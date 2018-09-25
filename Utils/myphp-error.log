@@ -1,0 +1,1015 @@
+[14-Aug-2018 09:57:38 Europe/Berlin] session_start:id553340
+[14-Aug-2018 09:57:39 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function start_visitor_counter() in /var/www/html/DASH-Conformance/Utils/Process.php:39
+Stack trace:
+#0 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Process.php on line 39
+[16-Aug-2018 10:01:47 Europe/Berlin] session_start:id741972
+[16-Aug-2018 10:02:24 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function process_mpd() in /var/www/html/DASH-Conformance/Utils/Process.php:101
+Stack trace:
+#0 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Process.php on line 101
+[16-Aug-2018 10:11:04 Europe/Berlin] session_start:id649221
+[16-Aug-2018 10:17:16 Europe/Berlin] session_start:id777499
+[16-Aug-2018 10:18:35 Europe/Berlin] session_start:id942956
+[16-Aug-2018 10:19:18 Europe/Berlin] session_start:id244720
+[16-Aug-2018 10:20:16 Europe/Berlin] session_start:id949827
+[16-Aug-2018 11:59:05 Europe/Berlin] session_start:id163870
+[16-Aug-2018 12:00:28 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function process_MPD() in /var/www/html/DASH-Conformance/Utils/Process.php:109
+Stack trace:
+#0 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Process.php on line 109
+[16-Aug-2018 12:07:36 Europe/Berlin] session_start:id197713
+[16-Aug-2018 12:07:37 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function process_MPD() in /var/www/html/DASH-Conformance/Utils/Process.php:109
+Stack trace:
+#0 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Process.php on line 109
+[16-Aug-2018 12:08:29 Europe/Berlin] session_start:id334059
+[16-Aug-2018 12:08:29 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function process_MPD() in /var/www/html/DASH-Conformance/Utils/Process.php:109
+Stack trace:
+#0 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Process.php on line 109
+[16-Aug-2018 12:09:05 Europe/Berlin] session_start:id673125
+[16-Aug-2018 12:09:07 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function process_MPD() in /var/www/html/DASH-Conformance/Utils/Process.php:109
+Stack trace:
+#0 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Process.php on line 109
+[16-Aug-2018 12:11:32 Europe/Berlin] session_start:id486376
+[16-Aug-2018 12:11:34 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function process_MPD() in /var/www/html/DASH-Conformance/Utils/Process.php:109
+Stack trace:
+#0 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Process.php on line 109
+[16-Aug-2018 12:14:34 Europe/Berlin] session_start:id532839
+[16-Aug-2018 12:19:43 Europe/Berlin] session_start:id773013
+[16-Aug-2018 12:19:45 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function process_MPD() in /var/www/html/DASH-Conformance/Utils/Process.php:109
+Stack trace:
+#0 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Process.php on line 109
+[16-Aug-2018 12:29:24 Europe/Berlin] session_start:id847247
+[16-Aug-2018 12:29:25 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function process_MPD() in /var/www/html/DASH-Conformance/Utils/Process.php:109
+Stack trace:
+#0 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Process.php on line 109
+[16-Aug-2018 12:30:34 Europe/Berlin] session_start:id171639
+[16-Aug-2018 12:31:46 Europe/Berlin] session_start:id308526
+[16-Aug-2018 12:33:32 Europe/Berlin] session_start:id977006
+[16-Aug-2018 12:34:19 Europe/Berlin] session_start:id496803
+[16-Aug-2018 12:34:21 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function process_MPD() in /var/www/html/DASH-Conformance/Utils/Process.php:109
+Stack trace:
+#0 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Process.php on line 109
+[16-Aug-2018 12:40:03 Europe/Berlin] session_start:id593013
+[16-Aug-2018 12:40:05 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function process_MPD() in /var/www/html/DASH-Conformance/Utils/Process.php:109
+Stack trace:
+#0 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Process.php on line 109
+[16-Aug-2018 12:45:31 Europe/Berlin] session_start:id915544
+[16-Aug-2018 12:45:32 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function process_MPD() in /var/www/html/DASH-Conformance/Utils/Process.php:89
+Stack trace:
+#0 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Process.php on line 89
+[16-Aug-2018 13:52:58 Europe/Berlin] session_start:id861791
+[16-Aug-2018 13:54:07 Europe/Berlin] session_start:id227849
+[16-Aug-2018 13:54:47 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function syscall() in /var/www/html/DASH-Conformance/MPDValidation.php:21
+Stack trace:
+#0 /var/www/html/DASH-Conformance/MPDProcessing.php(40): validate_MPD()
+#1 /var/www/html/DASH-Conformance/Utils/Process.php(89): process_MPD()
+#2 {main}
+  thrown in /var/www/html/DASH-Conformance/MPDValidation.php on line 21
+[16-Aug-2018 13:59:01 Europe/Berlin] session_start:id621201
+[16-Aug-2018 13:59:07 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function syscall() in /var/www/html/DASH-Conformance/MPDValidation.php:21
+Stack trace:
+#0 /var/www/html/DASH-Conformance/MPDProcessing.php(40): validate_MPD()
+#1 /var/www/html/DASH-Conformance/Utils/Process.php(89): process_MPD()
+#2 {main}
+  thrown in /var/www/html/DASH-Conformance/MPDValidation.php on line 21
+[16-Aug-2018 13:59:27 Europe/Berlin] session_start:id983578
+[16-Aug-2018 14:01:15 Europe/Berlin] session_start:id434789
+[16-Aug-2018 14:01:20 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function syscall() in /var/www/html/DASH-Conformance/MPDValidation.php:22
+Stack trace:
+#0 /var/www/html/DASH-Conformance/MPDProcessing.php(40): validate_MPD()
+#1 /var/www/html/DASH-Conformance/Utils/Process.php(89): process_MPD()
+#2 {main}
+  thrown in /var/www/html/DASH-Conformance/MPDValidation.php on line 22
+[16-Aug-2018 14:06:11 Europe/Berlin] session_start:id946907
+[16-Aug-2018 14:06:49 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function syscall() in /var/www/html/DASH-Conformance/MPDValidation.php:22
+Stack trace:
+#0 /var/www/html/DASH-Conformance/MPDProcessing.php(40): validate_MPD()
+#1 /var/www/html/DASH-Conformance/Utils/Process.php(89): process_MPD()
+#2 {main}
+  thrown in /var/www/html/DASH-Conformance/MPDValidation.php on line 22
+[16-Aug-2018 14:11:48 Europe/Berlin] session_start:id695461
+[16-Aug-2018 14:13:16 Europe/Berlin] session_start:id923078
+[16-Aug-2018 14:13:36 Europe/Berlin] session_start:id899381
+[16-Aug-2018 14:14:32 Europe/Berlin] session_start:id695649
+[16-Aug-2018 14:18:36 Europe/Berlin] session_start:id629280
+[16-Aug-2018 14:23:25 Europe/Berlin] session_start:id535147
+[16-Aug-2018 14:24:23 Europe/Berlin] session_start:id321066
+[16-Aug-2018 14:26:08 Europe/Berlin] session_start:id927556
+[16-Aug-2018 14:26:29 Europe/Berlin] session_start:id125348
+[16-Aug-2018 14:30:52 Europe/Berlin] session_start:id201152
+[16-Aug-2018 14:31:39 Europe/Berlin] session_start:id629704
+[16-Aug-2018 14:58:40 Europe/Berlin] session_start:id134059
+[16-Aug-2018 14:58:52 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function derive_segment_URLs() in /var/www/html/DASH-Conformance/MPDProcessing.php:51
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Process.php(89): process_MPD()
+#1 {main}
+  thrown in /var/www/html/DASH-Conformance/MPDProcessing.php on line 51
+[16-Aug-2018 14:59:29 Europe/Berlin] session_start:id202942
+[16-Aug-2018 14:59:32 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function derive_segment_URLs() in /var/www/html/DASH-Conformance/MPDProcessing.php:51
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Process.php(90): process_MPD()
+#1 {main}
+  thrown in /var/www/html/DASH-Conformance/MPDProcessing.php on line 51
+[16-Aug-2018 15:00:13 Europe/Berlin] session_start:id315059
+[16-Aug-2018 15:00:15 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function derive_segment_URLs() in /var/www/html/DASH-Conformance/MPDProcessing.php:48
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Process.php(90): process_MPD()
+#1 {main}
+  thrown in /var/www/html/DASH-Conformance/MPDProcessing.php on line 48
+[16-Aug-2018 15:00:57 Europe/Berlin] session_start:id214218
+[16-Aug-2018 16:45:35 Europe/Berlin] session_start:id341777
+[16-Aug-2018 16:59:02 Europe/Berlin] session_start:id514630
+[16-Aug-2018 17:15:14 Europe/Berlin] session_start:id997736
+[16-Aug-2018 17:15:39 Europe/Berlin] session_start:id348871
+[16-Aug-2018 17:17:38 Europe/Berlin] session_start:id660002
+[16-Aug-2018 17:18:33 Europe/Berlin] session_start:id516864
+[16-Aug-2018 17:19:23 Europe/Berlin] session_start:id548092
+[16-Aug-2018 17:19:54 Europe/Berlin] session_start:id197015
+[16-Aug-2018 17:27:46 Europe/Berlin] session_start:id515544
+[16-Aug-2018 17:29:14 Europe/Berlin] session_start:id374239
+[16-Aug-2018 17:36:44 Europe/Berlin] session_start:id201043
+[16-Aug-2018 17:43:27 Europe/Berlin] session_start:id817780
+[16-Aug-2018 17:47:19 Europe/Berlin] session_start:id909693
+[16-Aug-2018 17:49:14 Europe/Berlin] session_start:id154876
+[16-Aug-2018 17:51:06 Europe/Berlin] session_start:id597693
+[16-Aug-2018 17:51:43 Europe/Berlin] PHP Fatal error:  Uncaught Error: Cannot use object of type SegmentTimeline as array in /var/www/html/DASH-Conformance/SegmentURLs.php:76
+Stack trace:
+#0 /var/www/html/DASH-Conformance/SegmentURLs.php(73): form_SegmentTemplate(Object(SegmentTemplate), Object(SegmentTemplate), 'SegmentTimeline')
+#1 /var/www/html/DASH-Conformance/SegmentURLs.php(31): form_SegmentTemplate(Object(Period), Object(Representation), 'SegmentTemplate')
+#2 /var/www/html/DASH-Conformance/MPDProcessing.php(48): derive_segment_URLs(0)
+#3 /var/www/html/DASH-Conformance/Utils/Process.php(90): process_MPD()
+#4 {main}
+  thrown in /var/www/html/DASH-Conformance/SegmentURLs.php on line 76
+[16-Aug-2018 17:52:34 Europe/Berlin] session_start:id516218
+[17-Aug-2018 09:19:30 Europe/Berlin] session_start:id678852
+[17-Aug-2018 09:20:06 Europe/Berlin] session_start:id124389
+[17-Aug-2018 09:22:14 Europe/Berlin] session_start:id501340
+[17-Aug-2018 09:25:34 Europe/Berlin] session_start:id747100
+[17-Aug-2018 09:25:35 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function form_SegmentTemplate() in /var/www/html/DASH-Conformance/SegmentURLs.php:71
+Stack trace:
+#0 /var/www/html/DASH-Conformance/SegmentURLs.php(31): form_segment_access(Object(SegmentTemplate), Object(SegmentTemplate))
+#1 /var/www/html/DASH-Conformance/MPDProcessing.php(48): derive_segment_URLs(0)
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(90): process_MPD()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/SegmentURLs.php on line 71
+[17-Aug-2018 09:28:50 Europe/Berlin] session_start:id631781
+[17-Aug-2018 09:28:52 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function form_SegmentTemplate() in /var/www/html/DASH-Conformance/SegmentURLs.php:71
+Stack trace:
+#0 /var/www/html/DASH-Conformance/SegmentURLs.php(31): form_segment_access(Object(SegmentTemplate), Object(SegmentTemplate))
+#1 /var/www/html/DASH-Conformance/MPDProcessing.php(48): derive_segment_URLs(0)
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(90): process_MPD()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/SegmentURLs.php on line 71
+[17-Aug-2018 09:29:07 Europe/Berlin] session_start:id827410
+[17-Aug-2018 09:29:20 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function form_SegmentTemplate() in /var/www/html/DASH-Conformance/SegmentURLs.php:71
+Stack trace:
+#0 /var/www/html/DASH-Conformance/SegmentURLs.php(31): form_segment_access(Object(SegmentTemplate), Object(SegmentTemplate))
+#1 /var/www/html/DASH-Conformance/MPDProcessing.php(48): derive_segment_URLs(0)
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(90): process_MPD()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/SegmentURLs.php on line 71
+[17-Aug-2018 09:29:59 Europe/Berlin] session_start:id289517
+[17-Aug-2018 09:31:38 Europe/Berlin] session_start:id306584
+[17-Aug-2018 09:32:32 Europe/Berlin] session_start:id369333
+[17-Aug-2018 09:33:15 Europe/Berlin] session_start:id307709
+[17-Aug-2018 09:51:25 Europe/Berlin] session_start:id962389
+[17-Aug-2018 09:51:39 Europe/Berlin] session_start:id556162
+[17-Aug-2018 09:52:19 Europe/Berlin] session_start:id394320
+[17-Aug-2018 09:57:27 Europe/Berlin] session_start:id426051
+[17-Aug-2018 09:59:08 Europe/Berlin] session_start:id222651
+[17-Aug-2018 11:21:32 Europe/Berlin] session_start:id764279
+[17-Aug-2018 11:22:57 Europe/Berlin] session_start:id419589
+[17-Aug-2018 11:23:41 Europe/Berlin] session_start:id114199
+[17-Aug-2018 11:24:47 Europe/Berlin] session_start:id621877
+[17-Aug-2018 11:25:28 Europe/Berlin] session_start:id522679
+[17-Aug-2018 11:43:41 Europe/Berlin] session_start:id384535
+[17-Aug-2018 11:45:12 Europe/Berlin] session_start:id136329
+[17-Aug-2018 11:46:26 Europe/Berlin] session_start:id502602
+[17-Aug-2018 11:48:52 Europe/Berlin] session_start:id839210
+[17-Aug-2018 11:49:22 Europe/Berlin] session_start:id394349
+[17-Aug-2018 11:51:10 Europe/Berlin] session_start:id144660
+[17-Aug-2018 11:52:43 Europe/Berlin] session_start:id444354
+[17-Aug-2018 11:53:03 Europe/Berlin] session_start:id161294
+[17-Aug-2018 14:39:44 Europe/Berlin] session_start:id393607
+[17-Aug-2018 14:44:46 Europe/Berlin] session_start:id236071
+[17-Aug-2018 14:45:25 Europe/Berlin] session_start:id591409
+[17-Aug-2018 14:46:19 Europe/Berlin] session_start:id724269
+[17-Aug-2018 14:47:30 Europe/Berlin] session_start:id482760
+[17-Aug-2018 14:47:32 Europe/Berlin] PHP Fatal error:  Out of memory (allocated 10777268224) (tried to allocate 8589934600 bytes) in /var/www/html/DASH-Conformance/SegmentURLs.php on line 101
+[17-Aug-2018 14:47:32 Europe/Berlin] PHP Stack trace:
+[17-Aug-2018 14:47:32 Europe/Berlin] PHP   1. {main}() /var/www/html/DASH-Conformance/Utils/Process.php:0
+[17-Aug-2018 14:47:32 Europe/Berlin] PHP   2. process_MPD() /var/www/html/DASH-Conformance/Utils/Process.php:90
+[17-Aug-2018 14:47:32 Europe/Berlin] PHP   3. derive_segment_URLs($current_period = *uninitialized*) /var/www/html/DASH-Conformance/MPDProcessing.php:48
+[17-Aug-2018 14:47:32 Europe/Berlin] PHP   4. compute_URLs($representation = *uninitialized*, $segment_access = *uninitialized*, $segment_timings = *uninitialized*, $segmentno = *uninitialized*) /var/www/html/DASH-Conformance/SegmentURLs.php:47
+[17-Aug-2018 16:43:44 Europe/Berlin] session_start:id364601
+[17-Aug-2018 16:45:03 Europe/Berlin] session_start:id676530
+[17-Aug-2018 16:45:29 Europe/Berlin] session_start:id682607
+[17-Aug-2018 16:45:51 Europe/Berlin] session_start:id692798
+[17-Aug-2018 16:47:53 Europe/Berlin] session_start:id946354
+[17-Aug-2018 16:52:09 Europe/Berlin] session_start:id983039
+[17-Aug-2018 16:54:20 Europe/Berlin] session_start:id354634
+[17-Aug-2018 16:55:39 Europe/Berlin] session_start:id867571
+[17-Aug-2018 16:56:36 Europe/Berlin] session_start:id528009
+[17-Aug-2018 16:59:16 Europe/Berlin] session_start:id659825
+[20-Aug-2018 11:12:26 Europe/Berlin] session_start:id990281
+[20-Aug-2018 11:13:27 Europe/Berlin] session_start:id182164
+[20-Aug-2018 11:14:31 Europe/Berlin] session_start:id985215
+[20-Aug-2018 11:15:00 Europe/Berlin] session_start:id478733
+[20-Aug-2018 11:22:04 Europe/Berlin] session_start:id586607
+[20-Aug-2018 11:25:42 Europe/Berlin] session_start:id178909
+[20-Aug-2018 11:28:53 Europe/Berlin] session_start:id302431
+[20-Aug-2018 11:30:56 Europe/Berlin] session_start:id998754
+[20-Aug-2018 11:31:43 Europe/Berlin] session_start:id489148
+[20-Aug-2018 11:38:37 Europe/Berlin] session_start:id951102
+[20-Aug-2018 11:42:17 Europe/Berlin] session_start:id539223
+[20-Aug-2018 11:42:38 Europe/Berlin] session_start:id402630
+[20-Aug-2018 11:44:36 Europe/Berlin] session_start:id599032
+[20-Aug-2018 11:48:44 Europe/Berlin] session_start:id900970
+[20-Aug-2018 11:59:46 Europe/Berlin] session_start:id137971
+[20-Aug-2018 12:00:12 Europe/Berlin] session_start:id582866
+[20-Aug-2018 12:14:57 Europe/Berlin] session_start:id885372
+[20-Aug-2018 12:16:09 Europe/Berlin] session_start:id144717
+[20-Aug-2018 12:16:09 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(90): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[20-Aug-2018 12:17:47 Europe/Berlin] session_start:id375550
+[20-Aug-2018 12:17:47 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(90): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[20-Aug-2018 12:18:39 Europe/Berlin] session_start:id538415
+[20-Aug-2018 12:18:39 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(90): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[20-Aug-2018 12:18:55 Europe/Berlin] session_start:id923460
+[20-Aug-2018 12:18:55 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(89): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[20-Aug-2018 12:19:33 Europe/Berlin] session_start:id536419
+[20-Aug-2018 12:19:54 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(89): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[20-Aug-2018 12:20:12 Europe/Berlin] session_start:id456078
+[20-Aug-2018 12:21:19 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(89): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[20-Aug-2018 12:21:49 Europe/Berlin] session_start:id266101
+[20-Aug-2018 12:25:33 Europe/Berlin] session_start:id566352
+[20-Aug-2018 12:26:32 Europe/Berlin] session_start:id187452
+[20-Aug-2018 12:34:37 Europe/Berlin] session_start:id513824
+[20-Aug-2018 12:52:46 Europe/Berlin] session_start:id158465
+[20-Aug-2018 13:04:14 Europe/Berlin] session_start:id583940
+[20-Aug-2018 13:09:29 Europe/Berlin] session_start:id677023
+[20-Aug-2018 13:16:04 Europe/Berlin] session_start:id763525
+[20-Aug-2018 13:19:08 Europe/Berlin] session_start:id511288
+[20-Aug-2018 13:29:54 Europe/Berlin] session_start:id736272
+[20-Aug-2018 13:39:05 Europe/Berlin] session_start:id977636
+[20-Aug-2018 13:40:57 Europe/Berlin] session_start:id113385
+[20-Aug-2018 13:42:48 Europe/Berlin] session_start:id130181
+[20-Aug-2018 13:44:23 Europe/Berlin] session_start:id426186
+[20-Aug-2018 13:52:15 Europe/Berlin] session_start:id368637
+[20-Aug-2018 13:59:02 Europe/Berlin] session_start:id615010
+[20-Aug-2018 14:00:32 Europe/Berlin] session_start:id588475
+[20-Aug-2018 14:22:06 Europe/Berlin] session_start:id221008
+[20-Aug-2018 14:23:20 Europe/Berlin] session_start:id439779
+[20-Aug-2018 14:24:00 Europe/Berlin] session_start:id587694
+[20-Aug-2018 14:30:16 Europe/Berlin] session_start:id428301
+[20-Aug-2018 14:33:47 Europe/Berlin] session_start:id559941
+[20-Aug-2018 15:14:18 Europe/Berlin] session_start:id590549
+[20-Aug-2018 15:21:49 Europe/Berlin] session_start:id870887
+[20-Aug-2018 15:25:59 Europe/Berlin] session_start:id590321
+[20-Aug-2018 15:28:18 Europe/Berlin] session_start:id258124
+[20-Aug-2018 15:29:00 Europe/Berlin] session_start:id348993
+[20-Aug-2018 15:30:20 Europe/Berlin] session_start:id719546
+[20-Aug-2018 15:33:30 Europe/Berlin] session_start:id560379
+[20-Aug-2018 16:39:55 Europe/Berlin] session_start:id851737
+[20-Aug-2018 16:47:59 Europe/Berlin] session_start:id665548
+[20-Aug-2018 16:48:37 Europe/Berlin] session_start:id467276
+[20-Aug-2018 16:51:21 Europe/Berlin] session_start:id848523
+[20-Aug-2018 16:51:48 Europe/Berlin] session_start:id359332
+[20-Aug-2018 16:52:38 Europe/Berlin] session_start:id670265
+[20-Aug-2018 16:54:33 Europe/Berlin] session_start:id839230
+[20-Aug-2018 16:59:42 Europe/Berlin] session_start:id528622
+[21-Aug-2018 11:23:19 Europe/Berlin] session_start:id100879
+[21-Aug-2018 11:24:52 Europe/Berlin] session_start:id380557
+[21-Aug-2018 11:40:58 Europe/Berlin] session_start:id504834
+[21-Aug-2018 11:52:31 Europe/Berlin] session_start:id321700
+[21-Aug-2018 11:54:55 Europe/Berlin] session_start:id826811
+[21-Aug-2018 11:55:30 Europe/Berlin] session_start:id230954
+[21-Aug-2018 11:56:03 Europe/Berlin] session_start:id230954
+[21-Aug-2018 11:58:05 Europe/Berlin] session_start:id544526
+[21-Aug-2018 11:58:33 Europe/Berlin] session_start:id195255
+[21-Aug-2018 12:00:17 Europe/Berlin] session_start:id785133
+[21-Aug-2018 12:16:59 Europe/Berlin] session_start:id544231
+[21-Aug-2018 12:19:30 Europe/Berlin] session_start:id846005
+[21-Aug-2018 12:32:03 Europe/Berlin] session_start:id166273
+[21-Aug-2018 12:49:21 Europe/Berlin] session_start:id732381
+[21-Aug-2018 12:52:12 Europe/Berlin] session_start:id558892
+[21-Aug-2018 12:54:56 Europe/Berlin] session_start:id565484
+[21-Aug-2018 14:14:25 Europe/Berlin] session_start:id581394
+[21-Aug-2018 14:16:30 Europe/Berlin] session_start:id294477
+[21-Aug-2018 14:24:35 Europe/Berlin] session_start:id904440
+[21-Aug-2018 15:11:40 Europe/Berlin] session_start:id510252
+[21-Aug-2018 15:13:27 Europe/Berlin] session_start:id974582
+[21-Aug-2018 15:14:46 Europe/Berlin] session_start:id751986
+[21-Aug-2018 15:18:22 Europe/Berlin] session_start:id925805
+[21-Aug-2018 15:19:36 Europe/Berlin] session_start:id551219
+[21-Aug-2018 15:33:51 Europe/Berlin] session_start:id960552
+[21-Aug-2018 15:50:30 Europe/Berlin] session_start:id988652
+[21-Aug-2018 16:57:30 Europe/Berlin] session_start:id179463
+[21-Aug-2018 17:30:05 Europe/Berlin] session_start:id142026
+[21-Aug-2018 17:34:59 Europe/Berlin] session_start:id633705
+[21-Aug-2018 17:45:47 Europe/Berlin] session_start:id130418
+[21-Aug-2018 17:46:47 Europe/Berlin] session_start:id882771
+[21-Aug-2018 17:48:43 Europe/Berlin] session_start:id995260
+[21-Aug-2018 17:49:16 Europe/Berlin] session_start:id605338
+[22-Aug-2018 09:23:33 Europe/Berlin] session_start:id450476
+[22-Aug-2018 09:25:12 Europe/Berlin] session_start:id938798
+[22-Aug-2018 10:01:00 Europe/Berlin] session_start:id429952
+[22-Aug-2018 10:03:13 Europe/Berlin] session_start:id112281
+[22-Aug-2018 11:33:39 Europe/Berlin] session_start:id195420
+[22-Aug-2018 11:34:04 Europe/Berlin] session_start:id127462
+[22-Aug-2018 11:35:14 Europe/Berlin] session_start:id537612
+[22-Aug-2018 11:37:00 Europe/Berlin] session_start:id830608
+[22-Aug-2018 11:37:00 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(46): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[22-Aug-2018 11:37:30 Europe/Berlin] session_start:id324582
+[22-Aug-2018 11:38:32 Europe/Berlin] session_start:id657308
+[22-Aug-2018 11:38:32 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(46): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[22-Aug-2018 11:38:53 Europe/Berlin] session_start:id731720
+[22-Aug-2018 11:41:48 Europe/Berlin] session_start:id737497
+[22-Aug-2018 11:44:22 Europe/Berlin] session_start:id763639
+[22-Aug-2018 11:44:22 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(46): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[22-Aug-2018 11:44:36 Europe/Berlin] session_start:id316555
+[22-Aug-2018 12:12:13 Europe/Berlin] session_start:id269802
+[22-Aug-2018 12:13:11 Europe/Berlin] session_start:id606778
+[22-Aug-2018 12:13:11 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(46): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[22-Aug-2018 12:13:22 Europe/Berlin] session_start:id897766
+[22-Aug-2018 12:15:50 Europe/Berlin] session_start:id216167
+[22-Aug-2018 12:15:50 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(46): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[22-Aug-2018 12:16:12 Europe/Berlin] session_start:id498563
+[22-Aug-2018 12:31:06 Europe/Berlin] session_start:id562007
+[22-Aug-2018 13:50:55 Europe/Berlin] session_start:id315369
+[22-Aug-2018 13:50:55 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(46): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[22-Aug-2018 13:51:11 Europe/Berlin] session_start:id571443
+[22-Aug-2018 13:52:20 Europe/Berlin] session_start:id111006
+[22-Aug-2018 13:58:57 Europe/Berlin] session_start:id512137
+[22-Aug-2018 14:00:43 Europe/Berlin] session_start:id756638
+[22-Aug-2018 14:31:17 Europe/Berlin] session_start:id572294
+[22-Aug-2018 14:31:28 Europe/Berlin] session_start:id326587
+[22-Aug-2018 14:34:47 Europe/Berlin] session_start:id148132
+[22-Aug-2018 14:35:24 Europe/Berlin] session_start:id437743
+[22-Aug-2018 14:36:05 Europe/Berlin] session_start:id757531
+[22-Aug-2018 14:36:55 Europe/Berlin] session_start:id733869
+[22-Aug-2018 14:39:13 Europe/Berlin] session_start:id721166
+[22-Aug-2018 14:46:17 Europe/Berlin] session_start:id365762
+[22-Aug-2018 14:46:18 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(46): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[22-Aug-2018 14:46:36 Europe/Berlin] session_start:id125181
+[22-Aug-2018 15:04:07 Europe/Berlin] session_start:id680059
+[22-Aug-2018 15:08:50 Europe/Berlin] session_start:id781498
+[22-Aug-2018 15:18:24 Europe/Berlin] session_start:id843971
+[22-Aug-2018 15:24:35 Europe/Berlin] session_start:id185314
+[22-Aug-2018 15:25:05 Europe/Berlin] session_start:id807512
+[22-Aug-2018 15:26:36 Europe/Berlin] session_start:id274648
+[22-Aug-2018 15:27:13 Europe/Berlin] session_start:id635649
+[22-Aug-2018 15:27:42 Europe/Berlin] session_start:id504203
+[22-Aug-2018 15:29:18 Europe/Berlin] session_start:id276618
+[22-Aug-2018 15:31:42 Europe/Berlin] session_start:id317597
+[22-Aug-2018 15:32:51 Europe/Berlin] session_start:id759091
+[22-Aug-2018 15:33:14 Europe/Berlin] session_start:id336841
+[22-Aug-2018 15:34:00 Europe/Berlin] session_start:id593237
+[22-Aug-2018 15:36:02 Europe/Berlin] session_start:id492284
+[22-Aug-2018 15:37:25 Europe/Berlin] session_start:id189551
+[22-Aug-2018 16:18:44 Europe/Berlin] session_start:id980335
+[22-Aug-2018 16:19:31 Europe/Berlin] session_start:id713326
+[22-Aug-2018 16:20:35 Europe/Berlin] session_start:id368444
+[22-Aug-2018 16:21:19 Europe/Berlin] session_start:id124306
+[22-Aug-2018 16:22:32 Europe/Berlin] session_start:id732209
+[22-Aug-2018 16:23:27 Europe/Berlin] session_start:id318504
+[22-Aug-2018 16:25:09 Europe/Berlin] session_start:id959245
+[22-Aug-2018 16:26:57 Europe/Berlin] session_start:id250208
+[22-Aug-2018 16:27:18 Europe/Berlin] session_start:id688196
+[22-Aug-2018 16:27:50 Europe/Berlin] session_start:id185019
+[22-Aug-2018 16:29:32 Europe/Berlin] session_start:id107100
+[22-Aug-2018 16:30:33 Europe/Berlin] session_start:id595365
+[22-Aug-2018 16:34:26 Europe/Berlin] session_start:id748095
+[22-Aug-2018 16:34:55 Europe/Berlin] session_start:id911673
+[22-Aug-2018 16:35:45 Europe/Berlin] session_start:id652155
+[22-Aug-2018 16:36:20 Europe/Berlin] session_start:id962159
+[22-Aug-2018 16:59:41 Europe/Berlin] session_start:id171316
+[22-Aug-2018 17:00:13 Europe/Berlin] session_start:id800396
+[22-Aug-2018 17:10:48 Europe/Berlin] session_start:id189104
+[22-Aug-2018 17:12:36 Europe/Berlin] session_start:id269632
+[22-Aug-2018 17:15:33 Europe/Berlin] session_start:id397801
+[22-Aug-2018 17:17:34 Europe/Berlin] session_start:id308327
+[22-Aug-2018 17:28:40 Europe/Berlin] session_start:id482482
+[22-Aug-2018 17:30:17 Europe/Berlin] session_start:id781040
+[22-Aug-2018 17:30:37 Europe/Berlin] session_start:id131595
+[22-Aug-2018 17:32:41 Europe/Berlin] session_start:id796394
+[22-Aug-2018 17:33:02 Europe/Berlin] session_start:id876754
+[22-Aug-2018 17:33:02 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(46): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[22-Aug-2018 17:33:15 Europe/Berlin] session_start:id960161
+[23-Aug-2018 09:33:32 Europe/Berlin] session_start:id161756
+[23-Aug-2018 09:33:32 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(46): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[23-Aug-2018 09:34:02 Europe/Berlin] session_start:id823105
+[23-Aug-2018 09:45:22 Europe/Berlin] session_start:id594672
+[23-Aug-2018 09:45:22 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(46): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[23-Aug-2018 09:45:36 Europe/Berlin] session_start:id648909
+[23-Aug-2018 09:45:55 Europe/Berlin] session_start:id624405
+[23-Aug-2018 09:47:50 Europe/Berlin] session_start:id820965
+[23-Aug-2018 09:49:11 Europe/Berlin] session_start:id860384
+[23-Aug-2018 10:12:42 Europe/Berlin] session_start:id246501
+[23-Aug-2018 10:13:51 Europe/Berlin] session_start:id235814
+[23-Aug-2018 10:22:12 Europe/Berlin] session_start:id769397
+[23-Aug-2018 10:24:07 Europe/Berlin] session_start:id868633
+[23-Aug-2018 10:24:44 Europe/Berlin] session_start:id227557
+[23-Aug-2018 10:24:44 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(46): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[23-Aug-2018 10:24:54 Europe/Berlin] session_start:id376394
+[23-Aug-2018 14:05:13 Europe/Berlin] session_start:id275815
+[23-Aug-2018 14:08:01 Europe/Berlin] session_start:id429965
+[23-Aug-2018 14:13:33 Europe/Berlin] session_start:id937425
+[23-Aug-2018 14:22:48 Europe/Berlin] session_start:id204063
+[23-Aug-2018 14:26:24 Europe/Berlin] session_start:id163054
+[23-Aug-2018 14:30:55 Europe/Berlin] session_start:id358186
+[23-Aug-2018 14:30:55 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(46): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[23-Aug-2018 14:31:10 Europe/Berlin] session_start:id374217
+[23-Aug-2018 14:33:45 Europe/Berlin] session_start:id100031
+[23-Aug-2018 14:33:45 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(46): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[23-Aug-2018 14:33:57 Europe/Berlin] session_start:id756920
+[23-Aug-2018 14:42:08 Europe/Berlin] session_start:id275691
+[23-Aug-2018 15:10:16 Europe/Berlin] session_start:id296174
+[23-Aug-2018 15:14:52 Europe/Berlin] session_start:id253550
+[23-Aug-2018 15:14:52 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(46): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[23-Aug-2018 15:17:18 Europe/Berlin] session_start:id288967
+[23-Aug-2018 15:33:48 Europe/Berlin] session_start:id658472
+[23-Aug-2018 15:34:39 Europe/Berlin] session_start:id327516
+[23-Aug-2018 17:07:08 Europe/Berlin] session_start:id601067
+[23-Aug-2018 17:11:32 Europe/Berlin] session_start:id511724
+[23-Aug-2018 17:11:56 Europe/Berlin] session_start:id689758
+[23-Aug-2018 17:12:51 Europe/Berlin] session_start:id923131
+[23-Aug-2018 17:13:10 Europe/Berlin] session_start:PHPSESSID
+[23-Aug-2018 17:14:06 Europe/Berlin] session_start:id581014
+[23-Aug-2018 17:16:25 Europe/Berlin] session_start:id106141
+[23-Aug-2018 17:16:52 Europe/Berlin] session_start:id249585
+[23-Aug-2018 17:27:39 Europe/Berlin] session_start:id227415
+[23-Aug-2018 17:27:39 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(45): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[23-Aug-2018 17:27:54 Europe/Berlin] session_start:id910788
+[23-Aug-2018 17:39:33 Europe/Berlin] session_start:id600106
+[23-Aug-2018 17:39:33 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function rrmdir() in /var/www/html/DASH-Conformance/Utils/Session.php:91
+Stack trace:
+#0 /var/www/html/DASH-Conformance/Utils/Session.php(62): session_delete('/var/www/html/D...')
+#1 /var/www/html/DASH-Conformance/Utils/Session.php(110): old_sessions_delete()
+#2 /var/www/html/DASH-Conformance/Utils/Process.php(45): session_create()
+#3 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Session.php on line 91
+[23-Aug-2018 17:39:44 Europe/Berlin] session_start:id372812
+[23-Aug-2018 17:40:47 Europe/Berlin] session_start:id830683
+[24-Aug-2018 09:23:48 Europe/Berlin] session_start:id725415
+[24-Aug-2018 09:49:17 Europe/Berlin] session_start:id934659
+[24-Aug-2018 10:11:40 Europe/Berlin] session_start:id209081
+[24-Aug-2018 10:13:04 Europe/Berlin] session_start:id836301
+[24-Aug-2018 10:14:12 Europe/Berlin] session_start:id361214
+[24-Aug-2018 10:15:17 Europe/Berlin] session_start:id848493
+[24-Aug-2018 10:25:04 Europe/Berlin] session_start:id812154
+[24-Aug-2018 10:27:17 Europe/Berlin] session_start:id882092
+[24-Aug-2018 10:28:13 Europe/Berlin] session_start:id770601
+[24-Aug-2018 10:33:36 Europe/Berlin] session_start:id127515
+[24-Aug-2018 10:42:03 Europe/Berlin] session_start:id739884
+[24-Aug-2018 10:43:48 Europe/Berlin] session_start:id970872
+[24-Aug-2018 11:09:29 Europe/Berlin] session_start:id641964
+[24-Aug-2018 11:26:27 Europe/Berlin] session_start:id563240
+[24-Aug-2018 11:29:55 Europe/Berlin] session_start:id194574
+[24-Aug-2018 11:50:38 Europe/Berlin] session_start:id474906
+[24-Aug-2018 12:05:41 Europe/Berlin] session_start:id229764
+[24-Aug-2018 12:09:41 Europe/Berlin] session_start:id596271
+[24-Aug-2018 12:17:13 Europe/Berlin] session_start:id426070
+[24-Aug-2018 13:10:56 Europe/Berlin] session_start:id473584
+[24-Aug-2018 13:12:00 Europe/Berlin] session_start:id274787
+[24-Aug-2018 13:18:57 Europe/Berlin] session_start:id368911
+[24-Aug-2018 13:30:16 Europe/Berlin] session_start:id161146
+[24-Aug-2018 13:33:09 Europe/Berlin] session_start:id514259
+[24-Aug-2018 14:17:52 Europe/Berlin] session_start:id412518
+[24-Aug-2018 14:19:59 Europe/Berlin] session_start:id271575
+[24-Aug-2018 14:33:14 Europe/Berlin] session_start:id643718
+[24-Aug-2018 14:54:24 Europe/Berlin] session_start:id189994
+[24-Aug-2018 15:11:58 Europe/Berlin] session_start:id694564
+[24-Aug-2018 15:14:36 Europe/Berlin] session_start:id739541
+[24-Aug-2018 15:26:18 Europe/Berlin] session_start:id206595
+[24-Aug-2018 15:33:00 Europe/Berlin] session_start:id113091
+[24-Aug-2018 15:34:50 Europe/Berlin] session_start:id638269
+[24-Aug-2018 15:45:51 Europe/Berlin] session_start:id718707
+[24-Aug-2018 15:49:18 Europe/Berlin] session_start:id154322
+[24-Aug-2018 15:52:44 Europe/Berlin] session_start:id965500
+[24-Aug-2018 15:57:44 Europe/Berlin] session_start:id421677
+[24-Aug-2018 16:09:17 Europe/Berlin] session_start:id563929
+[24-Aug-2018 16:34:13 Europe/Berlin] session_start:id848651
+[24-Aug-2018 16:34:53 Europe/Berlin] session_start:id978535
+[24-Aug-2018 16:37:40 Europe/Berlin] session_start:id353465
+[24-Aug-2018 16:59:37 Europe/Berlin] session_start:id830870
+[24-Aug-2018 17:00:51 Europe/Berlin] session_start:id187558
+[24-Aug-2018 17:22:14 Europe/Berlin] session_start:id545541
+[24-Aug-2018 17:23:34 Europe/Berlin] session_start:id949373
+[24-Aug-2018 17:27:37 Europe/Berlin] session_start:id715366
+[24-Aug-2018 17:31:42 Europe/Berlin] session_start:id232902
+[24-Aug-2018 17:31:47 Europe/Berlin] session_start:id332088
+[24-Aug-2018 17:33:32 Europe/Berlin] session_start:id274843
+[24-Aug-2018 17:41:46 Europe/Berlin] session_start:id241601
+[24-Aug-2018 17:45:14 Europe/Berlin] session_start:id556703
+[27-Aug-2018 11:00:36 Europe/Berlin] session_start:id492964
+[27-Aug-2018 11:04:59 Europe/Berlin] session_start:id901082
+[27-Aug-2018 11:16:42 Europe/Berlin] session_start:id661538
+[27-Aug-2018 11:17:23 Europe/Berlin] session_start:id474993
+[27-Aug-2018 11:19:17 Europe/Berlin] session_start:id590844
+[27-Aug-2018 11:21:11 Europe/Berlin] session_start:id470928
+[27-Aug-2018 11:21:19 Europe/Berlin] session_start:id796117
+[27-Aug-2018 11:23:08 Europe/Berlin] session_start:id853937
+[27-Aug-2018 12:01:06 Europe/Berlin] session_start:id365470
+[27-Aug-2018 12:04:58 Europe/Berlin] session_start:id943652
+[27-Aug-2018 12:05:57 Europe/Berlin] session_start:id701368
+[27-Aug-2018 12:06:47 Europe/Berlin] session_start:id333649
+[27-Aug-2018 12:30:29 Europe/Berlin] session_start:id538458
+[27-Aug-2018 12:30:32 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function start_visitor_counter() in /var/www/html/DASH-Conformance/Utils/Process.php:43
+Stack trace:
+#0 {main}
+  thrown in /var/www/html/DASH-Conformance/Utils/Process.php on line 43
+[27-Aug-2018 12:30:57 Europe/Berlin] session_start:id152811
+[27-Aug-2018 12:38:23 Europe/Berlin] session_start:id364592
+[27-Aug-2018 12:39:32 Europe/Berlin] session_start:id548595
+[27-Aug-2018 13:04:05 Europe/Berlin] session_start:id787661
+[27-Aug-2018 13:04:54 Europe/Berlin] session_start:id694672
+[28-Aug-2018 08:42:55 Europe/Berlin] session_start:id377901
+[28-Aug-2018 08:45:45 Europe/Berlin] session_start:id769140
+[28-Aug-2018 08:48:52 Europe/Berlin] session_start:id554901
+[28-Aug-2018 08:59:03 Europe/Berlin] session_start:id918642
+[28-Aug-2018 09:47:10 Europe/Berlin] session_start:id232244
+[28-Aug-2018 09:47:48 Europe/Berlin] session_start:id951742
+[28-Aug-2018 09:48:56 Europe/Berlin] session_start:id631107
+[28-Aug-2018 09:49:55 Europe/Berlin] session_start:id845626
+[28-Aug-2018 09:54:02 Europe/Berlin] session_start:id208341
+[28-Aug-2018 10:14:31 Europe/Berlin] session_start:id780123
+[28-Aug-2018 10:23:22 Europe/Berlin] session_start:id502362
+[28-Aug-2018 10:25:00 Europe/Berlin] session_start:id474059
+[28-Aug-2018 10:27:43 Europe/Berlin] session_start:id809210
+[28-Aug-2018 10:36:21 Europe/Berlin] session_start:id277239
+[28-Aug-2018 10:37:46 Europe/Berlin] session_start:id373049
+[28-Aug-2018 17:07:08 Europe/Berlin] session_start:id946671
+[28-Aug-2018 17:07:47 Europe/Berlin] session_start:id912993
+[28-Aug-2018 17:09:40 Europe/Berlin] session_start:id946446
+[28-Aug-2018 17:16:34 Europe/Berlin] session_start:id738968
+[29-Aug-2018 09:29:24 Europe/Berlin] session_start:id714460
+[29-Aug-2018 10:13:11 Europe/Berlin] session_start:id495259
+[29-Aug-2018 10:16:27 Europe/Berlin] session_start:id455605
+[29-Aug-2018 10:18:08 Europe/Berlin] session_start:id863589
+[29-Aug-2018 10:26:55 Europe/Berlin] session_start:id565767
+[29-Aug-2018 10:31:10 Europe/Berlin] session_start:id332356
+[29-Aug-2018 10:32:39 Europe/Berlin] session_start:id181275
+[29-Aug-2018 10:33:54 Europe/Berlin] session_start:id590082
+[29-Aug-2018 10:35:39 Europe/Berlin] session_start:id274875
+[29-Aug-2018 10:39:19 Europe/Berlin] session_start:id868003
+[29-Aug-2018 10:40:24 Europe/Berlin] session_start:id115509
+[29-Aug-2018 10:42:22 Europe/Berlin] session_start:id668064
+[29-Aug-2018 10:42:55 Europe/Berlin] session_start:id556743
+[29-Aug-2018 10:43:31 Europe/Berlin] session_start:id514215
+[29-Aug-2018 10:56:57 Europe/Berlin] session_start:id467708
+[29-Aug-2018 10:57:38 Europe/Berlin] session_start:id533013
+[29-Aug-2018 11:00:10 Europe/Berlin] session_start:id225153
+[29-Aug-2018 13:40:18 Europe/Berlin] session_start:id656089
+[29-Aug-2018 13:44:03 Europe/Berlin] session_start:id627591
+[29-Aug-2018 17:55:49 Europe/Berlin] session_start:id313813
+[29-Aug-2018 17:56:11 Europe/Berlin] session_start:id270959
+[29-Aug-2018 17:56:45 Europe/Berlin] session_start:id636579
+[29-Aug-2018 17:57:12 Europe/Berlin] session_start:id197001
+[29-Aug-2018 17:57:34 Europe/Berlin] session_start:id924470
+[30-Aug-2018 10:17:18 Europe/Berlin] session_start:id179552
+[30-Aug-2018 10:17:47 Europe/Berlin] session_start:id900042
+[30-Aug-2018 10:21:41 Europe/Berlin] session_start:id876799
+[30-Aug-2018 10:28:10 Europe/Berlin] session_start:id204182
+[30-Aug-2018 10:31:32 Europe/Berlin] session_start:id684782
+[30-Aug-2018 10:35:45 Europe/Berlin] session_start:id751712
+[30-Aug-2018 10:36:11 Europe/Berlin] session_start:id701164
+[30-Aug-2018 10:42:06 Europe/Berlin] session_start:id341133
+[30-Aug-2018 10:42:58 Europe/Berlin] session_start:id322410
+[30-Aug-2018 10:47:51 Europe/Berlin] session_start:id873332
+[30-Aug-2018 10:53:22 Europe/Berlin] session_start:id860245
+[30-Aug-2018 10:54:20 Europe/Berlin] session_start:id581487
+[30-Aug-2018 11:17:33 Europe/Berlin] session_start:id237798
+[30-Aug-2018 11:37:10 Europe/Berlin] session_start:id932204
+[30-Aug-2018 11:45:43 Europe/Berlin] session_start:id601246
+[30-Aug-2018 12:01:06 Europe/Berlin] session_start:id868715
+[30-Aug-2018 12:01:20 Europe/Berlin] session_start:id574341
+[30-Aug-2018 12:05:17 Europe/Berlin] session_start:id693877
+[30-Aug-2018 15:07:13 Europe/Berlin] session_start:id860685
+[30-Aug-2018 15:11:06 Europe/Berlin] session_start:id224918
+[30-Aug-2018 15:11:30 Europe/Berlin] session_start:id143254
+[30-Aug-2018 15:13:23 Europe/Berlin] session_start:id489178
+[12-Sep-2018 10:19:26 Europe/Berlin] session_start:id425700
+[12-Sep-2018 10:20:36 Europe/Berlin] session_start:id374141
+[17-Sep-2018 10:38:24 Europe/Berlin] session_start:id109398
+[17-Sep-2018 10:41:20 Europe/Berlin] session_start:id204918
+[17-Sep-2018 10:45:45 Europe/Berlin] session_start:id197916
+[17-Sep-2018 10:49:14 Europe/Berlin] session_start:id341323
+[17-Sep-2018 10:51:51 Europe/Berlin] session_start:id318533
+[17-Sep-2018 10:53:33 Europe/Berlin] session_start:id936050
+[17-Sep-2018 11:03:40 Europe/Berlin] session_start:id174860
+[17-Sep-2018 11:09:07 Europe/Berlin] session_start:id617244
+[17-Sep-2018 11:09:55 Europe/Berlin] session_start:id177437
+[17-Sep-2018 11:13:01 Europe/Berlin] session_start:id163517
+[17-Sep-2018 11:15:57 Europe/Berlin] session_start:id823932
+[17-Sep-2018 11:47:07 Europe/Berlin] session_start:id757617
+[17-Sep-2018 11:48:32 Europe/Berlin] session_start:id349977
+[17-Sep-2018 11:49:49 Europe/Berlin] session_start:id418911
+[17-Sep-2018 11:55:09 Europe/Berlin] session_start:id919148
+[17-Sep-2018 11:57:10 Europe/Berlin] session_start:id738319
+[17-Sep-2018 11:57:44 Europe/Berlin] session_start:id888235
+[17-Sep-2018 11:58:08 Europe/Berlin] session_start:id546497
+[17-Sep-2018 11:59:06 Europe/Berlin] session_start:id183152
+[17-Sep-2018 12:56:01 Europe/Berlin] session_start:id469051
+[17-Sep-2018 13:31:47 Europe/Berlin] session_start:id657944
+[17-Sep-2018 13:32:45 Europe/Berlin] session_start:id144038
+[17-Sep-2018 13:36:54 Europe/Berlin] session_start:id303874
+[17-Sep-2018 13:38:44 Europe/Berlin] session_start:id546167
+[17-Sep-2018 15:34:40 Europe/Berlin] session_start:id341876
+[17-Sep-2018 15:35:04 Europe/Berlin] session_start:id364191
+[17-Sep-2018 15:36:31 Europe/Berlin] session_start:id784669
+[17-Sep-2018 15:37:44 Europe/Berlin] session_start:id736839
+[17-Sep-2018 15:39:43 Europe/Berlin] session_start:id256120
+[17-Sep-2018 15:41:09 Europe/Berlin] session_start:id856365
+[17-Sep-2018 15:43:03 Europe/Berlin] session_start:id404365
+[17-Sep-2018 15:45:41 Europe/Berlin] session_start:id259867
+[17-Sep-2018 15:56:32 Europe/Berlin] session_start:id810291
+[17-Sep-2018 15:59:15 Europe/Berlin] session_start:id374383
+[17-Sep-2018 16:14:53 Europe/Berlin] session_start:id654412
+[17-Sep-2018 16:15:20 Europe/Berlin] session_start:id187812
+[17-Sep-2018 17:35:01 Europe/Berlin] session_start:id551702
+[17-Sep-2018 17:35:55 Europe/Berlin] session_start:id486964
+[17-Sep-2018 17:37:26 Europe/Berlin] session_start:id235394
+[17-Sep-2018 17:39:29 Europe/Berlin] session_start:id382006
+[17-Sep-2018 17:39:46 Europe/Berlin] session_start:id544199
+[17-Sep-2018 17:49:52 Europe/Berlin] session_start:id739795
+[17-Sep-2018 17:52:37 Europe/Berlin] session_start:id836545
+[17-Sep-2018 18:02:34 Europe/Berlin] session_start:id218445
+[17-Sep-2018 18:03:00 Europe/Berlin] session_start:id649461
+[17-Sep-2018 18:03:52 Europe/Berlin] session_start:id231449
+[17-Sep-2018 18:04:07 Europe/Berlin] session_start:id711815
+[17-Sep-2018 18:05:39 Europe/Berlin] session_start:id406158
+[17-Sep-2018 18:06:16 Europe/Berlin] session_start:id264442
+[17-Sep-2018 18:11:04 Europe/Berlin] session_start:id568354
+[18-Sep-2018 09:48:00 Europe/Berlin] session_start:id288472
+[18-Sep-2018 11:05:05 Europe/Berlin] session_start:id379151
+[18-Sep-2018 13:27:49 Europe/Berlin] session_start:id375735
+[18-Sep-2018 13:28:20 Europe/Berlin] session_start:id100845
+[18-Sep-2018 13:29:08 Europe/Berlin] session_start:id847252
+[18-Sep-2018 13:30:06 Europe/Berlin] session_start:id615536
+[18-Sep-2018 13:32:27 Europe/Berlin] session_start:id164571
+[18-Sep-2018 13:33:08 Europe/Berlin] session_start:id644929
+[18-Sep-2018 13:34:02 Europe/Berlin] session_start:id868815
+[18-Sep-2018 13:35:33 Europe/Berlin] session_start:id407385
+[18-Sep-2018 13:35:54 Europe/Berlin] session_start:id824759
+[18-Sep-2018 13:41:23 Europe/Berlin] session_start:id281442
+[18-Sep-2018 13:56:06 Europe/Berlin] session_start:id985464
+[18-Sep-2018 13:56:36 Europe/Berlin] session_start:id793777
+[18-Sep-2018 14:05:51 Europe/Berlin] session_start:id935617
+[18-Sep-2018 14:07:28 Europe/Berlin] session_start:id843509
+[18-Sep-2018 14:09:00 Europe/Berlin] session_start:id991291
+[18-Sep-2018 14:10:29 Europe/Berlin] session_start:id419852
+[18-Sep-2018 14:11:41 Europe/Berlin] session_start:id686660
+[18-Sep-2018 14:12:20 Europe/Berlin] session_start:id267954
+[18-Sep-2018 14:14:18 Europe/Berlin] session_start:id753827
+[18-Sep-2018 14:48:42 Europe/Berlin] session_start:id986078
+[18-Sep-2018 14:49:07 Europe/Berlin] session_start:id883563
+[18-Sep-2018 14:49:55 Europe/Berlin] session_start:id770045
+[18-Sep-2018 14:50:40 Europe/Berlin] session_start:id513866
+[18-Sep-2018 14:51:20 Europe/Berlin] session_start:id215876
+[18-Sep-2018 15:01:50 Europe/Berlin] session_start:id717565
+[18-Sep-2018 15:02:23 Europe/Berlin] session_start:id531968
+[18-Sep-2018 15:07:42 Europe/Berlin] session_start:id526266
+[18-Sep-2018 15:10:38 Europe/Berlin] session_start:id761012
+[18-Sep-2018 15:11:30 Europe/Berlin] session_start:id409657
+[18-Sep-2018 15:12:59 Europe/Berlin] session_start:id217683
+[18-Sep-2018 15:13:38 Europe/Berlin] session_start:id648820
+[18-Sep-2018 15:14:57 Europe/Berlin] session_start:id244579
+[18-Sep-2018 15:15:57 Europe/Berlin] session_start:id823470
+[18-Sep-2018 15:16:19 Europe/Berlin] session_start:id130572
+[18-Sep-2018 15:18:54 Europe/Berlin] session_start:id909134
+[18-Sep-2018 15:19:51 Europe/Berlin] session_start:id291978
+[18-Sep-2018 15:20:53 Europe/Berlin] session_start:id738237
+[18-Sep-2018 15:21:39 Europe/Berlin] session_start:id949535
+[18-Sep-2018 15:41:17 Europe/Berlin] session_start:id341646
+[18-Sep-2018 15:43:31 Europe/Berlin] session_start:id903230
+[18-Sep-2018 15:48:30 Europe/Berlin] session_start:id358961
+[18-Sep-2018 15:50:00 Europe/Berlin] session_start:id956987
+[18-Sep-2018 16:05:13 Europe/Berlin] session_start:id136237
+[18-Sep-2018 16:07:47 Europe/Berlin] session_start:id342525
+[18-Sep-2018 16:10:16 Europe/Berlin] session_start:id930129
+[18-Sep-2018 16:10:36 Europe/Berlin] session_start:id229326
+[18-Sep-2018 16:11:24 Europe/Berlin] session_start:id759325
+[18-Sep-2018 16:11:48 Europe/Berlin] session_start:id212632
+[18-Sep-2018 16:12:05 Europe/Berlin] session_start:id435215
+[18-Sep-2018 16:12:58 Europe/Berlin] session_start:id699541
+[18-Sep-2018 16:13:31 Europe/Berlin] session_start:id242094
+[18-Sep-2018 16:14:02 Europe/Berlin] session_start:id494041
+[18-Sep-2018 16:14:17 Europe/Berlin] session_start:id370465
+[18-Sep-2018 16:14:43 Europe/Berlin] session_start:id404229
+[18-Sep-2018 16:16:19 Europe/Berlin] session_start:id411845
+[18-Sep-2018 16:16:53 Europe/Berlin] session_start:id469845
+[18-Sep-2018 16:17:51 Europe/Berlin] session_start:id522174
+[18-Sep-2018 16:18:39 Europe/Berlin] session_start:id456703
+[18-Sep-2018 16:22:10 Europe/Berlin] session_start:id891658
+[18-Sep-2018 16:23:23 Europe/Berlin] session_start:id538333
+[18-Sep-2018 16:26:53 Europe/Berlin] session_start:id916498
+[18-Sep-2018 16:30:59 Europe/Berlin] session_start:id591700
+[18-Sep-2018 16:31:41 Europe/Berlin] session_start:id158088
+[18-Sep-2018 16:36:02 Europe/Berlin] session_start:id445194
+[18-Sep-2018 16:37:11 Europe/Berlin] session_start:id647106
+[18-Sep-2018 16:37:54 Europe/Berlin] session_start:id353696
+[18-Sep-2018 16:38:31 Europe/Berlin] session_start:id398347
+[18-Sep-2018 16:41:38 Europe/Berlin] session_start:id888074
+[18-Sep-2018 16:42:30 Europe/Berlin] session_start:id374875
+[18-Sep-2018 16:43:04 Europe/Berlin] session_start:id870159
+[18-Sep-2018 16:44:07 Europe/Berlin] session_start:id173992
+[18-Sep-2018 16:44:32 Europe/Berlin] session_start:id794692
+[18-Sep-2018 16:49:27 Europe/Berlin] session_start:id447525
+[18-Sep-2018 16:59:49 Europe/Berlin] session_start:id210999
+[18-Sep-2018 17:09:00 Europe/Berlin] session_start:id366146
+[18-Sep-2018 17:58:19 Europe/Berlin] session_start:id262094
+[18-Sep-2018 17:59:34 Europe/Berlin] session_start:id990641
+[18-Sep-2018 18:00:06 Europe/Berlin] session_start:id609159
+[18-Sep-2018 18:17:33 Europe/Berlin] session_start:id679191
+[18-Sep-2018 18:21:21 Europe/Berlin] session_start:id812263
+[18-Sep-2018 18:27:01 Europe/Berlin] session_start:id573849
+[18-Sep-2018 18:34:44 Europe/Berlin] session_start:id139524
+[19-Sep-2018 09:29:50 Europe/Berlin] session_start:id661001
+[19-Sep-2018 09:29:57 Europe/Berlin] session_start:id679800
+[19-Sep-2018 10:20:00 Europe/Berlin] session_start:id831867
+[19-Sep-2018 10:21:11 Europe/Berlin] session_start:id530633
+[19-Sep-2018 10:44:01 Europe/Berlin] session_start:id590711
+[19-Sep-2018 10:45:39 Europe/Berlin] session_start:id432560
+[19-Sep-2018 10:48:28 Europe/Berlin] session_start:id930120
+[19-Sep-2018 10:50:12 Europe/Berlin] session_start:id239318
+[19-Sep-2018 10:55:27 Europe/Berlin] session_start:id851296
+[19-Sep-2018 11:15:33 Europe/Berlin] session_start:id383005
+[19-Sep-2018 11:18:23 Europe/Berlin] session_start:id507686
+[19-Sep-2018 11:18:52 Europe/Berlin] session_start:id453098
+[20-Sep-2018 13:15:30 Europe/Berlin] session_start:id505794
+[20-Sep-2018 13:46:53 Europe/Berlin] session_start:id471449
+[20-Sep-2018 13:48:28 Europe/Berlin] session_start:id325224
+[20-Sep-2018 13:56:01 Europe/Berlin] session_start:id171841
+[20-Sep-2018 13:57:43 Europe/Berlin] session_start:id138203
+[20-Sep-2018 13:58:05 Europe/Berlin] session_start:id659236
+[20-Sep-2018 13:59:08 Europe/Berlin] session_start:id763563
+[20-Sep-2018 13:59:50 Europe/Berlin] session_start:id622500
+[20-Sep-2018 14:00:12 Europe/Berlin] session_start:id619206
+[20-Sep-2018 14:01:07 Europe/Berlin] session_start:id654503
+[20-Sep-2018 14:06:06 Europe/Berlin] session_start:id254862
+[20-Sep-2018 14:17:36 Europe/Berlin] session_start:id139689
+[20-Sep-2018 14:19:56 Europe/Berlin] session_start:id664507
+[20-Sep-2018 14:23:04 Europe/Berlin] session_start:id212646
+[20-Sep-2018 14:24:24 Europe/Berlin] session_start:id393640
+[20-Sep-2018 15:09:21 Europe/Berlin] session_start:id931555
+[20-Sep-2018 15:11:16 Europe/Berlin] session_start:id779484
+[20-Sep-2018 15:21:40 Europe/Berlin] session_start:id878473
+[20-Sep-2018 15:21:53 Europe/Berlin] session_start:id628392
+[20-Sep-2018 15:22:50 Europe/Berlin] session_start:id992039
+[20-Sep-2018 15:23:48 Europe/Berlin] session_start:id589448
+[20-Sep-2018 15:30:41 Europe/Berlin] session_start:id548640
+[20-Sep-2018 15:33:19 Europe/Berlin] session_start:id537276
+[20-Sep-2018 15:35:29 Europe/Berlin] session_start:id375510
+[20-Sep-2018 15:35:55 Europe/Berlin] session_start:id574260
+[20-Sep-2018 15:36:41 Europe/Berlin] session_start:id203820
+[20-Sep-2018 15:40:03 Europe/Berlin] session_start:id293092
+[20-Sep-2018 15:40:25 Europe/Berlin] session_start:id400008
+[20-Sep-2018 15:44:18 Europe/Berlin] session_start:id227593
+[20-Sep-2018 15:45:46 Europe/Berlin] session_start:id658180
+[20-Sep-2018 15:46:12 Europe/Berlin] session_start:id477656
+[20-Sep-2018 15:47:11 Europe/Berlin] session_start:id438679
+[20-Sep-2018 15:48:28 Europe/Berlin] session_start:id384845
+[20-Sep-2018 15:51:23 Europe/Berlin] session_start:id376134
+[20-Sep-2018 15:53:14 Europe/Berlin] session_start:id493561
+[20-Sep-2018 15:59:58 Europe/Berlin] session_start:id750577
+[20-Sep-2018 16:04:15 Europe/Berlin] session_start:id762243
+[20-Sep-2018 16:06:17 Europe/Berlin] session_start:id807981
+[20-Sep-2018 16:08:36 Europe/Berlin] session_start:id705643
+[20-Sep-2018 16:13:04 Europe/Berlin] session_start:id201893
+[20-Sep-2018 16:13:52 Europe/Berlin] session_start:id434374
+[20-Sep-2018 16:15:28 Europe/Berlin] session_start:id291131
+[20-Sep-2018 16:17:57 Europe/Berlin] session_start:id959548
+[20-Sep-2018 16:22:07 Europe/Berlin] session_start:id411493
+[20-Sep-2018 16:24:05 Europe/Berlin] session_start:id262265
+[20-Sep-2018 16:24:41 Europe/Berlin] session_start:id534457
+[20-Sep-2018 16:24:57 Europe/Berlin] session_start:id101450
+[20-Sep-2018 16:28:01 Europe/Berlin] session_start:id703735
+[20-Sep-2018 16:30:04 Europe/Berlin] session_start:id934513
+[20-Sep-2018 16:30:53 Europe/Berlin] session_start:id386411
+[20-Sep-2018 16:32:24 Europe/Berlin] session_start:id483210
+[20-Sep-2018 16:33:15 Europe/Berlin] session_start:id816121
+[20-Sep-2018 16:37:07 Europe/Berlin] session_start:id508196
+[20-Sep-2018 16:37:20 Europe/Berlin] session_start:id911392
+[20-Sep-2018 16:38:08 Europe/Berlin] session_start:id428385
+[20-Sep-2018 16:40:32 Europe/Berlin] session_start:id190910
+[20-Sep-2018 16:52:42 Europe/Berlin] session_start:id323683
+[20-Sep-2018 16:54:58 Europe/Berlin] session_start:id686371
+[20-Sep-2018 16:57:14 Europe/Berlin] session_start:id193498
+[20-Sep-2018 17:01:59 Europe/Berlin] session_start:id622091
+[20-Sep-2018 17:05:44 Europe/Berlin] session_start:id915172
+[20-Sep-2018 17:07:11 Europe/Berlin] session_start:id209234
+[20-Sep-2018 17:09:43 Europe/Berlin] session_start:id415171
+[20-Sep-2018 17:15:10 Europe/Berlin] session_start:id760747
+[20-Sep-2018 17:25:51 Europe/Berlin] session_start:id807462
+[20-Sep-2018 17:28:06 Europe/Berlin] session_start:id742882
+[20-Sep-2018 17:28:37 Europe/Berlin] session_start:id740671
+[20-Sep-2018 17:31:47 Europe/Berlin] session_start:id905237
+[20-Sep-2018 17:32:41 Europe/Berlin] session_start:id318011
+[20-Sep-2018 17:33:42 Europe/Berlin] session_start:id533086
+[20-Sep-2018 17:46:58 Europe/Berlin] session_start:id516249
+[20-Sep-2018 17:48:23 Europe/Berlin] session_start:id866988
+[20-Sep-2018 17:48:52 Europe/Berlin] session_start:id931886
+[20-Sep-2018 17:49:32 Europe/Berlin] session_start:id916987
+[20-Sep-2018 17:49:43 Europe/Berlin] session_start:id524855
+[20-Sep-2018 18:02:05 Europe/Berlin] session_start:id314900
+[20-Sep-2018 18:02:53 Europe/Berlin] session_start:id561343
+[20-Sep-2018 18:06:15 Europe/Berlin] session_start:id101793
+[21-Sep-2018 09:16:09 Europe/Berlin] session_start:id186812
+[21-Sep-2018 09:19:09 Europe/Berlin] session_start:id799071
+[21-Sep-2018 09:21:27 Europe/Berlin] session_start:id940665
+[21-Sep-2018 09:27:00 Europe/Berlin] session_start:id803210
+[21-Sep-2018 09:28:46 Europe/Berlin] session_start:id142053
+[21-Sep-2018 09:29:35 Europe/Berlin] session_start:id452637
+[21-Sep-2018 09:30:19 Europe/Berlin] session_start:id299888
+[21-Sep-2018 09:30:50 Europe/Berlin] session_start:id657297
+[21-Sep-2018 09:37:02 Europe/Berlin] session_start:id474329
+[21-Sep-2018 09:37:41 Europe/Berlin] session_start:id227039
+[21-Sep-2018 09:39:39 Europe/Berlin] session_start:id208992
+[21-Sep-2018 09:42:21 Europe/Berlin] session_start:id983008
+[21-Sep-2018 09:44:14 Europe/Berlin] session_start:id139569
+[21-Sep-2018 09:48:35 Europe/Berlin] session_start:id753450
+[21-Sep-2018 09:54:31 Europe/Berlin] session_start:id485414
+[21-Sep-2018 09:55:05 Europe/Berlin] session_start:id150370
+[21-Sep-2018 09:57:37 Europe/Berlin] session_start:id384944
+[21-Sep-2018 09:58:20 Europe/Berlin] session_start:id219277
+[21-Sep-2018 10:00:27 Europe/Berlin] session_start:id320504
+[21-Sep-2018 10:00:38 Europe/Berlin] session_start:id755380
+[21-Sep-2018 10:00:59 Europe/Berlin] session_start:id530918
+[21-Sep-2018 10:04:42 Europe/Berlin] session_start:id607998
+[21-Sep-2018 10:05:00 Europe/Berlin] session_start:id664868
+[21-Sep-2018 10:05:19 Europe/Berlin] session_start:id235525
+[21-Sep-2018 10:05:47 Europe/Berlin] session_start:id409379
+[21-Sep-2018 10:08:03 Europe/Berlin] session_start:id327409
+[21-Sep-2018 10:09:19 Europe/Berlin] session_start:id394459
+[21-Sep-2018 10:10:10 Europe/Berlin] session_start:id177407
+[21-Sep-2018 10:13:54 Europe/Berlin] session_start:id142330
+[21-Sep-2018 10:14:20 Europe/Berlin] session_start:id158239
+[21-Sep-2018 10:14:43 Europe/Berlin] session_start:id148422
+[21-Sep-2018 10:15:28 Europe/Berlin] session_start:id100373
+[21-Sep-2018 10:16:01 Europe/Berlin] session_start:id741834
+[21-Sep-2018 10:35:03 Europe/Berlin] session_start:id338858
+[21-Sep-2018 10:35:54 Europe/Berlin] session_start:id602264
+[21-Sep-2018 10:36:01 Europe/Berlin] PHP Fatal error:  Uncaught Error: Call to undefined function HbbTV_DVB_beforeMPD() in /var/www/html/IntegratedConformance/HbbTV_DVB/HbbTV_DVB_Handle.php:20
+Stack trace:
+#0 /var/www/html/IntegratedConformance/DASH/MPDProcessing.php(64): HbbTV_DVB_Handle('BeforeMPD')
+#1 /var/www/html/IntegratedConformance/Utils/Process.php(48): process_MPD()
+#2 {main}
+  thrown in /var/www/html/IntegratedConformance/HbbTV_DVB/HbbTV_DVB_Handle.php on line 20
+[21-Sep-2018 10:36:18 Europe/Berlin] session_start:id303445
+[21-Sep-2018 10:37:40 Europe/Berlin] session_start:id471270
+[21-Sep-2018 10:40:45 Europe/Berlin] session_start:id256726
+[21-Sep-2018 10:40:56 Europe/Berlin] session_start:id559324
+[21-Sep-2018 10:49:36 Europe/Berlin] session_start:id383926
+[21-Sep-2018 10:54:14 Europe/Berlin] session_start:id389275
+[21-Sep-2018 10:54:40 Europe/Berlin] session_start:id904812
+[21-Sep-2018 10:55:39 Europe/Berlin] session_start:id304844
+[21-Sep-2018 11:00:04 Europe/Berlin] session_start:id659144
+[21-Sep-2018 11:02:34 Europe/Berlin] session_start:id413415
+[21-Sep-2018 11:03:45 Europe/Berlin] session_start:id739671
+[21-Sep-2018 11:08:38 Europe/Berlin] session_start:id472542
+[21-Sep-2018 11:09:09 Europe/Berlin] session_start:id155199
+[21-Sep-2018 11:10:09 Europe/Berlin] session_start:id887721
+[21-Sep-2018 11:10:25 Europe/Berlin] session_start:id596758
+[21-Sep-2018 11:10:38 Europe/Berlin] session_start:id888520
+[21-Sep-2018 11:10:49 Europe/Berlin] session_start:id734390
+[21-Sep-2018 11:11:31 Europe/Berlin] session_start:id226659
+[21-Sep-2018 11:15:06 Europe/Berlin] session_start:id135910
+[21-Sep-2018 16:56:23 Europe/Berlin] session_start:id540797
+[21-Sep-2018 16:56:32 Europe/Berlin] session_start:id983001
+[21-Sep-2018 16:57:34 Europe/Berlin] session_start:id522913
