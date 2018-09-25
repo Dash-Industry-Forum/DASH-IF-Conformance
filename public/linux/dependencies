@@ -1,0 +1,18 @@
+./obj/ValidateBitStreams.o: ../src/ValidateBitStreams.cpp ../src/ValidateMP4.h \
+ ../src/EndianMP4.h
+./obj/PostprocessData.o: ../src/PostprocessData.cpp ../src/HelperMethods.h \
+ ../src/ValidateMP4.h ../src/EndianMP4.h ../src/PostprocessData.h
+./obj/ValidateHints.o: ../src/ValidateHints.cpp ../src/ValidateMP4.h \
+ ../src/EndianMP4.h
+./obj/HelperMethods.o: ../src/HelperMethods.cpp ../src/HelperMethods.h \
+ ../src/ValidateMP4.h ../src/EndianMP4.h ../src/PostprocessData.h
+./obj/ValidateAtomList.o: ../src/ValidateAtomList.cpp ../src/ValidateMP4.h \
+ ../src/EndianMP4.h ../src/HelperMethods.h ../src/PostprocessData.h
+./obj/ValidateMP4.o: ../src/ValidateMP4.cpp ../src/ValidateMP4.h \
+ ../src/EndianMP4.h
+./obj/ValidateBits.o: ../src/ValidateBits.cpp ../src/ValidateMP4.h \
+ ../src/EndianMP4.h
+./obj/ValidateAtoms.o: ../src/ValidateAtoms.cpp ../src/ValidateMP4.h \
+ ../src/EndianMP4.h
+./obj/ValidateFileIO.o: ../src/ValidateFileIO.cpp ../src/ValidateMP4.h \
+ ../src/EndianMP4.h
