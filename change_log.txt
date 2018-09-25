@@ -1,0 +1,15 @@
+Version v4.1a
+
+New additions-
+-Support for last segment number signaling.
+-Support for the thumbnail trick mode.
+-Drag and drop support on the Frontend for MPD file input.
+-Fixed the issue of minHeight/minWidth.
+-Implementation of logging and performance monitoring of conformance software:
+    Logging times of access,
+    Hashes of IP,
+    Related performance metadata,
+    Assuring anonymity of users.
+-Support integration of new codec features (Dolby Vision and VP9).
+
+

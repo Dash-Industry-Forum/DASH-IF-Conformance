@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<svrl:schematron-output xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xmlns:schold="http://www.ascc.net/xml/schematron"
+                        xmlns:sch="http://www.ascc.net/xml/schematron"
+                        xmlns:iso="http://purl.oclc.org/dsdl/schematron"
+                        xmlns:dash="urn:mpeg:dash:schema:mpd:2011"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        title="Schema for validating MPDs"
+                        schemaVersion="ISO19757-3"><!--   
+		   
+		   
+		 --><svrl:ns-prefix-in-attribute-values uri="urn:mpeg:dash:schema:mpd:2011" prefix="dash"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/1999/xlink" prefix="xlink"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi"/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:MPD"/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:Period"/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:AdaptationSet"/>
+   <svrl:failed-assert test="if ((@profiles and descendant::dash:Representation/@profiles) or (@width and descendant::dash:Representation/@width) or (@height and descendant::dash:Representation/@height) or (@sar and descendant::dash:Representation/@sar) or (@frameRate and descendant::dash:Representation/@frameRate) or (@audioSamplingRate and descendant::dash:Representation/@audioSamplingRate) or (@mimeType and descendant::dash:Representation/@mimeType) or (@segmentProfiles and descendant::dash:Representation/@segmentProfiles) or (@codecs and descendant::dash:Representation/@codecs) or (@maximumSAPPeriod and descendant::dash:Representation/@maximumSAPPeriod) or (@startWithSAP and descendant::dash:Representation/@startWithSAP) or (@maxPlayoutRate and descendant::dash:Representation/@maxPlayoutRate) or (@codingDependency and descendant::dash:Representation/@codingDependency) or (@scanType and descendant::dash:Representation/@scanType)) then false() else true()"
+                       location="/*[local-name()='MPD' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='Period' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='AdaptationSet' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']">
+      <svrl:text>Common attributes for AdaptationSet and Representation shall either be in one of the elements but not in both.</svrl:text>
+   </svrl:failed-assert>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:SegmentList"/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+</svrl:schematron-output>

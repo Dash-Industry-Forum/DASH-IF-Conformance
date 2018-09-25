@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<svrl:schematron-output xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xmlns:schold="http://www.ascc.net/xml/schematron"
+                        xmlns:sch="http://www.ascc.net/xml/schematron"
+                        xmlns:iso="http://purl.oclc.org/dsdl/schematron"
+                        xmlns:dash="urn:mpeg:dash:schema:mpd:2011"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        title="Schema for validating MPDs"
+                        schemaVersion="ISO19757-3"><!--   
+		   
+		   
+		 --><svrl:ns-prefix-in-attribute-values uri="urn:mpeg:dash:schema:mpd:2011" prefix="dash"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/1999/xlink" prefix="xlink"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi"/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:MPD"/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:Period"/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:AdaptationSet"/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:SegmentList"/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:Role"/>
+   <svrl:failed-assert test="if ((@schemeIdUri = 'urn:mpeg:dash:role:2011') and not(@value = 'caption' or @value = 'subtitle' or @value = 'main' or @value = 'alternate' or @value = 'supplementary' or @value = 'commentary' or @value = 'dub')) then false else true()"
+                       location="/*[local-name()='MPD' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='Period' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='AdaptationSet' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='Role' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']">
+      <svrl:text>The value of Role (role) shall be caption, subtitle, main, alternate, supplementary, commentary or dub.</svrl:text>
+   </svrl:failed-assert>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+</svrl:schematron-output>

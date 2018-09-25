@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<svrl:schematron-output xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xmlns:schold="http://www.ascc.net/xml/schematron"
+                        xmlns:sch="http://www.ascc.net/xml/schematron"
+                        xmlns:iso="http://purl.oclc.org/dsdl/schematron"
+                        xmlns:dash="urn:mpeg:dash:schema:mpd:2011"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        title="Schema for validating MPDs"
+                        schemaVersion="ISO19757-3"><!--   
+		   
+		   
+		 --><svrl:ns-prefix-in-attribute-values uri="urn:mpeg:dash:schema:mpd:2011" prefix="dash"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/1999/xlink" prefix="xlink"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi"/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:MPD"/>
+   <svrl:failed-assert test="if (not(@profiles) or (contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-main:2011') or contains(@profiles, 'urn:mpeg:dash:profile:full:2011') or contains(@profiles, 'urn:mpeg:dash:profile:mp2t-main:2011') or contains(@profiles, 'urn:mpeg:dash:profile:mp2t-simple:2011'))) then true() else false()"
+                       location="/*[local-name()='MPD' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']">
+      <svrl:text>The On-Demand profile shall be identified by the URN "urn:mpeg:dash:profile:isoff-on-demand:2011". The live profile shall be identified by the URN "urn:mpeg:dash:profile:isoff-live:2011". The main profile shall be identified by the URN "urn:mpeg:dash:profile:isoff-main:2011". The full profile shall be identified by the URN "urn:mpeg:dash:profile:full:2011". The mp2t-main profile shall be identified by the URN "urn:mpeg:dash:profile:mp2t-main:2011". The mp2t-simple profile shall be identified by the URN "urn:mpeg:dash:profile:mp2t-simple:2011".</svrl:text>
+   </svrl:failed-assert>
+   <svrl:failed-assert test="if (contains(@profiles, 'urn:com:dashif:dash264') and (count(descendant::dash:SegmentList/dash:SegmentURL) &gt; count(descendant::dash:SegmentList))) then false() else true()"
+                       location="/*[local-name()='MPD' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']">
+      <svrl:text>DASH264 Section 3.1: "each Representation is provided in one of the following two ways: as a single Segment, ... as a sequence of Segments where each Segment is addressable by a template-generated URL." This rules out SegmentList which is found here.</svrl:text>
+   </svrl:failed-assert>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:Period"/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:AdaptationSet"/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:SegmentList"/>
+   <svrl:fired-rule context="dash:SegmentList"/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+</svrl:schematron-output>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<svrl:schematron-output xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xmlns:schold="http://www.ascc.net/xml/schematron"
+                        xmlns:sch="http://www.ascc.net/xml/schematron"
+                        xmlns:iso="http://purl.oclc.org/dsdl/schematron"
+                        xmlns:dash="urn:mpeg:dash:schema:mpd:2011"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        title="Schema for validating MPDs"
+                        schemaVersion="ISO19757-3"><!--   
+		   
+		   
+		 --><svrl:ns-prefix-in-attribute-values uri="urn:mpeg:dash:schema:mpd:2011" prefix="dash"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/1999/xlink" prefix="xlink"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi"/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:MPD"/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:Period"/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:AdaptationSet"/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:failed-assert test="if ((child::dash:SegmentBase and child::dash:SegmentTemplate and child::dash:SegmentList) or (child::dash:SegmentBase and child::dash:SegmentTemplate) or (child::dash:SegmentBase and child::dash:SegmentList) or (child::dash:SegmentTemplate and child::dash:SegmentList)) then false() else true()"
+                       location="/*[local-name()='MPD' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='Period' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='AdaptationSet' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='Representation' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']">
+      <svrl:text>At most one of SegmentBase, SegmentTemplate and SegmentList shall be defined in Representation.</svrl:text>
+   </svrl:failed-assert>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:SegmentList"/>
+   <svrl:active-pattern/>
+   <svrl:fired-rule context="dash:SegmentBase"/>
+   <svrl:failed-assert test="if (not(@indexRange) and @indexRangeExact) then false() else true()"
+                       location="/*[local-name()='MPD' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='Period' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='AdaptationSet' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='Representation' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='SegmentBase' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']">
+      <svrl:text>If indexRange is not present indexRangeExact shall not be present.</svrl:text>
+   </svrl:failed-assert>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+   <svrl:active-pattern/>
+</svrl:schematron-output>

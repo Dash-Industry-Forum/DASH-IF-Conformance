@@ -1,0 +1,31 @@
+[20-Sep-2018 13:57:45 Europe/Berlin] PHP Fatal error:  Uncaught Error: Function name must be a string in /var/www/html/IntegratedConformance/DASH/MPDProcessing.php:80
+Stack trace:
+#0 /var/www/html/IntegratedConformance/Utils/Process.php(48): process_MPD()
+#1 {main}
+  thrown in /var/www/html/IntegratedConformance/DASH/MPDProcessing.php on line 80
+[20-Sep-2018 13:58:19 Europe/Berlin] PHP Fatal error:  Uncaught Error: Function name must be a string in /var/www/html/IntegratedConformance/DASH/MPDProcessing.php:80
+Stack trace:
+#0 /var/www/html/IntegratedConformance/Utils/Process.php(48): process_MPD()
+#1 {main}
+  thrown in /var/www/html/IntegratedConformance/DASH/MPDProcessing.php on line 80
+[20-Sep-2018 13:21:44 UTC] PHP Fatal error:  Uncaught Error: Unsupported operand types in /var/www/html/IntegratedConformance/DASH/MPDInfo.php:344
+Stack trace:
+#0 /var/www/html/IntegratedConformance/DASH/SegmentURLs.php(70): dynamic_number(Array, Array)
+#1 /var/www/html/IntegratedConformance/DASH/SegmentURLs.php(35): compute_URLs(Array, Array, Array, 'https://irtdash...')
+#2 /var/www/html/IntegratedConformance/DASH/MPDProcessing.php(117): derive_segment_URLs(Array, Array)
+#3 /var/www/html/IntegratedConformance/Utils/Process.php(48): process_MPD()
+#4 {main}
+  thrown in /var/www/html/IntegratedConformance/DASH/MPDInfo.php on line 344
+[20-Sep-2018 13:23:26 UTC] PHP Fatal error:  Uncaught Error: Unsupported operand types in /var/www/html/IntegratedConformance/DASH/MPDInfo.php:344
+Stack trace:
+#0 /var/www/html/IntegratedConformance/DASH/SegmentURLs.php(70): dynamic_number(Array, Array)
+#1 /var/www/html/IntegratedConformance/DASH/SegmentURLs.php(35): compute_URLs(Array, Array, Array, 'https://irtdash...')
+#2 /var/www/html/IntegratedConformance/DASH/MPDProcessing.php(117): derive_segment_URLs(Array, Array)
+#3 /var/www/html/IntegratedConformance/Utils/Process.php(48): process_MPD()
+#4 {main}
+  thrown in /var/www/html/IntegratedConformance/DASH/MPDInfo.php on line 344
+[20-Sep-2018 16:52:50 Europe/Berlin] PHP Fatal error:  Uncaught Error: Function name must be a string in /var/www/html/IntegratedConformance/DASH/MPDProcessing.php:80
+Stack trace:
+#0 /var/www/html/IntegratedConformance/Utils/Process.php(48): process_MPD()
+#1 {main}
+  thrown in /var/www/html/IntegratedConformance/DASH/MPDProcessing.php on line 80

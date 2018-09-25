@@ -1,0 +1,60 @@
+<?php
+/* This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+function validate_MPD(){
+    global $main_dir, $mpd_dom, $mpd_url, $session_dir, $mpd_log, $featurelist_log_html, $string_info;
+    $schematronIssuesReport = NULL;
+    
+    chdir('../DASH/mpdvalidator');
+    $mpdvalidator = syscall('java -cp "saxon9.jar:saxon9-dom.jar:xercesImpl.jar:bin" Validator ' . explode('#', $mpd_url)[0] . " " . $session_dir . "/resolved.xml schemas/DASH-MPD.xsd");
+    $result = extract_relevant_text($mpdvalidator);
+    
+    ## Generate mpd report
+    $mpdreport = fopen($session_dir . '/' . $mpd_log . '.txt', 'a+b');
+    fwrite($mpdreport, $result);
+    
+    ## Check the PASS/FAIL status
+    $exit = false;
+    $string = '';
+    $mpd_rep_loc = relative_path($session_dir . '/' . $mpd_log . '.html');
+    if (!is_valid($mpdvalidator, 'XLink resolving successful')){ $string .= $mpd_rep_loc; $exit = true; }
+    else { $string .= 'true '; }
+    
+    if(!is_valid($mpdvalidator, 'MPD validation successful')){ $string .= $mpd_rep_loc; $exit = true; }
+    else { $string .= 'true '; }
+    
+    if(!is_valid($mpdvalidator, 'Schematron validation successful')){ $string .= $mpd_rep_loc; $exit = true; }
+    else { $string .= 'true '; }
+    
+    ## Featurelist generate
+    if(!is_valid($mpdvalidator, 'Schematron validation successful'))
+        $schematronIssuesReport = analyzeSchematronIssues($mpdvalidator);
+    copy($main_dir . "/" . $featurelist_log_html, $session_dir . '/' . $featurelist_log_html);
+    createMpdFeatureList($mpd_dom, $schematronIssuesReport);
+    
+    chdir('../');
+    return array(!$exit, $string);
+}
+
+function extract_relevant_text($result){
+    $needle = 'Start XLink resolving';
+    $temp_result = str_replace('[java]', "", $result);
+    
+    return substr($temp_result, strpos($temp_result, $needle));
+}
+
+function is_valid($haystack, $needle){
+    return strpos($haystack, $needle) !== FALSE;
+}
