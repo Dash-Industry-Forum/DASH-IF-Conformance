@@ -1,0 +1,12 @@
+[submodule "DASH"]
+	path = DASH
+	url = https://github.com/Dash-Industry-Forum/DASH
+[submodule "ISOSegmentValidator"]
+	path = ISOSegmentValidator
+	url = https://github.com/Dash-Industry-Forum/ISOSegmentValidator
+[submodule "CMAF"]
+	path = CMAF
+	url = https://github.com/Dash-Industry-Forum/CMAF
+[submodule "HbbTV_DVB"]
+	path = HbbTV_DVB
+	url = https://github.com/Dash-Industry-Forum/HbbTV_DVB
