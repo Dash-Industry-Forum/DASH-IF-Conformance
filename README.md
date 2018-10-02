@@ -9,4 +9,4 @@ To clone the IntegratedConformance with all the submodules, use the command,
 
 git clone --recurse-submodules https://github.com/Dash-Industry-Forum/IntegratedConformance
 
-For the complete installation including dependencies etc, please refer [Installation guide]( HbbTV_DVB/Documentation/Installation_Guide.pdf).
+For the complete installation including dependencies etc, please refer [Installation guide]( https://github.com/Dash-Industry-Forum/Conformance-Software/blob/master/Documentation/HbbTV_DVB/Installation_Guide.pdf).
