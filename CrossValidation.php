@@ -140,7 +140,7 @@ function crossRepresentationProcess(){
                     $timeoffset = $representation['presentationTimeOffset'];
 
                 $offsetmod = $timeoffset / $timescale;
-                $leafInfo[$j] = loadLeafInfoFile(str_replace(array('$AS$', '$R$'), array($i, $j), $reprsentation_info_log_template) . 'txt', $offsetmod);
+                $leafInfo[$j] = loadLeafInfoFile(str_replace(array('$AS$', '$R$'), array($i, $j), $reprsentation_info_log_template) . '.txt', $offsetmod);
                 $leafInfo[$j]['id'] = $representation['id'];
             }
 
