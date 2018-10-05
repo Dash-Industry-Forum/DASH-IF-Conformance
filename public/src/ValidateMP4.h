@@ -1208,6 +1208,7 @@ OSErr Validate_btrt_Atom( atomOffsetEntry *aoe, void *refcon, char *esname );
 OSErr Validate_m4ds_Atom( atomOffsetEntry *aoe, void *refcon, char *esname );
 
 OSErr Validate_stpp_Atom( atomOffsetEntry *aoe, void *refcon, char *esname );
+OSErr Validate_mime_Atom( atomOffsetEntry *aoe, void *refcon, char *esname );
 
 OSErr Validate_ftyp_Atom( atomOffsetEntry *aoe, void *refcon );
 OSErr Validate_styp_Atom( atomOffsetEntry *aoe, void *refcon );

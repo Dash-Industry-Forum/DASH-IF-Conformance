@@ -3929,6 +3929,11 @@ OSErr Validate_stpp_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
     char *name_space;
     char *schema_location;
     char *auxiliary_mime_types;
+    UInt64 minOffset, maxOffset;
+    atomOffsetEntry *entry;
+    long cnt;
+    atomOffsetEntry *list;
+    int i;
     
     atomprint("<%s", esname); vg.tabcnt++;
     
@@ -3942,15 +3947,54 @@ OSErr Validate_stpp_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
     BAILIFERR( GetFileCString( aoe, &auxiliary_mime_types, offset, aoe->maxOffset - offset, &offset ) );
     atomprint("auxiliary_mime_types=\"%s\"\n", auxiliary_mime_types);
     
-    atomprint("/>\n"); vg.tabcnt--;
+    minOffset = offset;
+    maxOffset = aoe->offset + aoe->size;
+    BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
+    for (i = 0; i < cnt; i++) {
+            entry = &list[i];
+            
+            atomprint("<%s",ostypetostr(entry->type)); vg.tabcnt++;
+            
+            switch( entry->type ) {
+                    case 'mime':
+                            Validate_mime_Atom( entry, refcon, (char *)"mime" );
+                            break;
+
+                    default:
+                            break;
+            }
+            --vg.tabcnt; 
+
+    }
     
     // All done
 	aoe->aoeflags |= kAtomValidated;
 
 bail:
+        atomprint("/>\n"); vg.tabcnt--;
 	return err;
-        
-        
+}
+
+OSErr Validate_mime_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
+{
+    OSErr err = noErr;
+    UInt64 offset;
+    char *contenttype;
+    
+    atomprint("<%s", esname); vg.tabcnt++;
+    
+    offset = aoe->offset;
+    
+    // Get data
+    BAILIFERR( GetFileCString( aoe, &contenttype, offset, aoe->maxOffset - offset, &offset ) );
+    atomprint("content_type=\"%s\"\n", contenttype);
+    
+    // All done
+	aoe->aoeflags |= kAtomValidated;
+
+bail:
+        atomprint("/>\n"); vg.tabcnt--;
+	return err;
 }
 
 //==========================================================================================
