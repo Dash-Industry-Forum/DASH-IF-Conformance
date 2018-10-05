@@ -453,6 +453,10 @@
                     <input type="checkbox" name="cmafprofile" id="cmafprofile" >
                     <span class="checkmark"></span>
                 </label>
+                <label class="chkbox" for="ctawaveprofile">CTA WAVE
+                    <input type="checkbox" name="ctawaveprofile" id="ctawaveprofile" >
+                    <span class="checkmark"></span>
+                </label>
             </div>  
         </div>  
     </div>
@@ -563,6 +567,7 @@ var cmaf = "<?php echo $cmaf; ?>";
 var dvb = 0;
 var hbbtv = 0;
 var dashif=0;
+var ctawave=0;
 
 /////////////////////////////////////////////////////////////
 //Check if 'drag and drop' feature is supported by the browser, if not, then traditional file upload can be used.
@@ -773,14 +778,17 @@ function submit()
     if($("#hbbtvprofile").is(':checked'))
         hbbtv= 1;
     if($("#cmafprofile").is(':checked'))
-        cmaf = "yes";
+        cmaf = 1;
     if($("#dashifprofile").is(':checked'))
         dashif = 1;
+    if($("#ctawaveprofile").is(':checked'))
+        ctawave = 1;
     
     stringurl[4]=cmaf;
     stringurl[5]=dvb;
     stringurl[6]=hbbtv;
     stringurl[7]=dashif;
+    stringurl[8]=ctawave;
     
     initVariables();
     setUpTreeView();

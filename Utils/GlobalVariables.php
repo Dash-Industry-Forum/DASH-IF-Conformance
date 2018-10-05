@@ -51,16 +51,20 @@ $segment_duration_script = '';
 $subtitle_segments_location = '';
 $hbbtv_dvb_crossvalidation_logfile = '';
 
+# CTA WAVE variables
+$ctawave_conformance = false;
+
 if (isset($_POST['urlcode'])){
     $url_array = json_decode($_POST['urlcode']);
     $mpd_url = $url_array[0];
     $_SESSION['url'] = $mpd_url;
     
     $mpd_validation_only = $url_array[2];
-    $cmaf_conformance = ($url_array[4] == 'yes') ? true : false;
+    $cmaf_conformance = $url_array[4];
     $dvb_conformance = $url_array[5];
     $hbbtv_conformance = $url_array[6];
     $dashif_conformance=$url_array[7];
+    $ctawave_conformance=$url_array[8];
 }
 if (isset($_SESSION['url']))
     $mpd_url = $_SESSION['url'];
