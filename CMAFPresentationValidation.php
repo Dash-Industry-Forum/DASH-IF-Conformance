@@ -31,6 +31,7 @@ function checkPresentation(){
             $file_error[] = $session_dir.'/'.$selectionset_infofile.'.html'; // add error file location to array
         }
         $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+        print_console($session_dir.'/'.$selectionset_infofile.'.txt', "CMAF Selection Set Results");
     }
     if(file_exists($session_dir.'/'.$presentation_infofile.'.txt')){
         $presentnFile=file_get_contents($session_dir.'/'.$presentation_infofile.'.txt');
@@ -45,6 +46,7 @@ function checkPresentation(){
             $file_error[] = $session_dir.'/'.$presentation_infofile.'.html'; // add error file location to array
         }
         $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+        print_console($session_dir.'/'.$presentation_infofile.'.txt', "CMAF Presentation Results");
     }
     
     return $file_error;
@@ -73,7 +75,6 @@ function checkCMAFPresentation(){
         echo "Error opening/creating Presentation profile conformance check file: "."./Presentation_infofile.txt";
         return;
     }
-    fprintf($opfile, "**Presentation (profile) conformance check: \n\n");
     
     $PresentationDur = time_parsing($mpd_features['mediaPresentationDuration']);
     $adapts = $mpd_features['Period'][$current_period]['AdaptationSet'];
@@ -340,7 +341,6 @@ function checkSelectionSet(){
     if(sizeof($adapts)<1)
         fprintf ($opfile,"**'CMAF check violated: Section 7.3.5-'A CMAF Selection Set SHALL contain one or more CMAF Switching Sets', but found none. \n");
 
-    fprintf($opfile, "**Selection Set conformance check: \n\n");
     for($adapt_count=0; $adapt_count<sizeof($adapts); $adapt_count++){
         $Adapt=$adapts[$adapt_count];
         
