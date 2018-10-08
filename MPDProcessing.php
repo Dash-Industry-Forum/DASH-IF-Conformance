@@ -14,12 +14,12 @@
  */
 
 function process_MPD(){
-    global $session_dir, $mpd_url, $mpd_dom, $mpd_features, $mpd_validation_only, $uploaded,                                        // Client block input
-            $current_period, $current_adaptation_set, $current_representation, $profiles,                                           // MPD process data
-            $progress_report, $progress_xml, $reprsentation_template, $adaptation_set_template, $missinglink_file, $string_info,    // Reporting
+    global $session_dir, $mpd_url, $mpd_dom, $mpd_features, $mpd_validation_only, $uploaded,                 // Client block input
+            $current_period, $current_adaptation_set, $current_representation, $profiles,                    // MPD process data
+            $progress_report, $progress_xml, $reprsentation_template, $adaptation_set_template, $mpd_log,    // Reporting
             $additional_flags,
-            $cmaf_conformance, $cmaf_function_name, $cmaf_when_to_call,                                                             // CMAF data
-            $hbbtv_conformance, $dvb_conformance, $hbbtv_dvb_function_name, $hbbtv_dvb_when_to_call;                                // HbbTV-DVB data
+            $cmaf_conformance, $cmaf_function_name, $cmaf_when_to_call, $compinfo_file,   // CMAF data
+            $hbbtv_conformance, $dvb_conformance, $hbbtv_dvb_function_name, $hbbtv_dvb_when_to_call;         // HbbTV-DVB data
     
     ## Open related files
     $progress_xml = simplexml_load_string('<root><Profile></Profile><PeriodCount></PeriodCount><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
@@ -85,6 +85,7 @@ function process_MPD(){
     
     MPD_report($valid_mpd[1] . $return_val);
     writeMPDEndTime();
+    print_console($session_dir.'/'.$mpd_log.'.txt', "MPD Validation Results");
     
     if($uploaded){ // Check if absolute URL is provided in the uploaded MPD for segment fetching. 
                    // Otherwise, only the mpd validation will be performed.
@@ -194,6 +195,7 @@ function process_MPD(){
             error_log('RepresentationDownloaded_Return:' . $send_string);
             
             err_file_op(1);
+            print_console(dirname(__DIR__) . '/' . explode('.', $return_seg_val[1])[0] . '.txt', "AdaptationSet $current_adaptation_set Representation $current_representation Results");
             $current_representation++;
         }
         
@@ -217,21 +219,8 @@ function process_MPD(){
     if($hbbtv_conformance || $dvb_conformance)
             $return_arr = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[4]);
     
-    $missingexist = file_exists("$session_dir/$missinglink_file.txt"); //check if any broken urls is detected
-    if ($missingexist){
-        $temp_string = str_replace(array('$Template$'), array("missinglink"), $string_info);
-        file_put_contents("$session_dir/$missinglink_file.html", $temp_string); //create html file contains report for all missing segments
-        
-        $ResultXML->addChild('BrokenURL', "error");
-        $ResultXML->BrokenURL->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $locate . '/missinglink.txt'));
-        $file_error[] = "temp" . '/' . $foldername . '/missinglink.html';
-    }
-    else{
-        $ResultXML->addChild('BrokenURL', "noerror");
-        $file_error[] = "noerror";
-    }
-    
     err_file_op(2);
+    
     //------------------------------------------------------------------------//
     
     $current_adaptation_set = 0;
