@@ -13,10 +13,15 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-include 'CTAWAVE_Handle.php';
-include 'CTAWAVE_SelectionSet.php';
-
-$ctawave_function_name = 'CTAWAVE_Handle';
-$ctawave_when_to_call = array( 'AdaptationSet');
-
-
+function CTAWAVE_Handle($request){
+    $return_val = NULL;
+    switch($request){
+        case 'AdaptationSet':
+            $return_val = checkSelectionSet();
+            break;
+        default:
+            break;
+    }
+    
+    return $return_val;
+}
