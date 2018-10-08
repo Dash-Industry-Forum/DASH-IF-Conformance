@@ -503,5 +503,8 @@ function checkSwitchingSets(){
         file_put_contents($session_dir.'/'.$compinfo.'.html',$temp_string);
     }
     
+    err_file_op(2);
+    print_console($session_dir.'/'.$compinfo.'.txt', "CMAF Switching Set Results for AdaptationSet $current_adaptation_set");
+    
     return $file_error;
 }
