@@ -32,7 +32,7 @@ function HbbTV_DVB_mpdvalidator() {
     if(!$mpdreport)
         return;
     
-    fwrite($mpdreport, "HbbTV-DVB Validation \n");
+    fwrite($mpdreport, "Start HbbTV-DVB Validation \n");
     fwrite($mpdreport, "===========================\n\n");
 
     ## Report on profile-specific media types' completeness
