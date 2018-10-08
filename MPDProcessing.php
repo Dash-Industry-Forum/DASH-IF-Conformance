@@ -24,6 +24,7 @@ function process_MPD(){
     ## Open related files
     $progress_xml = simplexml_load_string('<root><Profile></Profile><PeriodCount></PeriodCount><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
     $progress_xml->asXml($session_dir . '/' . $progress_report);
+    color_code_information();
     
     ## Load MPD to DOM XML
     if($uploaded){ // If MPD is uploaded, set the mpd_url to local path
@@ -36,7 +37,7 @@ function process_MPD(){
     if(!$mpd_dom){
         $progress_xml->MPDError = "1";
         $progress_xml->asXml($session_dir . '/' . $progress_report);
-        die("Error: Failed loading XML file");
+        die("Error: Failed loading XML file\n");
     }
     else{
         $progress_xml->MPDError = "0";
