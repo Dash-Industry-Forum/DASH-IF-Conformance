@@ -22,6 +22,7 @@ include 'Load.php';
 include 'FileOperations.php';
 include 'VisitorCounter.php';
 include 'GlobalVariables.php';
+include 'PrettyPrint.php';
 include 'SegmentDownload.php';
 include 'SegmentAssemble.php';
 include 'SegmentValidation.php';
