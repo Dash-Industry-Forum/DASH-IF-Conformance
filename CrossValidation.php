@@ -154,6 +154,6 @@ function crossRepresentationProcess(){
         close_file($opfile);
         $temp_string = str_replace('$Template$', explode('.', $file_path)[0], $string_info);
         file_put_contents($session_dir . '/' . explode('.', $file_path)[0] . '.html', $temp_string);
-        print_console($session_dir . '/' . $file_path, "Cross Validation Results for Adaptation Set $i");
+        print_console($session_dir . '/' . $file_path, "DASH Cross Validation Results for Adaptation Set $i");
     }
 }
