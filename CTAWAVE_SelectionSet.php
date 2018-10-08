@@ -450,7 +450,7 @@ function getMediaProfile($xml,$opfile,$handler_type)
 
 function checkAndGetConformingVideoProfile($xml_MPParameters)
 {
-    $errorFlag=0; $videoMediaProfile="";
+    $errorFlag=0; $videoMediaProfile="unknown";
     if($xml_MPParameters['codec']=="AVC")
     {
         //check if it is AVC_HD or not as WAVE approves only AVC_HD profile.
@@ -595,13 +595,50 @@ function checkAndGetConformingAudioProfile($xml_MPParameters)
 {
     if($xml_MPParameters['codec']=="AAC")
     {
-       // if($xml_MPParameters['channels'])
+        if($xml_MPParameters['channels']=="0x1" || $xml_MPParameters['channels']=="0x2")
+        {
+            if($xml_MPParameters["brand"]=="caac")
+                $audioMediaProfile="AAC_Core";
+            elseif($xml_MPParameters['brand']=="caaa")
+                $audioMediaProfile="Adaptive_AAC_Core";
+            else
+                $audioMediaProfile="AAC_Core";
+        }
+        elseif($xml_MPParameters['brand']=="camc")
+            $audioMediaProfile="AAC_Multichannel";
+            
     }
+    elseif($xml_MPParameters['codec']=="EC-3")
+        $audioMediaProfile="EC-3";
+    elseif($xml_MPParameters['codec']=="AC-4")
+        $audioMediaProfile="AC-4";
+    elseif($xml_MPParameters['codec']=="MPEG-H")
+        $audioMediaProfile="MPEG-H";
+    else
+        $audioMediaProfile="unknown";
+      
     return $audioMediaProfile;
 }
 
 function checkAndGetConformingSubtitleProfile($xml_MPParameters)
 {
+    $subtitleMediaProfile="unknown";
+    if($xml_MPParameters['type']=="application" && ($xml_MPParameters['subType']=="ttml+xml" || $xml_MPParameters['subType']=="mp4"))
+    {
+        if($xml_MPParameters['codec']=="im1t")
+            $subtitleMediaProfile="TTML_IMSC1_Text";
+        elseif($xml_MPParameters['codec']=="im1i")
+            $subtitleMediaProfile="TTML_IMSC1_Image";
+        else
+            fprintf ($opfile, "CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.4.1: 'Each WAVE subtitle Media Profile SHALL conform to normative ref. listed in Table 3', Media profiles conformance failed. codec parameter not found and identification of the exact media profile not possible.");
+
+    }
+    else
+    {
+        fprintf ($opfile, "CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.4.1: 'Each WAVE subtitle Media Profile SHALL conform to normative ref. listed in Table 3', Media profiles conformance failed. mime box parameters (type/subtype/codec) are not found/conforming and identification of the exact media profile not possible.");
+        displayMPparameters($xml_MPParameters);
+
+    }
     return $subtitleMediaProfile;
 }
 
