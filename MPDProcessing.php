@@ -18,7 +18,7 @@ function process_MPD(){
             $current_period, $current_adaptation_set, $current_representation, $profiles,                    // MPD process data
             $progress_report, $progress_xml, $reprsentation_template, $adaptation_set_template, $mpd_log,    // Reporting
             $additional_flags,
-            $cmaf_conformance, $cmaf_function_name, $cmaf_when_to_call, $compinfo_file,   // CMAF data
+            $cmaf_conformance, $cmaf_function_name, $cmaf_when_to_call,                                      // CMAF data
             $hbbtv_conformance, $dvb_conformance, $hbbtv_dvb_function_name, $hbbtv_dvb_when_to_call;         // HbbTV-DVB data
     
     ## Open related files
@@ -220,7 +220,6 @@ function process_MPD(){
             $return_arr = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[4]);
     
     err_file_op(2);
-    
     //------------------------------------------------------------------------//
     
     $current_adaptation_set = 0;
