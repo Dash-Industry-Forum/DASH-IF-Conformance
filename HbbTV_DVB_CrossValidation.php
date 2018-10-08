@@ -70,6 +70,9 @@ function CrossValidation_HbbTV_DVB(){
         }
         $progress_xml->Results[0]->Period[0]->Adaptation[$adapt_count]->HbbTVDVBComparedRepresentations->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $session_dir.'/'.$log_file.'.txt'));
         $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+        
+        err_file_op(2);
+        print_console($session_dir.'/'.$log_file.'.txt', "HbbTV-DVB Cross Validation Results for AdaptationSet $adapt_count");
         ##
     }
 }
