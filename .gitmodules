@@ -10,3 +10,6 @@
 [submodule "HbbTV_DVB"]
 	path = HbbTV_DVB
 	url = https://github.com/Dash-Industry-Forum/HbbTV_DVB
+[submodule "CTAWAVE"]
+	path = CTAWAVE
+	url = https://github.com/Dash-Industry-Forum/CTAWAVE
