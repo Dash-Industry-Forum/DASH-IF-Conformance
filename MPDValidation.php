@@ -28,7 +28,7 @@ function validate_MPD(){
     ## Check the PASS/FAIL status
     $exit = false;
     $string = '';
-    $mpd_rep_loc = relative_path($session_dir . '/' . $mpd_log . '.html');
+    $mpd_rep_loc = 'temp/' . basename($session_dir) . '/' . $mpd_log . '.html';
     if (!is_valid($mpdvalidator, 'XLink resolving successful')){ $string .= $mpd_rep_loc; $exit = true; }
     else { $string .= 'true '; }
     
@@ -57,4 +57,17 @@ function extract_relevant_text($result){
 
 function is_valid($haystack, $needle){
     return strpos($haystack, $needle) !== FALSE;
+}
+
+function MPD_report($string){
+    global $session_dir, $progress_report, $progress_xml, $mpd_url, $mpd_log, $string_info;
+    ## Save results to progress report
+    $progress_xml->MPDConformance = $string;
+    $progress_xml->MPDConformance->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $session_dir . '/' . $mpd_log . '.txt'));
+    $progress_xml->MPDConformance->addAttribute('MPDLocation', $mpd_url);
+    $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+    
+    ## Put the report in html
+    $temp_string = str_replace(array('$Template$'), array("mpdreport"), $string_info);
+    file_put_contents($session_dir . '/' . $mpd_log . '.html', $temp_string);
 }
