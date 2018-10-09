@@ -30,6 +30,9 @@ $segment_accesses = array();
 $profiles = array();
 $sizearray = array();
 $additional_flags = '';
+$error_message = 1;
+$warning_message = 1;
+$info_message = 1;
 
 # DASH-IF IOP variables
 $dashif_conformance = false;
@@ -59,12 +62,12 @@ if (isset($_POST['urlcode'])){
     $mpd_url = $url_array[0];
     $_SESSION['url'] = $mpd_url;
     
-    $mpd_validation_only = $url_array[2];
-    $cmaf_conformance = $url_array[4];
-    $dvb_conformance = $url_array[5];
-    $hbbtv_conformance = $url_array[6];
-    $dashif_conformance=$url_array[7];
-    $ctawave_conformance=$url_array[8];
+    $mpd_validation_only = $url_array[1];
+    $cmaf_conformance = $url_array[2];
+    $dvb_conformance = $url_array[3];
+    $hbbtv_conformance = $url_array[4];
+    $dashif_conformance=$url_array[5];
+    $ctawave_conformance=$url_array[6];
 }
 if (isset($_SESSION['url']))
     $mpd_url = $_SESSION['url'];
@@ -73,6 +76,38 @@ if (isset($_SESSION['foldername']))
 if (isset($_FILES['afile']['tmp_name'])){
     $_SESSION['fileContent'] = file_get_contents($_FILES['afile']['tmp_name']);
     $uploaded = true;
+}
+
+# Command line arguments
+if(isset($_POST['url'])){
+    $mpd_url = json_decode($_POST['url']);
+}
+if(isset($_POST['mpdonly'])){
+    $mpd_validation_only = 1;
+}
+if(isset($_POST['cmaf'])){
+    $cmaf_conformance = 1;
+}
+if(isset($_POST['dvb'])){
+    $dvb_conformance = 1;
+}
+if(isset($_POST['hbbtv'])){
+    $hbbtv_conformance = 1;
+}
+if(isset($_POST['dashif'])){
+    $dashif_conformance = 1;
+}
+if(isset($_POST['ctawave'])){
+    $ctawave_conformance = 1;
+}
+if (isset($_POST['noerror'])){
+    $error_message = 0;
+}
+if (isset($_POST['nowarning'])){
+    $warning_message = 0;
+}
+if (isset($_POST['noinfo'])){
+    $info_message = 0;
 }
 
 # Important for Backend block

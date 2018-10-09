@@ -766,12 +766,10 @@ function submit()
 	
     stringurl[0] = url;
 
-    stringurl[1] =  "mpdvalidator";
-	
     if($("#mpdvalidation").is(':checked'))
-        stringurl[2] = 1;
+        stringurl[1] = 1;
     else
-   	stringurl[2] = 0 ;
+   	stringurl[1] = 0 ;
     
     if($("#dvbprofile").is(':checked'))
         dvb = 1;
@@ -784,11 +782,11 @@ function submit()
     if($("#ctawaveprofile").is(':checked'))
         ctawave = 1;
     
-    stringurl[4]=cmaf;
-    stringurl[5]=dvb;
-    stringurl[6]=hbbtv;
-    stringurl[7]=dashif;
-    stringurl[8]=ctawave;
+    stringurl[2]=cmaf;
+    stringurl[3]=dvb;
+    stringurl[4]=hbbtv;
+    stringurl[5]=dashif;
+    stringurl[6]=ctawave;
     
     initVariables();
     setUpTreeView();
@@ -1205,7 +1203,7 @@ function progress()  //Progress of Segments' Conformance
             }
         }
         
-        if(cmaf == "yes")
+        if(cmaf == 1)
         {
             if(ComparedRepresentations.length !=0){
                 for(var i =1; i<=ComparedRepresentations.length;i++){
