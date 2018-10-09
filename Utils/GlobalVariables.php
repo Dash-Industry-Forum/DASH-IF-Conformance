@@ -164,6 +164,8 @@ $string_info = '<!doctype html>
 <p id="info"></p>
 <p id="warning"></p>
 <p id="error"></p>
+
+<div id="mpddiv"></div>
  
 <script>
 window.onload = tester;
@@ -182,34 +184,117 @@ $.post (location,
 function(result){
 $( "#init" ).remove();
 resultant=JSON.parse(result);
+
 var end0 = "";
 var end1 = "";
 var end2 = "";
-for(var i =0;i<resultant.length;i++)
-{
 
-resultant[i]=resultant[i]+"<br />";
-var Warning=resultant[i].search("Warning") ;
-var WARNING=resultant[i].search("WARNING");
-var errorFound=resultant[i].search("###");
-var cmafError=resultant[i].search("CMAF check violated");
+if(document.URL.search("mpdreport") !== -1){
+    var until = 0;
+    var from = 0;
+    var tempContent;
+    var content = resultant.join("\n");
+    
+    while(1){
+        from = content.indexOf("Start", until);
+        until = content.indexOf("Start", from+1);
+        
+        tempContent = (until !== -1) ? content.substring(from, until) : content.substring(from);
+        var array = tempContent.split("\n");
+        if(tempContent.search("not successful") !== -1){
+            for(var i=0; i<array.length; i++){
+                var endn = "";
+                if(array[i].search("Start") !== -1 || array[i].search("===") !== -1){
+                    endn = endn+" "+array[i];
+                    addParagraph(endn, "blue");
+                }
+                else{
+                    endn = endn+" "+array[i];
+                    addParagraph(endn, "red");
+                }
+            }
+            addParagraph("<br/>", "blue");
+        }
+        else{
+            if(tempContent.search("HbbTV-DVB") !== -1){
+                for(var i=0; i<array.length; i++){
+                    var endn = "";
+                    if(array[i].search("Start") !== -1 || array[i].search("===") !== -1){
+                        array[i] = array[i] + "<br />";
+                        endn = endn+" "+array[i];
+                        addParagraph(endn, "blue");
+                    }
+                    else{
+                        endn = endn+" "+array[i];
+                        
+                        var Warning=array[i].search("Warning") ;
+                        var WARNING=array[i].search("WARNING");
+                        var errorFound=array[i].search("###");
+                        var cmafError=array[i].search("CMAF check violated");
 
-if(Warning===-1 && WARNING===-1 && errorFound===-1 && cmafError===-1){
-end0 = end0+" "+resultant[i];
-$( "#info" ).html( end0);
-}
-else if(errorFound===-1 && cmafError===-1){
-    end1 = end1+" "+resultant[i];
-    $( "#warning" ).html( end1);
+                        if(Warning===-1 && WARNING===-1 && errorFound===-1 && cmafError===-1)
+                            addParagraph(endn, "blue");
+                        else if(errorFound===-1 && cmafError===-1)
+                            addParagraph(endn, "orange");
+                        else
+                            addParagraph(endn, "red");
+                    }
+                }
+            }
+            else{
+                for(var i=0; i<array.length; i++){
+                    var endn = "";
+                    endn = endn+" "+array[i];
+                    addParagraph(endn, "blue");
+                }
+                addParagraph("<br/>", "blue");
+            }
+        }
+
+        if(until === -1)
+            break;
+    }
 }
 else{
-    end2 = end2+" "+resultant[i];
-    $( "#error" ).html( end2);
+    for(var i =0;i<resultant.length;i++){
+        resultant[i]=resultant[i]+"<br />";
+        var Warning=resultant[i].search("Warning") ;
+        var WARNING=resultant[i].search("WARNING");
+        var errorFound=resultant[i].search("###");
+        var cmafError=resultant[i].search("CMAF check violated");
+
+        if(Warning===-1 && WARNING===-1 && errorFound===-1 && cmafError===-1){
+            end0 = end0+" "+resultant[i];
+            $( "#info" ).html( end0);
+        }
+        else if(errorFound===-1 && cmafError===-1){
+            end1 = end1+" "+resultant[i];
+            $( "#warning" ).html( end1);
+        }
+        else{
+            end2 = end2+" "+resultant[i];
+            $( "#error" ).html( end2);
+        }
+    }
 }
 
-}
 });
 
+}
+
+var index = 0;
+function addParagraph(string, color){
+    index++;
+    var ind = index.toString();
+    
+    var para = document.createElement("p");
+    para.setAttribute("id", ind);
+    para.style.fontSize = "16px";
+    para.style.color = color;
+    var element = document.getElementById("mpddiv");
+    element.appendChild(para);
+    
+    document.getElementById(ind).innerHTML = string;
 }
 </script>
  
