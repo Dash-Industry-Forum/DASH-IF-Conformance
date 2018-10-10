@@ -18,5 +18,4 @@ include 'CTAWAVE_SelectionSet.php';
 
 $ctawave_function_name = 'CTAWAVE_Handle';
 $ctawave_when_to_call = array( 'AdaptationSet');
-
-
+$selectionset_infofile = 'SelectionSet_infofile';
