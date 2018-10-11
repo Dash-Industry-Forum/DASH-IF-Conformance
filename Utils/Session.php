@@ -64,6 +64,9 @@ function session_check(){
     else
         $foldername = 'id' . rand();
     
+    if(!file_exists($session_dir))
+        create_folder_in_session($session_dir);
+    
     $_SESSION['foldername'] = $foldername;
     $session_dir .= '/' . $foldername;
     $_SESSION['locate'] = $session_dir;
