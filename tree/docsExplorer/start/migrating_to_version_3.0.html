@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link rel="stylesheet" href="../codebase/default.css" type="text/css" media="screen" title="no title" charset="utf-8"><title>
+    migrating_to_version_3.0    [DHX documentation]
+  </title></head>
+
+<body>
+<div class="dokuwiki">
+  
+  <div class="stylehead">
+
+    <div class="header">
+    <a class="logo" href="http://dhtmlx.com" title="DHTMLX Home Page"></a>
+    <span class="tittle-dhtmlx">DHTMLX Docs & Samples Explorer</span>
+
+    <div class="search-field">
+        <form action="/dhtmlx/docs/doku.php" accept-charset="utf-8" id="dw__search"><div class="no"><input type="hidden" name="do" value="search" /><input type="text" id="qsearch__in" accesskey="f" name="id" title="Search" /><button type="submit"></button><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>    </div>
+        <div class="buttons">
+                <a class="doc"></a>
+                <a title="DHTMLX Samples homepage" href="../samples.html" class="sample"/></a>
+        </div>
+     <!-- <div class="pagename">
+        [[<a href="#"  title="Backlinks">migrating_to_version_3.0</a>]]
+      </div>
+      <div class="logo">
+        <a href="/dhtmlx/docs/doku.php"  name="dokuwiki__top" id="dokuwiki__top" accesskey="h" title="[H]">DHX documentation</a>      </div>
+
+      <div class="clearer"></div>-->
+        
+    </div>
+
+    
+<!--   <div class="bar" id="bar__top">
+      <div class="bar-left" id="bar__topleft">
+        <form class="button btn_edit" method="post" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="edit" /><input type="hidden" name="rev" value="" /><input type="hidden" name="id" value="migrating_to_version_3.0" /><input type="submit" value="Edit this page" class="button" accesskey="e" title="Edit this page [E]" /></div></form>        <form class="button btn_revs" method="get" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="revisions" /><input type="hidden" name="id" value="migrating_to_version_3.0" /><input type="submit" value="Old revisions" class="button" accesskey="o" title="Old revisions [O]" /></div></form>      </div>
+
+      <div class="bar-right" id="bar__topright">
+        <form class="button btn_recent" method="get" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="recent" /><input type="hidden" name="id" value="migrating_to_version_3.0" /><input type="submit" value="Recent changes" class="button" accesskey="r" title="Recent changes [R]" /></div></form>        <form action="/dhtmlx/docs/doku.php" accept-charset="utf-8" id="dw__search"><div class="no"><input type="hidden" name="do" value="search" /><input type="text" id="qsearch__in" accesskey="f" name="id" title="Search" /><button type="submit"></button><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>&nbsp;
+      </div>
+
+      <div class="clearer"></div>
+    </div> -->
+
+<!--        <div class="breadcrumbs">
+      <span class="bchead">Trace:</span> <span class="bcsep">&raquo;</span> <span class="curid"><a href="/dhtmlx/docs/doku.php?id=migrating_to_version_3.0"  class="breadcrumbs" title="migrating_to_version_3.0">migrating_to_version_3.0</a></span>    </div>
+    -->
+
+    
+  </div>
+  
+  
+  <div class="page">
+    <!-- wikipage start -->
+    
+<p>
+<div class='backlinks'><div class='backlink'><a href="index.html" class="wikilink1" title="start">Index</a></div></div>
+
+</p>
+
+<h1><a name="migrating_to_version_3.0" id="migrating_to_version_3.0">Migrating to version 3.0</a></h1>
+<div class="level1">
+
+<p>
+
+Version 3.0 is backward compatible by <acronym title="Application Programming Interface">API</acronym> with the older versions and generally, you don&#039;t need to make any special corrections in the code to update the codebase to version 3.0 .
+</p>
+
+<p>
+Starting from version 2.5 <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxlayout:toc" style="text-decoration:underline;" class="wikilink1" title="dhtmlxlayout:toc">dhtmlxLayout</a>, <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxaccordion:toc" style="text-decoration:underline;" class="wikilink1" title="dhtmlxaccordion:toc">dhtmlxAccordion</a> and <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxtabbar:toc" style="text-decoration:underline;" class="wikilink1" title="dhtmlxtabbar:toc">dhtmlxTabbar</a> don&#039;t require to have <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxwindows:toc" style="text-decoration:underline;" class="wikilink1" title="dhtmlxwindows:toc">dhtmlxWindows</a> <em>js</em> files included. But don&#039;t forget to add <em>dhtmlxcontainer.js</em> on the page for these components.
+</p>
+
+<p>
+Starting from version 3.0 <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxform:toc" style="text-decoration:underline;" class="wikilink1" title="dhtmlxform:toc">dhtmlxForm</a> can&#039;t be created on basis of an <acronym title="HyperText Markup Language">HTML</acronym> form.
+</p>
+
+<p>
+Starting from version 2.5 <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxmenu:toc" style="text-decoration:underline;" class="wikilink1" title="dhtmlxmenu:toc">dhtmlxMenu</a>, <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxtoolbar:toc" style="text-decoration:underline;" class="wikilink1" title="dhtmlxtoolbar:toc">dhtmlxToolbar</a>, <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxwindows:toc" style="text-decoration:underline;" class="wikilink1" title="dhtmlxwindows:toc">dhtmlxWindows</a> have just 3 skins: <em>dhx_skyblue</em> (default), <em>dhx_blue</em> and <em>dhx_black</em>.
+</p>
+
+<p>
+Starting from version 2.6 dhtmlx components have at their disposal one more skin - <em>dhx_web</em>.
+</p>
+
+<p>
+Beware that <em>dhtmlx.js</em>, included in the package, is compiled with <em>dhx_skyblue skin</em>. So if you are using some different skin you will need to change the skin in your code or recompile <em>dhtmlx.js</em> through libCompiler ( by the way, in case of components 2.5+ you can change the default skin for all components on the page by simple defining <em>dhtmlx.skin=“skin name”</em> ).
+</p>
+
+<p>
+If after update, you start to receive “dhtmlx is undefined” error - be sure that:
+</p>
+<ul>
+<li class="level1"><div class="li"> the latest version of <em>dhtmlxcommon.js</em> is used;</div>
+</li>
+<li class="level1"><div class="li"> you included all other dhtmlx-related js files <strong>after</strong> <em>dhtmlxcommon.js</em>.</div>
+</li>
+</ul>
+
+</div>
+<div class="secedit"><form class="button btn_secedit" method="post" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="edit" /><input type="hidden" name="lines" value="38-1565" /><input type="hidden" name="rev" value="1335474000" /><input type="hidden" name="id" value="migrating_to_version_3.0" /><input type="submit" value="Edit" class="button" title="Migrating to version 3.0" /></div></form></div>
+<h3><a name="migration_details_for_specific_components" id="migration_details_for_specific_components">Migration details for specific components</a></h3>
+<div class="level3">
+<ul>
+<li class="level1"><div class="li"> <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxcalendar:dhtmlxcalendar_changes" style="text-decoration:underline;" class="wikilink1" title="dhtmlxcalendar:dhtmlxcalendar_changes">dhtmlxCalendar - migrating to version 3.0;</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxlayout:from_20_to_25" style="text-decoration:underline;" class="wikilink1" title="dhtmlxlayout:from_20_to_25">dhtmlxLayout - migrating to version 2.5;</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxgrid:dhtmlxgrid_2.1_-_2.5" style="text-decoration:underline;" class="wikilink1" title="dhtmlxgrid:dhtmlxgrid_2.1_-_2.5">dhtmlxGrid - migrating to version 2.5;</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxmenu:from_20_to_25" style="text-decoration:underline;" class="wikilink1" title="dhtmlxmenu:from_20_to_25">dhtmlxMenu/dhtmlxToolbar - migrating to version 2.5;</a></div>
+</li>
+<li class="level1"><div class="li"> <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxtabbar:from_20_to_25" style="text-decoration:underline;" class="wikilink1" title="dhtmlxtabbar:from_20_to_25">dhtmlxTabbar - migrating to version 2.5.</a></div>
+</li>
+</ul>
+
+</div>
+<div class="secedit"><form class="button btn_secedit" method="post" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="edit" /><input type="hidden" name="lines" value="1566-" /><input type="hidden" name="rev" value="1335474000" /><input type="hidden" name="id" value="migrating_to_version_3.0" /><input type="submit" value="Edit" class="button" title="Migration details for specific components" /></div></form></div>
+    <!-- wikipage stop -->
+  </div>
+
+  <div class="clearer">&nbsp;</div>
+
+  
+  <div class="stylefoot">
+
+    <div class="meta">
+      <div class="user">
+              </div>
+     <!-- <div class="doc">
+        migrating_to_version_3.0.txt &middot; Last modified: 2012/04/27 01:00 (external edit)      </div>
+    </div>-->
+
+   
+    <!--<div class="bar" id="bar__bottom">-->
+      <!--<div class="bar-left" id="bar__bottomleft">-->
+        <!--<form class="button btn_edit" method="post" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="edit" /><input type="hidden" name="rev" value="" /><input type="hidden" name="id" value="migrating_to_version_3.0" /><input type="submit" value="Edit this page" class="button" accesskey="e" title="Edit this page [E]" /></div></form>-->
+        <!--<form class="button btn_revs" method="get" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="revisions" /><input type="hidden" name="id" value="migrating_to_version_3.0" /><input type="submit" value="Old revisions" class="button" accesskey="o" title="Old revisions [O]" /></div></form>-->
+      <!--</div>-->
+      <!--<div class="bar-right" id="bar__bottomright">-->
+        <!---->
+        <!---->
+        <!---->
+        <!---->
+        <!---->
+        <!--<form class="button btn_index" method="get" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="index" /><input type="hidden" name="id" value="migrating_to_version_3.0" /><input type="submit" value="Index" class="button" accesskey="x" title="Index [X]" /></div></form>-->
+        <!--<a class="nolink" href="#dokuwiki__top"><input type="button" class="button" value="Back to top" onclick="window.scrollTo(0, 0)" title="Back to top" /></a>&nbsp;-->
+      <!--</div>-->
+      <!--<div class="clearer"></div>-->
+    <!--</div>-->
+
+  </div>
+
+  
+
+</div>
+
+<div class="footerinc">
+
+
+</div>
+
+<div class="no"><img src="/dhtmlx/docs/lib/exe/indexer.php?id=migrating_to_version_3.0&amp;1365769040" width="1" height="1" alt=""  /></div>
+     <div class="footer">
+        <div class="footer-logo"></div>
+        <div class="copyright">Copyright © 1998-2011 Dinamenta, UAB<br />All rights reserved.</div>
+        <form class="button btn_edit" method="post" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="edit" /><input type="hidden" name="rev" value="" /><input type="hidden" name="id" value="migrating_to_version_3.0" /><input type="submit" value="Edit this page" class="button" accesskey="e" title="Edit this page [E]" /></div></form>    	    </div>
+</body>
+</html>
