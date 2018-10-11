@@ -35,7 +35,7 @@ include '../DASH/CrossValidation.php';
 include '../DASH/Representation.php';
 include '../DASH/SegmentURLs.php';
 include '../DASH/Report.php';
-include '../webfe/Featurelist.php';
+include '../Frontend/Featurelist.php';
 
 set_time_limit(0);
 ini_set("log_errors", 1);
