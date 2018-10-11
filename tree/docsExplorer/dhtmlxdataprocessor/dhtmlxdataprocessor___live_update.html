@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+ lang="en" dir="ltr">
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><link rel="stylesheet" href="../codebase/default.css" type="text/css" media="screen" title="no title" charset="utf-8"><title>
+    dhtmlxdataprocessor:live_update    [DHX documentation]
+  </title></head>
+
+<body>
+<div class="dokuwiki">
+  
+  <div class="stylehead">
+
+    <div class="header">
+    <a class="logo" href="http://dhtmlx.com" title="DHTMLX Home Page"></a>
+    <span class="tittle-dhtmlx">DHTMLX Docs & Samples Explorer</span>
+
+    <div class="search-field">
+        <form action="/dhtmlx/docs/doku.php" accept-charset="utf-8" id="dw__search"><div class="no"><input type="hidden" name="do" value="search" /><input type="text" id="qsearch__in" accesskey="f" name="id" title="Search" /><button type="submit"></button><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>    </div>
+        <div class="buttons">
+                <a class="doc"></a>
+                <a title="DHTMLX Samples homepage" href="../samples.html" class="sample"/></a>
+        </div>
+     <!-- <div class="pagename">
+        [[<a href="#"  title="Backlinks">dhtmlxdataprocessor:live_update</a>]]
+      </div>
+      <div class="logo">
+        <a href="/dhtmlx/docs/doku.php"  name="dokuwiki__top" id="dokuwiki__top" accesskey="h" title="[H]">DHX documentation</a>      </div>
+
+      <div class="clearer"></div>-->
+        
+    </div>
+
+    
+<!--   <div class="bar" id="bar__top">
+      <div class="bar-left" id="bar__topleft">
+        <form class="button btn_edit" method="post" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="edit" /><input type="hidden" name="rev" value="" /><input type="hidden" name="id" value="dhtmlxdataprocessor:live_update" /><input type="submit" value="Edit this page" class="button" accesskey="e" title="Edit this page [E]" /></div></form>        <form class="button btn_revs" method="get" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="revisions" /><input type="hidden" name="id" value="dhtmlxdataprocessor:live_update" /><input type="submit" value="Old revisions" class="button" accesskey="o" title="Old revisions [O]" /></div></form>      </div>
+
+      <div class="bar-right" id="bar__topright">
+        <form class="button btn_recent" method="get" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="recent" /><input type="hidden" name="id" value="dhtmlxdataprocessor:live_update" /><input type="submit" value="Recent changes" class="button" accesskey="r" title="Recent changes [R]" /></div></form>        <form action="/dhtmlx/docs/doku.php" accept-charset="utf-8" id="dw__search"><div class="no"><input type="hidden" name="do" value="search" /><input type="text" id="qsearch__in" accesskey="f" name="id" title="Search" /><button type="submit"></button><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>&nbsp;
+      </div>
+
+      <div class="clearer"></div>
+    </div> -->
+
+<!--        <div class="breadcrumbs">
+      <span class="bchead">Trace:</span> <span class="bcsep">&raquo;</span> <span class="curid"><a href="/dhtmlx/docs/doku.php?id=dhtmlxdataprocessor:live_update"  class="breadcrumbs" title="dhtmlxdataprocessor:live_update">live_update</a></span>    </div>
+    -->
+
+    
+  </div>
+  
+  
+  <div class="page">
+    <!-- wikipage start -->
+    <!-- TOC START -->
+<div class="toc">
+<div class="tocheader toctoggle" id="toc__header">Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="#live_update_mode" class="toc">Live Update mode</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="#how_does_it_work" class="toc">How does it work?</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#activation" class="toc">Activation</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#learning_in_practice" class="toc">Learning in practice</a></span></div></li></ul>
+</li></ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<p>
+<div class='backlinks'><div class='backlink last_backlink'><img src="icons___file.gif"  class="media" alt="" /><a href="../index.html" class="wikilink1" title="start">Index</a></div><div class='arrow'></div><div class='backlink last_backlink'><img src="icons___dataprocessor.gif"  class="media" alt="" /><a href="index.html" class="wikilink1" title="dhtmlxdataprocessor:toc">dhtmlxdataprocessor</a></div></div>
+
+</p>
+
+<h1><a name="live_update_mode" id="live_update_mode">Live Update mode</a></h1>
+<div class="level1">
+
+<p>
+
+<strong>Live Update</strong> is a mode that provides synchronous data update in real time. When someone of users makes a change, it becomes visible to all others immediately. The mode uses the Faye socket library to make the process as fast and flexible as possible and doesn&#039;t require page refreshes (updates just a component it&#039;s applied to). 
+</p>
+
+<p>
+<strong>Live update</strong> can be applied to 4 components: 
+</p>
+<ol>
+<li class="level1"><div class="li"> <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxgrid:toc" class="wikilink1" title="dhtmlxgrid:toc">Grid</a>.</div>
+</li>
+<li class="level1"><div class="li"> <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxtreegrid:toc" class="wikilink1" title="dhtmlxtreegrid:toc">TreeGrid</a>.</div>
+</li>
+<li class="level1"><div class="li"> <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxscheduler:toc" class="wikilink1" title="dhtmlxscheduler:toc">Scheduler</a>.</div>
+</li>
+<li class="level1"><div class="li"> <a href="http://docs.dhtmlx.com/doku.php?id=dhtmlxdataview:toc" class="wikilink1" title="dhtmlxdataview:toc">Dataview</a>.</div>
+</li>
+</ol>
+
+</div>
+<div class="secedit"><form class="button btn_secedit" method="post" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="edit" /><input type="hidden" name="lines" value="62-616" /><input type="hidden" name="rev" value="1358281775" /><input type="hidden" name="id" value="dhtmlxdataprocessor:live_update" /><input type="submit" value="Edit" class="button" title="Live Update mode" /></div></form></div>
+<h2><a name="how_does_it_work" id="how_does_it_work">How does it work?</a></h2>
+<div class="level2">
+
+<p>
+When you run the app with the enabled live update mode the following happens:
+
+</p>
+<ol>
+<li class="level1"><div class="li"> The app connects clients to the server which links them with the data storage.</div>
+</li>
+<li class="level1"><div class="li"> Then, the app establishes a two-way connection with the <strong>Node.js</strong> server (opens a socket for the app and keeps it opened for the whole time the app is running) .<br/>
+ <br/>
+ <img src="dhtmlxdataprocessor___live_updates.png"  class="media" alt="" /><br/>
+  <br/>
+ </div>
+</li>
+<li class="level1"><div class="li"> When a client makes some change, the related request immediately goes to the server which processes it and sends the answer to the app. If the answer is affirmative ( the request was performed successfully), the app passes the message to the <strong>Node.js</strong> server informing that some change was made and the details of this change. <strong>Node.js</strong>, in its turn, sends this message to all other clients running the app.<br/>
+ The <strong>Live Update</strong> library  helps to process the obtained information and make the related updates on the clients.<br/>
+ <br/>
+ <img src="dhtmlxdataprocessor___live_updates_logic.png"  class="media" alt="" /><br/>
+ <br/>
+ </div>
+</li>
+</ol>
+
+</div>
+<div class="secedit"><form class="button btn_secedit" method="post" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="edit" /><input type="hidden" name="lines" value="617-1626" /><input type="hidden" name="rev" value="1358281775" /><input type="hidden" name="id" value="dhtmlxdataprocessor:live_update" /><input type="submit" value="Edit" class="button" title="How does it work?" /></div></form></div>
+<h2><a name="activation" id="activation">Activation</a></h2>
+<div class="level2">
+
+<p>
+To activate Live Update for a component you should do the following steps:
+</p>
+<ol>
+<li class="level1"><div class="li"> Set up the <strong><em>Node.js</em></strong> server:</div>
+<ul>
+<li class="level2"><div class="li"> Install <strong>Node.js</strong>;</div>
+</li>
+<li class="level2"><div class="li"> Download the <strong>gridLive_nodejs.zip</strong> package. The package is used for all components, not only for dhtmlxGrid (<a href="http://dhtmlx.com/x/download/regular/gridLive_nodejs.zip" class="urlextern" title="http://dhtmlx.com/x/download/regular/gridLive_nodejs.zip"  rel="nofollow">download link</a>);</div>
+</li>
+<li class="level2"><div class="li"> Unzip the package and copy the <strong>nodejs</strong> folder into the root directory of your web server.</div>
+</li>
+<li class="level2"><div class="li"> Execute in the command line: <strong>node nodejs/server.js</strong>.</div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> Include 2 files:</div>
+<ul>
+<li class="level2"><div class="li"> <strong><em>live_updates.js</em></strong> (a file located in the <strong>root_folder/dhtmlxDataProcessor/codebase</strong> folder in case you are using the  <a href="http://dhtmlx.com/docs/products/dhtmlxSuite/index.shtml" class="urlextern" title="http://dhtmlx.com/docs/products/dhtmlxSuite/index.shtml"  rel="nofollow">dhtmlxSuite</a>, <a href="http://dhtmlx.com/docs/products/dhtmlxGrid/index.shtml" class="urlextern" title="http://dhtmlx.com/docs/products/dhtmlxGrid/index.shtml"  rel="nofollow">dhtmlxGrid</a>, <a href="http://dhtmlx.com/docs/products/dhtmlxTree/index.shtml" class="urlextern" title="http://dhtmlx.com/docs/products/dhtmlxTree/index.shtml"  rel="nofollow">dhtmlxTree</a> or <a href="http://dhtmlx.com/docs/products/dhtmlxTreeGrid/index.shtml" class="urlextern" title="http://dhtmlx.com/docs/products/dhtmlxTreeGrid/index.shtml"  rel="nofollow">dhtmlxTreeGrid</a> package. If you want to use Live Update in <a href="http://dhtmlx.com/docs/products/dhtmlxScheduler/index.shtml" class="urlextern" title="http://dhtmlx.com/docs/products/dhtmlxScheduler/index.shtml"  rel="nofollow">dhtmlxScheduler</a>, please, download the <a href="http://dhtmlx.com/docs/products/dhtmlxSuite/index.shtml" class="urlextern" title="http://dhtmlx.com/docs/products/dhtmlxSuite/index.shtml"  rel="nofollow">dhtmlxSuite</a> package and take the file from there);</div>
+</li>
+<li class="level2"><div class="li"> <strong><em>sync.js</em></strong> (a file located on the <strong>Node.js</strong> server. It&#039;s automatically generated by the server code provided in the <a href="http://dhtmlx.com/x/download/regular/gridLive_nodejs.zip" class="urlextern" title="http://dhtmlx.com/x/download/regular/gridLive_nodejs.zip"  rel="nofollow">download package</a> - the <em>server.js</em> file).<br/>
+ <br/>
+ <pre class="code javascript"><span class="sy0">&lt;</span>script type<span class="sy0">=</span><span class="st0">&quot;text/javascript&quot;</span> src<span class="sy0">=</span><span class="st0">&quot;http://localhost:8008/sync.js&quot;</span><span class="sy0">&gt;&lt;/</span>script<span class="sy0">&gt;</span>
+<span class="sy0">&lt;</span>script src<span class="sy0">=</span><span class="st0">&quot;../codebase/live_update.js&quot;</span> type<span class="sy0">=</span><span class="st0">&quot;text/javascript&quot;</span> charset<span class="sy0">=</span><span class="st0">&quot;utf-8&quot;</span><span class="sy0">&gt;&lt;/</span>script<span class="sy0">&gt;</span></pre></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> Initialize dataProcessor for the appropriate component and call method <strong>live_update</strong>.<br/>
+ <br/>
+ <pre class="code javascript"><span class="kw2">var</span> myDP <span class="sy0">=</span> <span class="kw2">new</span> dataProcessor<span class="br0">&#40;</span><span class="st0">&quot;myconnector.php&quot;</span><span class="br0">&#41;</span>;
+&nbsp;
+myDP.<span class="me1">live_update</span><span class="br0">&#40;</span><span class="st0">&quot;http://localhost:8008/sync&quot;</span><span class="br0">&#41;</span>;<span class="co1">// the path to the JS Server</span>
+myDP.<span class="me1">init</span><span class="br0">&#40;</span>mygrid<span class="br0">&#41;</span>;</pre></div>
+</li>
+</ol>
+
+</div>
+<div class="secedit"><form class="button btn_secedit" method="post" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="edit" /><input type="hidden" name="lines" value="1627-3551" /><input type="hidden" name="rev" value="1358281775" /><input type="hidden" name="id" value="dhtmlxdataprocessor:live_update" /><input type="submit" value="Edit" class="button" title="Activation" /></div></form></div>
+<h2><a name="learning_in_practice" id="learning_in_practice">Learning in practice</a></h2>
+<div class="level2">
+
+<p>
+To make it easy to learn the topic, you can go through step-by-step tutorial - <strong><a href="http://docs.dhtmlx.com/doku.php?id=tutorials:live_update_tutorial" class="wikilink1" title="tutorials:live_update_tutorial">Live updates in DHTMLX</a> </strong>. 
+</p>
+
+<p>
+As you follow the tutorial, you will create a simple grid that accepts a user’s text input and updates it in real time.  The simple steps introduce common information and useful tips needed for using the mode in app development.
+</p>
+
+</div>
+<div class="secedit"><form class="button btn_secedit" method="post" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="edit" /><input type="hidden" name="lines" value="3552-" /><input type="hidden" name="rev" value="1358281775" /><input type="hidden" name="id" value="dhtmlxdataprocessor:live_update" /><input type="submit" value="Edit" class="button" title="Learning in practice" /></div></form></div>
+    <!-- wikipage stop -->
+  </div>
+
+  <div class="clearer">&nbsp;</div>
+
+  
+  <div class="stylefoot">
+
+    <div class="meta">
+      <div class="user">
+              </div>
+     <!-- <div class="doc">
+        dhtmlxdataprocessor/live_update.txt &middot; Last modified: 2013/01/16 00:29 by 192.168.1.111      </div>
+    </div>-->
+
+   
+    <!--<div class="bar" id="bar__bottom">-->
+      <!--<div class="bar-left" id="bar__bottomleft">-->
+        <!--<form class="button btn_edit" method="post" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="edit" /><input type="hidden" name="rev" value="" /><input type="hidden" name="id" value="dhtmlxdataprocessor:live_update" /><input type="submit" value="Edit this page" class="button" accesskey="e" title="Edit this page [E]" /></div></form>-->
+        <!--<form class="button btn_revs" method="get" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="revisions" /><input type="hidden" name="id" value="dhtmlxdataprocessor:live_update" /><input type="submit" value="Old revisions" class="button" accesskey="o" title="Old revisions [O]" /></div></form>-->
+      <!--</div>-->
+      <!--<div class="bar-right" id="bar__bottomright">-->
+        <!---->
+        <!---->
+        <!---->
+        <!---->
+        <!---->
+        <!--<form class="button btn_index" method="get" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="index" /><input type="hidden" name="id" value="dhtmlxdataprocessor:live_update" /><input type="submit" value="Index" class="button" accesskey="x" title="Index [X]" /></div></form>-->
+        <!--<a class="nolink" href="#dokuwiki__top"><input type="button" class="button" value="Back to top" onclick="window.scrollTo(0, 0)" title="Back to top" /></a>&nbsp;-->
+      <!--</div>-->
+      <!--<div class="clearer"></div>-->
+    <!--</div>-->
+
+  </div>
+
+  
+
+</div>
+
+<div class="footerinc">
+
+
+</div>
+
+<div class="no"><img src="/dhtmlx/docs/lib/exe/indexer.php?id=dhtmlxdataprocessor%3Alive_update&amp;1365768991" width="1" height="1" alt=""  /></div>
+     <div class="footer">
+        <div class="footer-logo"></div>
+        <div class="copyright">Copyright © 1998-2011 Dinamenta, UAB<br />All rights reserved.</div>
+        <form class="button btn_edit" method="post" action="/dhtmlx/docs/doku.php"><div class="no"><input type="hidden" name="do" value="edit" /><input type="hidden" name="rev" value="" /><input type="hidden" name="id" value="dhtmlxdataprocessor:live_update" /><input type="submit" value="Edit this page" class="button" accesskey="e" title="Edit this page [E]" /></div></form>    	    </div>
+</body>
+</html>
