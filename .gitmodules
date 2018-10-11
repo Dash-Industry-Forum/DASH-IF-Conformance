@@ -13,3 +13,6 @@
 [submodule "CTAWAVE"]
 	path = CTAWAVE
 	url = https://github.com/Dash-Industry-Forum/CTAWAVE
+[submodule "Frontend"]
+	path = Frontend
+	url = https://github.com/Dash-Industry-Forum/Frontend

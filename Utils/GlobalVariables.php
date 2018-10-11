@@ -14,8 +14,8 @@
  */
 
 # General variables
-$main_dir = dirname(__DIR__) . '/webfe/';
-$session_dir = (isset($_SESSION['locate'])) ? $_SESSION['locate'] : dirname(__DIR__) . '/webfe/temp';
+$main_dir = dirname(__DIR__) . '/Frontend/';
+$session_dir = (isset($_SESSION['locate'])) ? $_SESSION['locate'] : dirname(__DIR__) . '/Frontend/temp';
 $mpd_dom;
 $mpd_doc;
 $mpd_url = '';
