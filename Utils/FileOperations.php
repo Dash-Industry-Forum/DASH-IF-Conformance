@@ -131,7 +131,7 @@ function syscall($command){
  */
 function relative_path($path){
     if(file_exists($path))
-        return substr($path, strpos($path, 'Frontend'));
+        return substr($path, strpos($path, 'Conformance-Frontend'));
     return NULL;
 }
 
