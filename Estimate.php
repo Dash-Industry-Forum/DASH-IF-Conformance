@@ -18,10 +18,7 @@
 	<style>
             html,body
             {
-                background-color: #fff; 
-                background-image: 
-                linear-gradient(90deg, transparent 79px, #abced4 79px, #abced4 81px, transparent 81px),
-                linear-gradient(#eee .1em, transparent .1em);
+                background-color: #fff;
                 background-size: 100% 1.2em;
             }
             
@@ -150,15 +147,11 @@
 
             .content
             {
-                border-radius: 50%;
                 height: 550px;
                 width:550px;
                 position: absolute;
                 left: 35%;
                 top:25%;
-                background: rgba(163,247,230,0.4);
-                border-style: solid;
-                border-color: #77f475;
             }
             
             .title

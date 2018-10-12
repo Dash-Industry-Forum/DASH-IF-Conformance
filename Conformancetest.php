@@ -73,6 +73,10 @@
     var dvb=0,hbbtv=0;
     window.onload = function()
     {
+        //To aid the localhost testing of the page, use CSP upgrade only if page is on https server.
+        if(window.location.protocol== "https:")
+            $('head').append('<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />');
+        
         //Display the version number after refering to change log.     
         $.post(
                 "../DASH/IOPVersion.php",
@@ -138,7 +142,8 @@
     }
     
     .site-footer {
-        background: #e0f5f6;
+        background: #909090;
+        margin-top: auto;
     }
     .mytext {
         width: 600px;
@@ -167,8 +172,8 @@
         text-align:center;
         width:600px;
         height:50px;
-        border: 1px solid rgba(0,0,0,0.08);
-        color: #05acfb;
+        border: 1px solid #fff;
+        color: #fff;
         margin-top:0.2%;
     }
     
@@ -192,8 +197,7 @@
     }
     
     #btn8 {
-        background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #99ccff), color-stop(1, #80b5ea) );
-        background:-moz-linear-gradient( center top, #bddbfa 5%, #80b5ea 100% );
+        background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #007bff), color-stop(1, #007bff) );
         filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#bddbfa', endColorstr='#80b5ea');
         background-color:#bddbfa;
         -webkit-border-top-left-radius:0px;
@@ -209,12 +213,12 @@
         -moz-border-radius-bottomleft:0px;
         border-bottom-left-radius:3px;
         text-indent:-1px;
-        border: 1px solid #2d6898;
+        border: 1px solid #007bff;
         display:inline-block;
-        color: #3B5957;
+        color: #fff;
         font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
         font-size:24px;
-        font-weight:bold;
+        font-weight:normal;
         font-style:normal;
         height:50px;
         line-height:40px;
@@ -224,18 +228,14 @@
         position:absolute;
         margin-left:0.5%;
         margin-top: -0.7%;
-        text-shadow: 0px 1px 0px rgba(255, 255, 255, .5);
         -webkit-border-radius: 5px;
         -moz-border-radius: 5px;
         border-radius: 5px;
-        -webkit-box-shadow: 0px 6px 0px #2b638f, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-        -moz-box-shadow: 0px 6px 0px #2b638f, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-        box-shadow: 0px 6px 0px #2b638f, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
     }
     
     #btn8:hover:enabled {
-        background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #80b5ea), color-stop(1, #bddbfa) );
-        background:-moz-linear-gradient( center top, #80b5ea 5%, #bddbfa 100% );
+        background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #0069d9), color-stop(1, #0069d9) );
+        background:-moz-linear-gradient( center top, #0062cc 5%, #0062cc 100% );
         filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#80b5ea', endColorstr='#bddbfa');
         background-color:#80b5ea;
     }
@@ -247,18 +247,14 @@
     }
     
     #btn8:disabled {
-        background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #C0C0C0), color-stop(1, #808080) );
-        background:-moz-linear-gradient( center top, #808080 5%, #808080 100% );
-        filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#C0C0C0', endColorstr='#808080');
-        background-color:#808080;
-        color:#C0C0C0;
+        background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #fff), color-stop(1, #007bff) );
+        background:-moz-linear-gradient( center top, #007bff 5%, #007bff 100% );
+        background-color:#007bff;
+        color:#fff;
         text-shadow: 0px 1px 0px rgba(255, 255, 255, .5);
         -webkit-border-radius: 5px;
         -moz-border-radius: 5px;
         border-radius: 5px;
-        -webkit-box-shadow: 0px 6px 0px #2b638f, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-        -moz-box-shadow: 0px 6px 0px #2b638f, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-        box-shadow: 0px 6px 0px #2b638f, 0px 3px 15px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
     }
     
     input{
@@ -280,10 +276,10 @@
     }
     
     .box.has-advanced-upload {
-        background-color: #e6e6e6;
-        outline: 1px dashed grey;
+        background-color: #007bff;
+        outline: 1px dashed #007bff;
         outline-offset: -3px;
-        background-color: #baeff5;    
+        background-color: #007bff;
     }
     
     .box.has-advanced-upload .box__dragndrop {
@@ -755,7 +751,7 @@ function progressupdate()
 
 function submit()
 {
-    document.getElementById("dash").style.marginTop="1%";
+    //document.getElementById("dash").style.marginTop="1%";
     mpdprocessed = false;
     url = document.getElementById("urlinput").value; 
  
@@ -796,7 +792,6 @@ function submit()
     document.getElementById('list').style.visibility='hidden';
     //document.getElementById('img').style.visibility='visible';
     //document.getElementById('par').style.visibility='visible';
-//    console.log(stringurl);
     //Generate a random folder name for results in "temp" folder
     dirid="id"+Math.floor((Math.random() * 10000000000) + 1);
    
@@ -845,8 +840,6 @@ function pollingProgress()
     else    
         totarrstring=MPDError[0].childNodes[0].nodeValue;
 
-//    console.log("process_returned:");
-//    console.log(totarrstring);
     if (totarrstring == 1)//Check for the error in MPD loading.
     {
         window.alert("Error loading the MPD, please check the URL.");
@@ -855,9 +848,6 @@ function pollingProgress()
         return false;
     }
     
-//    console.log("dirid=");
-//    console.log(dirid);
-
    //Get MPD Conformance results from progress.xml file.
     var MPDtotalResultXML=xmlDoc_progress.getElementsByTagName("MPDConformance");
     if(MPDtotalResultXML.length==0)
@@ -906,15 +896,12 @@ function processmpdresults(MPDtotalResultXML)
     //check if SegmentList exist
     if(xmlDoc_progress.getElementsByTagName("segmentList").length !== 0)
     {
-//        console.log("SegmentList exist!");
         segmentListExist = true;
     }
 
     document.getElementById("list").href=currentpath+'/temp/'+dirid+'/featuretable.html';
     document.getElementById('list').style.visibility='visible';
 
-//        console.log("totarr=");
-//        console.log(totarr);
     var failed ='false';
     var hbbtvDvbTrue = 'false';
     var hbbtvDvbError = 'false';
@@ -997,8 +984,7 @@ function processmpdresults(MPDtotalResultXML)
         tree.setItemImage2(x,'log.jpg','log.jpg','log.jpg');
         kidsloc.push(x);
         urlarray.push(failed);
-//        console.log(kidsloc);
-//        console.log(urlarray[0]);
+        
         x++;
         lastloc++;
         clearInterval( pollingTimer);
@@ -1103,8 +1089,7 @@ function processmpdresults(MPDtotalResultXML)
 function progress()  //Progress of Segments' Conformance
 {
     xmlDoc_progress=loadXMLDoc("temp/"+dirid+"/progress.xml");
-//    console.log("progress():");
-//    console.log(totarr);
+    
     if(representationid >totarr[hinindex])
     {
         representationid = 1;
@@ -1119,8 +1104,7 @@ function progress()  //Progress of Segments' Conformance
     
     if(xmlDoc_progress == null)
         return;
-//    console.log("progress(): representationid=",representationid,",hinindex=",hinindex,",adaptationid=",adaptationid  );
-//    console.log("downloading, response:");
+    
     var CrossRepValidation=xmlDoc_progress.getElementsByTagName("CrossRepresentation");
     var ComparedRepresentations = xmlDoc_progress.getElementsByTagName("ComparedRepresentations");
     var HbbTVDVBComparedRepresentations = xmlDoc_progress.getElementsByTagName("HbbTVDVBComparedRepresentations");
@@ -1129,7 +1113,7 @@ function progress()  //Progress of Segments' Conformance
     if ((CrossRepValidation.length!=0 && adaptationid>totarr[0]) || (ComparedRepresentations.length !=0 && representationid>totarr[adaptationid]) || 
             (SelectionSet.length !=0 && adaptationid>totarr[0]) || (CmafProfile.length !=0 && adaptationid>totarr[0]) || 
             (HbbTVDVBComparedRepresentations.length !=0 && adaptationid>totarr[0])){
-//        console.log("Inside locations");
+        
         if(CrossRepValidation.length!=0 && adaptationid>totarr[0]){
             for(var i =1; i<=CrossRepValidation.length;i++)
             {
@@ -1150,8 +1134,6 @@ function progress()  //Progress of Segments' Conformance
 
                     tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                     lastloc++;
-
-//                console.log("errors");
 
                     automate(adaptid[i-1],lastloc,"log");
                     tree.setItemImage2( lastloc,'log.jpg','log.jpg','log.jpg');
@@ -1286,16 +1268,13 @@ function progress()  //Progress of Segments' Conformance
             lastloc++; 
         }
 
-//        console.log("go");
+        adjustFooter();
         clearTimeout(progressTimer);
         setStatusTextlabel("Conformance test completed");
         finishTest();
     }
     else
     {
-//        console.log("Got output:");
-//        console.log(lastloc);
-
         var AdaptXML=xmlDoc_progress.getElementsByTagName("Adaptation"); 
         if(AdaptXML[adaptationid-1]== null)
             return;
@@ -1306,8 +1285,6 @@ function progress()  //Progress of Segments' Conformance
             var RepXML=AdaptXML[adaptationid-1].getElementsByTagName("Representation")[representationid-1].textContent;
             if(RepXML == "")
                 return;
-//            console.log("Adapt:"+(adaptationid)+" Rep:"+(representationid));
-//            console.log(RepXML);
             representationid++;
         }
 
@@ -1326,14 +1303,15 @@ function progress()  //Progress of Segments' Conformance
         lastloc++;  
 
         var location = "temp/"+dirid+"/"+ "Adapt"+(adaptationid-1)+"rep"+(representationid-2) + "sample_data.xml";
-        automate(repid[counting],lastloc,"Estimate");
+        automate(repid[counting],lastloc,"Estimate bitrate");
         tree.setItemImage2( lastloc,'csh_winstyle/calculator.gif','csh_winstyle/calculator.gif','csh_winstyle/calculator.gif');
         kidsloc.push(lastloc);
         urlarray.push("Estimate.php?location=" + location );
         lastloc++;
 
         counting++;
-
+        
+        adjustFooter();
         progress();
     }
 }
@@ -1481,6 +1459,19 @@ function UrlExists(url, cb){
                cb.apply(this, [xhr.status]);
         }
     });
+}
+
+function adjustFooter(){
+    var docHeight = Math.max( document.body.scrollHeight, document.documentElement.scrollHeight,
+                              document.body.offsetHeight, document.documentElement.offsetHeight,
+                              document.body.clientHeight, document.documentElement.clientHeight
+                    );
+    var footerHeight = $('.site-footer').height();
+    var footerTop = $('.site-footer').position().top + footerHeight;
+    
+    if (footerTop < docHeight) {
+     $('.site-footer').css('margin-top', 1.5*footerHeight + (docHeight - footerTop) + 'px');
+    }
 }
 </script>
 
