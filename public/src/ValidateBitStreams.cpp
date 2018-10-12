@@ -546,9 +546,10 @@ OSErr Validate_ES_Descriptor(BitBuffer *inbb, UInt8 Expect_ObjectType, UInt8 Exp
 
 	err = SkipBytes(inbb, size); if (err) goto bail;
 		
-	--vg.tabcnt; atomprint("</ES_descriptor>\n");
+	--vg.tabcnt; //atomprint("</ES_descriptor>\n");
 
 bail:
+        atomprint("</ES_descriptor>\n");
 	if (err) {
             bailprint("Validate_ES_Descriptor", err);
 	}
