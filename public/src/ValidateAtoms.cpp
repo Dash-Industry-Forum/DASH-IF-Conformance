@@ -3362,9 +3362,9 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	atomprint(">\n"); //vg.tabcnt++; 
 
 	// Check required field values
-	FieldMustBeOneOf9( sdh.sdType, OSType, "SampleDescription sdType must be 'mp4a' or 'enca' or 'ac-4' or 'mha1' or 'ec-3' or 'dtsc' or 'dtsh', 'dtse', 'dtsl' ", ( 'mp4a', 'enca','ac-4', 'mha1','ec-3','dtsc','dtsh','dtse','dtsl' ) );
+	FieldMustBeOneOf9( sdh.sdType, OSType, "SampleDescription sdType must be 'mp4a' or 'enca' or 'ac-4' or 'mha1' or 'ac-3' or 'ec-3' or 'dtsc' or 'dtsh', 'dtse', 'dtsl' ", ( 'mp4a', 'enca','ac-4', 'mha1','ec-3','dtsc','dtsh','dtse','dtsl' ) );
 	
-	if( (sdh.sdType != 'mp4a') && (sdh.sdType != 'enca') && (sdh.sdType != 'ac-4') && (sdh.sdType != 'mha1') && (sdh.sdType != 'ec-3') && (sdh.sdType != 'dtsc') && (sdh.sdType != 'dtsh') && (sdh.sdType != 'dtse') && (sdh.sdType != 'dtsl') && !fileTypeKnown ){	
+	if( (sdh.sdType != 'mp4a') && (sdh.sdType != 'enca') && (sdh.sdType != 'ac-4') && (sdh.sdType != 'mha1') && (sdh.sdType != 'ac-3') && (sdh.sdType != 'ec-3') && (sdh.sdType != 'dtsc') && (sdh.sdType != 'dtsh') && (sdh.sdType != 'dtse') && (sdh.sdType != 'dtsl') && !fileTypeKnown ){	
 			warnprint("WARNING: Don't know about this sound descriptor type \"%s\"\n", 
 				ostypetostr(sdh.sdType));
 			// goto bail;
@@ -3422,6 +3422,12 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 			}				
 			else if (entry->type == 'mhaC' ){
 			        BAILIFERR( Validate_mhaC_Atom( entry, refcon)); 
+			}
+			else if (entry->type == 'dac3' ){
+			        BAILIFERR( Validate_dac3_Atom( entry, refcon)); 
+			}
+			else if (entry->type == 'dec3' ){
+			        BAILIFERR( Validate_dec3_Atom( entry, refcon)); 
 			}
 			
 			else warnprint("Warning: In %s - unknown atom found \"%s\": audio sample descriptions would not normally contain this\n",vg.curatompath, ostypetostr(entry->type));
@@ -3602,13 +3608,141 @@ bail:
 	return err;
 }
 
-
-
-
-
+//==========================================================================================
+OSErr Validate_dac3_Atom( atomOffsetEntry *aoe, void *refcon)
+{
+    OSErr err = noErr;
+    UInt64 offset;
+    
+    UInt8 fscod;
+    UInt8 bsid;
+    UInt8 bsmod;
+    UInt8 acmod;
+    UInt8 lfeon;
+    UInt8 bit_rate_code;
+    UInt8 reserved;
+    UInt32 overall;
+    
+    offset = aoe->offset + aoe->atomStartSize;
+    
+    atomprint("<dac3\n");
+    vg.tabcnt++;
+    
+    BAILIFERR(GetFileData( aoe, &overall, offset, 3, &offset ));
+    fscod = overall & 0xC00000;
+    bsid = overall & 0x3E0000;
+    bsmod = overall & 0x01C000;
+    acmod = overall & 0x003800;
+    lfeon = overall & 0x000400;
+    bit_rate_code = overall & 0x0003E0;
+    reserved = overall & 0x00001F;
+    
+    atomprint("overall=\"%ld\"\n", overall);
+    atomprint("fscod=\"%ld\"\n", fscod);
+    atomprint("bsid=\"%ld\"\n", bsid);
+    atomprint("bsmod=\"%ld\"\n", bsmod);
+    atomprint("acmod=\"%ld\"\n", acmod);
+    atomprint("lfeon=\"%ld\"\n", lfeon);
+    atomprint("bit_rate_code=\"%ld\"\n", bit_rate_code);
+    atomprint("reserved=\"%ld\"\n", reserved);
+    
+    vg.tabcnt--;
+    
+bail:
+    atomprint(">\n");
+    atomprint("</dac3>\n");
+    return err;
+}
 
 //==========================================================================================
+OSErr Validate_dec3_Atom( atomOffsetEntry *aoe, void *refcon)
+{
+    OSErr err = noErr;
+    UInt64 offset;
+    
+    UInt16 first_iter;
+    UInt16 data_rate;
+    UInt8 num_ind_sub;
+    
+    UInt16 second_iter;
+    UInt8 fscod;
+    UInt8 bsid;
+    UInt8 reserved;
+    UInt8 asvc;
+    UInt8 bsmod;
+    UInt8 acmod;
+    UInt8 lfeon;
+    
+    UInt8 third_iter;
+    UInt8 reserved1;
+    UInt8 num_dep_sub;
+    
+    UInt8 fourth_iter;
+    UInt8 chan_loc;
+    UInt8 reserved2;
+    
+    offset = aoe->offset + aoe->atomStartSize;
+    
+    atomprint("<dec3\n");
+    vg.tabcnt++;
+    
+    BAILIFERR(GetFileData( aoe, &first_iter, offset, sizeof(first_iter), &offset ));
+    data_rate = first_iter & 0xFFF8;
+    num_ind_sub = first_iter & 0x0007;
+    atomprint("data_rate=\"%d\"\n", data_rate);
+    atomprint("num_ind_sub=\"%d\"\n", num_ind_sub);
+    
+    int i;
+    for (i=0; i<num_ind_sub; i++){
+	BAILIFERR(GetFileData( aoe, &second_iter, offset, 2, &offset ));
+	fscod = second_iter & 0xC000;
+	bsid = second_iter & 0x3E00;
+	reserved = second_iter & 0x0100;
+	asvc = second_iter & 0x0080;
+	bsmod = second_iter & 0x0070;
+	acmod = second_iter & 0x000E;
+	lfeon = second_iter & 0x0001;
+	
+	BAILIFERR(GetFileData( aoe, &third_iter, offset, 1, &offset ));
+	reserved1 = third_iter & 0xE0;
+	num_dep_sub = third_iter & 0x1E;
+	
+        atomprint("fscod_%d=\"%d\"\n", i, fscod);
+        atomprint("bsid_%d=\"%d\"\n", i, bsid);
+        atomprint("reserved_%d=\"%d\"\n", i, reserved);
+        atomprint("asvc_%d=\"%d\"\n", i, asvc);
+        atomprint("bsmod_%d=\"%d\"\n", i, bsmod);
+        atomprint("acmod_%d=\"%d\"\n", i, acmod);
+        atomprint("lfeon_%d=\"%d\"\n", i, lfeon);
+        atomprint("reserved1_%d=\"%d\"\n", i, reserved1);
+        atomprint("num_dep_sub_%d=\"%d\"\n", i, num_dep_sub);
+        
+        if(num_dep_sub > 0){
+            BAILIFERR(GetFileData( aoe, &fourth_iter, offset, 1, &offset ));
+	    chan_loc = (fourth_iter & 0xFF) + (third_iter & 0x01);
+            atomprint("chan_loc_%d=\"%d\"\n", i, chan_loc);
+        }
+        else{
+	    reserved2 = third_iter & 0x01;
+	    atomprint("reserved2_%d=\"%d\"\n", i, reserved2);
+	}
+    }
+    
+    if(aoe->size - offset > 0){
+	UInt64 reserved3;
+	BAILIFERR(GetFileData( aoe, &reserved3, offset, sizeof(aoe->size - offset), &offset ));
+	atomprint("reserved3=\"%d\"\n", reserved3);
+    }
+    
+    vg.tabcnt--;
+    
+bail:
+    atomprint(">\n");
+    atomprint("</dec3>\n");
+    return err;
+}
 
+//==========================================================================================
 typedef struct MHADecoderConfigurationRecord {
       UInt8	configurationVersion;
       UInt8	mpegh3daProfileLevelIndication;
