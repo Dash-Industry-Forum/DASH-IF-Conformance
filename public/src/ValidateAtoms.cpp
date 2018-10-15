@@ -3429,6 +3429,9 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 			else if (entry->type == 'dec3' ){
 			        BAILIFERR( Validate_dec3_Atom( entry, refcon)); 
 			}
+			else if (entry->type == 'dac4' ){
+			        BAILIFERR( Validate_dac4_Atom( entry, refcon)); 
+			}
 			
 			else warnprint("Warning: In %s - unknown atom found \"%s\": audio sample descriptions would not normally contain this\n",vg.curatompath, ostypetostr(entry->type));
 			
@@ -3739,6 +3742,22 @@ OSErr Validate_dec3_Atom( atomOffsetEntry *aoe, void *refcon)
 bail:
     atomprint(">\n");
     atomprint("</dec3>\n");
+    return err;
+}
+
+//==========================================================================================
+OSErr Validate_dac4_Atom( atomOffsetEntry *aoe, void *refcon)
+{
+    OSErr err = noErr;
+    
+    atomprint("<dac4\n");
+    vg.tabcnt++;
+    
+    vg.tabcnt--;
+    atomprint(">\n");
+    atomprint("</dac4>\n");
+    
+bail:
     return err;
 }
 
