@@ -1201,6 +1201,8 @@ typedef OSErr (*ValidateBitstreamProcPtr)( BitBuffer *bb, void *refcon );
 OSErr Validate_ESDAtom( atomOffsetEntry *aoe, void *refcon, ValidateBitstreamProcPtr validateBitstreamProc, char *esname );
 OSErr Validate_mp4_SD_Entry( atomOffsetEntry *aoe, void *refcon, ValidateBitstreamProcPtr validateBitstreamProc, char *esname );
 OSErr Validate_mhaC_Atom( atomOffsetEntry *aoe, void *refcon );
+OSErr Validate_dac3_Atom( atomOffsetEntry *aoe, void *refcon);
+OSErr Validate_dec3_Atom( atomOffsetEntry *aoe, void *refcon);
 
 OSErr Validate_avcC_Atom( atomOffsetEntry *aoe, void *refcon, char *esname );
 OSErr Validate_hvcC_Atom( atomOffsetEntry *aoe, void *refcon, char *esname );
