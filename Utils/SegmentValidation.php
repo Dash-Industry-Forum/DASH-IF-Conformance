@@ -40,6 +40,32 @@ function validate_segment($curr_adapt_dir, $dir_in_use, $period, $adaptation_set
     return $file_location;
 }
 
+function assemble($path, $segment_urls, $sizearr){
+    global $session_dir, $segment_accesses, $reprsentation_template, $current_adaptation_set, $current_representation, $hls_manifest, $hls_tag;
+    
+    $index = ($segment_accesses[$current_adaptation_set][$current_representation][0]['initialization']) ? 0 : 1;
+    
+    for ($i = 0; $i < sizeof($segment_urls); $i++){
+        if(!$hls_manifest)
+            $rep_dir = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_template);
+        else
+            $rep_dir = $hls_tag;
+        $fp1 = fopen($session_dir . '/' . $rep_dir . ".mp4", 'a+');
+        
+        $segment_name = basename($segment_urls[$i]);
+        if (file_exists($path . $segment_name)){
+            $size = $sizearr[$i]; // Get the real size of the file (passed as inupt for function)
+            $file2 = file_get_contents($path . $segment_name); // Get the file contents
+
+            fwrite($fp1, $file2); // dump it in the container file
+            fclose($fp1);
+            file_put_contents($session_dir . '/' . $rep_dir . ".txt", $index . " " . $size . "\n", FILE_APPEND); // add size to a text file to be passed to conformance software
+            
+            $index++; // iterate over all segments within the segments folder
+        }
+    }
+}
+
 function analyze_results($returncode, $curr_adapt_dir, $rep_dir_name){
     global $session_dir, $stderr_file, $leafinfo_file, $reprsentation_info_log_template, $reprsentation_error_log_template,
             $string_info, $progress_report, $progress_xml, $current_adaptation_set, $current_representation, $atominfo_file, $sample_data;
@@ -110,7 +136,7 @@ function run_backend($config_file){
 }
 
 function config_file_for_backend($period, $adaptation_set, $representation, $rep_dir_name){
-    global $session_dir, $config_file, $additional_flags, $reprsentation_mdat_template, $current_adaptation_set, $current_representation;
+    global $session_dir, $config_file, $additional_flags, $reprsentation_mdat_template, $current_adaptation_set, $current_representation, $hls_manifest;
     
     $file = open_file($session_dir . '/' . $config_file, 'w');
     fwrite($file, $session_dir . '/' . $rep_dir_name . '.mp4 ' . "\n");
@@ -120,12 +146,14 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     fwrite($file, "-offsetinfo" . "\n");
     fwrite($file, $session_dir . '/' . $offsetinfo . '.txt' . "\n");
     
-    $flags = construct_flags($period, $adaptation_set, $representation) . $additional_flags;
-    $piece = explode(" ", $flags);
-    foreach ($piece as $pie)
-        if ($pie !== "")
-            fwrite($file, $pie . "\n");
-
+    if(!$hls_manifest){
+        $flags = construct_flags($period, $adaptation_set, $representation) . $additional_flags;
+        $piece = explode(" ", $flags);
+        foreach ($piece as $pie)
+            if ($pie !== "")
+                fwrite($file, $pie . "\n");
+    }
+    
     fclose($file);
     return $session_dir . '/' . $config_file;
 }

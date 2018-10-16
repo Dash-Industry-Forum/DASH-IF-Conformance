@@ -16,3 +16,6 @@
 [submodule "Conformance-Frontend"]
 	path = Conformance-Frontend
 	url = https://github.com/Dash-Industry-Forum/Conformance-Frontend
+[submodule "HLS"]
+	path = HLS
+	url = https://github.com/Dash-Industry-Forum/HLS
