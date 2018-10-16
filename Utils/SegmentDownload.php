@@ -35,16 +35,21 @@
  * @output: $file_sizearr - array of original size(s) of the segment(s)
  */
 function download_data($directory, $array_file, $is_subtitle_rep){
-    global $session_dir, $progress_report, $progress_xml, $reprsentation_mdat_template, $missinglink_file, $current_adaptation_set, $current_representation;
+    global $session_dir, $progress_report, $progress_xml, $reprsentation_mdat_template, $missinglink_file, $current_adaptation_set, $current_representation, 
+            $hls_byte_range_begin, $hls_byte_range_size, $hls_manifest, $hls_mdat_file;
     
-    $mdat_file = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_mdat_template);
+    if(!$hls_manifest)
+        $mdat_file = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_mdat_template);
+    else
+        $mdat_file = $hls_mdat_file;
+    
     $sizefile = open_file($session_dir . '/' . $mdat_file . '.txt', 'a+b'); //create text file containing the original size of Mdat box that is ignored
     $initoffset = 0; // Set pointer to 0
     $totaldownloaded = 0; // bytes downloaded
     $totalDataProcessed = 0; // bytes processed within segments
     $totalDataDownloaded = 0;
     $downloadMdat=0;
-    
+    $byte_range_array = array();
     # Initialize curl object
     $ch = curl_init();
     
@@ -52,18 +57,21 @@ function download_data($directory, $array_file, $is_subtitle_rep){
     $mdat_index = 0;
     for ($index = 0; $index < sizeof($array_file); $index++){
         $filePath = $array_file[$index]; //get segment URL
-        $file_size = remote_file_size2($filePath); // Get actual data size
+        if(!$hls_manifest)
+            $file_size = remote_file_size2($filePath); // Get actual data size
+        else
+            $file_size = ($hls_byte_range_size) ? $hls_byte_range_size[$index]+$hls_byte_range_begin[$index] : remote_file_size2($filePath);
+        
         if ($file_size === false){ // if URL return 404 report it as broken url
             $missing = open_file($session_dir . '/' . $missinglink_file . '.txt', 'a+b');
             fwrite($missing, $filePath . "\n");
             error_log("downloaddata_Missing:" . $filePath);
         }
         else{
-            $sizepos = 0;
-            
+            $sizepos = ($hls_byte_range_begin) ? $hls_byte_range_begin[$index] : 0;
             # Store the original size of segments
             $file_sizearr[$index] = $file_size; 
-            
+            $remaining = $file_size - $sizepos; //remained byte range size to download
             # Get the name of segment
             $tok = explode('/', $filePath);
             $filename = $tok[sizeof($tok) - 1]; 
@@ -78,13 +86,18 @@ function download_data($directory, $array_file, $is_subtitle_rep){
                 # Download the partial content and unpack
                 $content = partial_download($filePath, $sizepos, $sizepos + 1500, $ch);
                 $byte_array = unpack('C*', $content);
-                
+                $byte_range_array = array_merge($byte_range_array,$byte_array);
                 # Update the total size of downloaded data
                 $totalDataDownloaded = $totalDataDownloaded + 1500; 
                 
                 # Assure that the pointer doesn't exceed size of downloaded bytes
                 while ($location < sizeof($byte_array)){
                     $size = $byte_array[$location] * 16777216 + $byte_array[$location + 1] * 65536 + $byte_array[$location + 2] * 256 + $byte_array[$location + 3];
+                    
+                    $size_copy = $size; // keep a cope of size to add to $location when it is replaced by remaining 
+                    if ($size > $remaining)
+                        $size = $remaining;
+                    
                     if (sizeof($array_file) === 1){ // if presentation contain only single segment
                         $totaldownloaded = $totaldownloaded + $size;   // total data being processed 
                         $percent = (int) (100 * $totaldownloaded / $file_size); //get percent over the whole file size
@@ -105,7 +118,7 @@ function download_data($directory, $array_file, $is_subtitle_rep){
                         if ($total < sizeof($byte_array))
                             fwrite($newfile, substr($content, $location - 1, $size));
                         else{
-                            $rest = partial_download($filePath, $sizepos, $sizepos + $size - 1, $ch); 
+                            $rest = partial_download($filePath, $sizepos, $sizepos + $size - 1, $ch);                            
                             $totalDataDownloaded = $totalDataDownloaded + $size - 1;
                             fwrite($newfile, $rest);
                         }
@@ -158,14 +171,18 @@ function download_data($directory, $array_file, $is_subtitle_rep){
                     }
                     
                     $sizepos = $sizepos + $size; // move size pointer
-                    $location = $location + $size; // move location pointer
+                    $remaining = $file_size -$sizepos;
+                    $location = $location + $size_copy; // move location pointer
+                    
+                    if ($remaining==0)
+                        continue;
                 }
                 
                 # Modify node and sav it to a progress report
                 $progress_xml->Progress->percent = strval($percent);
                 $progress_xml->Progress->dataProcessed = strval($totalDataProcessed + $sizepos);
                 $progress_xml->Progress->dataDownloaded = strval($totalDataDownloaded);
-                $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+                $progress_xml->asXML(trim($session_dir . '/' . $progress_report));
             }
 
             fflush($newfile);

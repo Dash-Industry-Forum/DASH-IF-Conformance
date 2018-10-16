@@ -34,6 +34,15 @@ $error_message = 1;
 $warning_message = 1;
 $info_message = 1;
 
+# HLS variable
+$hls_manifest = 0;
+$hls_stream_inf_file = 'StreamINF';
+$hls_x_media_file = 'XMedia';
+$hls_iframe_file = 'IFrameByteRange';
+$hls_mdat_file = 'mdatoffset';
+$hls_current_index = 0;
+$hls_tag = '';
+
 # DASH-IF IOP variables
 $dashif_conformance = false;
 
@@ -62,6 +71,10 @@ if (isset($_POST['urlcode'])){
     $mpd_url = $url_array[0];
     $_SESSION['url'] = $mpd_url;
     
+    if(strpos($mpd_url, '.m3u8') !== FALSE){
+        $hls_manifest = 1;
+    }
+    
     $mpd_validation_only = $url_array[1];
     $cmaf_conformance = $url_array[2];
     $dvb_conformance = $url_array[3];
@@ -81,6 +94,9 @@ if (isset($_FILES['afile']['tmp_name'])){
 # Command line arguments
 if(isset($_POST['url'])){
     $mpd_url = json_decode($_POST['url']);
+    if(strpos($mpd_url, '.m3u8') !== FALSE){
+        $hls_manifest = 1;
+    }
 }
 if(isset($_POST['mpdonly'])){
     $mpd_validation_only = 1;

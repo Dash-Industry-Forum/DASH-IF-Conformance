@@ -35,6 +35,7 @@ include '../DASH/CrossValidation.php';
 include '../DASH/Representation.php';
 include '../DASH/SegmentURLs.php';
 include '../DASH/Report.php';
+include '../HLS/HLSProcessing.php';
 include '../Conformance-Frontend/Featurelist.php';
 
 set_time_limit(0);
@@ -47,4 +48,7 @@ session_start();
 error_log("session_start:" . session_name());
 
 session_create();
-process_MPD();
+if(!$hls_manifest)
+    process_MPD();
+else
+    processHLS();
