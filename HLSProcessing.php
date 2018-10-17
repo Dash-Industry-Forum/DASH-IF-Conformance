@@ -29,6 +29,9 @@ function processHLS(){
         
         // download segments from stream_inf playlists, x_media playlists, and Iframe playlists
         validate_segment_hls(array($StreamInfURLArray, $IframeURLArray,$XMediaURLArray));
+        
+        // group the playlists together
+        groupPlaylists();
     }
 }
 
@@ -220,19 +223,50 @@ function segURLs($tmparray,$segmentURL){
     return $array;
 }
 
+function groupPlaylists(){
+    global $session_dir, $hls_media_types, $adaptation_set_template, $reprsentation_template;
+    
+    $i = 0;
+    foreach($hls_media_types as $hls_media_type){
+        foreach($hls_media_type as $sw){
+            $new_sw_path = str_replace('$AS$', $i, $adaptation_set_template);
+            create_folder_in_session($session_dir . '/' . $new_sw_path);
+            
+            $j = 0;
+            foreach($sw as $track){
+                $name = explode('_', $track);
+                $pathdir = $name[0]; $pathdir_ind = $name[1];
+                $track_path = $session_dir . '/' . $pathdir . '/' . $pathdir_ind;
+                
+                $new_track_path = str_replace(array('$AS$', '$R$'), array($i, $j), $reprsentation_template);
+                
+                rename_file($track_path . '.xml', $session_dir . '/' . $new_sw_path . '/' . $new_track_path . '.xml');
+                rename_file($track_path, $session_dir . '/' . $new_track_path);
+                
+                $j++;
+            }
+            
+            $i++;
+        }
+    }
+}
+
 function determineMediaType($path, $tag){
-    global $hls_media_types;
+    global $hls_media_types, $hls_iframe_file;
     
     if(file_exists($path)){
-        $xml = get_DOM($path);
-        if($path){
+        $xml = get_DOM($path, 'atomlist');
+        if($xml){
             $hdlr = $xml->getElementsByTagName('hdlr')->item(0);
             $hdlr_type = $hdlr->getAttribute('handler_type');
             $sdType = $xml->getElementsByTagName($hdlr_type.'_sampledescription')->item(0)->getAttribute('sdType');
 
             switch($hdlr_type){
                 case 'vide':
-                    $hls_media_types['video'][$sdType][] = $tag;
+                    if(strpos($tag, $hls_iframe_file) === FALSE)
+                        $hls_media_types['video'][$sdType][] = $tag;
+                    else
+                        $hls_media_types['iframe'][$sdType][] = $tag;
                     break;
                 case 'soun':
                     $hls_media_types['audio'][$sdType][] = $tag;
@@ -240,14 +274,10 @@ function determineMediaType($path, $tag){
                 case 'subt':
                     $hls_media_types['subtitle'][$sdType][] = $tag;
                     break;
-                /*case '':
-                    $hls_media_types['closed-caption'][$sdType][] = $tag;
-                    break;*/
                 default:
                     $hls_media_types['unknown'][$sdType][] = $tag;
                     break;
             }
-            determineMediaType($hdlr_type, $sdType, $hls_tag);
         }
     }
 }
