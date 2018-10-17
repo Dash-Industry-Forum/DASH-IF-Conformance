@@ -14,8 +14,11 @@
  */
 
 function processHLS(){
-    global $session_dir, $mpd_url, $progress_xml, $progress_report;
-    
+    global $session_dir, $mpd_url, $progress_xml, $progress_report, $hls_manifest_type;
+    $StreamInfURLArray = array();
+    $IframeURLArray = array();
+    $XMediaURLArray = array();
+            
     // Open related files
     $progress_xml = simplexml_load_string('<root><Profile></Profile><PeriodCount></PeriodCount><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
     $progress_xml->asXml($session_dir . '/' . $progress_report);
@@ -24,16 +27,28 @@ function processHLS(){
     $m3u8 = playlistToArray($mpd_url);
     
     if($m3u8){
+        if($hls_manifest_type=="MasterPlaylist"){
         // extract the urls to stream_inf, iframe and x_media playlists from master playlist and save them in separate arrays
-        list($StreamInfURLArray, $IframeURLArray,$XMediaURLArray) = playlistURLs($m3u8);
-        
+            list($StreamInfURLArray, $IframeURLArray,$XMediaURLArray) = playlistURLs($m3u8);
+            
+           
+            
+        }
+        else{
+            if(strpos(file_get_contents($mpd_url),"#EXT-X-I-FRAMES-ONLY")) 
+                $IframeURLArray[0] =$mpd_url;
+            else
+                $StreamInfURLArray[0]=$mpd_url;
+        } 
         // download segments from stream_inf playlists, x_media playlists, and Iframe playlists
-        validate_segment_hls(array($StreamInfURLArray, $IframeURLArray,$XMediaURLArray));
+        validate_segment_hls(array($StreamInfURLArray, $IframeURLArray,$XMediaURLArray));  
+        
     }
 }
 
 #put each line of a playlist into an array
 function playlistToArray($url) {
+    global $hls_manifest_type;
     $m3u8 = file_get_contents($url);
     if(!$m3u8)
         return false;
@@ -41,8 +56,17 @@ function playlistToArray($url) {
     $array = preg_split('/$\n?^/m', trim($m3u8), NULL, PREG_SPLIT_NO_EMPTY);
     if($array[0]!= '#EXTM3U')
         die("Data does not look like a m3u8 file, first line is not #EXTM3U! Exiting..");
-    else
-        return $array;
+    else{
+        if (strpos("EXT-X-MEDIA" || "EXT-X-STREAM-INF" || "EXT-X-I-FRAME-STREAM-INF")){
+            $hls_manifest_type = "MasterPlaylist";
+            return $array;
+        }
+        else {
+            $hls_manifest_type = "MediaPlaylist"; 
+            return $array;
+        }
+    }
+        
 }
 
 //extract the urls to stream_inf, iframe and x_media playlists from master playlist and save them in separate arrays
@@ -134,6 +158,9 @@ function segmentDownload($urlarray, $type){
     
     $segment_urls = array();
     $sizearray=array();
+    
+    if(!$urlarray)
+        return [$segment_urls, $sizearray];
     
     ## Define a directory for downloading segments
     $dir = $session_dir.'/'.$type;
