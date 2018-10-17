@@ -61,7 +61,7 @@ function validate_segment_hls($URL_array){
                 $returncode = run_backend($config_file_loc);
                 
                 ## Analyse the results and report them
-                $file_location = analyze_results($returncode, $session_dir . '/' . $tag_array[$i], $j);
+                $file_location[] = analyze_results($returncode, $session_dir . '/' . $tag_array[$i], $j);
                 
                 ## Determine media type based on atomxml information
                 determineMediaType($session_dir . '/' . $tag_array[$i] . '/' . $j . '.xml', $hls_tag);
@@ -73,6 +73,8 @@ function validate_segment_hls($URL_array){
             }
         }
     }
+    
+    return $file_location;
 }
 
 function assemble($path, $segment_urls, $sizearr){
@@ -109,12 +111,22 @@ function analyze_results($returncode, $curr_adapt_dir, $rep_dir_name){
     if($returncode != 0){
         error_log('Processing AdaptationSet ' . $current_adaptation_set . ' Representation ' . $current_representation . ' returns: ' . $returncode);
         if (filesize($session_dir . '/' . $stderr_file) == 0){
-            if($adaptation_set['mimeType'] == 'application/ttml+xml' || $adaptation_set['mimeType'] == 'image/jpeg')
-                file_put_contents($session_dir . '/' . 'stderr.txt', '### error:  \n###        Failed to process Adaptation Set ' . $current_adaptation_set . ', Representation ' . $current_representation . "!, as mimeType= '".$adaptation_set['mimeType']."' is not supported");
-            elseif($representation['mimeType'] == "application/ttml+xml" || $representation['mimeType'] == "image/jpeg")
-                file_put_contents($session_dir . '/' . 'stderr.txt', '### error:  \n###        Failed to process Adaptation Set ' . $current_adaptation_set . ', Representation ' . $current_representation . "!, as mimeType= '".$representation['mimeType']."' is not supported");
-            else
-                file_put_contents($session_dir . '/' . 'stderr.txt', '### error:  \n###        Failed to process Adaptation Set ' . $current_adaptation_set . ', Representation ' . $current_representation . '!');
+            if(!$hls_manifest){
+                if($adaptation_set['mimeType'] == 'application/ttml+xml' || $adaptation_set['mimeType'] == 'image/jpeg')
+                    file_put_contents($session_dir . '/' . 'stderr.txt', '### error:  \n###        Failed to process Adaptation Set ' . $current_adaptation_set . ', Representation ' . $current_representation . "!, as mimeType= '".$adaptation_set['mimeType']."' is not supported");
+                elseif($representation['mimeType'] == "application/ttml+xml" || $representation['mimeType'] == "image/jpeg")
+                    file_put_contents($session_dir . '/' . 'stderr.txt', '### error:  \n###        Failed to process Adaptation Set ' . $current_adaptation_set . ', Representation ' . $current_representation . "!, as mimeType= '".$representation['mimeType']."' is not supported");
+                else
+                    file_put_contents($session_dir . '/' . 'stderr.txt', '### error:  \n###        Failed to process Adaptation Set ' . $current_adaptation_set . ', Representation ' . $current_representation . '!');
+            }
+            else{
+                $tag_array = explode('_', $hls_tag);
+                $files = array_diff(scandir($session_dir . '/' . $tag_array[0] . '/' . $tag_array[1] . "/"), array('.', '..'));
+                if(strpos($files[2], 'webvtt') !== FALSE || strpos($files[2], 'xml') !== FALSE || strpos($files[2], 'html') !== FALSE)
+                    file_put_contents($session_dir . '/' . 'stderr.txt', '### error:  \n###        Failed to process ' . $tag_array[0] . ' with index ' . $tag_array[1] . ', as the file type is ' . explode('.', $files[2])[1] . '!');
+                else
+                    file_put_contents($session_dir . '/' . 'stderr.txt', '### error:  \n###        Failed to process ' . $tag_array[0] . ' with index ' . $tag_array[1] . '!');
+            }
         }
     }
 

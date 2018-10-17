@@ -45,7 +45,7 @@ $hls_error_file = '$hls_tag$log';
 $hls_info_file = '$hls_tag$_infofile';
 $hls_mdat_file = 'mdatoffset';
 $hls_current_index = 0;
-$hls_media_types = array('video' => array(), 'audio' => array(), 'subtitle' => array(), 'closed-caption' => array(), 'unknown' => array());
+$hls_media_types = array('video' => array(), 'iframe' => array(), 'audio' => array(), 'subtitle' => array(), 'unknown' => array());
 
 # DASH-IF IOP variables
 $dashif_conformance = false;
