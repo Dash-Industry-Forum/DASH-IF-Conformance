@@ -1,1 +1,3 @@
 # Conformance-Frontend-HLS
+
+This repository is a submodule of the [Integrated Conformance Software Tool](https://github.com/Dash-Industry-Forum/IntegratedConformance) and contains web user interface (UI) software for HLS manifests. It has been created to maintain and manage the HLS UI features. The index file is called ConformanceTest.html. It is responsible for initiating the conformance server processes and updating the user interface on the overall progress as well as the conformance results. This submodule differs from the [Conformance-Frontend](https://github.com/Dash-Industry-Forum/Conformance-Frontend) the DASH-related UI features are removed.
