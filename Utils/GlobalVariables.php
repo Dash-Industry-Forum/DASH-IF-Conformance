@@ -39,9 +39,12 @@ $hls_manifest = 0;
 $hls_stream_inf_file = 'StreamINF';
 $hls_x_media_file = 'XMedia';
 $hls_iframe_file = 'IFrameByteRange';
+$hls_tag = '';
+$hls_error_file = '$hls_tag$log';
+$hls_info_file = '$hls_tag$_infofile';
 $hls_mdat_file = 'mdatoffset';
 $hls_current_index = 0;
-$hls_tag = '';
+$hls_media_types = array('video' => array(), 'audio' => array(), 'subtitle' => array(), 'closed-caption' => array(), 'unknown' => array());
 
 # DASH-IF IOP variables
 $dashif_conformance = false;

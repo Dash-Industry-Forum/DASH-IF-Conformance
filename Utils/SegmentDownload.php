@@ -62,7 +62,7 @@ function download_data($directory, $array_file, $is_subtitle_rep){
         else
             $file_size = ($hls_byte_range_size) ? $hls_byte_range_size[$index]+$hls_byte_range_begin[$index] : remote_file_size2($filePath);
         
-        if ($file_size === false){ // if URL return 404 report it as broken url
+        if (remote_file_size2($filePath) === false){ // if URL return 404 report it as broken url
             $missing = open_file($session_dir . '/' . $missinglink_file . '.txt', 'a+b');
             fwrite($missing, $filePath . "\n");
             error_log("downloaddata_Missing:" . $filePath);
@@ -80,7 +80,7 @@ function download_data($directory, $array_file, $is_subtitle_rep){
             while ($sizepos < $file_size){
                 $location = 1; // temporary pointer
                 $name = null; // box name
-                $size = 0; // box size
+                $box_size = 0; // box size
                 $newfile = open_file($directory . $filename, 'a+b'); // create an empty mp4 file to contain data needed from remote segment
                 
                 # Download the partial content and unpack
@@ -92,14 +92,14 @@ function download_data($directory, $array_file, $is_subtitle_rep){
                 
                 # Assure that the pointer doesn't exceed size of downloaded bytes
                 while ($location < sizeof($byte_array)){
-                    $size = $byte_array[$location] * 16777216 + $byte_array[$location + 1] * 65536 + $byte_array[$location + 2] * 256 + $byte_array[$location + 3];
+                    $box_size = $byte_array[$location] * 16777216 + $byte_array[$location + 1] * 65536 + $byte_array[$location + 2] * 256 + $byte_array[$location + 3];
                     
-                    $size_copy = $size; // keep a cope of size to add to $location when it is replaced by remaining 
-                    if ($size > $remaining)
-                        $size = $remaining;
+                    $size_copy = $box_size; // keep a cope of size to add to $location when it is replaced by remaining 
+                    if ($box_size > $remaining)
+                        $size_copy = $remaining;
                     
                     if (sizeof($array_file) === 1){ // if presentation contain only single segment
-                        $totaldownloaded = $totaldownloaded + $size;   // total data being processed 
+                        $totaldownloaded += (!$hls_byte_range_begin) ? $box_size : $size_copy;   // total data being processed 
                         $percent = (int) (100 * $totaldownloaded / $file_size); //get percent over the whole file size
                     }
                     else
@@ -114,12 +114,12 @@ function download_data($directory, $array_file, $is_subtitle_rep){
                         # Else 
                         #   Download the rest of the box from the remote segment
                         #   Copy the rest to the file
-                        $total = $location + $size;
+                        $total = $location + ((!$hls_byte_range_begin) ? $box_size : $size_copy);
                         if ($total < sizeof($byte_array))
-                            fwrite($newfile, substr($content, $location - 1, $size));
+                            fwrite($newfile, substr($content, $location - 1, ((!$hls_byte_range_begin) ? $box_size : $size_copy)));
                         else{
-                            $rest = partial_download($filePath, $sizepos, $sizepos + $size - 1, $ch);                            
-                            $totalDataDownloaded = $totalDataDownloaded + $size - 1;
+                            $rest = partial_download($filePath, $sizepos, $sizepos + ((!$hls_byte_range_begin) ? $box_size : $size_copy) - 1, $ch);                            
+                            $totalDataDownloaded = $totalDataDownloaded + ((!$hls_byte_range_begin) ? $box_size : $size_copy) - 1;
                             fwrite($newfile, $rest);
                         }
                     }
@@ -134,10 +134,10 @@ function download_data($directory, $array_file, $is_subtitle_rep){
                         if($downloadMdat){
                             fwrite($sizefile, ($initoffset + $sizepos + 8) . " " . 0 . "\n");
                             fwrite($newfile, substr($content, $location - 1, 8));
-                            fwrite($newfile,str_pad("0",$size-8,"0"));
+                            fwrite($newfile,str_pad("0",((!$hls_byte_range_begin) ? $box_size : $size_copy)-8,"0"));
                         }
                         else{
-                            fwrite($sizefile, ($initoffset + $sizepos + 8) . " " . ($size - 8) . "\n");
+                            fwrite($sizefile, ($initoffset + $sizepos + 8) . " " . (((!$hls_byte_range_begin) ? $box_size : $size_copy) - 8) . "\n");
                             fwrite($newfile, substr($content, $location - 1, 8));
                             
                             ## For DVB subtitle checks related to mdat content
@@ -148,15 +148,15 @@ function download_data($directory, $array_file, $is_subtitle_rep){
                                 fopen($mdat_file, 'w');
                                 chmod($mdat_file, 0777);
                                 $mdat_index++;
-                                 $total = $location + $size;
+                                $total = $location + $box_size;
                                 if ($total < sizeof($byte_array)){
-                                    $text = substr($content, ($initoffset + $location + 7), ($size - 7));
+                                    $text = substr($content, ($initoffset + $location + 7), ($box_size - 7));
                                     $text = substr($text, strpos($text, '<tt'));
                                     $subtitle_xml_string .= $text;
-                                    //fwrite($mdat_file, substr($content, ($initoffset + $sizepos + 8), ($size - 1)));
+                                    //fwrite($mdat_file, substr($content, ($initoffset + $sizepos + 8), ($box_size - 1)));
                                 }
                                 else{
-                                    $rest = partial_download($filePath, $sizepos+8, $sizepos + $size - 1, $ch);
+                                    $rest = partial_download($filePath, $sizepos+8, $sizepos + $box_size - 1, $ch);
                                     $text = $rest;
                                     $text = substr($text, strpos($text, '<tt'));
                                     $subtitle_xml_string .= $text;
@@ -170,12 +170,12 @@ function download_data($directory, $array_file, $is_subtitle_rep){
                         }
                     }
                     
-                    $sizepos = $sizepos + $size; // move size pointer
+                    $sizepos = $sizepos + ((!$hls_byte_range_begin) ? $box_size : $size_copy); // move size pointer
                     $remaining = $file_size -$sizepos;
-                    $location = $location + $size_copy; // move location pointer
+                    $location = $location + $box_size; // move location pointer
                     
                     if ($remaining==0)
-                        continue;
+                        break;
                 }
                 
                 # Modify node and sav it to a progress report
@@ -190,7 +190,7 @@ function download_data($directory, $array_file, $is_subtitle_rep){
             
             # Update initial offset after processing the whole file
             # Update data processed
-            $initoffset = $initoffset + $file_size;
+            $initoffset = (!$hls_byte_range_begin) ? $initoffset + $file_size : 0;
             $totalDataProcessed = $totalDataProcessed + $file_size;  
         }
     }

@@ -40,6 +40,41 @@ function validate_segment($curr_adapt_dir, $dir_in_use, $period, $adaptation_set
     return $file_location;
 }
 
+function validate_segment_hls($URL_array){
+    global $session_dir, $hls_stream_inf_file, $hls_x_media_file, $hls_iframe_file, $hls_tag;
+    
+    $tag_array = array($hls_stream_inf_file, $hls_iframe_file, $hls_x_media_file);
+    for($i=0; $i<sizeof($URL_array); $i++){
+        list($segmentURL, $sizeArray) = segmentDownload($URL_array[$i], $tag_array[$i]);
+        
+        for($j=0; $j<sizeof($segmentURL); $j++){
+            if($sizeArray[$j] != 0){
+                $hls_tag = $tag_array[$i] . '_' . $j;
+                
+                ## Put segments in one file
+                assemble($session_dir.'/'.$tag_array[$i].'/'.$j.'/', $segmentURL[$j], $sizeArray[$j]);
+                
+                ## Create config file with the flags for segment validation
+                $config_file_loc = config_file_for_backend(NULL, NULL, NULL, $hls_tag);
+                
+                ## Run the backend
+                $returncode = run_backend($config_file_loc);
+                
+                ## Analyse the results and report them
+                $file_location = analyze_results($returncode, $session_dir . '/' . $tag_array[$i], $j);
+                
+                ## Determine media type based on atomxml information
+                determineMediaType($session_dir . '/' . $tag_array[$i] . '/' . $j . '.xml', $hls_tag);
+            }
+            else{
+                ## Save to progress report that the representation does not exist
+                $file_location[] = 'notexist';
+                //$progress_xml->Results[0]->Period[0]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "notexist";
+            }
+        }
+    }
+}
+
 function assemble($path, $segment_urls, $sizearr){
     global $session_dir, $segment_accesses, $reprsentation_template, $current_adaptation_set, $current_representation, $hls_manifest, $hls_tag;
     
@@ -68,7 +103,8 @@ function assemble($path, $segment_urls, $sizearr){
 
 function analyze_results($returncode, $curr_adapt_dir, $rep_dir_name){
     global $session_dir, $stderr_file, $leafinfo_file, $reprsentation_info_log_template, $reprsentation_error_log_template,
-            $string_info, $progress_report, $progress_xml, $current_adaptation_set, $current_representation, $atominfo_file, $sample_data;
+            $string_info, $progress_report, $progress_xml, $current_adaptation_set, $current_representation, $atominfo_file, $sample_data,
+            $hls_manifest, $hls_tag, $hls_error_file, $hls_info_file;
     
     if($returncode != 0){
         error_log('Processing AdaptationSet ' . $current_adaptation_set . ' Representation ' . $current_representation . ' returns: ' . $returncode);
@@ -83,11 +119,17 @@ function analyze_results($returncode, $curr_adapt_dir, $rep_dir_name){
     }
 
     // Rename the files from backend block and make them visible for UI
-    $info_log = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_info_log_template);
+    if(!$hls_manifest)
+        $info_log = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_info_log_template);
+    else
+        $info_log = str_replace('$hls_tag$', $hls_tag, $hls_info_file);
     rename_file($session_dir . '/' . $leafinfo_file, $session_dir . '/' . $info_log . '.txt');
     $file_location[] = relative_path($session_dir . '/' . $info_log . '.html');
 
-    $error_log = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_error_log_template);
+    if(!$hls_manifest)
+        $error_log = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_error_log_template);
+    else
+        $error_log = str_replace('$hls_tag$', $hls_tag, $hls_error_file);
     rename_file($session_dir . '/' . $stderr_file, $session_dir . '/' . $error_log . '.txt');
     $temp_string = str_replace(array('$Template$'), array($error_log), $string_info);
     file_put_contents($session_dir . '/' . $error_log . '.html', $temp_string);
@@ -136,13 +178,18 @@ function run_backend($config_file){
 }
 
 function config_file_for_backend($period, $adaptation_set, $representation, $rep_dir_name){
-    global $session_dir, $config_file, $additional_flags, $reprsentation_mdat_template, $current_adaptation_set, $current_representation, $hls_manifest;
+    global $session_dir, $config_file, $additional_flags, $reprsentation_mdat_template, $current_adaptation_set, $current_representation, $hls_manifest, $hls_mdat_file;
     
     $file = open_file($session_dir . '/' . $config_file, 'w');
     fwrite($file, $session_dir . '/' . $rep_dir_name . '.mp4 ' . "\n");
     fwrite($file, "-infofile" . "\n");
     fwrite($file, $session_dir . '/' . $rep_dir_name . '.txt' . "\n");
-    $offsetinfo = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_mdat_template);
+    
+    if(!$hls_manifest)
+        $offsetinfo = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_mdat_template);
+    else
+        $offsetinfo = $rep_dir_name . '_' . $hls_mdat_file;
+    
     fwrite($file, "-offsetinfo" . "\n");
     fwrite($file, $session_dir . '/' . $offsetinfo . '.txt' . "\n");
     
