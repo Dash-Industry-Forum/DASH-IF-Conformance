@@ -14,7 +14,7 @@
  */
 
 function processHLS(){
-    global $session_dir, $mpd_url, $progress_xml, $progress_report, $hls_tag, $hls_stream_inf_file, $hls_x_media_file, $hls_iframe_file;
+    global $session_dir, $mpd_url, $progress_xml, $progress_report;
     
     // Open related files
     $progress_xml = simplexml_load_string('<root><Profile></Profile><PeriodCount></PeriodCount><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
@@ -23,22 +23,13 @@ function processHLS(){
     // Read each line of manifest file into an array
     $m3u8 = playlistToArray($mpd_url);
     
-    //extract the urls to stream_inf, iframe and x_media playlists from master playlist and save them in separate arrays
     if($m3u8){
+        // extract the urls to stream_inf, iframe and x_media playlists from master playlist and save them in separate arrays
         list($StreamInfURLArray, $IframeURLArray,$XMediaURLArray) = playlistURLs($m3u8);
+        
+        // download segments from stream_inf playlists, x_media playlists, and Iframe playlists
+        validate_segment_hls(array($StreamInfURLArray, $IframeURLArray,$XMediaURLArray));
     }
-    
-    //download segments from stream_inf playlists, x_media playlists, and Iframe playlists
-    list($StreamInfSegmentURL, $StreamInfSizeArray) = segmentDownload($StreamInfURLArray, "StreamINF");
-    for($i=0; $i<sizeof($StreamInfSegmentURL); $i++){
-        $hls_tag = $hls_stream_inf_file . '_' . $i;
-        assemble($session_dir.'/'.'StreamINF'.'/'.strval($i).'/', $StreamInfSegmentURL[$i], $StreamInfSizeArray[$i]);
-    }
-    
-    $XMediaSizeArray = segmentDownload($XMediaURLArray, "XMedia");
-    $IframeSizeArray = IframeByteRangeDownload($IframeURLArray);
-    
-    
 }
 
 #put each line of a playlist into an array
@@ -139,29 +130,40 @@ function segmentURLs($url){
  * inputs are the url to the playlist and the type of the playlist
  */
 function segmentDownload($urlarray, $type){
-    global $session_dir, $hls_stream_inf_file, $hls_x_media_file, $hls_mdat_file, $hls_current_index;
+    global $session_dir, $hls_iframe_file, $hls_mdat_file, $hls_current_index, $hls_byte_range_begin, $hls_byte_range_size;
     
     $segment_urls = array();
-    $sizerray=array();
+    $sizearray=array();
     
-    //define a directory for stream_inf and x_media segments
-    if ($type=="StreamINF") 
-        $dir = $session_dir.'/'.$hls_stream_inf_file.'/';
-    elseif ($type=="XMedia") 
-        $dir = $session_dir.'/'.$hls_x_media_file.'/';
+    ## Define a directory for downloading segments
+    $dir = $session_dir.'/'.$type;
     mkdir($dir, 0777, true);
     
-    //iterate over the playlists, download the segments for each one, and save the segments of each playlist into a different folder
+    ## Iterate over the playlists, download the segments for each one, and save the segments of each playlist into a different folder
     foreach($urlarray as $url){
-        $segmentURLs = segmentURLs($url);//extract the url of the segments of a playlist
-        $tmpdir = $dir.strval($hls_current_index).'/'; // make a new folder for this playlist
+        // create a new folder for this playlist
+        $tmpdir = $dir.'/'.$hls_current_index.'/';
         mkdir($tmpdir, 0777, true);
         
-        //download data of the playlist into the folder and return size of the downloaded content 
+        // extract the url of the segments of a playlist
+        $segmentURLs = segmentURLs($url);
+        if($type == $hls_iframe_file){
+            $tmparray = playlistToArray($url);
+            $array = segURLs($tmparray, $segmentURLs);
+            if(!$array)
+                continue;
+        }
+        
+        // download data of the playlist into the folder and return size of the downloaded content 
         $segment_urls[] = $segmentURLs;
-        $sizearray[] = download_data($tmpdir, $segmentURLs);
+        $sizearray[] = download_data($tmpdir, ($type == $hls_iframe_file) ? $array : $segmentURLs);
         
         rename_file($session_dir . '/' . $hls_mdat_file . '.txt', $session_dir . '/' . $type . '_' . $hls_current_index . '_' . $hls_mdat_file . '.txt');
+        if($type == $hls_iframe_file){
+            $hls_byte_range_begin = array();
+            $hls_byte_range_size = array();
+        }
+        
         $hls_current_index++;
     }
     
@@ -169,55 +171,83 @@ function segmentDownload($urlarray, $type){
     return [$segment_urls, $sizearray];
 }
 
-//download byte ranges of an iframe playlist 
-function IframeByteRangeDownload($IframeURLArray){
-    global $session_dir, $hls_iframe_file, $hls_byte_range_begin, $hls_byte_range_size, $hls_mdat_file, $hls_current_index;
-    
-    $segment_urls = array();
-    $Iframedir = $session_dir.'/'.$hls_iframe_file.'/';
-    mkdir($Iframedir, 0777, true);
-    
-    foreach($IframeURLArray as $url){
-        $segmentURL = segmentURLs($url); //URL to the segment from which we get the byte range
-        $tmparray = playlistToArray($url);
-        $array=  segURLs($tmparray, $segmentURL);
-        
-        $dir = $Iframedir.strval($hls_current_index)."/";
-        mkdir($dir, 0777, true);
-        
-        $segment_urls[] = $segmentURL;
-        $sizearray[]= download_data($dir,$array);
-        rename_file($session_dir . '/' . $hls_mdat_file . '.txt', $session_dir . '/' . $hls_iframe_file . '_' . $hls_current_index . '_' . $hls_mdat_file . '.txt');
-        
-        $hls_byte_range_begin = array();
-        $hls_byte_range_size = array();
-    }
-    
-    return [$segment_urls, $sizearray];
-}
-
 function segURLs($tmparray,$segmentURL){
     global $hls_byte_range_begin, $hls_byte_range_size;
     $array = array();
+    $i = 0;
     foreach ($tmparray as $line) { 
         if(strpos($line,"EXT-X-MAP") !== FALSE)
         {
-            if (strpos($line,"@")!== FALSE )
+            if (strpos($line,"@")!== FALSE ){
                 $hls_byte_range_begin[]= (int)(substr($line,strpos($line,"@")+1,strlen($line)-strpos($line,"@")));
-            $st = strpos($line,"BYTERANGE=")+11;
-            $en = strpos($line,"@");
-            $hls_byte_range_size[] = (int)(substr($line,$st, $en-$st)); 
-            $array[]=$segmentURL[0]; 
+                $st = strpos($line,"BYTERANGE=")+11;
+                $en = strpos($line,"@");
+                $hls_byte_range_size[] = (int)(substr($line,$st, $en-$st)); 
+                $array[]=$segmentURL[0]; 
+            }
+            else{
+                if($hls_byte_range_size[$i-1]){
+                    $st = strpos($line,"BYTERANGE=")+11;
+                    $hls_byte_range_begin[] = $hls_byte_range_size[$i-1];
+                    $hls_byte_range_size[] = (int)(substr($line,$st));
+                }
+                else{
+                    return NULL;
+                }
+            }
         }
         if(strpos($line,"EXT-X-BYTERANGE") !== FALSE){
-            if (strpos($line,"@")!== FALSE )
+            if (strpos($line,"@")!== FALSE ){
                 $hls_byte_range_begin[]= (int)(substr($line,strpos($line,"@")+1));
-            $st = strpos($line,":")+1;
-            $en = strpos($line,"@");
-            $hls_byte_range_size[] = (int)(substr($line,$st, $en-$st)); 
-            $array[]=$segmentURL[0];
-
+                $st = strpos($line,":")+1;
+                $en = strpos($line,"@");
+                $hls_byte_range_size[] = (int)(substr($line,$st, $en-$st)); 
+                $array[]=$segmentURL[0];
+            }
+            else{
+                if($hls_byte_range_size[$i-1]){
+                    $st = strpos($line,":")+1;
+                    $hls_byte_range_begin[] = $hls_byte_range_size[$i-1];
+                    $hls_byte_range_size[] = (int)(substr($line,$st));
+                }
+                else{
+                    return NULL;
+                }
+            }
         }
+        $i++;
     }
     return $array;
+}
+
+function determineMediaType($path, $tag){
+    global $hls_media_types;
+    
+    if(file_exists($path)){
+        $xml = get_DOM($path);
+        if($path){
+            $hdlr = $xml->getElementsByTagName('hdlr')->item(0);
+            $hdlr_type = $hdlr->getAttribute('handler_type');
+            $sdType = $xml->getElementsByTagName($hdlr_type.'_sampledescription')->item(0)->getAttribute('sdType');
+
+            switch($hdlr_type){
+                case 'vide':
+                    $hls_media_types['video'][$sdType][] = $tag;
+                    break;
+                case 'soun':
+                    $hls_media_types['audio'][$sdType][] = $tag;
+                    break;
+                case 'subt':
+                    $hls_media_types['subtitle'][$sdType][] = $tag;
+                    break;
+                /*case '':
+                    $hls_media_types['closed-caption'][$sdType][] = $tag;
+                    break;*/
+                default:
+                    $hls_media_types['unknown'][$sdType][] = $tag;
+                    break;
+            }
+            determineMediaType($hdlr_type, $sdType, $hls_tag);
+        }
+    }
 }
