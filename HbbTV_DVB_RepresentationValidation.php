@@ -1075,7 +1075,7 @@ function seg_duration_checks($opfile){
         $MPD_duration_sec = 'Not_Set'; //to avoid giving an array to the python code as an argument
     }
     $atm_duration_array_str = implode(',', $segment_duration_array);
-    $location = $session_dir.'/' . $rep_loc . '.png';
+    $location = $session_dir.'/' . $rep_loc . '_.png';
     $command = "cd $session_dir && python seg_duration.py  $atm_duration_array_str $MPD_duration_sec $location";
     exec($command);
 
@@ -1087,7 +1087,7 @@ function seg_duration_checks($opfile){
             fwrite($opfile, "###'HbbTV-DVB DASH Validation Requirements check violated: Section 'Duration Self consistency' - The average segment duration is not consistent with the durations advertised by the MPD " . round($average_segment_duration, 2) . ' vs. ' . round($MPD_duration_sec, 2) . ".'\n");
     }
     
-    return $rep_loc . '.png';
+    return $rep_loc . '_.png';
 }
 
 function segmentToPeriodDurationCheck($xml_rep){
