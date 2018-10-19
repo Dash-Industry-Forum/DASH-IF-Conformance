@@ -41,10 +41,13 @@ function validate_segment($curr_adapt_dir, $dir_in_use, $period, $adaptation_set
 }
 
 function validate_segment_hls($URL_array){
-    global $session_dir, $hls_stream_inf_file, $hls_x_media_file, $hls_iframe_file, $hls_tag;
+    global $session_dir, $hls_stream_inf_file, $hls_x_media_file, $hls_iframe_file, $hls_tag, $progress_xml, $progress_report;
     
     $tag_array = array($hls_stream_inf_file, $hls_iframe_file, $hls_x_media_file);
     for($i=0; $i<sizeof($URL_array); $i++){
+        $progress_xml->Progress->CurrentAdapt = $tag_array[$i];
+        $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+        
         list($segmentURL, $sizeArray) = segmentDownload($URL_array[$i], $tag_array[$i]);
         
         for($j=0; $j<sizeof($segmentURL); $j++){
@@ -155,17 +158,20 @@ function analyze_results($returncode, $curr_adapt_dir, $rep_dir_name){
     // Search for segment validation errors and save it to progress report
     $search = file_get_contents($session_dir . '/' . $error_log . '.txt');
     if (strpos($search, 'error') === false){
-        $progress_xml->Results[0]->Period[0]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "noerror";
+        if(!$hls_manifest)
+            $progress_xml->Results[0]->Period[0]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "noerror";
         $file_location[] = 'noerror';
     }
     else{
-        $progress_xml->Results[0]->Period[0]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "error";
+        if(!$hls_manifest)
+            $progress_xml->Results[0]->Period[0]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "error";
         $file_location[] = 'error'; //else notify client with error
     }
-
-    $progress_xml->Results[0]->Period[0]->Adaptation[$current_adaptation_set]->Representation[$current_representation]->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $session_dir . '/' . $error_log . '.txt'));
-    $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
-
+    
+    if(!$hls_manifest){
+        $progress_xml->Results[0]->Period[0]->Adaptation[$current_adaptation_set]->Representation[$current_representation]->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $session_dir . '/' . $error_log . '.txt'));
+        $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+    }
     return $file_location;
 }
 
