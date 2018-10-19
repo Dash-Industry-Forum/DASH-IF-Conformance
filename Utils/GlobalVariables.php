@@ -75,16 +75,24 @@ if (isset($_POST['urlcode'])){
     $mpd_url = $url_array[0];
     $_SESSION['url'] = $mpd_url;
     
-    if(strpos($mpd_url, '.m3u8') !== FALSE){
-        $hls_manifest = 1;
-    }
-    
     $mpd_validation_only = $url_array[1];
     $cmaf_conformance = $url_array[2];
     $dvb_conformance = $url_array[3];
     $hbbtv_conformance = $url_array[4];
     $dashif_conformance=$url_array[5];
     $ctawave_conformance=$url_array[6];
+}
+if (isset($_POST['urlcodehls'])){
+    $url_array = json_decode($_POST['urlcodehls']);
+    $mpd_url = $url_array[0];
+    $_SESSION['url'] = $mpd_url;
+    
+    $cmaf_conformance = $url_array[1];
+    $ctawave_conformance=$url_array[2];
+    
+    $hls_manifest = 1;
+    $main_dir = dirname(__DIR__) . '/Conformance-Frontend-HLS/';
+    $session_dir = (isset($_SESSION['locate'])) ? $_SESSION['locate'] : dirname(__DIR__) . '/Conformance-Frontend-HLS/temp';
 }
 if (isset($_SESSION['url']))
     $mpd_url = $_SESSION['url'];
