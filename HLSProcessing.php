@@ -17,7 +17,7 @@ function processHLS(){
     global $session_dir, $mpd_url, $progress_xml, $progress_report;
     
     // Open related files
-    $progress_xml = simplexml_load_string('<root><Profile></Profile><PeriodCount></PeriodCount><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
+    $progress_xml = simplexml_load_string('<root><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><allDownloadComplete></allDownloadComplete><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
     $progress_xml->asXml($session_dir . '/' . $progress_report);
     
     // Read each line of manifest file into an array
@@ -28,11 +28,17 @@ function processHLS(){
         list($StreamInfURLArray, $IframeURLArray,$XMediaURLArray) = playlistURLs($m3u8);
         
         // download segments from stream_inf playlists, x_media playlists, and Iframe playlists
-        validate_segment_hls(array($StreamInfURLArray, $IframeURLArray,$XMediaURLArray));
+        $file_location = validate_segment_hls(array($StreamInfURLArray, $IframeURLArray,$XMediaURLArray));
         
         // group the playlists together
-        groupPlaylists();
+        groupPlaylists($file_location);
     }
+    
+    $progress_xml->completed = "true";
+    $progress_xml->completed->addAttribute('time', time());
+    $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+    writeEndTime((int)$progress_xml->completed->attributes());
+    exit;
 }
 
 #put each line of a playlist into an array
@@ -43,7 +49,7 @@ function playlistToArray($url) {
     
     $array = preg_split('/$\n?^/m', trim($m3u8), NULL, PREG_SPLIT_NO_EMPTY);
     if($array[0]!= '#EXTM3U')
-        die("Data does not look like a m3u8 file, first line is not #EXTM3U! Exiting..");
+        return false;
     else
         return $array;
 }
@@ -133,7 +139,7 @@ function segmentURLs($url){
  * inputs are the url to the playlist and the type of the playlist
  */
 function segmentDownload($urlarray, $type){
-    global $session_dir, $hls_iframe_file, $hls_mdat_file, $hls_current_index, $hls_byte_range_begin, $hls_byte_range_size;
+    global $session_dir, $hls_iframe_file, $hls_mdat_file, $hls_current_index, $hls_byte_range_begin, $hls_byte_range_size, $progress_xml, $progress_report;
     
     $segment_urls = array();
     $sizearray=array();
@@ -144,6 +150,9 @@ function segmentDownload($urlarray, $type){
     
     ## Iterate over the playlists, download the segments for each one, and save the segments of each playlist into a different folder
     foreach($urlarray as $url){
+        $progress_xml->Progress->CurrentRep = $hls_current_index+1;
+        $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+        
         // create a new folder for this playlist
         $tmpdir = $dir.'/'.$hls_current_index.'/';
         mkdir($tmpdir, 0777, true);
@@ -223,17 +232,36 @@ function segURLs($tmparray,$segmentURL){
     return $array;
 }
 
-function groupPlaylists(){
-    global $session_dir, $hls_media_types, $adaptation_set_template, $reprsentation_template;
+function groupPlaylists($file_location){
+    global $session_dir, $hls_media_types, $adaptation_set_template, $reprsentation_template, $progress_xml, $progress_report;
+    
+    $progress_xml->allDownloadComplete = "true";
+    $ResultXML = $progress_xml->addChild('Results');
+    $PeriodXML = $ResultXML->addChild('Period');
     
     $i = 0;
+    $file_location_ind = 0;
     foreach($hls_media_types as $hls_media_type){
         foreach($hls_media_type as $sw){
+            $AdaptationXML = $PeriodXML->addChild('Adaptation');
+            
             $new_sw_path = str_replace('$AS$', $i, $adaptation_set_template);
             create_folder_in_session($session_dir . '/' . $new_sw_path);
             
             $j = 0;
             foreach($sw as $track){
+                $RepXML = $AdaptationXML->addChild('Representation');
+                $RepXML->addAttribute('id', $j + 1);
+                
+                if($file_location[$file_location_ind] == 'notexist'){
+                    $RepXML->textContent = "notexist";
+                    $file_location_ind++;
+                }
+                else{
+                    $RepXML->textContent = $file_location[0][2];
+                    $file_location_ind ++; 
+                }
+                
                 $name = explode('_', $track);
                 $pathdir = $name[0]; $pathdir_ind = $name[1];
                 $track_path = $session_dir . '/' . $pathdir . '/' . $pathdir_ind;
@@ -241,6 +269,8 @@ function groupPlaylists(){
                 $new_track_path = str_replace(array('$AS$', '$R$'), array($i, $j), $reprsentation_template);
                 
                 rename_file($track_path . '.xml', $session_dir . '/' . $new_sw_path . '/' . $new_track_path . '.xml');
+                rename_file($session_dir . '/' . $track .'log.txt' , $session_dir . '/' . $new_track_path . 'log.txt');
+                rename_file($session_dir . '/' . $track .'log.html' , $session_dir . '/' . $new_track_path . 'log.html');
                 rename_file($track_path, $session_dir . '/' . $new_track_path);
                 
                 $j++;
@@ -249,6 +279,8 @@ function groupPlaylists(){
             $i++;
         }
     }
+    
+    $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
 }
 
 function determineMediaType($path, $tag){
