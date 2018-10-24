@@ -17,7 +17,8 @@ function CTAWAVE_Handle($request){
     $return_val = NULL;
     switch($request){
         case 'AdaptationSet':
-            $return_val = checkSelectionSet();
+            $return_val = SelectionSet();
+            $return_val = Presentation();
             break;
         default:
             break;
