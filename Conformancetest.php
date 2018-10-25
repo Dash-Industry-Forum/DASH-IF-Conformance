@@ -682,7 +682,7 @@ function submit()
     document.getElementById("btn8").disabled="true";
     document.getElementById("drop_div").disabled="true";
     dirid="id"+Math.floor((Math.random() * 10000000000) + 1);
-   
+    
     if(uploaded===true){ // In the case of file upload.
         fd.append("foldername", dirid);
         fd.append("urlcodehls", JSON.stringify(stringurl));
@@ -694,17 +694,17 @@ function submit()
             processData: false
         });}
     else{  // Pass to server only, no JS response model.
-           UrlExists(stringurl[0], function(urlStatus){
-                 //console.log(urlStatus);
-                if(urlStatus === 200 && stringurl[0]!=""){
-                    $.post("../Utils/Process.php",{urlcodehls:JSON.stringify(stringurl),sessionid:JSON.stringify(SessionID),foldername: dirid});
-                }
-                else{ //if(urlStatus === 404){
-                   window.alert("Error loading the M3U8, please check the URL.");
-                   clearInterval( pollingTimer);	
-                   finishTest(); 
-                }
-            });
+        UrlExists(stringurl[0], function(urlStatus){
+              //console.log(urlStatus);
+             if(urlStatus === 200 && stringurl[0]!=""){
+                 $.post("../Utils/Process.php",{urlcodehls:JSON.stringify(stringurl),sessionid:JSON.stringify(SessionID),foldername: dirid});
+             }
+             else{ //if(urlStatus === 404){
+                window.alert("Error loading the M3U8, please check the URL.");
+                clearInterval( pollingTimer);	
+                finishTest(); 
+             }
+         });
     }
     
     //Start polling of progress.xml for the progress percentage results.
@@ -748,11 +748,14 @@ function pollingProgress()
         }
         return;
     }else{
+        var TotalAdaptRep_count = 0;
         var Periodxml=xmlDoc_progress.getElementsByTagName("Period"); 
         Adapt_count= Periodxml[0].childNodes.length;
         var AdaptRepPeriod_count=Adapt_count;
+        TotalAdaptRep_count = AdaptRepPeriod_count;
         var Adaptxml=xmlDoc_progress.getElementsByTagName("Adaptation");
         for (var v=0; v<Adapt_count; v++){
+            TotalAdaptRep_count = TotalAdaptRep_count + Adaptxml[v].getElementsByTagName("Representation").length;
             AdaptRepPeriod_count=AdaptRepPeriod_count+" "+Adaptxml[v].getElementsByTagName("Representation").length;
         }
     }
@@ -766,11 +769,12 @@ function pollingProgress()
     });
     totarr=AdaptRepPeriod_count.split(" ");
     var AdaptXML=xmlDoc_progress.getElementsByTagName("Adaptation");
+    lastloc = TotalAdaptRep_count + 2;
     for(var i=0;i<totarr[0];i++)
     {
         automate(y,x,"SwitchingSet "+(i+1));
         adaptid.push(x);
-        tree.setItemImage2( x,'adapt.jpg','adapt.jpg','adapt.jpg');
+        //tree.setItemImage2( x,'adapt.jpg','adapt.jpg','adapt.jpg');
         
         for(var j=0;j<totarr[childno];j++)
         {
@@ -791,7 +795,6 @@ function pollingProgress()
             urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i)+"rep"+(j) + "log.html");
             lastloc++;
             counting++;
-            
             adjustFooter();
         }
 
@@ -819,10 +822,10 @@ function progress()  //Progress of Segments' Conformance
     var SelectionSet=xmlDoc_progress.getElementsByTagName("SelectionSet");
     var CmafProfile=xmlDoc_progress.getElementsByTagName("CMAFProfile");
     if ((ComparedRepresentations.length !=0 && representationid>totarr[adaptationid]) || (SelectionSet.length !=0 && adaptationid>totarr[0]) || (CmafProfile.length !=0 && adaptationid>totarr[0])){
-        if(cmaf == 1){
+        if(cmaf == 1 || ctawave == 1){
             if(ComparedRepresentations.length !=0){
                 for(var i =1; i<=ComparedRepresentations.length;i++){
-                
+
                     if(ComparedRepresentations[i-1].textContent=="noerror"){
                         tree.setItemImage2(adaptid[i-1],'right.jpg','right.jpg','right.jpg');
                         automate(adaptid[i-1],lastloc,"CMAF Compared representations validation success");
@@ -836,7 +839,7 @@ function progress()  //Progress of Segments' Conformance
 
                         tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                         lastloc++;
-                    
+
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
@@ -848,13 +851,19 @@ function progress()  //Progress of Segments' Conformance
             //Additions for CMAF Selection Set and Presentation profile.
             if(SelectionSet.length!=0  && adaptationid>totarr[0]){
                 if(SelectionSet[0].textContent=="noerror"){
-                    automate(1,lastloc,"CMAF Selection Set");
+                    if(cmaf == 1)
+                        automate(1,lastloc,"CMAF Selection Set");
+                    else if(ctawave == 1)
+                        automate(1,lastloc,"CTA WAVE Selection Set");
 
                     tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
                     lastloc++;
                 }
                 else{
-                    automate(1,lastloc,"CMAF Selection Set");
+                    if(cmaf == 1)
+                        automate(1,lastloc,"CMAF Selection Set");
+                    else if(ctawave == 1)
+                        automate(1,lastloc,"CTA WAVE Selection Set");
 
                     tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                     lastloc++;
