@@ -19,32 +19,36 @@ function processHLS(){
     $IframeURLArray = array();
     $XMediaURLArray = array();
             
-    // Open related files
+    ## Open related files
     $progress_xml = simplexml_load_string('<root><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><allDownloadComplete></allDownloadComplete><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
     $progress_xml->asXml($session_dir . '/' . $progress_report);
     
-    // Read each line of manifest file into an array
+    ## Read each line of manifest file into an array
     $m3u8 = playlistToArray($mpd_url);
     
     if($m3u8){
+        ## If the manifest is a master playlist
+        ## extract the urls to stream_inf, iframe and x_media playlists from master playlist and save them in separate arrays
+        ## If the manifest is a media playlist
+        ## extract the urls to either stream_inf or iframe and save it into arrays
         if($hls_manifest_type=="MasterPlaylist"){
-        // extract the urls to stream_inf, iframe and x_media playlists from master playlist and save them in separate arrays
             list($StreamInfURLArray, $IframeURLArray,$XMediaURLArray) = playlistURLs($m3u8);
-            
-           
-            
         }
         else{
             if(strpos(file_get_contents($mpd_url),"#EXT-X-I-FRAMES-ONLY")) 
                 $IframeURLArray[0] =$mpd_url;
             else
                 $StreamInfURLArray[0]=$mpd_url;
-        } 
-        // download segments from stream_inf playlists, x_media playlists, and Iframe playlists
+        }
+        
+        ## Download segments from stream_inf playlists, x_media playlists, and Iframe playlists
         $file_location = validate_segment_hls(array($StreamInfURLArray, $IframeURLArray,$XMediaURLArray));
         
-        // group the playlists together
+        ## Group the playlists together
         groupPlaylists($file_location);
+        
+        ## Crete $mpd_features structure since it is used in conformance server checks
+        formMpdFeatures();
     }
     
     $progress_xml->completed = "true";
@@ -65,7 +69,7 @@ function playlistToArray($url) {
     if($array[0]!= '#EXTM3U')
         return false;
     else{
-        if (strpos("EXT-X-MEDIA" || "EXT-X-STREAM-INF" || "EXT-X-I-FRAME-STREAM-INF")){
+        if(strpos($m3u8, 'EXT-X-STREAM-INF') !== FALSE || strpos($m3u8, 'EXT-X-I-FRAME-STREAM-INF') !== FALSE){
             $hls_manifest_type = "MasterPlaylist";
             return $array;
         }
@@ -258,7 +262,7 @@ function segURLs($tmparray,$segmentURL){
 }
 
 function groupPlaylists($file_location){
-    global $session_dir, $hls_media_types, $adaptation_set_template, $reprsentation_template, $progress_xml, $progress_report;
+    global $session_dir, $hls_media_types, $adaptation_set_template, $reprsentation_template, $progress_xml, $progress_report, $string_info;
     
     $progress_xml->allDownloadComplete = "true";
     $ResultXML = $progress_xml->addChild('Results');
@@ -295,7 +299,8 @@ function groupPlaylists($file_location){
                 
                 rename_file($track_path . '.xml', $session_dir . '/' . $new_sw_path . '/' . $new_track_path . '.xml');
                 rename_file($session_dir . '/' . $track .'log.txt' , $session_dir . '/' . $new_track_path . 'log.txt');
-                rename_file($session_dir . '/' . $track .'log.html' , $session_dir . '/' . $new_track_path . 'log.html');
+                $temp_string = str_replace(array('$Template$'), array($new_track_path.'log'), $string_info);
+                file_put_contents($session_dir . '/' . $new_track_path . 'log.html', $temp_string);
                 rename_file($track_path, $session_dir . '/' . $new_track_path);
                 
                 $j++;
@@ -306,6 +311,28 @@ function groupPlaylists($file_location){
     }
     
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+}
+
+function formMpdFeatures(){
+    global $hls_media_types, $mpd_features;
+    
+    $mpd_features = array();
+    $mpd_features['Period'][0] = array();
+    $adapt_cnt = 0;
+    foreach($hls_media_types as $hls_media_type){
+        foreach($hls_media_type as $codec => $adaptation_set){
+            $mpd_features['Period'][0]['AdaptationSet'][$adapt_cnt] = array();
+            $mpd_features['Period'][0]['AdaptationSet'][$adapt_cnt]['codec'] = $codec;
+            
+            $rep_count = 0;
+            foreach($adaptation_set as $representation){
+                $mpd_features['Period'][0]['AdaptationSet'][$adapt_cnt]['Representation'][$rep_count] = array();
+                
+                $rep_count++;
+            }
+            $adapt_cnt++;
+        }
+    }
 }
 
 function determineMediaType($path, $tag){
