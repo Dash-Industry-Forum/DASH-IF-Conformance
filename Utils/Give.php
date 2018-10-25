@@ -15,7 +15,7 @@
 
 if (isset($_POST['val'])){
     $filename = $_POST['val'];
-    $stringarr = file('../Conformance-Frontend/temp/' . $filename . '.txt', FILE_IGNORE_NEW_LINES);
+    $stringarr = file('..' . $filename . '.txt', FILE_IGNORE_NEW_LINES);
     $string = safe_json_encode($stringarr);
     echo $string;
 }

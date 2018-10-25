@@ -202,13 +202,19 @@ function tester(){
 var url = document.URL.split("/");
 var newPathname = url[0];
 var loc = window.location.pathname.split("/");
+var txtloc = "";
+for ( j = 2; j < loc.length-1; j++){
+    txtloc += "/";
+    txtloc += loc[j];
+}
+console.log(txtloc);
 for ( i = 1; i < url.length-4; i++ ) {
   newPathname += "/";
   newPathname += url[i];
 }
 var location = newPathname+"/Utils/Give.php";
 $.post (location,
-{val:loc[loc.length-2]+"/$Template$"},
+{val:txtloc+"/$Template$"},
 function(result){
 $( "#init" ).remove();
 resultant=JSON.parse(result);
@@ -224,15 +230,15 @@ if(document.URL.search("mpdreport") !== -1){
     var content = resultant.join("\n");
     
     while(1){
-        from = content.indexOf("Start", until);
-        until = content.indexOf("Start", from+1);
+        from = content.indexOf("Start ", until);
+        until = content.indexOf("Start ", from+1);
         
         tempContent = (until !== -1) ? content.substring(from, until) : content.substring(from);
         var array = tempContent.split("\n");
         if(tempContent.search("not successful") !== -1){
             for(var i=0; i<array.length; i++){
                 var endn = "";
-                if(array[i].search("Start") !== -1 || array[i].search("===") !== -1){
+                if(array[i].search("Start ") !== -1 || array[i].search("===") !== -1){
                     endn = endn+" "+array[i];
                     addParagraph(endn, "blue");
                 }
@@ -247,7 +253,7 @@ if(document.URL.search("mpdreport") !== -1){
             if(tempContent.search("HbbTV-DVB") !== -1){
                 for(var i=0; i<array.length; i++){
                     var endn = "";
-                    if(array[i].search("Start") !== -1 || array[i].search("===") !== -1){
+                    if(array[i].search("Start ") !== -1 || array[i].search("===") !== -1){
                         array[i] = array[i] + "<br />";
                         endn = endn+" "+array[i];
                         addParagraph(endn, "blue");

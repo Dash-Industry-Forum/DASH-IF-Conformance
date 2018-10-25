@@ -141,15 +141,18 @@ function analyze_results($returncode, $curr_adapt_dir, $rep_dir_name){
     rename_file($session_dir . '/' . $leafinfo_file, $session_dir . '/' . $info_log . '.txt');
     $file_location[] = relative_path($session_dir . '/' . $info_log . '.html');
 
-    if(!$hls_manifest)
+    if(!$hls_manifest){
         $error_log = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_error_log_template);
-    else
+        rename_file($session_dir . '/' . $stderr_file, $session_dir . '/' . $error_log . '.txt');
+        $temp_string = str_replace(array('$Template$'), array($error_log), $string_info);
+        file_put_contents($session_dir . '/' . $error_log . '.html', $temp_string);
+    }
+    else{
         $error_log = str_replace('$hls_tag$', $hls_tag, $hls_error_file);
-    rename_file($session_dir . '/' . $stderr_file, $session_dir . '/' . $error_log . '.txt');
-    $temp_string = str_replace(array('$Template$'), array($error_log), $string_info);
-    file_put_contents($session_dir . '/' . $error_log . '.html', $temp_string);
+        rename_file($session_dir . '/' . $stderr_file, $session_dir . '/' . $error_log . '.txt');
+    }
     $file_location[] = relative_path($session_dir . '/' . $error_log . '.html');
-
+    
     rename_file($session_dir . '/' . $atominfo_file, $curr_adapt_dir . '/' . $rep_dir_name . ".xml");
 
     if(file_exists($session_dir . '/' . $sample_data . '.txt'))
