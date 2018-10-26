@@ -342,3 +342,6 @@ if($cmaf_conformance){
 if($hbbtv_conformance || $dvb_conformance){
     include '../HbbTV_DVB/HbbTV_DVB_Initialization.php';
 }
+if($ctawave_conformance){
+    include '../CTAWAVE/CTAWAVE_Initialization.php';
+}
