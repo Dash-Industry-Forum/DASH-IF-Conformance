@@ -294,7 +294,8 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
         {
             $xml_MPParameters['codec']="AAC";
             $decoderSpecInfo=$sounSampleDes->getElementsByTagName("DecoderSpecificInfo")->item(0);
-            //$audioObj=$decoderSpecInfo->getAttribute("audioObjectType");
+            $audioObj=$decoderSpecInfo->getAttribute("audioObjectType");
+            $xml_MPParameters['profile']=$audioObj;
             $channels=$decoderSpecInfo->getAttribute("channelConfig");
             $xml_MPParameters['channels']=$channels;
             //Todo , extract profile and level.
@@ -305,7 +306,16 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
         }
         elseif($sdType=="ec-3")
         {
-            $xml_MPParameters['codec']="EC-3";
+            $xml_MPParameters['codec']="EAC-3";
+            $xml_MPParameters['profile']="EAC-3";
+            $brand_pos=strpos($compatible_brands,"ceac");
+             if($brand_pos!==False)
+                $xml_MPParameters['brand']=substr($compatible_brands,$brand_pos,$brand_pos+3);
+        }
+        elseif($sdType=="ac-3")
+        {
+            $xml_MPParameters['codec']="AC-3";
+            $xml_MPParameters['profile']="AC-3";
             $brand_pos=strpos($compatible_brands,"ceac");
              if($brand_pos!==False)
                 $xml_MPParameters['brand']=substr($compatible_brands,$brand_pos,$brand_pos+3);
@@ -313,6 +323,7 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
         elseif($sdType=="ac-4")
         {
             $xml_MPParameters['codec']="AC-4";
+            $xml_MPParameters['profile']="AC-4";
             $brand_pos=strpos($compatible_brands,"ca4s");
              if($brand_pos!==False)
                 $xml_MPParameters['brand']=substr($compatible_brands,$brand_pos,$brand_pos+3);
@@ -507,19 +518,33 @@ function checkAndGetConformingVideoProfile($xml_MPParameters,$repCount, $adaptCo
 
 function checkAndGetConformingAudioProfile($xml_MPParameters,$repCount,$adaptCount,$opfile)
 {
+    $audioMediaProfile="unknown";
     if($xml_MPParameters['codec']=="AAC")
     {
-        if($xml_MPParameters['channels']=="0x1" || $xml_MPParameters['channels']=="0x2")
+        if($xml_MPParameters['channels']==="0x1" || $xml_MPParameters['channels']==="0x2")
         {
-            if($xml_MPParameters["brand"]=="caac")
-                $audioMediaProfile="AAC_Core";
-            elseif($xml_MPParameters['brand']=="caaa")
-                $audioMediaProfile="Adaptive_AAC_Core";
+            if(in_array($xml_MPParameters['profile'],array("0x02", "0x05", "0x29")))
+            {
+                if($xml_MPParameters["brand"]=="caaa")
+                    $audioMediaProfile="Adaptive_AAC_Core";
+                else
+                    $audioMediaProfile="AAC_Core";
+            }
             else
-                $audioMediaProfile="AAC_Core";
+                fprintf ($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.4.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but the profiles are not among the [AAC-LC, HE-AAC, HE-AAC v2] for track ".$repCount." of SwitchingSet ".$adaptCount." \n");
+
+              
+  
         }
-        elseif($xml_MPParameters['brand']=="camc")
-            $audioMediaProfile="AAC_Multichannel";
+        elseif($xml_MPParameters['channels']>"0x1")
+        {
+            if(in_array($xml_MPParameters['profile'],array("0x02", "0x05")))
+                $audioMediaProfile="AAC_Multichannel";
+        }
+        else
+            fprintf ($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.4.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but channels are not conforming, found ".$xml_MPParameters['channels']." but expected 1,2 or x for track ".$repCount." of SwitchingSet ".$adaptCount." \n");
+
+            
             
     }
     elseif($xml_MPParameters['codec']=="EC-3")
@@ -529,7 +554,7 @@ function checkAndGetConformingAudioProfile($xml_MPParameters,$repCount,$adaptCou
     elseif($xml_MPParameters['codec']=="MPEG-H")
         $audioMediaProfile="MPEG-H";
     else
-        $audioMediaProfile="unknown";
+        fprintf ($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.4.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. codec parameter not found and identification of the exact media profile not possible for track ".$repCount." of SwitchingSet ".$adaptCount." \n");
       
     return $audioMediaProfile;
 }
@@ -654,7 +679,7 @@ function checkPresentation($adapts_count,$session_dir,$adaptation_set_template,$
     
     if(($videoSelectionSetFound && $cfhdVideoSwSetFound)||($audioSelectionSetFound && $caacAudioSwSetFound) ||($subtitleSelectionSetFound && $im1tSubtitleSwSetFound))
     {
-        if($encryptedTrackFound!==0)
+        if($encryptedTrackFound===0)
             $presentationProfile="CMFHD";
         elseif($encryptedTrackFound && $cencSwSetFound && $cbcsSwSetFound)
             fprintf($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 5: 'Each CMAF Presentation Profile contains either all unencrypted samples or some samples encrypted with CENC using 'cenc' or 'cbcs' scheme, but not both', here SwSet with 'cenc' and 'cbcs' are found.");
