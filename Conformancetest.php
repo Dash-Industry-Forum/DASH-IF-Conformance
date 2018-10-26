@@ -497,6 +497,8 @@ var progressSegmentsTimer;
 var pollingTimer;
 var cmaf = 0;
 var ctawave=0;
+var TotalAdaptRep_count = 0;
+var crossValidation = 0;
 
 /////////////////////////////////////////////////////////////
 //Check if 'drag and drop' feature is supported by the browser, if not, then traditional file upload can be used.
@@ -748,7 +750,6 @@ function pollingProgress()
         }
         return;
     }else{
-        var TotalAdaptRep_count = 0;
         var Periodxml=xmlDoc_progress.getElementsByTagName("Period"); 
         Adapt_count= Periodxml[0].childNodes.length;
         var AdaptRepPeriod_count=Adapt_count;
@@ -803,12 +804,12 @@ function pollingProgress()
         x++;
     }
     
-    lastloc = repid[repid.length-1]+1;
+    lastloc++;
+    crossValidation = 1;
     
     clearInterval( pollingTimer);
-    //progressSegmentsTimer = setInterval(function(){progress()},400);
+    progressSegmentsTimer = setInterval(function(){progress()},400);
     document.getElementById('par').style.visibility='visible';
-    finishTest();
 }
 
 function progress()  //Progress of Segments' Conformance
@@ -817,12 +818,15 @@ function progress()  //Progress of Segments' Conformance
     if(xmlDoc_progress == null)
         return;
     
-    tree.setItemImage2( repid[counting],'progress3.gif','progress3.gif','progress3.gif');
-    var ComparedRepresentations = xmlDoc_progress.getElementsByTagName("ComparedRepresentations");
-    var SelectionSet=xmlDoc_progress.getElementsByTagName("SelectionSet");
-    var CmafProfile=xmlDoc_progress.getElementsByTagName("CMAFProfile");
-    if ((ComparedRepresentations.length !=0 && representationid>totarr[adaptationid]) || (SelectionSet.length !=0 && adaptationid>totarr[0]) || (CmafProfile.length !=0 && adaptationid>totarr[0])){
-        if(cmaf == 1 || ctawave == 1){
+    if(cmaf == 1 || ctawave == 1){
+        //tree.setItemImage2( repid[counting],'progress3.gif','progress3.gif','progress3.gif');
+        var ComparedRepresentations = xmlDoc_progress.getElementsByTagName("ComparedRepresentations");
+        var SelectionSet=xmlDoc_progress.getElementsByTagName("SelectionSet");
+        var CmafProfile=xmlDoc_progress.getElementsByTagName("CMAFProfile");
+        var CTAWAVESelectionSet=xmlDoc_progress.getElementsByTagName("CTAWAVESelectionSet");
+        var CTAWAVEProfile=xmlDoc_progress.getElementsByTagName("CTAWAVEPresentation");
+        if (crossValidation == 1 && ((ComparedRepresentations.length !=0) || (SelectionSet.length !=0) || (CmafProfile.length !=0) ||
+            (CTAWAVESelectionSet.length !=0) || (CTAWAVEProfile.length !=0))){
             if(ComparedRepresentations.length !=0){
                 for(var i =1; i<=ComparedRepresentations.length;i++){
 
@@ -851,19 +855,13 @@ function progress()  //Progress of Segments' Conformance
             //Additions for CMAF Selection Set and Presentation profile.
             if(SelectionSet.length!=0  && adaptationid>totarr[0]){
                 if(SelectionSet[0].textContent=="noerror"){
-                    if(cmaf == 1)
-                        automate(1,lastloc,"CMAF Selection Set");
-                    else if(ctawave == 1)
-                        automate(1,lastloc,"CTA WAVE Selection Set");
+                    automate(1,lastloc,"CMAF Selection Set");
 
                     tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
                     lastloc++;
                 }
                 else{
-                    if(cmaf == 1)
-                        automate(1,lastloc,"CMAF Selection Set");
-                    else if(ctawave == 1)
-                        automate(1,lastloc,"CTA WAVE Selection Set");
+                    automate(1,lastloc,"CMAF Selection Set");
 
                     tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                     lastloc++;
@@ -895,26 +893,73 @@ function progress()  //Progress of Segments' Conformance
                     lastloc++;
                 }
             }
-        }
-        
-        kidsloc.push(lastloc);
-        var BrokenURL=xmlDoc_progress.getElementsByTagName("BrokenURL");
-        if( BrokenURL != null && BrokenURL[0].textContent == "error")//if(locations[locations.length-1]!="noerror")
-        {
-            urlarray.push("temp/" + dirid+"/missinglink.html");//urlarray.push(locations[locations.length-1]);
+            if(CTAWAVESelectionSet.length!=0){
+                if(CTAWAVESelectionSet[0].textContent=="noerror"){
+                    automate(1,lastloc,"CTA WAVE Selection Set");
 
-            automate(1,lastloc,"Broken URL list");
-            tree.setItemImage2(lastloc,'404.jpg','404.jpg','404.jpg');
-            lastloc++; 
-        }
+                    tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
+                    lastloc++;
+                }
+                else{
+                    automate(1,lastloc,"CTA WAVE Selection Set");
 
+                    tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
+                    lastloc++;
+
+                    automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                    tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                    kidsloc.push(lastloc);
+                    urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
+                    lastloc++;
+                }
+            }
+            if(CTAWAVEProfile.length!=0){
+                if(CTAWAVEProfile[0].textContent=="noerror"){
+                        automate(1,lastloc,"CTA WAVE Presentation Profile");
+
+                        tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
+                        lastloc++;
+                }
+                else{
+                    automate(1,lastloc,"CTA WAVE Presentation Profile");
+
+                    tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
+                    lastloc++;
+
+                    automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                    tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                    kidsloc.push(lastloc);
+                    urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
+                    lastloc++;
+                }
+            }
+
+            kidsloc.push(lastloc);
+            var BrokenURL=xmlDoc_progress.getElementsByTagName("BrokenURL");
+            if( BrokenURL != null && BrokenURL.length != 0){//if(locations[locations.length-1]!="noerror")
+                if(BrokenURL[0].textContent == "error"){
+                    urlarray.push("temp/" + dirid+"/missinglink.html");//urlarray.push(locations[locations.length-1]);
+
+                    automate(1,lastloc,"Broken URL list");
+                    tree.setItemImage2(lastloc,'404.jpg','404.jpg','404.jpg');
+                    lastloc++; 
+                }
+            }
+
+            adjustFooter();
+            clearTimeout(progressTimer);
+            setStatusTextlabel("Conformance test completed");
+            finishTest();
+        }
+        else{
+            progress();
+        }
+    }
+    else{
         adjustFooter();
         clearTimeout(progressTimer);
         setStatusTextlabel("Conformance test completed");
         finishTest();
-    }
-    else{
-        progress();
     }
 }
 /////////////////////////Automation starts///////////////////////////////////////////////////
