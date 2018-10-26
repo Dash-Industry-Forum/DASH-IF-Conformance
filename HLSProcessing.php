@@ -14,11 +14,15 @@
  */
 
 function processHLS(){
-    global $session_dir, $mpd_url, $progress_xml, $progress_report, $hls_manifest_type;
+    global $session_dir, $mpd_url,                                                  // Client block input
+            $progress_xml, $progress_report,                                        // Reporting
+            $hls_manifest_type,                                                     // HLS data
+            $ctawave_conformance, $ctawave_function_name, $ctawave_when_to_call;    // CTA WAVE data
+    
     $StreamInfURLArray = array();
     $IframeURLArray = array();
     $XMediaURLArray = array();
-            
+    
     ## Open related files
     $progress_xml = simplexml_load_string('<root><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><allDownloadComplete></allDownloadComplete><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
     $progress_xml->asXml($session_dir . '/' . $progress_report);
@@ -49,6 +53,10 @@ function processHLS(){
         
         ## Crete $mpd_features structure since it is used in conformance server checks
         formMpdFeatures();
+        
+        ## Perform Cross Validation
+        if($ctawave_conformance)
+            $return_arr = $ctawave_function_name($ctawave_when_to_call[0]);
     }
     
     $progress_xml->completed = "true";
@@ -362,6 +370,9 @@ function determineMediaType($path, $tag){
                     $hls_media_types['unknown'][$sdType][] = $tag;
                     break;
             }
+        }
+        else{
+            $hls_media_types['unknown'][$sdType][] = $tag;
         }
     }
 }
