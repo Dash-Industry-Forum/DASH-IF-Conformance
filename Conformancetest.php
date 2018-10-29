@@ -523,7 +523,9 @@
     <table>
         <tr>
             <td valign="top">
-                <div id="treeboxbox_tree" style="background-color:#0000;overflow:hidden;border :none; "></div>
+                <div id="treeboxbox_tree" style="background-color:#0000;overflow:hidden;border :none; ">
+                    <a id="downloadpar" href="" download="" style="visibility:hidden;"></a>
+                </div>
             </td>
 
             <td rowspan="2" style="padding-left:25" valign="top">
@@ -564,6 +566,7 @@ var dvb = 0;
 var hbbtv = 0;
 var dashif=0;
 var ctawave=0;
+var downloadarray=[];
 
 /////////////////////////////////////////////////////////////
 //Check if 'drag and drop' feature is supported by the browser, if not, then traditional file upload can be used.
@@ -1110,9 +1113,12 @@ function progress()  //Progress of Segments' Conformance
     var HbbTVDVBComparedRepresentations = xmlDoc_progress.getElementsByTagName("HbbTVDVBComparedRepresentations");
     var SelectionSet=xmlDoc_progress.getElementsByTagName("SelectionSet");
     var CmafProfile=xmlDoc_progress.getElementsByTagName("CMAFProfile");
+    var CTAWAVESelectionSet=xmlDoc_progress.getElementsByTagName("CTAWAVESelectionSet");
+    var CTAWAVEProfile=xmlDoc_progress.getElementsByTagName("CTAWAVEPresentation");
     if ((CrossRepValidation.length!=0 && adaptationid>totarr[0]) || (ComparedRepresentations.length !=0 && representationid>totarr[adaptationid]) || 
             (SelectionSet.length !=0 && adaptationid>totarr[0]) || (CmafProfile.length !=0 && adaptationid>totarr[0]) || 
-            (HbbTVDVBComparedRepresentations.length !=0 && adaptationid>totarr[0])){
+            (HbbTVDVBComparedRepresentations.length !=0 && adaptationid>totarr[0]) ||
+            (CTAWAVESelectionSet.length!=0 && adaptationid>totarr[0]) || (CTAWAVEProfile.length!=0 && adaptationid>totarr[0])){
         
         if(CrossRepValidation.length!=0 && adaptationid>totarr[0]){
             for(var i =1; i<=CrossRepValidation.length;i++)
@@ -1257,6 +1263,83 @@ function progress()  //Progress of Segments' Conformance
             }
         }
         
+        if(ctawave == 1)
+        {
+            //Additions for CMAF Selection Set and Presentation profile.
+            if(CTAWAVESelectionSet.length!=0  && adaptationid>totarr[0])
+            {
+                if(CTAWAVESelectionSet[0].textContent=="noerror"){
+                        automate(1,lastloc,"CTA WAVE Selection Set");
+                        tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
+                        lastloc++;
+                        
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
+                        lastloc++;
+                }
+                else if(CTAWAVESelectionSet[0].textContent=="warning"){
+                        automate(1,lastloc,"CTA WAVE Selection Set");
+                        tree.setItemImage2(lastloc,'log.jpg','log.jpg','log.jpg');
+                        lastloc++;
+                        
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
+                        lastloc++;
+                }
+                else{
+                        automate(1,lastloc,"CTA WAVE Selection Set");
+                        tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
+                        lastloc++;
+                    
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
+                        lastloc++;
+                }
+            }
+            if(CTAWAVEProfile.length!=0  && adaptationid>totarr[0])
+            {
+                if(CTAWAVEProfile[0].textContent=="noerror"){
+                        automate(1,lastloc,"CTA WAVE Presentation Profile");
+                        tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
+                        lastloc++;
+                        
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
+                        lastloc++;
+                }
+                else if(CTAWAVEProfile[0].textContent=="warning"){
+                        automate(1,lastloc,"CTA WAVE Presentation Profile");
+                        tree.setItemImage2(lastloc,'log.jpg','log.jpg','log.jpg');
+                        lastloc++;
+                        
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
+                        lastloc++;
+                }
+                else{
+                        automate(1,lastloc,"CTA WAVE Presentation Profile");
+                        tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
+                        lastloc++;
+                    
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
+                        lastloc++;
+                }
+            }
+        }
+        
         kidsloc.push(lastloc);
         var BrokenURL=xmlDoc_progress.getElementsByTagName("BrokenURL");
         if( BrokenURL != null && BrokenURL[0].textContent == "error")//if(locations[locations.length-1]!="noerror")
@@ -1334,15 +1417,32 @@ function brother(y,x)
     y++;
 }
 
-function tondblclick(id)
+function tonsingleclick(id)
+{
+    var urlto="";
+    var position = kidsloc.indexOf(id);
+    urlto=urlarray[position];
+    
+    if(urlto)
+        window.open(urlto, "_blank");
+}
+
+function tonrightclick(id)
 {
     var urlto="";
     var position = kidsloc.indexOf(id);
     urlto=urlarray[position];
     //console.log(position);
     //console.log(urlto);
-    if(urlto)
-    window.open(urlto, "_blank");
+    
+    if(urlto){
+        var locarray = urlto.split("/");
+        var htmlname = locarray[locarray.length-1];
+        var textname = htmlname.split(".")[0] + ".txt";
+
+        var textloc = window.location.href + "/../" + urlto.split(".")[0] + ".txt";
+        downloadLog(textloc, textname);
+    }
 }
 //var parsed;
 //var uploaded = "false";
@@ -1415,7 +1515,8 @@ function setUpTreeView()
     }
 
     tree = new dhtmlXTreeObject('treeboxbox_tree', '100%', '100%', 0);
-    tree.setOnDblClickHandler(tondblclick);
+    tree.setOnClickHandler(tonsingleclick);
+    tree.setOnRightClickHandler(tonrightclick);
     tree.setSkin('dhx_skyblue');
     tree.setImagePath("img/");
     tree.enableDragAndDrop(true);
@@ -1472,6 +1573,14 @@ function adjustFooter(){
     if (footerTop < docHeight) {
      $('.site-footer').css('margin-top', 1.5*footerHeight + (docHeight - footerTop) + 'px');
     }
+}
+
+function downloadLog(url, name){
+    var element = document.getElementById("downloadpar");
+    element.href = url;
+    element.download = name;
+    
+    document.querySelector('#downloadpar').click();
 }
 </script>
 
