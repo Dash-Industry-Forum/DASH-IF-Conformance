@@ -51,7 +51,7 @@ define("MediaProfileAttributesSubtitle", array(
 
 function SelectionSet()
 {
-    global $mpd_features,$session_dir,$selectionset_infofile,$current_period,$adaptation_set_template, $opfile ;
+    global $mpd_features,$session_dir,$selectionset_infofile,$current_period,$adaptation_set_template, $opfile, $string_info, $progress_xml, $progress_report;
     $opfile="";
     
     
@@ -64,7 +64,29 @@ function SelectionSet()
     $adapts = $mpd_features['Period'][$current_period]['AdaptationSet'];
     $result=checkSelectionSet(sizeof($adapts),$session_dir,$adaptation_set_template,$opfile);
     fclose($opfile);
-    //checkPresentation();
+    
+    $temp_string = str_replace(array('$Template$'),array($selectionset_infofile),$string_info);
+    file_put_contents($session_dir.'/'.$selectionset_infofile.'.html',$temp_string);
+    
+    $searchfiles = file_get_contents($session_dir.'/'.$selectionset_infofile.'.txt');
+    if(strpos($searchfiles, "CTAWAVE check violated") !== FALSE){
+        $progress_xml->Results[0]->addChild('CTAWAVESelectionSet', 'error');
+        $file_error[] = $session_dir.'/'.$selectionset_infofile.'.html';
+    }
+    elseif(strpos($searchfiles, "Warning") !== FALSE || strpos($searchfiles, "WARNING") !== FALSE){
+        $progress_xml->Results[0]->addChild('CTAWAVESelectionSet', 'warning');
+        $file_error[] = $session_dir.'/'.$selectionset_infofile.'.html';
+    }
+    else{
+        $progress_xml->Results[0]->addChild('CTAWAVESelectionSet', 'noerror');
+        $file_error[] = "noerror";
+    }
+    
+    $tempr_string = str_replace(array('$Template$'), array($selectionset_infofile), $string_info);
+    file_put_contents($session_dir.'/'.$selectionset_infofile.'.html', $tempr_string);
+    $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+    
+    print_console($session_dir.'/'.$selectionset_infofile.'.txt', "CTA WAVE Selection Set Results");
 }
 
 function checkSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$opfile)
@@ -91,31 +113,33 @@ function checkSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$
             for($fcount=0;$fcount<$filecount;$fcount++)
             {
                 $xml = get_DOM($files[$fcount], 'atomlist');
-                $hdlr=$xml->getElementsByTagName("hdlr")->item(0);
-                $handler_type=$hdlr->getAttribute("handler_type");
-                $MPTrackResult=getMediaProfile($xml,$handler_type,$fcount, $adapt_count,$opfile);
-                $MPTrack=$MPTrackResult[0];
-                fprintf($opfile, $MPTrackResult[1]);
-                fprintf($opfile, "Information: The Media profile found in track ".$fcount." of SwitchingSet ".$adapt_count." is-".$MPTrack. "\n");
-                if($handler_type=="vide")
-                {
-                    $videoSelectionSetFound=1;
-                    if(in_array($MPTrack, $videoMPArray))
-                            $waveVideoTrackFound=1;
+                if($xml){
+                    $hdlr=$xml->getElementsByTagName("hdlr")->item(0);
+                    $handler_type=$hdlr->getAttribute("handler_type");
+                    $MPTrackResult=getMediaProfile($xml,$handler_type,$fcount, $adapt_count,$opfile);
+                    $MPTrack=$MPTrackResult[0];
+                    fprintf($opfile, $MPTrackResult[1]);
+                    fprintf($opfile, "Information: The Media profile found in track ".$fcount." of SwitchingSet ".$adapt_count." is-".$MPTrack. "\n");
+                    if($handler_type=="vide")
+                    {
+                        $videoSelectionSetFound=1;
+                        if(in_array($MPTrack, $videoMPArray))
+                                $waveVideoTrackFound=1;
+                    }
+                    if($handler_type=="soun")
+                    {
+                        $audioSelectionSetFound=1;
+                        if(in_array($MPTrack, $audioMPArray))
+                                $waveAudioTrackFound=1;
+                    }
+                    if($handler_type=="subt")
+                    {
+                        $subtitleSelectionSetFound=1;
+                        if(in_array($MPTrack, $subtitleMPArray))
+                                $waveSubtitleTrackFound=1;
+                    }
+                       array_push($SwSet_MP, $MPTrack); 
                 }
-                if($handler_type=="soun")
-                {
-                    $audioSelectionSetFound=1;
-                    if(in_array($MPTrack, $audioMPArray))
-                            $waveAudioTrackFound=1;
-                }
-                if($handler_type=="subt")
-                {
-                    $subtitleSelectionSetFound=1;
-                    if(in_array($MPTrack, $subtitleMPArray))
-                            $waveSubtitleTrackFound=1;
-                }
-                   array_push($SwSet_MP, $MPTrack); 
             }
 
             if(count(array_unique($SwSet_MP)) !== 1)
@@ -618,7 +642,7 @@ function checkAndGetConformingSubtitleProfile($xml_MPParameters,$repCount,$adapt
 
 function Presentation()
 {   
-    global $mpd_features,$session_dir,$presentation_infofile,$current_period,$adaptation_set_template, $opfile ;
+    global $mpd_features,$session_dir,$presentation_infofile,$current_period,$adaptation_set_template, $opfile, $string_info, $progress_xml, $progress_report;
     $opfile="";
 
     if(!($opfile = open_file($session_dir. '/' . $presentation_infofile . '.txt', 'w'))){
@@ -628,6 +652,29 @@ function Presentation()
     $adapts = $mpd_features['Period'][$current_period]['AdaptationSet'];
     $result= checkPresentation(sizeof($adapts), $session_dir, $adaptation_set_template, $opfile);
     fclose($opfile);
+    
+    $temp_string = str_replace(array('$Template$'),array($presentation_infofile),$string_info);
+    file_put_contents($session_dir.'/'.$presentation_infofile.'.html',$temp_string);
+    
+    $searchfiles = file_get_contents($session_dir.'/'.$presentation_infofile.'.txt');
+    if(strpos($searchfiles, "CTAWAVE check violated") !== FALSE){
+        $progress_xml->Results[0]->addChild('CTAWAVEPresentation', 'error');
+        $file_error[] = $session_dir.'/'.$presentation_infofile.'.html';
+    }
+    elseif(strpos($searchfiles, "Warning") !== FALSE || strpos($searchfiles, "WARNING") !== FALSE){
+        $progress_xml->Results[0]->addChild('CTAWAVEPresentation', 'warning');
+        $file_error[] = $session_dir.'/'.$presentation_infofile.'.html';
+    }
+    else{
+        $progress_xml->Results[0]->addChild('CTAWAVEPresentation', 'noerror');
+        $file_error[] = "noerror";
+    }
+    
+    $tempr_string = str_replace(array('$Template$'), array($presentation_infofile), $string_info);
+    file_put_contents($session_dir.'/'.$presentation_infofile.'.html', $tempr_string);
+    $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+    
+    print_console($session_dir.'/'.$presentation_infofile.'.txt', "CTA WAVE Presentation Results");
 }
 
 function checkPresentation($adapts_count,$session_dir,$adaptation_set_template,$opfile)
@@ -654,37 +701,37 @@ function checkPresentation($adapts_count,$session_dir,$adaptation_set_template,$
             for($fcount=0;$fcount<$filecount;$fcount++)
             {
                 $xml = get_DOM($files[$fcount], 'atomlist');
-                $hdlr=$xml->getElementsByTagName("hdlr")->item(0);
-                $handler_type=$hdlr->getAttribute("handler_type");
-                $MPTrackResult=getMediaProfile($xml,$handler_type,$fcount, $adapt_count,$opfile);
-                $MPTrack=$MPTrackResult[0];
-                if($handler_type=="vide")
-                {
-                    $videoSelectionSetFound=1;
+                if($xml){
+                    $hdlr=$xml->getElementsByTagName("hdlr")->item(0);
+                    $handler_type=$hdlr->getAttribute("handler_type");
+                    $MPTrackResult=getMediaProfile($xml,$handler_type,$fcount, $adapt_count,$opfile);
+                    $MPTrack=$MPTrackResult[0];
+                    if($handler_type=="vide")
+                    {
+                        $videoSelectionSetFound=1;
 
-                }
-                if($handler_type=="soun")
-                {
-                    $audioSelectionSetFound=1;
+                    }
+                    if($handler_type=="soun")
+                    {
+                        $audioSelectionSetFound=1;
 
-                }
-                if($handler_type=="subt")
-                {
-                    $subtitleSelectionSetFound=1;
+                    }
+                    if($handler_type=="subt")
+                    {
+                        $subtitleSelectionSetFound=1;
 
-                }
-                   array_push($SwSet_MP, $MPTrack); 
-                   
-                   //Check for encrypted tracks
-                   if($xml->getElementsByTagName('tenc')->length >0)
-                   {
-                       $encryptedTrackFound=1;
-                       $schm=$xml->getElementsByTagName('schm');
-                       if($schm->length>0)
-                            array_push($EncTracks,$schm->item(0)->getAttribute('scheme'));
-                   }
-                 
-                       
+                    }
+                       array_push($SwSet_MP, $MPTrack); 
+
+                    //Check for encrypted tracks
+                    if($xml->getElementsByTagName('tenc')->length >0)
+                    {
+                        $encryptedTrackFound=1;
+                        $schm=$xml->getElementsByTagName('schm');
+                        if($schm->length>0)
+                             array_push($EncTracks,$schm->item(0)->getAttribute('scheme'));
+                    }
+                }     
             }
 
             if(count(array_unique($SwSet_MP)) === 1)
