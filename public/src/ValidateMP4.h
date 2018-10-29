@@ -635,6 +635,7 @@ typedef struct {
 
 	// -----
 	atompathType atompath;
+        bool suppressAtomLevel;
 
 	argstr	filetypestr;
 	argstr	checklevelstr;
