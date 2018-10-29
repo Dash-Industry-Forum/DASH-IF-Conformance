@@ -19,7 +19,8 @@ function process_MPD(){
             $progress_report, $progress_xml, $reprsentation_template, $adaptation_set_template, $mpd_log,    // Reporting
             $additional_flags,
             $cmaf_conformance, $cmaf_function_name, $cmaf_when_to_call,                                      // CMAF data
-            $hbbtv_conformance, $dvb_conformance, $hbbtv_dvb_function_name, $hbbtv_dvb_when_to_call;         // HbbTV-DVB data
+            $hbbtv_conformance, $dvb_conformance, $hbbtv_dvb_function_name, $hbbtv_dvb_when_to_call,         // HbbTV-DVB data
+            $ctawave_conformance, $ctawave_function_name, $ctawave_when_to_call;                             // CTA WAVE data
     
     ## Open related files
     $progress_xml = simplexml_load_string('<root><Profile></Profile><PeriodCount></PeriodCount><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
@@ -218,7 +219,9 @@ function process_MPD(){
             $file_error[] = $return_item;
     }
     if($hbbtv_conformance || $dvb_conformance)
-            $return_arr = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[4]);
+        $return_arr = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[4]);
+    if($ctawave_conformance)
+        $return_arr = $ctawave_function_name($ctawave_when_to_call[0]);
     
     err_file_op(2);
     //------------------------------------------------------------------------//

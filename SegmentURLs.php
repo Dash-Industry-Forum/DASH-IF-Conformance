@@ -38,6 +38,10 @@ function derive_segment_URLs($urls, $period_info){
                 $segment_access[] = $segment_base_low;
                 $segment_urls[] = array($urls[$i][$j]);
             }
+            else{
+                $segment_access[] = '';
+                $segment_urls[] = array($urls[$i][$j]);
+            }
         }
         $adapt_segment_urls[] = $segment_urls;
         $segment_accesses[] = $segment_access;
