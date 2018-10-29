@@ -639,7 +639,7 @@ function Presentation()
     file_put_contents($session_dir.'/'.$presentation_infofile.'.html', $tempr_string);
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
     
-    print_console($session_dir.'/'.$presentation_infofile.'.txt', "CTAWAVE Presentation Results");
+    print_console($session_dir.'/'.$presentation_infofile.'.txt', "CTA WAVE Presentation Results");
 }
 
 function checkPresentation($adapts_count,$session_dir,$adaptation_set_template,$opfile)
