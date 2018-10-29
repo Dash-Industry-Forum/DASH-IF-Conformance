@@ -107,28 +107,30 @@ function assemble($path, $segment_urls, $sizearr){
 }
 
 function analyze_results($returncode, $curr_adapt_dir, $rep_dir_name){
-    global $session_dir, $stderr_file, $leafinfo_file, $reprsentation_info_log_template, $reprsentation_error_log_template,
-            $string_info, $progress_report, $progress_xml, $current_adaptation_set, $current_representation, $atominfo_file, $sample_data,
+    global $session_dir, $mpd_features, $stderr_file, $leafinfo_file, $reprsentation_info_log_template, $reprsentation_error_log_template,
+            $string_info, $progress_report, $progress_xml, $current_period, $current_adaptation_set, $current_representation, $atominfo_file, $sample_data,
             $hls_manifest, $hls_tag, $hls_error_file, $hls_info_file;
     
+    $adaptation_set = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
+    $representation = $adaptation_set['Representation'][$current_representation];
     if($returncode != 0){
         error_log('Processing AdaptationSet ' . $current_adaptation_set . ' Representation ' . $current_representation . ' returns: ' . $returncode);
         if (filesize($session_dir . '/' . $stderr_file) == 0){
             if(!$hls_manifest){
                 if($adaptation_set['mimeType'] == 'application/ttml+xml' || $adaptation_set['mimeType'] == 'image/jpeg')
-                    file_put_contents($session_dir . '/' . 'stderr.txt', '### error:  \n###        Failed to process Adaptation Set ' . $current_adaptation_set . ', Representation ' . $current_representation . "!, as mimeType= '".$adaptation_set['mimeType']."' is not supported");
+                    file_put_contents($session_dir . '/' . 'stderr.txt', "### error:  \n###        Failed to process Adaptation Set " . $current_adaptation_set . ', Representation ' . $current_representation . "!, as mimeType= '".$adaptation_set['mimeType']."' is not supported");
                 elseif($representation['mimeType'] == "application/ttml+xml" || $representation['mimeType'] == "image/jpeg")
-                    file_put_contents($session_dir . '/' . 'stderr.txt', '### error:  \n###        Failed to process Adaptation Set ' . $current_adaptation_set . ', Representation ' . $current_representation . "!, as mimeType= '".$representation['mimeType']."' is not supported");
+                    file_put_contents($session_dir . '/' . 'stderr.txt', "### error:  \n###        Failed to process Adaptation Set " . $current_adaptation_set . ', Representation ' . $current_representation . "!, as mimeType= '".$representation['mimeType']."' is not supported");
                 else
-                    file_put_contents($session_dir . '/' . 'stderr.txt', '### error:  \n###        Failed to process Adaptation Set ' . $current_adaptation_set . ', Representation ' . $current_representation . '!');
+                    file_put_contents($session_dir . '/' . 'stderr.txt', "### error:  \n###        Failed to process Adaptation Set " . $current_adaptation_set . ', Representation ' . $current_representation . '!');
             }
             else{
                 $tag_array = explode('_', $hls_tag);
                 $files = array_diff(scandir($session_dir . '/' . $tag_array[0] . '/' . $tag_array[1] . "/"), array('.', '..'));
                 if(strpos($files[2], 'webvtt') !== FALSE || strpos($files[2], 'xml') !== FALSE || strpos($files[2], 'html') !== FALSE)
-                    file_put_contents($session_dir . '/' . 'stderr.txt', '### error:  \n###        Failed to process ' . $tag_array[0] . ' with index ' . $tag_array[1] . ', as the file type is ' . explode('.', $files[2])[1] . '!');
+                    file_put_contents($session_dir . '/' . 'stderr.txt', "### error:  \n###        Failed to process " . $tag_array[0] . ' with index ' . $tag_array[1] . ', as the file type is ' . explode('.', $files[2])[1] . '!');
                 else
-                    file_put_contents($session_dir . '/' . 'stderr.txt', '### error:  \n###        Failed to process ' . $tag_array[0] . ' with index ' . $tag_array[1] . '!');
+                    file_put_contents($session_dir . '/' . 'stderr.txt', "### error:  \n###        Failed to process " . $tag_array[0] . ' with index ' . $tag_array[1] . '!');
             }
         }
     }
@@ -199,7 +201,7 @@ function run_backend($config_file){
 }
 
 function config_file_for_backend($period, $adaptation_set, $representation, $rep_dir_name){
-    global $session_dir, $config_file, $additional_flags, $reprsentation_mdat_template, $current_adaptation_set, $current_representation, $hls_manifest, $hls_mdat_file;
+    global $session_dir, $config_file, $additional_flags, $suppressatomlevel, $reprsentation_mdat_template, $current_adaptation_set, $current_representation, $hls_manifest, $hls_mdat_file;
     
     $file = open_file($session_dir . '/' . $config_file, 'w');
     fwrite($file, $session_dir . '/' . $rep_dir_name . '.mp4 ' . "\n");
@@ -220,6 +222,8 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
         foreach ($piece as $pie)
             if ($pie !== "")
                 fwrite($file, $pie . "\n");
+        if($suppressatomlevel)
+            fwrite($file, '-suppressatomlevel' . "\n");
     }
     
     fclose($file);

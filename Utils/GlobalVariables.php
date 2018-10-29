@@ -33,6 +33,7 @@ $additional_flags = '';
 $error_message = 1;
 $warning_message = 1;
 $info_message = 1;
+$suppressatomlevel = 0;
 
 # HLS variable
 $hls_manifest = 0;
@@ -111,19 +112,31 @@ if(isset($_POST['url'])){
     }
 }
 if(isset($_POST['mpdonly'])){
-    $mpd_validation_only = 1;
+    if($hls_manifest)
+        echo "\n\n\033[".'0;34'."m"."The option 'mpdonly' can only be used for DASH manifests, ignoring for this test..."."\033[0m"."\n\n";
+    else
+        $mpd_validation_only = 1;
 }
 if(isset($_POST['cmaf'])){
     $cmaf_conformance = 1;
 }
 if(isset($_POST['dvb'])){
-    $dvb_conformance = 1;
+    if($hls_manifest)
+        echo "\n\n\033[".'0;34'."m"."The option 'dvb' can only be used for DASH manifests, ignoring for this test..."."\033[0m"."\n\n";
+    else
+        $dvb_conformance = 1;
 }
 if(isset($_POST['hbbtv'])){
-    $hbbtv_conformance = 1;
+    if($hls_manifest)
+        echo "\n\n\033[".'0;34'."m"."The option 'hbbtv' can only be used for DASH manifests, ignoring for this test..."."\033[0m"."\n\n";
+    else
+        $hbbtv_conformance = 1;
 }
 if(isset($_POST['dashif'])){
-    $dashif_conformance = 1;
+    if($hls_manifest)
+        echo "\n\n\033[".'0;34'."m"."The option 'dashif' can only be used for DASH manifests, ignoring for this test..."."\033[0m"."\n\n";
+    else
+        $dashif_conformance = 1;
 }
 if(isset($_POST['ctawave'])){
     $ctawave_conformance = 1;
@@ -137,6 +150,9 @@ if (isset($_POST['nowarning'])){
 if (isset($_POST['noinfo'])){
     $info_message = 0;
 }
+if (isset($_POST['suppressatomlevel'])){
+    $suppressatomlevel = 1;
+}
 
 # Important for Backend block
 $command_file = 'command.txt';
@@ -147,7 +163,7 @@ $atominfo_file = 'atominfo.xml';
 $sample_data = 'sample_data';
 
 # Important for reporting
-$counter_name = dirname(__DIR__) . '/DASH/counter.txt';
+$counter_name = (!$hls_manifest) ? dirname(__DIR__) . '/DASH/counter.txt' : dirname(__DIR__) . '/HLS/counter.txt';
 $mpd_log = 'mpdreport';
 $featurelist_log = 'featuresList.xml';
 $featurelist_log_html = 'featuretable.html';
