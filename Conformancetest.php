@@ -464,6 +464,7 @@
         <tr>
             <td valign="top">
                 <div id="treeboxbox_tree" style="background-color:#0000;overflow:hidden;border :none; "></div>
+                <a id="downloadpar" href="" download="" style="visibility:hidden;"></a>
             </td>
 
             <td rowspan="2" style="padding-left:25" valign="top">
@@ -896,13 +897,28 @@ function progress()  //Progress of Segments' Conformance
             if(CTAWAVESelectionSet.length!=0){
                 if(CTAWAVESelectionSet[0].textContent=="noerror"){
                     automate(1,lastloc,"CTA WAVE Selection Set");
-
                     tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
+                    lastloc++;
+                    
+                    automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                    tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                    kidsloc.push(lastloc);
+                    urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
+                    lastloc++;
+                }
+                else if(CTAWAVESelectionSet[0].textContent=="warning"){
+                    automate(adaptid[i-1],lastloc,"CTA WAVE Selection Set");
+                    tree.setItemImage2(lastloc,'log.jpg','log.jpg','log.jpg');
+                    lastloc++;
+
+                    automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                    tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                    kidsloc.push(lastloc);
+                    urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
                     lastloc++;
                 }
                 else{
                     automate(1,lastloc,"CTA WAVE Selection Set");
-
                     tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                     lastloc++;
 
@@ -915,14 +931,29 @@ function progress()  //Progress of Segments' Conformance
             }
             if(CTAWAVEProfile.length!=0){
                 if(CTAWAVEProfile[0].textContent=="noerror"){
-                        automate(1,lastloc,"CTA WAVE Presentation Profile");
+                    automate(1,lastloc,"CTA WAVE Presentation Profile");
+                    tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
+                    lastloc++;
 
-                        tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
-                        lastloc++;
+                    automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                    tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                    kidsloc.push(lastloc);
+                    urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
+                    lastloc++;
+                }
+                else if(CTAWAVEProfile[0].textContent=="warning"){
+                    automate(1,lastloc,"CTA WAVE Presentation Profile");
+                    tree.setItemImage2(lastloc,'log.jpg','log.jpg','log.jpg');
+                    lastloc++;
+
+                    automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                    tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                    kidsloc.push(lastloc);
+                    urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
+                    lastloc++;
                 }
                 else{
                     automate(1,lastloc,"CTA WAVE Presentation Profile");
-
                     tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                     lastloc++;
 
@@ -981,15 +1012,32 @@ function brother(y,x)
     y++;
 }
 
-function tondblclick(id)
+function tonsingleclick(id)
+{
+    var urlto="";
+    var position = kidsloc.indexOf(id);
+    urlto=urlarray[position];
+    
+    if(urlto)
+        window.open(urlto, "_blank");
+}
+
+function tonrightclick(id)
 {
     var urlto="";
     var position = kidsloc.indexOf(id);
     urlto=urlarray[position];
     //console.log(position);
     //console.log(urlto);
-    if(urlto)
-    window.open(urlto, "_blank");
+    
+    if(urlto){
+        var locarray = urlto.split("/");
+        var htmlname = locarray[locarray.length-1];
+        var textname = htmlname.split(".")[0] + ".txt";
+
+        var textloc = window.location.href + "/../" + urlto.split(".")[0] + ".txt";
+        downloadLog(textloc, textname);
+    }
 }
 //var parsed;
 //var uploaded = "false";
@@ -1049,7 +1097,8 @@ function setUpTreeView()
     }
 
     tree = new dhtmlXTreeObject('treeboxbox_tree', '100%', '100%', 0);
-    tree.setOnDblClickHandler(tondblclick);
+    tree.setOnClickHandler(tonsingleclick);
+    tree.setOnRightClickHandler(tonrightclick);
     tree.setSkin('dhx_skyblue');
     tree.setImagePath("img/");
     tree.enableDragAndDrop(true);
@@ -1085,6 +1134,14 @@ function adjustFooter(){
     if (footerTop < docHeight) {
      $('.site-footer').css('margin-top', 1.5*footerHeight + (docHeight - footerTop) + 'px');
     }
+}
+
+function downloadLog(url, name){
+    var element = document.getElementById("downloadpar");
+    element.href = url;
+    element.download = name;
+    
+    document.querySelector('#downloadpar').click();
 }
 </script>
 
