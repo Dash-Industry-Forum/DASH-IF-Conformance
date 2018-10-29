@@ -40,7 +40,7 @@
  */
 function open_file($file_path, $mode){
     if (!($opfile = fopen($file_path, $mode))){
-        echo "Error opening file" . $file_path;
+        echo "Error opening file" . $file_path . "\n";
         return NULL;
     }
     
@@ -131,7 +131,7 @@ function syscall($command){
  */
 function relative_path($path){
     if(file_exists($path))
-        return substr($path, strpos($path, 'webfe'));
+        return substr($path, strpos($path, 'Conformance-Frontend'));
     return NULL;
 }
 

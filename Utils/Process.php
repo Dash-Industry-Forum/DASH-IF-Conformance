@@ -22,6 +22,7 @@ include 'Load.php';
 include 'FileOperations.php';
 include 'VisitorCounter.php';
 include 'GlobalVariables.php';
+include 'PrettyPrint.php';
 include 'SegmentDownload.php';
 include 'SegmentAssemble.php';
 include 'SegmentValidation.php';
@@ -34,7 +35,8 @@ include '../DASH/CrossValidation.php';
 include '../DASH/Representation.php';
 include '../DASH/SegmentURLs.php';
 include '../DASH/Report.php';
-include '../webfe/Featurelist.php';
+include '../HLS/HLSProcessing.php';
+include '../Conformance-Frontend/Featurelist.php';
 
 set_time_limit(0);
 ini_set("log_errors", 1);
@@ -46,4 +48,7 @@ session_start();
 error_log("session_start:" . session_name());
 
 session_create();
-process_MPD();
+if(!$hls_manifest)
+    process_MPD();
+else
+    processHLS();
