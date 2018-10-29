@@ -29,7 +29,7 @@ final class SelectionSetTest extends TestCase
     //
 
     //Test that a WAVE SwSet is found in the SelSet. The SwSet contains two Wave tracks. 
-    public function testWAVESetSetInSelSet()
+    public function testWAVESwSetInSelSet()
     { 
         $adapts_count=1;
         $session_dir="Selection_set_examples/SelSetVideoWaveSwSet";
