@@ -57,6 +57,8 @@ function processHLS(){
         ## Perform Cross Validation
         if($ctawave_conformance)
             $return_arr = $ctawave_function_name($ctawave_when_to_call[0]);
+        
+        err_file_op(2);
     }
     
     $progress_xml->completed = "true";
@@ -310,6 +312,9 @@ function groupPlaylists($file_location){
                 $temp_string = str_replace(array('$Template$'), array($new_track_path.'log'), $string_info);
                 file_put_contents($session_dir . '/' . $new_track_path . 'log.html', $temp_string);
                 rename_file($track_path, $session_dir . '/' . $new_track_path);
+                
+                err_file_op(1);
+                print_console($session_dir . '/' . $new_track_path . 'log.txt', "AdaptationSet $i Representation $j Results");
                 
                 $j++;
             }
