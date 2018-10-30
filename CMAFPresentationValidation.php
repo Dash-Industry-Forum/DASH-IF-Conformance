@@ -22,6 +22,8 @@ function checkPresentation(){
         $selSetFile=file_get_contents($session_dir.'/'.$selectionset_infofile.'.txt');
         if(strpos($selSetFile, "CMAF check violated") == false){
              $progress_xml->Results[0]->addChild('SelectionSet', 'noerror');
+             $tempr_string = str_replace(array('$Template$'), array($selectionset_infofile), $string_info); // this string shows a text file on HTML
+             file_put_contents($session_dir.'/'.$selectionset_infofile.'.html', $tempr_string); // Create html file containing log file result
              $file_error[] = "noerror"; // no error found in text file
         }
         else{
@@ -37,6 +39,8 @@ function checkPresentation(){
         $presentnFile=file_get_contents($session_dir.'/'.$presentation_infofile.'.txt');
         if(strpos($presentnFile, "CMAF check violated") == false){
              $progress_xml->Results[0]->addChild('CMAFProfile', 'noerror');
+             $tempr_string = str_replace(array('$Template$'), array($presentation_infofile), $string_info); // this string shows a text file on HTML
+             file_put_contents($session_dir.'/'.$presentation_infofile.'.html', $tempr_string); // Create html file containing log file result
              $file_error[] = "noerror"; // no error found in text file
         }
         else{
