@@ -1226,6 +1226,12 @@ function progress()  //Progress of Segments' Conformance
 
                         tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
                         lastloc++;
+                        
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile.html");
+                        lastloc++;
                 }
                 else{
                         automate(1,lastloc,"CMAF Selection Set");
@@ -1246,6 +1252,12 @@ function progress()  //Progress of Segments' Conformance
                         automate(1,lastloc,"CMAF Presentation Profile");
 
                         tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
+                        lastloc++;
+                        
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile.html");
                         lastloc++;
                 }
                 else{
