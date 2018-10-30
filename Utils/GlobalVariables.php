@@ -70,6 +70,8 @@ $hbbtv_dvb_crossvalidation_logfile = '';
 
 # CTA WAVE variables
 $ctawave_conformance = false;
+$CTApresentation_infofile = '';
+$CTAselectionset_infofile = '';
 
 if (isset($_POST['urlcode'])){
     $url_array = json_decode($_POST['urlcode']);
