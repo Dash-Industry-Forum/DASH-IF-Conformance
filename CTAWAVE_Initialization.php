@@ -15,8 +15,9 @@
 
 include 'CTAWAVE_Handle.php';
 include 'CTAWAVE_SelectionSet.php';
+include 'CTAWAVE_PresentationProfile.php';
 
 $ctawave_function_name = 'CTAWAVE_Handle';
 $ctawave_when_to_call = array( 'AdaptationSet');
-$selectionset_infofile = 'SelectionSet_infofile_ctawave';
-$presentation_infofile = 'Presentation_infofile_ctawave';
+$CTAselectionset_infofile = 'SelectionSet_infofile_ctawave';
+$CTApresentation_infofile = 'Presentation_infofile_ctawave';

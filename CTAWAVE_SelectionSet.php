@@ -26,14 +26,6 @@ define("MediaProfileAttributesVideo", array(
         "tier" => "",
         "brand"=>""));
 
-$ACC_core = array(
-    "codec" => "AAC", // in soun_sampledescription box  sdType="mp4a" 
-    "profiles" => array("AAC-LC", "HE-AAC", "HE-AACv2"), // in DecoderSpecificInfo box audioObjectType="0x02" (0x02=>AAC-LC, 0x05=>HE-AAC, 0x29=>HE-AACv2) 
-    "levels" => "2", // can't seem to find where it is contained
-    "numb_channels" => array("mono", "stereo") //in DecoderSpecificInfo box channelConfig="0x2" (0x1 for mono, 0x2 for stereo
-    //should include ObjectType="0x40" to identify the type is audio and StreamType = 0x05 (Audio Stream)?
-    );
-
 define("MediaProfileAttributesAudio", array(
         "codec" => "",
         "profile" => "",
@@ -49,47 +41,47 @@ define("MediaProfileAttributesSubtitle", array(
         "brand"=>""));
 
 
-function SelectionSet()
+function CTASelectionSet()
 {
-    global $mpd_features,$session_dir,$selectionset_infofile,$current_period,$adaptation_set_template, $opfile, $string_info, $progress_xml, $progress_report;
+    global $mpd_features,$session_dir,$CTAselectionset_infofile,$current_period,$adaptation_set_template, $opfile, $string_info, $progress_xml, $progress_report;
     $opfile="";
     
     
-    if(!($opfile = open_file($session_dir. '/' . $selectionset_infofile . '.txt', 'w'))){
-        echo "Error opening/creating Selection Set conformance check file: "."./SelectionSet_infofile.txt";
+    if(!($opfile = open_file($session_dir. '/' . $CTAselectionset_infofile . '.txt', 'w'))){
+        echo "Error opening/creating Selection Set conformance check file: "."./SelectionSet_infofile_ctawave.txt";
         return;
     }
     //fprintf($opfile, "**Selection Set conformance check: \n\n");
     
     $adapts = $mpd_features['Period'][$current_period]['AdaptationSet'];
-    $result=checkSelectionSet(sizeof($adapts),$session_dir,$adaptation_set_template,$opfile);
+    $result=CTACheckSelectionSet(sizeof($adapts),$session_dir,$adaptation_set_template,$opfile);
     fclose($opfile);
     
-    $temp_string = str_replace(array('$Template$'),array($selectionset_infofile),$string_info);
-    file_put_contents($session_dir.'/'.$selectionset_infofile.'.html',$temp_string);
+    $temp_string = str_replace(array('$Template$'),array($CTAselectionset_infofile),$string_info);
+    file_put_contents($session_dir.'/'.$CTAselectionset_infofile.'.html',$temp_string);
     
-    $searchfiles = file_get_contents($session_dir.'/'.$selectionset_infofile.'.txt');
+    $searchfiles = file_get_contents($session_dir.'/'.$CTAselectionset_infofile.'.txt');
     if(strpos($searchfiles, "CTAWAVE check violated") !== FALSE){
         $progress_xml->Results[0]->addChild('CTAWAVESelectionSet', 'error');
-        $file_error[] = $session_dir.'/'.$selectionset_infofile.'.html';
+        $file_error[] = $session_dir.'/'.$CTAselectionset_infofile.'.html';
     }
     elseif(strpos($searchfiles, "Warning") !== FALSE || strpos($searchfiles, "WARNING") !== FALSE){
         $progress_xml->Results[0]->addChild('CTAWAVESelectionSet', 'warning');
-        $file_error[] = $session_dir.'/'.$selectionset_infofile.'.html';
+        $file_error[] = $session_dir.'/'.$CTAselectionset_infofile.'.html';
     }
     else{
         $progress_xml->Results[0]->addChild('CTAWAVESelectionSet', 'noerror');
         $file_error[] = "noerror";
     }
     
-    $tempr_string = str_replace(array('$Template$'), array($selectionset_infofile), $string_info);
-    file_put_contents($session_dir.'/'.$selectionset_infofile.'.html', $tempr_string);
+    $tempr_string = str_replace(array('$Template$'), array($CTAselectionset_infofile), $string_info);
+    file_put_contents($session_dir.'/'.$CTAselectionset_infofile.'.html', $tempr_string);
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
     
-    print_console($session_dir.'/'.$selectionset_infofile.'.txt', "CTA WAVE Selection Set Results");
+    print_console($session_dir.'/'.$CTAselectionset_infofile.'.txt', "CTA WAVE Selection Set Results");
 }
 
-function checkSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$opfile)
+function CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$opfile)
 {
     $waveVideoTrackFound=0; $waveVideoSwSetFound=0;$videoSelectionSetFound=0;
     $waveAudioTrackFound=0; $waveAudioSwSetFound=0;$audioSelectionSetFound=0;
@@ -143,7 +135,7 @@ function checkSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$
             }
 
             if(count(array_unique($SwSet_MP)) !== 1)
-                fprintf ($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.2.1: 'WAVE content SHALL include one or more Switching Sets conforming to at least one WAVE approved CMAF Media Profile',but Switching Set ".$adapt_count." found with Tracks of different Media Profiles. \n");
+                fprintf ($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.1: 'WAVE content SHALL include one or more Switching Sets conforming to at least one WAVE approved CMAF Media Profile',but Switching Set ".$adapt_count." found with Tracks of different Media Profiles. \n");
             else{
                 if($handler_type==="vide" && in_array(array_unique($SwSet_MP)[0], $videoMPArray)){
                         $waveVideoSwSetFound=1;
@@ -159,28 +151,28 @@ function checkSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$
     //Check if at least one wave SwSet found.
     if($videoSelectionSetFound){
         if($waveVideoTrackFound!=1){
-            $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.2.1: 'WAVE content SHALL include one or more Tracks conforming to at least one WAVE approved CMAF Media Profile',but no Tracks found conforming to WAVE video Media Profile in the video Selection Set \n";
+            $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.1: 'WAVE content SHALL include one or more Tracks conforming to at least one WAVE approved CMAF Media Profile',but no Tracks found conforming to WAVE video Media Profile in the video Selection Set \n";
             fprintf ($opfile, $errorMsg );
         }elseif($waveVideoSwSetFound!=1){
-            $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.2.1: 'WAVE content SHALL include one or more Switching Sets conforming to at least one WAVE approved CMAF Media Profile',but no Switching Set found conforming to WAVE video Media Profile in the video Selection Set \n";
+            $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.1: 'WAVE content SHALL include one or more Switching Sets conforming to at least one WAVE approved CMAF Media Profile',but no Switching Set found conforming to WAVE video Media Profile in the video Selection Set \n";
             fprintf ($opfile, $errorMsg );
         }
     }
     if($audioSelectionSetFound){
         if($waveAudioTrackFound!=1){
-            $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.2.1: 'WAVE content SHALL include one or more Tracks conforming to at least one WAVE approved CMAF Media Profile',but no Tracks found conforming to WAVE audio Media Profile in the audio Selection Set \n";
+            $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.1: 'WAVE content SHALL include one or more Tracks conforming to at least one WAVE approved CMAF Media Profile',but no Tracks found conforming to WAVE audio Media Profile in the audio Selection Set \n";
             fprintf ($opfile, $errorMsg);
         }elseif($waveAudioSwSetFound!=1){
-            $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.2.1: 'WAVE content SHALL include one or more Switching Sets conforming to at least one WAVE approved CMAF Media Profile',but no Switching Set found conforming to WAVE audio Media Profile in the audio Selection Set \n";
+            $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.1: 'WAVE content SHALL include one or more Switching Sets conforming to at least one WAVE approved CMAF Media Profile',but no Switching Set found conforming to WAVE audio Media Profile in the audio Selection Set \n";
             fprintf ($opfile, $errorMsg);
         }
     }
     if($subtitleSelectionSetFound){
         if($waveSubtitleTrackFound!=1){
-            $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.2.1: 'WAVE content SHALL include one or more Tracks conforming to at least one WAVE approved CMAF Media Profile',but no Tracks found conforming to WAVE subtitle Media Profile in the subtitle Selection Set \n";
+            $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.1: 'WAVE content SHALL include one or more Tracks conforming to at least one WAVE approved CMAF Media Profile',but no Tracks found conforming to WAVE subtitle Media Profile in the subtitle Selection Set \n";
             fprintf ($opfile, $errorMsg);
         }elseif($waveSubtitleSwSetFound!=1){
-            $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.2.1: 'WAVE content SHALL include one or more Switching Sets conforming to at least one WAVE approved CMAF Media Profile',but no Switching Set found conforming to WAVE subtitle Media Profile in the subtitle Selection Set \n";
+            $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.1: 'WAVE content SHALL include one or more Switching Sets conforming to at least one WAVE approved CMAF Media Profile',but no Switching Set found conforming to WAVE subtitle Media Profile in the subtitle Selection Set \n";
             fprintf ($opfile, $errorMsg);
         }
     }
@@ -428,7 +420,7 @@ function checkAndGetConformingVideoProfile($xml_MPParameters,$repCount, $adaptCo
  
         }
         else
-            $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.2.1: 'Each WAVE Video Media Profile SHALL conform to normative ref. listed in Table 1',AVC media profiles conformance failed, profile- ".$xml_MPParameters['profile']." not matching to any WAVE AVC media profiles ('High' is expected). for track ".$repCount." of SwitchingSet ".$adaptCount."\n";      
+            $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.2.1: 'Each WAVE Video Media Profile SHALL conform to normative ref. listed in Table 1',AVC media profiles conformance failed, profile- ".$xml_MPParameters['profile']." not matching to any WAVE AVC media profiles ('High' is expected) for track ".$repCount." of SwitchingSet ".$adaptCount."\n";      
 
 
     }
@@ -567,7 +559,7 @@ function checkAndGetConformingAudioProfile($xml_MPParameters,$repCount,$adaptCou
                         $audioMediaProfile="AAC_Core";
                 }
                 else
-                    $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.4.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but the profiles are not among the [AAC-LC, HE-AAC, HE-AAC v2] for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
+                    $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but the profiles are not among the [AAC-LC, HE-AAC, HE-AAC v2] for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
 
               
   
@@ -577,15 +569,15 @@ function checkAndGetConformingAudioProfile($xml_MPParameters,$repCount,$adaptCou
                 if(in_array($xml_MPParameters['profile'],array("0x02", "0x05")))
                     $audioMediaProfile="AAC_Multichannel";
                 else
-                    $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.4.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC multichannel codec found but the profiles are not among the [AAC-LC, HE-AAC] for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
+                    $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC multichannel codec found but the profiles are not among the [AAC-LC, HE-AAC] for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
 
             }
             else
-                $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.4.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but channels are not conforming, found ".$xml_MPParameters['channels']." but expected 1,2,5,6,7,12 or 14 for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
+                $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but channels are not conforming, found ".$xml_MPParameters['channels']." but expected 1,2,5,6,7,12 or 14 for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
 
         }
         else
-            $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.4.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but sampling rate is not conforming, found ".$xml_MPParameters['sampleRate']." but expected 48kHz for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
+            $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but sampling rate is not conforming, found ".$xml_MPParameters['sampleRate']." but expected 48kHz for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
              
     }
     elseif($xml_MPParameters['codec']=="EAC-3" ||$xml_MPParameters['codec']=="AC-3")
@@ -601,19 +593,19 @@ function checkAndGetConformingAudioProfile($xml_MPParameters,$repCount,$adaptCou
                 if(in_array($xml_MPParameters['channels'], array("1","2","3","4","5","6","7","9","10","11","12","14","15","16","17","19")))
                         $audioMediaProfile="MPEG-H_SingleStream";
                 else
-                    $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.4.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. MPEG-H codec found but the channels are not conforming, found ".$xml_MPParameters['channels']." but expected 1-7, 9-12, 14-17, or 19  for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
+                    $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. MPEG-H codec found but the channels are not conforming, found ".$xml_MPParameters['channels']." but expected 1-7, 9-12, 14-17, or 19  for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
 
             }
             else
-                $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.4.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. MPEG-H codec found but the profile found ('".$xml_MPParameters['profile']."') are not among the Low Complexity( LC 1,2,3)  for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
+                $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. MPEG-H codec found but the profile found ('".$xml_MPParameters['profile']."') are not among the Low Complexity( LC 1,2,3)  for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
 
         }    
         else
-            $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.4.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. MPEG-H codec found but sampling rate is not conforming, found ".$xml_MPParameters['sampleRate']." but expected 48kHz for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
+            $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. MPEG-H codec found but sampling rate is not conforming, found ".$xml_MPParameters['sampleRate']." but expected 48kHz for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
 
     }
     else
-        $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.4.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. codec parameter (".$xml_MPParameters['codec'].") is not as expected and identification of the exact media profile not possible for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
+        $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. codec parameter (".$xml_MPParameters['codec'].") is not as expected and identification of the exact media profile not possible for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
       
     return [$audioMediaProfile, $errorMsg];
 }
@@ -640,199 +632,4 @@ function checkAndGetConformingSubtitleProfile($xml_MPParameters,$repCount,$adapt
 }
 
 
-function Presentation()
-{   
-    global $mpd_features,$session_dir,$presentation_infofile,$current_period,$adaptation_set_template, $opfile, $string_info, $progress_xml, $progress_report;
-    $opfile="";
-
-    if(!($opfile = open_file($session_dir. '/' . $presentation_infofile . '.txt', 'w'))){
-            echo "Error opening/creating Presentation profile conformance check file: "."./Presentation_infofile.txt";
-            return;
-        }
-    $adapts = $mpd_features['Period'][$current_period]['AdaptationSet'];
-    $result= checkPresentation(sizeof($adapts), $session_dir, $adaptation_set_template, $opfile);
-    fclose($opfile);
-    
-    $temp_string = str_replace(array('$Template$'),array($presentation_infofile),$string_info);
-    file_put_contents($session_dir.'/'.$presentation_infofile.'.html',$temp_string);
-    
-    $searchfiles = file_get_contents($session_dir.'/'.$presentation_infofile.'.txt');
-    if(strpos($searchfiles, "CTAWAVE check violated") !== FALSE){
-        $progress_xml->Results[0]->addChild('CTAWAVEPresentation', 'error');
-        $file_error[] = $session_dir.'/'.$presentation_infofile.'.html';
-    }
-    elseif(strpos($searchfiles, "Warning") !== FALSE || strpos($searchfiles, "WARNING") !== FALSE){
-        $progress_xml->Results[0]->addChild('CTAWAVEPresentation', 'warning');
-        $file_error[] = $session_dir.'/'.$presentation_infofile.'.html';
-    }
-    else{
-        $progress_xml->Results[0]->addChild('CTAWAVEPresentation', 'noerror');
-        $file_error[] = "noerror";
-    }
-    
-    $tempr_string = str_replace(array('$Template$'), array($presentation_infofile), $string_info);
-    file_put_contents($session_dir.'/'.$presentation_infofile.'.html', $tempr_string);
-    $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
-    
-    print_console($session_dir.'/'.$presentation_infofile.'.txt', "CTA WAVE Presentation Results");
-}
-
-function checkPresentation($adapts_count,$session_dir,$adaptation_set_template,$opfile)
-{
-    $cfhdVideoSwSetFound=0;$videoSelectionSetFound=0;
-    $caacAudioSwSetFound=0;$audioSelectionSetFound=0;
-    $im1tSubtitleSwSetFound=0;$subtitleSelectionSetFound=0;
-    $handler_type=""; $errorMsg="";$encryptedTrackFound=0;$cencSwSetFound=0;$cbcsSwSetFound=0;
-    $presentationProfile="";
-
-    for($adapt_count=0; $adapt_count<$adapts_count; $adapt_count++){
-
-        $SwSet_MP=array();    
-        $EncTracks=array();
-        $adapt_dir = str_replace('$AS$', $adapt_count, $adaptation_set_template);
-        $loc = $session_dir . '/' . $adapt_dir.'/';
-        $filecount = 0;
-        $files = glob($loc . "*.xml");
-        if($files)
-            $filecount = count($files);
-        if(!file_exists($loc))
-            fprintf ($opfile, "Switching Set ".$adapt_count."-Tried to retrieve data from a location that does not exist. \n (Possible cause: Representations are not valid and no file/directory for box info is created.)");
-        else{
-            for($fcount=0;$fcount<$filecount;$fcount++)
-            {
-                $xml = get_DOM($files[$fcount], 'atomlist');
-                if($xml){
-                    $hdlr=$xml->getElementsByTagName("hdlr")->item(0);
-                    $handler_type=$hdlr->getAttribute("handler_type");
-                    $MPTrackResult=getMediaProfile($xml,$handler_type,$fcount, $adapt_count,$opfile);
-                    $MPTrack=$MPTrackResult[0];
-                    if($handler_type=="vide")
-                    {
-                        $videoSelectionSetFound=1;
-
-                    }
-                    if($handler_type=="soun")
-                    {
-                        $audioSelectionSetFound=1;
-
-                    }
-                    if($handler_type=="subt")
-                    {
-                        $subtitleSelectionSetFound=1;
-
-                    }
-                       array_push($SwSet_MP, $MPTrack); 
-
-                    //Check for encrypted tracks
-                    if($xml->getElementsByTagName('tenc')->length >0)
-                    {
-                        $encryptedTrackFound=1;
-                        $schm=$xml->getElementsByTagName('schm');
-                        if($schm->length>0)
-                             array_push($EncTracks,$schm->item(0)->getAttribute('scheme'));
-                    }
-                }     
-            }
-
-            if(count(array_unique($SwSet_MP)) === 1)
-            {
-                if($handler_type==="vide" && array_unique($SwSet_MP)[0]==="AVC_HD"){
-                        $cfhdVideoSwSetFound=1;
-                }elseif($handler_type=="soun" && array_unique($SwSet_MP)[0]==="AAC_Core"){
-                        $caacAudioSwSetFound=1;
-                }
-                elseif($handler_type=="subt" && array_unique($SwSet_MP)[0]==="TTML_IMSC1_Text"){
-                        $im1tSubtitleSwSetFound=1;
-                }
-                
-            }
-            if($encryptedTrackFound===1)
-            {
-                if(count($EncTracks)==$filecount && count(array_unique($EncTracks)) === 1 && array_unique($EncTracks)[0]==="cenc")
-                    $cencSwSetFound=1;
-                elseif(count($EncTracks)==$filecount && count(array_unique($EncTracks)) === 1 && array_unique($EncTracks)[0]==="cbcs")
-                    $cbcsSwSetFound=1;
-
-            }
-        }
-    }
-    
-
-    $PresProfArray=array();
-    if($videoSelectionSetFound )
-    {
-        if(!$cfhdVideoSwSetFound)
-        {
-            array_push($PresProfArray,"");
-            fprintf ($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 5: 'If a video track is included, then conforming Presentation will at least include that video in a CMAF SwSet conforming to required AVC (HD) Media Profile', but AVC-HD SwSet not found in the presenatation. \n");
-
-        }
-        else
-            array_push($PresProfArray,getPresentationProfile($encryptedTrackFound,$cencSwSetFound,$cbcsSwSetFound,$opfile));
-             
-    }
-    if($audioSelectionSetFound )//&& $caacAudioSwSetFound) ||( && $im1tSubtitleSwSetFound
-    {
-        if(!$caacAudioSwSetFound)
-        {
-            array_push($PresProfArray,"");
-            fprintf ($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 5: 'If an audio track is included, then conforming Presentation will at least include that audio in a CMAF SwSet conforming to required AAC (Core) Media Profile', but AAC-Core SwSet not found in the presenatation. \n");
-
-        }
-        else
-            array_push($PresProfArray,getPresentationProfile($encryptedTrackFound,$cencSwSetFound,$cbcsSwSetFound,$opfile));
-    }
-    if($subtitleSelectionSetFound)
-    {
-        if(!$im1tSubtitleSwSetFound)
-        {
-            array_push($PresProfArray,"");
-            fprintf ($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 5: 'If a subtitle track is included, then conforming Presentation will at least include that subtitle in a CMAF SwSet conforming to TTML Text Media Profile', but TTML Text SwSet not found in the presenatation. \n");
-
-        }
-        else
-            array_push($PresProfArray,getPresentationProfile($encryptedTrackFound,$cencSwSetFound,$cbcsSwSetFound,$opfile));
-    }
-
-    if(in_array("", $PresProfArray))
-        $presentationProfile="";
-    elseif(count(array_unique($PresProfArray))===1)
-        $presentationProfile=$PresProfArray[0];
-    else
-        $presentationProfile="";
-    /*
-        fprintf($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 5: For CMAF Presentation profile ".$presnt_profile." ',if video track is included, then Presentation will at least include that video in a CMAF SwSet conforming to AVC-HD Media Profile', video track found but SWSet conforming to AVC-HD not found \n");
-    if(inarray($profile,$profilesArray) && $audioSelectionSetFound && $caacAudioSwSetFound!=1)
-        fprintf($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 5: For CMAF Presentation profile ".$presnt_profile." ',if audio track is included, then Presentation will at least include that audio in a CMAF SwSet conforming to AAC-Core Media Profile', audio track found but SWSet conforming to AAC-Core not found \n");
-
-    if(inarray($profile,$profilesArray) && $subtitleSelectionSetFound && $im1tSubtitleSwSetFound!=1)
-        fprintf($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 5: For CMAF Presentation profile ".$presnt_profile." ',if subtitile track is included, then Presentation will at least include that subtitle in a CMAF SwSet conforming to IMSC1-Text Media Profile', subtitle track found but SWSet conforming to IMSC1-Text not found \n");
-    if($profile_cmfhdc && $encryptedSwSetFound!=1)
-        fprintf($opfile, "**'CMAF check violated: Section A.1.3 - 'At least one CMAF Switching Set SHALL be encrypted', but found none. \n");
-    if($profile_cmfhds && $encryptedSwSetFound!=1)
-        fprintf($opfile, "**'CMAF check violated: Section A.1.4 - 'At least one CMAF Switching Set SHALL be encrypted', but found none. \n");
-    */
-    
-    if($presentationProfile!=="")
-        fprintf ($opfile, "Information: The WAVE content conforms to CMAF Presentation Profile- ".$presentationProfile." \n");
-    else
-        fprintf ($opfile, "Information: The WAVE content doesn't conform to any of the CMAF Presentation Profiles \n");
-    
-return $presentationProfile;    
-    
-}
-function getPresentationProfile($encryptedTrackFound,$cencSwSetFound,$cbcsSwSetFound,$opfile)
-{
-    $presentationProfile="";
-    if($encryptedTrackFound===0)
-        $presentationProfile="CMFHD";
-    elseif($encryptedTrackFound && $cencSwSetFound && $cbcsSwSetFound)
-        fprintf($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 5: 'Each CMAF Presentation Profile contains either all unencrypted samples or some samples encrypted with CENC using 'cenc' or 'cbcs' scheme, but not both', here SwSet with 'cenc' and 'cbcs' are found.");
-    elseif($encryptedTrackFound && $cencSwSetFound)
-        $presentationProfile="CMFHDc";
-    elseif($encryptedTrackFound && $cencSwSetFound)
-        $presentationProfile="CMFHDs";
-    
-    return $presentationProfile;
-}
 ?>
