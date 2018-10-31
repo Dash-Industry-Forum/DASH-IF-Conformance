@@ -16,6 +16,9 @@
 function CTAWAVE_Handle($request){
     $return_val = NULL;
     switch($request){
+        case 'Tracks':
+            CTAFlags();
+            break;
         case 'AdaptationSet':
             $return_val = CTASelectionSet();
             $return_val = CTAPresentation();
