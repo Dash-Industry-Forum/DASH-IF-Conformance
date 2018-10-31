@@ -2375,7 +2375,7 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 						//goto bail;
 					}
 				}
-				else if (((( sdh.sdType == 'hev1' ) || ( sdh.sdType == 'hvc1' )) || is_protected) && (vg.cmaf || vg.dvb || vg.hbbtv))
+				else if (((( sdh.sdType == 'hev1' ) || ( sdh.sdType == 'hvc1' )) || is_protected) && (vg.cmaf || vg.dvb || vg.hbbtv || vg.ctawave))
 				{
 					if (entry->type == 'hvcC') {
 						atomerr= Validate_hvcC_Atom( entry, refcon, (char *)"hvcC" );
@@ -3362,7 +3362,7 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	atomprint(">\n"); //vg.tabcnt++; 
 
 	// Check required field values
-	FieldMustBeOneOf9( sdh.sdType, OSType, "SampleDescription sdType must be 'mp4a' or 'enca' or 'ac-4' or 'mha1' or 'ac-3' or 'ec-3' or 'dtsc' or 'dtsh', 'dtse', 'dtsl' ", ( 'mp4a', 'enca','ac-4', 'mha1','ec-3','dtsc','dtsh','dtse','dtsl' ) );
+	FieldMustBeOneOf10( sdh.sdType, OSType, "SampleDescription sdType must be 'mp4a' or 'enca' or 'ac-4' or 'mha1' or 'ac-3' or 'ec-3' or 'dtsc' or 'dtsh', 'dtse', 'dtsl' ", ( 'mp4a', 'enca','ac-4', 'mha1','ac-3','ec-3','dtsc','dtsh','dtse','dtsl' ) );
 	
 	if( (sdh.sdType != 'mp4a') && (sdh.sdType != 'enca') && (sdh.sdType != 'ac-4') && (sdh.sdType != 'mha1') && (sdh.sdType != 'ac-3') && (sdh.sdType != 'ec-3') && (sdh.sdType != 'dtsc') && (sdh.sdType != 'dtsh') && (sdh.sdType != 'dtse') && (sdh.sdType != 'dtsl') && !fileTypeKnown ){	
 			warnprint("WARNING: Don't know about this sound descriptor type \"%s\"\n", 

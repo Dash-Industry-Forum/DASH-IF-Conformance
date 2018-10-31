@@ -625,6 +625,7 @@ typedef struct {
     bool    cmaf;
     bool    dvb;
     bool    hbbtv;
+    bool    ctawave;
     unsigned int  numControlTracks;
     unsigned int  *numControlLeafs;
     LeafInfo **controlLeafInfo;
