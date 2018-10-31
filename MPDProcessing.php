@@ -185,6 +185,8 @@ function process_MPD(){
                 $return_val = $cmaf_function_name($cmaf_when_to_call[0]);
             if($hbbtv_conformance || $dvb_conformance)
                 $is_subtitle_rep = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[2]);
+            if($ctawave_conformance)
+                $return_cta = $ctawave_function_name($ctawave_when_to_call[0]);
             
             $return_seg_val = validate_segment($curr_adapt_dir, $curr_rep_dir, $period, $adaptation_set, $representation, $segment_url, $rep_dir_name, $is_subtitle_rep);
             if($cmaf_conformance)
@@ -221,7 +223,7 @@ function process_MPD(){
     if($hbbtv_conformance || $dvb_conformance)
         $return_arr = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[4]);
     if($ctawave_conformance)
-        $return_arr = $ctawave_function_name($ctawave_when_to_call[0]);
+        $return_arr = $ctawave_function_name($ctawave_when_to_call[1]);
     
     err_file_op(2);
     //------------------------------------------------------------------------//
