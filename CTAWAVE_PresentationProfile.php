@@ -129,7 +129,7 @@ function CTACheckPresentation($adapts_count,$session_dir,$adaptation_set_templat
         if(!$cfhdVideoSwSetFound)
         {
             array_push($PresProfArray,"");
-            fprintf ($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 5: 'If a video track is included, then conforming Presentation will at least include that video in a CMAF SwSet conforming to required AVC (HD) Media Profile', but AVC-HD SwSet not found in the presenatation. \n");
+            fprintf ($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 5: 'If a video track is included, then conforming Presentation will at least include that video in a CMAF SwSet conforming to required AVC (HD) Media Profile', but AVC-HD SwSet not found in the presentation. \n");
 
         }
         else
@@ -141,7 +141,7 @@ function CTACheckPresentation($adapts_count,$session_dir,$adaptation_set_templat
         if(!$caacAudioSwSetFound)
         {
             array_push($PresProfArray,"");
-            fprintf ($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 5: 'If an audio track is included, then conforming Presentation will at least include that audio in a CMAF SwSet conforming to required AAC (Core) Media Profile', but AAC-Core SwSet not found in the presenatation. \n");
+            fprintf ($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 5: 'If an audio track is included, then conforming Presentation will at least include that audio in a CMAF SwSet conforming to required AAC (Core) Media Profile', but AAC-Core SwSet not found in the presentation. \n");
 
         }
         else
@@ -152,7 +152,7 @@ function CTACheckPresentation($adapts_count,$session_dir,$adaptation_set_templat
         if(!$im1tSubtitleSwSetFound)
         {
             array_push($PresProfArray,"");
-            fprintf ($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 5: 'If a subtitle track is included, then conforming Presentation will at least include that subtitle in a CMAF SwSet conforming to TTML Text Media Profile', but TTML Text SwSet not found in the presenatation. \n");
+            fprintf ($opfile, "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 5: 'If a subtitle track is included, then conforming Presentation will at least include that subtitle in a CMAF SwSet conforming to TTML Text Media Profile', but TTML Text SwSet not found in the presentation. \n");
 
         }
         else

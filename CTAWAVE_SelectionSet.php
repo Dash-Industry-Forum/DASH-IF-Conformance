@@ -191,8 +191,8 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
             $xml_MPParameters['codec']="AVC";
             $nal_unit=$xml->getElementsByTagName("NALUnit");
             if($nal_unit->length==0){
-                fprintf ($opfile, "###NAL unit not found in the sample description");
-                return;
+               $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.2.1: 'Each WAVE Video Media Profile SHALL conform to normative ref. listed in Table 1',AVC media profiles conformance failed.  NAL unit not found in the sample description and identification of the exact media profile not possible for track ".$repCount." of SwitchingSet ".$adaptCount.". \n";      
+               return ["unknown", $errorMsg];
             }
             else{
                 for($nal_count=0;$nal_count<$nal_unit->length;$nal_count++)
@@ -220,9 +220,9 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
                   }
                   elseif($comment->getAttribute("colour_description_present_flag")=="0x0")
                   {
-                    $xml_MPParameters['color_primaries']="1";
-                    $xml_MPParameters['transfer_char']="1";
-                    $xml_MPParameters['matrix_coeff']="1";
+                    $xml_MPParameters['color_primaries']="0x1";
+                    $xml_MPParameters['transfer_char']="0x1";
+                    $xml_MPParameters['matrix_coeff']="0x1";
                   }
               }
               if($comment->getAttribute("timing_info_present_flag")=="0x1" )
@@ -240,24 +240,28 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
         else if($sdType=='hev1' || $sdType=='hvc1')
         {
             $xml_MPParameters['codec']="HEVC";
-            $hvcC=$xml->getElementsByTagName("hvcC")->item(0);
-            if(($hvcC->getAttribute("profile_idc")==1) || ($hvcC->getAttribute("compatibility_flag_1"))==1)
-                $profile="Main";
-            elseif(($hvcC->getAttribute("profile_idc")==2) || ($hvcC->getAttribute("compatibility_flag_2"))==1)
-                $profile="Main10";
-            else
-                $profile="Other";
-            
-            $tier=$hvcC->getAttribute("tier_flag");
-            $xml_MPParameters['tier']=$tier;//Tier=0 is the main-tier.
-            $xml_MPParameters['profile']=$profile;
-            $xml_MPParameters['level']=(float)($hvcC->getAttribute("level_idc"))/30; //HEVC std defines level_idc is 30 times of actual level number.
+            $hvcC=$xml->getElementsByTagName("hvcC");
+            if($hvcC->length>0)
+            {
+                $hvcC=$xml->getElementsByTagName("hvcC")->item(0);
+                if(($hvcC->getAttribute("profile_idc")=="1") || ($hvcC->getAttribute("compatibility_flag_1"))=="1")
+                    $profile="Main";
+                elseif(($hvcC->getAttribute("profile_idc")=="2") || ($hvcC->getAttribute("compatibility_flag_2"))=="1")
+                    $profile="Main10";
+                else
+                    $profile="Other";
+
+                $tier=$hvcC->getAttribute("tier_flag");
+                $xml_MPParameters['tier']=$tier;//Tier=0 is the main-tier.
+                $xml_MPParameters['profile']=$profile;
+                $xml_MPParameters['level']=(float)($hvcC->getAttribute("level_idc"))/30; //HEVC std defines level_idc is 30 times of actual level number.
+            }
             $xml_MPParameters['width']=$videSampleDes->getAttribute("width"); 
             $xml_MPParameters['height']=$videSampleDes->getAttribute("height"); 
             $nal_unit=$xml->getElementsByTagName("NALUnit");
             if($nal_unit->length==0){
-                fprintf ($opfile, "### NAL unit not found in the sample description \n");
-                return;
+                $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.2.1: 'Each WAVE Video Media Profile SHALL conform to normative ref. listed in Table 1',HEVC media profiles conformance failed.  NAL unit not found in the sample description and identification of the exact media profile not possible for track ".$repCount." of SwitchingSet ".$adaptCount.". \n";      
+                return ["unknown", $errorMsg];
             }
             else{
                 for($nal_count=0;$nal_count<$nal_unit->length;$nal_count++)
@@ -551,7 +555,7 @@ function checkAndGetConformingAudioProfile($xml_MPParameters,$repCount,$adaptCou
         {
             if($xml_MPParameters['channels']=="0x1" || $xml_MPParameters['channels']=="0x2")
             {
-                if(in_array($xml_MPParameters['profile'],array("0x02", "0x05", "0x29")))
+                if(in_array($xml_MPParameters['profile'],array("0x02", "0x05", "0x1d")))
                 {
                     if($xml_MPParameters["brand"]=="caaa")
                         $audioMediaProfile="Adaptive_AAC_Core";
