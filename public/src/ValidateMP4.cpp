@@ -401,6 +401,8 @@ int main(void)
                          vg.dvb = true;
                 } else if ( keymatch( arg, "hbbtv", 1)) {
                          vg.hbbtv = true;
+                } else if ( keymatch( arg, "ctawave", 1)) {
+                        vg.ctawave = true;
                 } else if ( keymatch( arg, "suppressatomlevel", 1)) {
                     vg.suppressAtomLevel = true;
                 } else {
