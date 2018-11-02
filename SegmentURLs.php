@@ -24,6 +24,7 @@ function derive_segment_URLs($urls, $period_info){
         $segment_base_high = get_segment_access($period['SegmentBase'], $adaptation_set['SegmentBase']);
         
         $representations = $adaptation_set['Representation'];
+        $segment_access = array();
         $segment_urls = array();
         foreach($representations as $j => $representation){
             $segment_template_low = get_segment_access($segment_template_high, $representation['SegmentTemplate']);

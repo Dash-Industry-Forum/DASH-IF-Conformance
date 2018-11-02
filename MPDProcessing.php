@@ -56,7 +56,7 @@ function process_MPD(){
         }
     }
     if(!$dvb_conformance){
-        if(strpos($mpd_dom->getAttribute('profiles'), 'urn:dvb:dash:profile:dvb-dash:2014') !== FALSE || strpos($mpd_dom->getAttribute('profiles'), 'urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014')!== FALSE || strpos($MPD_profiles, 'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014') !== FALSE){
+        if(strpos($mpd_dom->getAttribute('profiles'), 'urn:dvb:dash:profile:dvb-dash:2014') !== FALSE || strpos($mpd_dom->getAttribute('profiles'), 'urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014')!== FALSE || strpos($mpd_dom->getAttribute('profiles'), 'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014') !== FALSE){
             $dvb_conformance = 1;
             if(!$hbbtv_conformance)
                 include '../HbbTV_DVB/HbbTV_DVB_Initialization.php';
