@@ -64,13 +64,13 @@ function HbbTV_DVB_mpdvalidator() {
 }
 
 function DVB_HbbTV_profile_specific_media_types_report($mpdreport){
-    global $mpd_dom, $enforced_profile_dvb, $enforced_profile_hbbtv;
+    global $mpd_dom, $dvb_conformance, $hbbtv_conformance;
     
     $mpd_profiles = $mpd_dom->getAttribute('profiles');
     
-    if($enforced_profile_dvb)
+    if($dvb_conformance && (strpos($mpd_dom->getAttribute('profiles'), 'urn:dvb:dash:profile:dvb-dash:2014') === FALSE && strpos($mpd_dom->getAttribute('profiles'), 'urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014') === FALSE && strpos($mpd_dom->getAttribute('profiles'), 'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014') === FALSE))
         $mpd_profiles .= ',urn:dvb:dash:profile:dvb-dash:2014';
-    if($enforced_profile_hbbtv)
+    if($hbbtv_conformance && strpos($mpd_dom->getAttribute('profiles'), 'urn:hbbtv:dash:profile:isoff-live:2012') === FALSE)
         $mpd_profiles .= ',urn:hbbtv:dash:profile:isoff-live:2012';
     
     $profiles_arr = explode(',', $mpd_profiles);

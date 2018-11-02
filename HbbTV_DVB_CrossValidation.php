@@ -267,7 +267,7 @@ function crossValidation_DVB_Representations($opfile, $xml_r, $xml_d, $i, $r, $d
                 if($equal_info != '')
                     fwrite($opfile, "###'DVB check violated: Section 6.1.1- Role element SHALL be common between all audio Representations in an Adaptation Set', not common in Adaptation Set " . ($i+1) . ": Representation " . ($r+1) . " and Representation " . ($d+1) . ".\n");
             }
-            else
+            elseif((!empty($rep_role_r) && empty($rep_role_d)) || (empty($rep_role_r) && !empty($rep_role_d)))
                 fwrite($opfile, "###'DVB check violated: Section 6.1.1- Role element SHALL be common between all audio Representations in an Adaptation Set', not common in Adaptation Set " . ($i+1) . ": Representation " . ($r+1) . " and Representation " . ($d+1) . ".\n");
         }
         ##
