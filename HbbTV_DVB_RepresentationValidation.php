@@ -758,7 +758,7 @@ function common_validation_HbbTV($opfile, $xml_rep){
     }
     
     $seg_loc = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_template);
-    if($mpd_features['type'] == 'dynamic' && count(glob($session_dir.'/'.$seg_loc.'/*mp4')) == 1)
+    if($mpd_features['type'] == 'dynamic' && count(glob($session_dir.'/'.$seg_loc.'/*')) == 1)
         fwrite($opfile, "###'HbbTV-DVB DASH Validation Requirements check violated for HbbTV: Section 'Segments' - 'Segment includes features that are not required by the profile being validated against', found only segment in the representation while MPD@type is dynamic.\n");
 }
 
