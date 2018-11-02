@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once '../CTAWAVE_SelectionSet.php';
+require_once '../CTAWAVE_PresentationProfile.php';
 include(dirname(__FILE__)."/../../Utils/Load.php");
 
 use PHPUnit\Framework\TestCase;
@@ -16,7 +17,7 @@ final class PresentationProfileTest extends TestCase
         $session_dir="Presention_examples/CMFHD_video/";
         $adaptation_set_template='Adapt$AS$';
         $outfile=fopen("out.txt","w");
-        $this->assertSame("CMFHD", checkPresentation($adapts_count,$session_dir,$adaptation_set_template,$outfile));
+        $this->assertSame("CMFHD", CTACheckPresentation($adapts_count,$session_dir,$adaptation_set_template,$outfile));
     }
 
     public function testNoCMAFPresentationProfile()
@@ -28,7 +29,7 @@ final class PresentationProfileTest extends TestCase
         $adaptation_set_template='Adapt$AS$';
         $outfile=fopen("out.txt","w");
         //CMFHD presentation profile is not expected, hence check notSame assertion.
-        $this->assertNotSame("CMFHD", checkPresentation($adapts_count,$session_dir,$adaptation_set_template,$outfile));
+        $this->assertNotSame("CMFHD", CTACheckPresentation($adapts_count,$session_dir,$adaptation_set_template,$outfile));
     }
 
 

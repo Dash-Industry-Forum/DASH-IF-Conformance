@@ -10,7 +10,7 @@ final class MediaProfileTest extends TestCase
     public function testAVCMediaProfile()
     {    
         
-        $outfile=fopen("out.txt","w");
+
         $rep_count=0;
         $adapt_count=0;
         //Check for HD profile of AVC.
@@ -31,7 +31,7 @@ final class MediaProfileTest extends TestCase
     
     public function testNonAVCMediaProfile()
     {
-        $outfile=fopen("out.txt","w");
+
         $rep_count=0;
         $adapt_count=0;
         //Check for HD profile of AVC.
@@ -53,7 +53,7 @@ final class MediaProfileTest extends TestCase
    public function testHEVCMediaProfile()
     {    
         
-        $outfile=fopen("out.txt","w");
+
         $rep_count=0;
         $adapt_count=0;
         //Check for HD profile of AVC.
@@ -82,7 +82,7 @@ final class MediaProfileTest extends TestCase
     
     public function testNonHEVCMediaProfile()
     {
-        $outfile=fopen("out.txt","w");
+
         $rep_count=0;
         $adapt_count=0;
         
