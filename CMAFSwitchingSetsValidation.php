@@ -229,31 +229,34 @@ function checkHeaders($opfile, $xml, $xml_comp, $id, $id_comp, $curr_adapt_dir, 
 
         $first = true;
         $xml = get_DOM($path, 'compInfo');
-        foreach($xml->childNodes as $child){ //if any attribute in the xml file contains "No", then this will be considered as an error
-            if($first){ //obtain the rep ids in the xml file. (info for $opfile)
-                $ids = getIds($xml);
-                $first = false;
-            }
-            
-            $child_name = $child->nodeName;
-            foreach($child->attributes as $attribute){
-                if(in_array("No", explode(" ", $attribute->nodeValue))){
-                    if($child_name == "elst" && strpos($info_str, 'elst: do not care') !== FALSE)
-                        continue;
-                    if($child_name == "mdhd" && strpos($info_str, 'mdhd: do not care') !== FALSE)
-                        continue;
-                    if($child_name == "ftyp" && strpos($info_str, 'ftyp: do not care') !== FALSE)
-                        continue;
-                    else{
-                        fprintf ($opfile, "**'CMAF check violated: Section 7.3.4- CMAF header parameters SHALL NOT differ between CMAF tracks, except as allowed in Table 11', but ".$attribute.' in the box: '.$child_name." is different between Rep. $ids[0] and Rep. $ids[1] in Switching Set " . (string) ($current_adaptation_set+1) . " \n\n");
-                        $found = true;
+        
+        if($xml){
+            foreach($xml->childNodes as $child){ //if any attribute in the xml file contains "No", then this will be considered as an error
+                if($first){ //obtain the rep ids in the xml file. (info for $opfile)
+                    $ids = getIds($xml);
+                    $first = false;
+                }
+
+                $child_name = $child->nodeName;
+                foreach($child->attributes as $attribute){
+                    if(in_array("No", explode(" ", $attribute->nodeValue))){
+                        if($child_name == "elst" && strpos($info_str, 'elst: do not care') !== FALSE)
+                            continue;
+                        if($child_name == "mdhd" && strpos($info_str, 'mdhd: do not care') !== FALSE)
+                            continue;
+                        if($child_name == "ftyp" && strpos($info_str, 'ftyp: do not care') !== FALSE)
+                            continue;
+                        else{
+                            fprintf ($opfile, "**'CMAF check violated: Section 7.3.4- CMAF header parameters SHALL NOT differ between CMAF tracks, except as allowed in Table 11', but ".$attribute->nodeName.' in the box: '.$child_name." is different between Rep. $ids[0] and Rep. $ids[1] in Switching Set " . (string) ($current_adaptation_set+1) . " \n\n");
+                            $found = true;
+                        }
                     }
                 }
             }
-        }
 
-        if(!$found){ //otherwise this comparison conforms to specifications 
-            $found = false;
+            if(!$found){ //otherwise this comparison conforms to specifications 
+                $found = false;
+            }
         }
     }
     else
@@ -476,9 +479,11 @@ function checkSwitchingSets(){
             $name_comp_part = explode('.', basename($filename_comp))[0];
             $path = $curr_adapt_dir  . '/' . $comparison_folder . $name_part . "_vs_" . $name_comp_part . ".xml";
             
-            checkHeaders($opfile, $xml, $xml_comp, $id, $id_comp, $curr_adapt_dir, $ind, $path); //start comparing
-            compareHevc($opfile, $xml, $xml_comp, $id, $id_comp);
-            compareRest($opfile, $xml, $xml_comp, $id, $id_comp);
+            if($xml && $xml_comp){
+                checkHeaders($opfile, $xml, $xml_comp, $id, $id_comp, $curr_adapt_dir, $ind, $path); //start comparing
+                compareHevc($opfile, $xml, $xml_comp, $id, $id_comp);
+                compareRest($opfile, $xml, $xml_comp, $id, $id_comp);
+            }
             
             $ind++;
         }

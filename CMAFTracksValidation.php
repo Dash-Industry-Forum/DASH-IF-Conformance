@@ -18,6 +18,9 @@ function checkCMAFTracks(){
     if(file_exists($rep_xml)){
         $xml = get_DOM($rep_xml, 'atomlist');
         
+        if(!$xml)
+            return;
+        
         $error_file = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_error_log_template);
         if(!($opfile = open_file($session_dir.'/'.$error_file.'.txt', 'a'))){
             echo 'Error opening/creating CMAF Tracks conformance check file: '.$session_dir.'/'.$error_file.'.txt';
