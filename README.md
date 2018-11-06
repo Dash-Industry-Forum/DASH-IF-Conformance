@@ -1,6 +1,6 @@
 # DASH-IF Conformance Software
 
-This package provides the Web-FE of MPEG-DASH/DASH-IF ISO-Segment Validator. It has been extended according to further standards, such as CMAF, DVB-DASH, and HbbTV.
+This repository provides the source code for MPEG-DASH/DASH-IF Validator. It has been extended according to further standards, such as CMAF, DVB-DASH, and HbbTV.
 
 This repository contains common modules (Utils) and submodules (DASH, CMAF, HbbTV, ISOSegmentValidator, Conformance-Frontend). Each submodule is a repository on its own and all the submodules need the common modules.
 
