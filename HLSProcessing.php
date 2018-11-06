@@ -16,7 +16,7 @@
 function processHLS(){
     global $session_dir, $mpd_url, $mpd_features,                                   // Client block input
             $current_period, $current_adaptation_set, $current_representation,      // HLS process data
-            $progress_xml, $progress_report,                                        // Reporting
+            $progress_xml, $progress_report, $reprsentation_error_log_template,     // Reporting
             $hls_manifest_type,                                                     // HLS data
             $cmaf_conformance, $cmaf_function_name, $cmaf_when_to_call,             // CMAF data
             $ctawave_conformance, $ctawave_function_name, $ctawave_when_to_call;    // CTA WAVE data
@@ -69,11 +69,13 @@ function processHLS(){
             $reps = $adapts[$current_adaptation_set]['Representation'];
             
             while($current_representation < sizeof($reps)){
+                $error_log = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_error_log_template);
+                
                 if($cmaf_conformance)
                     $return_seg_val[] = $cmaf_function_name($cmaf_when_to_call[1]);
                 
                 err_file_op(1);
-                //print_console($session_dir . '/' . $new_track_path . 'log.txt', "AdaptationSet $i Representation $j Results");
+                print_console($session_dir . '/' . $error_log . '.txt', "AdaptationSet $current_adaptation_set Representation $current_representation Results");
                 $current_representation++;
             }
             
