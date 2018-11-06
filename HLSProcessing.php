@@ -14,9 +14,11 @@
  */
 
 function processHLS(){
-    global $session_dir, $mpd_url,                                                  // Client block input
+    global $session_dir, $mpd_url, $mpd_features,                                   // Client block input
+            $current_period, $current_adaptation_set, $current_representation,      // HLS process data
             $progress_xml, $progress_report,                                        // Reporting
             $hls_manifest_type,                                                     // HLS data
+            $cmaf_conformance, $cmaf_function_name, $cmaf_when_to_call,             // CMAF data
             $ctawave_conformance, $ctawave_function_name, $ctawave_when_to_call;    // CTA WAVE data
     
     $StreamInfURLArray = array();
@@ -24,7 +26,7 @@ function processHLS(){
     $XMediaURLArray = array();
     
     ## Open related files
-    $progress_xml = simplexml_load_string('<root><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><allDownloadComplete></allDownloadComplete><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
+    $progress_xml = simplexml_load_string('<root><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><allDownloadComplete>false</allDownloadComplete><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
     $progress_xml->asXml($session_dir . '/' . $progress_report);
     
     ## Read each line of manifest file into an array
@@ -46,6 +48,10 @@ function processHLS(){
         }
         
         ## Download segments from stream_inf playlists, x_media playlists, and Iframe playlists
+        if($cmaf_conformance)
+            $return_arr = $cmaf_function_name($cmaf_when_to_call[0]);
+        if($ctawave_conformance)
+            $return_arr = $ctawave_function_name($ctawave_when_to_call[0]);
         $file_location = validate_segment_hls(array($StreamInfURLArray, $IframeURLArray,$XMediaURLArray));
         
         ## Group the playlists together
@@ -54,13 +60,41 @@ function processHLS(){
         ## Crete $mpd_features structure since it is used in conformance server checks
         formMpdFeatures();
         
-        ## Perform Cross Validation
-        if($ctawave_conformance)
-            $return_arr = $ctawave_function_name($ctawave_when_to_call[0]);
+        ## Perform enforced profile segment validation
+        $current_period = 0;
+        $current_adaptation_set = 0;
+        $current_representation = 0;
+        $adapts = $mpd_features['Period'][$current_period]['AdaptationSet'];
+        while($current_adaptation_set < sizeof($adapts)){
+            $reps = $adapts[$current_adaptation_set]['Representation'];
+            
+            while($current_representation < sizeof($reps)){
+                if($cmaf_conformance)
+                    $return_seg_val[] = $cmaf_function_name($cmaf_when_to_call[1]);
+                
+                err_file_op(1);
+                //print_console($session_dir . '/' . $new_track_path . 'log.txt', "AdaptationSet $i Representation $j Results");
+                $current_representation++;
+            }
+            
+            if($cmaf_conformance)
+                $return_arr = $cmaf_function_name($cmaf_when_to_call[2]);
+            
+            $current_representation = 0;
+            $current_adaptation_set++;
+        }
         
+        ## Perform Cross Validation
+        if($cmaf_conformance)
+            $return_arr = $cmaf_function_name($cmaf_when_to_call[3]);
+        if($ctawave_conformance)
+            $return_arr = $ctawave_function_name($ctawave_when_to_call[1]);
+        
+        $current_adaptation_set = 0;
         err_file_op(2);
     }
     
+    $progress_xml->allDownloadComplete = "true";
     $progress_xml->completed = "true";
     $progress_xml->completed->addAttribute('time', time());
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
@@ -274,7 +308,6 @@ function segURLs($tmparray,$segmentURL){
 function groupPlaylists($file_location){
     global $session_dir, $hls_media_types, $adaptation_set_template, $reprsentation_template, $progress_xml, $progress_report, $string_info;
     
-    $progress_xml->allDownloadComplete = "true";
     $ResultXML = $progress_xml->addChild('Results');
     $PeriodXML = $ResultXML->addChild('Period');
     
@@ -312,9 +345,6 @@ function groupPlaylists($file_location){
                 $temp_string = str_replace(array('$Template$'), array($new_track_path.'log'), $string_info);
                 file_put_contents($session_dir . '/' . $new_track_path . 'log.html', $temp_string);
                 rename_file($track_path, $session_dir . '/' . $new_track_path);
-                
-                err_file_op(1);
-                print_console($session_dir . '/' . $new_track_path . 'log.txt', "AdaptationSet $i Representation $j Results");
                 
                 $j++;
             }
