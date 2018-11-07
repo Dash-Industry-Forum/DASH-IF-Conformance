@@ -429,7 +429,7 @@
         <img id="img2" border="0" src="dash_img/Dash1.jpeg" width="191" height="61" >
         <br>    <br>
     </div>
-    <p align="center" class="sansserif">Validation (Conformance check) of ISO/IEC 23009-1 MPEG-DASH MPD and Segments</p>
+    <p align="center" class="sansserif">Validation (Conformance check) of HLS M3U8 Segments</p>
     <div id="groupA">
         <div>
             <input type="text" id='urlinput' name="urlinput" class="mytext" placeholder="Enter MPD URL" onkeyup="CheckKey(event)"/>
@@ -725,7 +725,7 @@ function pollingProgress()
         var allDownloadComplete=xmlDoc_progress.getElementsByTagName("allDownloadComplete");
 
     var totarrstring = allDownloadComplete[0].nodeValue;
-    if (totarrstring == '') //Check for the error in segment download.   
+    if (totarrstring == 'false') //Check for the error in segment download.   
         return;
     
     //Get Conformance results from progress.xml file.
@@ -854,7 +854,7 @@ function progress()  //Progress of Segments' Conformance
                 }
             }
             //Additions for CMAF Selection Set and Presentation profile.
-            if(SelectionSet.length!=0  && adaptationid>totarr[0]){
+            if(SelectionSet.length!=0){
                 if(SelectionSet[0].textContent=="noerror"){
                     automate(1,lastloc,"CMAF Selection Set");
 
@@ -874,7 +874,7 @@ function progress()  //Progress of Segments' Conformance
                     lastloc++;
                 }
             }
-            if(CmafProfile.length!=0  && adaptationid>totarr[0]){
+            if(CmafProfile.length!=0){
                 if(CmafProfile[0].textContent=="noerror"){
                         automate(1,lastloc,"CMAF Presentation Profile");
 
