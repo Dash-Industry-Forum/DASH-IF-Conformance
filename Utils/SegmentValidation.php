@@ -216,15 +216,13 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     fwrite($file, "-offsetinfo" . "\n");
     fwrite($file, $session_dir . '/' . $offsetinfo . '.txt' . "\n");
     
-    if(!$hls_manifest){
-        $flags = construct_flags($period, $adaptation_set, $representation) . $additional_flags;
-        $piece = explode(" ", $flags);
-        foreach ($piece as $pie)
-            if ($pie !== "")
-                fwrite($file, $pie . "\n");
-        if($suppressatomlevel)
-            fwrite($file, '-suppressatomlevel' . "\n");
-    }
+    $flags = (!$hls_manifest) ? construct_flags($period, $adaptation_set, $representation) . $additional_flags : $additional_flags;
+    $piece = explode(" ", $flags);
+    foreach ($piece as $pie)
+        if ($pie !== "")
+            fwrite($file, $pie . "\n");
+    if($suppressatomlevel)
+        fwrite($file, '-suppressatomlevel' . "\n");
     
     fclose($file);
     return $session_dir . '/' . $config_file;
