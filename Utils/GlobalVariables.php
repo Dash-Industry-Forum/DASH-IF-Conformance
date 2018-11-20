@@ -221,7 +221,8 @@ var url = document.URL.split("/");
 var newPathname = url[0];
 var loc = window.location.pathname.split("/");
 var txtloc = "";
-for ( j = 2; j < loc.length-1; j++){
+var txtloc_start_ind = (loc.indexOf("Conformance-Frontend") != -1) ? loc.indexOf("Conformance-Frontend") : loc.indexOf("Conformance-Frontend-HLS");
+for ( j = txtloc_start_ind; j < loc.length-1; j++){
     txtloc += "/";
     txtloc += loc[j];
 }
