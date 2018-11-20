@@ -1608,10 +1608,10 @@ function downloadLog(url, name){
 
 <footer class="site-footer">
     <center> <p id="footerVersion"></p>
-        <p><a target="_blank" href="https://github.com/DASHIndustryForum/Conformance-Software/issues"><b>Report issue</b></a></p>
+        <p><a target="_blank" href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/issues"><b>Report issue</b></a></p>
     </center>
     <center> <p>
-            <a target="_blank" href="https://github.com/DASHIndustryForum/Conformance-Software/"><b>GitHub</b></a></p>
+            <a target="_blank" href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/"><b>GitHub</b></a></p>
     </center>
 </footer>
 
