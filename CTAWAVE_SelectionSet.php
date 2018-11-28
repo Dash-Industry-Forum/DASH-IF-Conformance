@@ -13,7 +13,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define("MediaProfileAttributesVideo", array(
+$MediaProfileAttributesVideo = array(
         "codec" => "",
         "profile" => "",
         "level" => "",
@@ -24,21 +24,21 @@ define("MediaProfileAttributesVideo", array(
         "transfer_char" => "",
         "matrix_coeff" => "",
         "tier" => "",
-        "brand"=>""));
+        "brand"=>"");
 
-define("MediaProfileAttributesAudio", array(
+$MediaProfileAttributesAudio = array(
         "codec" => "",
         "profile" => "",
         "level" => "",
         "channels"=>"",
         "sampleRate"=>"",
-        "brand"=>""));
+        "brand"=>"");
 
-define("MediaProfileAttributesSubtitle", array(
+$MediaProfileAttributesSubtitle = array(
         "codec" => "",
         "mimeType" => "",
         "mimeSubtype"=>"",
-        "brand"=>""));
+        "brand"=>"");
 
 
 function CTASelectionSet()
@@ -178,12 +178,14 @@ function CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_templat
     }
     return $errorMsg;
 }
+
 function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
 {
+    global $MediaProfileAttributesVideo, $MediaProfileAttributesAudio, $MediaProfileAttributesSubtitle;
     $compatible_brands=$xml->getElementsByTagName("ftyp")->item(0)->getAttribute("compatible_brands");
     if($handler_type=='vide')
     {
-        $xml_MPParameters= MediaProfileAttributesVideo;
+        $xml_MPParameters= $MediaProfileAttributesVideo;
         $videSampleDes=$xml->getElementsByTagName("vide_sampledescription")->item(0);
         $sdType=$videSampleDes->getAttribute("sdType");
         if($sdType=='avc1' || $sdType=='avc3')
@@ -308,7 +310,7 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
     }
     elseif($handler_type=='soun')
     {
-        $xml_MPParameters= MediaProfileAttributesAudio;
+        $xml_MPParameters= $MediaProfileAttributesAudio;
         $sounSampleDes=$xml->getElementsByTagName("soun_sampledescription")->item(0);
         $sdType=$sounSampleDes->getAttribute("sdType");
         if($sdType=="mp4a")
@@ -321,16 +323,15 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
             $xml_MPParameters['channels']=$channels;
             $xml_MPParameters['sampleRate']=$sounSampleDes->getAttribute('sampleRate');
             $brand_pos=strpos($compatible_brands,"caaa") || strpos($compatible_brands,"caac")|| $brand_pos=strpos($compatible_brands,"camc");
-             if($brand_pos!==False)
+            if($brand_pos!==False)
                 $xml_MPParameters['brand']=substr($compatible_brands,$brand_pos,$brand_pos+3);
-            
         }
         elseif($sdType=="ec-3")
         {
             $xml_MPParameters['codec']="EAC-3";
             $xml_MPParameters['profile']="EAC-3";
             $brand_pos=strpos($compatible_brands,"ceac");
-             if($brand_pos!==False)
+            if($brand_pos!==False)
                 $xml_MPParameters['brand']=substr($compatible_brands,$brand_pos,$brand_pos+3);
         }
         elseif($sdType=="ac-3")
@@ -338,7 +339,7 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
             $xml_MPParameters['codec']="AC-3";
             $xml_MPParameters['profile']="AC-3";
             $brand_pos=strpos($compatible_brands,"ceac");
-             if($brand_pos!==False)
+            if($brand_pos!==False)
                 $xml_MPParameters['brand']=substr($compatible_brands,$brand_pos,$brand_pos+3);
         }
         elseif($sdType=="ac-4")
@@ -346,7 +347,7 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
             $xml_MPParameters['codec']="AC-4";
             $xml_MPParameters['profile']="AC-4";
             $brand_pos=strpos($compatible_brands,"ca4s");
-             if($brand_pos!==False)
+            if($brand_pos!==False)
                 $xml_MPParameters['brand']=substr($compatible_brands,$brand_pos,$brand_pos+3);
         }
          elseif($sdType=="mhm1")
@@ -360,15 +361,14 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
                 $xml_MPParameters['profile']=$mhaC->getAttribute("mpegh3daProfileLevelIndication");
                 $xml_MPParameters['channel']=$mhaC->getAttribute("referenceChannelLayout");
             }
-                
-             if($brand_pos!==False)
+            if($brand_pos!==False)
                 $xml_MPParameters['brand']=substr($compatible_brands,$brand_pos,$brand_pos+3);
         }
         $MP=checkAndGetConformingAudioProfile($xml_MPParameters,$repCount,$adaptCount);
     }
     elseif($handler_type=='subt')
     {
-        $xml_MPParameters= MediaProfileAttributesSubtitle;
+        $xml_MPParameters= $MediaProfileAttributesSubtitle;
         $subtSampleDes=$xml->getElementsByTagName("subt_sampledescription")->item(0);
         $sdType=$subtSampleDes->getAttribute("sdType");
         if($sdType=="stpp")
