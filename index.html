@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html><head><meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type"><script type="text/javascript" src="resources/script/extensions.js"></script><script type="text/javascript" src="resources/script/verify.js"></script><title>Dynamic Service Conformance</title><style type="text/css">
+#btnstart {
+  border:  none;
+  background: transparent url(resources/images/btnstart.png) repeat scroll 0% 50%;
+  cursor: pointer;
+  width: 78px;
+  height: 28px;
+}
+#btnstop {
+  border:  none;
+  background: transparent url(resources/images/btnstop.png) repeat scroll 0% 50%;
+  cursor: pointer;
+  width: 78px;
+  height: 28px;
+}
+
+#SegmentOutput
+{
+background-color:rgb(221,221,221);
+box-shadow: 10px 10px 5px #888888;
+}
+
+#MPDOutput
+{
+background-color:rgb(221,221,221);
+box-shadow: 10px 10px 5px #888888;
+}
+
+#Progress
+{
+background-color:rgb(221,221,221);
+box-shadow: 10px 10px 5px #888888;
+}
+
+</style>
+<style> 
+</style></head>
+<body bgcolor="#e7ebff" onload=parseURL();>
+
+<script type="text/javascript"> 
+var userMPD;
+function checkRTT() 
+{
+    if (document.getElementById("rttsel").checked)
+    {
+        document.getElementById("rtt").disabled = false;
+    }
+    else 
+    {
+        document.getElementById("rtt").disabled = true;
+    }
+}
+
+function checkMPD() 
+{
+	if(document.getElementById('mpdURL').options[document.getElementById('mpdURL').selectedIndex].text == "Customized")
+	{
+		document.getElementById("mpdbox").value = userMPD;
+	}
+	else
+	{
+		document.getElementById("mpdbox").value = document.getElementById('mpdURL').options[document.getElementById('mpdURL').selectedIndex].value;
+	}
+}
+
+function parseURL()
+{
+	var url = document.createElement('a');
+	url.href = document.URL;
+	var urlAux = url.href.split('?');
+	if (urlAux[1] && urlAux[1].split('=')[0] == "mpdurl" )
+	  userMPD = urlAux[1].split('=')[1];
+	if(userMPD && userMPD.length > 0)
+	{
+		document.getElementById("mpdbox").value = userMPD;
+		document.getElementById("mpdURL").selectedIndex = document.getElementById("mpdURL").length-1;
+	}
+	if(urlAux[2]=="start=yes")
+	  process();
+}
+
+function advancedOptions() {
+    x= document.getElementsByClassName("adv");
+    for (i = 0; i < x.length; i++){
+      if (x[i].style.display === "none") {
+	  x[i].style.display = "block";
+      } else {
+	  x[i].style.display = "none";
+      }
+     }
+}
+
+function details() {
+    x= document.getElementsByClassName("detail")[0];
+    if (x.style.display === "none") {
+      x.style.display = "block";
+      } else {
+	  x.style.display = "none";
+      }
+}
+</script>
+<h3 style="font-family: Helvetica,Arial,sans-serif; text-align: center; color: rgb(102, 102, 102);"><big>Dynamic Service Conformance</big></h3>
+<div style="text-align: center;"><select style="font-family: Helvetica,Arial,sans-serif;" name="mpd URL" id="mpdURL" onchange="checkMPD()"><option value="http://livesim.dashif.org/livesim/mup_60/testpic_2s/Manifest.mpd">Number-based Template</option><option value="http://livesim.dashif.org/livesim/segtimeline_1/mup_60/testpic_2s/Manifest.mpd">SegmentTimeline</option><option value="http://livesim.dashif.org/livesim/periods_60/xlink_30/testpic_2s/Manifest.mpd">Access via Xlink</option><option>Customized</option></select><span style="font-family: Helvetica,Arial,sans-serif;">
+</span><textarea style="font-family: Helvetica,Arial,sans-serif;" id="mpdbox" rows="1" cols="80">http://livesim.dashif.org/livesim/mup_60/testpic_2s/Manifest.mpd</textarea><span style="font-family: Helvetica,Arial,sans-serif;">    
+
+</span><button id="btnstart" style="font-family: Helvetica,Arial,sans-serif;" type="button" onclick="process()"></button><span style="font-family: Helvetica,Arial,sans-serif;">
+
+</span><button id="btnstop" style="font-family: Helvetica,Arial,sans-serif;" type="button" onclick="exit()"></button><span style="font-family: Helvetica,Arial,sans-serif;">
+
+</span><br style="font-family: Helvetica,Arial,sans-serif;"></div><br style="font-family: Helvetica,Arial,sans-serif;">
+<button onclick="advancedOptions()">Advanced Options</button>
+
+<div class="adv" style="display:none"><input style="font-family: Helvetica,Arial,sans-serif;" name="group1" onchange="checkRTT()" id="rttsel" checked="checked" type="radio"><span style="font-family: Helvetica,Arial,sans-serif;">
+RTT correction to SAE times </span><small style="font-family: Helvetica,Arial,sans-serif;">(in msec)</small><span style="font-family: Helvetica,Arial,sans-serif;"> : </span><input style="font-family: Helvetica,Arial,sans-serif;" name="rtt" min="1" max="1000000" step="1" value="300" id="rtt" type="number"><span style="font-family: Helvetica,Arial,sans-serif;">   
+</span><input style="font-family: Helvetica,Arial,sans-serif;" name="group1" onchange="checkRTT()" type="radio"><span style="font-family: Helvetica,Arial,sans-serif;"> None
+
+</span><br style="font-family: Helvetica,Arial,sans-serif;"></div><br style="font-family: Helvetica,Arial,sans-serif;">
+
+<div class="adv" style="display:none"><input style="font-family: Helvetica,Arial,sans-serif;" id="cscorrect" type="checkbox"><span style="font-family: Helvetica,Arial,sans-serif;">Dynamic clock skew correction</span><br style="font-family: Helvetica,Arial,sans-serif;"></div>
+<div style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; font-size: 80%; text-align: center;" id="access"></div>
+ <br style="font-family: Helvetica,Arial,sans-serif; color: rgb(102, 102, 102);"> 
+
+<button onclick="details()">Process in details</button>
+<div  class="detail" style="display:none">
+ <h4 style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; color: rgb(51, 51, 51);"><big>Response information for the MPD request .....</big></h4>
+ <br style="font-family: Helvetica,Arial,sans-serif;">
+    <div style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; font-size: 80%;" id="MPDOutput"></div>
+ <br style="font-family: Helvetica,Arial,sans-serif; color: rgb(102, 102, 102);"> 
+
+<h4 style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; color: rgb(51, 51, 51);"><big>Overall progress of segment requests .....</big></h4>
+ <br style="font-family: Helvetica,Arial,sans-serif;">
+    <div style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; font-size: 80%;" id="Progress"></div>
+ <br style="font-family: Helvetica,Arial,sans-serif;">  
+ 
+<h4 style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; color: rgb(51, 51, 51);"><big>Response information for the segments requests .....</big></h4>
+ <br>
+     <div style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; font-size: 80%;" id="SegmentOutput"> <br></div>	 
+ <br></div>
+</body></html>
