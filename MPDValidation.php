@@ -18,7 +18,7 @@ function validate_MPD(){
     $schematronIssuesReport = NULL;
     
     chdir('../DASH/mpdvalidator');
-    $mpdvalidator = syscall('java -cp "saxon9.jar:saxon9-dom.jar:xercesImpl.jar:bin" Validator ' . explode('#', $mpd_url)[0] . " " . $session_dir . "/resolved.xml schemas/DASH-MPD.xsd");
+    $mpdvalidator = syscall('java -cp "saxon9.jar:saxon9-dom.jar:xercesImpl.jar:bin" Validator ' . '"' . explode('#', $mpd_url)[0] . '"' . " " . "$session_dir" . "/resolved.xml schemas/DASH-MPD.xsd");
     $result = extract_relevant_text($mpdvalidator);
     
     ## Generate mpd report
