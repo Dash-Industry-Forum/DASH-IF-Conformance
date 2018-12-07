@@ -37,6 +37,8 @@
     <script type="text/javascript"  src="tree/dhtmlxTree/codebase/dhtmlxtree.js"></script>
     <script type="text/javascript" src="tree/dhtmlxTree/codebase/ext/dhtmlxtree_json.js"></script>
     
+    <link href="gdpr/css/jquery-eu-cookie-law-popup.css" rel="stylesheet">
+    <script src="gdpr/js/jquery-eu-cookie-law-popup.js"></script>
 <?php 
     if(isset($_REQUEST['mpdurl']))
     {
@@ -425,6 +427,10 @@
     
 </style>
 <body>
+<div class="eupopup"></div>
+<div class="eupopup eupopup-fixedtop"></div>
+<div class="eupopup eupopup-color-default"></div>
+
 <div class="page-wrap">    
     <div class="container">
         <button type="submit" class="btn btn-info" id="settings_button" data-toggle="collapse" data-target="#demo" >
