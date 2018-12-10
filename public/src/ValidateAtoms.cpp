@@ -3362,14 +3362,14 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	atomprint(">\n"); //vg.tabcnt++; 
 
 	// Check required field values
-	FieldMustBeOneOf10( sdh.sdType, OSType, "SampleDescription sdType must be 'mp4a' or 'enca' or 'ac-4' or 'mha1' or 'ac-3' or 'ec-3' or 'dtsc' or 'dtsh', 'dtse', 'dtsl' ", ( 'mp4a', 'enca','ac-4', 'mha1','ac-3','ec-3','dtsc','dtsh','dtse','dtsl' ) );
+	FieldMustBeOneOf11( sdh.sdType, OSType, "SampleDescription sdType must be 'mp4a' or 'enca' or 'ac-4' or 'mha1' or 'mha2' or 'ac-3' or 'ec-3' or 'dtsc' or 'dtsh', 'dtse', 'dtsl' ", ( 'mp4a', 'enca','ac-4', 'mha1','mha2','ac-3','ec-3','dtsc','dtsh','dtse','dtsl' ) );
 	
-	if( (sdh.sdType != 'mp4a') && (sdh.sdType != 'enca') && (sdh.sdType != 'ac-4') && (sdh.sdType != 'mha1') && (sdh.sdType != 'ac-3') && (sdh.sdType != 'ec-3') && (sdh.sdType != 'dtsc') && (sdh.sdType != 'dtsh') && (sdh.sdType != 'dtse') && (sdh.sdType != 'dtsl') && !fileTypeKnown ){	
+	if( (sdh.sdType != 'mp4a') && (sdh.sdType != 'enca') && (sdh.sdType != 'ac-4') && (sdh.sdType != 'mha1') && (sdh.sdType != 'mha2') && (sdh.sdType != 'ac-3') && (sdh.sdType != 'ec-3') && (sdh.sdType != 'dtsc') && (sdh.sdType != 'dtsh') && (sdh.sdType != 'dtse') && (sdh.sdType != 'dtsl') && !fileTypeKnown ){	
 			warnprint("WARNING: Don't know about this sound descriptor type \"%s\"\n", 
 				ostypetostr(sdh.sdType));
 			// goto bail;
-	}  
-		
+	}
+        
 	FieldMustBe( sdh.resvd1, 0, "SampleDescription resvd1 must be %d not 0x%lx" );
 	FieldMustBe( sdh.resvdA, 0, "SampleDescription resvd1 must be %d not 0x%lx" );
 	FieldMustBe( ssdi.version, 0, "SoundDescription version must be %d not %d" );
@@ -3797,10 +3797,16 @@ OSErr Validate_mhaC_Atom( atomOffsetEntry *aoe, void *refcon)
 	atomprint(">\n");
 	
         FieldMustBe( mhaDecoderConfigurationRecord.configurationVersion , 1, "ConfigurationVersion must be %d not %d" );
-	if(vg.audioChValue != mhaDecoderConfigurationRecord.referenceChannelLayout)
-	{
-	   errprint( "The referenceChannelLayout is not matching  with out of box AudioChannelConfiguration value\n" );
-	}
+        if(vg.dash264base){
+            if(vg.audioChValue != mhaDecoderConfigurationRecord.referenceChannelLayout){
+                errprint( "DASH-IF IOP 4.2 check violated - Section 9.2.5.2. \" The referenceChannelLayout field shall be equivalent to what is signalled in ChannelConfiguration\", referenceChannelLayout is not matching with out of box AudioChannelConfiguration value\n" );
+            }
+            if(mhaDecoderConfigurationRecord.mpegh3daProfileLevelIndication != 11
+                && mhaDecoderConfigurationRecord.mpegh3daProfileLevelIndication != 12
+                && mhaDecoderConfigurationRecord.mpegh3daProfileLevelIndication != 13
+            )
+                errprint( "DASH-IF IOP 4.2 check violated - Section 9.2.5.2. \"The mpegh3daProfileLevelIndication shall be set to 0x0B, 0x0C or 0x0D\", found %d.\n", mhaDecoderConfigurationRecord.mpegh3daProfileLevelIndication);
+        }
 	
 	--vg.tabcnt; 
 	atomprint("</mhaC>\n");
