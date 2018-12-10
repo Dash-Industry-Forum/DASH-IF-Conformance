@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:dash="urn:mpeg:dash:schema:mpd:2011" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" queryBinding='xslt' schemaVersion='ISO19757-3'>
+<schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:dash="urn:mpeg:dash:schema:mpd:2011" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cenc="urn:mpeg:cenc:2013" queryBinding='xslt' schemaVersion='ISO19757-3'>
 	<ns prefix="dash" uri="urn:mpeg:dash:schema:mpd:2011"/>
 	<ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>
 	<ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+        <ns prefix="cenc" uri="urn:mpeg:cenc:2013"/>
 	<title>Schema for validating MPDs</title>
 	<pattern name="MPD element">
 		<!-- R1.*: Check the conformance of MPD -->
@@ -227,6 +228,9 @@
 			<!--  R12.3  DASH-IF IOP v4.0-->
 			<assert test="if ((@schemeIdUri = 'urn:mpeg:dash:mp4protection:2011') and (@value= 'cenc') and not(parent::dash:AdaptationSet)) then false() else true()">The ContentProtection descriptor for the mp4 protection scheme with @schemeIdUri 'urn:mpeg:dash:mp4protection:2011' and @value 'cenc' shall be present in the AdaptationSet element.
 			</assert>
+                        <!--  R12.3  DASH-IF IOP v4.2-->
+                        <assert test="if ( contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and (@schemeIdUri = 'urn:mpeg:dash:mp4protection:2011') and not(@cenc:default_KID) ) then false() else true()">The ContentProtection Descriptor for the mp4protection scheme shall contain the attribute @cenc:default_KID.
+                        </assert>
 		</rule>
 	</pattern>
 	<pattern name="Role element">
