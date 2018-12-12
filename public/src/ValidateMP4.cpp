@@ -339,7 +339,7 @@ int main(void)
                 vg.dashifbase = true;
         } else if ( keymatch( arg, "dash264enc", 10 ) ) {
                 vg.dash264enc = true;
-        } else if ( keymatch( arg, "repIndex", 1 ) ) {
+        } else if ( keymatch( arg, "repindex", 8 ) ) {
                 vg.RepresentationIndex = true;
 		} else if ( keymatch( arg, "samplenumber", 1 ) ) {
 			getNextArgStr( &vg.samplenumberstr, "samplenumber" );
@@ -656,7 +656,7 @@ int main(void)
 
 usageError:
 	fprintf( stderr, "Usage: %s [-filetype <type>] "
-								"[-printtype <options>] [-checklevel <level>] [-infofile <Segment Info File>] [-leafinfo <Leaf Info File>] [-segal] [-ssegal] [-startwithsap TYPE] [-level] [-bss] [-isolive] [-isoondemand] [-isomain] [-dynamic] [-dash264base] [-dashifbase] [-dash264enc] [-repIndex] [-atomxml] [-cmaf] [-dvb] [-hbbtv] [-suppressatomlevel]", "ValidateMP4" );
+								"[-printtype <options>] [-checklevel <level>] [-infofile <Segment Info File>] [-leafinfo <Leaf Info File>] [-segal] [-ssegal] [-startwithsap TYPE] [-level] [-bss] [-isolive] [-isoondemand] [-isomain] [-dynamic] [-dash264base] [-dashifbase] [-dash264enc] [-repindex] [-atomxml] [-cmaf] [-dvb] [-hbbtv] [-suppressatomlevel]", "ValidateMP4" );
 	fprintf( stderr, " [-samplenumber <number>] [-verbose <options>] [-offsetinfo <Offset Info File>] [-logconsole ] [-help] inputfile\n" );
 	fprintf( stderr, "    -a[tompath]      <atompath> - limit certain operations to <atompath> (e.g. moov-1:trak-2)\n" );
 	fprintf( stderr, "                     this effects -checklevel and -printtype (default is everything) \n" );
@@ -691,7 +691,7 @@ usageError:
 	fprintf( stderr, "    -dash264base      Make checks specific for DASH264 Base IOP\n" );
 	fprintf( stderr, "    -dashifbase      Make checks specific for DASHIF Base IOP\n" );
 	fprintf( stderr, "    -dash264enc       Make checks specific for encrypted DASH264 content\n" );
-	fprintf( stderr, "    -repIndex         Make checks specific for @RepresentationIndex");
+	fprintf( stderr, "    -repindex         Make checks specific for @RepresentationIndex");
 	fprintf( stderr, "    -indexrange       Byte range where sidx is expected\n");
 	fprintf( stderr, "    -width            Expected width of the video track\n");
 	fprintf( stderr, "    -height           Expected height of the video track\n");

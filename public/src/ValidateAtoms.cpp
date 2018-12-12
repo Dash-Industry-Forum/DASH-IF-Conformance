@@ -3206,8 +3206,8 @@ OSErr Validate_sidx_Atom( atomOffsetEntry *aoe, void *refcon )
 
         }else
         {   //indexRange missing, check if it's a IOP test vector without @RepresentationIndex
-            if (vg.dash264base && !vg.RepresentationIndex)
-              errprint("sidx present without @indexRange and RepresentationIndex for DASH-IF IOP content\n");
+            if (vg.dash264base)
+              errprint("DASH-IF IOP 4.2 check violated - Section 3.2.1. \" For on-demand profiles the Indexed Media Segment as defined in ISI/IEC 23009-1, clause 6.3.4.4 shall be used. In this case the @indexRange attribute shall be present.\"; however, sidx present without @indexRange.\n");
         }
     }
     
