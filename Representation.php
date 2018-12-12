@@ -101,7 +101,7 @@ function construct_flags($period, $adaptation_set, $representation){
     ## RepresentationIndex
     $representationIndex = find_attribute(array($period, $adaptation_set, $representation), 'RepresentationIndex');
     if($representationIndex != NULL)
-        $processArguments = $processArguments . " -repIndex " . $representationIndex[0]['range'];   // Not sure of this!!
+        $processArguments = $processArguments . " -repIndex";
     
     ## ContentProtection
     $content_protections = $adaptation_set['ContentProtection'];
