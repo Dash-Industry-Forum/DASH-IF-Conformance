@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="urn:mpeg:dash:schema:mpd:2011" attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="urn:mpeg:dash:schema:mpd:2011">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="urn:mpeg:dash:schema:mpd:2011" targetNamespace="urn:mpeg:dash:schema:mpd:2011" elementFormDefault="qualified" attributeFormDefault="unqualified">
 
   <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="xlink.xsd"/>
 
@@ -62,7 +62,10 @@
       <xs:element name="AdaptationSet" type="AdaptationSetType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="Subset" type="SubsetType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="SupplementalProperty" type="DescriptorType" minOccurs="0" maxOccurs="unbounded"/>
-	  <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="EmptyAdaptationSet" type="AdaptationSetType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="GroupLabel" type="LabelType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="Preselection" type="PreselectionType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute ref="xlink:href"/>
     <xs:attribute ref="xlink:actuate" default="onRequest"/>
@@ -81,13 +84,11 @@
     </xs:sequence>
     <xs:attribute ref="xlink:href"/>
     <xs:attribute ref="xlink:actuate" default="onRequest"/>
-    <xs:attribute name="messageData" type="xs:anyURI"/>
     <xs:attribute name="schemeIdUri" type="xs:anyURI" use="required"/>
     <xs:attribute name="value" type="xs:string"/>
     <xs:attribute name="timescale" type="xs:unsignedInt"/>
   </xs:complexType>
 
-  
   <!-- Event  -->
   <xs:complexType name="EventType">
     <xs:sequence>
@@ -131,8 +132,8 @@
         <xs:attribute name="maxHeight" type="xs:unsignedInt"/>
         <xs:attribute name="minFrameRate" type="FrameRateType"/>
         <xs:attribute name="maxFrameRate" type="FrameRateType"/>
-        <xs:attribute name="segmentAlignment" type="ConditionalUintType" default="false"/>
-        <xs:attribute name="subsegmentAlignment" type="ConditionalUintType" default="false"/>
+        <xs:attribute name="segmentAlignment" type="xs:boolean" default="false"/>
+        <xs:attribute name="subsegmentAlignment" type="xs:boolean" default="false"/>
         <xs:attribute name="subsegmentStartsWithSAP" type="SAPType" default="0"/>
         <xs:attribute name="bitstreamSwitching" type="xs:boolean"/>
       </xs:extension>
@@ -145,18 +146,12 @@
       <xs:pattern value="[0-9]*:[0-9]*"/>
     </xs:restriction>
   </xs:simpleType>   
-  
+
   <!-- Type for Frame Rate -->
   <xs:simpleType name="FrameRateType">
     <xs:restriction base="xs:string">
       <xs:pattern value="[0-9]*[0-9](/[0-9]*[0-9])?"/>
     </xs:restriction>
-  </xs:simpleType>
- 
-
-  <!-- Conditional Unsigned Integer (unsignedInt or boolean) -->
-  <xs:simpleType name="ConditionalUintType">
-    <xs:union memberTypes="xs:unsignedInt xs:boolean"/>
   </xs:simpleType>
 
   <!-- Content Component -->
@@ -172,6 +167,7 @@
     <xs:attribute name="lang" type="xs:language"/>
     <xs:attribute name="contentType" type="xs:string"/>
     <xs:attribute name="par" type="RatioType"/>
+    <xs:attribute name="tag" type="TagType"/>
     <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
 
@@ -190,18 +186,19 @@
         <xs:attribute name="bandwidth" type="xs:unsignedInt" use="required"/>
         <xs:attribute name="qualityRanking" type="xs:unsignedInt"/>
         <xs:attribute name="dependencyId" type="StringVectorType"/>
+        <xs:attribute name="associationId" type="StringVectorType"/>
+        <xs:attribute name="associationType" type="ListOf4CCType"/>
         <xs:attribute name="mediaStreamStructureId" type="StringVectorType"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- String without white spaces -->
   <xs:simpleType name="StringNoWhitespaceType">
     <xs:restriction base="xs:string">
       <xs:pattern value="[^\r\n\t \p{Z}]*"/>
     </xs:restriction>
   </xs:simpleType>
-  
 
   <!-- SubRepresentation -->
   <xs:complexType name="SubRepresentationType">
@@ -224,7 +221,10 @@
       <xs:element name="EssentialProperty" type="DescriptorType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="SupplementalProperty" type="DescriptorType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="InbandEventStream" type="EventStreamType" minOccurs="0" maxOccurs="unbounded"/>
-	  <xs:element name="Switching" type="SwitchingType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="Switching" type="SwitchingType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="RandomAccess" type="RandomAccessType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="GroupLabel" type="LabelType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="Label" type="LabelType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="profiles" type="xs:string"/>
@@ -232,18 +232,42 @@
     <xs:attribute name="height" type="xs:unsignedInt"/>
     <xs:attribute name="sar" type="RatioType"/>
     <xs:attribute name="frameRate" type="FrameRateType"/>
-    <xs:attribute name="audioSamplingRate" type="xs:string"/>
+    <xs:attribute name="audioSamplingRate" type="UIntVectorType"/>
     <xs:attribute name="mimeType" type="xs:string"/>
-    <xs:attribute name="segmentProfiles" type="xs:string"/>
+    <xs:attribute name="segmentProfiles" type="ListOf4CCType"/>
     <xs:attribute name="codecs" type="xs:string"/>
     <xs:attribute name="maximumSAPPeriod" type="xs:double"/>
     <xs:attribute name="startWithSAP" type="SAPType"/>
     <xs:attribute name="maxPlayoutRate" type="xs:double"/>
     <xs:attribute name="codingDependency" type="xs:boolean"/>
     <xs:attribute name="scanType" type="VideoScanType"/>
+    <xs:attribute name="selectionPriority" type="xs:unsignedInt"/>
+    <xs:attribute name="tag" type="TagType"/>
     <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
-  
+
+  <!-- Label and Group Label -->
+  <xs:complexType name="LabelType">
+      <xs:simpleContent>
+          <xs:extension base="xs:string">
+              <xs:attribute name="id" type="xs:unsignedInt" default="0"/>
+              <xs:attribute name="lang" type="xs:language"/>
+              <xs:anyAttribute namespace="##other" processContents="lax"/>
+          </xs:extension>
+      </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- Preselection -->
+  <xs:complexType name="PreselectionType">
+      <xs:complexContent>
+          <xs:extension base="RepresentationBaseType">
+              <xs:attribute name="id" type="StringNoWhitespaceType" default="1"/>
+              <xs:attribute name="preselectionComponents" type="StringVectorType" use="required"/>
+              <xs:attribute name="lang" type="xs:language"/>
+          </xs:extension>
+      </xs:complexContent>
+  </xs:complexType>
+
   <!-- Stream Access Point type enumeration -->
   <xs:simpleType name="SAPType">
     <xs:restriction base="xs:unsignedInt">
@@ -259,6 +283,11 @@
       <xs:enumeration value="interlaced"/>
       <xs:enumeration value="unknown"/>
     </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Tag -->
+  <xs:simpleType name="TagType">
+    <xs:restriction base="xs:string"/>
   </xs:simpleType>
 
   <!-- Subset  -->
@@ -282,8 +311,25 @@
       <xs:enumeration value="bitstream"/>
     </xs:restriction>
   </xs:simpleType>
-  
-  
+
+  <!-- Random Access -->
+  <xs:complexType name="RandomAccessType">
+    <xs:attribute name="interval" type="xs:unsignedInt" use="required"/>
+    <xs:attribute name="type" type="RandomAccessTypeType" default="closed"/>
+    <xs:attribute name="minBufferTime" type="xs:duration"/>
+    <xs:attribute name="bandwidth" type="xs:unsignedInt"/>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
+  </xs:complexType>
+
+  <!-- Random Access Type type enumeration -->
+  <xs:simpleType name="RandomAccessTypeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="closed"/>
+      <xs:enumeration value="open"/>
+      <xs:enumeration value="gradual"/>
+    </xs:restriction>
+  </xs:simpleType>
+
   <!-- Segment information base -->
   <xs:complexType name="SegmentBaseType">
     <xs:sequence>
@@ -294,6 +340,7 @@
     <xs:attribute name="timescale" type="xs:unsignedInt"/>
     <xs:attribute name="presentationTimeOffset" type="xs:unsignedLong"/>
     <xs:attribute name="presentationDuration" type="xs:unsignedLong"/>
+    <xs:attribute name="timeShiftBufferDepth" type="xs:duration"/>
     <xs:attribute name="indexRange" type="xs:string"/>
     <xs:attribute name="indexRangeExact" type="xs:boolean" default="false"/>
     <xs:attribute name="availabilityTimeOffset" type="xs:double"/>
@@ -368,9 +415,10 @@
       <xs:element name="S" minOccurs="1" maxOccurs="unbounded">
         <xs:complexType>
           <xs:attribute name="t" type="xs:unsignedLong"/>
-          <xs:attribute name="n" type="xs:unsignedLong" use="optional"/>
+          <xs:attribute name="n" type="xs:unsignedLong"/>
           <xs:attribute name="d" type="xs:unsignedLong" use="required"/>
-          <xs:attribute name="r" type="xs:integer" use="optional" default="0"/>
+          <xs:attribute name="r" type="xs:integer" default="0"/>
+          <xs:attribute name="k" type="xs:unsignedLong" default="1"/>
           <xs:anyAttribute namespace="##other" processContents="lax"/>
         </xs:complexType>
       </xs:element>
@@ -384,6 +432,16 @@
     <xs:list itemType="xs:string"/>
   </xs:simpleType>
 
+  <!-- Whitespace-separated list of 4CC -->
+  <xs:simpleType name="ListOf4CCType">
+    <xs:list itemType="FourCCType"/>
+  </xs:simpleType>
+  
+  <!-- 4CC as per latest 14496-12 -->
+  <xs:simpleType name="FourCCType">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  
   <!-- Whitespace-separated list of unsigned integers -->
   <xs:simpleType name="UIntVectorType">
     <xs:list itemType="xs:unsignedInt"/>
@@ -412,7 +470,7 @@
     </xs:sequence>
     <xs:attribute name="lang" type="xs:language"/>
     <xs:attribute name="moreInformationURL" type="xs:anyURI"/>
-		<xs:anyAttribute namespace="##other" processContents="lax"/>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
 
   <!-- Descriptor -->
@@ -429,8 +487,8 @@
   <!-- Metrics -->
   <xs:complexType name="MetricsType">
     <xs:sequence>
-      <xs:element name="Reporting" type="DescriptorType" maxOccurs="unbounded"/>
       <xs:element name="Range" type="RangeType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="Reporting" type="DescriptorType" maxOccurs="unbounded"/>
       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="metrics" type="xs:string" use="required"/>
@@ -439,8 +497,9 @@
 
   <!-- Metrics Range -->
   <xs:complexType name="RangeType">
-    <xs:attribute name="starttime" type="xs:duration"/>
+    <xs:attribute name="time" type="xs:duration"/>
     <xs:attribute name="duration" type="xs:duration"/>
+    <xs:anyAttribute namespace="##other" processContents="lax"/>
   </xs:complexType>
 
 </xs:schema>
