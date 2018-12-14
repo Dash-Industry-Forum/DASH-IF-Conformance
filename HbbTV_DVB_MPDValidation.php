@@ -26,7 +26,7 @@ $subtitle_bw = array();
 $associativity = array();
 
 function HbbTV_DVB_mpdvalidator() {
-    global $session_dir, $mpd_log, $hbbtv_conformance, $dvb_conformance;
+    global $session_dir, $mpd_log, $hbbtv_conformance, $dvb_conformance, $mpd_xml, $mpd_xml_report;
     
     $mpdreport = open_file($session_dir . '/' . $mpd_log . '.txt', 'a+b');
     if(!$mpdreport)
@@ -59,6 +59,10 @@ function HbbTV_DVB_mpdvalidator() {
             $returnValue="error";
     elseif(strpos($mpdreportText, 'Warning')!=FALSE)
              $returnValue="warning";
+    
+    $mpd_xml = simplexml_load_file($session_dir . '/' . $mpd_xml_report);
+    $mpd_xml->hbbtv_dvb = $returnValue;
+    $mpd_xml->asXml($session_dir . '/' . $mpd_xml_report);
     
     return $returnValue;
 }
