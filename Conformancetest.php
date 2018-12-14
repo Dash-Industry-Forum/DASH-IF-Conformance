@@ -564,8 +564,10 @@ var segmentListExist = false;
 var SessionID = "id"+Math.floor(100000 + Math.random() * 900000);
 var totarrstring=[];
 var xmlDoc_progress;
+var xmlDoc_mpdresult;
 var progressSegmentsTimer;
 var pollingTimer;
+var mpdTimer;
 var ChainedToUrl;
 var cmaf = "<?php echo $cmaf; ?>";
 var dvb = 0;
@@ -843,7 +845,7 @@ function pollingProgress()
         return;
     else
         var MPDError=xmlDoc_progress.getElementsByTagName("MPDError");
-
+    
     if(MPDError.length === 0)
         return;
     else    
@@ -857,219 +859,170 @@ function pollingProgress()
         return false;
     }
     
-   //Get MPD Conformance results from progress.xml file.
-    var MPDtotalResultXML=xmlDoc_progress.getElementsByTagName("MPDConformance");
-    if(MPDtotalResultXML.length==0)
-        return;
-    else
-    {
-        if (!mpdprocessed)
-        {
-            mpdprocessed = true; //only process it once!
-            processmpdresults(MPDtotalResultXML);
-        }
-    }
-}
-
-function processmpdresults(MPDtotalResultXML)
-{
-    var x=2;
-    var y=1;
-    var MPDtotalResult=MPDtotalResultXML[0].childNodes[0].nodeValue; 
-
-    totarr=MPDtotalResult.split(" ");
-
-    var currentpath = window.location.pathname;
-    currentpath = currentpath.substring(0, currentpath.lastIndexOf('/'));
-
-    //Check if the MPD is dynamic.
-    if(xmlDoc_progress.getElementsByTagName("dynamic").length !== 0)
-    {
-        if (xmlDoc_progress.getElementsByTagName("dynamic")[0].innerHTML === "true")
-        {
-    //        console.log("i'M DYNAMIC");
-            if (xmlDoc_progress.getElementsByTagName("SegmentTimeline").length !== 0)
-                dynamicsegtimeline = true;
-    //            document.getElementById("list").href=currentpath+'/temp/'+dirid+'/featuretable.html';
-
-            document.getElementById('dynamic').style.visibility='visible';
-
-            document.getElementById("dynamic").href='http://vm1.dashif.org/DynamicServiceValidator/?mpdurl=' +url ;
-    //            document.getElementById('list').style.visibility='visible';
-
-    //            finishTest();
-    //            return false;
-        }
-    }
-
-    //check if SegmentList exist
-    if(xmlDoc_progress.getElementsByTagName("segmentList").length !== 0)
-    {
-        segmentListExist = true;
-    }
-
-    document.getElementById("list").href=currentpath+'/temp/'+dirid+'/featuretable.html';
-    document.getElementById('list').style.visibility='visible';
-
-    var failed ='false';
-    var hbbtvDvbTrue = 'false';
-    var hbbtvDvbError = 'false';
-    var hbbtvDvbWarning='false';
-
-    repid =[];
+    clearInterval(pollingTimer);
     tree.loadJSONObject({
         id: 0,
         item: [{
             id: 1,
             text: "Mpd"
         }]
-        });
-    if(totarr[0]==='true')
-    {
-        automate(y,x,"XLink resolving");
-        tree.setItemImage2( x,'right.jpg','right.jpg','right.jpg');
-    }
-    else {
-        automate(y,x,"XLink resolving");
-        tree.setItemImage2( x,'button_cancel.png','button_cancel.png','button_cancel.png');
-        failed='temp/'+dirid+'/mpdreport.html';//totarr[0];
-    }
-    totarr.splice(0,1);
-    x++;
-    if(totarr[0]==='true')
-    {
-        automate(y,x,"MPD validation");
-        tree.setItemImage2( x,'right.jpg','right.jpg','right.jpg');
-    }
-    else
-    {
-        automate(y,x,"MPD validation");
-        tree.setItemImage2( x,'button_cancel.png','button_cancel.png','button_cancel.png');
-        failed='temp/'+dirid+'/mpdreport.html';//totarr[0];
-    }
-    totarr.splice(0,1);
-    x++;
-    if(totarr[0]==='true')
-    {
-        automate(y,x,"Schematron validation");
-        tree.setItemImage2( x,'right.jpg','right.jpg','right.jpg');
-    }
-    else {
-        automate(y,x,"Schematron validation");
-        tree.setItemImage2( x,'button_cancel.png','button_cancel.png','button_cancel.png');
-        failed='temp/'+dirid+'/mpdreport.html';//totarr[0];
-    }
-    totarr.splice(0,1);
-    x++;
-    if(dvb==1 || hbbtv==1 || (totarr !== undefined && totarr.length != 0 && totarr[0] != ''))
-    {
-        dvb = 1;
-        hbbtv = 1;
-        
-        if(totarr[0]==='true') // New for HbbTV-DVB conformance.
-        {
-            automate(y,x,"HbbTv DVB validation");
-            tree.setItemImage2( x,'right.jpg','right.jpg','right.jpg');
-            hbbtvDvbTrue = 'temp/'+dirid+'/mpdreport.html';
-        }
-        else if(totarr[0]==='error'){
-            automate(y,x,"HbbTv DVB validation");
-            tree.setItemImage2( x,'button_cancel.png','button_cancel.png','button_cancel.png');
-            hbbtvDvbError='temp/'+dirid+'/mpdreport.html';//totarr[0];
-        }
-        else{
-            automate(y,x,"HbbTv DVB validation");
-            tree.setItemImage2( x,'log.jpg','log.jpg','log.jpg');
-            if(failed=='false') // This condition says all other MPD validations are true and only this warning is present.
-                hbbtvDvbWarning='true';
-        }
-        totarr.splice(0,1);
-        x++;
-    }
+    });
+    mpdTimer = setInterval(function(){mpdProgress()},50);
+}
 
-    if (failed!=='false')
-    {
-        automate(y,x,"mpd error log");
-        tree.setItemImage2(x,'log.jpg','log.jpg','log.jpg');
-        kidsloc.push(x);
-        urlarray.push(failed);
-        
-        x++;
-        lastloc++;
-        clearInterval( pollingTimer);
-        finishTest();
-        return false;
-    }
-    if(hbbtvDvbTrue !== 'false')
-    {
-        automate(y,x,"mpd log");
-        tree.setItemImage2( x,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-        kidsloc.push(x);
-        urlarray.push(hbbtvDvbTrue);
-        x++;
-        lastloc++;
-    }
-    if(hbbtvDvbError !== 'false')
-    {
-        automate(y,x,"mpd error log");
-        tree.setItemImage2( x,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-        kidsloc.push(x);
-        urlarray.push(hbbtvDvbError);
-        x++;
-        lastloc++;
-    }
-    if(hbbtvDvbWarning==='true')
-    {
-        automate(y,x,"mpd warning log");
-        tree.setItemImage2( x,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-        kidsloc.push(x);
-        urlarray.push("temp/"+dirid+"/mpdreport.html");
-        x++;
-        lastloc++;
-    }
+var mpd_node_index = 0;
+var mpdresult_x = 2;
+var mpdresult_y = 1;
+var branch_added = [0, 0, 0, 0];
+var branchName = [
+    "XLink resolving",
+    "MPD validation",
+    "Schematron validation",
+    "HbbTv DVB validation"
+];
+var log_brancName = "mpd log";
+var shouldFinishTest = false;
 
-    if (dynamicsegtimeline || segmentListExist)
-    {
-        clearInterval( pollingTimer);
-        finishTest();
+function mpdProgress(){
+    xmlDoc_mpdresult = loadXMLDoc("temp/"+dirid+"/mpdresult.xml");
+    
+    if(xmlDoc_mpdresult === null)
         return;
-    }
+    
+    var mpd_node_index_until = xmlDoc_mpdresult.documentElement.childNodes.length;
+    if(mpd_node_index === mpd_node_index_until){
+        clearInterval(mpdTimer);
 
-    var childno=1;
-    //For dynamic type.
-    if(totarrstring!=null && totarrstring=="true"){//TODO temporarily exit before processing adaptation sets
-        clearInterval( pollingTimer);
-        finishTest();
-        return false;
-    }
-    //Get the number of AdaptationSets, Representations and Periods.   
-    var  Treexml=xmlDoc_progress.getElementsByTagName("Representation");
-    if (Treexml.length==0){
-        var complete=xmlDoc_progress.getElementsByTagName("completed");
-        if(complete[0].textContent == "true"){
-            clearInterval( pollingTimer);
-            finishTest();
-        }              
-        return;
-    }else{
-        var Periodxml=xmlDoc_progress.getElementsByTagName("Period"); 
-        Adapt_count= Periodxml[0].childNodes.length;
-        var AdaptRepPeriod_count=Adapt_count;
-        var Adaptxml=xmlDoc_progress.getElementsByTagName("Adaptation");
-        for (var v=0; v<Adapt_count; v++){
-            AdaptRepPeriod_count=AdaptRepPeriod_count+" "+Adaptxml[v].getElementsByTagName("Representation").length;
+        if(!mpdprocessed){
+            mpdprocessed = true;
+
+            automate(mpdresult_y, mpdresult_x, log_brancName);
+            tree.setItemImage2(mpdresult_x, 'csh_winstyle/iconText.gif', 'csh_winstyle/iconText.gif', 'csh_winstyle/iconText.gif');
+            kidsloc.push(mpdresult_x);
+            urlarray.push("temp/"+dirid+"/mpdreport.html");
+            
+            var i;
+            for(i=0; i<3; i++){
+                if(xmlDoc_mpdresult.documentElement.childNodes[i].childNodes[0].nodeValue === 'error'){
+                    shouldFinishTest = true;
+                    break;
+                }
+            }
+            
+            if(shouldFinishTest){
+                finishTest();
+                return false;
+            }
+            else{
+                processmpdresults();
+                return;
+            }
         }
     }
     
-    totarr=AdaptRepPeriod_count.split(" ");
-    for(var i=0;i<totarr[0];i++)
-    {
+    var node = xmlDoc_mpdresult.documentElement.childNodes[mpd_node_index];
+    if(!node){
+        clearInterval(mpdTimer);	
+        finishTest();            
+        return false;
+    }
+    
+    var node_result = node.childNodes[0].nodeValue;
+    if(node_result === 'No Result'){
+        addToTree(0);
+        return;
+    }
+    else if(node_result === 'true'){
+        addToTree(1);
+        mpd_node_index++;
+    }
+    else if(node_result === 'warning'){
+        addToTree(2);
+        mpd_node_index++;
+        log_branchName = "mpd warning log";
+    }
+    else if(node_result === 'error'){
+        while(mpd_node_index !== mpd_node_index_until){
+            addToTree(3);
+            mpd_node_index++;
+        }
+        log_brancName = "mpd error log";
+    }
+}
+
+function addToTree(button){
+    if(branch_added[mpd_node_index] === 0){
+        automate(mpdresult_y, mpdresult_x, branchName[mpd_node_index]);
+        branch_added[mpd_node_index] = mpdresult_x;
+        mpdresult_x++;
+    }
+    
+    if(button === 0)
+        tree.setItemImage2(branch_added[mpd_node_index], 'progress3.gif', 'progress3.gif', 'progress3.gif');
+    else if(button === 1)
+        tree.setItemImage2(branch_added[mpd_node_index], 'right.jpg', 'right.jpg', 'right.jpg');
+    else if(button === 2)
+        tree.setItemImage2(branch_added[mpd_node_index], 'log.jpg', 'log.jpg', 'log.jpg');
+    else if(button === 3)
+        tree.setItemImage2(branch_added[mpd_node_index], 'button_cancel.png', 'button_cancel.png', 'button_cancel.png');
+}
+
+function processmpdresults()
+{
+    // Check if the MPD is dynamic.
+    if(xmlDoc_progress.getElementsByTagName("dynamic").length !== 0){
+        if (xmlDoc_progress.getElementsByTagName("dynamic")[0].innerHTML === "true"){
+            if (xmlDoc_progress.getElementsByTagName("SegmentTimeline").length !== 0)
+                dynamicsegtimeline = true;
+
+            document.getElementById('dynamic').style.visibility='visible';
+            document.getElementById("dynamic").href='http://vm1.dashif.org/DynamicServiceValidator/?mpdurl=' +url ;
+        }
+    }
+
+    // Check if SegmentList exist
+    if(xmlDoc_progress.getElementsByTagName("segmentList").length !== 0)
+        segmentListExist = true;
+    
+    if (dynamicsegtimeline || segmentListExist){
+        finishTest();
+        return;
+    }
+
+    // Get the number of AdaptationSets, Representations and Periods.
+    var x = mpdresult_x+1;
+    var y = 1;
+    var childno = 1;
+    repid = [];
+    
+    var currentpath = window.location.pathname;
+    currentpath = currentpath.substring(0, currentpath.lastIndexOf('/'));
+    document.getElementById("list").href=currentpath+'/temp/'+dirid+'/featuretable.html';
+    document.getElementById('list').style.visibility='visible';
+
+    var  Treexml = xmlDoc_progress.getElementsByTagName("Representation");
+    if (Treexml.length==0){
+        var complete=xmlDoc_progress.getElementsByTagName("completed");
+        if(complete[0].textContent == "true")
+            finishTest();     
+        return;
+    }else{
+        var Periodxml = xmlDoc_progress.getElementsByTagName("Period"); 
+        Adapt_count= Periodxml[0].childNodes.length;
+        var AdaptRepPeriod_count = Adapt_count;
+        var Adaptxml = xmlDoc_progress.getElementsByTagName("Adaptation");
+        for (var v=0; v<Adapt_count; v++){
+            AdaptRepPeriod_count = AdaptRepPeriod_count+" "+Adaptxml[v].getElementsByTagName("Representation").length;
+        }
+    }
+    
+    totarr = AdaptRepPeriod_count.split(" ");
+    for(var i=0;i<totarr[0];i++){
         automate(y,x,"Adaptationset "+(i+1));
         adaptid.push(x);
-        tree.setItemImage2( x,'adapt.jpg','adapt.jpg','adapt.jpg');
+        tree.setItemImage2(x,'adapt.jpg','adapt.jpg','adapt.jpg');
 
-        for(var j=0;j<totarr[childno];j++)
-        {
+        for(var j=0;j<totarr[childno];j++){
             automate(x,x+j+1,"Representation "+(j+1));
             repid.push(x+j+1);
         }
@@ -1080,16 +1033,10 @@ function processmpdresults(MPDtotalResultXML)
     }
     
     var period_count = xmlDoc_progress.getElementsByTagName('PeriodCount');
-    if(period_count[0].childNodes.length != 0){
+    if(period_count[0].childNodes.length != 0)
         numPeriods = period_count[0].childNodes[0].nodeValue;
-        if(numPeriods > 1)
-        {
-            console.log("MDP With Multiple Period:" + numPeriods);
-        }
-    }
 
     lastloc = repid[repid.length-1]+1;
-    clearInterval( pollingTimer);
     progressSegmentsTimer = setInterval(function(){progress()},400);
     document.getElementById('par').style.visibility='visible';
     document.getElementById('list').style.visibility='visible';
@@ -1099,16 +1046,12 @@ function progress()  //Progress of Segments' Conformance
 {
     xmlDoc_progress=loadXMLDoc("temp/"+dirid+"/progress.xml");
     
-    if(representationid >totarr[hinindex])
-    {
+    if(representationid >totarr[hinindex]){
         representationid = 1;
         hinindex++;
         adaptationid++;
     }
 
-    //var status = "Processing Representation "+representationid+" in Adaptationset "+adaptationid;
-    
-    //document.getElementById("par").innerHTML=status;
     tree.setItemImage2( repid[counting],'progress3.gif','progress3.gif','progress3.gif');
     
     if(xmlDoc_progress == null)
@@ -1135,13 +1078,9 @@ function progress()  //Progress of Segments' Conformance
 
                     tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
                     lastloc++;
-                // 			 tree.updateItem(adaptid[i-1],"Adaptationset " + i + " -cross validation success",'right.jpg','right.jpg','right.jpg',false);
                 }
                 else{
                     tree.setItemImage2(adaptid[i-1],'button_cancel.png','button_cancel.png','button_cancel.png');
-//                  kidsloc.push(lastloc);
-                    //urlarray.push(locations[i]);
-
                     automate(adaptid[i-1],lastloc,"Cross-representation validation error");
 
                     tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
@@ -1283,7 +1222,7 @@ function progress()  //Progress of Segments' Conformance
         
         if(ctawave == 1)
         {
-            //Additions for CMAF Selection Set and Presentation profile.
+            //Additions for CTA WAVE Selection Set and Presentation profile.
             if(CTAWAVESelectionSet.length!=0  && adaptationid>totarr[0])
             {
                 if(CTAWAVESelectionSet[0].textContent=="noerror"){
@@ -1360,9 +1299,9 @@ function progress()  //Progress of Segments' Conformance
         
         kidsloc.push(lastloc);
         var BrokenURL=xmlDoc_progress.getElementsByTagName("BrokenURL");
-        if( BrokenURL != null && BrokenURL[0].textContent == "error")//if(locations[locations.length-1]!="noerror")
+        if( BrokenURL != null && BrokenURL[0].textContent == "error")
         {
-            urlarray.push("temp/" + dirid+"/missinglink.html");//urlarray.push(locations[locations.length-1]);
+            urlarray.push("temp/" + dirid+"/missinglink.html");
 
             automate(1,lastloc,"Broken URL list");
             tree.setItemImage2(lastloc,'404.jpg','404.jpg','404.jpg');
@@ -1379,16 +1318,14 @@ function progress()  //Progress of Segments' Conformance
         var AdaptXML=xmlDoc_progress.getElementsByTagName("Adaptation"); 
         if(AdaptXML[adaptationid-1]== null)
             return;
-        else if(AdaptXML[adaptationid-1].getElementsByTagName("Representation")[representationid-1] == null) {
+        else if(AdaptXML[adaptationid-1].getElementsByTagName("Representation")[representationid-1] == null)
             return;
-        }
         else{   
             var RepXML=AdaptXML[adaptationid-1].getElementsByTagName("Representation")[representationid-1].textContent;
             if(RepXML == "")
                 return;
             representationid++;
         }
-
 
         if(RepXML == "noerror")
             tree.setItemImage2( repid[counting],'right.jpg','right.jpg','right.jpg');
@@ -1401,7 +1338,7 @@ function progress()  //Progress of Segments' Conformance
         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
         kidsloc.push(lastloc);
         urlarray.push("temp/"+dirid+"/"+ "Adapt"+(adaptationid-1)+"rep"+(representationid-2) + "log.html");
-        lastloc++;  
+        lastloc++;
 
         var location = "temp/"+dirid+"/"+ "Adapt"+(adaptationid-1)+"rep"+(representationid-2) + "sample_data.xml";
         automate(repid[counting],lastloc,"Estimate bitrate");
@@ -1418,8 +1355,6 @@ function progress()  //Progress of Segments' Conformance
 }
 /////////////////////////Automation starts///////////////////////////////////////////////////
 var urlarray=[];
-//var x=2;
-//var y=1;
 function automate(y,x,stri)
 {
     tree.insertNewChild(y,x,stri,0,0,0,0,'SELECT');
@@ -1450,8 +1385,6 @@ function tonrightclick(id)
     var urlto="";
     var position = kidsloc.indexOf(id);
     urlto=urlarray[position];
-    //console.log(position);
-    //console.log(urlto);
     
     if(urlto){
         var locarray = urlto.split("/");
@@ -1462,8 +1395,6 @@ function tonrightclick(id)
         downloadLog(textloc, textname);
     }
 }
-//var parsed;
-//var uploaded = "false";
 
 function loadXMLDoc(dname)
 {
@@ -1487,7 +1418,6 @@ function finishTest()
 
     clearInterval( progressTimer);
     clearInterval( progressSegmentsTimer);
-    
     
     //Open a new window for checking Conformance of Chained-to MPD (if present).
     xmlDoc_progress=loadXMLDoc("temp/"+dirid+"/progress.xml");
@@ -1521,13 +1451,9 @@ function initVariables()
 
 function setUpTreeView()
 {
-    if (typeof tree === "undefined") 
-    {
-//        console.log("tree:doesnt exist");				
+    if (typeof tree === "undefined"){		
     }
-    else
-    {
-//        console.log("tree: exist");
+    else{
         tree.deleteChildItems(0);
         tree.destructor(); 
     }
@@ -1543,26 +1469,14 @@ function setUpTreeView()
 function setStatusTextlabel(textToSet)
 {
     status = textToSet;
-
     if( numPeriods > 1 )
-    {
-        status = status + "<br><font color='red'> MPD with multiple Periods (" + numPeriods + "). Only segments of the current period were checked.</font>"
-    }
-
+        status = status + "<br><font color='red'> MPD with multiple Periods (" + numPeriods + "). Only segments of the current period were checked.</font>";
     if( dynamicsegtimeline)
-    {
-        status = status + "<br><font color='red'> Segment timeline for type dynamic is not supported, only MPD will be tested. </font>"
-    }
-    
+        status = status + "<br><font color='red'> Segment timeline for type dynamic is not supported, only MPD will be tested. </font>";
     if(segmentListExist)
-    {
-        status = status + "<br><font color='red'> SegmentList is not supported, only MPD will be tested. </font>"
-    }
-    
+        status = status + "<br><font color='red'> SegmentList is not supported, only MPD will be tested. </font>";
     if(ChainedToUrl)
-    {
-        status = status + "<br><font color='red'> Chained-to MPD conformance is opened in new window. </font>"
-    }
+        status = status + "<br><font color='red'> Chained-to MPD conformance is opened in new window. </font>";
 
     document.getElementById("par").innerHTML=status;
     document.getElementById('par').style.visibility='visible';
