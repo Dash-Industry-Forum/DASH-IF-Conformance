@@ -566,6 +566,7 @@ var totarrstring=[];
 var xmlDoc_progress;
 var xmlDoc_mpdresult;
 var progressSegmentsTimer;
+var treeTimer;
 var pollingTimer;
 var mpdTimer;
 var ChainedToUrl;
@@ -914,7 +915,7 @@ function mpdProgress(){
                 return false;
             }
             else{
-                processmpdresults();
+                treeTimer = setInterval(function(){processmpdresults()},100);
                 return;
             }
         }
@@ -969,6 +970,8 @@ function addToTree(button){
 
 function processmpdresults()
 {
+    xmlDoc_progress=loadXMLDoc("temp/"+dirid+"/progress.xml");
+    
     // Check if the MPD is dynamic.
     if(xmlDoc_progress.getElementsByTagName("dynamic").length !== 0){
         if (xmlDoc_progress.getElementsByTagName("dynamic")[0].innerHTML === "true"){
@@ -1037,6 +1040,7 @@ function processmpdresults()
         numPeriods = period_count[0].childNodes[0].nodeValue;
 
     lastloc = repid[repid.length-1]+1;
+    clearInterval(treeTimer);
     progressSegmentsTimer = setInterval(function(){progress()},400);
     document.getElementById('par').style.visibility='visible';
     document.getElementById('list').style.visibility='visible';
