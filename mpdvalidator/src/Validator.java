@@ -31,12 +31,19 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.xpath.XPathExpressionException;
-
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.iso.mpeg.dash.MPD;
 import org.xml.sax.SAXException;
 
@@ -105,7 +112,7 @@ public class Validator {
     	   }
         }
 		
-        if (args.length < 2 || args.length > 3) {
+        if (args.length < 2 || args.length > 4) {
    		   System.out.println("Needing a file to validate and intermediate file");
    		   printUsage();
    		   System.out.println("\nValidation not successful!\n\n");
@@ -126,6 +133,7 @@ public class Validator {
 		}
         
 	    Definitions.tmpOutputFile_ = args[1];	//Previously, this software was saving all temp files into java.io.tmpdir, so two parallel sessions could overwrite the same
+	    Definitions.mpdResultFile_ = args[3];
 
 		try {
 			String OS = System.getProperty("os.name").toLowerCase();
@@ -158,6 +166,11 @@ public class Validator {
 						pathToXSD = new URL("file://" + f.getAbsolutePath());
 				}
 			}
+			
+			
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			Document doc = docBuilder.parse(Definitions.mpdResultFile_);
 
 			// Step 1:
 			// XLink resolving and validation
@@ -167,6 +180,7 @@ public class Validator {
 			xlinkResolver.resolveXLinks(pathToMPD);		
 			
 			System.out.println("XLink resolving successful\n\n");
+			writeToMPDResult(doc, "xlink", "true");
 			
 			URL url = null;
 			if (system_os.equals("windows")) {
@@ -183,10 +197,14 @@ public class Validator {
 			// MPD validation
 			System.out.println("\nStart MPD validation\n====================\n");
 			retVal = parseDASH(url, pathToXSD);
-			if (retVal)
+			if (retVal){
 				System.out.println("MPD validation successful - DASH is valid!\n\n");
+				writeToMPDResult(doc, "schema", "true");
+			}
 			else {
 				System.out.println("MPD validation not successful - DASH is not valid!\n\n");
+				writeToMPDResult(doc, "schema", "error");
+				writeToMPDResult(doc, "schematron", "error");
 				System.exit(4);
 			}
 			
@@ -194,10 +212,14 @@ public class Validator {
 			// Schematron check
 			System.out.println("\nStart Schematron validation\n===========================\n");
 			retVal = XSLTTransformer.transform(Definitions.tmpOutputFile_, Definitions.XSLTFILE);
-			if (retVal)
+			if (retVal){
 				System.out.println("Schematron validation successful - DASH is valid!\n\n");
-			else
+				writeToMPDResult(doc, "schematron", "true");
+			}
+			else{
 				System.out.println("Schematron validation not successful - DASH is not valid!\n\n");
+				writeToMPDResult(doc, "schematron", "error");
+			}
 		} catch (MalformedURLException e) {
 			System.out.println("Malformed URL: " + e.getMessage());
 			System.out.println("\nValidation not successful!\n\n");
@@ -275,6 +297,16 @@ public class Validator {
 			System.out.println("Unexpected error: " + e.getMessage());
 			return false; // we have errors
 		}
+	}
+	
+	public static void writeToMPDResult(Document doc, String nodeName, String nodeValue) throws TransformerException{
+		Node xlink_result = doc.getElementsByTagName(nodeName).item(0).getChildNodes().item(0);
+		xlink_result.setNodeValue(nodeValue);
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(doc);
+		StreamResult result = new StreamResult(new File(Definitions.mpdResultFile_));
+		transformer.transform(source, result);
 	}
 	
 	public static void printUsage() {

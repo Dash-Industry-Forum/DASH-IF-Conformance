@@ -14,11 +14,16 @@
  */
 
 function validate_MPD(){
-    global $main_dir, $mpd_dom, $mpd_url, $session_dir, $mpd_log, $featurelist_log_html, $string_info;
+    global $main_dir, $mpd_dom, $mpd_url, $session_dir, $mpd_log, $featurelist_log_html, $mpd_xml, $mpd_xml_string, $mpd_xml_report;
     $schematronIssuesReport = NULL;
     
+    $mpd_xml = simplexml_load_string($mpd_xml_string);
+    $mpd_xml->asXml($session_dir . '/' . $mpd_xml_report);
+    if(!$mpd_xml)
+        exit();
+
     chdir('../DASH/mpdvalidator');
-    $mpdvalidator = syscall('java -cp "saxon9.jar:saxon9-dom.jar:xercesImpl.jar:bin" Validator ' . '"' . explode('#', $mpd_url)[0] . '"' . " " . "$session_dir" . "/resolved.xml schemas/DASH-MPD.xsd");
+    $mpdvalidator = syscall('java -cp "saxon9.jar:saxon9-dom.jar:xercesImpl.jar:bin" Validator ' . '"' . explode('#', $mpd_url)[0] . '"' . " " . "$session_dir" . "/resolved.xml schemas/DASH-MPD.xsd $session_dir/$mpd_xml_report");
     $result = extract_relevant_text($mpdvalidator);
     
     ## Generate mpd report
@@ -29,13 +34,14 @@ function validate_MPD(){
     $exit = false;
     $string = '';
     $mpd_rep_loc = 'temp/' . basename($session_dir) . '/' . $mpd_log . '.html';
-    if (!is_valid($mpdvalidator, 'XLink resolving successful')){ $string .= $mpd_rep_loc; $exit = true; }
+    $mpd_xml = simplexml_load_file($session_dir.'/'.$mpd_xml_report);
+    if (!is_valid($mpdvalidator, 'XLink resolving successful')){ $string .= $mpd_rep_loc; $exit = true; $mpd_xml->xlink = "error"; $mpd_xml->schema = "error"; $mpd_xml->schematron = "error"; $mpd_xml->asXml($session_dir . '/' . $mpd_xml_report); }
     else { $string .= 'true '; }
     
     if(!is_valid($mpdvalidator, 'MPD validation successful')){ $string .= $mpd_rep_loc; $exit = true; }
     else { $string .= 'true '; }
     
-    if(!is_valid($mpdvalidator, 'Schematron validation successful')){ $string .= $mpd_rep_loc; $exit = true; }
+    if(!is_valid($mpdvalidator, 'Schematron validation successful')){ $string .= $mpd_rep_loc; $exit = true;  }
     else { $string .= 'true '; }
     
     ## Featurelist generate
