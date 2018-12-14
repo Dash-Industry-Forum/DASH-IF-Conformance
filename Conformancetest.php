@@ -766,6 +766,14 @@ function submit()
     //document.getElementById("dash").style.marginTop="1%";
     mpdprocessed = false;
     url = document.getElementById("urlinput").value; 
+    
+    if(window.location.href.indexOf('https') !== -1){
+        if(url && url.indexOf('https') === -1){
+            setStatusTextlabel("HTTP content is detected. This secure site will not be processing the content. If you wish to continue using this content, please use <a href=\"http://54.72.87.160/conformance/current/Conformance-Frontend/Conformancetest.php\">HTTP-based interface</a> instead.");
+            //finishTest();
+            return false;
+        }
+    }
  
     if (uploaded===true)
 	url="upload";
