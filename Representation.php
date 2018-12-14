@@ -73,7 +73,7 @@ function construct_flags($period, $adaptation_set, $representation){
             $processArguments .= ' -isolive';
         if(in_array($profile, $main))
             $processArguments .= ' -isomain';
-        if(in_array($profile, $dash264) || $dashif_conformance)
+        if(strpos($profile, $dash264) !== FALSE || $dashif_conformance)
             $processArguments .= ' -dash264base';
     }
     
