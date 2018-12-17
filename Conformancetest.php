@@ -769,7 +769,7 @@ function submit()
     
     if(window.location.href.indexOf('https') !== -1){
         if(url && url.indexOf('https') === -1){
-            setStatusTextlabel("HTTP content is detected. This secure site will not be processing the content. If you wish to continue using this content, please use <a target=\"_blank\" href=\"http://54.72.87.160/conformance/current/Conformance-Frontend/Conformancetest.php\">HTTP-based interface</a> instead.");
+            setStatusTextlabel("HTTP content is detected. <span style=\"color:red\"><b>This secure (HTTPS) site cannot process the HTTP content.</b></span> If you wish to continue using this content, please use <a target=\"_blank\" href=\"http://54.72.87.160/conformance/current/Conformance-Frontend/Conformancetest.php\">HTTP-based interface</a> instead.");
             return false;
         }
     }
