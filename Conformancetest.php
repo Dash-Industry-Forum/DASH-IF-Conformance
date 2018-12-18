@@ -1429,6 +1429,8 @@ function finishTest()
 
     clearInterval( progressTimer);
     clearInterval( progressSegmentsTimer);
+    clearInterval( mpdTimer);
+    clearInterval( treeTimer);
     
     //Open a new window for checking Conformance of Chained-to MPD (if present).
     xmlDoc_progress=loadXMLDoc("temp/"+dirid+"/progress.xml");
@@ -1458,6 +1460,12 @@ function initVariables()
     //uploaded = false;
     dynamicsegtimeline = false;
     segmentListExist = false;
+    
+    mpd_node_index = 0;
+    mpdresult_x = 2;
+    mpdresult_y = 1;
+    branch_added = [0, 0, 0, 0];
+    shouldFinishTest = false;
 }
 
 function setUpTreeView()
