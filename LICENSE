@@ -1,0 +1,42 @@
+DASH-IF Conformance
+
+This rerpository contains sub-modules. Below GNU General Public 
+License applies to this repository except the sub-modules. Licenses
+of sub-module repositories are specified in the respective 
+repository:
+- CMAF
+  - https://github.com/Dash-Industry-Forum/CMAF/
+- CTAWAVE
+  - https://github.com/Dash-Industry-Forum/CTAWAVE/
+- Conformance-Frontend
+  - https://github.com/Dash-Industry-Forum/Conformance-Frontend/
+- Conformance-Frontend-HLS
+  - https://github.com/Dash-Industry-Forum/Conformance-Frontend-HLS/
+- DASH
+  - https://github.com/Dash-Industry-Forum/DASH/
+- DynamicServiceValidator
+  - https://github.com/Dash-Industry-Forum/DynamicServiceValidator/
+- HbbTV_DVB
+  - https://github.com/Dash-Industry-Forum/HbbTV_DVB/
+- HLS
+  - https://github.com/Dash-Industry-Forum/HLS/
+- ISOSegmentValidator
+  - https://github.com/Dash-Industry-Forum/ISOSegmentValidator/
+
+
+                The GNU General Public License
+                         Version 3
+                 http://www.gnu.org/licenses/
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/> 
