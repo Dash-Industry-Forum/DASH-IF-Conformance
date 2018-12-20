@@ -255,9 +255,10 @@ public class Validator {
 			System.exit(12);
 		} finally {
 			// delete the temporary file
-			File tmpFile = new File(Definitions.tmpOutputFile_);
+			// The below deletion is commented out for future debugging purposes in case of high CPU usage
+			/*File tmpFile = new File(Definitions.tmpOutputFile_);
 			if (tmpFile != null && tmpFile.exists())
-				tmpFile.delete();
+				tmpFile.delete();*/
 		}
 	}
 
