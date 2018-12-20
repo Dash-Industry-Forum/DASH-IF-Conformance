@@ -2109,6 +2109,22 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
+
+		    <!--ASSERT -->
+<xsl:choose>
+         <xsl:when test="if (((@profiles and contains(@profiles, 'http://dashif.org/guidelines/dash')) or (not(@profiles) and parent::dash:AdaptationSet/@profiles and contains(parent::dash:AdaptationSet/@profiles, 'http://dashif.org/guidelines/dash')) or (not(@profiles) and not(parent::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash'))) and ((@profiles and contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or (not(@profiles) and parent::dash:AdaptationSet/@profiles and contains(parent::dash:AdaptationSet/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or (not(@profiles) and not(parent::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011'))) and (not(dash:SegmentBase) and not(parent::dash:AdaptationSet/dash:SegmentBase) and not(ancestor::dash:Period/dash:SegmentBase))) then false() else true()"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                                xmlns:schold="http://www.ascc.net/xml/schematron"
+                                xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="if (((@profiles and contains(@profiles, 'http://dashif.org/guidelines/dash')) or (not(@profiles) and parent::dash:AdaptationSet/@profiles and contains(parent::dash:AdaptationSet/@profiles, 'http://dashif.org/guidelines/dash')) or (not(@profiles) and not(parent::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash'))) and ((@profiles and contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or (not(@profiles) and parent::dash:AdaptationSet/@profiles and contains(parent::dash:AdaptationSet/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or (not(@profiles) and not(parent::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011'))) and (not(dash:SegmentBase) and not(parent::dash:AdaptationSet/dash:SegmentBase) and not(ancestor::dash:Period/dash:SegmentBase))) then false() else true()">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-get-full-path"/>
+               </xsl:attribute>
+               <svrl:text>DASH-IF IOP 4.3 Section 3.2.1 - "For on-demand profiles, @indexRange attribute shall be present.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M27"/>
    </xsl:template>
    <xsl:template match="text()" priority="-1" mode="M27"/>
