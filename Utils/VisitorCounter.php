@@ -175,7 +175,12 @@ function writeMPDStatus($mpd){
                     $value = $value.$output[0].", ";
             }
             else
-                $value = $value."uploaded, ";
+            {
+                if(strpos($mpd, "MPD with error")!=FALSE)
+                    $value = $value."uploaded- MPD with error. ";
+                else
+                    $value = $value."uploaded, ";
+            }
             break;
         }
     }
