@@ -91,9 +91,9 @@ function update_visitor_counter(){
     foreach($contents_new as $value){ // write file contents as it is with incremented counter value.
      fwrite($f, $value.PHP_EOL);
     }
-    fwrite($f, $user_IP_hash .", ".$_SESSION['foldername'].", ".$start_time.", ");
-    fwrite($f, $cpu_avg_load[0].", ");
-    fwrite($f, $mem[1].",".$mem[2].",".$mem[3].",".$mem[4].",".$mem[5].",".$mem[6].", ");
+    fwrite($f, "#1:".$user_IP_hash .", #2:".$_SESSION['foldername'].", #3:".$start_time.", ");
+    fwrite($f, "#4:".$cpu_avg_load[0].", ");
+    fwrite($f, "#5:".$mem[1].",".$mem[2].",".$mem[3].",".$mem[4].",".$mem[5].",".$mem[6].", ");
 
     fclose($f);
 }
@@ -137,7 +137,7 @@ function writeEndTime($end_time_sec){
     foreach ($lines as $key => &$value){
         $pos_ID=strpos($value,$ID);
         if($pos_ID!=FALSE){
-            $value = $value.$end_time;
+            $value = $value."#8:".$end_time;
             break;
         }
     }
@@ -168,18 +168,18 @@ function writeMPDStatus($mpd){
                 $pos=strpos($output[0], "200 OK");
 
                 if($pos!=FALSE)
-                    $value = $value."200 OK, ";
+                    $value = $value."#6:200 OK, ";
                 else if(strpos($output[0], "404 Not Found"))
-                    $value = $value."404 Not Found- ".$mpd;
+                    $value = $value."#6:404 Not Found- ".$mpd;
                 else
-                    $value = $value.$output[0].", ";
+                    $value = $value."#6:".$output[0].", ";
             }
             else
             {
                 if(strpos($mpd, "MPD with error")!=FALSE)
-                    $value = $value."uploaded- MPD with error. ";
+                    $value = $value."#6:uploaded- MPD with error. ";
                 else
-                    $value = $value."uploaded, ";
+                    $value = $value."#6:uploaded, ";
             }
             break;
         }
@@ -205,7 +205,7 @@ function writeMPDEndTime(){
     foreach ($lines as $key => &$value) {
         $pos_ID=strpos($value,$ID);
         if($pos_ID!=FALSE){
-            $value = $value.$mpd_end_time.", ";
+            $value = $value."#7:".$mpd_end_time.", ";
             break;
         }
     }
