@@ -25,17 +25,18 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     </head>
-
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
     <!--link rel="stylesheet" href="/resources/demos/style.css" /-->
+    
 
-    <link rel="STYLESHEET" type="text/css" href="tree/dhtmlxTree/codebase/dhtmlxtree.css">
-    <script type="text/javascript" src="tree/dhtmlxTree/codebase/dhtmlxcommon.js"></script>
-    <script type="text/javascript"  src="tree/dhtmlxTree/codebase/dhtmlxtree.js"></script>
-    <script type="text/javascript" src="tree/dhtmlxTree/codebase/ext/dhtmlxtree_json.js"></script>
+    <link rel="STYLESHEET" type="text/css" href="tree/dhtmlxTree_v51_std/codebase/dhtmlxtree.css">
+    <script type="text/javascript" src="tree/dhtmlxTree_v51_std/codebase/dhtmltree_deprecated.js"></script>
+    <script type="text/javascript"  src="tree/dhtmlxTree_v51_std/codebase/dhtmlxtree.js"></script>
+    <script type="text/javascript" src="tree/dhtmlxTree_v51/codebase/ext/dhtmlxtree_json.js"></script>
     
     <link href="gdpr/css/jquery-eu-cookie-law-popup.css" rel="stylesheet">
     <script src="gdpr/js/jquery-eu-cookie-law-popup.js"></script>
@@ -68,7 +69,6 @@
     else
         $hbbtv = "false";
 ?>
-
 <script type="text/javascript">
 
     var url = "";
@@ -424,7 +424,14 @@
         position: absolute;
         left: 42%;
     }
-    
+    added{
+     border:1px solid;
+     background:#ff9999;
+     width:500px;
+     height:500px;
+     display:none;
+     position:absolute;
+   }
 </style>
 <body>
 <div class="eupopup"></div>
@@ -539,7 +546,9 @@
         </tr>
     </table>
 </div>
-
+ <div id="myconfirm" >
+        
+ </div>
 <script type="text/javascript">
 var progressXMLRequest;
 var progressXML;
@@ -547,6 +556,7 @@ var progressTimer;
 var current = 0;
 var dirid="";
 var kidsloc=[];
+var idholder=[];
 var lastloc = 0;
 var mpdprocessed = false;
 var counting =0;
@@ -958,15 +968,17 @@ function mpdProgress(){
     }
 }
 
+
 function addToTree(button){
     if(branch_added[mpd_node_index] === 0){
         automate(mpdresult_y, mpdresult_x, branchName[mpd_node_index]);
         branch_added[mpd_node_index] = mpdresult_x;
         mpdresult_x++;
     }
-    
+     //var x = document.getElementById("mpdresult_x");
+     //x.style.cursor = "default"
     if(button === 0)
-        tree.setItemImage2(branch_added[mpd_node_index], 'progress3.gif', 'progress3.gif', 'progress3.gif');
+        tree.setItemImage2(branch_added[mpd_node_index], 'progress.gif', 'progress.gif', 'progress.gif');
     else if(button === 1)
         tree.setItemImage2(branch_added[mpd_node_index], 'right.jpg', 'right.jpg', 'right.jpg');
     else if(button === 2)
@@ -1063,7 +1075,7 @@ function progress()  //Progress of Segments' Conformance
         adaptationid++;
     }
 
-    tree.setItemImage2( repid[counting],'progress3.gif','progress3.gif','progress3.gif');
+    tree.setItemImage2( repid[counting],'progress.gif','progress.gif','progress.gif');
     
     if(xmlDoc_progress == null)
         return;
@@ -1098,6 +1110,7 @@ function progress()  //Progress of Segments' Conformance
                     lastloc++;
 
                     automate(adaptid[i-1],lastloc,"log");
+                    idholder.push(lastloc);
                     tree.setItemImage2( lastloc,'log.jpg','log.jpg','log.jpg');
                     kidsloc.push(lastloc);
                     urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i-1)+ "_CrossInfofile.html");
@@ -1116,6 +1129,7 @@ function progress()  //Progress of Segments' Conformance
                         lastloc++;
                         
                         automate(adaptid[i-1],lastloc,"log");
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
                         urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
@@ -1127,6 +1141,7 @@ function progress()  //Progress of Segments' Conformance
                         lastloc++;
                         
                         automate(adaptid[i-1],lastloc,"log");
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
                         urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
@@ -1138,6 +1153,7 @@ function progress()  //Progress of Segments' Conformance
                         lastloc++;
                         
                         automate(adaptid[i-1],lastloc,"log");
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
                         urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
@@ -1167,6 +1183,7 @@ function progress()  //Progress of Segments' Conformance
                         lastloc++;
                     
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
                         urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i-1)+ "_compInfo.html");
@@ -1184,6 +1201,7 @@ function progress()  //Progress of Segments' Conformance
                         lastloc++;
                         
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
                         urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile.html");
@@ -1196,6 +1214,7 @@ function progress()  //Progress of Segments' Conformance
                         lastloc++;
                     
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
                         urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile.html");
@@ -1211,6 +1230,7 @@ function progress()  //Progress of Segments' Conformance
                         lastloc++;
                         
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
                         urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile.html");
@@ -1223,6 +1243,7 @@ function progress()  //Progress of Segments' Conformance
                         lastloc++;
                     
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
                         urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile.html");
@@ -1242,6 +1263,7 @@ function progress()  //Progress of Segments' Conformance
                         lastloc++;
                         
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
                         urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
@@ -1253,6 +1275,7 @@ function progress()  //Progress of Segments' Conformance
                         lastloc++;
                         
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
                         urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
@@ -1264,6 +1287,7 @@ function progress()  //Progress of Segments' Conformance
                         lastloc++;
                     
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
                         urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
@@ -1278,6 +1302,7 @@ function progress()  //Progress of Segments' Conformance
                         lastloc++;
                         
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
                         urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
@@ -1289,6 +1314,7 @@ function progress()  //Progress of Segments' Conformance
                         lastloc++;
                         
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
                         urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
@@ -1300,6 +1326,7 @@ function progress()  //Progress of Segments' Conformance
                         lastloc++;
                     
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
                         urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
@@ -1381,31 +1408,127 @@ function brother(y,x)
     y++;
 }
 
+
 function tonsingleclick(id)
 {
-    var urlto="";
-    var position = kidsloc.indexOf(id);
-    urlto=urlarray[position];
-    
-    if(urlto)
-        window.open(urlto, "_blank");
+   var urlto="";
+   var position = kidsloc.indexOf(id);
+   urlto=urlarray[position];
+   if(urlto){
+       window.open(urlto, "_blank");
+  }
 }
 
-function tonrightclick(id)
+    document.addEventListener("click",function()//delete the download button when anywhere in the dom file is left clicked.
+    {
+        if(buttoncontroller)
+            downloadButtonHandle.remove();
+        buttoncontroller=false;//because button is removed, change buttoncontroller to be false so that intvariable becomes false...
+            //and function automaticalyy enters into if statement above and a button is created with next right click.
+    }
+        );
+    document.addEventListener("contextmenu",function()//delete the download button when anywhere in the dom file is right clicked.
+    {
+        if(buttoncontroller)
+            downloadButtonHandle.remove();
+        buttoncontroller=false;//because button is removed, change buttoncontroller to be false so that intvariable becomes false...
+            //and function automaticalyy enters into if statement above and a button is created with next right click.
+    }
+        );
+   
+function adjuststylein(id)//This function is created to adjust the style of the mouse cursor when it goes onto a Dtmlxtree element.
 {
     var urlto="";
     var position = kidsloc.indexOf(id);
+  
+        if(position !== -1){//when id is not in the kidsloc, it returns -1. Therefore this if statement is created.
+        urlto=urlarray[position];// url corresponding to this id, in other words the url of the webpage opened when this element is clicked. 
+        if(urlto)//if url exists, change the cursor to pointer on this tree element.
+        tree.style_pointer = "pointer";//This makes the cursor pointer when the pointer is exactly on this tree element(it works for texts) 
+        document.getElementById("treeboxbox_tree").style.cursor = "pointer";//This makes the cursor pointer when the pointer is exactly on this tree element(it works for the icons)
+        }
+        else{ //This makes the tree pointer when the pointer is exactly on this tree element
+        tree.style_pointer = "default";//If no url exists corresponding to tree element make the cursor default
+        document.getElementById("treeboxbox_tree").style.cursor = "default";//If no url exists corresponding to tree element make the cursor default
+        
+        }
+}
+function adjuststyleout(id)//This function is created to adjust the style of the mouse cursor when it leaves a tree element.
+{
+    var urlto="";
+    var position = kidsloc.indexOf(id);
+    if(position !== -1){
+        urlto=urlarray[position];
+        if(urlto)//If it leaves a tree element that has a corresponding url make the cursor style default.
+        tree.style_pointer = "default";
+        document.getElementById("treeboxbox_tree").style.cursor= "default";
+        }
+}
+
+var downloadButtonHandle=false;
+var buttoncontroller=false;
+function tonrightclick(id)
+{
+    var intvariable=buttoncontroller;
+    $(document).ready(function()//cretaed to remove the custom right click popup menu from this page
+{ 
+    $(document).bind("contextmenu",function(e){
+        return false;
+    }); 
+});
+    aPos=event.clientX;//position of the x coordinate of the right click point in terms of pixels.
+    bPos=event.clientY;//position of the y coordinate of the right click point in terms of pixels.
+    
+    var urlto="";
+    var position = kidsloc.indexOf(id);
     urlto=urlarray[position];
     
-    if(urlto){
+    if(urlto){//if this tree element has a corresponding url
         var locarray = urlto.split("/");
         var htmlname = locarray[locarray.length-1];
         var textname = htmlname.split(".")[0] + ".txt";
-
         var textloc = window.location.href + "/../" + urlto.split(".")[0] + ".txt";
-        downloadLog(textloc, textname);
+    if(intvariable==false){//if intvariable is false execute 
+        downloadButtonHandle = document.createElement("BUTTON");//create a dynamic button
+        var t = document.createTextNode("click to download");//put this text in to the button
+        downloadButtonHandle.appendChild(t);
+        document.body.appendChild(downloadButtonHandle);//put button in the body of the document
+        var str1=aPos+20 + "px";//x coordinate of the button is adjusted to be 20 pixel right of the click position
+        var str2=bPos + "px";//y coordinate of the button is adjusted to be the same with the click position
+        downloadButtonHandle.style.position = 'absolute';
+        downloadButtonHandle.style.left = str1;//x coordinate assigned
+        downloadButtonHandle.style.top =  str2;//y coordinate assigned
+        downloadButtonHandle.onclick=function(){//when button is clicked, this function executes
+        downloadLog(textloc,textname);
+        downloadButtonHandle.remove();//after the file is downloaded, remove the button.
+        }
     }
-}
+        
+        else{//if intvariable is correct it means there is already a button in the page so remove it.
+        downloadButtonHandle.remove();
+        }
+        if(intvariable==false){//int variable is created because both in the if statement and between the curly braces of if statement having buttoncontroller cretae some problems during new assignments. 
+            buttoncontroller=true;//if intvariable is false, a button is created after the execution of rightclick. Therefore change the global variable buttoncontroller to be true so that intvariable becomes true...
+            //and function automaticalyy enters into else statement above and button is removed with next right click.
+            
+        }       
+        else{//if intvariable is correct, a button is removed after the execution of rightclick. Therefore change the global variable buttoncontroller to be false so that intvariable becomes false...
+            //and function automaticalyy enters into if statement above and a button is created with next right click.
+           buttoncontroller=false;
+        }
+              }
+         else{//if any tree element, other than the ones which have corresponding ids, are right clicked remove the button 
+        downloadButtonHandle.remove();
+        buttoncontroller=false;//because button is removed, change buttoncontroller to be false so that intvariable becomes false...
+            //and function automaticalyy enters into if statement above and a button is created with next right click.
+    }
+              
+    }     
+        
+ 
+ 
+
+
 
 function loadXMLDoc(dname)
 {
@@ -1482,7 +1605,8 @@ function setUpTreeView()
     tree.setOnRightClickHandler(tonrightclick);
     tree.setSkin('dhx_skyblue');
     tree.setImagePath("img/");
-    tree.enableDragAndDrop(true);
+    tree.attachEvent("onMouseIn", function(id){adjuststylein(id);});//Dhtmlx onMouseIn function is customized. 
+    tree.attachEvent("onMouseout", function(id){adjuststyleout(id);});//Dhtmlx onMouseout function is customized.
 }
 
 function setStatusTextlabel(textToSet)
@@ -1545,6 +1669,13 @@ function downloadLog(url, name){
     ga('send', 'pageview');
 </script>
 
+
+<script>
+   var i;
+   for (i = 0; i < idholder.length; i++) { 
+   document.getElementById("idholder[i]").style_pointer="pointer";
+}
+</script>
 <footer class="site-footer">
     <center> <p id="footerVersion"></p>
         <p><a target="_blank" href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/issues"><b>Report issue</b></a></p>
