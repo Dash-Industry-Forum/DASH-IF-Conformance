@@ -71,10 +71,15 @@ function session_check(){
     $session_dir .= '/' . $foldername;
     $_SESSION['locate'] = $session_dir;
     
-    $_SESSION['foldername'] = $foldername;
-    update_visitor_counter();
+    //Create folder, but if exists then it indicates foldername is repeated and stop the process.
+    if (!file_exists($session_dir)){
+        create_folder_in_session($session_dir);
+    }
+    else {
+        die("Error:Session folder already available, ...quitting.\n");    
+    }
     
-    create_folder_in_session($session_dir);
+    update_visitor_counter();
 }
 
 /*
