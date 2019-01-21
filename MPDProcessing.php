@@ -72,6 +72,7 @@ function process_MPD(){
     ## Determine the current period
     $mpd_features = MPD_features($mpd_dom);
     $period_info = current_period();
+    writeProfiles();
     
     //------------------------------------------------------------------------//
     ## Perform MPD Validation
