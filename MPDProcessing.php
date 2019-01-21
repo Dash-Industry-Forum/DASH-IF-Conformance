@@ -38,6 +38,7 @@ function process_MPD(){
     if(!$mpd_dom){
         $progress_xml->MPDError = "1";
         $progress_xml->asXml($session_dir . '/' . $progress_report);
+        writeMPDStatus($mpd_url."MPD with error");
         die("Error: Failed loading XML file\n");
     }
     else{
