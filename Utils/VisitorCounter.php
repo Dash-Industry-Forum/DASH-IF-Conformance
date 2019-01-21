@@ -211,3 +211,36 @@ function writeMPDEndTime(){
     }
     file_put_contents($counter_name, implode("\n", $lines));
 }
+
+/*
+ * Updating the counter file with the profiles
+ * (both MPD@profiles and enforced profiles)
+ * @name: writeProfiles
+ * @input: NA
+ * @output: NA
+ */
+function writeProfiles(){
+    global $counter_name, $mpd_features, $dashif_conformance, $cmaf_conformance, $dvb_conformance, $hbbtv_conformance, $ctawave_conformance;
+    
+    $mpd_profiles = str_replace(',', ';', $mpd_features['profiles']);
+    $conformance_profiles = $mpd_profiles . 
+                            (($dashif_conformance) ? ";DASH-IF" : '') .
+                            (($cmaf_conformance) ? ";CMAF" : '') .
+                            (($dvb_conformance) ? ";DVB" : '') .
+                            (($hbbtv_conformance) ? ";HbbTV" : '') .
+                            (($ctawave_conformance) ? ";CTAWAVE" : '');
+    
+    $file = file_get_contents($counter_name);
+    $lines = explode("\n", $file);
+    $ID=$_SESSION['foldername'];
+    
+    foreach ($lines as $key => &$value) {
+        $pos_ID=strpos($value,$ID);
+        if($pos_ID!=FALSE){
+            $value = $value.$conformance_profiles.", ";
+            break;
+        }
+    }
+    
+    file_put_contents($counter_name, implode("\n", $lines));
+}
