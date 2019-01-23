@@ -122,7 +122,7 @@ function process_MPD(){
     
     ## Update the progress report with MPD information
     ## Calculate Segment URLs for each representation in each adaptation set within the current period
-    check_before_segment_validation();
+    check_before_segment_validation($result_for_json);
     $urls = process_base_url();
     $segment_urls = derive_segment_URLs($urls, $period_info);
     $profiles = derive_profiles();
