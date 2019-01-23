@@ -29,4 +29,14 @@ For the framework of the conformance software and how the general conformance te
 
 ### Issue Reporting
 
-If the issue is known to correspond to a specific submodule functionality, please open the issues in the respective submodule's Github issue page. Otherwise, the issues can be reported on this repository. Please beware that in the latter case, the issue can be moved to the corresponding submodule by the repository admin.
+If the issue is known to correspond to a specific submodule functionality, please open the issues in the respective submodule's Github issue page. Otherwise, the issues can be reported on this repository. Please beware that in the latter case, the issue can be moved to the corresponding submodule by the repository admin. Access to submodules' Github issue pages are provided below:
+
+* [DASH issues](https://github.com/Dash-Industry-Forum/DASH/issues)
+* [HLS issues](https://github.com/Dash-Industry-Forum/HLS/issues)
+* [CMAF issues](https://github.com/Dash-Industry-Forum/CMAF/issues) 
+* [CTAWAVE issues](https://github.com/Dash-Industry-Forum/CTAWAVE/issues)
+* [HbbTV_DVB issues](https://github.com/Dash-Industry-Forum/HbbTV_DVB/issues) 
+* [ISOSegmentValidator issues](https://github.com/Dash-Industry-Forum/ISOSegmentValidator/issues)
+* [Conformance-Frontend issues](https://github.com/Dash-Industry-Forum/Conformance-Frontend/issues)
+* [Conformance-Frontend-HLS issues](https://github.com/Dash-Industry-Forum/Conformance-Frontend-HLS/issues)
+* [DynamicServiceValidator issues](https://github.com/Dash-Industry-Forum/DynamicServiceValidator/issues)
