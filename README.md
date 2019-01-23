@@ -1,6 +1,6 @@
 # DASH-IF Conformance Software
 
-This repository provides the source code for MPEG-DASH/DASH-IF Validator. It has been extended according to further standards, such as CMAF, DVB-DASH, HbbTV, and CTA WAVE. 
+This repository provides the source code for MPEG-DASH/DASH-IF Conformance Software/Validator. It has been extended according to further standards, such as CMAF, DVB-DASH, HbbTV, and CTA WAVE. 
 
 This repository contains the common directory (Utils) and submodules: 
 * [DASH](https://github.com/Dash-Industry-Forum/DASH)
