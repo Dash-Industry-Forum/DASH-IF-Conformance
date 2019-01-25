@@ -134,5 +134,18 @@ final class MediaProfileTest extends TestCase
         
         
     }
+    public function testAACMediaProfile2()
+    {    
+        
+        $rep_count=0;
+        $adapt_count=0;
+        //Check for HD profile of AVC.
+        $xmlParamsTobeTested=array("codec" => "AAC", "profile" => "0x02", "level"=>"AAC@L2",
+                                   "channels" => "0x1" , "sampleRate" => "48000", "brand"=>""  );
+        
+        $this->assertSame("AAC_Core", checkAndGetConformingAudioProfile($xmlParamsTobeTested,$rep_count,$adapt_count)[0]);
+        
+        
+    }
 } 
 

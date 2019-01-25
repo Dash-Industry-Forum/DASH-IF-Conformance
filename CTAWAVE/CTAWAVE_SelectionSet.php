@@ -84,12 +84,13 @@ function CTASelectionSet()
 
 function CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$opfile)
 {
-    global $MediaProfDatabase, $current_period;
+    global $MediaProfDatabase, $current_period,$profileCommandLine;
     $waveVideoTrackFound=0; $waveVideoSwSetFound=0;$videoSelectionSetFound=0;
     $waveAudioTrackFound=0; $waveAudioSwSetFound=0;$audioSelectionSetFound=0;
     $waveSubtitleTrackFound=0; $waveSubtitleSwSetFound=0;$subtitleSelectionSetFound=0;
     $handler_type=""; $errorMsg="";
-    $videoMPArray=array("AVC_HD", "HHD10", "UHD_10", "HLG_10","HDR10");
+    $profileMatched='';
+    $videoMPArray=array("HD", "HHD10", "UHD10", "HLG10","HDR10");
     $audioMPArray=array("AAC_Core", "Adaptive_AAC_Core", "AAC_Multichannel", "Enhanced_AC-3","AC-4_SingleStream","MPEG-H_SingleStream");
     $subtitleMPArray=array("TTML_IMSC1_Text", "TTML_IMSC1_Image");
     for($adapt_count=0; $adapt_count<$adapts_count; $adapt_count++){
@@ -115,7 +116,18 @@ function CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_templat
                     //Update the MP database for future checks
                     $MediaProfDatabase[$current_period][$adapt_count][$fcount]=$MPTrack;
                     fprintf($opfile, $MPTrackResult[1]);
-                    fprintf($opfile, "Information: The Media profile found in track ".$fcount." of SwitchingSet ".$adapt_count." is-".$MPTrack. "\n");
+                    if($profileCommandLine!=='')
+                    {
+                        foreach($profileCommandLine as $profile){
+                            if($profile===$MPTrack || $profile===FourCCEquivalent($MPTrack)){
+                                fprintf($opfile, "Information: The Media profile found in track ".$fcount." of SwitchingSet ".$adapt_count." is-".$MPTrack. "\n");
+                                $profileMatched[]=$profile;
+                            }
+                        }
+
+                    }
+                    else
+                        fprintf($opfile, "Information: The Media profile found in track ".$fcount." of SwitchingSet ".$adapt_count." is-".$MPTrack. "\n");
                     if($handler_type=="vide")
                     {
                         $videoSelectionSetFound=1;
@@ -180,6 +192,7 @@ function CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_templat
             fprintf ($opfile, $errorMsg);
         }
     }
+    printCommandLineProfileInfo($profileCommandLine,$profileMatched,$opfile);
     return $errorMsg;
 }
 
@@ -329,6 +342,18 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
             $brand_pos=strpos($compatible_brands,"caaa") || strpos($compatible_brands,"caac")|| $brand_pos=strpos($compatible_brands,"camc");
             if($brand_pos!==False)
                 $xml_MPParameters['brand']=substr($compatible_brands,$brand_pos,$brand_pos+3);
+            
+            $levelcomment=$xml->getElementsByTagName("iods_OD");
+            if($levelcomment->length>0)
+            {    
+                $profileLevelString=$levelcomment->getAttribute("Comment");
+                if($profileLevelString!==NULL)
+                {
+                    $profileLevel=str_replace("audio profile/level is ", "", $profileLevelString);
+                    $xml_MPParameters['level']==$profileLevel;
+                }
+            }
+            
         }
         elseif($sdType=="ec-3")
         {
@@ -413,7 +438,7 @@ function checkAndGetConformingVideoProfile($xml_MPParameters,$repCount, $adaptCo
                 if($xml_MPParameters['height']<=1080 && $xml_MPParameters['width']<=1920 && $xml_MPParameters['framerate']<=60)
                 {
                     if($xml_MPParameters['level']<=4.0  )
-                        $videoMediaProfile="AVC_HD";
+                        $videoMediaProfile="HD";
                     elseif($xml_MPParameters['level']<=4.2)
                         $videoMediaProfile="AVC_HDHF";
                     else
@@ -559,16 +584,21 @@ function checkAndGetConformingAudioProfile($xml_MPParameters,$repCount,$adaptCou
         {
             if($xml_MPParameters['channels']=="0x1" || $xml_MPParameters['channels']=="0x2")
             {
-                if(in_array($xml_MPParameters['profile'],array("0x02", "0x05", "0x1d")))
+                //Level is checked here , however level can not be found always from the atom xml as the IODS atom is not always present in the track.
+                if($xml_MPParameters['level']!=="" && strpos($xml_MPParameters['level'], "AAC@L2")===FALSE){
+                        $errorMsg[]= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but the level found for track ".$repCount." of SwitchingSet ".$adaptCount."- ".$xml_MPParameters['level'].", expected level 2. \n";
+                }else
                 {
-                    if($xml_MPParameters["brand"]=="caaa")
-                        $audioMediaProfile="Adaptive_AAC_Core";
+                    if(in_array($xml_MPParameters['profile'],array("0x02", "0x05", "0x1d")))
+                    {
+                        if($xml_MPParameters["brand"]=="caaa")
+                            $audioMediaProfile="Adaptive_AAC_Core";
+                        else
+                            $audioMediaProfile="AAC_Core";
+                    }
                     else
-                        $audioMediaProfile="AAC_Core";
+                        $errorMsg[]= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but the profiles are not among the [AAC-LC, HE-AAC, HE-AAC v2] for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
                 }
-                else
-                    $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but the profiles are not among the [AAC-LC, HE-AAC, HE-AAC v2] for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
-
               
   
             }
@@ -577,15 +607,15 @@ function checkAndGetConformingAudioProfile($xml_MPParameters,$repCount,$adaptCou
                 if(in_array($xml_MPParameters['profile'],array("0x02", "0x05")))
                     $audioMediaProfile="AAC_Multichannel";
                 else
-                    $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC multichannel codec found but the profiles are not among the [AAC-LC, HE-AAC] for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
+                    $errorMsg[]= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC multichannel codec found but the profiles are not among the [AAC-LC, HE-AAC] for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
 
             }
             else
-                $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but channels are not conforming, found ".$xml_MPParameters['channels']." but expected 1,2,5,6,7,12 or 14 for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
+                $errorMsg[]= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but channels are not conforming, found ".$xml_MPParameters['channels']." but expected 1,2,5,6,7,12 or 14 for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
 
         }
         else
-            $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but sampling rate is not conforming, found ".$xml_MPParameters['sampleRate']." but expected 48kHz for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
+            $errorMsg[]= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but sampling rate is not conforming, found ".$xml_MPParameters['sampleRate']." but expected 48kHz for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
              
     }
     elseif($xml_MPParameters['codec']=="EAC-3" ||$xml_MPParameters['codec']=="AC-3")
@@ -640,4 +670,23 @@ function checkAndGetConformingSubtitleProfile($xml_MPParameters,$repCount,$adapt
 }
 
 
+function FourCCEquivalent($MP)
+{
+    $MPNames=["HD", "HHD10","UHD10","HLG10", "HDR10", "AAC_Multichannel", "Enhanced_AC-3","AC-4_SingleStream","MPEG-H_SingleStream", "TTML_IMSC1_Text", "TTML_IMSC1_Image"];
+    $fourCC=["cfhd","chh1","cud1","clg1","chd1","caac","caaa","camc","ceac","ca4s","cmhs","im1t","im1i"];
+    $key = array_search($MP, $MPNames);
+    return $fourCC[$key];
+    
+}
+
+function printCommandLineProfileInfo($profileCommandLine,$profileMatched,$opfile)
+{
+    if($profileCommandLine!=='')
+    {
+        $DiffArray=array_diff($profileCommandLine, $profileMatched);
+        foreach($DiffArray as $profile)
+            fprintf ($opfile, "Information: No tracks found conforming to the given media profile- ".$profile);
+            
+    }
+}
 ?>
