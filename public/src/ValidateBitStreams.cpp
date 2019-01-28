@@ -194,7 +194,13 @@ OSErr Validate_iods_OD_Bits( Ptr odDataP, unsigned long odSize, Boolean fileForm
 						"High Efficiency AAC@L2",
 						"High Efficiency AAC@L3",
 						"High Efficiency AAC@L4",
-						"High Efficiency AAC@L5" };
+						"High Efficiency AAC@L5",
+						"High Efficiency AACv2@L2",
+						"High Efficiency AACv2@L3",
+						"High Efficiency AACv2@L4",
+						"High Efficiency AACv2@L5",
+						"Low Delay AAC@L1"};
+		
 		VALIDATE_FIELD  ("%2.2x",  ODProfileLevelIndication, 8 );
 		if (ODProfileLevelIndication!=0xFF)
 			warnprint("Warning: Validate_IODS: ISMA expects no-capability(0xFF) for ODProfileLevelIndication\n");
