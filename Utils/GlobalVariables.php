@@ -229,7 +229,7 @@ for ( j = txtloc_start_ind; j < loc.length-1; j++){
     txtloc += "/";
     txtloc += loc[j];
 }
-console.log(txtloc);
+
 for ( i = 1; i < url.length-4; i++ ) {
   newPathname += "/";
   newPathname += url[i];
