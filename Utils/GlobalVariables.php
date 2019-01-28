@@ -34,6 +34,7 @@ $error_message = 1;
 $warning_message = 1;
 $info_message = 1;
 $suppressatomlevel = 0;
+$profileCommandLine='';
 
 # HLS variable
 $hls_manifest = 0;
@@ -155,7 +156,9 @@ if (isset($_POST['noinfo'])){
 if (isset($_POST['suppressatomlevel'])){
     $suppressatomlevel = 1;
 }
-
+if(isset($_POST['profile'])){
+    $profileCommandLine = (array)json_decode($_POST['profile'],true);
+}
 # Important for Backend block
 $command_file = 'command.txt';
 $config_file = 'config_file.txt';
