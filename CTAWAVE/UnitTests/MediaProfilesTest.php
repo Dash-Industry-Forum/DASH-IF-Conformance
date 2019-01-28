@@ -32,14 +32,14 @@ final class MediaProfileTest extends TestCase
                                    "height" => "1080" , "width"=> "1920" , "framerate" =>  "60","color_primaries" => "0x1",
                                    "transfer_char" => "0x1", "matrix_coeff" => "0x1", "tier" => "", "brand"=>""  );
         
-        $this->assertSame("AVC_HD", checkAndGetConformingVideoProfile($xmlParamsTobeTested,$rep_count,$adapt_count)[0]);
+        $this->assertSame("HD", checkAndGetConformingVideoProfile($xmlParamsTobeTested,$rep_count,$adapt_count)[0]);
         
         //check that SD profile also conforms to HD profile of AVC.
         $xmlParamsTobeTested=array("codec" => "AVC", "profile" => "main", "level" => "3.1",
                                    "height" => "576" , "width"=> "864" , "framerate" =>  "30","color_primaries" => "0x1",
                                    "transfer_char" => "0x1", "matrix_coeff" => "0x1", "tier" => "", "brand"=>""  );
         
-        $this->assertSame("AVC_HD", checkAndGetConformingVideoProfile($xmlParamsTobeTested,$rep_count,$adapt_count)[0]);
+        $this->assertSame("HD", checkAndGetConformingVideoProfile($xmlParamsTobeTested,$rep_count,$adapt_count)[0]);
         
     }
     
@@ -60,7 +60,7 @@ final class MediaProfileTest extends TestCase
                                    "height" => "2160" , "width"=> "3840" , "framerate" =>  "80","color_primaries" => "",
                                    "transfer_char" => "", "matrix_coeff" => "", "tier" => "", "brand"=>""  );
         
-        $this->assertNotSame("AVC_HD", checkAndGetConformingVideoProfile($xmlParamsTobeTested,$rep_count,$adapt_count)[0]);
+        $this->assertNotSame("HD", checkAndGetConformingVideoProfile($xmlParamsTobeTested,$rep_count,$adapt_count)[0]);
         
     }
     

@@ -89,7 +89,7 @@ function CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_templat
     $waveAudioTrackFound=0; $waveAudioSwSetFound=0;$audioSelectionSetFound=0;
     $waveSubtitleTrackFound=0; $waveSubtitleSwSetFound=0;$subtitleSelectionSetFound=0;
     $handler_type=""; $errorMsg="";
-    $profileMatched='';
+    $profileMatched=array();
     $videoMPArray=array("HD", "HHD10", "UHD10", "HLG10","HDR10");
     $audioMPArray=array("AAC_Core", "Adaptive_AAC_Core", "AAC_Multichannel", "Enhanced_AC-3","AC-4_SingleStream","MPEG-H_SingleStream");
     $subtitleMPArray=array("TTML_IMSC1_Text", "TTML_IMSC1_Image");
@@ -685,7 +685,7 @@ function printCommandLineProfileInfo($profileCommandLine,$profileMatched,$opfile
     {
         $DiffArray=array_diff($profileCommandLine, $profileMatched);
         foreach($DiffArray as $profile)
-            fprintf ($opfile, "Information: No tracks found conforming to the given media profile- ".$profile);
+            fprintf ($opfile, "Information: No tracks found conforming to the given media profile- ".$profile."\n");
             
     }
 }
