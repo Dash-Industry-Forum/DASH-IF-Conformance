@@ -604,7 +604,7 @@ function checkAndGetConformingAudioProfile($xml_MPParameters,$repCount,$adaptCou
             }
             elseif(in_array($xml_MPParameters['channels'], array("0x5","0x6","0x7","0xc","0xe")))
             {
-                if(in_array($xml_MPParameters['profile'],array("0x02", "0x05")))
+                if($xml_MPParameters['profile'] == "0x05" || ($xml_MPParameters['profile'] == "0x02" && $xml_MPParameters['level'] == "High Quality Audio@L6"))
                     $audioMediaProfile="AAC_Multichannel";
                 else
                     $errorMsg[]= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC multichannel codec found but the profiles are not among the [AAC-LC, HE-AAC] for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
