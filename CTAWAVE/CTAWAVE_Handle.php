@@ -22,6 +22,7 @@ function CTAWAVE_Handle($request){
         case 'AdaptationSet':
             $return_val = CTASelectionSet();
             $return_val = CTAPresentation();
+          //  $return_val= CTABaselineSpliceChecks();
             break;
         default:
             break;
