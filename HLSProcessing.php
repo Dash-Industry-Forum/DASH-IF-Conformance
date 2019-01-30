@@ -26,7 +26,7 @@ function processHLS(){
     $XMediaURLArray = array();
     
     ## Open related files
-    $progress_xml = simplexml_load_string('<root><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><allDownloadComplete>false</allDownloadComplete><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
+    $progress_xml = simplexml_load_string('<root><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed><allDownloadComplete>false</allDownloadComplete></root>');
     $progress_xml->asXml($session_dir . '/' . $progress_report);
     
     ## Read each line of manifest file into an array
@@ -75,7 +75,7 @@ function processHLS(){
                     $return_seg_val[] = $cmaf_function_name($cmaf_when_to_call[1]);
                 
                 err_file_op(1);
-                print_console($session_dir . '/' . $error_log . '.txt', "AdaptationSet $current_adaptation_set Representation $current_representation Results");
+                print_console($session_dir . '/Period0/' . $error_log . '.txt', "Period 1 AdaptationSet " . ($current_adaptation_set+1) . " Representation " . ($current_representation+1) . " Results");
                 $current_representation++;
             }
             
@@ -315,12 +315,14 @@ function groupPlaylists($file_location){
     
     $i = 0;
     $file_location_ind = 0;
+    $period_dir = $session_dir . '/Period0';
+    create_folder_in_session($period_dir);
     foreach($hls_media_types as $hls_media_type){
         foreach($hls_media_type as $sw){
             $AdaptationXML = $PeriodXML->addChild('Adaptation');
             
             $new_sw_path = str_replace('$AS$', $i, $adaptation_set_template);
-            create_folder_in_session($session_dir . '/' . $new_sw_path);
+            create_folder_in_session($period_dir . '/' . $new_sw_path);
             
             $j = 0;
             foreach($sw as $track){
@@ -342,11 +344,11 @@ function groupPlaylists($file_location){
                 
                 $new_track_path = str_replace(array('$AS$', '$R$'), array($i, $j), $reprsentation_template);
                 
-                rename_file($track_path . '.xml', $session_dir . '/' . $new_sw_path . '/' . $new_track_path . '.xml');
-                rename_file($session_dir . '/' . $track .'log.txt' , $session_dir . '/' . $new_track_path . 'log.txt');
-                $temp_string = str_replace(array('$Template$'), array($new_track_path.'log'), $string_info);
-                file_put_contents($session_dir . '/' . $new_track_path . 'log.html', $temp_string);
-                rename_file($track_path, $session_dir . '/' . $new_track_path);
+                rename_file($track_path . '.xml', $period_dir . '/' . $new_sw_path . '/' . $new_track_path . '.xml');
+                rename_file($session_dir . '/' . $track .'log.txt' , $period_dir . '/' . $new_track_path . 'log.txt');
+                $temp_string = str_replace('$Template$', '/Period0/'.$new_track_path.'log', $string_info);
+                file_put_contents($period_dir . '/' . $new_track_path . 'log.html', $temp_string);
+                rename_file($track_path, $period_dir . '/' . $new_track_path);
                 
                 $j++;
             }
