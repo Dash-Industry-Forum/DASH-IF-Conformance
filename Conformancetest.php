@@ -721,11 +721,10 @@ function pollingProgress()
 
     if (xmlDoc_progress === null)
         return;
-    else
-        var allDownloadComplete=xmlDoc_progress.getElementsByTagName("allDownloadComplete");
-
-    var totarrstring = allDownloadComplete[0].nodeValue;
-    if (totarrstring == 'false') //Check for the error in segment download.   
+    
+    var allDownloadComplete=xmlDoc_progress.getElementsByTagName("allDownloadComplete");
+    var totarrstring = allDownloadComplete[0].textContent;
+    if (totarrstring !== 'true') //Check for the error in segment download.   
         return;
     
     //Get Conformance results from progress.xml file.
@@ -752,7 +751,7 @@ function pollingProgress()
         return;
     }else{
         var Periodxml=xmlDoc_progress.getElementsByTagName("Period"); 
-        Adapt_count= Periodxml[0].childNodes.length;
+        Adapt_count= Periodxml[0].getElementsByTagName("Adaptation").length;
         var AdaptRepPeriod_count=Adapt_count;
         TotalAdaptRep_count = AdaptRepPeriod_count;
         var Adaptxml=xmlDoc_progress.getElementsByTagName("Adaptation");
@@ -794,7 +793,7 @@ function pollingProgress()
             automate(repid[counting],lastloc,"log");
             tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
             kidsloc.push(lastloc);
-            urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i)+"rep"+(j) + "log.html");
+            urlarray.push("temp/"+dirid+"/Period0/"+ "Adapt"+(i)+"rep"+(j) + "log.html");
             lastloc++;
             counting++;
             adjustFooter();
@@ -848,7 +847,7 @@ function progress()  //Progress of Segments' Conformance
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i-1)+ "_compInfo.html");
+                        urlarray.push("temp/"+dirid+"/Period0/"+ "Adapt"+(i-1)+ "_compInfo.html");
                         lastloc++;
                     }
                 }
@@ -870,7 +869,7 @@ function progress()  //Progress of Segments' Conformance
                     automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                     tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                     kidsloc.push(lastloc);
-                    urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile.html");
+                    urlarray.push("temp/"+dirid+"/Period0/"+ "SelectionSet_infofile.html");
                     lastloc++;
                 }
             }
@@ -890,7 +889,7 @@ function progress()  //Progress of Segments' Conformance
                     automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                     tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                     kidsloc.push(lastloc);
-                    urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile.html");
+                    urlarray.push("temp/"+dirid+"/Period0/"+ "Presentation_infofile.html");
                     lastloc++;
                 }
             }
@@ -903,7 +902,7 @@ function progress()  //Progress of Segments' Conformance
                     automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                     tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                     kidsloc.push(lastloc);
-                    urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
+                    urlarray.push("temp/"+dirid+"/Period0/"+ "SelectionSet_infofile_ctawave.html");
                     lastloc++;
                 }
                 else if(CTAWAVESelectionSet[0].textContent=="warning"){
@@ -914,7 +913,7 @@ function progress()  //Progress of Segments' Conformance
                     automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                     tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                     kidsloc.push(lastloc);
-                    urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
+                    urlarray.push("temp/"+dirid+"/Period0/"+ "SelectionSet_infofile_ctawave.html");
                     lastloc++;
                 }
                 else{
@@ -925,7 +924,7 @@ function progress()  //Progress of Segments' Conformance
                     automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                     tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                     kidsloc.push(lastloc);
-                    urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
+                    urlarray.push("temp/"+dirid+"/Period0/"+ "SelectionSet_infofile_ctawave.html");
                     lastloc++;
                 }
             }
@@ -938,7 +937,7 @@ function progress()  //Progress of Segments' Conformance
                     automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                     tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                     kidsloc.push(lastloc);
-                    urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
+                    urlarray.push("temp/"+dirid+"/Period0/"+ "Presentation_infofile_ctawave.html");
                     lastloc++;
                 }
                 else if(CTAWAVEProfile[0].textContent=="warning"){
@@ -949,7 +948,7 @@ function progress()  //Progress of Segments' Conformance
                     automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                     tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                     kidsloc.push(lastloc);
-                    urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
+                    urlarray.push("temp/"+dirid+"/Period0/"+ "Presentation_infofile_ctawave.html");
                     lastloc++;
                 }
                 else{
@@ -960,7 +959,7 @@ function progress()  //Progress of Segments' Conformance
                     automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                     tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                     kidsloc.push(lastloc);
-                    urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
+                    urlarray.push("temp/"+dirid+"/Period0/"+ "Presentation_infofile_ctawave.html");
                     lastloc++;
                 }
             }
