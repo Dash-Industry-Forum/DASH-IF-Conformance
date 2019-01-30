@@ -18,46 +18,46 @@ $caac_SwSetFound=0;
 $encryptedSwSetFound=0;
 
 function checkPresentation(){
-    global $session_dir, $progress_xml, $progress_report, $string_info,
+    global $session_dir, $progress_xml, $progress_report, $string_info, $current_period,
             $presentation_infofile, $selectionset_infofile, $alignedswitching_infofile;
     
     checkCMAFPresentation();
     checkSelectionSet();
     checkAlignedSwitchingSets();
     
-    if(file_exists($session_dir.'/'.$selectionset_infofile.'.txt')){
-        $selSetFile=file_get_contents($session_dir.'/'.$selectionset_infofile.'.txt');
+    if(file_exists($session_dir.'/Period'.$current_period.'/'.$selectionset_infofile.'.txt')){
+        $selSetFile=file_get_contents($session_dir.'/Period'.$current_period.'/'.$selectionset_infofile.'.txt');
         if(strpos($selSetFile, "CMAF check violated") == false){
-             $progress_xml->Results[0]->addChild('SelectionSet', 'noerror');
-             $tempr_string = str_replace(array('$Template$'), array($selectionset_infofile), $string_info); // this string shows a text file on HTML
-             file_put_contents($session_dir.'/'.$selectionset_infofile.'.html', $tempr_string); // Create html file containing log file result
+             $progress_xml->Results[0]->Period[$current_period]->addChild('SelectionSet', 'noerror');
+             $tempr_string = str_replace('$Template$', '/Period'.$current_period.'/'.$selectionset_infofile, $string_info); // this string shows a text file on HTML
+             file_put_contents($session_dir.'/Period'.$current_period.'/'.$selectionset_infofile.'.html', $tempr_string); // Create html file containing log file result
              $file_error[] = "noerror"; // no error found in text file
         }
         else{
-            $progress_xml->Results[0]->addChild('SelectionSet', 'error');
-            $tempr_string = str_replace(array('$Template$'), array($selectionset_infofile), $string_info); // this string shows a text file on HTML
-            file_put_contents($session_dir.'/'.$selectionset_infofile.'.html', $tempr_string); // Create html file containing log file result
-            $file_error[] = $session_dir.'/'.$selectionset_infofile.'.html'; // add error file location to array
+            $progress_xml->Results[0]->Period[$current_period]->addChild('SelectionSet', 'error');
+            $tempr_string = str_replace('$Template$', '/Period'.$current_period.'/'.$selectionset_infofile, $string_info); // this string shows a text file on HTML
+            file_put_contents($session_dir.'/Period'.$current_period.'/'.$selectionset_infofile.'.html', $tempr_string); // Create html file containing log file result
+            $file_error[] = $session_dir.'/Period'.$current_period.'/'.$selectionset_infofile.'.html'; // add error file location to array
         }
         $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
-        print_console($session_dir.'/'.$selectionset_infofile.'.txt', "CMAF Selection Set Results");
+        print_console($session_dir.'/Period'.$current_period.'/'.$selectionset_infofile.'.txt', "Period " . ($current_period+1) . " CMAF Selection Set Results");
     }
-    if(file_exists($session_dir.'/'.$presentation_infofile.'.txt')){
-        $presentnFile=file_get_contents($session_dir.'/'.$presentation_infofile.'.txt');
+    if(file_exists($session_dir.'/Period'.$current_period.'/'.$presentation_infofile.'.txt')){
+        $presentnFile=file_get_contents($session_dir.'/Period'.$current_period.'/'.$presentation_infofile.'.txt');
         if(strpos($presentnFile, "CMAF check violated") == false){
-             $progress_xml->Results[0]->addChild('CMAFProfile', 'noerror');
-             $tempr_string = str_replace(array('$Template$'), array($presentation_infofile), $string_info); // this string shows a text file on HTML
-             file_put_contents($session_dir.'/'.$presentation_infofile.'.html', $tempr_string); // Create html file containing log file result
+             $progress_xml->Results[0]->Period[$current_period]->addChild('CMAFProfile', 'noerror');
+             $tempr_string = str_replace('$Template$', '/Period'.$current_period.'/'.$presentation_infofile, $string_info); // this string shows a text file on HTML
+             file_put_contents($session_dir.'/Period'.$current_period.'/'.$presentation_infofile.'.html', $tempr_string); // Create html file containing log file result
              $file_error[] = "noerror"; // no error found in text file
         }
         else{
-            $progress_xml->Results[0]->addChild('CMAFProfile', 'error');
-            $tempr_string = str_replace(array('$Template$'), array($presentation_infofile), $string_info); // this string shows a text file on HTML
-            file_put_contents($session_dir.'/'.$presentation_infofile.'.html', $tempr_string); // Create html file containing log file result
-            $file_error[] = $session_dir.'/'.$presentation_infofile.'.html'; // add error file location to array
+            $progress_xml->Results[0]->Period[$current_period]->addChild('CMAFProfile', 'error');
+            $tempr_string = str_replace('$Template$', '/Period'.$current_period.'/'.$presentation_infofile, $string_info); // this string shows a text file on HTML
+            file_put_contents($session_dir.'/Period'.$current_period.'/'.$presentation_infofile.'.html', $tempr_string); // Create html file containing log file result
+            $file_error[] = $session_dir.'/Period'.$current_period.'/'.$presentation_infofile.'.html'; // add error file location to array
         }
         $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
-        print_console($session_dir.'/'.$presentation_infofile.'.txt', "CMAF Presentation Results");
+        print_console($session_dir.'/Period'.$current_period.'/'.$presentation_infofile.'.txt', "Period " . ($current_period+1) . " CMAF Presentation Results");
     }
     
     return $file_error;
@@ -82,7 +82,7 @@ function checkCMAFPresentation(){
     $videoFragDur=0;
     //$lang_count=0;
     
-    if(!($opfile = open_file($session_dir. '/' . $presentation_infofile . '.txt', 'w'))){
+    if(!($opfile = open_file($session_dir. '/Period' . $current_period . '/' . $presentation_infofile . '.txt', 'w'))){
         echo "Error opening/creating Presentation profile conformance check file: "."./Presentation_infofile.txt";
         return;
     }
@@ -93,7 +93,7 @@ function checkCMAFPresentation(){
         $Adapt = $adapts[$adapt_count];
         
         $adapt_dir = str_replace('$AS$', $adapt_count, $adaptation_set_template);
-        $loc = $session_dir . '/' . $adapt_dir.'/';
+        $loc = $session_dir . '/Period' . $current_period . '/' . $adapt_dir.'/';
         $filecount = 0;
         $files = glob($loc . "*.xml");
         if($files)
@@ -344,7 +344,7 @@ function checkSelectionSet(){
     $longFragDur=0;
     $firstEntryflag=1;
     $SwSetDurArray=array();
-    if(!($opfile = open_file($session_dir. '/' . $selectionset_infofile . '.txt', 'w'))){
+    if(!($opfile = open_file($session_dir. '/Period' . $current_period . '/' . $selectionset_infofile . '.txt', 'w'))){
         echo "Error opening/creating SelectionSet_infofile conformance check file: "."SelectionSet_infofile.txt";
         return;
     }
@@ -357,7 +357,7 @@ function checkSelectionSet(){
         $Adapt=$adapts[$adapt_count];
         
         $adapt_dir = str_replace('$AS$', $adapt_count, $adaptation_set_template);
-        $loc = $session_dir . '/' . $adapt_dir.'/';
+        $loc = $session_dir . '/Period' . $current_period . '/' . $adapt_dir.'/';
         $filecount = 0;
         $files = glob($loc . "*.xml");
         if($files)
@@ -438,7 +438,7 @@ function checkAlignedSwitchingSets(){
         }             
     }
     if(count($index)>=1){ // 0 means no Aligned SwSet, 2 or more is fine, 1 means error should be raised.
-        if(!($opfile = open_file($session_dir. '/' . $alignedswitching_infofile . '.txt', 'w'))){
+        if(!($opfile = open_file($session_dir. '/Period' . $current_period . '/' . $alignedswitching_infofile . '.txt', 'w'))){
             echo "Error opening/creating Aligned SwitchingSet conformance check file: "."./AlignedSwitchingSet_infofile.txt";
             return;
         }
@@ -447,7 +447,7 @@ function checkAlignedSwitchingSets(){
         return;
     
     if(count($index)>=2){
-        $loc1 = $session_dir . '/Adapt' . ($index[0]-1).'/'; // For this naming there is no automation yet, since this implementation has an assumption on ids
+        $loc1 = $session_dir . '/Period' . $current_period . '/Adapt' . ($index[0]-1).'/'; // For this naming there is no automation yet, since this implementation has an assumption on ids
         $filecount1 = 0;
         $files1 = glob($loc1. "*.xml");
         if($files1)
@@ -463,7 +463,7 @@ function checkAlignedSwitchingSets(){
                 $id = $adapts[$index[0]-1]['Representation'][$i]['id'];
                 
                 if($xml){
-                    $loc2 = $session_dir . '/Adapt' . ($index[1]-1).'/'; // For this naming there is no automation yet, since this implementation has an assumption on ids
+                    $loc2 = $session_dir . '/Period' . $current_period . '/Adapt' . ($index[1]-1).'/'; // For this naming there is no automation yet, since this implementation has an assumption on ids
                     $filecount2 = 0;
                     $files2 = glob($loc2. "*.xml");
                     if($files2)

@@ -48,7 +48,7 @@ function CTASelectionSet()
     $opfile="";
     
     
-    if(!($opfile = open_file($session_dir. '/' . $CTAselectionset_infofile . '.txt', 'w'))){
+    if(!($opfile = open_file($session_dir. '/Period' . $current_period . '/' . $CTAselectionset_infofile . '.txt', 'w'))){
         echo "Error opening/creating Selection Set conformance check file: "."./SelectionSet_infofile_ctawave.txt";
         return;
     }
@@ -59,27 +59,27 @@ function CTASelectionSet()
     fclose($opfile);
     
     $temp_string = str_replace(array('$Template$'),array($CTAselectionset_infofile),$string_info);
-    file_put_contents($session_dir.'/'.$CTAselectionset_infofile.'.html',$temp_string);
+    file_put_contents($session_dir.'/Period'.$current_period.'/'.$CTAselectionset_infofile.'.html',$temp_string);
     
-    $searchfiles = file_get_contents($session_dir.'/'.$CTAselectionset_infofile.'.txt');
+    $searchfiles = file_get_contents($session_dir.'/Period'.$current_period.'/'.$CTAselectionset_infofile.'.txt');
     if(strpos($searchfiles, "CTAWAVE check violated") !== FALSE){
-        $progress_xml->Results[0]->addChild('CTAWAVESelectionSet', 'error');
-        $file_error[] = $session_dir.'/'.$CTAselectionset_infofile.'.html';
+        $progress_xml->Results[0]->Period[$current_period]->addChild('CTAWAVESelectionSet', 'error');
+        $file_error[] = $session_dir.'/Period'.$current_period.'/'.$CTAselectionset_infofile.'.html';
     }
     elseif(strpos($searchfiles, "Warning") !== FALSE || strpos($searchfiles, "WARNING") !== FALSE){
-        $progress_xml->Results[0]->addChild('CTAWAVESelectionSet', 'warning');
-        $file_error[] = $session_dir.'/'.$CTAselectionset_infofile.'.html';
+        $progress_xml->Results[0]->Period[$current_period]->addChild('CTAWAVESelectionSet', 'warning');
+        $file_error[] = $session_dir.'/Period'.$current_period.'/'.$CTAselectionset_infofile.'.html';
     }
     else{
-        $progress_xml->Results[0]->addChild('CTAWAVESelectionSet', 'noerror');
+        $progress_xml->Results[0]->Period[$current_period]->addChild('CTAWAVESelectionSet', 'noerror');
         $file_error[] = "noerror";
     }
     
-    $tempr_string = str_replace(array('$Template$'), array($CTAselectionset_infofile), $string_info);
-    file_put_contents($session_dir.'/'.$CTAselectionset_infofile.'.html', $tempr_string);
+    $tempr_string = str_replace('$Template$', '/Period'.$current_period.'/'.$CTAselectionset_infofile, $string_info);
+    file_put_contents($session_dir.'/Period'.$current_period.'/'.$CTAselectionset_infofile.'.html', $tempr_string);
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
     
-    print_console($session_dir.'/'.$CTAselectionset_infofile.'.txt', "CTA WAVE Selection Set Results");
+    print_console($session_dir.'/Period'.$current_period.'/'.$CTAselectionset_infofile.'.txt', "Period " . ($current_period+1) . " CTA WAVE Selection Set Results");
 }
 
 function CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$opfile)
@@ -97,7 +97,7 @@ function CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_templat
 
         $SwSet_MP=array();
         $adapt_dir = str_replace('$AS$', $adapt_count, $adaptation_set_template);
-        $loc = $session_dir . '/' . $adapt_dir.'/';
+        $loc = $session_dir. '/Period' .$current_period. '/'. $adapt_dir.'/';
         $filecount = 0;
         $files = glob($loc . "*.xml");
         if($files)

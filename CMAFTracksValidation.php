@@ -20,7 +20,7 @@ function checkCMAFTracks(){
     
     $adapt_dir = str_replace('$AS$', $current_adaptation_set, $adaptation_set_template);
     $rep_xml_dir = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_template);
-    $rep_xml = $session_dir . '/' . $adapt_dir . '/' . $rep_xml_dir . '.xml';
+    $rep_xml = $session_dir . '/Period' . $current_period . '/' . $adapt_dir . '/' . $rep_xml_dir . '.xml';
     
     if(file_exists($rep_xml)){
         $xml = get_DOM($rep_xml, 'atomlist');
@@ -29,7 +29,7 @@ function checkCMAFTracks(){
             return;
         
         $error_file = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_error_log_template);
-        if(!($opfile = open_file($session_dir.'/'.$error_file.'.txt', 'a'))){
+        if(!($opfile = open_file($session_dir.'/Period'.$current_period.'/'.$error_file.'.txt', 'a'))){
             echo 'Error opening/creating CMAF Tracks conformance check file: '.$session_dir.'/'.$error_file.'.txt';
             return;
         }
@@ -267,19 +267,19 @@ function checkCMAFTracks(){
     }
     
     ## For reporting
-    $search = file_get_contents($session_dir . '/' . $error_file . '.txt'); //Search for errors within log file
+    $search = file_get_contents($session_dir . '/Period' . $current_period . '/' . $error_file . '.txt'); //Search for errors within log file
     if (strpos($search, "Error") == false && strpos($search, "CMAF check violated") == false){
         if(strpos($search, "Warning") === false && strpos($search, "WARNING") === false){
-            $progress_xml->Results[0]->Period[0]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "noerror";
+            $progress_xml->Results[0]->Period[$current_period]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "noerror";
             $file_location[] = "noerror";
         }
         else{
-            $progress_xml->Results[0]->Period[0]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "warning";
+            $progress_xml->Results[0]->Period[$current_period]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "warning";
             $file_location[] = "warning";
         }
     }
     else{
-        $progress_xml->Results[0]->Period[0]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "error";
+        $progress_xml->Results[0]->Period[$current_period]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "error";
         $file_location[] = "error";
     }
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
