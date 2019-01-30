@@ -20,7 +20,7 @@ function RepresentationValidation_HbbTV_DVB(){
             $reprsentation_error_log_template, $string_info, $progress_report, $progress_xml;
     
     $rep_error_file = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_error_log_template);
-    if(!($opfile = open_file($session_dir.'/'.$rep_error_file.'.txt', 'a'))){
+    if(!($opfile = open_file($session_dir.'/Period'.$current_period.'/'.$rep_error_file.'.txt', 'a'))){
         echo "Error opening/creating HbbTV/DVB codec validation file: "."$session_dir.'/'.$rep_error_file".'.txt';
         return;
     }
@@ -28,7 +28,7 @@ function RepresentationValidation_HbbTV_DVB(){
     ## Representation checks
     $adapt_dir = str_replace('$AS$', $current_adaptation_set, $adaptation_set_template);
     $rep_dir = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_template);
-    $xml_rep = get_DOM($session_dir.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+    $xml_rep = get_DOM($session_dir.'/Period'.$current_period.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
     if($xml_rep){
         if($dvb_conformance){
             $media_types = media_types($mpd_dom->getElementsByTagName('Period')->item($current_period));
@@ -50,29 +50,29 @@ function RepresentationValidation_HbbTV_DVB(){
     }
     
     ## For reporting
-    $search = file_get_contents($session_dir . '/' . $rep_error_file . '.txt'); //Search for errors within log file
+    $search = file_get_contents($session_dir . '/Period' . $current_period . '/' . $rep_error_file . '.txt'); //Search for errors within log file
     if (strpos($search, "###") === false){
         if(strpos($search, "Warning") === false && strpos($search, "WARNING") === false){
-            $progress_xml->Results[0]->Period[0]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "noerror";
+            $progress_xml->Results[0]->Period[$current_period]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "noerror";
             $file_location[] = "noerror";
         }
         else{
-            $progress_xml->Results[0]->Period[0]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "warning";
+            $progress_xml->Results[0]->Period[$current_period]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "warning";
             $file_location[] = "warning";
         }
     }
     else{
-        $progress_xml->Results[0]->Period[0]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "error";
+        $progress_xml->Results[0]->Period[$current_period]->Adaptation[$current_adaptation_set]->Representation[$current_representation] = "error";
         $file_location[] = "error";
     }
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
     
     $copy_string_info=$string_info;
     $index = strpos($copy_string_info, '</body>');
-    $copy_string_info = substr($copy_string_info, 0, $index) ."<img id=\"bitrateReport\" src=\"$segment_duration_name\" width=\"650\" height=\"350\">".
-    "<img id=\"bitrateReport\" src=\"$bitrate_report_name\" width=\"650\" height=\"350\">" .substr($copy_string_info, $index);
-    $temp_string = str_replace(array('$Template$'), array($rep_dir . "log"), $copy_string_info);
-    file_put_contents($session_dir . '/' . $rep_error_file . '.html', $temp_string);
+    $copy_string_info = substr($copy_string_info, 0, $index) ."<img id=\"segmentReport\" src=\"$segment_duration_name\" width=\"650\" height=\"350\">".
+    "<img id=\"bitrateReport\" src=\"$bitrate_report_name\" width=\"650\" height=\"350\"/>\n" .substr($copy_string_info, $index);
+    $temp_string = str_replace('$Template$', '/Period'.$current_period.'/'.$rep_dir . "log", $copy_string_info);
+    file_put_contents($session_dir . '/Period' . $current_period . '/' . $rep_error_file . '.html', $temp_string);
     
     return $file_location;
 }
@@ -146,7 +146,7 @@ function is_subtitle(){
 
     if($subtitle_rep){
         $subdir = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $subtitle_segments_location);
-        $subtitle_dir = $session_dir . '/Adapt' . $current_adaptation_set . 'rep' . $current_representation . '/Subtitles/';//$subdir;
+        $subtitle_dir = $session_dir . '/Period' . $current_period . '/Adapt' . $current_adaptation_set . 'rep' . $current_representation . '/Subtitles/';//$subdir;
         if (!file_exists($subtitle_dir)){
             $oldmask = umask(0);
             mkdir($subtitle_dir, 0777, true);
@@ -944,9 +944,10 @@ function bitrate_report($xml_rep){
     
     $bitrate_info = substr($bitrate_info, 0, strlen($bitrate_info)-2);
     $bitrate_report_name = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_template) . '.png';
-    $command="cd $session_dir && python bitratereport.py $bitrate_info $bandwidth $bitrate_report_name";
+    $location = $session_dir. '/Period' . $current_period . '/' . $bitrate_report_name;
+    $command="cd $session_dir && python bitratereport.py $bitrate_info $bandwidth $location";
     exec($command);
-    chmod($session_dir.'/'.$bitrate_report_name, 777);
+    //chmod($session_dir.'/'.$bitrate_report_name, 777);
     
     return $bitrate_report_name;
 }
@@ -1075,7 +1076,7 @@ function seg_duration_checks($opfile){
         $MPD_duration_sec = 'Not_Set'; //to avoid giving an array to the python code as an argument
     }
     $atm_duration_array_str = implode(',', $segment_duration_array);
-    $location = $session_dir.'/' . $rep_loc . '_.png';
+    $location = $session_dir.'/Period' . $current_period . '/' . $rep_loc . '_.png';
     $command = "cd $session_dir && python seg_duration.py  $atm_duration_array_str $MPD_duration_sec $location";
     exec($command);
 

@@ -22,14 +22,14 @@ function CrossValidation_HbbTV_DVB(){
     $adapts = $mpd_features['Period'][$current_period]['AdaptationSet'];
     for($adapt_count=0; $adapt_count<sizeof($adapts); $adapt_count++){
         $adapt_dir = str_replace('$AS$', $adapt_count, $adaptation_set_template);
-        $loc = $session_dir . '/' . $adapt_dir.'/';
+        $loc = $session_dir . '/Period' . $current_period . '/' . $adapt_dir.'/';
         $filecount = 0;
         $files = glob($loc . "*.xml");
         if($files)
             $filecount = count($files);
         
         $log_file = str_replace('$AS$', $adapt_count, $hbbtv_dvb_crossvalidation_logfile);
-        if(!($opfile = open_file($session_dir.'/'.$log_file.'.txt', 'a'))){
+        if(!($opfile = open_file($session_dir.'/Period'.$current_period.'/'.$log_file.'.txt', 'a'))){
             echo 'Error opening/creating HbbTV/DVB Cross representation validation file: ./'.$adapt_dir.$hbbtv_dvb_crossvalidation_logfile.'.txt';
             return;
         }
@@ -59,27 +59,27 @@ function CrossValidation_HbbTV_DVB(){
         
         ## Reporting
         fclose($opfile);
-        $temp_string = str_replace(array('$Template$'),array($log_file),$string_info);
-        file_put_contents($session_dir.'/'.$log_file.'.html',$temp_string);
+        $temp_string = str_replace('$Template$','/Period'.$current_period.'/'.$log_file,$string_info);
+        file_put_contents($session_dir.'/Period'.$current_period.'/'.$log_file.'.html',$temp_string);
         
-        $searchfiles = file_get_contents($session_dir.'/'.$log_file.'.txt');
+        $searchfiles = file_get_contents($session_dir.'/Period'.$current_period.'/'.$log_file.'.txt');
         if(strpos($searchfiles, "DVB check violated") !== FALSE || strpos($searchfiles, "HbbTV check violated") !== FALSE || strpos($searchfiles, 'ERROR') !== FALSE){
-            $progress_xml->Results[0]->Period[0]->Adaptation[$adapt_count]->addChild('HbbTVDVBComparedRepresentations', 'error');
-            $file_error[] = $session_dir.'/'.$log_file.'.html'; // add error file location to array
+            $progress_xml->Results[0]->Period[$current_period]->Adaptation[$adapt_count]->addChild('HbbTVDVBComparedRepresentations', 'error');
+            $file_error[] = $session_dir.'/Period'.$current_period.'/'.$log_file.'.html'; // add error file location to array
         }
         elseif(strpos($searchfiles, "Warning") !== FALSE || strpos($searchfiles, "WARNING") !== FALSE){
-            $progress_xml->Results[0]->Period[0]->Adaptation[$adapt_count]->addChild('HbbTVDVBComparedRepresentations', 'warning');
-            $file_error[] = $session_dir.'/'.$log_file.'.html'; // add error file location to array
+            $progress_xml->Results[0]->Period[$current_period]->Adaptation[$adapt_count]->addChild('HbbTVDVBComparedRepresentations', 'warning');
+            $file_error[] = $session_dir.'/Period'.$current_period.'/'.$log_file.'.html'; // add error file location to array
         }
         else{
-            $progress_xml->Results[0]->Period[0]->Adaptation[$adapt_count]->addChild('HbbTVDVBComparedRepresentations', 'noerror');
+            $progress_xml->Results[0]->Period[$current_period]->Adaptation[$adapt_count]->addChild('HbbTVDVBComparedRepresentations', 'noerror');
             $file_error[] = "noerror"; // no error found in text file
         }
-        $progress_xml->Results[0]->Period[0]->Adaptation[$adapt_count]->HbbTVDVBComparedRepresentations->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $session_dir.'/'.$log_file.'.txt'));
+        $progress_xml->Results[0]->Period[$current_period]->Adaptation[$adapt_count]->HbbTVDVBComparedRepresentations->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $session_dir.'/Period'.$current_period.'/'.$log_file.'.txt'));
         $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
         
         err_file_op(2);
-        print_console($session_dir.'/'.$log_file.'.txt', "HbbTV-DVB Cross Validation Results for AdaptationSet $adapt_count");
+        print_console($session_dir.'/Period'.$current_period.'/'.$log_file.'.txt', "Period " . ($current_period+1) . " Adaptation Set " . ($adapt_count+1) . " HbbTV-DVB Cross Validation Results");
         ##
     }
 }
@@ -536,7 +536,7 @@ function init_seg_commonCheck($files,$opfile){
 }
 
 function content_protection_report(){
-    global $session_dir, $mpd_dom, $adaptation_set_template, $reprsentation_template, $hbbtv_dvb_crossvalidation_logfile;
+    global $session_dir, $mpd_dom, $current_period, $adaptation_set_template, $reprsentation_template, $hbbtv_dvb_crossvalidation_logfile;
     $DRM_uuid_array = array ('urn:mpeg:dash:mp4protection:2011'=>'Generic Identifier 1',
                              'urn:mpeg:dash:13818:1:CA_descriptor:2011'=>'Generic Identifier 2',
                              'urn:uuid:5E629AF538DA4063897797FFBD9902D4'=>'Marlin Adaptive Streaming Specification',
@@ -565,7 +565,7 @@ function content_protection_report(){
     foreach ($mpd_dom->getElementsByTagName('AdaptationSet') as $node){
         $adapt_id = $Adapt_index + 1;
         $report_loc = str_replace('$AS$', $Adapt_index, $hbbtv_dvb_crossvalidation_logfile);
-        $adaptreport = open_file($session_dir . "/".$report_loc.'.txt', 'a+b');
+        $adaptreport = open_file($session_dir.'/Period'.$current_period.'/'.$report_loc.'.txt', 'a+b');
         if($adaptreport !== false){
             $MPD_systemID_array = array();
             $missing_pssh_array = array(); //holds the uuid-s of the DRM-s which are missing the pssh in the mpd
@@ -636,7 +636,7 @@ function content_protection_report(){
 
                         $adapt_dir = str_replace('$AS$', $Adapt_index, $adaptation_set_template);
                         $rep_dir = str_replace(array('$AS$', '$R$'), array($Adapt_index, $rep_index), $reprsentation_template);
-                        $xml_file_location = ($session_dir.'/'.$adapt_dir.'/'.$rep_dir.'.xml'); //first rep of the adapt set will have the same pssh as the rest
+                        $xml_file_location = ($session_dir.'/Period'.$current_period.'/'.$adapt_dir.'/'.$rep_dir.'.xml'); //first rep of the adapt set will have the same pssh as the rest
                         $abs = get_DOM($xml_file_location, 'atomlist'); // load mpd from url
                         if($abs){
                             /*There SHALL be identical values of default_KID in the Track Encryption Box
@@ -800,7 +800,7 @@ function DVB_period_continuous_adaptation_sets_check($opfile){
                                         $adapt_dir = str_replace('$AS$', $a1, $adaptation_set_template);
                                         $rep_dir = str_replace(array('$AS$', '$R$'), array($a1, $r1), $reprsentation_template);
                                         
-                                        $xml_rep = get_DOM($session_dir.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+                                        $xml_rep = get_DOM($session_dir.'/Period'.$i.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
                                         if($xml_rep)
                                             $EPT1[] = segment_timing_info($xml_rep);
                                     }
