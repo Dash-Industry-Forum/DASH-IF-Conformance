@@ -216,7 +216,7 @@ function checkMediaProfiles($xml, $xml_comp,$xml_handlerType,$xml_comp_handlerTy
 }
 
 function checkHeaders($opfile, $xml, $xml_comp, $id, $id_comp, $curr_adapt_dir, $index, $path){
-    global $session_dir, $current_adaptation_set, 
+    global $session_dir, $current_period, $current_adaptation_set, 
             $adaptation_set_template, $infofile_template;
     
     compare($xml, $xml_comp, $id, $id_comp, $curr_adapt_dir, $index, $path);
@@ -225,7 +225,7 @@ function checkHeaders($opfile, $xml, $xml_comp, $id, $id_comp, $curr_adapt_dir, 
     if(file_exists($path)){
         $infofile = str_replace('$Number$', $index, $infofile_template);
         $adapt_dir = str_replace('$AS$', $current_adaptation_set, $adaptation_set_template);
-        $info_str = file_get_contents($session_dir . '/' . $adapt_dir . '/' . $infofile);
+        $info_str = file_get_contents($session_dir . '/Period' . $current_period . '/' . $adapt_dir . '/' . $infofile);
 
         $first = true;
         $xml = get_DOM($path, 'compInfo');
@@ -447,10 +447,10 @@ function checkSwitchingSets(){
             $adaptation_set_template, $comparison_folder, $compinfo_file, $progress_xml, $progress_report;
     
     $adaptation_set = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
-    $curr_adapt_dir = $session_dir . '/' . str_replace('$AS$', $current_adaptation_set, $adaptation_set_template);
+    $curr_adapt_dir = $session_dir . '/Period' . $current_period . '/' . str_replace('$AS$', $current_adaptation_set, $adaptation_set_template);
     
     $compinfo = str_replace('$AS$', $current_adaptation_set, $compinfo_file);
-    if(!($opfile = open_file($session_dir.'/'.$compinfo.'.txt', 'w'))){
+    if(!($opfile = open_file($session_dir.'/Period'.$current_period.'/'.$compinfo.'.txt', 'w'))){
         echo "Error opening/creating compared representations' conformance check file: ". $session_dir.'/'.$compinfo.'.txt';
         return;
     }
@@ -491,25 +491,25 @@ function checkSwitchingSets(){
     
     fclose($opfile);
     
-    if(file_exists($session_dir.'/'.$compinfo.'.txt')){
-        $searchfiles = file_get_contents($session_dir.'/'.$compinfo.'.txt');
+    if(file_exists($session_dir.'/Period'.$current_period.'/'.$compinfo.'.txt')){
+        $searchfiles = file_get_contents($session_dir.'/Period'.$current_period.'/'.$compinfo.'.txt');
         if(strpos($searchfiles, "Error") == false && strpos($searchfiles, "CMAF check violated") == false){
-            $progress_xml->Results[0]->Period[0]->Adaptation[$current_adaptation_set]->addChild('ComparedRepresentations', 'noerror');
+            $progress_xml->Results[0]->Period[$current_period]->Adaptation[$current_adaptation_set]->addChild('ComparedRepresentations', 'noerror');
             $file_error[] = "noerror"; // no error found in text file
         }
         else{
-            $progress_xml->Results[0]->Period[0]->Adaptation[$current_adaptation_set]->addChild('ComparedRepresentations', 'error');
-            $file_error[] = $session_dir.'/'.$compinfo.'.html'; // add error file location to array
+            $progress_xml->Results[0]->Period[$current_period]->Adaptation[$current_adaptation_set]->addChild('ComparedRepresentations', 'error');
+            $file_error[] = $session_dir.'/Period'.$current_period.'/'.$compinfo.'.html'; // add error file location to array
         }
-        $progress_xml->Results[0]->Period[0]->Adaptation[$current_adaptation_set]->ComparedRepresentations->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $session_dir.'/'.$compinfo.'.txt'));
+        $progress_xml->Results[0]->Period[$current_period]->Adaptation[$current_adaptation_set]->ComparedRepresentations->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $session_dir.'/Period'.$current_period.'/'.$compinfo.'.txt'));
         $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
         
-        $temp_string = str_replace ('$Template$',$compinfo,$string_info);
-        file_put_contents($session_dir.'/'.$compinfo.'.html',$temp_string);
+        $temp_string = str_replace ('$Template$','/Period'.$current_period.'/'.$compinfo,$string_info);
+        file_put_contents($session_dir.'/Period'.$current_period.'/'.$compinfo.'.html',$temp_string);
     }
     
     err_file_op(2);
-    print_console($session_dir.'/'.$compinfo.'.txt', "CMAF Switching Set Results for AdaptationSet $current_adaptation_set");
+    print_console($session_dir.'/Period'.$current_period.'/'.$compinfo.'.txt', "Period " . ($current_period+1) . " Adaptation Set " . ($current_adaptation_set+1) . " CMAF Switching Set Results");
     
     return $file_error;
 }
