@@ -42,9 +42,8 @@ function current_period(){
     $AST = $mpd_features['availabilityStartTime'];
     
     if($mpd_features['type'] === 'static'){
-        $current_period = 0;
-        $start = $period_info[0][0];
-        $duration = $period_info[1][0];
+        $start = $period_info[0][$current_period];
+        $duration = $period_info[1][$current_period];
     }
     elseif($mpd_features['type'] === 'dynamic'){
         if(sizeof($mpd_features['Period']) == 1){

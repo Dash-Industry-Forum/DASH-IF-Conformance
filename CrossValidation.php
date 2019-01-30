@@ -109,7 +109,7 @@ function crossRepresentationProcess(){
         $adaptation_set = $adaptation_sets[$i];
 
         $file_path = str_replace('$AS$', $i, $adaptation_set_error_log_template) . '.txt';
-        $opfile = open_file($session_dir . '/' . $file_path, 'w');
+        $opfile = open_file($session_dir . '/Period' .$current_period.'/' . $file_path, 'w');
         
         $segmentAlignment = ($adaptation_set['segmentAlignment']) ? $adaptation_set['segmentAlignment'] : 'false';
         $subsegmentAlignment = ($adaptation_set['subsegmentAlignment']) ? $adaptation_set['subsegmentAlignment'] : 'false';
@@ -140,7 +140,7 @@ function crossRepresentationProcess(){
                     $timeoffset = $representation['presentationTimeOffset'];
 
                 $offsetmod = $timeoffset / $timescale;
-                $leafInfo[$j] = loadLeafInfoFile(str_replace(array('$AS$', '$R$'), array($i, $j), $reprsentation_info_log_template) . '.txt', $offsetmod);
+                $leafInfo[$j] = loadLeafInfoFile('Period' . $current_period . '/' . str_replace(array('$AS$', '$R$'), array($i, $j), $reprsentation_info_log_template) . '.txt', $offsetmod);
                 $leafInfo[$j]['id'] = $representation['id'];
             }
 
@@ -153,7 +153,7 @@ function crossRepresentationProcess(){
 
         close_file($opfile);
         $temp_string = str_replace('$Template$', explode('.', $file_path)[0], $string_info);
-        file_put_contents($session_dir . '/' . explode('.', $file_path)[0] . '.html', $temp_string);
-        print_console($session_dir . '/' . $file_path, "DASH Cross Validation Results for Adaptation Set $i");
+        file_put_contents($session_dir . '/Period' .$current_period.'/' . explode('.', $file_path)[0] . '.html', $temp_string);
+        print_console($session_dir . '/Period' .$current_period.'/' . $file_path, "Period " . ($current_period+1) . " Adaptation Set " . ($i+1) . " DASH Cross Validation Results");
     }
 }

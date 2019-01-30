@@ -23,7 +23,7 @@ function process_MPD(){
             $ctawave_conformance, $ctawave_function_name, $ctawave_when_to_call;                             // CTA WAVE data
     
     ## Open related files
-    $progress_xml = simplexml_load_string('<root><Profile></Profile><PeriodCount></PeriodCount><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
+    $progress_xml = simplexml_load_string('<root><Profile></Profile><PeriodCount></PeriodCount><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><CurrentPeriod>1</CurrentPeriod><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
     $progress_xml->asXml($session_dir . '/' . $progress_report);
     color_code_information();
     
@@ -69,9 +69,7 @@ function process_MPD(){
         $return_val = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[0]);
     
     ## Get MPD features into an array
-    ## Determine the current period
     $mpd_features = MPD_features($mpd_dom);
-    $period_info = current_period();
     writeProfiles();
     
     //------------------------------------------------------------------------//
@@ -120,13 +118,6 @@ function process_MPD(){
     }
     //------------------------------------------------------------------------//
     
-    ## Update the progress report with MPD information
-    ## Calculate Segment URLs for each representation in each adaptation set within the current period
-    check_before_segment_validation();
-    $urls = process_base_url();
-    $segment_urls = derive_segment_URLs($urls, $period_info);
-    $profiles = derive_profiles();
-    
     ## Save information on the current period structure to progress report
     if($mpd_features['type'] == 'dynamic'){
         if($mpd_dom->getElementsByTagName('SegmentTemplate')->length == 0)
@@ -136,21 +127,28 @@ function process_MPD(){
     }
     
     $ResultXML = $progress_xml->addChild('Results');
-    $PeriodXML = $ResultXML->addChild('Period');
-    $result_for_json[] = sizeof($segment_urls);
-    for ($j1 = 0; $j1 < sizeof($segment_urls); $j1++){
-        $AdaptationXML = $PeriodXML->addChild('Adaptation');
-        $result_for_json[] = sizeof($segment_urls[$j1]);
-        for ($k1 = 0; $k1 < sizeof($segment_urls[$j1]); $k1++){
-            $RepXML = $AdaptationXML->addChild('Representation');
-            $RepXML->addAttribute('id', $k1 + 1);
+    for ($i1 = 0; $i1 < (($ctawave_conformance) ? sizeof($mpd_features['Period']) : 1); $i1++){
+        $PeriodXML = $ResultXML->addChild('Period');
+        
+        $period_info = current_period();
+        $segment_urls = derive_segment_URLs($urls, $period_info);
+        $result_for_json[] = sizeof($segment_urls);
+        
+        for ($j1 = 0; $j1 < sizeof($segment_urls); $j1++){
+            $AdaptationXML = $PeriodXML->addChild('Adaptation');
+            $result_for_json[] = sizeof($segment_urls[$j1]);
+            for ($k1 = 0; $k1 < sizeof($segment_urls[$j1]); $k1++){
+                $RepXML = $AdaptationXML->addChild('Representation');
+                $RepXML->addAttribute('id', $k1 + 1);
 
-            $str = '{';
-            for($l1 = 0; $l1 < sizeof($segment_urls[$j1][$k1]); $l1++)
-                $str = $str . $segment_urls[$j1][$k1][$l1] . ',';
-            $str = substr($str, 0, strlen($str)-1) . '}';
-            $RepXML->addAttribute('url', $str);
+                $str = '{';
+                for($l1 = 0; $l1 < sizeof($segment_urls[$j1][$k1]); $l1++)
+                    $str = $str . $segment_urls[$j1][$k1][$l1] . ',';
+                $str = substr($str, 0, strlen($str)-1) . '}';
+                $RepXML->addAttribute('url', $str);
+            }
         }
+        $current_period++;
     }
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
     $result_for_json[] = sizeof($mpd_features['Period']);
@@ -159,14 +157,57 @@ function process_MPD(){
     
     //------------------------------------------------------------------------//
     ## Perform Segment Validation for each representation in each adaptation set within the current period
-    $period = $mpd_features['Period'][$current_period];
+    check_before_segment_validation();
+    $current_period = 0;
+    while($current_period < sizeof($mpd_features['Period']))
+    {
+        $period_info = current_period();
+        $urls = process_base_url();
+        $segment_urls = derive_segment_URLs($urls, $period_info);
+        $profiles = derive_profiles();
+        
+        $period_dir_name = "Period".$current_period;
+        $curr_period_dir = $session_dir . '/' . $period_dir_name;
+        create_folder_in_session($curr_period_dir);
+        
+        $progress_xml->Progress->CurrentPeriod = $current_period + 1;
+        $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+        
+        $period = $mpd_features['Period'][$current_period];
+        processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML,$segment_urls);
+        
+        if(!$ctawave_conformance)
+            break;
+        
+        $current_period++;
+    }
+    //CTABaselineSpliceChecks();
+    
+    session_close();
+    $send_string = json_encode($file_error);
+    error_log("ReturnFinish:" . $send_string);
+    $progress_xml->completed = "true";
+    $progress_xml->completed->addAttribute('time', time());
+    $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+    writeEndTime((int)$progress_xml->completed->attributes());
+    exit;
+}
+
+function processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML,$segment_urls)
+{
+   global  $current_period, $current_adaptation_set, $adaptation_set_template,$current_representation,$reprsentation_template,$session_dir,
+           $progress_xml,$progress_report,$additional_flags,
+           $cmaf_conformance, $cmaf_function_name, $cmaf_when_to_call,                                      // CMAF data
+           $hbbtv_conformance, $dvb_conformance, $hbbtv_dvb_function_name, $hbbtv_dvb_when_to_call,         // HbbTV-DVB data
+           $ctawave_conformance, $ctawave_function_name, $ctawave_when_to_call;                             // CTA WAVE data;
+    
     $adaptation_sets = $period['AdaptationSet'];
     while($current_adaptation_set < sizeof($adaptation_sets)){
         $adaptation_set = $adaptation_sets[$current_adaptation_set];
         $representations = $adaptation_set['Representation'];
         
         $adapt_dir_name = str_replace('$AS$', $current_adaptation_set, $adaptation_set_template);
-        $curr_adapt_dir = $session_dir . '/' . $adapt_dir_name . '/';
+        $curr_adapt_dir = $curr_period_dir . '/' . $adapt_dir_name . '/';
         create_folder_in_session($curr_adapt_dir);
         
         $progress_xml->Progress->CurrentAdapt = $current_adaptation_set + 1;
@@ -177,7 +218,7 @@ function process_MPD(){
             $segment_url = $segment_urls[$current_adaptation_set][$current_representation];
             
             $rep_dir_name = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_template);
-            $curr_rep_dir = $session_dir . '/' . $rep_dir_name . '/';
+            $curr_rep_dir = $curr_period_dir . '/' . $rep_dir_name . '/';
             create_folder_in_session($curr_rep_dir);
             
             $progress_xml->Progress->CurrentRep = $current_representation + 1;
@@ -202,7 +243,7 @@ function process_MPD(){
             error_log('RepresentationDownloaded_Return:' . $send_string);
             
             err_file_op(1);
-            print_console(dirname(__DIR__) . '/' . explode('.', $return_seg_val[1])[0] . '.txt', "AdaptationSet $current_adaptation_set Representation $current_representation Results");
+            print_console(dirname(__DIR__) . '/' . explode('.', $return_seg_val[1])[0] . '.txt', "Period " . ($current_period+1) . " Adaptation Set " . ($current_adaptation_set+1) . " Representation " . ($current_representation+1) . " Results");
             $current_representation++;
         }
         
@@ -232,14 +273,6 @@ function process_MPD(){
     //------------------------------------------------------------------------//
     
     $current_adaptation_set = 0;
-    session_close();
-    $send_string = json_encode($file_error);
-    error_log("ReturnFinish:" . $send_string);
-    $progress_xml->completed = "true";
-    $progress_xml->completed->addAttribute('time', time());
-    $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
-    writeEndTime((int)$progress_xml->completed->attributes());
-    exit;
 }
 
 function check_before_segment_validation($result_for_json){
@@ -283,45 +316,45 @@ function check_before_segment_validation($result_for_json){
 }
 
 function adapt_result($ResultXML){
-    global $session_dir, $missinglink_file, $progress_xml, $progress_report, $string_info,
+    global $session_dir, $current_period, $missinglink_file, $progress_xml, $progress_report, $string_info,
             $current_adaptation_set, $adaptation_set_error_log_template;
     
     $file_error[] = "done";
     
-    $missingexist = file_exists($session_dir . '/' . $missinglink_file . '.txt');
+    $missingexist = file_exists($session_dir . '/Period' . $current_period . '/' . $missinglink_file . '.txt');
     if($missingexist){
         $temp_string = str_replace(array('$Template$'), array("$missinglink_file"), $string_info);
-        file_put_contents($session_dir . '/' . $missinglink_file . '.html', $temp_string);
+        file_put_contents($session_dir . '/Period' . $current_period . '/' . $missinglink_file . '.html', $temp_string);
         
-        $ResultXML->addChild('BrokenURL', "error");
-        $ResultXML->BrokenURL->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $session_dir . '/' . $missinglink_file . '.txt'));
-        $file_error[] = relative_path($session_dir . '/' . $missinglink_file . '.html');
+        $ResultXML->Period[$current_period]->addChild('BrokenURL', "error");
+        $ResultXML->Period[$current_period]->BrokenURL->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $session_dir . '/' . $missinglink_file . '.txt'));
+        $file_error[] = relative_path($session_dir . '/Period' . $current_period . '/' . $missinglink_file . '.html');
     }
     else{
-        $ResultXML->addChild('BrokenURL', "noerror");
+        $ResultXML->Period[$current_period]->addChild('BrokenURL', "noerror");
         $file_error[] = "noerror";
     }
     
     for ($i = 0; $i < $current_adaptation_set; $i++){
         $adapt_log_file = str_replace('$AS$', $i, $adaptation_set_error_log_template);
         
-        if (file_exists($session_dir . '/' . $adapt_log_file . '.txt')){
-            $searchadapt = file_get_contents($session_dir . '/' . $adapt_log_file . '.txt');
+        if (file_exists($session_dir . '/Period' . $current_period . '/' . $adapt_log_file . '.txt')){
+            $searchadapt = file_get_contents($session_dir . '/Period' . $current_period . '/' . $adapt_log_file . '.txt');
             if(strpos($searchadapt, "Error") == false){
-                $ResultXML->Period[0]->Adaptation[$i]->addChild('CrossRepresentation', 'noerror');
+                $ResultXML->Period[$current_period]->Adaptation[$i]->addChild('CrossRepresentation', 'noerror');
                 $file_error[] = "noerror";
             }
             else{
-                $ResultXML->Period[0]->Adaptation[$i]->addChild('CrossRepresentation', 'error');
-                $file_error[] = relative_path($session_dir . '/' . $adapt_log_file . '.html');
+                $ResultXML->Period[$current_period]->Adaptation[$i]->addChild('CrossRepresentation', 'error');
+                $file_error[] = relative_path($session_dir . '/Period' . $current_period . '/' . $adapt_log_file . '.html');
             }
         }
         else{
-            $ResultXML->Period[0]->Adaptation[$i]->addChild('CrossRepresentation', 'noerror');
+            $ResultXML->Period[$current_period]->Adaptation[$i]->addChild('CrossRepresentation', 'noerror');
             $file_error[] = "noerror";
         }
 
-        $ResultXML->Period[0]->Adaptation[$i]->CrossRepresentation->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $session_dir . '/' . $adapt_log_file . '.txt'));
+        $ResultXML->Period[$current_period]->Adaptation[$i]->CrossRepresentation->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $session_dir . '/' . $adapt_log_file . '.txt'));
         $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
     }
     
