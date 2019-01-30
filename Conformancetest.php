@@ -485,24 +485,8 @@
             </div>
             <button id="btn8" onclick="submit()"> GO </button>
         </div>
-      <!--input type="text" id='urlinput' name="urlinput" class="mytext" value="http://localhost/content/TestCases/1b/thomson-networks/2/manifest.mpd" onkeyup="CheckKey(event)"/-->
-      <!--input type="text" id='urlinput' name="urlinput" class="mytext" value="http://dash.edgesuite.net/dash264/TestCases/1a/qualcomm/1/MultiRate.mpd" onkeyup="CheckKey(event)"/-->
-      <!--input type="text" id='urlinput' name="urlinput" class="mytext" value="http://10.4.193.185/Content/TestCases/1b/qualcomm/1/MultiRate_Broken.mpd" onkeyup="CheckKey(event)"/-->
-
-        <!--b>or</b>
-
-        <input type="file" name="afile" id="afile" /-->
-        <!--<input type="file" id="selectfile" /> Uploading local mpd for testing -->
-
-      <!--  <form action="">
-            <p class="sansserif"><input type="checkbox" id="mpdvalidation" class = "validation" value="0">MPD conformance only</p><br>
-        </form> -->
         
-            
-
-
         <a id="dynamic" href="url" target="_blank" style="visibility:hidden;" >Dynamic timing validation</a>
-
     </div>
     
     <div id="conformance_only">
@@ -552,10 +536,13 @@ var mpdprocessed = false;
 var counting =0;
 var representationid =1;
 var adaptationid = 1;
-var hinindex = 1;
+var periodid = 1;
+var hinindex = 2;
+var hinindex2 = 1;
 var repid =[];	
 var totarr = [];
 var adaptid=[];
+var perid=[];
 var file,fd,xhr;
 var uploaded = false;
 var numPeriods = 0;
@@ -693,14 +680,15 @@ function  progressEventHandler(){
                 //Get currently running Adaptation and Representation numbers.
                 var lastRep = progressXML.getElementsByTagName("CurrentRep")[0].childNodes[0].nodeValue;
                 var lastAdapt =progressXML.getElementsByTagName("CurrentAdapt")[0].childNodes[0].nodeValue;
+                var lastPeriod = progressXML.getElementsByTagName("CurrentPeriod")[0].childNodes[0].nodeValue;
                 
                 var progressText;
                 if (lastRep == 1 && lastAdapt == 1 && progressPercent == 0 && dataDownloaded == 0 && dataProcessed == 0) //initial state
                     progressText = "Processing MPD, please wait...";
                 else
-                    progressText = "Processing Representation "+lastRep+" in Adaptationset "+lastAdapt+", "+progressPercent+"% done ( "+dataDownloaded+" KB downloaded, "+dataProcessed+" MB processed )";
+                    progressText = "Processing Representation "+lastRep+" in Adaptationset "+lastAdapt+" in Period "+lastPeriod+", "+progressPercent+"% done ( "+dataDownloaded+" KB downloaded, "+dataProcessed+" MB processed )";
 
-		if( numPeriods > 1 )
+		if( numPeriods > 1 && !ctawave )
 		{
                     progressText = progressText + "<br><font color='red'> MPD with multiple Periods (" + numPeriods + "). Only segments of the current period will be checked.</font>"
 		}
@@ -1000,11 +988,6 @@ function processmpdresults()
     }
 
     // Get the number of AdaptationSets, Representations and Periods.
-    var x = mpdresult_x+1;
-    var y = 1;
-    var childno = 1;
-    repid = [];
-    
     var currentpath = window.location.pathname;
     currentpath = currentpath.substring(0, currentpath.lastIndexOf('/'));
     document.getElementById("list").href=currentpath+'/temp/'+dirid+'/featuretable.html';
@@ -1018,69 +1001,403 @@ function processmpdresults()
         return;
     }else{
         var Periodxml = xmlDoc_progress.getElementsByTagName("Period"); 
-        Adapt_count= Periodxml[0].childNodes.length;
-        var AdaptRepPeriod_count = Adapt_count;
-        var Adaptxml = xmlDoc_progress.getElementsByTagName("Adaptation");
-        for (var v=0; v<Adapt_count; v++){
-            AdaptRepPeriod_count = AdaptRepPeriod_count+" "+Adaptxml[v].getElementsByTagName("Representation").length;
+        Period_count = Periodxml.length;
+        var AdaptRepPeriod_count = Period_count;
+        for(var p=0; p<Period_count; p++){
+            Adapt_count= Periodxml[p].childNodes.length;
+            AdaptRepPeriod_count += ' ' + Adapt_count;
+            var Adaptxml = xmlDoc_progress.getElementsByTagName("Adaptation");
+            for (var v=0; v<Adapt_count; v++){
+                AdaptRepPeriod_count += " " +Adaptxml[v].getElementsByTagName("Representation").length;
+            }
         }
     }
     
     totarr = AdaptRepPeriod_count.split(" ");
+    var x = mpdresult_x+1;
+    var y = 1;
+    var childno = 1;
+    var childno2 = 2;
+    var id = x;
+    repid = [];
     for(var i=0;i<totarr[0];i++){
-        automate(y,x,"Adaptationset "+(i+1));
-        adaptid.push(x);
+        automate(y,x,"Period "+(i+1));
+        perid.push(x);
         tree.setItemImage2(x,'adapt.jpg','adapt.jpg','adapt.jpg');
-
-        for(var j=0;j<totarr[childno];j++){
-            automate(x,x+j+1,"Representation "+(j+1));
-            repid.push(x+j+1);
+        
+        id++;
+        var adaptid_temp = [];
+        for(var j=0; j<totarr[childno]; j++){
+            automate(x,id,"Adaptationset "+(j+1));
+            
+            adaptid_temp.push(id);
+            tree.setItemImage2(id,'adapt.jpg','adapt.jpg','adapt.jpg');
+            
+            var parentid = id;
+            id++;
+            for(var k=0; k<totarr[childno2]; k++){
+                automate(parentid,id,"Representation "+(k+1));
+                repid.push(adaptid_temp[adaptid_temp.length-1]+k+1);
+                id++;
+            }
+            
+            childno2++;
         }
-
-        childno++;
-        x=x+j;
-        x++;
+        
+        adaptid.push(adaptid_temp);
+        childno += childno2 - 1;
+        childno2 ++;
+        x = id;
     }
     
     var period_count = xmlDoc_progress.getElementsByTagName('PeriodCount');
     if(period_count[0].childNodes.length != 0)
         numPeriods = period_count[0].childNodes[0].nodeValue;
 
-    lastloc = repid[repid.length-1]+1;
+    lastloc = x+1;
     clearInterval(treeTimer);
     progressSegmentsTimer = setInterval(function(){progress()},400);
     document.getElementById('par').style.visibility='visible';
     document.getElementById('list').style.visibility='visible';
 }
 
-function progress()  //Progress of Segments' Conformance
+function progress()
+{
+    if(periodid > totarr[0]){
+        clearTimeout(progressSegmentsTimer);
+        setStatusTextlabel("Conformance test completed");
+        finishTest();
+    }
+    
+    xmlDoc_progress=loadXMLDoc("temp/"+dirid+"/progress.xml");
+    
+    if(xmlDoc_progress == null)
+        return;
+    
+    tree.setItemImage2(repid[counting],'progress3.gif','progress3.gif','progress3.gif');
+    
+    var CrossRepValidation=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CrossRepresentation");
+    var ComparedRepresentations = xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("ComparedRepresentations");
+    var HbbTVDVBComparedRepresentations = xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("HbbTVDVBComparedRepresentations");
+    var SelectionSet=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("SelectionSet");
+    var CmafProfile=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CMAFProfile");
+    var CTAWAVESelectionSet=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CTAWAVESelectionSet");
+    var CTAWAVEProfile=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CTAWAVEPresentation");
+    
+    if(representationid >totarr[hinindex]){
+        if (cmaf && ComparedRepresentations.length !=0){
+            for(var i =1; i<=ComparedRepresentations.length;i++){
+
+                if(ComparedRepresentations[i-1].textContent=="noerror"){
+                    tree.setItemImage2(adaptid[periodid-1][i-1],'right.jpg','right.jpg','right.jpg');
+                    automate(adaptid[periodid-1][i-1],lastloc,"CMAF Compared representations validation success");
+
+                    tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
+                    lastloc++;
+                }
+                else{
+                    tree.setItemImage2(adaptid[periodid-1][i-1],'button_cancel.png','button_cancel.png','button_cancel.png');
+                    automate(adaptid[periodid-1][i-1],lastloc,"CMAF Compared representations validation error");
+
+                    tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
+                    lastloc++;
+
+                    automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                    tree.setItemImage2(lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                    kidsloc.push(lastloc);
+                    urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_compInfo.html");
+                    lastloc++;
+                }
+            }
+        }
+        
+        adjustFooter();
+        representationid = 1;
+        hinindex++;
+        adaptationid++;
+    }
+    else if(adaptationid>totarr[hinindex2]){
+        if(CrossRepValidation.length!=0){
+            for(var i =1; i<=CrossRepValidation.length;i++)
+            {
+                if(CrossRepValidation[i-1].textContent=="noerror"){
+                    tree.setItemImage2(adaptid[periodid-1][i-1],'right.jpg','right.jpg','right.jpg');
+                    automate(adaptid[periodid-1][i-1],lastloc,"Cross-representation validation success");
+
+                    tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
+                    lastloc++;
+                }
+                else{
+                    tree.setItemImage2(adaptid[periodid-1][i-1],'button_cancel.png','button_cancel.png','button_cancel.png');
+                    automate(adaptid[periodid-1][i-1],lastloc,"Cross-representation validation error");
+
+                    tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
+                    lastloc++;
+
+                    automate(adaptid[periodid-1][i-1],lastloc,"log");
+                    tree.setItemImage2(lastloc,'log.jpg','log.jpg','log.jpg');
+                    kidsloc.push(lastloc);
+                    urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_CrossInfofile.html");
+                    lastloc++;
+                }
+            }
+        }
+        
+        if((dvb == 1 || hbbtv == 1) && HbbTVDVBComparedRepresentations.length!=0){
+            for(var i =1; i<=HbbTVDVBComparedRepresentations.length;i++){
+                if(HbbTVDVBComparedRepresentations[i-1].textContent=="noerror"){
+                    automate(adaptid[periodid-1][i-1],lastloc,"DVB-HbbTV Compared representations validation success");
+                    tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
+                    lastloc++;
+
+                    automate(adaptid[periodid-1][i-1],lastloc,"log");
+                    tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                    kidsloc.push(lastloc);
+                    urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
+                    lastloc++;
+                }
+                else if(HbbTVDVBComparedRepresentations[i-1].textContent=="warning"){
+                    automate(adaptid[periodid-1][i-1],lastloc,"DVB-HbbTV Compared representations validation warning");
+                    tree.setItemImage2(lastloc,'log.jpg','log.jpg','log.jpg');
+                    lastloc++;
+
+                    automate(adaptid[periodid-1][i-1],lastloc,"log");
+                    tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                    kidsloc.push(lastloc);
+                    urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
+                    lastloc++;
+                }
+                else{
+                    automate(adaptid[periodid-1][i-1],lastloc,"DVB-HbbTV Compared representations validation error");
+                    tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
+                    lastloc++;
+
+                    automate(adaptid[periodid-1][i-1],lastloc,"log");
+                    tree.setItemImage2(lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                    kidsloc.push(lastloc);
+                    urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
+                    lastloc++;
+                }
+            }
+        }
+        
+        if(cmaf){
+            //Additions for CMAF Selection Set and Presentation Profile.
+            if(SelectionSet.length!=0){
+                if(SelectionSet[0].textContent=="noerror"){
+                        automate(perid[i-1],lastloc,"CMAF Selection Set");
+
+                        tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
+                        lastloc++;
+                        
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile.html");
+                        lastloc++;
+                }
+                else{
+                        automate(perid[i-1],lastloc,"CMAF Selection Set");
+
+                        tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
+                        lastloc++;
+                    
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile.html");
+                        lastloc++;
+                    }
+            }
+            if(CmafProfile.length!=0){
+                if(CmafProfile[0].textContent=="noerror"){
+                        automate(perid[i-1],lastloc,"CMAF Presentation Profile");
+
+                        tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
+                        lastloc++;
+                        
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile.html");
+                        lastloc++;
+                }
+                else{
+                        automate(perid[i-1],lastloc,"CMAF Presentation Profile");
+
+                        tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
+                        lastloc++;
+                    
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile.html");
+                        lastloc++;
+                }
+            }
+        }
+        
+        if(ctawave == 1){
+            //Additions for CTA WAVE Selection Set and Presentation Profile.
+            if(CTAWAVESelectionSet.length!=0)
+            {
+                if(CTAWAVESelectionSet[0].textContent=="noerror"){
+                        automate(perid[periodid-1],lastloc,"CTA WAVE Selection Set");
+                        tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
+                        lastloc++;
+                        
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile_ctawave.html");
+                        lastloc++;
+                }
+                else if(CTAWAVESelectionSet[0].textContent=="warning"){
+                        automate(perid[periodid-1],lastloc,"CTA WAVE Selection Set");
+                        tree.setItemImage2(lastloc,'log.jpg','log.jpg','log.jpg');
+                        lastloc++;
+                        
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile_ctawave.html");
+                        lastloc++;
+                }
+                else{
+                        automate(perid[periodid-1],lastloc,"CTA WAVE Selection Set");
+                        tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
+                        lastloc++;
+                    
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile_ctawave.html");
+                        lastloc++;
+                }
+            }
+            if(CTAWAVEProfile.length!=0)
+            {
+                if(CTAWAVEProfile[0].textContent=="noerror"){
+                        automate(perid[periodid-1],lastloc,"CTA WAVE Presentation Profile");
+                        tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
+                        lastloc++;
+                        
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile_ctawave.html");
+                        lastloc++;
+                }
+                else if(CTAWAVEProfile[0].textContent=="warning"){
+                        automate(perid[periodid-1],lastloc,"CTA WAVE Presentation Profile");
+                        tree.setItemImage2(lastloc,'log.jpg','log.jpg','log.jpg');
+                        lastloc++;
+                        
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile_ctawave.html");
+                        lastloc++;
+                }
+                else{
+                        automate(perid[periodid-1],lastloc,"CTA WAVE Presentation Profile");
+                        tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
+                        lastloc++;
+                    
+                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+                        kidsloc.push(lastloc);
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile_ctawave.html");
+                        lastloc++;
+                }
+            }
+        }
+        
+        adjustFooter();
+        adaptationid = 1;
+        hinindex2 += hinindex - 1;
+        hinindex = hinindex2 + 1;
+        tree.setItemImage2(perid[periodid-1],'right.jpg','right.jpg','right.jpg');
+        periodid++;
+    }
+    else{
+        var AdaptXML=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("Adaptation"); 
+        if(AdaptXML[adaptationid-1]== null)
+            return;
+        else if(AdaptXML[adaptationid-1].getElementsByTagName("Representation")[representationid-1] == null)
+            return;
+        else{   
+            var RepXML=AdaptXML[adaptationid-1].getElementsByTagName("Representation")[representationid-1].textContent;
+            if(RepXML == "")
+                return;
+            representationid++;
+        }
+
+        if(RepXML == "noerror")
+            tree.setItemImage2( repid[counting],'right.jpg','right.jpg','right.jpg');
+        else if(RepXML == "warning")
+            tree.setItemImage2( repid[counting],'log.jpg','log.jpg','log.jpg');
+        else
+            tree.setItemImage2( repid[counting],'button_cancel.png','button_cancel.png','button_cancel.png');
+        
+        automate(repid[counting],lastloc,"log");
+        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
+        kidsloc.push(lastloc);
+        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(adaptationid-1)+"rep"+(representationid-2) + "log.html");
+        lastloc++;
+
+        var location = "temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(adaptationid-1)+"rep"+(representationid-2) + "sample_data.xml";
+        automate(repid[counting],lastloc,"Estimate bitrate");
+        tree.setItemImage2( lastloc,'csh_winstyle/calculator.gif','csh_winstyle/calculator.gif','csh_winstyle/calculator.gif');
+        kidsloc.push(lastloc);
+        urlarray.push("Estimate.php?location=" + location );
+        lastloc++;
+
+        counting++;
+        
+        adjustFooter();
+        progress();
+    }
+}
+
+function progress1()  //Progress of Segments' Conformance
 {
     xmlDoc_progress=loadXMLDoc("temp/"+dirid+"/progress.xml");
     
+    if(periodid > totarr[0]){
+        clearTimeout(progressSegmentsTimer);
+        setStatusTextlabel("Conformance test completed");
+        finishTest();
+    }
     if(representationid >totarr[hinindex]){
         representationid = 1;
         hinindex++;
         adaptationid++;
     }
-
+    if(adaptationid>totarr[hinindex2]){
+        adaptationid = 1;
+        hinindex2 += hinindex - 1;
+        hinindex = hinindex2 + 1;
+    }
+    
     tree.setItemImage2( repid[counting],'progress3.gif','progress3.gif','progress3.gif');
     
     if(xmlDoc_progress == null)
         return;
     
-    var CrossRepValidation=xmlDoc_progress.getElementsByTagName("CrossRepresentation");
-    var ComparedRepresentations = xmlDoc_progress.getElementsByTagName("ComparedRepresentations");
-    var HbbTVDVBComparedRepresentations = xmlDoc_progress.getElementsByTagName("HbbTVDVBComparedRepresentations");
-    var SelectionSet=xmlDoc_progress.getElementsByTagName("SelectionSet");
-    var CmafProfile=xmlDoc_progress.getElementsByTagName("CMAFProfile");
-    var CTAWAVESelectionSet=xmlDoc_progress.getElementsByTagName("CTAWAVESelectionSet");
-    var CTAWAVEProfile=xmlDoc_progress.getElementsByTagName("CTAWAVEPresentation");
-    if ((CrossRepValidation.length!=0 && adaptationid>totarr[0]) || (ComparedRepresentations.length !=0 && representationid>totarr[adaptationid]) || 
-            (SelectionSet.length !=0 && adaptationid>totarr[0]) || (CmafProfile.length !=0 && adaptationid>totarr[0]) || 
-            (HbbTVDVBComparedRepresentations.length !=0 && adaptationid>totarr[0]) ||
-            (CTAWAVESelectionSet.length!=0 && adaptationid>totarr[0]) || (CTAWAVEProfile.length!=0 && adaptationid>totarr[0])){
+    var CrossRepValidation=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CrossRepresentation");
+    var ComparedRepresentations = xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("ComparedRepresentations");
+    var HbbTVDVBComparedRepresentations = xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("HbbTVDVBComparedRepresentations");
+    var SelectionSet=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("SelectionSet");
+    var CmafProfile=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CMAFProfile");
+    var CTAWAVESelectionSet=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CTAWAVESelectionSet");
+    var CTAWAVEProfile=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CTAWAVEPresentation");
+    if ((CrossRepValidation.length!=0 && adaptationid>totarr[hinindex2]) || (ComparedRepresentations.length !=0 && representationid>totarr[hinindex]) || 
+            (SelectionSet.length !=0 && adaptationid>totarr[hinindex2]) || (CmafProfile.length !=0 && adaptationid>totarr[hinindex2]) || 
+            (HbbTVDVBComparedRepresentations.length !=0 && adaptationid>totarr[hinindex2]) ||
+            (CTAWAVESelectionSet.length!=0 && adaptationid>totarr[hinindex2]) || (CTAWAVEProfile.length!=0 && adaptationid>totarr[hinindex2])){
         
-        if(CrossRepValidation.length!=0 && adaptationid>totarr[0]){
+        if(CrossRepValidation.length!=0 && adaptationid>totarr[hinindex2]){
             for(var i =1; i<=CrossRepValidation.length;i++)
             {
                 if(CrossRepValidation[i-1].textContent=="noerror"){
@@ -1100,14 +1417,14 @@ function progress()  //Progress of Segments' Conformance
                     automate(adaptid[i-1],lastloc,"log");
                     tree.setItemImage2( lastloc,'log.jpg','log.jpg','log.jpg');
                     kidsloc.push(lastloc);
-                    urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i-1)+ "_CrossInfofile.html");
+                    urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_CrossInfofile.html");
                     lastloc++;
                 }
             }
         }
         
         if( dvb == 1 || hbbtv == 1){
-            if(HbbTVDVBComparedRepresentations.length!=0 && adaptationid>totarr[0]){
+            if(HbbTVDVBComparedRepresentations.length!=0 && adaptationid>totarr[hinindex2]){
                 for(var i =1; i<=HbbTVDVBComparedRepresentations.length;i++)
                 {
                     if(HbbTVDVBComparedRepresentations[i-1].textContent=="noerror"){
@@ -1118,7 +1435,7 @@ function progress()  //Progress of Segments' Conformance
                         automate(adaptid[i-1],lastloc,"log");
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
                         lastloc++;
                     }
                     else if(HbbTVDVBComparedRepresentations[i-1].textContent=="warning"){
@@ -1129,7 +1446,7 @@ function progress()  //Progress of Segments' Conformance
                         automate(adaptid[i-1],lastloc,"log");
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
                         lastloc++;
                     }
                     else{
@@ -1140,7 +1457,7 @@ function progress()  //Progress of Segments' Conformance
                         automate(adaptid[i-1],lastloc,"log");
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
                         lastloc++;
                     }
                 }
@@ -1169,16 +1486,16 @@ function progress()  //Progress of Segments' Conformance
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i-1)+ "_compInfo.html");
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_compInfo.html");
                         lastloc++;
                     }
                 }
             }
             //Additions for CMAF Selection Set and Presentation profile.
-            if(SelectionSet.length!=0  && adaptationid>totarr[0])
+            if(SelectionSet.length!=0  && adaptationid>totarr[hinindex2])
             {
                 if(SelectionSet[0].textContent=="noerror"){
-                        automate(1,lastloc,"CMAF Selection Set");
+                        automate(perid[i-1],lastloc,"CMAF Selection Set");
 
                         tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
                         lastloc++;
@@ -1186,11 +1503,11 @@ function progress()  //Progress of Segments' Conformance
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile.html");
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile.html");
                         lastloc++;
                 }
                 else{
-                        automate(1,lastloc,"CMAF Selection Set");
+                        automate(perid[i-1],lastloc,"CMAF Selection Set");
 
                         tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                         lastloc++;
@@ -1198,14 +1515,14 @@ function progress()  //Progress of Segments' Conformance
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile.html");
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile.html");
                         lastloc++;
                     }
             }
-            if(CmafProfile.length!=0  && adaptationid>totarr[0])
+            if(CmafProfile.length!=0  && adaptationid>totarr[hinindex2])
             {
                 if(CmafProfile[0].textContent=="noerror"){
-                        automate(1,lastloc,"CMAF Presentation Profile");
+                        automate(perid[i-1],lastloc,"CMAF Presentation Profile");
 
                         tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
                         lastloc++;
@@ -1213,11 +1530,11 @@ function progress()  //Progress of Segments' Conformance
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile.html");
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile.html");
                         lastloc++;
                 }
                 else{
-                        automate(1,lastloc,"CMAF Presentation Profile");
+                        automate(perid[i-1],lastloc,"CMAF Presentation Profile");
 
                         tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                         lastloc++;
@@ -1225,84 +1542,84 @@ function progress()  //Progress of Segments' Conformance
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile.html");
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile.html");
                         lastloc++;
-                    }
+                }
             }
         }
         
         if(ctawave == 1)
         {
             //Additions for CTA WAVE Selection Set and Presentation profile.
-            if(CTAWAVESelectionSet.length!=0  && adaptationid>totarr[0])
+            if(CTAWAVESelectionSet.length!=0  && adaptationid>totarr[hinindex2])
             {
                 if(CTAWAVESelectionSet[0].textContent=="noerror"){
-                        automate(1,lastloc,"CTA WAVE Selection Set");
+                        automate(perid[i-1],lastloc,"CTA WAVE Selection Set");
                         tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
                         lastloc++;
                         
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile_ctawave.html");
                         lastloc++;
                 }
                 else if(CTAWAVESelectionSet[0].textContent=="warning"){
-                        automate(1,lastloc,"CTA WAVE Selection Set");
+                        automate(perid[i-1],lastloc,"CTA WAVE Selection Set");
                         tree.setItemImage2(lastloc,'log.jpg','log.jpg','log.jpg');
                         lastloc++;
                         
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile_ctawave.html");
                         lastloc++;
                 }
                 else{
-                        automate(1,lastloc,"CTA WAVE Selection Set");
+                        automate(perid[i-1],lastloc,"CTA WAVE Selection Set");
                         tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                         lastloc++;
                     
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile_ctawave.html");
                         lastloc++;
                 }
             }
-            if(CTAWAVEProfile.length!=0  && adaptationid>totarr[0])
+            if(CTAWAVEProfile.length!=0  && adaptationid>totarr[hinindex2])
             {
                 if(CTAWAVEProfile[0].textContent=="noerror"){
-                        automate(1,lastloc,"CTA WAVE Presentation Profile");
+                        automate(perid[i-1],lastloc,"CTA WAVE Presentation Profile");
                         tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
                         lastloc++;
                         
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile_ctawave.html");
                         lastloc++;
                 }
                 else if(CTAWAVEProfile[0].textContent=="warning"){
-                        automate(1,lastloc,"CTA WAVE Presentation Profile");
+                        automate(perid[i-1],lastloc,"CTA WAVE Presentation Profile");
                         tree.setItemImage2(lastloc,'log.jpg','log.jpg','log.jpg');
                         lastloc++;
                         
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile_ctawave.html");
                         lastloc++;
                 }
                 else{
-                        automate(1,lastloc,"CTA WAVE Presentation Profile");
+                        automate(perid[i-1],lastloc,"CTA WAVE Presentation Profile");
                         tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                         lastloc++;
                     
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
+                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile_ctawave.html");
                         lastloc++;
                 }
             }
@@ -1312,21 +1629,20 @@ function progress()  //Progress of Segments' Conformance
         var BrokenURL=xmlDoc_progress.getElementsByTagName("BrokenURL");
         if( BrokenURL != null && BrokenURL[0].textContent == "error")
         {
-            urlarray.push("temp/" + dirid+"/missinglink.html");
+            urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"missinglink.html");
 
-            automate(1,lastloc,"Broken URL list");
+            automate(perid[i-1],lastloc,"Broken URL list");
             tree.setItemImage2(lastloc,'404.jpg','404.jpg','404.jpg');
             lastloc++; 
         }
 
         adjustFooter();
-        clearTimeout(progressTimer);
-        setStatusTextlabel("Conformance test completed");
-        finishTest();
+        periodid++;
+        progress();
     }
     else
     {
-        var AdaptXML=xmlDoc_progress.getElementsByTagName("Adaptation"); 
+        var AdaptXML=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("Adaptation"); 
         if(AdaptXML[adaptationid-1]== null)
             return;
         else if(AdaptXML[adaptationid-1].getElementsByTagName("Representation")[representationid-1] == null)
@@ -1348,10 +1664,10 @@ function progress()  //Progress of Segments' Conformance
         automate(repid[counting],lastloc,"log");
         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
         kidsloc.push(lastloc);
-        urlarray.push("temp/"+dirid+"/"+ "Adapt"+(adaptationid-1)+"rep"+(representationid-2) + "log.html");
+        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(adaptationid-1)+"rep"+(representationid-2) + "log.html");
         lastloc++;
 
-        var location = "temp/"+dirid+"/"+ "Adapt"+(adaptationid-1)+"rep"+(representationid-2) + "sample_data.xml";
+        var location = "temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(adaptationid-1)+"rep"+(representationid-2) + "sample_data.xml";
         automate(repid[counting],lastloc,"Estimate bitrate");
         tree.setItemImage2( lastloc,'csh_winstyle/calculator.gif','csh_winstyle/calculator.gif','csh_winstyle/calculator.gif');
         kidsloc.push(lastloc);
@@ -1455,7 +1771,9 @@ function initVariables()
     counting =0;
     representationid =1;
     adaptationid = 1;
-    hinindex = 1;
+    periodid = 1;
+    hinindex = 2;
+    hinindex2 = 1;
     numPeriods = 0;
     //uploaded = false;
     dynamicsegtimeline = false;
@@ -1488,7 +1806,7 @@ function setUpTreeView()
 function setStatusTextlabel(textToSet)
 {
     status = textToSet;
-    if( numPeriods > 1 )
+    if( numPeriods > 1 && !ctawave)
         status = status + "<br><font color='red'> MPD with multiple Periods (" + numPeriods + "). Only segments of the current period were checked.</font>";
     if( dynamicsegtimeline)
         status = status + "<br><font color='red'> Segment timeline for type dynamic is not supported, only MPD will be tested. </font>";
