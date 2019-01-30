@@ -35,11 +35,11 @@
  * @output: $file_sizearr - array of original size(s) of the segment(s)
  */
 function download_data($directory, $array_file, $is_subtitle_rep){
-    global $session_dir, $progress_report, $progress_xml, $reprsentation_mdat_template, $missinglink_file, $current_adaptation_set, $current_representation, 
+    global $session_dir, $progress_report, $progress_xml, $current_period, $reprsentation_mdat_template, $missinglink_file, $current_adaptation_set, $current_representation, 
             $hls_byte_range_begin, $hls_byte_range_size, $hls_manifest, $hls_mdat_file;
     
     if(!$hls_manifest)
-        $mdat_file = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_mdat_template);
+        $mdat_file = 'Period' . $current_period .'/' . str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_mdat_template);
     else
         $mdat_file = $hls_mdat_file;
     
@@ -63,7 +63,10 @@ function download_data($directory, $array_file, $is_subtitle_rep){
             $file_size = ($hls_byte_range_size) ? $hls_byte_range_size[$index]+$hls_byte_range_begin[$index] : remote_file_size2($filePath);
         
         if (remote_file_size2($filePath) === false){ // if URL return 404 report it as broken url
-            $missing = open_file($session_dir . '/' . $missinglink_file . '.txt', 'a+b');
+            if(!$hls_manifest)
+                $missing = open_file($session_dir . '/Period' . $current_period . '/' . $missinglink_file . '.txt', 'a+b');
+            else
+                $missing = open_file($session_dir . '/' . $missinglink_file . '.txt', 'a+b');
             fwrite($missing, $filePath . "\n");
             error_log("downloaddata_Missing:" . $filePath);
         }

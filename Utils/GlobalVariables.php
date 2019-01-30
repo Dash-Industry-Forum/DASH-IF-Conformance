@@ -228,12 +228,15 @@ var newPathname = url[0];
 var loc = window.location.pathname.split("/");
 var txtloc = "";
 var txtloc_start_ind = (loc.indexOf("Conformance-Frontend") != -1) ? loc.indexOf("Conformance-Frontend") : loc.indexOf("Conformance-Frontend-HLS");
-for ( j = txtloc_start_ind; j < loc.length-1; j++){
+var txtlocuntil = (document.URL.search("mpdreport") !== -1) ? 1 : 2
+var pathnameuntil = (document.URL.search("mpdreport") !== -1) ? 4 : 5
+
+for ( j = txtloc_start_ind; j < loc.length-txtlocuntil; j++){
     txtloc += "/";
     txtloc += loc[j];
 }
 
-for ( i = 1; i < url.length-4; i++ ) {
+for ( i = 1; i < url.length-pathnameuntil; i++ ) {
   newPathname += "/";
   newPathname += url[i];
 }
@@ -356,7 +359,7 @@ function addParagraph(string, color){
     document.getElementById(ind).innerHTML = string;
 }
 </script>
- 
+
 </body>
 </html>';
 
