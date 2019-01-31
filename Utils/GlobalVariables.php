@@ -34,6 +34,7 @@ $error_message = 1;
 $warning_message = 1;
 $info_message = 1;
 $suppressatomlevel = 0;
+$profileCommandLine='';
 
 # HLS variable
 $hls_manifest = 0;
@@ -155,7 +156,9 @@ if (isset($_POST['noinfo'])){
 if (isset($_POST['suppressatomlevel'])){
     $suppressatomlevel = 1;
 }
-
+if(isset($_POST['profile'])){
+    $profileCommandLine = (array)json_decode($_POST['profile'],true);
+}
 # Important for Backend block
 $command_file = 'command.txt';
 $config_file = 'config_file.txt';
@@ -225,12 +228,15 @@ var newPathname = url[0];
 var loc = window.location.pathname.split("/");
 var txtloc = "";
 var txtloc_start_ind = (loc.indexOf("Conformance-Frontend") != -1) ? loc.indexOf("Conformance-Frontend") : loc.indexOf("Conformance-Frontend-HLS");
-for ( j = txtloc_start_ind; j < loc.length-1; j++){
+var txtlocuntil = (document.URL.search("mpdreport") !== -1) ? 1 : 2
+var pathnameuntil = (document.URL.search("mpdreport") !== -1) ? 4 : 5
+
+for ( j = txtloc_start_ind; j < loc.length-txtlocuntil; j++){
     txtloc += "/";
     txtloc += loc[j];
 }
-console.log(txtloc);
-for ( i = 1; i < url.length-4; i++ ) {
+
+for ( i = 1; i < url.length-pathnameuntil; i++ ) {
   newPathname += "/";
   newPathname += url[i];
 }
@@ -353,7 +359,7 @@ function addParagraph(string, color){
     document.getElementById(ind).innerHTML = string;
 }
 </script>
- 
+
 </body>
 </html>';
 
@@ -365,5 +371,5 @@ if($hbbtv_conformance || $dvb_conformance){
     include '../HbbTV_DVB/HbbTV_DVB_Initialization.php';
 }
 if($ctawave_conformance){
-    include '../CTAWAVE/CTAWAVE_Initialization.php';
+    include '../CMAF/CTAWAVE/CTAWAVE_Initialization.php';
 }

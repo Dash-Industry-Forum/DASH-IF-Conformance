@@ -137,11 +137,11 @@ function relative_path($path){
 
 //The function to remove repeated error statements from the log files.
 function err_file_op($reqFile){
-    global $session_dir, $already_processed;
+    global $session_dir, $current_period, $already_processed;
     if($reqFile==1)
-        $LogFiles=glob($session_dir."/*log.txt");
+        $LogFiles=glob($session_dir.'/Period'.$current_period."/*log.txt");
     else
-        $LogFiles=glob($session_dir."/*compInfo.txt");
+        $LogFiles=glob($session_dir.'/Period'.$current_period."/*compInfo.txt");
     
     //$CrossRepDASH=glob($locate."/*CrossInfofile.txt");
     //$all_report_files = array_merge($RepLogFiles, $CrossValidDVB, $CrossRepDASH); // put all the filepaths in a single array
