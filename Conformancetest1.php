@@ -33,10 +33,10 @@
     <!--link rel="stylesheet" href="/resources/demos/style.css" /-->
     
 
-    <link rel="STYLESHEET" type="text/css" href="tree/dhtmlxTree/codebase/dhtmlxtree.css">
-    <script type="text/javascript" src="tree/dhtmlxTree/codebase/dhtmltree_deprecated.js"></script>
-    <script type="text/javascript"  src="tree/dhtmlxTree/codebase/dhtmlxtree.js"></script>
-    <script type="text/javascript" src="tree/dhtmlxTree/codebase/ext/dhtmlxtree_json.js"></script>
+    <link rel="STYLESHEET" type="text/css" href="tree/dhtmlxTree_v51_std/codebase/dhtmlxtree.css">
+    <script type="text/javascript" src="tree/dhtmlxTree_v51_std/codebase/dhtmltree_deprecated.js"></script>
+    <script type="text/javascript"  src="tree/dhtmlxTree_v51_std/codebase/dhtmlxtree.js"></script>
+    <script type="text/javascript" src="tree/dhtmlxTree_v51/codebase/ext/dhtmlxtree_json.js"></script>
     
     <link href="gdpr/css/jquery-eu-cookie-law-popup.css" rel="stylesheet">
     <script src="gdpr/js/jquery-eu-cookie-law-popup.js"></script>
@@ -975,9 +975,10 @@ function addToTree(button){
         branch_added[mpd_node_index] = mpdresult_x;
         mpdresult_x++;
     }
-   
+     //var x = document.getElementById("mpdresult_x");
+     //x.style.cursor = "default"
     if(button === 0)
-        tree.setItemImage2(branch_added[mpd_node_index], 'ajax-loader.gif', 'ajax-loader.gif', 'ajax-loader.gif');
+        tree.setItemImage2(branch_added[mpd_node_index], 'progress.gif', 'progress.gif', 'progress.gif');
     else if(button === 1)
         tree.setItemImage2(branch_added[mpd_node_index], 'right.jpg', 'right.jpg', 'right.jpg');
     else if(button === 2)
@@ -1074,7 +1075,7 @@ function progress()  //Progress of Segments' Conformance
         adaptationid++;
     }
 
-    tree.setItemImage2( repid[counting],'ajax-loader.gif','ajax-loader.gif','ajax-loader.gif');
+    tree.setItemImage2( repid[counting],'progress.gif','progress.gif','progress.gif');
     
     if(xmlDoc_progress == null)
         return;
@@ -1381,7 +1382,7 @@ function progress()  //Progress of Segments' Conformance
         automate(repid[counting],lastloc,"Estimate bitrate");
         tree.setItemImage2( lastloc,'csh_winstyle/calculator.gif','csh_winstyle/calculator.gif','csh_winstyle/calculator.gif');
         kidsloc.push(lastloc);
-        urlarray.push("estimate1.php?location=" + location );
+        urlarray.push("Estimate.php?location=" + location );
         lastloc++;
 
         counting++;
@@ -1487,8 +1488,7 @@ function tonrightclick(id)
         var htmlname = locarray[locarray.length-1];
         var textname = htmlname.split(".")[0] + ".txt";
         var textloc = window.location.href + "/../" + urlto.split(".")[0] + ".txt";
-        var arrayurl= textloc.split(".");
-    if(intvariable==false && arrayurl[3]!=="/estimate1"){//if intvariable is false execute 
+    if(intvariable==false){//if intvariable is false execute 
         downloadButtonHandle = document.createElement("BUTTON");//create a dynamic button
         var t = document.createTextNode("click to download");//put this text in to the button
         downloadButtonHandle.appendChild(t);
@@ -1498,31 +1498,16 @@ function tonrightclick(id)
         downloadButtonHandle.style.position = 'absolute';
         downloadButtonHandle.style.left = str1;//x coordinate assigned
         downloadButtonHandle.style.top =  str2;//y coordinate assigned
-        downloadButtonHandle.style.background= "white";
-       
-        downloadButtonHandle.onmouseover = function(){
-        downloadButtonHandle.style.background = "Gainsboro ";
-        }
-        downloadButtonHandle.onmouseout = function(){
-        downloadButtonHandle.style.background = "white";
-        }
-    
-        /*downloadButtonHandle : hover{ = "#F0F8FF";}*/
         downloadButtonHandle.onclick=function(){//when button is clicked, this function executes
         downloadLog(textloc,textname);
         downloadButtonHandle.remove();//after the file is downloaded, remove the button.
         }
     }
-    else if(intvariable==false && arrayurl[3]==="/estimate1"){
-        downloadButtonHandle.remove();
-        buttoncontroller=false;
-       }
-    
         
         else{//if intvariable is correct it means there is already a button in the page so remove it.
         downloadButtonHandle.remove();
         }
-        if(intvariable==false&& arrayurl[3]!=="/estimate1"){//int variable is created because both in the if statement and between the curly braces of if statement having buttoncontroller cretae some problems during new assignments. 
+        if(intvariable==false){//int variable is created because both in the if statement and between the curly braces of if statement having buttoncontroller cretae some problems during new assignments. 
             buttoncontroller=true;//if intvariable is false, a button is created after the execution of rightclick. Therefore change the global variable buttoncontroller to be true so that intvariable becomes true...
             //and function automaticalyy enters into else statement above and button is removed with next right click.
             
