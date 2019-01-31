@@ -25,15 +25,16 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     </head>
-
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
     <!--link rel="stylesheet" href="/resources/demos/style.css" /-->
+    
 
     <link rel="STYLESHEET" type="text/css" href="tree/dhtmlxTree/codebase/dhtmlxtree.css">
-    <script type="text/javascript" src="tree/dhtmlxTree/codebase/dhtmlxcommon.js"></script>
+    <script type="text/javascript" src="tree/dhtmlxTree/codebase/dhtmltree_deprecated.js"></script>
     <script type="text/javascript"  src="tree/dhtmlxTree/codebase/dhtmlxtree.js"></script>
     <script type="text/javascript" src="tree/dhtmlxTree/codebase/ext/dhtmlxtree_json.js"></script>
     
@@ -68,7 +69,6 @@
     else
         $hbbtv = "false";
 ?>
-
 <script type="text/javascript">
 
     var url = "";
@@ -424,7 +424,14 @@
         position: absolute;
         left: 42%;
     }
-    
+    added{
+     border:1px solid;
+     background:#ff9999;
+     width:500px;
+     height:500px;
+     display:none;
+     position:absolute;
+   }
 </style>
 <body>
 <div class="eupopup"></div>
@@ -485,8 +492,24 @@
             </div>
             <button id="btn8" onclick="submit()"> GO </button>
         </div>
+      <!--input type="text" id='urlinput' name="urlinput" class="mytext" value="http://localhost/content/TestCases/1b/thomson-networks/2/manifest.mpd" onkeyup="CheckKey(event)"/-->
+      <!--input type="text" id='urlinput' name="urlinput" class="mytext" value="http://dash.edgesuite.net/dash264/TestCases/1a/qualcomm/1/MultiRate.mpd" onkeyup="CheckKey(event)"/-->
+      <!--input type="text" id='urlinput' name="urlinput" class="mytext" value="http://10.4.193.185/Content/TestCases/1b/qualcomm/1/MultiRate_Broken.mpd" onkeyup="CheckKey(event)"/-->
+
+        <!--b>or</b>
+
+        <input type="file" name="afile" id="afile" /-->
+        <!--<input type="file" id="selectfile" /> Uploading local mpd for testing -->
+
+      <!--  <form action="">
+            <p class="sansserif"><input type="checkbox" id="mpdvalidation" class = "validation" value="0">MPD conformance only</p><br>
+        </form> -->
         
+            
+
+
         <a id="dynamic" href="url" target="_blank" style="visibility:hidden;" >Dynamic timing validation</a>
+
     </div>
     
     <div id="conformance_only">
@@ -523,7 +546,9 @@
         </tr>
     </table>
 </div>
-
+ <div id="myconfirm" >
+        
+ </div>
 <script type="text/javascript">
 var progressXMLRequest;
 var progressXML;
@@ -531,18 +556,16 @@ var progressTimer;
 var current = 0;
 var dirid="";
 var kidsloc=[];
+var idholder=[];
 var lastloc = 0;
 var mpdprocessed = false;
 var counting =0;
 var representationid =1;
 var adaptationid = 1;
-var periodid = 1;
-var hinindex = 2;
-var hinindex2 = 1;
+var hinindex = 1;
 var repid =[];	
 var totarr = [];
 var adaptid=[];
-var perid=[];
 var file,fd,xhr;
 var uploaded = false;
 var numPeriods = 0;
@@ -680,15 +703,14 @@ function  progressEventHandler(){
                 //Get currently running Adaptation and Representation numbers.
                 var lastRep = progressXML.getElementsByTagName("CurrentRep")[0].childNodes[0].nodeValue;
                 var lastAdapt =progressXML.getElementsByTagName("CurrentAdapt")[0].childNodes[0].nodeValue;
-                var lastPeriod = progressXML.getElementsByTagName("CurrentPeriod")[0].childNodes[0].nodeValue;
                 
                 var progressText;
                 if (lastRep == 1 && lastAdapt == 1 && progressPercent == 0 && dataDownloaded == 0 && dataProcessed == 0) //initial state
                     progressText = "Processing MPD, please wait...";
                 else
-                    progressText = "Processing Representation "+lastRep+" in Adaptationset "+lastAdapt+" in Period "+lastPeriod+", "+progressPercent+"% done ( "+dataDownloaded+" KB downloaded, "+dataProcessed+" MB processed )";
+                    progressText = "Processing Representation "+lastRep+" in Adaptationset "+lastAdapt+", "+progressPercent+"% done ( "+dataDownloaded+" KB downloaded, "+dataProcessed+" MB processed )";
 
-		if( numPeriods > 1 && !ctawave )
+		if( numPeriods > 1 )
 		{
                     progressText = progressText + "<br><font color='red'> MPD with multiple Periods (" + numPeriods + "). Only segments of the current period will be checked.</font>"
 		}
@@ -946,15 +968,16 @@ function mpdProgress(){
     }
 }
 
+
 function addToTree(button){
     if(branch_added[mpd_node_index] === 0){
         automate(mpdresult_y, mpdresult_x, branchName[mpd_node_index]);
         branch_added[mpd_node_index] = mpdresult_x;
         mpdresult_x++;
     }
-    
+   
     if(button === 0)
-        tree.setItemImage2(branch_added[mpd_node_index], 'progress3.gif', 'progress3.gif', 'progress3.gif');
+        tree.setItemImage2(branch_added[mpd_node_index], 'ajax-loader.gif', 'ajax-loader.gif', 'ajax-loader.gif');
     else if(button === 1)
         tree.setItemImage2(branch_added[mpd_node_index], 'right.jpg', 'right.jpg', 'right.jpg');
     else if(button === 2)
@@ -988,6 +1011,11 @@ function processmpdresults()
     }
 
     // Get the number of AdaptationSets, Representations and Periods.
+    var x = mpdresult_x+1;
+    var y = 1;
+    var childno = 1;
+    repid = [];
+    
     var currentpath = window.location.pathname;
     currentpath = currentpath.substring(0, currentpath.lastIndexOf('/'));
     document.getElementById("list").href=currentpath+'/temp/'+dirid+'/featuretable.html';
@@ -1001,403 +1029,69 @@ function processmpdresults()
         return;
     }else{
         var Periodxml = xmlDoc_progress.getElementsByTagName("Period"); 
-        Period_count = Periodxml.length;
-        var AdaptRepPeriod_count = Period_count;
-        for(var p=0; p<Period_count; p++){
-            Adapt_count= Periodxml[p].childNodes.length;
-            AdaptRepPeriod_count += ' ' + Adapt_count;
-            var Adaptxml = xmlDoc_progress.getElementsByTagName("Adaptation");
-            for (var v=0; v<Adapt_count; v++){
-                AdaptRepPeriod_count += " " +Adaptxml[v].getElementsByTagName("Representation").length;
-            }
+        Adapt_count= Periodxml[0].childNodes.length;
+        var AdaptRepPeriod_count = Adapt_count;
+        var Adaptxml = xmlDoc_progress.getElementsByTagName("Adaptation");
+        for (var v=0; v<Adapt_count; v++){
+            AdaptRepPeriod_count = AdaptRepPeriod_count+" "+Adaptxml[v].getElementsByTagName("Representation").length;
         }
     }
     
     totarr = AdaptRepPeriod_count.split(" ");
-    var x = mpdresult_x+1;
-    var y = 1;
-    var childno = 1;
-    var childno2 = 2;
-    var id = x;
-    repid = [];
     for(var i=0;i<totarr[0];i++){
-        automate(y,x,"Period "+(i+1));
-        perid.push(x);
+        automate(y,x,"Adaptationset "+(i+1));
+        adaptid.push(x);
         tree.setItemImage2(x,'adapt.jpg','adapt.jpg','adapt.jpg');
-        
-        id++;
-        var adaptid_temp = [];
-        for(var j=0; j<totarr[childno]; j++){
-            automate(x,id,"Adaptationset "+(j+1));
-            
-            adaptid_temp.push(id);
-            tree.setItemImage2(id,'adapt.jpg','adapt.jpg','adapt.jpg');
-            
-            var parentid = id;
-            id++;
-            for(var k=0; k<totarr[childno2]; k++){
-                automate(parentid,id,"Representation "+(k+1));
-                repid.push(adaptid_temp[adaptid_temp.length-1]+k+1);
-                id++;
-            }
-            
-            childno2++;
+
+        for(var j=0;j<totarr[childno];j++){
+            automate(x,x+j+1,"Representation "+(j+1));
+            repid.push(x+j+1);
         }
-        
-        adaptid.push(adaptid_temp);
-        childno += childno2 - 1;
-        childno2 ++;
-        x = id;
+
+        childno++;
+        x=x+j;
+        x++;
     }
     
     var period_count = xmlDoc_progress.getElementsByTagName('PeriodCount');
     if(period_count[0].childNodes.length != 0)
         numPeriods = period_count[0].childNodes[0].nodeValue;
 
-    lastloc = x+1;
+    lastloc = repid[repid.length-1]+1;
     clearInterval(treeTimer);
     progressSegmentsTimer = setInterval(function(){progress()},400);
     document.getElementById('par').style.visibility='visible';
     document.getElementById('list').style.visibility='visible';
 }
 
-function progress()
-{
-    if(periodid > totarr[0]){
-        clearTimeout(progressSegmentsTimer);
-        setStatusTextlabel("Conformance test completed");
-        finishTest();
-    }
-    
-    xmlDoc_progress=loadXMLDoc("temp/"+dirid+"/progress.xml");
-    
-    if(xmlDoc_progress == null)
-        return;
-    
-    tree.setItemImage2(repid[counting],'progress3.gif','progress3.gif','progress3.gif');
-    
-    var CrossRepValidation=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CrossRepresentation");
-    var ComparedRepresentations = xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("ComparedRepresentations");
-    var HbbTVDVBComparedRepresentations = xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("HbbTVDVBComparedRepresentations");
-    var SelectionSet=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("SelectionSet");
-    var CmafProfile=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CMAFProfile");
-    var CTAWAVESelectionSet=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CTAWAVESelectionSet");
-    var CTAWAVEProfile=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CTAWAVEPresentation");
-    
-    if(representationid >totarr[hinindex]){
-        if (cmaf && ComparedRepresentations.length !=0){
-            for(var i =1; i<=ComparedRepresentations.length;i++){
-
-                if(ComparedRepresentations[i-1].textContent=="noerror"){
-                    tree.setItemImage2(adaptid[periodid-1][i-1],'right.jpg','right.jpg','right.jpg');
-                    automate(adaptid[periodid-1][i-1],lastloc,"CMAF Compared representations validation success");
-
-                    tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
-                    lastloc++;
-                }
-                else{
-                    tree.setItemImage2(adaptid[periodid-1][i-1],'button_cancel.png','button_cancel.png','button_cancel.png');
-                    automate(adaptid[periodid-1][i-1],lastloc,"CMAF Compared representations validation error");
-
-                    tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
-                    lastloc++;
-
-                    automate(lastloc-1,lastloc,"log");//adaptid[i-1]
-                    tree.setItemImage2(lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-                    kidsloc.push(lastloc);
-                    urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_compInfo.html");
-                    lastloc++;
-                }
-            }
-        }
-        
-        adjustFooter();
-        representationid = 1;
-        hinindex++;
-        adaptationid++;
-    }
-    else if(adaptationid>totarr[hinindex2]){
-        if(CrossRepValidation.length!=0){
-            for(var i =1; i<=CrossRepValidation.length;i++)
-            {
-                if(CrossRepValidation[i-1].textContent=="noerror"){
-                    tree.setItemImage2(adaptid[periodid-1][i-1],'right.jpg','right.jpg','right.jpg');
-                    automate(adaptid[periodid-1][i-1],lastloc,"Cross-representation validation success");
-
-                    tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
-                    lastloc++;
-                }
-                else{
-                    tree.setItemImage2(adaptid[periodid-1][i-1],'button_cancel.png','button_cancel.png','button_cancel.png');
-                    automate(adaptid[periodid-1][i-1],lastloc,"Cross-representation validation error");
-
-                    tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
-                    lastloc++;
-
-                    automate(adaptid[periodid-1][i-1],lastloc,"log");
-                    tree.setItemImage2(lastloc,'log.jpg','log.jpg','log.jpg');
-                    kidsloc.push(lastloc);
-                    urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_CrossInfofile.html");
-                    lastloc++;
-                }
-            }
-        }
-        
-        if((dvb == 1 || hbbtv == 1) && HbbTVDVBComparedRepresentations.length!=0){
-            for(var i =1; i<=HbbTVDVBComparedRepresentations.length;i++){
-                if(HbbTVDVBComparedRepresentations[i-1].textContent=="noerror"){
-                    automate(adaptid[periodid-1][i-1],lastloc,"DVB-HbbTV Compared representations validation success");
-                    tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
-                    lastloc++;
-
-                    automate(adaptid[periodid-1][i-1],lastloc,"log");
-                    tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-                    kidsloc.push(lastloc);
-                    urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
-                    lastloc++;
-                }
-                else if(HbbTVDVBComparedRepresentations[i-1].textContent=="warning"){
-                    automate(adaptid[periodid-1][i-1],lastloc,"DVB-HbbTV Compared representations validation warning");
-                    tree.setItemImage2(lastloc,'log.jpg','log.jpg','log.jpg');
-                    lastloc++;
-
-                    automate(adaptid[periodid-1][i-1],lastloc,"log");
-                    tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-                    kidsloc.push(lastloc);
-                    urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
-                    lastloc++;
-                }
-                else{
-                    automate(adaptid[periodid-1][i-1],lastloc,"DVB-HbbTV Compared representations validation error");
-                    tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
-                    lastloc++;
-
-                    automate(adaptid[periodid-1][i-1],lastloc,"log");
-                    tree.setItemImage2(lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-                    kidsloc.push(lastloc);
-                    urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
-                    lastloc++;
-                }
-            }
-        }
-        
-        if(cmaf){
-            //Additions for CMAF Selection Set and Presentation Profile.
-            if(SelectionSet.length!=0){
-                if(SelectionSet[0].textContent=="noerror"){
-                        automate(perid[i-1],lastloc,"CMAF Selection Set");
-
-                        tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
-                        lastloc++;
-                        
-                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
-                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-                        kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile.html");
-                        lastloc++;
-                }
-                else{
-                        automate(perid[i-1],lastloc,"CMAF Selection Set");
-
-                        tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
-                        lastloc++;
-                    
-                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
-                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-                        kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile.html");
-                        lastloc++;
-                    }
-            }
-            if(CmafProfile.length!=0){
-                if(CmafProfile[0].textContent=="noerror"){
-                        automate(perid[i-1],lastloc,"CMAF Presentation Profile");
-
-                        tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
-                        lastloc++;
-                        
-                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
-                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-                        kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile.html");
-                        lastloc++;
-                }
-                else{
-                        automate(perid[i-1],lastloc,"CMAF Presentation Profile");
-
-                        tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
-                        lastloc++;
-                    
-                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
-                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-                        kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile.html");
-                        lastloc++;
-                }
-            }
-        }
-        
-        if(ctawave == 1){
-            //Additions for CTA WAVE Selection Set and Presentation Profile.
-            if(CTAWAVESelectionSet.length!=0)
-            {
-                if(CTAWAVESelectionSet[0].textContent=="noerror"){
-                        automate(perid[periodid-1],lastloc,"CTA WAVE Selection Set");
-                        tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
-                        lastloc++;
-                        
-                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
-                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-                        kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile_ctawave.html");
-                        lastloc++;
-                }
-                else if(CTAWAVESelectionSet[0].textContent=="warning"){
-                        automate(perid[periodid-1],lastloc,"CTA WAVE Selection Set");
-                        tree.setItemImage2(lastloc,'log.jpg','log.jpg','log.jpg');
-                        lastloc++;
-                        
-                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
-                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-                        kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile_ctawave.html");
-                        lastloc++;
-                }
-                else{
-                        automate(perid[periodid-1],lastloc,"CTA WAVE Selection Set");
-                        tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
-                        lastloc++;
-                    
-                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
-                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-                        kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile_ctawave.html");
-                        lastloc++;
-                }
-            }
-            if(CTAWAVEProfile.length!=0)
-            {
-                if(CTAWAVEProfile[0].textContent=="noerror"){
-                        automate(perid[periodid-1],lastloc,"CTA WAVE Presentation Profile");
-                        tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
-                        lastloc++;
-                        
-                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
-                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-                        kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile_ctawave.html");
-                        lastloc++;
-                }
-                else if(CTAWAVEProfile[0].textContent=="warning"){
-                        automate(perid[periodid-1],lastloc,"CTA WAVE Presentation Profile");
-                        tree.setItemImage2(lastloc,'log.jpg','log.jpg','log.jpg');
-                        lastloc++;
-                        
-                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
-                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-                        kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile_ctawave.html");
-                        lastloc++;
-                }
-                else{
-                        automate(perid[periodid-1],lastloc,"CTA WAVE Presentation Profile");
-                        tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
-                        lastloc++;
-                    
-                        automate(lastloc-1,lastloc,"log");//adaptid[i-1]
-                        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-                        kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile_ctawave.html");
-                        lastloc++;
-                }
-            }
-        }
-        
-        adjustFooter();
-        adaptationid = 1;
-        hinindex2 += hinindex - 1;
-        hinindex = hinindex2 + 1;
-        tree.setItemImage2(perid[periodid-1],'right.jpg','right.jpg','right.jpg');
-        periodid++;
-    }
-    else{
-        var AdaptXML=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("Adaptation"); 
-        if(AdaptXML[adaptationid-1]== null)
-            return;
-        else if(AdaptXML[adaptationid-1].getElementsByTagName("Representation")[representationid-1] == null)
-            return;
-        else{   
-            var RepXML=AdaptXML[adaptationid-1].getElementsByTagName("Representation")[representationid-1].textContent;
-            if(RepXML == "")
-                return;
-            representationid++;
-        }
-
-        if(RepXML == "noerror")
-            tree.setItemImage2( repid[counting],'right.jpg','right.jpg','right.jpg');
-        else if(RepXML == "warning")
-            tree.setItemImage2( repid[counting],'log.jpg','log.jpg','log.jpg');
-        else
-            tree.setItemImage2( repid[counting],'button_cancel.png','button_cancel.png','button_cancel.png');
-        
-        automate(repid[counting],lastloc,"log");
-        tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
-        kidsloc.push(lastloc);
-        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(adaptationid-1)+"rep"+(representationid-2) + "log.html");
-        lastloc++;
-
-        var location = "temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(adaptationid-1)+"rep"+(representationid-2) + "sample_data.xml";
-        automate(repid[counting],lastloc,"Estimate bitrate");
-        tree.setItemImage2( lastloc,'csh_winstyle/calculator.gif','csh_winstyle/calculator.gif','csh_winstyle/calculator.gif');
-        kidsloc.push(lastloc);
-        urlarray.push("Estimate.php?location=" + location );
-        lastloc++;
-
-        counting++;
-        
-        adjustFooter();
-        progress();
-    }
-}
-
-function progress1()  //Progress of Segments' Conformance
+function progress()  //Progress of Segments' Conformance
 {
     xmlDoc_progress=loadXMLDoc("temp/"+dirid+"/progress.xml");
     
-    if(periodid > totarr[0]){
-        clearTimeout(progressSegmentsTimer);
-        setStatusTextlabel("Conformance test completed");
-        finishTest();
-    }
     if(representationid >totarr[hinindex]){
         representationid = 1;
         hinindex++;
         adaptationid++;
     }
-    if(adaptationid>totarr[hinindex2]){
-        adaptationid = 1;
-        hinindex2 += hinindex - 1;
-        hinindex = hinindex2 + 1;
-    }
-    
-    tree.setItemImage2( repid[counting],'progress3.gif','progress3.gif','progress3.gif');
+
+    tree.setItemImage2( repid[counting],'ajax-loader.gif','ajax-loader.gif','ajax-loader.gif');
     
     if(xmlDoc_progress == null)
         return;
     
-    var CrossRepValidation=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CrossRepresentation");
-    var ComparedRepresentations = xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("ComparedRepresentations");
-    var HbbTVDVBComparedRepresentations = xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("HbbTVDVBComparedRepresentations");
-    var SelectionSet=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("SelectionSet");
-    var CmafProfile=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CMAFProfile");
-    var CTAWAVESelectionSet=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CTAWAVESelectionSet");
-    var CTAWAVEProfile=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CTAWAVEPresentation");
-    if ((CrossRepValidation.length!=0 && adaptationid>totarr[hinindex2]) || (ComparedRepresentations.length !=0 && representationid>totarr[hinindex]) || 
-            (SelectionSet.length !=0 && adaptationid>totarr[hinindex2]) || (CmafProfile.length !=0 && adaptationid>totarr[hinindex2]) || 
-            (HbbTVDVBComparedRepresentations.length !=0 && adaptationid>totarr[hinindex2]) ||
-            (CTAWAVESelectionSet.length!=0 && adaptationid>totarr[hinindex2]) || (CTAWAVEProfile.length!=0 && adaptationid>totarr[hinindex2])){
+    var CrossRepValidation=xmlDoc_progress.getElementsByTagName("CrossRepresentation");
+    var ComparedRepresentations = xmlDoc_progress.getElementsByTagName("ComparedRepresentations");
+    var HbbTVDVBComparedRepresentations = xmlDoc_progress.getElementsByTagName("HbbTVDVBComparedRepresentations");
+    var SelectionSet=xmlDoc_progress.getElementsByTagName("SelectionSet");
+    var CmafProfile=xmlDoc_progress.getElementsByTagName("CMAFProfile");
+    var CTAWAVESelectionSet=xmlDoc_progress.getElementsByTagName("CTAWAVESelectionSet");
+    var CTAWAVEProfile=xmlDoc_progress.getElementsByTagName("CTAWAVEPresentation");
+    if ((CrossRepValidation.length!=0 && adaptationid>totarr[0]) || (ComparedRepresentations.length !=0 && representationid>totarr[adaptationid]) || 
+            (SelectionSet.length !=0 && adaptationid>totarr[0]) || (CmafProfile.length !=0 && adaptationid>totarr[0]) || 
+            (HbbTVDVBComparedRepresentations.length !=0 && adaptationid>totarr[0]) ||
+            (CTAWAVESelectionSet.length!=0 && adaptationid>totarr[0]) || (CTAWAVEProfile.length!=0 && adaptationid>totarr[0])){
         
-        if(CrossRepValidation.length!=0 && adaptationid>totarr[hinindex2]){
+        if(CrossRepValidation.length!=0 && adaptationid>totarr[0]){
             for(var i =1; i<=CrossRepValidation.length;i++)
             {
                 if(CrossRepValidation[i-1].textContent=="noerror"){
@@ -1415,16 +1109,17 @@ function progress1()  //Progress of Segments' Conformance
                     lastloc++;
 
                     automate(adaptid[i-1],lastloc,"log");
+                    idholder.push(lastloc);
                     tree.setItemImage2( lastloc,'log.jpg','log.jpg','log.jpg');
                     kidsloc.push(lastloc);
-                    urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_CrossInfofile.html");
+                    urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i-1)+ "_CrossInfofile.html");
                     lastloc++;
                 }
             }
         }
         
         if( dvb == 1 || hbbtv == 1){
-            if(HbbTVDVBComparedRepresentations.length!=0 && adaptationid>totarr[hinindex2]){
+            if(HbbTVDVBComparedRepresentations.length!=0 && adaptationid>totarr[0]){
                 for(var i =1; i<=HbbTVDVBComparedRepresentations.length;i++)
                 {
                     if(HbbTVDVBComparedRepresentations[i-1].textContent=="noerror"){
@@ -1433,9 +1128,10 @@ function progress1()  //Progress of Segments' Conformance
                         lastloc++;
                         
                         automate(adaptid[i-1],lastloc,"log");
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
+                        urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
                         lastloc++;
                     }
                     else if(HbbTVDVBComparedRepresentations[i-1].textContent=="warning"){
@@ -1444,9 +1140,10 @@ function progress1()  //Progress of Segments' Conformance
                         lastloc++;
                         
                         automate(adaptid[i-1],lastloc,"log");
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
+                        urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
                         lastloc++;
                     }
                     else{
@@ -1455,9 +1152,10 @@ function progress1()  //Progress of Segments' Conformance
                         lastloc++;
                         
                         automate(adaptid[i-1],lastloc,"log");
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
+                        urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i-1)+ "_hbbtv_dvb_compInfo.html");
                         lastloc++;
                     }
                 }
@@ -1484,142 +1182,153 @@ function progress1()  //Progress of Segments' Conformance
                         lastloc++;
                     
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_compInfo.html");
+                        urlarray.push("temp/"+dirid+"/"+ "Adapt"+(i-1)+ "_compInfo.html");
                         lastloc++;
                     }
                 }
             }
             //Additions for CMAF Selection Set and Presentation profile.
-            if(SelectionSet.length!=0  && adaptationid>totarr[hinindex2])
+            if(SelectionSet.length!=0  && adaptationid>totarr[0])
             {
                 if(SelectionSet[0].textContent=="noerror"){
-                        automate(perid[i-1],lastloc,"CMAF Selection Set");
+                        automate(1,lastloc,"CMAF Selection Set");
 
                         tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
                         lastloc++;
                         
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile.html");
+                        urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile.html");
                         lastloc++;
                 }
                 else{
-                        automate(perid[i-1],lastloc,"CMAF Selection Set");
+                        automate(1,lastloc,"CMAF Selection Set");
 
                         tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                         lastloc++;
                     
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile.html");
+                        urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile.html");
                         lastloc++;
                     }
             }
-            if(CmafProfile.length!=0  && adaptationid>totarr[hinindex2])
+            if(CmafProfile.length!=0  && adaptationid>totarr[0])
             {
                 if(CmafProfile[0].textContent=="noerror"){
-                        automate(perid[i-1],lastloc,"CMAF Presentation Profile");
+                        automate(1,lastloc,"CMAF Presentation Profile");
 
                         tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
                         lastloc++;
                         
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile.html");
+                        urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile.html");
                         lastloc++;
                 }
                 else{
-                        automate(perid[i-1],lastloc,"CMAF Presentation Profile");
+                        automate(1,lastloc,"CMAF Presentation Profile");
 
                         tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                         lastloc++;
                     
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile.html");
+                        urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile.html");
                         lastloc++;
-                }
+                    }
             }
         }
         
         if(ctawave == 1)
         {
             //Additions for CTA WAVE Selection Set and Presentation profile.
-            if(CTAWAVESelectionSet.length!=0  && adaptationid>totarr[hinindex2])
+            if(CTAWAVESelectionSet.length!=0  && adaptationid>totarr[0])
             {
                 if(CTAWAVESelectionSet[0].textContent=="noerror"){
-                        automate(perid[i-1],lastloc,"CTA WAVE Selection Set");
+                        automate(1,lastloc,"CTA WAVE Selection Set");
                         tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
                         lastloc++;
                         
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile_ctawave.html");
+                        urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
                         lastloc++;
                 }
                 else if(CTAWAVESelectionSet[0].textContent=="warning"){
-                        automate(perid[i-1],lastloc,"CTA WAVE Selection Set");
+                        automate(1,lastloc,"CTA WAVE Selection Set");
                         tree.setItemImage2(lastloc,'log.jpg','log.jpg','log.jpg');
                         lastloc++;
                         
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile_ctawave.html");
+                        urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
                         lastloc++;
                 }
                 else{
-                        automate(perid[i-1],lastloc,"CTA WAVE Selection Set");
+                        automate(1,lastloc,"CTA WAVE Selection Set");
                         tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                         lastloc++;
                     
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"SelectionSet_infofile_ctawave.html");
+                        urlarray.push("temp/"+dirid+"/"+ "SelectionSet_infofile_ctawave.html");
                         lastloc++;
                 }
             }
-            if(CTAWAVEProfile.length!=0  && adaptationid>totarr[hinindex2])
+            if(CTAWAVEProfile.length!=0  && adaptationid>totarr[0])
             {
                 if(CTAWAVEProfile[0].textContent=="noerror"){
-                        automate(perid[i-1],lastloc,"CTA WAVE Presentation Profile");
+                        automate(1,lastloc,"CTA WAVE Presentation Profile");
                         tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
                         lastloc++;
                         
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile_ctawave.html");
+                        urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
                         lastloc++;
                 }
                 else if(CTAWAVEProfile[0].textContent=="warning"){
-                        automate(perid[i-1],lastloc,"CTA WAVE Presentation Profile");
+                        automate(1,lastloc,"CTA WAVE Presentation Profile");
                         tree.setItemImage2(lastloc,'log.jpg','log.jpg','log.jpg');
                         lastloc++;
                         
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile_ctawave.html");
+                        urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
                         lastloc++;
                 }
                 else{
-                        automate(perid[i-1],lastloc,"CTA WAVE Presentation Profile");
+                        automate(1,lastloc,"CTA WAVE Presentation Profile");
                         tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                         lastloc++;
                     
                         automate(lastloc-1,lastloc,"log");//adaptid[i-1]
+                        idholder.push(lastloc);
                         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                         kidsloc.push(lastloc);
-                        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Presentation_infofile_ctawave.html");
+                        urlarray.push("temp/"+dirid+"/"+ "Presentation_infofile_ctawave.html");
                         lastloc++;
                 }
             }
@@ -1629,20 +1338,21 @@ function progress1()  //Progress of Segments' Conformance
         var BrokenURL=xmlDoc_progress.getElementsByTagName("BrokenURL");
         if( BrokenURL != null && BrokenURL[0].textContent == "error")
         {
-            urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"missinglink.html");
+            urlarray.push("temp/" + dirid+"/missinglink.html");
 
-            automate(perid[i-1],lastloc,"Broken URL list");
+            automate(1,lastloc,"Broken URL list");
             tree.setItemImage2(lastloc,'404.jpg','404.jpg','404.jpg');
             lastloc++; 
         }
 
         adjustFooter();
-        periodid++;
-        progress();
+        clearTimeout(progressTimer);
+        setStatusTextlabel("Conformance test completed");
+        finishTest();
     }
     else
     {
-        var AdaptXML=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("Adaptation"); 
+        var AdaptXML=xmlDoc_progress.getElementsByTagName("Adaptation"); 
         if(AdaptXML[adaptationid-1]== null)
             return;
         else if(AdaptXML[adaptationid-1].getElementsByTagName("Representation")[representationid-1] == null)
@@ -1664,14 +1374,14 @@ function progress1()  //Progress of Segments' Conformance
         automate(repid[counting],lastloc,"log");
         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
         kidsloc.push(lastloc);
-        urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(adaptationid-1)+"rep"+(representationid-2) + "log.html");
+        urlarray.push("temp/"+dirid+"/"+ "Adapt"+(adaptationid-1)+"rep"+(representationid-2) + "log.html");
         lastloc++;
 
-        var location = "temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(adaptationid-1)+"rep"+(representationid-2) + "sample_data.xml";
+        var location = "temp/"+dirid+"/"+ "Adapt"+(adaptationid-1)+"rep"+(representationid-2) + "sample_data.xml";
         automate(repid[counting],lastloc,"Estimate bitrate");
         tree.setItemImage2( lastloc,'csh_winstyle/calculator.gif','csh_winstyle/calculator.gif','csh_winstyle/calculator.gif');
         kidsloc.push(lastloc);
-        urlarray.push("Estimate.php?location=" + location );
+        urlarray.push("estimate1.php?location=" + location );
         lastloc++;
 
         counting++;
@@ -1697,31 +1407,143 @@ function brother(y,x)
     y++;
 }
 
+
 function tonsingleclick(id)
 {
-    var urlto="";
-    var position = kidsloc.indexOf(id);
-    urlto=urlarray[position];
-    
-    if(urlto)
-        window.open(urlto, "_blank");
+   var urlto="";
+   var position = kidsloc.indexOf(id);
+   urlto=urlarray[position];
+   if(urlto){
+       window.open(urlto, "_blank");
+  }
 }
 
-function tonrightclick(id)
+    document.addEventListener("click",function()//delete the download button when anywhere in the dom file is left clicked.
+    {
+        if(buttoncontroller)
+            downloadButtonHandle.remove();
+        buttoncontroller=false;//because button is removed, change buttoncontroller to be false so that intvariable becomes false...
+            //and function automaticalyy enters into if statement above and a button is created with next right click.
+    }
+        );
+    document.addEventListener("contextmenu",function()//delete the download button when anywhere in the dom file is right clicked.
+    {
+        if(buttoncontroller)
+            downloadButtonHandle.remove();
+        buttoncontroller=false;//because button is removed, change buttoncontroller to be false so that intvariable becomes false...
+            //and function automaticalyy enters into if statement above and a button is created with next right click.
+    }
+        );
+   
+function adjuststylein(id)//This function is created to adjust the style of the mouse cursor when it goes onto a Dtmlxtree element.
 {
     var urlto="";
     var position = kidsloc.indexOf(id);
+  
+        if(position !== -1){//when id is not in the kidsloc, it returns -1. Therefore this if statement is created.
+        urlto=urlarray[position];// url corresponding to this id, in other words the url of the webpage opened when this element is clicked. 
+        if(urlto)//if url exists, change the cursor to pointer on this tree element.
+        tree.style_pointer = "pointer";//This makes the cursor pointer when the pointer is exactly on this tree element(it works for texts) 
+        document.getElementById("treeboxbox_tree").style.cursor = "pointer";//This makes the cursor pointer when the pointer is exactly on this tree element(it works for the icons)
+        }
+        else{ //This makes the tree pointer when the pointer is exactly on this tree element
+        tree.style_pointer = "default";//If no url exists corresponding to tree element make the cursor default
+        document.getElementById("treeboxbox_tree").style.cursor = "default";//If no url exists corresponding to tree element make the cursor default
+        
+        }
+}
+function adjuststyleout(id)//This function is created to adjust the style of the mouse cursor when it leaves a tree element.
+{
+    var urlto="";
+    var position = kidsloc.indexOf(id);
+    if(position !== -1){
+        urlto=urlarray[position];
+        if(urlto)//If it leaves a tree element that has a corresponding url make the cursor style default.
+        tree.style_pointer = "default";
+        document.getElementById("treeboxbox_tree").style.cursor= "default";
+        }
+}
+
+var downloadButtonHandle=false;
+var buttoncontroller=false;
+function tonrightclick(id)
+{
+    var intvariable=buttoncontroller;
+    $(document).ready(function()//cretaed to remove the custom right click popup menu from this page
+{ 
+    $(document).bind("contextmenu",function(e){
+        return false;
+    }); 
+});
+    aPos=event.clientX;//position of the x coordinate of the right click point in terms of pixels.
+    bPos=event.clientY;//position of the y coordinate of the right click point in terms of pixels.
+    
+    var urlto="";
+    var position = kidsloc.indexOf(id);
     urlto=urlarray[position];
     
-    if(urlto){
+    if(urlto){//if this tree element has a corresponding url
         var locarray = urlto.split("/");
         var htmlname = locarray[locarray.length-1];
         var textname = htmlname.split(".")[0] + ".txt";
-
         var textloc = window.location.href + "/../" + urlto.split(".")[0] + ".txt";
-        downloadLog(textloc, textname);
+        var arrayurl= textloc.split(".");
+    if(intvariable==false && arrayurl[3]!=="/estimate1"){//if intvariable is false execute 
+        downloadButtonHandle = document.createElement("BUTTON");//create a dynamic button
+        var t = document.createTextNode("click to download");//put this text in to the button
+        downloadButtonHandle.appendChild(t);
+        document.body.appendChild(downloadButtonHandle);//put button in the body of the document
+        var str1=aPos+20 + "px";//x coordinate of the button is adjusted to be 20 pixel right of the click position
+        var str2=bPos + "px";//y coordinate of the button is adjusted to be the same with the click position
+        downloadButtonHandle.style.position = 'absolute';
+        downloadButtonHandle.style.left = str1;//x coordinate assigned
+        downloadButtonHandle.style.top =  str2;//y coordinate assigned
+        downloadButtonHandle.style.background= "white";
+       
+        downloadButtonHandle.onmouseover = function(){
+        downloadButtonHandle.style.background = "Gainsboro ";
+        }
+        downloadButtonHandle.onmouseout = function(){
+        downloadButtonHandle.style.background = "white";
+        }
+    
+        /*downloadButtonHandle : hover{ = "#F0F8FF";}*/
+        downloadButtonHandle.onclick=function(){//when button is clicked, this function executes
+        downloadLog(textloc,textname);
+        downloadButtonHandle.remove();//after the file is downloaded, remove the button.
+        }
     }
-}
+    else if(intvariable==false && arrayurl[3]==="/estimate1"){
+        downloadButtonHandle.remove();
+        buttoncontroller=false;
+       }
+    
+        
+        else{//if intvariable is correct it means there is already a button in the page so remove it.
+        downloadButtonHandle.remove();
+        }
+        if(intvariable==false&& arrayurl[3]!=="/estimate1"){//int variable is created because both in the if statement and between the curly braces of if statement having buttoncontroller cretae some problems during new assignments. 
+            buttoncontroller=true;//if intvariable is false, a button is created after the execution of rightclick. Therefore change the global variable buttoncontroller to be true so that intvariable becomes true...
+            //and function automaticalyy enters into else statement above and button is removed with next right click.
+            
+        }       
+        else{//if intvariable is correct, a button is removed after the execution of rightclick. Therefore change the global variable buttoncontroller to be false so that intvariable becomes false...
+            //and function automaticalyy enters into if statement above and a button is created with next right click.
+           buttoncontroller=false;
+        }
+              }
+         else{//if any tree element, other than the ones which have corresponding ids, are right clicked remove the button 
+        downloadButtonHandle.remove();
+        buttoncontroller=false;//because button is removed, change buttoncontroller to be false so that intvariable becomes false...
+            //and function automaticalyy enters into if statement above and a button is created with next right click.
+    }
+              
+    }     
+        
+ 
+ 
+
+
 
 function loadXMLDoc(dname)
 {
@@ -1771,9 +1593,7 @@ function initVariables()
     counting =0;
     representationid =1;
     adaptationid = 1;
-    periodid = 1;
-    hinindex = 2;
-    hinindex2 = 1;
+    hinindex = 1;
     numPeriods = 0;
     //uploaded = false;
     dynamicsegtimeline = false;
@@ -1800,13 +1620,14 @@ function setUpTreeView()
     tree.setOnRightClickHandler(tonrightclick);
     tree.setSkin('dhx_skyblue');
     tree.setImagePath("img/");
-    tree.enableDragAndDrop(true);
+    tree.attachEvent("onMouseIn", function(id){adjuststylein(id);});//Dhtmlx onMouseIn function is customized. 
+    tree.attachEvent("onMouseout", function(id){adjuststyleout(id);});//Dhtmlx onMouseout function is customized.
 }
 
 function setStatusTextlabel(textToSet)
 {
     status = textToSet;
-    if( numPeriods > 1 && !ctawave)
+    if( numPeriods > 1 )
         status = status + "<br><font color='red'> MPD with multiple Periods (" + numPeriods + "). Only segments of the current period were checked.</font>";
     if( dynamicsegtimeline)
         status = status + "<br><font color='red'> Segment timeline for type dynamic is not supported, only MPD will be tested. </font>";
@@ -1863,6 +1684,13 @@ function downloadLog(url, name){
     ga('send', 'pageview');
 </script>
 
+
+<script>
+   var i;
+   for (i = 0; i < idholder.length; i++) { 
+   document.getElementById("idholder[i]").style_pointer="pointer";
+}
+</script>
 <footer class="site-footer">
     <center> <p id="footerVersion"></p>
         <p><a target="_blank" href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/issues"><b>Report issue</b></a></p>
