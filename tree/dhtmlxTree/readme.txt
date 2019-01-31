@@ -1,3 +1,3 @@
-dhtmlxTree v.5.1.0 Standard edition
+dhtmlxTree v.3.6 Standard edition build 130416
 
-(c) Dinamenta, UAB.
+(c) Dinamenta, UAB
