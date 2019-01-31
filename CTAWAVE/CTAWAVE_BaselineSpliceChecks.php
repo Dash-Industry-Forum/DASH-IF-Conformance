@@ -59,7 +59,7 @@ function checkSequentialSwSetMProfile($MediaProfDatabase)
         for($j=0;$j<$adapt_count;$j++)
         {
             if($MediaProf_PeriodAdSet[$i][$j]!==$MediaProf_PeriodAdSet[$i+1][$j])
-                $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets SHALL conform to the same CMAF Media Profile, voilated for Sw set ".$j." between CMAF Presentations ".$i." and  ".($i+1).".\n";
+                $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets SHALL conform to the same CMAF Media Profile, voilated for Sw set ".$j." between CMAF Presentations ".$i." and  ".($i+1)." with media profiles- ".$MediaProf_PeriodAdSet[$i][$j]." and ".$MediaProf_PeriodAdSet[$i+1][$j]." respectively.\n";
                 $errorMsg.="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: Encoding parameters Shall be constrained such that CMAF Fragments of following Switching Set can be decoded by a decoder configured for previous Switching Set without reinitialization, voilated for Sw set ".$j." between CMAF Presentations ".$i." and  ".($i+1)." as Media Profile found are ".$MediaProf_PeriodAdSet[$i][$j]." and ".$MediaProf_PeriodAdSet[$i+1][$j]." respectively.\n";
 
         }
@@ -99,7 +99,7 @@ function checkDiscontinuousSplicePoints($session_dir, $MediaProfDatabase, $adapt
                     
                 }
                 if($baseMediaDecodeTime_p2!=$baseMediaDecodeTime_p1+$cummulatedSampleDuration_p1)
-                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can be discontinuous, and it is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1).".\n";
+                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can be discontinuous, and it is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with baseMediaDecodeTime- ".($baseMediaDecodeTime_p1+$cummulatedSampleDuration_p1)." and ".$baseMediaDecodeTime_p2." respectively.\n";
 
                 
             }
@@ -131,7 +131,7 @@ function checkEncryptionChangeSplicePoint($session_dir,$MediaProfDatabase, $adap
 
             }
             if($encScheme_p1!=$encScheme_p2 && ($encScheme_p1===0 || $encScheme_p2===0))
-                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can change between unencrypted/encrypted at Splice points, it is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1).".\n";
+                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can change between unencrypted/encrypted at Splice points, it is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with enc scheme ".$encScheme_p1." and ".$encScheme_p1." respectively.\n";
 
                 
         }   
@@ -200,7 +200,7 @@ function checkSampleEntryChangeSplicePoint($session_dir,$MediaProfDatabase, $ada
 
             }
             if($sdType_p1!=$sdType_p2 )
-                    $errorMsg="###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: 'Sample entries in Sequential Switching Sets Shall not change sample type at Splice points', but different sample types observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1).".\n";
+                    $errorMsg="###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: 'Sample entries in Sequential Switching Sets Shall not change sample type at Splice points', but different sample types ".$sdType_p1." and ".$sdType_p2."observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1).".\n";
 
                 
         }   
@@ -251,7 +251,7 @@ function checkDefaultKIDChangeSplicePoint($session_dir,$MediaProfDatabase, $adap
 
             }
             if($defaultKID_p1!=$defaultKID_p2 )
-                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Default KID can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1).".\n";
+                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Default KID can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with values -".$defaultKID_p1." and ".$defaultKID_p2." respectively.\n";
 
                 
         }   
@@ -284,7 +284,7 @@ function checkTrackIDChangeSplicePoint($session_dir,$MediaProfDatabase, $adaptat
 
             }
             if($trackID_p1!=$trackID_p2 )
-                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Track_ID can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1).".\n";
+                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Track_ID can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with TrackID -".$trackID_p1." and ".$trackID_p2." respectively.\n";
 
                 
         }   
@@ -318,7 +318,7 @@ function checkTimeScaleChangeSplicePoint($session_dir,$MediaProfDatabase, $adapt
 
             }
             if($timescale_p1!=$timescale_p2 )
-                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Timescale can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1).".\n";
+                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Timescale can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with timescale ".$timescale_p1." and ".$timescale_p1." respectively.\n";
 
                 
         }   
@@ -365,9 +365,9 @@ function checkFragrmentOverlapSplicePoint($session_dir,$MediaProfDatabase, $adap
 
             }
             if(($earlyCompTime_p1+$mediaTime_p1+$sumSampleDur) >($earlyCompTime_p2+$mediaTime_p2) )
-                    $errorMsg="###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: 'CMAF Fragments Shall not overlap the same WAVE Program presentation time at the Splice point', overlap is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1).".\n";
+                    $errorMsg="###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: 'CMAF Fragments Shall not overlap the same WAVE Program presentation time at the Splice point', overlap is observed for Sw set ".$adapt." between CMAF Presentations ".$i." (".($earlyCompTime_p1+$mediaTime_p1+$sumSampleDur).") and  ".($i+1)." (".($earlyCompTime_p2+$mediaTime_p2).").\n";
             elseif(($earlyCompTime_p1+$mediaTime_p1+$sumSampleDur) <($earlyCompTime_p2+$mediaTime_p2) )
-                    $errorMsg.="###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: 'CMAF Fragments Shall not have gaps in WAVE Program presentation time at the Splice point', gap is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1).".\n";
+                    $errorMsg.="###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: 'CMAF Fragments Shall not have gaps in WAVE Program presentation time at the Splice point', gap is observed for Sw set ".$adapt." between CMAF Presentations ".$i." (".($earlyCompTime_p1+$mediaTime_p1+$sumSampleDur).") and  ".($i+1)." (".($earlyCompTime_p2+$mediaTime_p2).").\n";
 
                 
         }   
@@ -399,7 +399,7 @@ function checkPicAspectRatioSplicePoint($session_dir,$MediaProfDatabase, $adapta
 
             }
             if($par_p1!=$par_p2)
-                $errorMsg="###Warning: WAVE Content Spec 2018Ed-Section 7.2.2: 'Pictrure Aspect Ratio Should be the same between Sequential Sw Sets at the Splice point', violated for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1).".\n";
+                $errorMsg="###Warning: WAVE Content Spec 2018Ed-Section 7.2.2: 'Pictrure Aspect Ratio (PAR) Should be the same between Sequential Sw Sets at the Splice point', violated for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with - PAR ".$par_p1." and ".$par_p2.".\n";
 
               
         }   

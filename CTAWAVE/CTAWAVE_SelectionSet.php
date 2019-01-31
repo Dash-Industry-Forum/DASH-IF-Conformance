@@ -56,6 +56,8 @@ function CTASelectionSet()
     $MediaProfDatabase=array();
     $adapts = $mpd_features['Period'][$current_period]['AdaptationSet'];
     $result=CTACheckSelectionSet(sizeof($adapts),$session_dir,$adaptation_set_template,$opfile);
+    $infoResult=CTACheckSingleInitSwSet(sizeof($adapts),$session_dir,$adaptation_set_template);
+    fwrite($opfile,$infoResult);
     fclose($opfile);
     
     $temp_string = str_replace(array('$Template$'),array($CTAselectionset_infofile),$string_info);
@@ -688,5 +690,41 @@ function printCommandLineProfileInfo($profileCommandLine,$profileMatched,$opfile
             fprintf ($opfile, "Information: No tracks found conforming to the given media profile- ".$profile."\n");
             
     }
+}
+
+
+function CTACheckSingleInitSwSet($adapts_count,$session_dir,$adaptation_set_template)
+{
+    $InfoMsg="";
+    for($adapt_count=0; $adapt_count<$adapts_count; $adapt_count++){
+        $adapt_dir = str_replace('$AS$', $adapt_count, $adaptation_set_template);
+        $loc = $session_dir . '/' . $adapt_dir.'/';
+        $filecount = 0;
+        $files = glob($loc . "*.xml");
+        if($files){
+            $filecount = count($files);
+            for($fcount=0;$fcount<$filecount;$fcount++)
+            {
+                $xml = get_DOM($files[$fcount], 'atomlist');
+                if($xml){
+                    $hdlr=$xml->getElementsByTagName("hdlr")->item(0);
+                    $handler_type=$hdlr->getAttribute("handler_type");
+                    if($handler_type=="vide")
+                    {   
+                        $sdTypeArray=array();
+                        $sampleDesc=$xml->getElementsByTagName("vide_sampledescription");
+                        if($sampleDesc->length >1)
+                        {
+                            $InfoMsg="Information:WAVE Content Spec 2018Ed-Section 7.2.2: Switching Set May conform to CMAF Single Initialization Constraints to indicate reinitialization not req on Track switches', and found CMAF common header with multiple sample descriptions in Sw Set ".$adapt_count." with entry types- ";
+                            for($i=0;$i<$sampleDesc->length;$i++)
+                                $InfoMsg.=$sampleDesc->getAttribute("sdType"). ", ";
+                            $InfoMsg.=". \n";
+                        }
+                    }
+                }
+            }
+        }
+    }
+        return $InfoMsg;
 }
 ?>
