@@ -18,40 +18,42 @@ function CTAPresentation()
     global $mpd_features,$session_dir,$CTApresentation_infofile,$current_period,$adaptation_set_template, $opfile, $string_info, $progress_xml, $progress_report;
     $opfile="";
 
-    if(!($opfile = open_file($session_dir. '/' . $CTApresentation_infofile . '.txt', 'w'))){
+    if(!($opfile = open_file($session_dir. '/Period' . $current_period . '/' . $CTApresentation_infofile . '.txt', 'w'))){
             echo "Error opening/creating Presentation profile conformance check file: "."./Presentation_infofile_ctawave.txt";
             return;
-        }
+    }
     $adapts = $mpd_features['Period'][$current_period]['AdaptationSet'];
     $result= CTACheckPresentation(sizeof($adapts), $session_dir, $adaptation_set_template, $opfile);
     fclose($opfile);
     
     $temp_string = str_replace(array('$Template$'),array($CTApresentation_infofile),$string_info);
-    file_put_contents($session_dir.'/'.$CTApresentation_infofile.'.html',$temp_string);
+    file_put_contents($session_dir.'/Period'.$current_period.'/'.$CTApresentation_infofile.'.html',$temp_string);
     
-    $searchfiles = file_get_contents($session_dir.'/'.$CTApresentation_infofile.'.txt');
+    $searchfiles = file_get_contents($session_dir.'/Period'.$current_period.'/'.$CTApresentation_infofile.'.txt');
     if(strpos($searchfiles, "CTAWAVE check violated") !== FALSE){
-        $progress_xml->Results[0]->addChild('CTAWAVEPresentation', 'error');
-        $file_error[] = $session_dir.'/'.$CTApresentation_infofile.'.html';
+        $progress_xml->Results[0]->Period[$current_period]->addChild('CTAWAVEPresentation', 'error');
+        $file_error[] = $session_dir.'/Period' .$current_period.'/'.$CTApresentation_infofile.'.html';
     }
     elseif(strpos($searchfiles, "Warning") !== FALSE || strpos($searchfiles, "WARNING") !== FALSE){
-        $progress_xml->Results[0]->addChild('CTAWAVEPresentation', 'warning');
-        $file_error[] = $session_dir.'/'.$CTApresentation_infofile.'.html';
+        $progress_xml->Results[0]->Period[$current_period]->addChild('CTAWAVEPresentation', 'warning');
+        $file_error[] = $session_dir.'/Period'.$current_period.'/'.$CTApresentation_infofile.'.html';
     }
     else{
-        $progress_xml->Results[0]->addChild('CTAWAVEPresentation', 'noerror');
+        $progress_xml->Results[0]->Period[$current_period]->addChild('CTAWAVEPresentation', 'noerror');
         $file_error[] = "noerror";
     }
     
-    $tempr_string = str_replace(array('$Template$'), array($CTApresentation_infofile), $string_info);
-    file_put_contents($session_dir.'/'.$CTApresentation_infofile.'.html', $tempr_string);
+    $tempr_string = str_replace('$Template$', '/Period'.$current_period.'/'.$CTApresentation_infofile, $string_info);
+    file_put_contents($session_dir.'/Period'.$current_period.'/'.$CTApresentation_infofile.'.html', $tempr_string);
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
     
-    print_console($session_dir.'/'.$CTApresentation_infofile.'.txt', "CTA WAVE Presentation Results");
+    print_console($session_dir.'/Period'.$current_period.'/'.$CTApresentation_infofile.'.txt', "Period " . ($current_period+1) . " CTA WAVE Presentation Results");
 }
 
 function CTACheckPresentation($adapts_count,$session_dir,$adaptation_set_template,$opfile)
 {
+    global $current_period;
+    
     $cfhdVideoSwSetFound=0;$videoSelectionSetFound=0;
     $caacAudioSwSetFound=0;$audioSelectionSetFound=0;
     $im1tSubtitleSwSetFound=0;$subtitleSelectionSetFound=0;
@@ -63,7 +65,7 @@ function CTACheckPresentation($adapts_count,$session_dir,$adaptation_set_templat
         $SwSet_MP=array();    
         $EncTracks=array();
         $adapt_dir = str_replace('$AS$', $adapt_count, $adaptation_set_template);
-        $loc = $session_dir . '/' . $adapt_dir.'/';
+        $loc = $session_dir . '/Period' . $current_period . '/' . $adapt_dir.'/';
         $filecount = 0;
         $files = glob($loc . "*.xml");
         if($files)

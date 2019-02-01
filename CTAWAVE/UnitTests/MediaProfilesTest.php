@@ -147,5 +147,19 @@ final class MediaProfileTest extends TestCase
         
         
     }
+    
+    public function testAACMultiChannelMediaProfile()
+    {    
+        
+        $rep_count=0;
+        $adapt_count=0;
+        //Check for AAC Multichannel.
+        $xmlParamsTobeTested=array("codec" => "AAC", "profile" => "0x02", "level"=>"High Quality Audio@L6",
+                                   "channels" => "0x5" , "sampleRate" => "48000", "brand"=>"camc"  );
+        
+        $this->assertSame("AAC_Multichannel", checkAndGetConformingAudioProfile($xmlParamsTobeTested,$rep_count,$adapt_count)[0]);
+        
+        
+    }
 } 
 
