@@ -33,7 +33,7 @@
     <!--link rel="stylesheet" href="/resources/demos/style.css" /-->
 
     <link rel="STYLESHEET" type="text/css" href="tree/dhtmlxTree/codebase/dhtmlxtree.css">
-    <script type="text/javascript" src="tree/dhtmlxTree/codebase/dhtmlxcommon.js"></script>
+    <script type="text/javascript" src="tree/dhtmlxTree/codebase/dhtmlx_deprecated.js"></script>
     <script type="text/javascript"  src="tree/dhtmlxTree/codebase/dhtmlxtree.js"></script>
     <script type="text/javascript" src="tree/dhtmlxTree/codebase/ext/dhtmlxtree_json.js"></script>
     
@@ -790,9 +790,10 @@ function submit()
     stringurl[4]=hbbtv;
     stringurl[5]=dashif;
     stringurl[6]=ctawave;
-    
+
     initVariables();
     setUpTreeView();
+
     setStatusTextlabel("Processing...");
     document.getElementById("btn8").disabled="true";
     document.getElementById("drop_div").disabled="true";
@@ -801,7 +802,7 @@ function submit()
     //document.getElementById('par').style.visibility='visible';
     //Generate a random folder name for results in "temp" folder
     dirid="id"+Math.floor((Math.random() * 10000000000) + 1);
-   
+
     if(uploaded===true){ // In the case of file upload.
         fd.append("foldername", dirid);
         fd.append("urlcode", JSON.stringify(stringurl));
@@ -954,7 +955,7 @@ function addToTree(button){
     }
     
     if(button === 0)
-        tree.setItemImage2(branch_added[mpd_node_index], 'progress3.gif', 'progress3.gif', 'progress3.gif');
+        tree.setItemImage2(branch_added[mpd_node_index], 'ajax-loader.gif', 'ajax-loader.gif', 'ajax-loader.gif');
     else if(button === 1)
         tree.setItemImage2(branch_added[mpd_node_index], 'right.jpg', 'right.jpg', 'right.jpg');
     else if(button === 2)
@@ -1074,7 +1075,7 @@ function progress()
     if(xmlDoc_progress == null)
         return;
     
-    tree.setItemImage2(repid[counting],'progress3.gif','progress3.gif','progress3.gif');
+    tree.setItemImage2(repid[counting],'ajax-loader.gif','ajax-loader.gif','ajax-loader.gif');
     
     var CrossRepValidation=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CrossRepresentation");
     var ComparedRepresentations = xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("ComparedRepresentations");
@@ -1675,7 +1676,7 @@ function progress1()  //Progress of Segments' Conformance
         lastloc++;
 
         counting++;
-        
+
         adjustFooter();
         progress();
     }
@@ -1707,21 +1708,132 @@ function tonsingleclick(id)
         window.open(urlto, "_blank");
 }
 
+ document.addEventListener("click",function()//delete the download button when anywhere in the dom file is left clicked.
+    {
+        if(buttoncontroller)
+            downloadButtonHandle.remove();
+        buttoncontroller=false;//because button is removed, change buttoncontroller to be false so that intvariable becomes false...
+            //and function automaticalyy enters into if statement above and a button is created with next right click.
+    }
+        );
+        
+    document.addEventListener("contextmenu",function()//delete the download button when anywhere in the dom file is right clicked.
+    {
+        if(buttoncontroller)
+            downloadButtonHandle.remove();
+        buttoncontroller=false;//because button is removed, change buttoncontroller to be false so that intvariable becomes false...
+            //and function automaticalyy enters into if statement above and a button is created with next right click.
+    }
+        );
+
+function adjuststylein(id)//This function is created to adjust the style of the mouse cursor when it goes onto a Dtmlxtree element.
+{
+    var urlto="";
+    var position = kidsloc.indexOf(id);
+  
+        if(position !== -1){//when id is not in the kidsloc, it returns -1. Therefore this if statement is created.
+        urlto=urlarray[position];// url corresponding to this id, in other words the url of the webpage opened when this element is clicked. 
+        if(urlto){//if url exists, change the cursor to pointer on this tree element.
+        tree.style_pointer = "pointer";//This makes the cursor pointer when the pointer is exactly on this tree element(it works for texts) 
+        document.getElementById("treeboxbox_tree").style.cursor = "pointer";//This makes the cursor pointer when the pointer is exactly on this tree element(it works for the icons)
+        }
+    }
+        else{ //This makes the tree pointer when the cursor is exactly on this tree element
+        tree.style_pointer = "default";//If no url exists corresponding to tree element make the cursor default
+        document.getElementById("treeboxbox_tree").style.cursor = "default";//If no url exists corresponding to tree element make the cursor default
+       }
+}
+
+
+function adjuststyleout(id)//This function is created to adjust the style of the mouse cursor when it leaves a tree element.
+{
+    var urlto="";
+    var position = kidsloc.indexOf(id);
+    if(position !== -1){
+        urlto=urlarray[position];
+        if(urlto){//If it leaves a tree element that has a corresponding url make the cursor style default.
+        tree.style_pointer = "default";
+        document.getElementById("treeboxbox_tree").style.cursor= "default";
+        }
+    }
+}
+
+var downloadButtonHandle=false;
+var buttoncontroller=false;
+
 function tonrightclick(id)
 {
+    var intvariable=buttoncontroller;
+    $(document).ready(function()//cretaed to remove the custom right click popup menu from this page
+{ 
+    $(document).bind("contextmenu",function(e){
+        return false;
+    }); 
+});
+    aPos=event.clientX;//position of the x coordinate of the right click point in terms of pixels.
+    bPos=event.clientY;//position of the y coordinate of the right click point in terms of pixels.
+    
     var urlto="";
     var position = kidsloc.indexOf(id);
     urlto=urlarray[position];
     
-    if(urlto){
+    if(urlto){//if this tree element has a corresponding url
         var locarray = urlto.split("/");
         var htmlname = locarray[locarray.length-1];
         var textname = htmlname.split(".")[0] + ".txt";
-
         var textloc = window.location.href + "/../" + urlto.split(".")[0] + ".txt";
-        downloadLog(textloc, textname);
+        var arrayurl= textloc.split(".");
+    if(intvariable==false && arrayurl[3]!=="/Estimate"){//if intvariable is false execute 
+        downloadButtonHandle = document.createElement("BUTTON");//create a dynamic button
+        var t = document.createTextNode("click to download");//put this text in to the button
+        downloadButtonHandle.appendChild(t);
+        document.body.appendChild(downloadButtonHandle);//put button in the body of the document
+        var str1=aPos+20 + "px";//x coordinate of the button is adjusted to be 20 pixel right of the click position
+        var str2=bPos + "px";//y coordinate of the button is adjusted to be the same with the click position
+        downloadButtonHandle.style.position = 'absolute';
+        downloadButtonHandle.style.left = str1;//x coordinate assigned
+        downloadButtonHandle.style.top =  str2;//y coordinate assigned
+        downloadButtonHandle.style.background= "white";
+       
+        downloadButtonHandle.onmouseover = function(){
+        downloadButtonHandle.style.background = "Gainsboro ";
+        }
+        downloadButtonHandle.onmouseout = function(){
+        downloadButtonHandle.style.background = "white";
+        }
+    
+        /*downloadButtonHandle : hover{ = "#F0F8FF";}*/
+        downloadButtonHandle.onclick=function(){//when button is clicked, this function executes
+        downloadLog(textloc,textname);
+        downloadButtonHandle.remove();//after the file is downloaded, remove the button.
+        }
     }
-}
+    else if(intvariable==false && arrayurl[3]==="/Estimate"){
+        downloadButtonHandle.remove();
+        buttoncontroller=false;
+       }
+    
+        
+        else{//if intvariable is correct it means there is already a button in the page so remove it.
+        downloadButtonHandle.remove();
+        }
+        if(intvariable==false&& arrayurl[3]!=="/Estimate"){//int variable is created because both in the if statement and between the curly braces of if statement having buttoncontroller cretae some problems during new assignments. 
+            buttoncontroller=true;//if intvariable is false, a button is created after the execution of rightclick. Therefore change the global variable buttoncontroller to be true so that intvariable becomes true...
+            //and function automaticalyy enters into else statement above and button is removed with next right click.
+            
+        }       
+        else{//if intvariable is correct, a button is removed after the execution of rightclick. Therefore change the global variable buttoncontroller to be false so that intvariable becomes false...
+            //and function automaticalyy enters into if statement above and a button is created with next right click.
+           buttoncontroller=false;
+        }
+              }
+         else{//if any tree element, other than the ones which have corresponding ids, are right clicked remove the button 
+        downloadButtonHandle.remove();
+        buttoncontroller=false;//because button is removed, change buttoncontroller to be false so that intvariable becomes false...
+            //and function automaticalyy enters into if statement above and a button is created with next right click.
+    }
+              
+    }     
 
 function loadXMLDoc(dname)
 {
@@ -1801,6 +1913,9 @@ function setUpTreeView()
     tree.setSkin('dhx_skyblue');
     tree.setImagePath("img/");
     tree.enableDragAndDrop(true);
+    tree.attachEvent("onMouseIn", function(id){adjuststylein(id);});//Dhtmlx onMouseIn function is customized. 
+    tree.attachEvent("onMouseout", function(id){adjuststyleout(id);});//Dhtmlx onMouseout function is customized.
+
 }
 
 function setStatusTextlabel(textToSet)
