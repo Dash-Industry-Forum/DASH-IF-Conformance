@@ -1075,7 +1075,7 @@
   <sidx	version="0" flags="0"
     referenceID="1"
     timeScale="12288"
-    earliestPresentationTime="3073024"
+    earliestPresentationTime="3073000"
     firstOffset="0"
     referenceCount="1"
     reference_type_1="0"
@@ -2812,7 +2812,7 @@
       <trun	version="0" flags="2565"
         sampleCount="48"
         cummulatedSampleDuration="24576"
-        earliestCompositionTime="1024"
+        earliestCompositionTime="1000"
         data_offset="480"
         >
       </trun>

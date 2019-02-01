@@ -148,7 +148,7 @@ final class SpliceConstraintsTest extends TestCase
         $session_dir="Splice_examples/Pass_case";
         $adaptation_set_template='Adapt$AS$';
         $reprsentation_template = 'Adapt$AS$rep$R$';
-        $this->assertNotContains("Pictrure Aspect Ratio Should be the same between Sequential Sw Sets at the Splice point', violated for ", checkPicAspectRatioSplicePoint($session_dir,$MediaProfDatabase,$adaptation_set_template,$reprsentation_template));
+        $this->assertNotContains("Picture Aspect Ratio (PAR) Should be the same between Sequential Sw Sets at the Splice point', violated for ", checkPicAspectRatioSplicePoint($session_dir,$MediaProfDatabase,$adaptation_set_template,$reprsentation_template));
     }
     public function testPictureAspectRatioChangeSplice()
     {
@@ -157,7 +157,7 @@ final class SpliceConstraintsTest extends TestCase
         $session_dir="Splice_examples/Fail_case";
         $adaptation_set_template='Adapt$AS$';
         $reprsentation_template = 'Adapt$AS$rep$R$';
-        $this->assertContains("Pictrure Aspect Ratio Should be the same between Sequential Sw Sets at the Splice point', violated for ", checkPicAspectRatioSplicePoint($session_dir,$MediaProfDatabase,$adaptation_set_template,$reprsentation_template));
+        $this->assertContains("Picture Aspect Ratio (PAR) Should be the same between Sequential Sw Sets at the Splice point', violated for ", checkPicAspectRatioSplicePoint($session_dir,$MediaProfDatabase,$adaptation_set_template,$reprsentation_template));
     }
     public function testNoFrameRateChangeSplice()
     {
@@ -195,5 +195,23 @@ final class SpliceConstraintsTest extends TestCase
         $adaptation_set_template='Adapt$AS$';
         $reprsentation_template = 'Adapt$AS$rep$R$';
         $this->assertContains("Audio channel configuration Should allow the same stereo or multichannel config between Sequential Sw Sets at the Splice point', violated for", checkAudioChannelSplicePoint($session_dir,$MediaProfDatabase,$adaptation_set_template,$reprsentation_template));
+    }
+    public function testNoFragOverlapSplice()
+    {
+        $MediaProfDatabase[0][0][0]="HD";
+        $MediaProfDatabase[1][0][0]="HD";
+        $session_dir="Splice_examples/Pass_case";
+        $adaptation_set_template='Adapt$AS$';
+        $reprsentation_template = 'Adapt$AS$rep$R$';
+        $this->assertNotContains("not overlap the same WAVE Program presentation time at the Splice point', overlap is observed", checkFragrmentOverlapSplicePoint($session_dir,$MediaProfDatabase,$adaptation_set_template,$reprsentation_template));
+    }
+    public function testFragOverlapSplice()
+    {
+        $MediaProfDatabase[0][0][0]="HD";
+        $MediaProfDatabase[1][0][0]="HD";
+        $session_dir="Splice_examples/Fail_case";
+        $adaptation_set_template='Adapt$AS$';
+        $reprsentation_template = 'Adapt$AS$rep$R$';
+        $this->assertContains("not overlap the same WAVE Program presentation time at the Splice point', overlap is observed", checkFragrmentOverlapSplicePoint($session_dir,$MediaProfDatabase,$adaptation_set_template,$reprsentation_template));
     }
 }

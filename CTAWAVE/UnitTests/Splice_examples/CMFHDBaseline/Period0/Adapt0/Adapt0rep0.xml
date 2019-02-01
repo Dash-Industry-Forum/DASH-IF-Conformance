@@ -169,14 +169,7 @@
                   </NALUnit>
                   </Comment>
                 </avcC>
-                <sinf>
-                    <frma original_format="avc1"> </frma>
-                    <schm scheme="cenc" version="65536"> </schm>
-                    <schi>
-                        comment="1 contained atoms" >
-                        <tenc version="0" flags="0" default_IsEncrypted="1" default_IV_size="8" default_KID="15818051322875722147463921580131226102"> </tenc>
-                    </schi>
-                </sinf>
+                
               </vide_sampledescription>
             </stsd>
             <stts	version="0" flags="0"

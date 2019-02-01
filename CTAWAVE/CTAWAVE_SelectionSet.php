@@ -118,7 +118,7 @@ function CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_templat
                     //Update the MP database for future checks
                     $MediaProfDatabase[$current_period][$adapt_count][$fcount]=$MPTrack;
                     fprintf($opfile, $MPTrackResult[1]);
-                    if($profileCommandLine!=='')
+                    if(count($profileCommandLine)>0)
                     {
                         foreach($profileCommandLine as $profile){
                             if($profile===$MPTrack || $profile===FourCCEquivalent($MPTrack)){
@@ -683,7 +683,7 @@ function FourCCEquivalent($MP)
 
 function printCommandLineProfileInfo($profileCommandLine,$profileMatched,$opfile)
 {
-    if($profileCommandLine!=='')
+    if(count($profileCommandLine)>0)
     {
         $DiffArray=array_diff($profileCommandLine, $profileMatched);
         foreach($DiffArray as $profile)
@@ -717,7 +717,7 @@ function CTACheckSingleInitSwSet($adapts_count,$session_dir,$adaptation_set_temp
                         {
                             $InfoMsg="Information:WAVE Content Spec 2018Ed-Section 7.2.2: Switching Set May conform to CMAF Single Initialization Constraints to indicate reinitialization not req on Track switches', and found CMAF common header with multiple sample descriptions in Sw Set ".$adapt_count." with entry types- ";
                             for($i=0;$i<$sampleDesc->length;$i++)
-                                $InfoMsg.=$sampleDesc->getAttribute("sdType"). ", ";
+                                $InfoMsg.=$sampleDesc->item($i)->getAttribute("sdType"). ", ";
                             $InfoMsg.=". \n";
                         }
                     }
