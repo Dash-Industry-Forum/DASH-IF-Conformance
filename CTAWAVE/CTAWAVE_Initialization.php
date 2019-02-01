@@ -16,6 +16,7 @@
 include 'CTAWAVE_Handle.php';
 include 'CTAWAVE_SelectionSet.php';
 include 'CTAWAVE_PresentationProfile.php';
+include 'BaselineSpliceChecks.php';
 
 $ctawave_function_name = 'CTAWAVE_Handle';
 $ctawave_when_to_call = array( 'Tracks','AdaptationSet');

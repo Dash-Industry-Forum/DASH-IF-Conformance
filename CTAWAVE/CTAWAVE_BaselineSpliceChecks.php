@@ -5,31 +5,32 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+include(dirname(__FILE__)."/../../Utils/Load.php");
 function CTABaselineSpliceChecks()
 {
-    global $MediaProfDatabase, $session_dir;
+    global $MediaProfDatabase, $session_dir, $adaptation_set_template,$reprsentation_template;
     $error=checkSequentialSwSetMProfile($MediaProfDatabase);
     fwrite($opfile, $error);
-    $error=checkDiscontinuousSplicePoints($session_dir,$MediaProfDatabase);
+    $error=checkDiscontinuousSplicePoints($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template);
     fwrite($opfile, $error);
-    $error=checkEncryptionChangeSplicePoint($session_dir,$MediaProfDatabase);
+    $error=checkEncryptionChangeSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template);
     fwrite($opfile, $error);
-    $error=checkSampleEntryChangeSplicePoint($session_dir,$MediaProfDatabase);
+    $error=checkSampleEntryChangeSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template);
     fwrite($opfile, $error);
-    $error=checkDefaultKIDChangeSplicePoint($session_dir,$MediaProfDatabase);
+    $error=checkDefaultKIDChangeSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template);
     fwrite($opfile, $error);
-    $error=checkPicAspectRatioSplicePoint($session_dir,$MediaProfDatabase);
+    $error=checkPicAspectRatioSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template);
     fwrite($opfile, $error);
-    $error=checkFrameRateSplicePoint($session_dir,$MediaProfDatabase);
+    $error=checkFrameRateSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template);
     fwrite($opfile, $error);
-    $error=checkAudioChannelSplicePoint($session_dir,$MediaProfDatabase);
+    $error=checkAudioChannelSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template);
     fwrite($opfile, $error);
 
 }
 
 function checkSequentialSwSetMProfile($MediaProfDatabase)
 {
+    $errorMsg="";
     $period_count=sizeof($MediaProfDatabase);
     //Create an array of media profiles at Sw set level.
     //If all reps doesnt have same MP, then "unknown" is assigned.
@@ -58,45 +59,47 @@ function checkSequentialSwSetMProfile($MediaProfDatabase)
         for($j=0;$j<$adapt_count;$j++)
         {
             if($MediaProf_PeriodAdSet[$i][$j]!==$MediaProf_PeriodAdSet[$i+1][$j])
-                $errorMsg[]="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets SHALL conform to the same CMAF Media Profile, voilated for Sw set ".$j." between CMAF Presentations ".$i." and  ".($i+1).".\n";
-                $errorMsg[]="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: Encoding parameters Shall be constrained such that CMAF Fragments of following Switching Set can be decoded by a decoder configured for previous Switching Set without reinitialization, voilated for Sw set ".$j." between CMAF Presentations ".$i." and  ".($i+1)." as Media Profile found are ".$MediaProf_PeriodAdSet[$i][$j]." and ".$MediaProf_PeriodAdSet[$i+1][$j]." respectively.\n";
+                $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets SHALL conform to the same CMAF Media Profile, voilated for Sw set ".$j." between CMAF Presentations ".$i." and  ".($i+1)." with media profiles- ".$MediaProf_PeriodAdSet[$i][$j]." and ".$MediaProf_PeriodAdSet[$i+1][$j]." respectively.\n";
+                $errorMsg.="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: Encoding parameters Shall be constrained such that CMAF Fragments of following Switching Set can be decoded by a decoder configured for previous Switching Set without reinitialization, voilated for Sw set ".$j." between CMAF Presentations ".$i." and  ".($i+1)." as Media Profile found are ".$MediaProf_PeriodAdSet[$i][$j]." and ".$MediaProf_PeriodAdSet[$i+1][$j]." respectively.\n";
 
         }
     }
     return $errorMsg;
 }
 
-function checkDiscontinuousSplicePoints($session_dir, $MediaProfDatabase)
+function checkDiscontinuousSplicePoints($session_dir, $MediaProfDatabase, $adaptation_set_template,$reprsentation_template)
 {
+    $errorMsg="";
     $period_count=sizeof($MediaProfDatabase);
-    $adapt_count=sizeof($MediaProf_PeriodAdSet[0]);
+    $adapt_count=sizeof($MediaProfDatabase[0]);
     for($i=0;$i<($period_count-1);$i++)
     {
-       for($adapt=0;$j<$adapt_count;$adapt++)
+       for($adapt=0;$adapt<$adapt_count;$adapt++)
         {
             $adapt_dir = str_replace('$AS$', $adapt, $adaptation_set_template);
             $rep_dir = str_replace(array('$AS$', '$R$'), array($adapt, 0), $reprsentation_template);
-            $xml_rep_P1 = get_DOM($session_dir.'/'.$period_count.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P1 = get_DOM($session_dir.'/Period'.$i.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P1){
                 $moof_len=$xml_rep_P1->getElementsByTagName("moof")->length;
                 if($moof_len>0)
                 {
                     $tfdt=$xml_rep_P1->getElementsByTagName("tfdt")->item($moof_len-1);
                     $baseMediaDecodeTime_p1=$tfdt->getAttribute("baseMediaDecodeTime");
+                    $trun=$xml_rep_P1->getElementsByTagName("trun")->item($moof_len-1);
+                    $cummulatedSampleDuration_p1=$trun->getAttribute("cummulatedSampleDuration");
                 }
             }
-            $xml_rep_P2 = get_DOM($session_dir.'/'.($period_count+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P2 = get_DOM($session_dir.'/Period'.($i+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P2){
-                $moof_len=$xml_rep_P1->getElementsByTagName("moof")->length;
+                $moof_len=$xml_rep_P2->getElementsByTagName("moof")->length;
                 if($moof_len>0)
                 {
-                    $tfdt=$xml_rep_P1->getElementsByTagName("tfdt")->item(0);
+                    $tfdt=$xml_rep_P2->getElementsByTagName("tfdt")->item(0);
                     $baseMediaDecodeTime_p2=$tfdt->getAttribute("baseMediaDecodeTime");
-                    $trun=$xml_rep_P1->getElementsByTagName("trun")->item(0);
-                    $cummulatedSampleDuration_p2=$tfdt->getAttribute("cummulatedSampleDuration");
+                    
                 }
-                if($baseMediaDecodeTime_p2!==$baseMediaDecodeTime_p1+$cummulatedSampleDuration_p2)
-                    $errorMsg[]="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can be discontinuous, and it is observed for Sw set ".$adapt." between CMAF Presentations ".$period_count." and  ".($period_count+1).".\n";
+                if($baseMediaDecodeTime_p2!=$baseMediaDecodeTime_p1+$cummulatedSampleDuration_p1)
+                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can be discontinuous, and it is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with baseMediaDecodeTime- ".($baseMediaDecodeTime_p1+$cummulatedSampleDuration_p1)." and ".$baseMediaDecodeTime_p2." respectively.\n";
 
                 
             }
@@ -106,28 +109,29 @@ function checkDiscontinuousSplicePoints($session_dir, $MediaProfDatabase)
     return $errorMsg;
 }
 
-function checkEncryptionChangeSplicePoint($session_dir,$MediaProfDatabase)
+function checkEncryptionChangeSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template)
 {
+    $errorMsg="";
     $period_count=sizeof($MediaProfDatabase);
-    $adapt_count=sizeof($MediaProf_PeriodAdSet[0]);
+    $adapt_count=sizeof($MediaProfDatabase[0]);
     for($i=0;$i<($period_count-1);$i++)
     {
-       for($adapt=0;$j<$adapt_count;$adapt++)
+       for($adapt=0;$adapt<$adapt_count;$adapt++)
         {
             $adapt_dir = str_replace('$AS$', $adapt, $adaptation_set_template);
             $rep_dir = str_replace(array('$AS$', '$R$'), array($adapt, 0), $reprsentation_template);
-            $xml_rep_P1 = get_DOM($session_dir.'/'.$period_count.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P1 = get_DOM($session_dir.'/Period'.$i.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P1){
                 $encScheme_p1=getEncrytionScheme($xml_rep_P1);
 
             }
-           $xml_rep_P2 = get_DOM($session_dir.'/'.($period_count+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+           $xml_rep_P2 = get_DOM($session_dir.'/Period'.($i+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P2){
                 $encScheme_p2=getEncrytionScheme($xml_rep_P2);
 
             }
-            if($encScheme_p1!=$encScheme_p2 && ($encScheme_p1==0 || $encScheme_p2==0))
-                    $errorMsg[]="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can change between unencrypted/encrypted at Splice points, it is observed for Sw set ".$adapt." between CMAF Presentations ".$period_count." and  ".($period_count+1).".\n";
+            if($encScheme_p1!=$encScheme_p2 && ($encScheme_p1===0 || $encScheme_p2===0))
+                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can change between unencrypted/encrypted at Splice points, it is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with enc scheme ".$encScheme_p1." and ".$encScheme_p1." respectively.\n";
 
                 
         }   
@@ -136,26 +140,26 @@ function checkEncryptionChangeSplicePoint($session_dir,$MediaProfDatabase)
     for($i=0;$i<($period_count);$i++)
     {
        $encSchemeAdapt=array();
-       for($adapt=0;$j<$adapt_count;$adapt++)
+       for($adapt=0;$adapt<$adapt_count;$adapt++)
         {
             $adapt_dir = str_replace('$AS$', $adapt, $adaptation_set_template);
             $rep_dir = str_replace(array('$AS$', '$R$'), array($adapt, 0), $reprsentation_template);
-            $xml_rep_P1 = get_DOM($session_dir.'/'.$period_count.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P1 = get_DOM($session_dir.'/Period'.$i.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P1){
                 $encScheme_p1=getEncrytionScheme($xml_rep_P1);
-                if($encScheme_p1!=0)
+                if($encScheme_p1!==0)
                    array_push($encSchemeAdapt,$encScheme_p1);
             }       
         }
-        if($encSchemeAdapt==null)
+        if(count($encSchemeAdapt)==0)
             array_push ($encSchemePeriod, 0);
         else
             array_push ($encSchemePeriod, array_unique($encSchemeAdapt)[0]);
     }
     for($i=0;$i<($period_count-1);$i++)
     {
-        if($encSchemePeriod[$i]!=$encSchemePeriod[$i+1] && $encSchemePeriod[$i]!=0 && $encSchemePeriod[$i+1]!=0)
-            $errorMsg[]="###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: 'WAVE content SHALL contain one CENC Scheme per program', violated between CMAF Presentations ".$period_count." and  ".($period_count+1)." contains ".$encSchemePeriod[$i]." and ".$encSchemePeriod[$i+1]." respectively.\n";
+        if($encSchemePeriod[$i]!==$encSchemePeriod[$i+1] && $encSchemePeriod[$i]!==0 && $encSchemePeriod[$i+1]!==0)
+            $errorMsg.="###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: 'WAVE content SHALL contain one CENC Scheme per program', violated between CMAF Presentations ".$i." and  ".($i+1)." contains ".$encSchemePeriod[$i]." and ".$encSchemePeriod[$i+1]." respectively.\n";
 
     }
     return $errorMsg;
@@ -174,28 +178,29 @@ function getEncrytionScheme($xml)
         return 0;
 }
 
-function checkSampleEntryChangeSplicePoint($session_dir,$MediaProfDatabase)
+function checkSampleEntryChangeSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template)
 {
+    $errorMsg="";
     $period_count=sizeof($MediaProfDatabase);
-    $adapt_count=sizeof($MediaProf_PeriodAdSet[0]);
+    $adapt_count=sizeof($MediaProfDatabase[0]);
     for($i=0;$i<($period_count-1);$i++)
     {
-       for($adapt=0;$j<$adapt_count;$adapt++)
+       for($adapt=0;$adapt<$adapt_count;$adapt++)
         {
             $adapt_dir = str_replace('$AS$', $adapt, $adaptation_set_template);
             $rep_dir = str_replace(array('$AS$', '$R$'), array($adapt, 0), $reprsentation_template);
-            $xml_rep_P1 = get_DOM($session_dir.'/'.$period_count.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P1 = get_DOM($session_dir.'/Period'.$i.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P1){
                 $sdType_p1=getSdType($xml_rep_P1);
 
             }
-           $xml_rep_P2 = get_DOM($session_dir.'/'.($period_count+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+           $xml_rep_P2 = get_DOM($session_dir.'/Period'.($i+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P2){
                   $sdType_p2=getSdType($xml_rep_P2);
 
             }
             if($sdType_p1!=$sdType_p2 )
-                    $errorMsg[]="###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: 'Sample entries in Sequential Switching Sets Shall not change sample type at Splice points', but different sample types observed for Sw set ".$adapt." between CMAF Presentations ".$period_count." and  ".($period_count+1).".\n";
+                    $errorMsg="###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: 'Sample entries in Sequential Switching Sets Shall not change sample type at Splice points', but different sample types ".$sdType_p1." and ".$sdType_p2."observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1).".\n";
 
                 
         }   
@@ -205,38 +210,40 @@ function checkSampleEntryChangeSplicePoint($session_dir,$MediaProfDatabase)
 
 function getSdType($xml)
 {
-    $sdType=0;
+    $sdType=0;$SampleDescr="";
     $hdlr=$xml->getElementsByTagName("hdlr")->item(0);
-    if($hdlr=="vide")
+    $handler_type=$hdlr->getAttribute("handler_type");
+    if($handler_type=="vide")
         $SampleDescr=$xml->getElementsByTagName("vide_sampledescription")->item(0);
-    elseif($hdlr=="soun")
+    elseif($handler_type=="soun")
         $SampleDescr=$xml->getElementsByTagName("soun_sampledescription")->item(0);
-    if($SampleDescr->length>0)
+    if($SampleDescr!=="")
         $sdType=$SampleDescr->getAttribute("sdType");
     
     return $sdType;
 }
 
-function checkDefaultKIDChangeSplicePoint($session_dir,$MediaProfDatabase)
+function checkDefaultKIDChangeSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template)
 {
+    $errorMsg="";
     $period_count=sizeof($MediaProfDatabase);
-    $adapt_count=sizeof($MediaProf_PeriodAdSet[0]);
+    $adapt_count=sizeof($MediaProfDatabase[0]);
     $defaultKID_p1=0;$defaultKID_p2=0;
     $errorMsg="";
     for($i=0;$i<($period_count-1);$i++)
     {
-       for($adapt=0;$j<$adapt_count;$adapt++)
+       for($adapt=0;$adapt<$adapt_count;$adapt++)
         {
             $adapt_dir = str_replace('$AS$', $adapt, $adaptation_set_template);
             $rep_dir = str_replace(array('$AS$', '$R$'), array($adapt, 0), $reprsentation_template);
-            $xml_rep_P1 = get_DOM($session_dir.'/'.$period_count.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P1 = get_DOM($session_dir.'/Period'.$i.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P1){
                 $tenc=$xml_rep_P1->getElementsByTagName("tenc");
                 if($tenc->length>0)
                   $defaultKID_p1=$tenc->item(0)->getAttribute("default_KID");
                
             }
-           $xml_rep_P2 = get_DOM($session_dir.'/'.($period_count+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+           $xml_rep_P2 = get_DOM($session_dir.'/Period'.($i+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P2){
                 $tenc=$xml_rep_P2->getElementsByTagName("tenc");
                 if($tenc->length>0)
@@ -244,32 +251,32 @@ function checkDefaultKIDChangeSplicePoint($session_dir,$MediaProfDatabase)
 
             }
             if($defaultKID_p1!=$defaultKID_p2 )
-                    $errorMsg[]="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Default KID can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$period_count." and  ".($period_count+1).".\n";
+                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Default KID can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with values -".$defaultKID_p1." and ".$defaultKID_p2." respectively.\n";
 
                 
         }   
     }
     return $errorMsg;
 }
-function checkTrackIDChangeSplicePoint($session_dir,$MediaProfDatabase)
+function checkTrackIDChangeSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template)
 {
-    $period_count=sizeof($MediaProfDatabase);
-    $adapt_count=sizeof($MediaProf_PeriodAdSet[0]);
     $errorMsg="";
+    $period_count=sizeof($MediaProfDatabase);
+    $adapt_count=sizeof($MediaProfDatabase[0]);
     for($i=0;$i<($period_count-1);$i++)
     {
-       for($adapt=0;$j<$adapt_count;$adapt++)
+       for($adapt=0;$adapt<$adapt_count;$adapt++)
         {
             $adapt_dir = str_replace('$AS$', $adapt, $adaptation_set_template);
             $rep_dir = str_replace(array('$AS$', '$R$'), array($adapt, 0), $reprsentation_template);
-            $xml_rep_P1 = get_DOM($session_dir.'/'.$period_count.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P1 = get_DOM($session_dir.'/Period'.$i.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P1){
                 $tkhd=$xml_rep_P1->getElementsByTagName("tkhd");
                 if($tkhd->length>0)
                   $trackID_p1=$tkhd->item(0)->getAttribute("trackID");
                
             }
-           $xml_rep_P2 = get_DOM($session_dir.'/'.($period_count+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+           $xml_rep_P2 = get_DOM($session_dir.'/Period'.($i+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P2){
                 $tkhd=$xml_rep_P2->getElementsByTagName("tkhd");
                 if($tkhd->length>0)
@@ -277,7 +284,7 @@ function checkTrackIDChangeSplicePoint($session_dir,$MediaProfDatabase)
 
             }
             if($trackID_p1!=$trackID_p2 )
-                    $errorMsg[]="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Track_ID can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$period_count." and  ".($period_count+1).".\n";
+                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Track_ID can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with TrackID -".$trackID_p1." and ".$trackID_p2." respectively.\n";
 
                 
         }   
@@ -285,25 +292,25 @@ function checkTrackIDChangeSplicePoint($session_dir,$MediaProfDatabase)
     return $errorMsg;
 }
 
-function checkTimeScaleChangeSplicePoint($session_dir,$MediaProfDatabase)
+function checkTimeScaleChangeSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template)
 {
     $period_count=sizeof($MediaProfDatabase);
-    $adapt_count=sizeof($MediaProf_PeriodAdSet[0]);
+    $adapt_count=sizeof($MediaProfDatabase[0]);
     $errorMsg="";
     for($i=0;$i<($period_count-1);$i++)
     {
-       for($adapt=0;$j<$adapt_count;$adapt++)
+       for($adapt=0;$adapt<$adapt_count;$adapt++)
         {
             $adapt_dir = str_replace('$AS$', $adapt, $adaptation_set_template);
             $rep_dir = str_replace(array('$AS$', '$R$'), array($adapt, 0), $reprsentation_template);
-            $xml_rep_P1 = get_DOM($session_dir.'/'.$period_count.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P1 = get_DOM($session_dir.'/Period'.$i.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P1){
                 $mvhd=$xml_rep_P1->getElementsByTagName("mvhd");
                 if($mvhd->length>0)
                   $timescale_p1=$mvhd->item(0)->getAttribute("timeScale");
                
             }
-           $xml_rep_P2 = get_DOM($session_dir.'/'.($period_count+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P2 = get_DOM($session_dir.'/Period'.($i+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P2){
                 $mvhd=$xml_rep_P2->getElementsByTagName("mvhd");
                 if($mvhd->length>0)
@@ -311,7 +318,7 @@ function checkTimeScaleChangeSplicePoint($session_dir,$MediaProfDatabase)
 
             }
             if($timescale_p1!=$timescale_p2 )
-                    $errorMsg[]="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Timescale can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$period_count." and  ".($period_count+1).".\n";
+                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Timescale can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with timescale ".$timescale_p1." and ".$timescale_p1." respectively.\n";
 
                 
         }   
@@ -319,18 +326,18 @@ function checkTimeScaleChangeSplicePoint($session_dir,$MediaProfDatabase)
     return $errorMsg;
 }
 
-function checkFragrmentOverlapSplicePoint($session_dir,$MediaProfDatabase)
+function checkFragrmentOverlapSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template)
 {
     $period_count=sizeof($MediaProfDatabase);
-    $adapt_count=sizeof($MediaProf_PeriodAdSet[0]);
+    $adapt_count=sizeof($MediaProfDatabase[0]);
     $errorMsg="";
     for($i=0;$i<($period_count-1);$i++)
     {
-       for($adapt=0;$j<$adapt_count;$adapt++)
+       for($adapt=0;$adapt<$adapt_count;$adapt++)
         {
             $adapt_dir = str_replace('$AS$', $adapt, $adaptation_set_template);
             $rep_dir = str_replace(array('$AS$', '$R$'), array($adapt, 0), $reprsentation_template);
-            $xml_rep_P1 = get_DOM($session_dir.'/'.$period_count.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P1 = get_DOM($session_dir.'/Period'.$i.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P1){
                 $trun=$xml_rep_P1->getElementsByTagName('trun')->item(0);
                 $earlyCompTime_p1=$trun->getAttribute('earliestCompositionTime');
@@ -341,26 +348,35 @@ function checkFragrmentOverlapSplicePoint($session_dir,$MediaProfDatabase)
                 }
                 $trun=$xml_rep_P1->getElementsByTagName('trun');
                 $sumSampleDur=0;
-                for($i=0;i<$trun->length;$i++)
+                for($j=0;$j<$trun->length;$j++)
                 {
-                    $sumSampleDur+=$trun->item($i)->getAttribute("cummulatedSampleDuration");
+                    $sumSampleDur+=$trun->item($j)->getAttribute("cummulatedSampleDuration");
                 }
             }
-           $xml_rep_P2 = get_DOM($session_dir.'/'.($period_count+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P2 = get_DOM($session_dir.'/Period'.($i+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P2){
-                $trun=$xml_rep_P2->getElementsByTagName('trun')->item(0);
-                $earlyCompTime_p2=$trun->getAttribute('earliestCompositionTime');
-                $xml_elst=$xml_rep_P2->getElementsByTagName('elstEntry');
-                $mediaTime_p2=0;
-                if($xml_elst->length>0 ){
-                    $mediaTime_p2=$xml_elst->item(0)->getAttribute('mediaTime');
+                $sidx=$xml_rep_P2->getElementsByTagName('sidx');
+                if($sidx->length>0)
+                {
+                    $presTime_p2=$sidx->item(0)->getAttribute("earliestPresentationTime");
+                }
+                else
+                {
+                    $trun=$xml_rep_P2->getElementsByTagName('trun')->item(0);
+                    $earlyCompTime_p2=$trun->getAttribute('earliestCompositionTime');
+                    $xml_elst=$xml_rep_P2->getElementsByTagName('elstEntry');
+                    $mediaTime_p2=0;
+                    if($xml_elst->length>0 ){
+                        $mediaTime_p2=$xml_elst->item(0)->getAttribute('mediaTime');
+                    }
+                    $presTime_p2=$earlyCompTime_p2+$mediaTime_p2;
                 }
 
             }
-            if(($earlyCompTime_p1+$mediaTime_p1+$sumSampleDur) >($earlyCompTime_p2+$mediaTime_p2) )
-                    $errorMsg[]="###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: 'CMAF Fragments Shall not overlap the same WAVE Program presentation time at the Splice point', overlap is observed for Sw set ".$adapt." between CMAF Presentations ".$period_count." and  ".($period_count+1).".\n";
-            elseif(($earlyCompTime_p1+$mediaTime_p1+$sumSampleDur) <($earlyCompTime_p2+$mediaTime_p2) )
-                    $errorMsg[]="###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: 'CMAF Fragments Shall not have gaps in WAVE Program presentation time at the Splice point', gap is observed for Sw set ".$adapt." between CMAF Presentations ".$period_count." and  ".($period_count+1).".\n";
+            if(($earlyCompTime_p1+$mediaTime_p1+$sumSampleDur) >$presTime_p2 )
+                    $errorMsg="###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: 'CMAF Fragments Shall not overlap the same WAVE Program presentation time at the Splice point', overlap is observed for Sw set ".$adapt." between CMAF Presentations ".$i." (".($earlyCompTime_p1+$mediaTime_p1+$sumSampleDur).") and  ".($i+1)." (".$presTime_p2.").\n";
+            elseif(($earlyCompTime_p1+$mediaTime_p1+$sumSampleDur) <$presTime_p2 )
+                    $errorMsg.="###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: 'CMAF Fragments Shall not have gaps in WAVE Program presentation time at the Splice point', gap is observed for Sw set ".$adapt." between CMAF Presentations ".$i." (".($earlyCompTime_p1+$mediaTime_p1+$sumSampleDur).") and  ".($i+1)." (".$presTime_p2.").\n";
 
                 
         }   
@@ -368,65 +384,65 @@ function checkFragrmentOverlapSplicePoint($session_dir,$MediaProfDatabase)
     return $errorMsg;
 }
 
-function checkPicAspectRatioSplicePoint($session_dir,$MediaProfDatabase)
+function checkPicAspectRatioSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template)
 {
     $period_count=sizeof($MediaProfDatabase);
-    $adapt_count=sizeof($MediaProf_PeriodAdSet[0]);
+    $adapt_count=sizeof($MediaProfDatabase[0]);
     $errorMsg="";
     for($i=0;$i<($period_count-1);$i++)
     {
-       for($adapt=0;$j<$adapt_count;$adapt++)
+       for($adapt=0;$adapt<$adapt_count;$adapt++)
         {
             $adapt_dir = str_replace('$AS$', $adapt, $adaptation_set_template);
             $rep_dir = str_replace(array('$AS$', '$R$'), array($adapt, 0), $reprsentation_template);
-            $xml_rep_P1 = get_DOM($session_dir.'/'.$period_count.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P1 = get_DOM($session_dir.'/Period'.$i.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P1){
                 $tkhd=$xml_rep_P1->getElementsByTagName("tkhd")->item(0);
                 $par_p1=$tkhd->getAttribute("width")/($tkhd->getAttribute("height"));
                     
             }
-           $xml_rep_P2 = get_DOM($session_dir.'/'.($period_count+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P2 = get_DOM($session_dir.'/Period'.($i+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P2){
                 $tkhd=$xml_rep_P2->getElementsByTagName("tkhd")->item(0);
                 $par_p2=$tkhd->getAttribute("width")/($tkhd->getAttribute("height"));
 
             }
             if($par_p1!=$par_p2)
-                $errorMsg[]="###Warning: WAVE Content Spec 2018Ed-Section 7.2.2: 'Pictrure Aspect Ratio Should be the same between Sequential Sw Sets at the Splice point', violated for Sw set ".$adapt." between CMAF Presentations ".$period_count." and  ".($period_count+1).".\n";
+                $errorMsg="###Warning: WAVE Content Spec 2018Ed-Section 7.2.2: 'Picture Aspect Ratio (PAR) Should be the same between Sequential Sw Sets at the Splice point', violated for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with - PAR ".$par_p1." and ".$par_p2.".\n";
 
               
         }   
     }
     return $errorMsg;
 }
-function checkFrameRateSplicePoint($session_dir,$MediaProfDatabase)
+function checkFrameRateSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template)
 {
     $period_count=sizeof($MediaProfDatabase);
-    $adapt_count=sizeof($MediaProf_PeriodAdSet[0]);
+    $adapt_count=sizeof($MediaProfDatabase[0]);
     $errorMsg="";
     for($i=0;$i<($period_count-1);$i++)
     {
-       for($adapt=0;$j<$adapt_count;$adapt++)
+       for($adapt=0;$adapt<$adapt_count;$adapt++)
         {
             $adapt_dir = str_replace('$AS$', $adapt, $adaptation_set_template);
             $rep_dir = str_replace(array('$AS$', '$R$'), array($adapt, 0), $reprsentation_template);
-            $xml_rep_P1 = get_DOM($session_dir.'/'.$period_count.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P1 = get_DOM($session_dir.'/Period'.$i.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P1){
                 $hdlr=$xml_rep_P1->getElementsByTagName("hdlr")->item(0)->getAttribute("handler_type");
                 if($hdlr=="vide")
                     $framerate_p1=getFrameRate($xml_rep_P1);
                     
             }
-           $xml_rep_P2 = get_DOM($session_dir.'/'.($period_count+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P2 = get_DOM($session_dir.'/Period'.($i+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P2){
                 $hdlr=$xml_rep_P2->getElementsByTagName("hdlr")->item(0)->getAttribute("handler_type");
                 if($hdlr=="vide"){
                     $framerate_p2=getFrameRate($xml_rep_P2);
 
             
-                    $remainder=($framerate_p1>$framerate_p2 ? ($framerate_p1/$framerate_p2): ($framerate_p2/$framerate_p1));
+                    $remainder=($framerate_p1>$framerate_p2 ? ($framerate_p1 % $framerate_p2): ($framerate_p2 % $framerate_p1));
                     if($remainder !=0)
-                        $errorMsg[]="###Warning: WAVE Content Spec 2018Ed-Section 7.2.2: 'Frame rate Should be the same family of multiples between Sequential Sw Sets at the Splice point', violated for Sw set ".$adapt." between CMAF Presentations ".$period_count." and  ".($period_count+1)." with framerates of ".$framerate_p1." and ".$framerate_p2." respectively.\n";
+                        $errorMsg="###Warning: WAVE Content Spec 2018Ed-Section 7.2.2: 'Frame rate Should be the same family of multiples between Sequential Sw Sets at the Splice point', violated for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with framerates of ".$framerate_p1." and ".$framerate_p2." respectively.\n";
                     }
             }
               
@@ -498,18 +514,18 @@ function getFrameRate($xml)
     }
     return $framerate;
 }
-function checkAudioChannelSplicePoint($session_dir,$MediaProfDatabase)
+function checkAudioChannelSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template)
 {
     $period_count=sizeof($MediaProfDatabase);
-    $adapt_count=sizeof($MediaProf_PeriodAdSet[0]);
+    $adapt_count=sizeof($MediaProfDatabase[0]);
     $errorMsg="";
     for($i=0;$i<($period_count-1);$i++)
     {
-       for($adapt=0;$j<$adapt_count;$adapt++)
+       for($adapt=0;$adapt<$adapt_count;$adapt++)
         {
             $adapt_dir = str_replace('$AS$', $adapt, $adaptation_set_template);
             $rep_dir = str_replace(array('$AS$', '$R$'), array($adapt, 0), $reprsentation_template);
-            $xml_rep_P1 = get_DOM($session_dir.'/'.$period_count.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P1 = get_DOM($session_dir.'/Period'.$i.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P1){
                 $hdlr=$xml_rep_P1->getElementsByTagName("hdlr")->item(0)->getAttribute("handler_type");
                 if($hdlr=="soun"){
@@ -517,7 +533,7 @@ function checkAudioChannelSplicePoint($session_dir,$MediaProfDatabase)
                     $channels_p1=$decoderSpecInfo->getAttribute("channelConfig");
                 }
             }
-           $xml_rep_P2 = get_DOM($session_dir.'/'.($period_count+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
+            $xml_rep_P2 = get_DOM($session_dir.'/Period'.($i+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P2){
                 $hdlr=$xml_rep_P2->getElementsByTagName("hdlr")->item(0)->getAttribute("handler_type");
                 if($hdlr=="soun"){
@@ -525,7 +541,7 @@ function checkAudioChannelSplicePoint($session_dir,$MediaProfDatabase)
                     $channels_p2=$decoderSpecInfo->getAttribute("channelConfig");
 
                     if($channels_p1 !=$channels_p2)
-                        $errorMsg[]="###Warning: WAVE Content Spec 2018Ed-Section 7.2.2: 'Audio channel configuration Should allow the same stereo or multichannel config between Sequential Sw Sets at the Splice point', violated for Sw set ".$adapt." between CMAF Presentations ".$period_count." and  ".($period_count+1)." with channels ".$channels_p1." and ".$channels_p2." respectively.\n";
+                        $errorMsg="###Warning: WAVE Content Spec 2018Ed-Section 7.2.2: 'Audio channel configuration Should allow the same stereo or multichannel config between Sequential Sw Sets at the Splice point', violated for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with channels ".$channels_p1." and ".$channels_p2." respectively.\n";
                     }
             }
               
