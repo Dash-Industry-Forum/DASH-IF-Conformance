@@ -5,32 +5,30 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-include(dirname(__FILE__)."/../../Utils/Load.php");
-include(dirname(__FILE__)."/../../Utils/FileOperations.php");
-include("CTAWAVE_PresentationProfile.php");
-include("CTAWAVE_SelectionSet.php");
+
+
 function WAVEProgramChecks()
 {
-    global $MediaProfDatabase, $session_dir,$adaptation_set_template,$spliceConstraitsLog,$reprsentation_template;
+    global $MediaProfDatabase, $session_dir,$adaptation_set_template,$CTAspliceConstraitsLog,$reprsentation_template;
     $error=checkSequentialSwSetAV($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template);
-    fwrite($spliceConstraitsLog, $error);
+    fwrite($CTAspliceConstraitsLog, $error);
     //Call the CMFHD Baseline constraints. 
-    $error=checkCMFHDBaselineConstraints($MediaProfDatabase, $session_dir,$adaptation_set_template,$spliceConstraitsLog);
-    fwrite($spliceConstraitsLog, $error);
+    $error=checkCMFHDBaselineConstraints($MediaProfDatabase, $session_dir,$adaptation_set_template,$CTAspliceConstraitsLog);
+    fwrite($CTAspliceConstraitsLog, $error);
     //Using the error messages, check other MAY/Need not conditions and print respective informations.
     if(strpos($error,"###CTAWAVE check violated")!== FALSE)
-        fwrite($spliceConstraitsLog, "Information:WAVE Content Spec 2018Ed-Section 6.1: 'WAVE Programs that contain more than one CMAF Presentation MAY conform to constraints of a WAVE Splice Constraints Profile (section 6.2)', however non-conformance observed in this WAVE Program. \n ");
+        fwrite($CTAspliceConstraitsLog, "Information:WAVE Content Spec 2018Ed-Section 6.1: 'WAVE Programs that contain more than one CMAF Presentation MAY conform to constraints of a WAVE Splice Constraints Profile (section 6.2)', however non-conformance observed in this WAVE Program. \n ");
     else
-        fwrite($spliceConstraitsLog, "Information:WAVE Content Spec 2018Ed-Section 6.1: 'WAVE Programs that contain more than one CMAF Presentation MAY conform to constraints of a WAVE Splice Constraints Profile (section 6.2)', however conformance observed in this WAVE Program. \n ");
+        fwrite($CTAspliceConstraitsLog, "Information:WAVE Content Spec 2018Ed-Section 6.1: 'WAVE Programs that contain more than one CMAF Presentation MAY conform to constraints of a WAVE Splice Constraints Profile (section 6.2)', however conformance observed in this WAVE Program. \n ");
 
     if(strpos($error,"violation observed in WAVE Baseline Splice")!== FALSE)
-        fwrite($spliceConstraitsLog, "Information:WAVE Content Spec 2018Ed-Section 6.1: 'CMAF Presentation in a WAVE Program need not conform to any Splice Constraint Profile', however non-conformance to WAVE Baseline Splice constraints found. \n ");
+        fwrite($CTAspliceConstraitsLog, "Information:WAVE Content Spec 2018Ed-Section 6.1: 'CMAF Presentation in a WAVE Program need not conform to any Splice Constraint Profile', however non-conformance to WAVE Baseline Splice constraints found. \n ");
     elseif(strpos($error,"violated as not all CMAF presentations conforms to CMFHD")!== FALSE)
-        fwrite($spliceConstraitsLog, "Information:WAVE Content Spec 2018Ed-Section 6.1: 'CMAF Presentation in a WAVE Program need not conform to any Splice Constraint Profile', however non-conformance to CMFHD Baseline constraints found. \n ");
+        fwrite($CTAspliceConstraitsLog, "Information:WAVE Content Spec 2018Ed-Section 6.1: 'CMAF Presentation in a WAVE Program need not conform to any Splice Constraint Profile', however non-conformance to CMFHD Baseline constraints found. \n ");
 
 }
 
-function checkCMFHDBaselineConstraints($MediaProfDatabase, $session_dir,$adaptation_set_template,$spliceConstraitsLog)
+function checkCMFHDBaselineConstraints($MediaProfDatabase, $session_dir,$adaptation_set_template,$CTAspliceConstraitsLog)
 {
     //Check for CMFHD presentation profile for all periods/presentations
     //and then check WAVE Baseline constraints . If both are satisfied, then CMFHD Baseline Constraints are satisfied.
@@ -48,13 +46,13 @@ function checkCMFHDBaselineConstraints($MediaProfDatabase, $session_dir,$adaptat
         $errorMsg.="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 6.2: 'WAVE CMFHD Baseline Program Shall contain a sequence of one or more CMAF Presentations conforming to CMAF CMFHD profile', violated as not all CMAF presentations conforms to CMFHD. ".$presentationProfile."\n";
 
     //WAVE Baseline constraints are already checked, open the log file and check if contains errors and print related error message.
-    if(!($opfile = fopen($session_dir. '/' . $spliceConstraitsLog . '.txt', 'r'))){
-        echo "Error opening Splice constraints log file: ". $spliceConstraitsLog . ".txt";
+    if(!($opfile = fopen($session_dir. '/' . $CTAspliceConstraitsLog . '.txt', 'r'))){
+        echo "Error opening Splice constraints log file: ". $CTAspliceConstraitsLog . ".txt";
         return;
     }
     else
     {
-        $searchfiles = file_get_contents($session_dir.'/'.$spliceConstraitsLog.'.txt');
+        $searchfiles = file_get_contents($session_dir.'/'.$CTAspliceConstraitsLog.'.txt');
         if(strpos($searchfiles, "###CTAWAVE check violated") !== FALSE){
             $errorMsg.="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 6.2: 'WAVE CMFHD Baseline Program's Sequential Sw Sets Shall only contain splices conforming to WAVE Baseline Splice profile (section 7.2)', but violation observed in WAVE Baseline Splice constraints. \n";
 

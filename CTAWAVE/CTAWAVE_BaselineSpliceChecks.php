@@ -5,10 +5,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-include(dirname(__FILE__)."/../../Utils/Load.php");
+
 function CTABaselineSpliceChecks()
 {
-    global $MediaProfDatabase, $session_dir, $adaptation_set_template,$reprsentation_template;
+    global $MediaProfDatabase, $session_dir, $adaptation_set_template,$reprsentation_template,$CTAspliceConstraitsLog;
+    $opfile="";
+    if(!($opfile = open_file($session_dir . '/' . $CTAspliceConstraitsLog . '.txt', 'w'))){
+        echo "Error opening/creating SpliceConstraints conformance check file: "."./SpliceConstraints_infofile_ctawave.txt";
+        return;
+    }
     $error=checkSequentialSwSetMProfile($MediaProfDatabase);
     fwrite($opfile, $error);
     $error=checkDiscontinuousSplicePoints($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template);
@@ -25,6 +30,31 @@ function CTABaselineSpliceChecks()
     fwrite($opfile, $error);
     $error=checkAudioChannelSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template);
     fwrite($opfile, $error);
+    
+     fclose($opfile);
+    
+    $temp_string = str_replace(array('$Template$'),array($CTAspliceConstraitsLog),$string_info);
+    file_put_contents($session_dir.'/'.$CTAspliceConstraitsLog.'.html',$temp_string);
+    
+    $searchfiles = file_get_contents($session_dir.'/'.$CTAspliceConstraitsLog.'.txt');
+    if(strpos($searchfiles, "CTAWAVE check violated") !== FALSE){
+        $progress_xml->Results[0]->addChild('CTAWAVESpliceConstraints', 'error');
+        $file_error[] = $session_dir.'/'.$CTAspliceConstraitsLog.'.html';
+    }
+    elseif(strpos($searchfiles, "Warning") !== FALSE || strpos($searchfiles, "WARNING") !== FALSE){
+        $progress_xml->Results[0]->addChild('CTAWAVESpliceConstraints', 'warning');
+        $file_error[] = $session_dir.'/'.$CTAspliceConstraitsLog.'.html';
+    }
+    else{
+        $progress_xml->Results[0]->addChild('CTAWAVESpliceConstraints', 'noerror');
+        $file_error[] = "noerror";
+    }
+    
+    $tempr_string = str_replace('$Template$', '/'.$CTAspliceConstraitsLog, $string_info);
+    file_put_contents($session_dir.'/'.$CTAspliceConstraitsLog.'.html', $tempr_string);
+    $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+    
+    print_console($session_dir.'/'.$CTAspliceConstraitsLog.'.txt', " CTA WAVE Baseline Splice Constraints Results");
 
 }
 
@@ -58,10 +88,10 @@ function checkSequentialSwSetMProfile($MediaProfDatabase)
     {
         for($j=0;$j<$adapt_count;$j++)
         {
-            if($MediaProf_PeriodAdSet[$i][$j]!==$MediaProf_PeriodAdSet[$i+1][$j])
-                $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets SHALL conform to the same CMAF Media Profile, voilated for Sw set ".$j." between CMAF Presentations ".$i." and  ".($i+1)." with media profiles- ".$MediaProf_PeriodAdSet[$i][$j]." and ".$MediaProf_PeriodAdSet[$i+1][$j]." respectively.\n";
-                $errorMsg.="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: Encoding parameters Shall be constrained such that CMAF Fragments of following Switching Set can be decoded by a decoder configured for previous Switching Set without reinitialization, voilated for Sw set ".$j." between CMAF Presentations ".$i." and  ".($i+1)." as Media Profile found are ".$MediaProf_PeriodAdSet[$i][$j]." and ".$MediaProf_PeriodAdSet[$i+1][$j]." respectively.\n";
-
+            if($MediaProf_PeriodAdSet[$i][$j]!==$MediaProf_PeriodAdSet[$i+1][$j]){
+                $errorMsg="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets SHALL conform to the same CMAF Media Profile, voilated for Sw set ".$j." between CMAF Presentations ".$i." and  ".($i+1)." with media profiles- '".$MediaProf_PeriodAdSet[$i][$j]."' and '".$MediaProf_PeriodAdSet[$i+1][$j]."' respectively.\n";
+                $errorMsg.="###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: Encoding parameters Shall be constrained such that CMAF Fragments of following Switching Set can be decoded by a decoder configured for previous Switching Set without reinitialization, voilated for Sw set ".$j." between CMAF Presentations ".$i." and  ".($i+1)." as Media Profile found are '".$MediaProf_PeriodAdSet[$i][$j]."' and '".$MediaProf_PeriodAdSet[$i+1][$j]."' respectively.\n";
+            }
         }
     }
     return $errorMsg;

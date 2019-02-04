@@ -53,7 +53,6 @@ function CTASelectionSet()
         return;
     }
     //fprintf($opfile, "**Selection Set conformance check: \n\n");
-    $MediaProfDatabase=array();
     $adapts = $mpd_features['Period'][$current_period]['AdaptationSet'];
     $result=CTACheckSelectionSet(sizeof($adapts),$session_dir,$adaptation_set_template,$opfile);
     $infoResult=CTACheckSingleInitSwSet(sizeof($adapts),$session_dir,$adaptation_set_template);
