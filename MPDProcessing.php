@@ -179,9 +179,11 @@ function process_MPD(){
         if(!$ctawave_conformance)
             break;
         
+        
         $current_period++;
     }
-    //CTABaselineSpliceChecks();
+    if($ctawave_conformance && $current_period>=1)
+        $return_arr = $ctawave_function_name($ctawave_when_to_call[2]);
     
     session_close();
     $send_string = json_encode($file_error);
