@@ -31,7 +31,9 @@ function CTABaselineSpliceChecks()
     $error=checkAudioChannelSplicePoint($session_dir,$MediaProfDatabase, $adaptation_set_template,$reprsentation_template);
     fwrite($opfile, $error);
     
-     fclose($opfile);
+    fclose($opfile);
+    
+    WAVEProgramChecks();
     
     $temp_string = str_replace(array('$Template$'),array($CTAspliceConstraitsLog),$string_info);
     file_put_contents($session_dir.'/'.$CTAspliceConstraitsLog.'.html',$temp_string);
@@ -117,6 +119,9 @@ function checkDiscontinuousSplicePoints($session_dir, $MediaProfDatabase, $adapt
                     $baseMediaDecodeTime_p1=$tfdt->getAttribute("baseMediaDecodeTime");
                     $trun=$xml_rep_P1->getElementsByTagName("trun")->item($moof_len-1);
                     $cummulatedSampleDuration_p1=$trun->getAttribute("cummulatedSampleDuration");
+                    $mdhd=$xml_rep_P1->getElementsByTagName("mdhd")->item(0);
+                    $timescale_1=$mdhd->getAttribute("timescale");
+                    round($baseMediaDecodeTime_p1/$timescale, 2);
                 }
             }
             $xml_rep_P2 = get_DOM($session_dir.'/Period'.($i+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
@@ -126,10 +131,12 @@ function checkDiscontinuousSplicePoints($session_dir, $MediaProfDatabase, $adapt
                 {
                     $tfdt=$xml_rep_P2->getElementsByTagName("tfdt")->item(0);
                     $baseMediaDecodeTime_p2=$tfdt->getAttribute("baseMediaDecodeTime");
+                    $mdhd=$xml_rep_P2->getElementsByTagName("mdhd")->item(0);
+                    $timescale_2=$mdhd->getAttribute("timescale");
                     
                 }
-                if($baseMediaDecodeTime_p2!=$baseMediaDecodeTime_p1+$cummulatedSampleDuration_p1)
-                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can be discontinuous, and it is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with baseMediaDecodeTime- ".($baseMediaDecodeTime_p1+$cummulatedSampleDuration_p1)." and ".$baseMediaDecodeTime_p2." respectively.\n";
+                if(($baseMediaDecodeTime_p2/$timescale_2)!=(($baseMediaDecodeTime_p1+$cummulatedSampleDuration_p1)/$timescale_1))
+                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can be discontinuous, and it is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with baseMediaDecodeTime- ".(($baseMediaDecodeTime_p1+$cummulatedSampleDuration_p1)/$timescale_1)." and ".($baseMediaDecodeTime_p2/$timescale_2)." respectively.\n";
 
                 
             }
@@ -428,19 +435,23 @@ function checkPicAspectRatioSplicePoint($session_dir,$MediaProfDatabase, $adapta
             $xml_rep_P1 = get_DOM($session_dir.'/Period'.$i.'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P1){
                 $tkhd=$xml_rep_P1->getElementsByTagName("tkhd")->item(0);
-                $par_p1=$tkhd->getAttribute("width")/($tkhd->getAttribute("height"));
+                $hdlr=$xml_rep_P1->getElementsByTagName("hdlr")->item(0)->getAttribute("handler_type");
+                if($hdlr=="vide")
+                    $par_p1=$tkhd->getAttribute("width")/($tkhd->getAttribute("height"));
                     
             }
             $xml_rep_P2 = get_DOM($session_dir.'/Period'.($i+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
             if($xml_rep_P2){
                 $tkhd=$xml_rep_P2->getElementsByTagName("tkhd")->item(0);
-                $par_p2=$tkhd->getAttribute("width")/($tkhd->getAttribute("height"));
+                $hdlr=$xml_rep_P2->getElementsByTagName("hdlr")->item(0)->getAttribute("handler_type");
+                if($hdlr=="vide"){
+                    $par_p2=$tkhd->getAttribute("width")/($tkhd->getAttribute("height"));
 
+            
+                    if($par_p1!=$par_p2)
+                        $errorMsg="###Warning: WAVE Content Spec 2018Ed-Section 7.2.2: 'Picture Aspect Ratio (PAR) Should be the same between Sequential Sw Sets at the Splice point', violated for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with - PAR ".$par_p1." and ".$par_p2.".\n";
+                }
             }
-            if($par_p1!=$par_p2)
-                $errorMsg="###Warning: WAVE Content Spec 2018Ed-Section 7.2.2: 'Picture Aspect Ratio (PAR) Should be the same between Sequential Sw Sets at the Splice point', violated for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with - PAR ".$par_p1." and ".$par_p2.".\n";
-
-              
         }   
     }
     return $errorMsg;
