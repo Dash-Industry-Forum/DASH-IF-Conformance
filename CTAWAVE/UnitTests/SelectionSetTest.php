@@ -15,7 +15,7 @@
 
 declare(strict_types=1);
 require_once '../CTAWAVE_SelectionSet.php';
-include(dirname(__FILE__)."/../../Utils/Load.php");
+include(dirname(__FILE__)."/../../../Utils/Load.php");
 
 use PHPUnit\Framework\TestCase;
 
@@ -50,5 +50,20 @@ final class SelectionSetTest extends TestCase
         $adaptation_set_template='Adapt$AS$';
         $outfile=fopen("out.txt","w");
         $this->assertNotContains("no Switching Set found conforming to WAVE", CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$outfile));
+    }
+    
+    public function testSingleInitSwSet()
+    {
+        $adapts_count=1;
+        $session_dir="Selection_set_examples/SwSetSingleInit";
+        $adaptation_set_template='Adapt$AS$';
+        $this->assertContains("reinitialization not req on Track switches', and found CMAF common header", CTACheckSingleInitSwSet($adapts_count,$session_dir,$adaptation_set_template));
+    }
+    public function testNoSingleInitSwSet()
+    {
+        $adapts_count=1;
+        $session_dir="Selection_set_examples/SelSetVideoWaveSwSet";
+        $adaptation_set_template='Adapt$AS$';
+        $this->assertNotContains("reinitialization not req on Track switches', and found CMAF common header", CTACheckSingleInitSwSet($adapts_count,$session_dir,$adaptation_set_template));
     }
 }

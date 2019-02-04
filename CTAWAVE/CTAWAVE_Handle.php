@@ -23,6 +23,8 @@ function CTAWAVE_Handle($request){
             $return_val = CTASelectionSet();
             $return_val = CTAPresentation();
             break;
+        case 'Period' :
+             $return_val= CTABaselineSpliceChecks();
         default:
             break;
     }

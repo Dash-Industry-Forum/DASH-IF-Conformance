@@ -111,7 +111,7 @@ function CTACheckPresentation($adapts_count,$session_dir,$adaptation_set_templat
 
             if(count(array_unique($SwSet_MP)) === 1)
             {
-                if($handler_type==="vide" && array_unique($SwSet_MP)[0]==="AVC_HD"){
+                if($handler_type==="vide" && array_unique($SwSet_MP)[0]==="HD"){
                         $cfhdVideoSwSetFound=1;
                 }elseif($handler_type=="soun" && array_unique($SwSet_MP)[0]==="AAC_Core"){
                         $caacAudioSwSetFound=1;

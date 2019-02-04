@@ -16,11 +16,15 @@
 include 'CTAWAVE_Handle.php';
 include 'CTAWAVE_SelectionSet.php';
 include 'CTAWAVE_PresentationProfile.php';
+include 'CTAWAVE_BaselineSpliceChecks.php';
+include 'CTAWAVE_Programs.php';
 
 $ctawave_function_name = 'CTAWAVE_Handle';
-$ctawave_when_to_call = array( 'Tracks','AdaptationSet');
+$ctawave_when_to_call = array( 'Tracks','AdaptationSet','Period');
 $CTAselectionset_infofile = 'SelectionSet_infofile_ctawave';
 $CTApresentation_infofile = 'Presentation_infofile_ctawave';
+$CTAspliceConstraitsLog='SpliceConstraints_infofile_ctawave';
+$MediaProfDatabase=array();
 
 function CTAFlags(){
     global $additional_flags;
