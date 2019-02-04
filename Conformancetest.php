@@ -1772,7 +1772,8 @@ function tonrightclick(id)
 });
     aPos=event.clientX;//position of the x coordinate of the right click point in terms of pixels.
     bPos=event.clientY;//position of the y coordinate of the right click point in terms of pixels.
-    
+    var scrollTop = $(window).scrollTop() ;
+    bPos = bPos + scrollTop;
     var urlto="";
     var position = kidsloc.indexOf(id);
     urlto=urlarray[position];
@@ -1783,7 +1784,7 @@ function tonrightclick(id)
         var textname = htmlname.split(".")[0] + ".txt";
         var textloc = window.location.href + "/../" + urlto.split(".")[0] + ".txt";
         var arrayurl= textloc.split(".");
-    if(intvariable==false && arrayurl[3]!=="/Estimate"){//if intvariable is false execute 
+        if(intvariable==false && arrayurl[3]!=="/Estimate"){//if intvariable is false execute 
         downloadButtonHandle = document.createElement("BUTTON");//create a dynamic button
         var t = document.createTextNode("click to download");//put this text in to the button
         downloadButtonHandle.appendChild(t);
