@@ -34,7 +34,7 @@ $error_message = 1;
 $warning_message = 1;
 $info_message = 1;
 $suppressatomlevel = 0;
-$profileCommandLine='';
+$profileCommandLine=array();
 
 # HLS variable
 $hls_manifest = 0;
@@ -73,6 +73,7 @@ $hbbtv_dvb_crossvalidation_logfile = '';
 $ctawave_conformance = false;
 $CTApresentation_infofile = '';
 $CTAselectionset_infofile = '';
+$CTAspliceConstraitsLog = '';
 
 if (isset($_POST['urlcode'])){
     $url_array = json_decode($_POST['urlcode']);
