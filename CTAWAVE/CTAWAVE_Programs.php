@@ -46,7 +46,7 @@ function checkCMFHDBaselineConstraints($MediaProfDatabase, $session_dir,$adaptat
     {
         $adapts_count=sizeof($MediaProfDatabase[$i]);
         $opfile=fopen("temp.txt","w"); // This file will not be used.
-        $presentationProfile=CTACheckPresentation($adapts_count,$session_dir.'/Period'.$i,$adaptation_set_template,$opfile,$i);
+        $presentationProfile=CTACheckPresentation($adapts_count,$session_dir,$adaptation_set_template,$opfile,$i);
         array_push($presentationProfileArray,$presentationProfile );
     }
     if(!(count(array_unique($presentationProfileArray))===1 && array_unique($presentationProfileArray)[0]=="CMFHD"))
