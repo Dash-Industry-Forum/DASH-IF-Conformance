@@ -372,7 +372,7 @@ OSErr Validate_minf_Atom( atomOffsetEntry *aoe, void *refcon )
 		
                 case 'subt':
 			// Process 'sthd' atoms
-                        if(vg.cmaf || vg.dvb || vg.hbbtv ){
+                        if(vg.cmaf || vg.dvb || vg.hbbtv || vg.ctawave){
                             atomerr = ValidateAtomOfType( 'sthd',kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
                                     Validate_sthd_Atom, cnt, list, nil );
                             if (!err) err = atomerr;
@@ -2000,7 +2000,7 @@ OSErr Validate_traf_Atom( atomOffsetEntry *aoe, void *refcon )
         Validate_tfdt_Atom, cnt, list, trafInfo );
     if (!err) err = atomerr;
     
-    if(vg.cmaf){
+    if(vg.cmaf || vg.ctawave){
         atomerr = ValidateAtomOfType( 'senc', 0, 
             Validate_senc_Atom, cnt, list, trafInfo );
         if (!err) err = atomerr;
