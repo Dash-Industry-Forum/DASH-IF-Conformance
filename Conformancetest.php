@@ -506,7 +506,6 @@
         <p align="center"></p>
         <p id="par" class="sansserif" style="visibility:hidden;">Loading....</p>
         <p id="profile" class="sansserif" style="visibility:hidden;">Profiles: </p>
-        <a id="list" href="url" target="_blank" style="visibility:hidden;" >Feature list</a>
     </div>
     
     <br><br>
@@ -799,7 +798,6 @@ function submit()
     setStatusTextlabel("Processing...");
     document.getElementById("btn8").disabled="true";
     document.getElementById("drop_div").disabled="true";
-    document.getElementById('list').style.visibility='hidden';
     //document.getElementById('img').style.visibility='visible';
     //document.getElementById('par').style.visibility='visible';
     //Generate a random folder name for results in "temp" folder
@@ -894,6 +892,14 @@ function mpdProgress(){
 
         if(!mpdprocessed){
             mpdprocessed = true;
+            
+            automate(mpdresult_y, mpdresult_x, 'Feature list');
+            tree.setItemImage2(mpdresult_x, 'csh_winstyle/iconText.gif', 'csh_winstyle/iconText.gif', 'csh_winstyle/iconText.gif');
+            kidsloc.push(mpdresult_x);
+            var currentpath = window.location.pathname;
+            currentpath = currentpath.substring(0, currentpath.lastIndexOf('/'));
+            urlarray.push(currentpath+'/temp/'+dirid+'/featuretable.html');
+            mpdresult_x++;
 
             automate(mpdresult_y, mpdresult_x, log_brancName);
             tree.setItemImage2(mpdresult_x, 'csh_winstyle/iconText.gif', 'csh_winstyle/iconText.gif', 'csh_winstyle/iconText.gif');
@@ -991,11 +997,6 @@ function processmpdresults()
     }
 
     // Get the number of AdaptationSets, Representations and Periods.
-    var currentpath = window.location.pathname;
-    currentpath = currentpath.substring(0, currentpath.lastIndexOf('/'));
-    document.getElementById("list").href=currentpath+'/temp/'+dirid+'/featuretable.html';
-    document.getElementById('list').style.visibility='visible';
-
     var  Treexml = xmlDoc_progress.getElementsByTagName("Representation");
     if (Treexml.length==0){
         var complete=xmlDoc_progress.getElementsByTagName("completed");
@@ -1062,7 +1063,6 @@ function processmpdresults()
     clearInterval(treeTimer);
     progressSegmentsTimer = setInterval(function(){progress()},400);
     document.getElementById('par').style.visibility='visible';
-    document.getElementById('list').style.visibility='visible';
 }
 
 function progress()
