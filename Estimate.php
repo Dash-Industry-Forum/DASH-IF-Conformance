@@ -617,13 +617,13 @@
                             if(currentBandwidth > bandwidth && mpd_val_conf)
                                 currentBandwidth = bandwidth;
                             document.getElementById("field2").value = Math.ceil(currentBandwidth);
-                            document.getElementById("marginprint").innerHTML = "Estimation margin 50bps";
+                            //document.getElementById("marginprint").innerHTML = "Estimation margin 50bps";
                         }
                         else if(radio == "MinBufferTime"){
                             if(minBufferTime > MBT && mpd_val_conf)
                                 minBufferTime = MBT;
                             document.getElementById("field1").value = minBufferTime.toFixed(4);
-                            document.getElementById("marginprint").innerHTML = " Estimation margin 100 msec";
+                            //document.getElementById("marginprint").innerHTML = " Estimation margin 100 msec";
                         }
                     }                        
                 }

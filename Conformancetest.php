@@ -865,6 +865,7 @@ function pollingProgress()
         }]
     });
     mpdTimer = setInterval(function(){mpdProgress()},50);
+    adjustFooter();
 }
 
 var mpd_node_index = 0;
@@ -953,6 +954,7 @@ function mpdProgress(){
         }
         log_brancName = "mpd error log";
     }
+    adjustFooter();
 }
 
 function addToTree(button){
