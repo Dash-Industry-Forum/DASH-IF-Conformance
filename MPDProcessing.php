@@ -127,7 +127,7 @@ function process_MPD(){
     }
     
     $ResultXML = $progress_xml->addChild('Results');
-    for ($i1 = 0; $i1 < (($ctawave_conformance) ? sizeof($mpd_features['Period']) : 1); $i1++){
+    for ($i1 = 0; $i1 < sizeof($mpd_features['Period']); $i1++){
         $PeriodXML = $ResultXML->addChild('Period');
         
         $period_info = current_period();
@@ -148,6 +148,10 @@ function process_MPD(){
                 $RepXML->addAttribute('url', $str);
             }
         }
+        
+        if($mpd_features['type'] === 'dynamic')
+            break;
+        
         $current_period++;
     }
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
@@ -175,11 +179,6 @@ function process_MPD(){
         
         $period = $mpd_features['Period'][$current_period];
         processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML,$segment_urls);
-        
-        if(!$ctawave_conformance)
-            break;
-        
-        
         $current_period++;
     }
     if($ctawave_conformance && $current_period>=1)
@@ -290,9 +289,9 @@ function check_before_segment_validation($result_for_json){
         $supplementalScheme=$supplemental->item(0)->getAttribute('schemeIdUri');
         if(($supplementalScheme === 'urn:mpeg:dash:chaining:2016') || ($supplementalScheme ==='urn:mpeg:dash:fallback:2016')){
             $MPDChainingURL=$supplemental->item(0)->getAttribute('value');
+            $progress_xml->MPDChainingURL=$MPDChainingURL;
+            $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
         }
-        $progress_xml->MPDChainingURL=$MPDChainingURL;
-        $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
     }
     
     if($mpd_dom->getElementsByTagName('SegmentTemplate')->length != 0 && $mpd_features['type'] == 'dynamic' && $mpd_dom->getElementsByTagName('SegmentTimeline')->length != 0){
