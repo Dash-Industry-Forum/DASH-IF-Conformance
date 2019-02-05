@@ -8,7 +8,7 @@
 
 function CTABaselineSpliceChecks()
 {
-    global $MediaProfDatabase, $session_dir, $adaptation_set_template,$reprsentation_template,$CTAspliceConstraitsLog;
+    global $MediaProfDatabase, $session_dir, $string_info, $progress_xml, $progress_report, $adaptation_set_template,$reprsentation_template, $CTAspliceConstraitsLog;
     $opfile="";
     if(!($opfile = open_file($session_dir . '/' . $CTAspliceConstraitsLog . '.txt', 'w'))){
         echo "Error opening/creating SpliceConstraints conformance check file: "."./SpliceConstraints_infofile_ctawave.txt";
