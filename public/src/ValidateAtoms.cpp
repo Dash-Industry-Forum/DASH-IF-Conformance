@@ -4543,7 +4543,7 @@ OSErr Validate_tenc_Atom( atomOffsetEntry *aoe, void *refcon )
     
     vg.tencInInit=true;// As the 'tenc' box is present in moov box (initialization segment).
     
-    if(vg.cmaf && default_IsEncrypted!=1){
+    if((vg.ctawave || vg.cmaf) && default_IsEncrypted!=1){
         errprint("CMAF Check violated : Section 8.2.3.2. \"In an encrypted Track, the isProtected flag in the TrackEncryptionBox SHALL be set to 1.\",found %ld \n",default_IsEncrypted);
     }
     
