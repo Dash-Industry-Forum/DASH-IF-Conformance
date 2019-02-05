@@ -8,6 +8,7 @@
 declare(strict_types=1);
 require_once '../CTAWAVE_Programs.php';
 require_once '../CTAWAVE_PresentationProfile.php';
+require_once '../CTAWAVE_SelectionSet.php';
 include(dirname(__FILE__)."/../../../Utils/Load.php");
 
 use PHPUnit\Framework\TestCase;
