@@ -34,7 +34,6 @@
             {
                 background-color: #fff;
                 background-size: 100% 1.2em;
-                
             }
             
             /* The container */
@@ -101,116 +100,114 @@
             /* Style the indicator (dot/circle) */
             .container .checkmark:after 
             {
-                    top: 9px;
-                    left: 9px;
-                    width: 8px;
-                    height: 8px;
-                    border-radius: 50%;
-                    background: white;
+                top: 9px;
+                left: 9px;
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: white;
             }
 
             /*for the button*/
             .button 
             {
-        background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #007bff), color-stop(1, #007bff) );
-        filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#bddbfa', endColorstr='#80b5ea');
-        background-color:#bddbfa;
-      
-        border: 1px solid #007bff;
-        color: #fff;
-        font-size:1vw;
-        text-align:center;
-        height:30%;
-        line-height:90%;
-        position:absolute;
-        margin-left:100%;
-        margin-top: -0.7%;
-      
-        border-radius: 5px;
-        width:7vw;
-        cursor: pointer;
+                background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #007bff), color-stop(1, #007bff) );
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#bddbfa', endColorstr='#80b5ea');
+                background-color:#bddbfa;
 
+                border: 1px solid #007bff;
+                color: #fff;
+                font-size:1vw;
+                text-align:center;
+                height:30%;
+                line-height:90%;
+                position:absolute;
+                margin-left:100%;
+                margin-top: -0.7%;
+
+                border-radius: 5px;
+                width:7vw;
+                cursor: pointer;
             }
 
             .button:hover 
             {
-            background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #0069d9), color-stop(1, #0069d9) );
-            background:-moz-linear-gradient( center top, #0062cc 5%, #0062cc 100% );
-            filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#80b5ea', endColorstr='#bddbfa');
-            background-color:#80b5ea;
+                background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #0069d9), color-stop(1, #0069d9) );
+                background:-moz-linear-gradient( center top, #0062cc 5%, #0062cc 100% );
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#80b5ea', endColorstr='#bddbfa');
+                background-color:#80b5ea;
             }
 
             .button:active 
             {
-              transform: translateY(4px);
+                transform: translateY(4px);
             }
+            
             .buttonone 
             {
-        background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #007bff), color-stop(1, #007bff) );
-        filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#bddbfa', endColorstr='#80b5ea');
-        background-color:#bddbfa;
-        
-        border: 1px solid #007bff;
-        color: #fff;
-        font-size:1vw;
-        text-align:center;
-        height:30%;
-        line-height:90%;
-        position:absolute;
-        margin-left:0%;
-        margin-top: -0.7%;
-      
-        border-radius: 5px;
-       width: 7vw;
-       cursor: pointer;
+                background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #007bff), color-stop(1, #007bff) );
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#bddbfa', endColorstr='#80b5ea');
+                background-color:#bddbfa;
 
+                border: 1px solid #007bff;
+                color: #fff;
+                font-size:1vw;
+                text-align:center;
+                height:30%;
+                line-height:90%;
+                position:absolute;
+                margin-left:0%;
+                margin-top: -0.7%;
+
+                border-radius: 5px;
+                width: 7vw;
+                cursor: pointer;
             }
 
             .buttonone:hover 
             {
-            background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #0069d9), color-stop(1, #0069d9) );
-            background:-moz-linear-gradient( center top, #0062cc 5%, #0062cc 100% );
-            filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#80b5ea', endColorstr='#bddbfa');
-            background-color:#80b5ea;
+                background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #0069d9), color-stop(1, #0069d9) );
+                background:-moz-linear-gradient( center top, #0062cc 5%, #0062cc 100% );
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#80b5ea', endColorstr='#bddbfa');
+                background-color:#80b5ea;
             }
 
             .buttonone:active 
             {
-            transform: translateY(4px);
+                transform: translateY(4px);
             }
             .buttontwo 
             {
-        background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #007bff), color-stop(1, #007bff) );
-        filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#bddbfa', endColorstr='#80b5ea');
-        background-color:#bddbfa;
-      
-        border: 1px solid #007bff;
-        color: #fff;
-        height:30%;
-        font-size:1vw;
-        text-align:center;
-        line-height:90%;
-        position:absolute;
-        margin-left:50%;
-        margin-top: -0.7%;
-        
-        border-radius: 5px;
-         width: 7vw; 
-         cursor: pointer;
+                background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #007bff), color-stop(1, #007bff) );
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#bddbfa', endColorstr='#80b5ea');
+                background-color:#bddbfa;
 
+                border: 1px solid #007bff;
+                color: #fff;
+                height:30%;
+                font-size:1vw;
+                text-align:center;
+                line-height:90%;
+                position:absolute;
+                margin-left:50%;
+                margin-top: -0.7%;
+
+                border-radius: 5px;
+                width: 7vw; 
+                cursor: pointer;
             }
 
             .buttontwo:hover 
             {
-             background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #0069d9), color-stop(1, #0069d9) );
-             background:-moz-linear-gradient( center top, #0062cc 5%, #0062cc 100% );
-             filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#80b5ea', endColorstr='#bddbfa');
-             background-color:#80b5ea;
+                background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #0069d9), color-stop(1, #0069d9) );
+                background:-moz-linear-gradient( center top, #0062cc 5%, #0062cc 100% );
+                filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#80b5ea', endColorstr='#bddbfa');
+                background-color:#80b5ea;
             }
 
             .buttontwo:active 
             {
-            transform: translateY(4px);
+                transform: translateY(4px);
             }
             /*.button:disabled {
                     background-color: #3e7e41;
@@ -245,7 +242,7 @@
                 position: absolute;
                 left:25%;
                 top: 25%;
-                buttom:25%
+                bottom:25%
                 
             }
             
@@ -262,36 +259,33 @@
                 position: absolute;
                 height: 50%;
                 width: 30%;
-                top:15%;
-                buttom:35%; 
-                left: 35%;
+                top:25%;
+                bottom:25%; 
+                left: 25%;
             }
             .writingone
             {
-              font-size: 1.2vw;
-              font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
-              display: inline-block;
+                font-size: 1.2vw;
+                font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
+                display: inline-block;
             }
              .writingtwo
             {
-              font-size: 1.2vw; 
-              font-family:Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif ;
-              display: inline-block;
-
+                font-size: 1.2vw; 
+                font-family:Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif ;
+                display: inline-block;
             }
              .writingthree
             {
-              font-size: 0.8vw; 
-              font-family:Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif; 
-              display: inline-block;
-
+                font-size: 0.8vw; 
+                font-family:Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif; 
+                display: inline-block;
             }
              .writingfour
             {
-              font-size: 0.8vw; 
-              font-family:Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif; 
-              display: inline-block;
-
+                font-size: 0.8vw; 
+                font-family:Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif; 
+                display: inline-block;
             }
         </style>
     </head>
@@ -316,6 +310,8 @@
             <button class="buttonone" id="BTNONE" onclick="btnoneFunction()">Manually edit values</button>
             <button class="buttontwo" id="BTNTWO" onclick="btntwoFunction()">Reset to MPD values</button>
             <button class="button" id="BTN" onclick="btnFunction()">Estimate</button>
+            <br><br><br><br>
+            <p class="writingfour" style="color:red;" id="marginprint"></p>
             </div>
         </div>  
         
@@ -330,8 +326,7 @@
             wi = document.body.scrollWidth;
             $(document).ready(function () 
             {
-                
-                  function loadXMLDoc(dname)
+                function loadXMLDoc(dname)
                 {
                     if (window.XMLHttpRequest)
                     {
@@ -348,18 +343,17 @@
                 
                 var location = "<?php echo $locate ?>";
                 Sample_data = loadXMLDoc(location);
-                    if (Sample_data !== null)
-                    {
-                        defBW = parseFloat(Sample_data.getElementsByTagName("MPDInfo").item(0).getAttribute("bandwidth"));
-                        defMBT = parseFloat(Sample_data.getElementsByTagName("MPDInfo").item(0).getAttribute("minBufferTime"));
-                    }
-               
+                if (Sample_data !== null)
+                {
+                    defBW = parseFloat(Sample_data.getElementsByTagName("MPDInfo").item(0).getAttribute("bandwidth"));
+                    defMBT = parseFloat(Sample_data.getElementsByTagName("MPDInfo").item(0).getAttribute("minBufferTime"));
+                }
+                
                 document.getElementById("field1").value = defMBT;
                 document.getElementById("field2").value = defBW;
-               
             }); 
          
-                function btnFunction(){
+            function btnFunction(){
                 MBT = document.getElementById("field1").value; 
                 BW = document.getElementById("field2").value;        
                 ProcessSampleData(Sample_data, MBT, BW);
@@ -374,10 +368,10 @@
                 changebuttoncolor("BTNONE");
                 changebuttoncolor("BTNTWO");
                 }
-                };
+            };
             
-                placeholderactivator(true);
-                function btnoneFunction(){
+            placeholderactivator(true);
+            function btnoneFunction(){
                 placeholderactivator(false)
                 $('#field1, #field2').focus(function() {$( this ).css( "display", "inline" );});
                 placeholdercolor();
@@ -385,9 +379,10 @@
                 cursoradjust("BTN", "auto");
                 changebuttoncolor("BTN");
                 changebuttoncolor("BTNTWO");
-                };
+                document.getElementById("marginprint").innerHTML = "";
+            };
                 
-                function btntwoFunction(){
+            function btntwoFunction(){
                 document.getElementById("field1").value = defMBT;
                 document.getElementById("field2").value = defBW; 
                 placeholderactivator(true);
@@ -396,14 +391,14 @@
                 changebuttoncolor("BTNONE");
                 changebuttoncolor("BTN");
                 cursoradjust("BTN", "auto");
-               }
+                document.getElementById("marginprint").innerHTML = "";
+            }
                 
-                function placeholderactivator(activate){
+            function placeholderactivator(activate){
                 $('#field1, #field2').attr('disabled',activate);
-                }
+            }
                 
-                function changebuttoncolor(buttontype){
-                
+            function changebuttoncolor(buttontype){
                 document.getElementById(buttontype).style.background = "-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #007bff), color-stop(1, #007bff) )";
                 document.getElementById(buttontype).style.filter="progid:DXImageTransform.Microsoft.gradient(startColorstr='#bddbfa', endColorstr='#80b5ea'";
                 document.getElementById(buttontype).style.backgroundColor = "#bddbfa";
@@ -424,14 +419,14 @@
                 document.getElementById(buttontype).style.border = "1px solid #007bff"; 
                 document.getElementById(buttontype).style.color = "#fff";
                 }
-                }
+            }
                 
-               function placeholdercolor(){
+            function placeholdercolor(){
                 document.getElementById("field1").style.backgroundColor= "#F8F8FF";
                 document.getElementById("field2").style.backgroundColor= "#F8F8FF";
-                }
+            }
                 
-               function turntogrey(buttontype){
+            function turntogrey(buttontype){
                
                 document.getElementById(buttontype).style.background= "#BEBEBE";
                 document.getElementById(buttontype).style.border = "1px solid #BEBEBE"; 
@@ -448,128 +443,124 @@
                 document.getElementById(buttontype).style.border = "1px solid #BEBEBE"; 
 
                 }
-                }
+            }
                 
-                function cursoradjust(buttontype, cursorstyle){
-                    document.getElementById(buttontype).style.pointerEvents = cursorstyle;
-                }
+            function cursoradjust(buttontype, cursorstyle){
+                document.getElementById(buttontype).style.pointerEvents = cursorstyle;
+            }
                 
                 
             var checkerone;
             var checkertwo;
             function ProcessSampleData(Sample_data, MBT, BW)
             {
-                 checkerone = document.getElementById("field1").value;
-                 checkertwo = document.getElementById("field2").value;
-                 varone = parseFloat(checkerone);
-                 vartwo = parseFloat(checkertwo);
-                     
+                checkerone = document.getElementById("field1").value;
+                checkertwo = document.getElementById("field2").value;
+                varone = parseFloat(checkerone);
+                vartwo = parseFloat(checkertwo);
+                mpd_val_conf = false;
                 
-                if (Sample_data !== null)
-                {
-                    if(checkerone == 0 || checkerone == " " || checkertwo == 0 || checkertwo == " " || isNaN(varone) || isNaN(vartwo) || varone != checkerone || vartwo != checkertwo ) {
-                alert("Please enter numbers other than zero for both boxes!");
-            
-            
-                }  else{
-                    var bandwidth, minBufferTime, timescale, initSize, announcedSAP, dataSizeToRemove, duration; // to be read from the xml file
+                if (Sample_data !== null){
+                    if(checkerone == 0 || checkerone == " " || checkertwo == 0 || checkertwo == " " || isNaN(varone) || isNaN(vartwo) || varone != checkerone || vartwo != checkertwo )
+                        alert("Please enter numbers other than zero for both boxes!");
+                    else{
+                        var bandwidth, minBufferTime, timescale, initSize, announcedSAP, dataSizeToRemove, duration; // to be read from the xml file
 
-                    bandwidth = BW;
-                    minBufferTime = MBT;
-                    initSize = parseFloat(Sample_data.getElementsByTagName("Representation").item(0).getAttribute("initSize"));
-                    timescale = parseFloat(Sample_data.getElementsByTagName("Representation").item(0).getAttribute("timescale"));
+                        bandwidth = BW;
+                        minBufferTime = MBT;
+                        initSize = parseFloat(Sample_data.getElementsByTagName("Representation").item(0).getAttribute("initSize"));
+                        timescale = parseFloat(Sample_data.getElementsByTagName("Representation").item(0).getAttribute("timescale"));
 
-                    var trackNonConforming = false;
-                    var currentBandwidth = bandwidth;
-                    var increment_factor = 2;
-                    var decrement_factor = 0.75;
-                    var upper_bound = 0;
-                    var lower_bound = 0;
-                    var done = false;
-                    var mod_val = 0; 
-                    var bufferFullness, lastOffset, timeNowInTicks, totalDataRemoved, totalBitsAdded; //get moofCount from counting the number of instances with annauncedSAP attribute
-                    var radio = $("input[name='radio']:checked").val();
+                        var trackNonConforming = false;
+                        var currentBandwidth = bandwidth;
+                        var increment_factor = 2;
+                        var decrement_factor = 0.75;
+                        var upper_bound = 0;
+                        var lower_bound = 0;
+                        var done = false;
+                        var mod_val = 0; 
+                        var bufferFullness, lastOffset, timeNowInTicks, totalDataRemoved, totalBitsAdded; //get moofCount from counting the number of instances with annauncedSAP attribute
+                        var radio = $("input[name='radio']:checked").val();
 
-                    do
-                    {  
-                        bufferFullness = currentBandwidth * minBufferTime; //bits (not Bytes)
-                        lastOffset = initSize;
-                        timeNowInTicks = minBufferTime * timescale;
-                        totalDataRemoved = 0;
-                        totalBitsAdded = 0;
-                        trackNonConforming = false;
+                        do
+                        {  
+                            bufferFullness = currentBandwidth * minBufferTime; //bits (not Bytes)
+                            lastOffset = initSize;
+                            timeNowInTicks = minBufferTime * timescale;
+                            totalDataRemoved = 0;
+                            totalBitsAdded = 0;
+                            trackNonConforming = false;
 
-                        for(var moof_index = 0; moof_index < Sample_data.getElementsByTagName("moof").length; moof_index ++)
-                        {
-                            var moof = Sample_data.getElementsByTagName("moof").item(moof_index);
-                            announcedSAP = moof.getAttribute("a"); 
-                            if (announcedSAP && bufferFullness > currentBandwidth * minBufferTime) //There is no buffer overflow for DASH buffer model, only case is on a SAP, as DASH spec. defines the requiremnt that the playback could be from any SAP and at the SAP, the buffer fullness is bandwidth*minBufferTime
-                                {
-                                    totalDataRemoved += ((bufferFullness - currentBandwidth * minBufferTime) / 8.0); //The clipped data, for debug information
-                                    bufferFullness = currentBandwidth * minBufferTime;
-                                }
-
-                            for(var traf_index = 0; traf_index < moof.getElementsByTagName("traf").length; traf_index ++)
-                            {    
-                                var traf = moof.getElementsByTagName("traf").item(traf_index);
-                                for(var trun_index = 0; trun_index < traf.getElementsByTagName("trun").length; trun_index ++)
-                                {    
-                                    var trun = traf.getElementsByTagName("trun").item(trun_index);
-                                    for(var sample_index = 0; sample_index < trun.getElementsByTagName("s").length; sample_index ++)  
+                            for(var moof_index = 0; moof_index < Sample_data.getElementsByTagName("moof").length; moof_index ++)
+                            {
+                                var moof = Sample_data.getElementsByTagName("moof").item(moof_index);
+                                announcedSAP = moof.getAttribute("a"); 
+                                if (announcedSAP && bufferFullness > currentBandwidth * minBufferTime) //There is no buffer overflow for DASH buffer model, only case is on a SAP, as DASH spec. defines the requiremnt that the playback could be from any SAP and at the SAP, the buffer fullness is bandwidth*minBufferTime
                                     {
-                                        var sample = trun.getElementsByTagName("s").item(sample_index);
-                                        dataSizeToRemove = parseFloat(sample.getAttribute("z"));
-                                        duration = parseFloat(sample.getAttribute("d"));
-                                        totalDataRemoved += dataSizeToRemove;
-                                        if ((dataSizeToRemove * 8) > bufferFullness) //Bufferfullness is in bits
-                                        {
-                                            if (!trackNonConforming) 
-                                            {
-                                                //if (currentBandwidth == bandwidth)
-                                                    //console.log("Buffer underrun conformance error: first (and only one reported here) for sample ", sample_index + 1," of run ", trun_index + 1, " of track fragment ", traf_index + 1, " of fragment ", moof_index + 1, ", bandwidth: ", currentBandwidth);
-                                                trackNonConforming = true;
-                                                break;
-                                            }                     
-                                        }
+                                        totalDataRemoved += ((bufferFullness - currentBandwidth * minBufferTime) / 8.0); //The clipped data, for debug information
+                                        bufferFullness = currentBandwidth * minBufferTime;
+                                    }
 
-                                        bufferFullness -= (dataSizeToRemove * 8);
-                                        bufferFullness += (currentBandwidth * ( duration / timescale));
-                                        totalBitsAdded += (currentBandwidth * (duration / timescale));
-                                        timeNowInTicks += duration;
+                                for(var traf_index = 0; traf_index < moof.getElementsByTagName("traf").length; traf_index ++)
+                                {    
+                                    var traf = moof.getElementsByTagName("traf").item(traf_index);
+                                    for(var trun_index = 0; trun_index < traf.getElementsByTagName("trun").length; trun_index ++)
+                                    {    
+                                        var trun = traf.getElementsByTagName("trun").item(trun_index);
+                                        for(var sample_index = 0; sample_index < trun.getElementsByTagName("s").length; sample_index ++)  
+                                        {
+                                            var sample = trun.getElementsByTagName("s").item(sample_index);
+                                            dataSizeToRemove = parseFloat(sample.getAttribute("z"));
+                                            duration = parseFloat(sample.getAttribute("d"));
+                                            totalDataRemoved += dataSizeToRemove;
+                                            if ((dataSizeToRemove * 8) > bufferFullness) //Bufferfullness is in bits
+                                            {
+                                                if (!trackNonConforming) 
+                                                {
+                                                    //if (currentBandwidth == bandwidth)
+                                                        //console.log("Buffer underrun conformance error: first (and only one reported here) for sample ", sample_index + 1," of run ", trun_index + 1, " of track fragment ", traf_index + 1, " of fragment ", moof_index + 1, ", bandwidth: ", currentBandwidth);
+                                                    trackNonConforming = true;
+                                                    break;
+                                                }                     
+                                            }
+
+                                            bufferFullness -= (dataSizeToRemove * 8);
+                                            bufferFullness += (currentBandwidth * ( duration / timescale));
+                                            totalBitsAdded += (currentBandwidth * (duration / timescale));
+                                            timeNowInTicks += duration;
+                                        }
+                                        if (trackNonConforming) break;
                                     }
                                     if (trackNonConforming) break;
                                 }
                                 if (trackNonConforming) break;
                             }
-                            if (trackNonConforming) break;
-                        }
 
-                        if(radio == "Bandwidth")
-                        {    
-                            if (trackNonConforming) // not passing with the current value
-                            {
-                                if(upper_bound == 0) // if it has yet to pass for the first time then increment
-                                    currentBandwidth *= increment_factor;
-                                else // it has already passed once and the upper bound was assigned so it goes here for first time when we find the lower bound
-                                {    
-                                    if(lower_bound == 0) // first time it doesn't pass after it has passed at least once so we can assign lower bound now
-                                    {    
-                                        lower_bound = currentBandwidth;
-                                        mod_val = upper_bound - lower_bound;
-                                    }
-                                    mod_val /= 2; 
-                                    currentBandwidth += mod_val; // to be eleborated more
-                                }
-                            }
-                            else // passing with the current value
-                            {
-                                if((lower_bound != 0) && (mod_val <= 50))
-                                    done = true;
-
-                                if (currentBandwidth == bandwidth)
-                                    done = true;
-                                else
+                            if(radio == "Bandwidth")
+                            {    
+                                if (trackNonConforming) // not passing with the current value
                                 {
+                                    if(upper_bound == 0) // if it has yet to pass for the first time then increment
+                                        currentBandwidth *= increment_factor;
+                                    else // it has already passed once and the upper bound was assigned so it goes here for first time when we find the lower bound
+                                    {    
+                                        if(lower_bound == 0) // first time it doesn't pass after it has passed at least once so we can assign lower bound now
+                                        {    
+                                            lower_bound = currentBandwidth;
+                                            mod_val = upper_bound - lower_bound;
+                                        }
+                                        mod_val /= 2; 
+                                        currentBandwidth += mod_val; // to be eleborated more
+                                    }
+                                }
+                                else // passing with the current value
+                                {
+                                    if((lower_bound != 0) && (mod_val <= 50))
+                                        done = true;
+
+                                    if (currentBandwidth == bandwidth)
+                                        mpd_val_conf = true;
+                                    
                                     if(upper_bound == 0) // assign only the first time the condition is fulfilled
                                         upper_bound = currentBandwidth;
                                     if(mod_val == 0)
@@ -580,35 +571,33 @@
                                         currentBandwidth -= mod_val;
                                     }
                                 }
+                                document.getElementById("field2").style.backgroundColor= "#98FB98";
                             }
-                            document.getElementById("field2").style.backgroundColor= "#98FB98";
-                        }
-                        else if(radio == "MinBufferTime")
-                        {
-                            if (trackNonConforming) // not passing with the current value
+                            else if(radio == "MinBufferTime")
                             {
-                                if(upper_bound == 0) // if it has yet to pass for the first time then increment
-                                    minBufferTime *= increment_factor;
-                                else // it has already passed once and the upper bound was assigned so it goes here for first time when we find the lower bound
-                                {    
-                                    if(lower_bound == 0) // first time it doesn't pass after it has passed at least once so we can assign lower bound now
-                                    {    
-                                        lower_bound = minBufferTime;
-                                        mod_val = upper_bound - lower_bound;
-                                    }
-                                    mod_val /= 2; 
-                                    minBufferTime += mod_val; // to be eleborated more
-                                }
-                            }
-                            else // passing with the current value
-                            {
-                                if((lower_bound != 0) && (mod_val <= 0.1))
-                                    done = true;
-
-                                if (minBufferTime == MBT)
-                                    done = true;
-                                else
+                                if (trackNonConforming) // not passing with the current value
                                 {
+                                    if(upper_bound == 0) // if it has yet to pass for the first time then increment
+                                        minBufferTime *= increment_factor;
+                                    else // it has already passed once and the upper bound was assigned so it goes here for first time when we find the lower bound
+                                    {    
+                                        if(lower_bound == 0) // first time it doesn't pass after it has passed at least once so we can assign lower bound now
+                                        {    
+                                            lower_bound = minBufferTime;
+                                            mod_val = upper_bound - lower_bound;
+                                        }
+                                        mod_val /= 2; 
+                                        minBufferTime += mod_val; // to be eleborated more
+                                    }
+                                }
+                                else // passing with the current value
+                                {
+                                    if((lower_bound != 0) && (mod_val <= 0.1))
+                                        done = true;
+
+                                    if (minBufferTime == MBT)
+                                        mpd_val_conf = true;
+                                    
                                     if(upper_bound == 0) // assign only the first time the condition is fulfilled
                                         upper_bound = minBufferTime;
                                     if(mod_val == 0)
@@ -619,22 +608,26 @@
                                         minBufferTime -= mod_val;
                                     }
                                 }
-                            }
-                            document.getElementById("field1").style.backgroundColor= "#98FB98";
-                        }    
-                    }
-                    while (!done); 
+                                document.getElementById("field1").style.backgroundColor= "#98FB98";
+                            }    
+                        }
+                        while (!done); 
 
-                    if(currentBandwidth != bandwidth)
-                        document.getElementById("field2").value = Math.ceil(currentBandwidth);                               
-                    else if(minBufferTime != MBT)
-                        document.getElementById("field1").value = minBufferTime.toFixed(4);
-                    else
-                        alert("No Buffer underrun conformance error detected!")
-                    
-                }                        
+                        if(radio == "Bandwidth"){
+                            if(currentBandwidth > bandwidth && mpd_val_conf)
+                                currentBandwidth = bandwidth;
+                            document.getElementById("field2").value = Math.ceil(currentBandwidth);
+                            document.getElementById("marginprint").innerHTML = "Estimation margin 50bps";
+                        }
+                        else if(radio == "MinBufferTime"){
+                            if(minBufferTime > MBT && mpd_val_conf)
+                                minBufferTime = MBT;
+                            document.getElementById("field1").value = minBufferTime.toFixed(4);
+                            document.getElementById("marginprint").innerHTML = " Estimation margin 100 msec";
+                        }
+                    }                        
+                }
             }
-    }    
         </script>
     </body>
 </html>

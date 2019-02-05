@@ -33,7 +33,6 @@
     <!--link rel="stylesheet" href="/resources/demos/style.css" /-->
 
     <link rel="STYLESHEET" type="text/css" href="tree/dhtmlxTree/codebase/dhtmlxtree.css">
-   
     <script type="text/javascript"  src="tree/dhtmlxTree/codebase/dhtmlxtree.js"></script>
     <script type="text/javascript" src="tree/dhtmlxTree/codebase/ext/dhtmlxtree_json.js"></script>
     
@@ -1066,7 +1065,7 @@ function processmpdresults()
 function progress()
 {
     if(periodid > totarr[0]){
-        clearInterval(progressSegmentsTimer);
+        clearTimeout(progressSegmentsTimer);
         setStatusTextlabel("Conformance test completed");
         finishTest();
         return;
