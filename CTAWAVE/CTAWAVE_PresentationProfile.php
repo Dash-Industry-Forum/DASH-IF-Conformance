@@ -23,7 +23,7 @@ function CTAPresentation()
             return;
     }
     $adapts = $mpd_features['Period'][$current_period]['AdaptationSet'];
-    $result= CTACheckPresentation(sizeof($adapts), $session_dir, $adaptation_set_template, $opfile);
+    $result= CTACheckPresentation(sizeof($adapts), $session_dir, $adaptation_set_template, $opfile,$current_period);
     fclose($opfile);
     
     $temp_string = str_replace(array('$Template$'),array($CTApresentation_infofile),$string_info);
@@ -50,9 +50,8 @@ function CTAPresentation()
     print_console($session_dir.'/Period'.$current_period.'/'.$CTApresentation_infofile.'.txt', "Period " . ($current_period+1) . " CTA WAVE Presentation Results");
 }
 
-function CTACheckPresentation($adapts_count,$session_dir,$adaptation_set_template,$opfile)
+function CTACheckPresentation($adapts_count,$session_dir,$adaptation_set_template,$opfile,$current_period)
 {
-    global $current_period;
     
     $cfhdVideoSwSetFound=0;$videoSelectionSetFound=0;
     $caacAudioSwSetFound=0;$audioSelectionSetFound=0;

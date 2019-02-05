@@ -29,7 +29,8 @@ final class SelectionSetTest extends TestCase
         $session_dir="Selection_set_examples/SelSetVideoNoWaveTracks";
         $adaptation_set_template='Adapt$AS$';
         $outfile=fopen("out.txt","w");
-        $this->assertContains("no Tracks found conforming to WAVE", CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$outfile));
+        $current_period=0;
+        $this->assertContains("no Tracks found conforming to WAVE", CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$outfile,$current_period));
     }
     //Test that no WAVE SwSet found in the SelSet. SwSet contains one WAVE track and one non-WAVE track.
     public function testNoWAVESwSetInSelSet()
@@ -38,7 +39,8 @@ final class SelectionSetTest extends TestCase
         $session_dir="Selection_set_examples/SelSetVideoNoWaveSwSet";
         $adaptation_set_template='Adapt$AS$';
         $outfile=fopen("out.txt","w");
-        $this->assertContains("no Switching Set found conforming to WAVE", CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$outfile));
+        $current_period=0;
+        $this->assertContains("no Switching Set found conforming to WAVE", CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$outfile,$current_period));
     }
     //
 
@@ -49,7 +51,8 @@ final class SelectionSetTest extends TestCase
         $session_dir="Selection_set_examples/SelSetVideoWaveSwSet";
         $adaptation_set_template='Adapt$AS$';
         $outfile=fopen("out.txt","w");
-        $this->assertNotContains("no Switching Set found conforming to WAVE", CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$outfile));
+        $current_period=0;
+        $this->assertNotContains("no Switching Set found conforming to WAVE", CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$outfile,$current_period));
     }
     
     public function testSingleInitSwSet()
