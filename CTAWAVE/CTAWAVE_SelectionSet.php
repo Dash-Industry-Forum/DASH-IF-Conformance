@@ -44,7 +44,7 @@ $MediaProfileAttributesSubtitle = array(
 function CTASelectionSet()
 {
     global $mpd_features,$session_dir,$CTAselectionset_infofile,$current_period,$adaptation_set_template, $opfile, $string_info, $progress_xml, $progress_report,
-            $MediaProfDatabase;
+            $MediaProfDatabase,$current_period;
     $opfile="";
     
     
@@ -54,7 +54,7 @@ function CTASelectionSet()
     }
     //fprintf($opfile, "**Selection Set conformance check: \n\n");
     $adapts = $mpd_features['Period'][$current_period]['AdaptationSet'];
-    $result=CTACheckSelectionSet(sizeof($adapts),$session_dir,$adaptation_set_template,$opfile);
+    $result=CTACheckSelectionSet(sizeof($adapts),$session_dir,$adaptation_set_template,$opfile,$current_period);
     $infoResult=CTACheckSingleInitSwSet(sizeof($adapts),$session_dir,$adaptation_set_template);
     fwrite($opfile,$infoResult);
     fclose($opfile);
@@ -83,9 +83,9 @@ function CTASelectionSet()
     print_console($session_dir.'/Period'.$current_period.'/'.$CTAselectionset_infofile.'.txt', "Period " . ($current_period+1) . " CTA WAVE Selection Set Results");
 }
 
-function CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$opfile)
+function CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$opfile,$current_period)
 {
-    global $MediaProfDatabase, $current_period,$profileCommandLine;
+    global $MediaProfDatabase, $profileCommandLine;
     $waveVideoTrackFound=0; $waveVideoSwSetFound=0;$videoSelectionSetFound=0;
     $waveAudioTrackFound=0; $waveAudioSwSetFound=0;$audioSelectionSetFound=0;
     $waveSubtitleTrackFound=0; $waveSubtitleSwSetFound=0;$subtitleSelectionSetFound=0;

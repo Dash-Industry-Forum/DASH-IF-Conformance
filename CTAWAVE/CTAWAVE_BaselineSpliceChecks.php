@@ -121,7 +121,6 @@ function checkDiscontinuousSplicePoints($session_dir, $MediaProfDatabase, $adapt
                     $cummulatedSampleDuration_p1=$trun->getAttribute("cummulatedSampleDuration");
                     $mdhd=$xml_rep_P1->getElementsByTagName("mdhd")->item(0);
                     $timescale_1=$mdhd->getAttribute("timescale");
-                    round($baseMediaDecodeTime_p1/$timescale, 2);
                 }
             }
             $xml_rep_P2 = get_DOM($session_dir.'/Period'.($i+1).'/'.$adapt_dir.'/'.$rep_dir.'.xml', 'atomlist');
