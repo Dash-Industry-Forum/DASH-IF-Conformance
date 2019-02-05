@@ -33,7 +33,6 @@
     <!--link rel="stylesheet" href="/resources/demos/style.css" /-->
 
     <link rel="STYLESHEET" type="text/css" href="tree/dhtmlxTree/codebase/dhtmlxtree.css">
-    <script type="text/javascript" src="tree/dhtmlxTree/codebase/dhtmlx_deprecated.js"></script>
     <script type="text/javascript"  src="tree/dhtmlxTree/codebase/dhtmlxtree.js"></script>
     <script type="text/javascript" src="tree/dhtmlxTree/codebase/ext/dhtmlxtree_json.js"></script>
     
@@ -93,6 +92,7 @@
             submit();
         }
     }
+
 
     function fixImage(id){
         switch(tree.getLevel(id)){
@@ -1068,6 +1068,7 @@ function progress()
         clearTimeout(progressSegmentsTimer);
         setStatusTextlabel("Conformance test completed");
         finishTest();
+        return;
     }
     
     xmlDoc_progress=loadXMLDoc("temp/"+dirid+"/progress.xml");
