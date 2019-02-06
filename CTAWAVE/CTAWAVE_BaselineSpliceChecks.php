@@ -135,7 +135,7 @@ function checkDiscontinuousSplicePoints($session_dir, $MediaProfDatabase, $adapt
                     
                 }
                 if(($baseMediaDecodeTime_p2/$timescale_2)!=(($baseMediaDecodeTime_p1+$cummulatedSampleDuration_p1)/$timescale_1))
-                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can be discontinuous, and it is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with baseMediaDecodeTime- ".(($baseMediaDecodeTime_p1+$cummulatedSampleDuration_p1)/$timescale_1)." and ".($baseMediaDecodeTime_p2/$timescale_2)." respectively.\n";
+                    $errorMsg="Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can be discontinuous, and it is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with baseMediaDecodeTime- ".(($baseMediaDecodeTime_p1+$cummulatedSampleDuration_p1)/$timescale_1)." and ".($baseMediaDecodeTime_p2/$timescale_2)." respectively.\n";
 
                 
             }
@@ -167,7 +167,7 @@ function checkEncryptionChangeSplicePoint($session_dir,$MediaProfDatabase, $adap
 
             }
             if($encScheme_p1!=$encScheme_p2 && ($encScheme_p1===0 || $encScheme_p2===0))
-                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can change between unencrypted/encrypted at Splice points, it is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with enc scheme ".$encScheme_p1." and ".$encScheme_p1." respectively.\n";
+                    $errorMsg="Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can change between unencrypted/encrypted at Splice points, it is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with enc scheme ".$encScheme_p1." and ".$encScheme_p1." respectively.\n";
 
                 
         }   
@@ -287,7 +287,7 @@ function checkDefaultKIDChangeSplicePoint($session_dir,$MediaProfDatabase, $adap
 
             }
             if($defaultKID_p1!=$defaultKID_p2 )
-                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Default KID can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with values -".$defaultKID_p1." and ".$defaultKID_p2." respectively.\n";
+                    $errorMsg="Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Default KID can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with values -".$defaultKID_p1." and ".$defaultKID_p2." respectively.\n";
 
                 
         }   
@@ -320,7 +320,7 @@ function checkTrackIDChangeSplicePoint($session_dir,$MediaProfDatabase, $adaptat
 
             }
             if($trackID_p1!=$trackID_p2 )
-                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Track_ID can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with TrackID -".$trackID_p1." and ".$trackID_p2." respectively.\n";
+                    $errorMsg="Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Track_ID can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with TrackID -".$trackID_p1." and ".$trackID_p2." respectively.\n";
 
                 
         }   
@@ -354,7 +354,7 @@ function checkTimeScaleChangeSplicePoint($session_dir,$MediaProfDatabase, $adapt
 
             }
             if($timescale_p1!=$timescale_p2 )
-                    $errorMsg="###Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Timescale can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with timescale ".$timescale_p1." and ".$timescale_p1." respectively.\n";
+                    $errorMsg="Information: WAVE Content Spec 2018Ed-Section 7.2.2: 'Timescale can change at Splice points', change is observed for Sw set ".$adapt." between CMAF Presentations ".$i." and  ".($i+1)." with timescale ".$timescale_p1." and ".$timescale_p1." respectively.\n";
 
                 
         }   
