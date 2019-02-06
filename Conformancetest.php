@@ -1384,7 +1384,7 @@ function progress()
         lastloc++;
 
         var location = "temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(adaptationid-1)+"rep"+(representationid-2) + "sample_data.xml";
-        automate(repid[counting],lastloc,"Estimate bitrate");
+        automate(repid[counting],lastloc,"Calculate bitrate");
         tree.setItemImage2( lastloc,'csh_winstyle/calculator.gif','csh_winstyle/calculator.gif','csh_winstyle/calculator.gif');
         kidsloc.push(lastloc);
         urlarray.push("Estimate.php?location=" + location );
