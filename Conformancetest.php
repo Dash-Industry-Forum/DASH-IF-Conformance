@@ -1007,7 +1007,7 @@ function processmpdresults()
         for(var p=0; p<Period_count; p++){
             Adapt_count= Periodxml[p].childNodes.length;
             AdaptRepPeriod_count += ' ' + Adapt_count;
-            var Adaptxml = xmlDoc_progress.getElementsByTagName("Adaptation");
+            var Adaptxml = Periodxml[p].getElementsByTagName("Adaptation");
             for (var v=0; v<Adapt_count; v++){
                 AdaptRepPeriod_count += " " +Adaptxml[v].getElementsByTagName("Representation").length;
             }
@@ -1047,8 +1047,8 @@ function processmpdresults()
         }
         
         adaptid.push(adaptid_temp);
-        childno += childno2 - 1;
-        childno2 ++;
+        childno = childno2;
+        childno2++;
         x = id;
     }
     
@@ -1309,7 +1309,7 @@ function progress()
         
         adjustFooter();
         adaptationid = 1;
-        hinindex2 += hinindex - 1;
+        hinindex2 = hinindex ;
         hinindex = hinindex2 + 1;
         tree.setItemImage2(perid[periodid-1],'right.jpg','right.jpg','right.jpg');
         periodid++;
