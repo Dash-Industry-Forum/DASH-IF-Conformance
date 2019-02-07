@@ -300,18 +300,18 @@
     <body>   
         <div class="content">
             <div class="center">
-            <label class="title">Choose a parameter to estimate</label>
+            <label class="title">Choose a parameter to calculate</label>
             <br>
             <label class="writingfive">(according to DASH-IF IOP clause 3.2.8):</label>
             <br><br>
             <label class="container">
-                <input type="radio"   id="MinBufferTime"  value="MinBufferTime" name="radio" required> <div class="writingone">MinBufferTime</div>
+                <input type="radio"   id="MinBufferTime"  value="MinBufferTime" name="radio" required> <div class="writingone">@minBufferTime</div>
                 <span class="checkmark"></span>
             </label>
             <input type="text" class="input" id="field1" name="field1"> <div class="writingthree">(sec)</div>
             <br><br>
 
-            <label class="container"> <div class="writingtwo">Bandwidth</div>
+            <label class="container"> <div class="writingtwo">@bandwidth</div>
                 <input type="radio" name="radio" checked="true" id ="Bandwidth" value ="Bandwidth"> 
                 <span class="checkmark"></span> 
             </label>
@@ -319,7 +319,7 @@
             <br><br>
             <button class="buttonone" id="BTNONE" onclick="btnoneFunction()">Manually edit values</button>
             <button class="buttontwo" id="BTNTWO" onclick="btntwoFunction()">Reset to MPD values</button>
-            <button class="button" id="BTN" onclick="btnFunction()">Estimate</button>
+            <button class="button" id="BTN" onclick="btnFunction()">Calculate</button>
             <br><br><br><br>
             <p class="writingfour" style="color:red;" id="marginprint"></p>
             </div>
