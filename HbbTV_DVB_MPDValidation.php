@@ -363,7 +363,7 @@ function DVB_mpdvalidator($mpdreport){
         $utc_info = '';
         
         if($UTCTimings->length == 0)
-            fwrite($mpdreport, "Warning for DVB check: Section 4.7.2- 'If the MPD is dynamic or if the MPD@availabilityStartTime is present then the MPD SHOULD countain at least one UTCTiming element with the @schemeIdUri attribute set to one of the following: $acceptedTimingURIs ', UTCTiming element could not be found in the provided MPD.\n");
+            fwrite($mpdreport, "Warning for DVB check: Section 4.7.2- 'If the MPD is dynamic or if the MPD@availabilityStartTime is present then the MPD SHOULD countain at least one UTCTiming element with the @schemeIdUri attribute set to one of the following: ".join(', ', $acceptedTimingURIs)." ', UTCTiming element could not be found in the provided MPD.\n");
         else{
             foreach($UTCTimings as $UTCTiming){
                 if(!(in_array($UTCTiming->getAttribute('schemeIdUri'), $acceptedTimingURIs)))
@@ -371,7 +371,7 @@ function DVB_mpdvalidator($mpdreport){
             }
             
             if($utc_info != '')
-                fwrite($mpdreport, "Warning for DVB check: Section 4.7.2- 'If the MPD is dynamic or if the MPD@availabilityStartTime is present then the MPD SHOULD countain at least one UTCTiming element with the @schemeIdUri attribute set to one of the following: $acceptedTimingURIs ', could not be found in the provided MPD.\n");
+                fwrite($mpdreport, "Warning for DVB check: Section 4.7.2- 'If the MPD is dynamic or if the MPD@availabilityStartTime is present then the MPD SHOULD countain at least one UTCTiming element with the @schemeIdUri attribute set to one of the following: ".join(', ', $acceptedTimingURIs)." ', could not be found in the provided MPD.\n");
         }
     }
     
