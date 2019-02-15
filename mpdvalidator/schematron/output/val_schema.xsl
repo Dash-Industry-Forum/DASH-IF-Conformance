@@ -284,6 +284,10 @@
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M32"/>
+         <svrl:active-pattern>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M33"/>
       </svrl:schematron-output>
    </xsl:template>
 
@@ -1656,7 +1660,225 @@
 
 
 	<!--RULE -->
-<xsl:template match="dash:MPD" priority="1000" mode="M24">
+<xsl:template match="dash:Period" priority="1001" mode="M24">
+      <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                       xmlns:schold="http://www.ascc.net/xml/schematron"
+                       xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:Period"/>
+
+		    <!--ASSERT -->
+<xsl:choose>
+         <xsl:when test="if (every $AdaptationSet in child::dash:AdaptationSet satisfies $AdaptationSet/dash:EssentialProperty/@schemeIdUri = 'urn:mpeg:dash:srd:2014') then false() else true()"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                                xmlns:schold="http://www.ascc.net/xml/schematron"
+                                xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="if (every $AdaptationSet in child::dash:AdaptationSet satisfies $AdaptationSet/dash:EssentialProperty/@schemeIdUri = 'urn:mpeg:dash:srd:2014') then false() else true()">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-get-full-path"/>
+               </xsl:attribute>
+               <svrl:text>When every Adaptation Set in a MPD has a SRD descriptor, at least one of this descriptor shall be a SupplementalProperty.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+
+		    <!--ASSERT -->
+<xsl:choose>
+         <xsl:when test="if (some $source_id in (for $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014'] return subsequence(tokenize($srd/@value,','),1,1)) satisfies (every $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and subsequence(tokenize(@value,','),1,1) = $source_id] satisfies matches($srd/@value, '^(\d+,){4}\d+$') ) ) then false() else true()"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                                xmlns:schold="http://www.ascc.net/xml/schematron"
+                                xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="if (some $source_id in (for $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014'] return subsequence(tokenize($srd/@value,','),1,1)) satisfies (every $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and subsequence(tokenize(@value,','),1,1) = $source_id] satisfies matches($srd/@value, '^(\d+,){4}\d+$') ) ) then false() else true()">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-get-full-path"/>
+               </xsl:attribute>
+               <svrl:text>For a given source_id of the @value attribute, at least one of the EssentialProperty or SupplementalProperty in the containing Period shall specify the optional parameters W and H.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+
+		    <!--ASSERT -->
+<xsl:choose>
+         <xsl:when test="if (count(descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014')]) &gt; 0) then if (some $source_id in (for $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014'] return subsequence(tokenize($srd/@value,','),1,1)) satisfies ( if (count(distinct-values(for $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and subsequence(tokenize(@value,','),1,1) = $source_id and matches(@value, '^(\d+,){6}\d+')] return concat(string(subsequence(tokenize($srd/@value,','),6,1)), string(subsequence(tokenize($srd/@value,','),7,1))) ) ) &gt; 1 ) then every $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and subsequence(tokenize(@value,','),1,1) = $source_id] satisfies matches($srd/@value, '^(\d+,){6}\d+') else true() ) ) then true() else false() else true()"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                                xmlns:schold="http://www.ascc.net/xml/schematron"
+                                xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="if (count(descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014')]) &gt; 0) then if (some $source_id in (for $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014'] return subsequence(tokenize($srd/@value,','),1,1)) satisfies ( if (count(distinct-values(for $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and subsequence(tokenize(@value,','),1,1) = $source_id and matches(@value, '^(\d+,){6}\d+')] return concat(string(subsequence(tokenize($srd/@value,','),6,1)), string(subsequence(tokenize($srd/@value,','),7,1))) ) ) &gt; 1 ) then every $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and subsequence(tokenize(@value,','),1,1) = $source_id] satisfies matches($srd/@value, '^(\d+,){6}\d+') else true() ) ) then true() else false() else true()">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-get-full-path"/>
+               </xsl:attribute>
+               <svrl:text>For a given source_id of the @value attribute, if two SRD elements (indistinctively EssentialProperty or SupplementalProperty) explicitly specify a different pair of  values for the optional parameters (W,H) then all the remaining SRD element shall explicitly specify a pair of values for (W,H) too.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+
+		    <!--ASSERT -->
+<xsl:choose>
+         <xsl:when test="every $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and matches(@value, '^(\d+,){6}\d+')] satisfies sum((number(subsequence(tokenize($srd/@value,','),2,1)),number(subsequence(tokenize($srd/@value,','),4,1)) ) ) le number(subsequence(tokenize($srd/@value,','),6,1))"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                                xmlns:schold="http://www.ascc.net/xml/schematron"
+                                xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="every $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and matches(@value, '^(\d+,){6}\d+')] satisfies sum((number(subsequence(tokenize($srd/@value,','),2,1)),number(subsequence(tokenize($srd/@value,','),4,1)) ) ) le number(subsequence(tokenize($srd/@value,','),6,1))">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-get-full-path"/>
+               </xsl:attribute>
+               <svrl:text>For a given source_id of the @value attribute, the values of x, w and W shall be such that, for each descriptor, the sum of x and w is smaller or equal to W.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+
+		    <!--ASSERT -->
+<xsl:choose>
+         <xsl:when test="if (count(descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014')]) &gt; 0) then if (some $source_id in (for $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014'] return subsequence(tokenize($srd/@value,','),1,1)) satisfies ( every $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and subsequence(tokenize(@value,','),1,1) = $source_id and matches(@value, '^(\d+,){4}\d+')] satisfies sum((number(subsequence(tokenize($srd/@value,','),2,1)),number(subsequence(tokenize($srd/@value,','),4,1)) ) ) le number(subsequence(tokenize(descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014') and (subsequence(tokenize(@value,','),1,1) = $source_id) and (matches(@value, '^(\d+,){6}\d+'))]/@value,','),6,1)) ) ) then true() else false() else true()"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                                xmlns:schold="http://www.ascc.net/xml/schematron"
+                                xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="if (count(descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014')]) &gt; 0) then if (some $source_id in (for $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014'] return subsequence(tokenize($srd/@value,','),1,1)) satisfies ( every $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and subsequence(tokenize(@value,','),1,1) = $source_id and matches(@value, '^(\d+,){4}\d+')] satisfies sum((number(subsequence(tokenize($srd/@value,','),2,1)),number(subsequence(tokenize($srd/@value,','),4,1)) ) ) le number(subsequence(tokenize(descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014') and (subsequence(tokenize(@value,','),1,1) = $source_id) and (matches(@value, '^(\d+,){6}\d+'))]/@value,','),6,1)) ) ) then true() else false() else true()">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-get-full-path"/>
+               </xsl:attribute>
+               <svrl:text>For a given source_id of the @value attribute, the values of x, w and W shall be such that, for each descriptor, the sum of x and w is smaller or equal to W.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+
+		    <!--ASSERT -->
+<xsl:choose>
+         <xsl:when test="every $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and matches(@value, '^(\d+,){6}\d+')] satisfies sum((number(subsequence(tokenize($srd/@value,','),3,1)),number(subsequence(tokenize($srd/@value,','),5,1)) ) ) le number(subsequence(tokenize($srd/@value,','),7,1))"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                                xmlns:schold="http://www.ascc.net/xml/schematron"
+                                xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="every $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and matches(@value, '^(\d+,){6}\d+')] satisfies sum((number(subsequence(tokenize($srd/@value,','),3,1)),number(subsequence(tokenize($srd/@value,','),5,1)) ) ) le number(subsequence(tokenize($srd/@value,','),7,1))">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-get-full-path"/>
+               </xsl:attribute>
+               <svrl:text>For a given source_id of the @value attribute, the values of y, h and H shall be such that, for each descriptor, the sum of y and h is smaller or equal to H.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+
+		    <!--ASSERT -->
+<xsl:choose>
+         <xsl:when test="if (count(descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014')]) &gt; 0) then if (some $source_id in (for $srd in descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014')] return subsequence(tokenize($srd/@value,','),1,1)) satisfies ( every $srd in descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014') and (subsequence(tokenize(@value,','),1,1) = $source_id) and (matches(@value, '^(\d+,){4}\d+'))] satisfies sum((number(subsequence(tokenize($srd/@value,','),3,1)),number(subsequence(tokenize($srd/@value,','),5,1)) ) ) le number(subsequence(tokenize(descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014') and subsequence(tokenize(@value,','),1,1) = $source_id and matches(@value, '^(\d+,){6}\d+')]/@value,','),7,1)) ) ) then true() else false() else true()"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                                xmlns:schold="http://www.ascc.net/xml/schematron"
+                                xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="if (count(descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014')]) &gt; 0) then if (some $source_id in (for $srd in descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014')] return subsequence(tokenize($srd/@value,','),1,1)) satisfies ( every $srd in descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014') and (subsequence(tokenize(@value,','),1,1) = $source_id) and (matches(@value, '^(\d+,){4}\d+'))] satisfies sum((number(subsequence(tokenize($srd/@value,','),3,1)),number(subsequence(tokenize($srd/@value,','),5,1)) ) ) le number(subsequence(tokenize(descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014') and subsequence(tokenize(@value,','),1,1) = $source_id and matches(@value, '^(\d+,){6}\d+')]/@value,','),7,1)) ) ) then true() else false() else true()">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-get-full-path"/>
+               </xsl:attribute>
+               <svrl:text>For a given source_id of the @value attribute, the values of y, h and H shall be such that, for each descriptor, the sum of y and h is smaller or equal to H.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M24"/>
+   </xsl:template>
+
+	  <!--RULE -->
+<xsl:template match="dash:SupplementalProperty | dash:EssentialProperty" priority="1000"
+                 mode="M24">
+      <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                       xmlns:schold="http://www.ascc.net/xml/schematron"
+                       xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:SupplementalProperty | dash:EssentialProperty"/>
+
+		    <!--ASSERT -->
+<xsl:choose>
+         <xsl:when test="if (@schemeIdUri = 'urn:mpeg:dash:srd:2014') then if (parent::dash:AdaptationSet or parent::dash:SubRepresentation) then true() else false() else true()"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                                xmlns:schold="http://www.ascc.net/xml/schematron"
+                                xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="if (@schemeIdUri = 'urn:mpeg:dash:srd:2014') then if (parent::dash:AdaptationSet or parent::dash:SubRepresentation) then true() else false() else true()">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-get-full-path"/>
+               </xsl:attribute>
+               <svrl:text>An EssentialProperty or a SupplementalProperty descriptor with @schemeIdUri equal to “urn:mpeg:dash:srd:2014” shall be the child element of an AdaptationSet or a SubRepresentation element.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+
+		    <!--ASSERT -->
+<xsl:choose>
+         <xsl:when test="if (@schemeIdUri = 'urn:mpeg:dash:srd:2014') then if (@value) then true() else false() else true()"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                                xmlns:schold="http://www.ascc.net/xml/schematron"
+                                xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="if (@schemeIdUri = 'urn:mpeg:dash:srd:2014') then if (@value) then true() else false() else true()">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-get-full-path"/>
+               </xsl:attribute>
+               <svrl:text>If an EssentialProperty or a SupplementalProperty descriptor with @schemeIdUri equal to “urn:mpeg:dash:srd:2014” is present, then the @value attribute must be present.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+
+		    <!--ASSERT -->
+<xsl:choose>
+         <xsl:when test="if (@schemeIdUri = 'urn:mpeg:dash:srd:2014') then if (matches(@value, '^\d+,\d+,\d+,\d+,\d+')) then true() else false() else true()"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                                xmlns:schold="http://www.ascc.net/xml/schematron"
+                                xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="if (@schemeIdUri = 'urn:mpeg:dash:srd:2014') then if (matches(@value, '^\d+,\d+,\d+,\d+,\d+')) then true() else false() else true()">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-get-full-path"/>
+               </xsl:attribute>
+               <svrl:text>If an EssentialProperty or a SupplementalProperty descriptor with @schemeIdUri equal to “urn:mpeg:dash:srd:2014” is present, then the @value attribute must contain at least the mandatory comma separated parameters, i.e. source_id, x, y, w, h.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+
+		    <!--ASSERT -->
+<xsl:choose>
+         <xsl:when test="if (@schemeIdUri = 'urn:mpeg:dash:srd:2014') then if (matches(@value, '^(\d+,){4,7}\d+$')) then true() else false() else true()"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                                xmlns:schold="http://www.ascc.net/xml/schematron"
+                                xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="if (@schemeIdUri = 'urn:mpeg:dash:srd:2014') then if (matches(@value, '^(\d+,){4,7}\d+$')) then true() else false() else true()">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-get-full-path"/>
+               </xsl:attribute>
+               <svrl:text>If an EssentialProperty or a  SupplementalProperty descriptor with @schemeIdUri equal to “urn:mpeg:dash:srd:2014” is present, then each parameter value has to match the expected type format i.e. non-negative integer in decimal representation.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+
+		    <!--ASSERT -->
+<xsl:choose>
+         <xsl:when test="if ((@schemeIdUri = 'urn:mpeg:dash:srd:2014') and matches(@value, '^(\d+,){5}\d+$')) then false() else true()"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                                xmlns:schold="http://www.ascc.net/xml/schematron"
+                                xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="if ((@schemeIdUri = 'urn:mpeg:dash:srd:2014') and matches(@value, '^(\d+,){5}\d+$')) then false() else true()">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-get-full-path"/>
+               </xsl:attribute>
+               <svrl:text>If an EssentialProperty or a SupplementalProperty descriptor with @schemeIdUri equal to “urn:mpeg:dash:srd:2014” is present and the @value attribute contains the optional parameter W then the optional parameter H shall be present too. In addition, if the optional parameter spatial_set_id is present, then the optional parameters W and H shall be present.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M24"/>
+   </xsl:template>
+   <xsl:template match="text()" priority="-1" mode="M24"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M24">
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M24"/>
+   </xsl:template>
+
+   <!--PATTERN -->
+
+
+	<!--RULE -->
+<xsl:template match="dash:MPD" priority="1000" mode="M25">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
                        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1709,18 +1931,18 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M24"/>
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M25"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M24"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M24">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M24"/>
+   <xsl:template match="text()" priority="-1" mode="M25"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M25">
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M25"/>
    </xsl:template>
 
    <!--PATTERN -->
 
 
 	<!--RULE -->
-<xsl:template match="dash:Period" priority="1000" mode="M25">
+<xsl:template match="dash:Period" priority="1000" mode="M26">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
                        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1757,18 +1979,18 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M25"/>
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M26"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M25"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M25">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M25"/>
+   <xsl:template match="text()" priority="-1" mode="M26"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M26">
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M26"/>
    </xsl:template>
 
    <!--PATTERN -->
 
 
 	<!--RULE -->
-<xsl:template match="dash:AdaptationSet" priority="1000" mode="M26">
+<xsl:template match="dash:AdaptationSet" priority="1000" mode="M27">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
                        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1965,18 +2187,18 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M26"/>
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M27"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M26"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M26">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M26"/>
+   <xsl:template match="text()" priority="-1" mode="M27"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M27">
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M27"/>
    </xsl:template>
 
    <!--PATTERN -->
 
 
 	<!--RULE -->
-<xsl:template match="dash:Representation" priority="1000" mode="M27">
+<xsl:template match="dash:Representation" priority="1000" mode="M28">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
                        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2125,18 +2347,18 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M27"/>
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M28"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M27"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M27">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M27"/>
+   <xsl:template match="text()" priority="-1" mode="M28"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M28">
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M28"/>
    </xsl:template>
 
    <!--PATTERN -->
 
 
 	<!--RULE -->
-<xsl:template match="dash:SubRepresentation" priority="1000" mode="M28">
+<xsl:template match="dash:SubRepresentation" priority="1000" mode="M29">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
                        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2157,18 +2379,18 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M28"/>
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M29"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M28"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M28">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M28"/>
+   <xsl:template match="text()" priority="-1" mode="M29"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M29">
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M29"/>
    </xsl:template>
 
    <!--PATTERN -->
 
 
 	<!--RULE -->
-<xsl:template match="dash:SegmentBase" priority="1000" mode="M29">
+<xsl:template match="dash:SegmentBase" priority="1000" mode="M30">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
                        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2189,18 +2411,18 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M29"/>
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M30"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M29"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M29">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M29"/>
+   <xsl:template match="text()" priority="-1" mode="M30"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M30">
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M30"/>
    </xsl:template>
 
    <!--PATTERN -->
 
 
 	<!--RULE -->
-<xsl:template match="dash:ContentProtection" priority="1000" mode="M30">
+<xsl:template match="dash:ContentProtection" priority="1000" mode="M31">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
                        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2256,18 +2478,18 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M30"/>
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M31"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M30"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M30">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M30"/>
+   <xsl:template match="text()" priority="-1" mode="M31"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M31">
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M31"/>
    </xsl:template>
 
    <!--PATTERN -->
 
 
 	<!--RULE -->
-<xsl:template match="dash:AudioChannelConfiguration" priority="1000" mode="M31">
+<xsl:template match="dash:AudioChannelConfiguration" priority="1000" mode="M32">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
                        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2304,18 +2526,18 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M31"/>
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M32"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M31"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M31">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M31"/>
+   <xsl:template match="text()" priority="-1" mode="M32"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M32">
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M32"/>
    </xsl:template>
 
    <!--PATTERN -->
 
 
 	<!--RULE -->
-<xsl:template match="dash:EssentialProperty" priority="1000" mode="M32">
+<xsl:template match="dash:EssentialProperty" priority="1000" mode="M33">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
                        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2384,10 +2606,10 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M32"/>
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M33"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M32"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M32">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M32"/>
+   <xsl:template match="text()" priority="-1" mode="M33"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M33">
+      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M33"/>
    </xsl:template>
 </xsl:stylesheet>
