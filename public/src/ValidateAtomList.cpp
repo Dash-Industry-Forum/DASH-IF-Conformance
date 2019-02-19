@@ -1823,8 +1823,8 @@ OSErr Validate_moof_Atom( atomOffsetEntry *aoe, void *refcon )
         Validate_mfhd_Atom, cnt, list, moofInfo );
     if (!err) err = atomerr;
 
-    if((mir->processedFragments > 0) && (moofInfo->sequence_number <= vg.mir->sequence_number))
-        errprint( "sequence_number %d in violation of: the value in a given movie fragment be greater than in any preceding movie fragment\n",moofInfo->sequence_number );
+    //if((mir->processedFragments > 0) && (moofInfo->sequence_number <= vg.mir->sequence_number))
+      //  errprint( "sequence_number %d in violation of: the value in a given movie fragment be greater than in any preceding movie fragment\n",moofInfo->sequence_number );
 
     vg.mir->sequence_number = moofInfo->sequence_number;
 
