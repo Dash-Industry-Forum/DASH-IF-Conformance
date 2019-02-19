@@ -41,7 +41,7 @@ function RepresentationValidation_HbbTV_DVB(){
         seg_timing_common($opfile, $xml_rep);
         $bitrate_report_name = bitrate_report($xml_rep);
         $segment_duration_name = seg_duration_checks($opfile);        
-        if ($period_timing_info[1] !== ''){
+        if ($period_timing_info[1] !== '' && $period_timing_info[1] !== 0){
             $checks = segmentToPeriodDurationCheck($xml_rep);
             if(!$checks[0]){
                 fwrite($opfile, "###'HbbTV-DVB DASH Validation Requirements check violated: Section 'Periods' - The accumulated duration of the segments [".$checks[1]. "seconds] in the representation does not match the period duration[".$checks[2]."seconds].\n'");
