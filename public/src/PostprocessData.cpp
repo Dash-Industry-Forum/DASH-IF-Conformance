@@ -973,9 +973,16 @@ void processBuffering(long cnt, atomOffsetEntry *list, MovieInfoRec *mir) {
 
     for (int i = 0; i < mir->numTIRs; i++) 
     {
+        bool mpd_bandwidth_test = true;
         bool trackNonConforming = false; 
         long double currentBandwidth = (long double) vg.bandwidth; 
-        long double bandwidthIncrement = 100; 
+        long double bandwidthIncrement = 2;
+        long double bandwidthDecrement = 0.75;
+        long double upper_bound = 0;
+        long double lower_bound = 0;
+        long double mod_val = 0;
+        bool done = false;
+        bool mpd_val_conf = false;
         std::stringstream errStr;
 
         do {
@@ -989,7 +996,6 @@ void processBuffering(long cnt, atomOffsetEntry *list, MovieInfoRec *mir) {
 
             for (UInt32 j = 0; j < mir->numFragments; j++) 
             {
-
                 MoofInfoRec *moof = &mir->moofInfo[j];
                 offset = moof->offset - initSize;
 
@@ -998,7 +1004,7 @@ void processBuffering(long cnt, atomOffsetEntry *list, MovieInfoRec *mir) {
                     SAP = 1;
                 else
                     SAP = 0;
-                sample_data<<"<moof a='"<<SAP<<"'>\n";
+                if(mpd_bandwidth_test) sample_data<<"<moof a='"<<SAP<<"'>\n";
                 
                 if (moof->announcedSAP && bufferFullness > currentBandwidth * vg.minBufferTime) //There is no buffer overflow for DASH buffer model, only case is on a SAP, as DASH spec. defines the requiremnt that the playback could be from any SAP and at the SAP, the buffer fullness is bandwidth*minBufferTime
                 {
@@ -1008,14 +1014,13 @@ void processBuffering(long cnt, atomOffsetEntry *list, MovieInfoRec *mir) {
 
                 for (UInt32 k = 0; k < moof->numTrackFragments; k++) 
                 {
-                    
-                    sample_data<<"<traf>\n";
+                    if(mpd_bandwidth_test) sample_data<<"<traf>\n";
                     
                     if (moof->trafInfo[k].track_ID == tir->trackID && moof->trafInfo[k].numTrun > 0) //Assuming 'trun' cannot be empty, 14496-12 version 4 does not indicate such a possiblity.
                     {
                         for (UInt32 l = 0; l < moof->trafInfo[k].numTrun; l++) 
                         {                            
-                             sample_data<<"<trun>\n";
+                            if(mpd_bandwidth_test) sample_data<<"<trun>\n";
                             
                             if (moof->trafInfo[k].trunInfo[l].data_offset_present)
                                 offset = moof->offset - initSize + moof->trafInfo[k].trunInfo[l].data_offset;
@@ -1033,12 +1038,12 @@ void processBuffering(long cnt, atomOffsetEntry *list, MovieInfoRec *mir) {
                                 if(m == 0)
                                 {    
                                     if((k == 0) && (l == 0))
-                                        sample_data<<"<s z='"<<dataSizeToRemove<<"' d='"<<moof->trafInfo[k].trunInfo[l].sample_duration[m]<<"'/>\n";
+                                        if(mpd_bandwidth_test) sample_data<<"<s z='"<<dataSizeToRemove<<"' d='"<<moof->trafInfo[k].trunInfo[l].sample_duration[m]<<"'/>\n";
                                     else
-                                        sample_data<<"<s z='"<<dataSizeToRemove<<"' d='"<<moof->trafInfo[k].trunInfo[l].sample_duration[m]<<"'/>\n";
+                                        if(mpd_bandwidth_test) sample_data<<"<s z='"<<dataSizeToRemove<<"' d='"<<moof->trafInfo[k].trunInfo[l].sample_duration[m]<<"'/>\n";
                                 }
                                 else
-                                    sample_data<<"<s z='"<<dataSizeToRemove<<"' d='"<<moof->trafInfo[k].trunInfo[l].sample_duration[m]<<"'/>\n";
+                                    if(mpd_bandwidth_test) sample_data<<"<s z='"<<dataSizeToRemove<<"' d='"<<moof->trafInfo[k].trunInfo[l].sample_duration[m]<<"'/>\n";
                                 
                                 totalDataRemoved += dataSizeToRemove;
                                 lastOffset = offset;
@@ -1049,11 +1054,12 @@ void processBuffering(long cnt, atomOffsetEntry *list, MovieInfoRec *mir) {
                                 if (dataSizeToRemove * 8 > bufferFullness) //Bufferfullness is in bits
                                 {
                                     if (!trackNonConforming) {
-                                        if (currentBandwidth == (long double) vg.bandwidth)
+                                        /*if (currentBandwidth == (long double) vg.bandwidth)
                                             errStr << "Buffer underrun conformance error: first (and only one reported here) for sample " << m + 1 << " of run " << l + 1 << " of track fragment " << k + 1 << " of fragment " << j + 1 << " of track id " << tir->trackID << " (sample absolute file offset " << offset - moof->trafInfo[k].trunInfo[l].sample_size[m] + initSize << ", fragment absolute file offset " << moof->offset << ", bandwidth: " << (UInt64) currentBandwidth;
+                                        */
 
                                         trackNonConforming = true;
-                                        //break;
+                                        if(!mpd_bandwidth_test) break;
                                     }
 
                                     long double finalBufferFullness = bufferFullness - dataSizeToRemove * 8; //unused
@@ -1074,30 +1080,64 @@ void processBuffering(long cnt, atomOffsetEntry *list, MovieInfoRec *mir) {
                                 totalBitsAdded += (currentBandwidth * ((long double) moof->trafInfo[k].trunInfo[l].sample_duration[m] / (long double) tir->mediaTimeScale));
                                 timeNowInTicks += moof->trafInfo[k].trunInfo[l].sample_duration[m];
                             }
-                            //if (trackNonConforming) break;
-                            sample_data<<"</trun>\n";
+                            if(mpd_bandwidth_test) sample_data<<"</trun>\n";
+                            if (!mpd_bandwidth_test && trackNonConforming) break;
                         }
-                        //if (trackNonConforming) break;
+                        if (!mpd_bandwidth_test && trackNonConforming) break;
                     }
-                    //if (trackNonConforming) break;
-                    sample_data<<"</traf>\n";
+                    if(mpd_bandwidth_test) sample_data<<"</traf>\n";
+                    if (!mpd_bandwidth_test && trackNonConforming) break;
                 }
-            //if (trackNonConforming) break;
-            sample_data<<"</moof>\n";
+                if(mpd_bandwidth_test) sample_data<<"</moof>\n";
+                if (!mpd_bandwidth_test && trackNonConforming) break;
             }
+            
+            mpd_bandwidth_test = false;
             if (trackNonConforming) {
-                currentBandwidth += bandwidthIncrement;
+                if(upper_bound == 0)
+                    currentBandwidth *= bandwidthIncrement;
+                else{
+                    if(lower_bound == 0){
+                        lower_bound = currentBandwidth;
+                        mod_val = upper_bound - lower_bound;
+                    }
+                    mod_val /= 2; 
+                    currentBandwidth += mod_val;
+                }
             }
-        } while (trackNonConforming && vg.suggestBandwidth);
+            else {
+                if(currentBandwidth == (long double) vg.bandwidth)
+                    mpd_val_conf = true;
+                
+                if((lower_bound != 0) && (mod_val <= 50))
+                    done = true;
+                
+                if(upper_bound == 0)
+                    upper_bound = currentBandwidth;
+                if(mod_val == 0)
+                    currentBandwidth *= bandwidthDecrement;
+                else if(done != true){
+                    mod_val /= 2; 
+                    currentBandwidth -= mod_val;
+                }
+            }
+        } while (!done);
+        
+        if(currentBandwidth > vg.bandwidth && mpd_val_conf)
+            currentBandwidth = vg.bandwidth;
+        if(mpd_val_conf)
+            fprintf(stderr, "According to DASH-IF IOP Section 3.2.8 @bandwidth of the Representation (%ld bps) is set too high given the @minimumBufferTime (%ld s), the minimum @bandwidth value required to conform is %ld bps.\n", (UInt32) vg.bandwidth, (UInt32) vg.minBufferTime, (UInt32) currentBandwidth);
+        else
+            errprint("According to DASH-IF IOP Section 3.2.8 @bandwidth of the Representation (%ld bps) is set too low given the @minimumBufferTime (%ld s), the minimum @bandwidth value required to conform is %ld bps.\n", (UInt32) vg.bandwidth, (UInt32) vg.minBufferTime, (UInt32) currentBandwidth);
 
-        if (trackNonConforming || (currentBandwidth != (long double) vg.bandwidth)) //Latter means vg.suggestBandwidth is set and new bw is calculated
+        /*if (trackNonConforming || (currentBandwidth != (long double) vg.bandwidth) ) //Latter means vg.suggestBandwidth is set and new bw is calculated
         {
             if (vg.suggestBandwidth)
                 errStr << ", estimated bandwidth: " << (UInt64) currentBandwidth;
 
             errStr << ")\n";
             errprint(errStr.str().c_str());
-        }
+        }*/
     }
     sample_data<<"</Representation>\n";
     sample_data<<"</MPDInfo>\n";
