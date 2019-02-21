@@ -21,6 +21,7 @@ include 'CMAFPresentationValidation.php';
 $cmaf_function_name = 'CMAF_handle';
 $cmaf_when_to_call = array('BeforeRepresentation', 'Representation', 'AdaptationSet', 'All');
 
+$cmaf_mediaProfiles = array();
 $infofile_template = 'infofile$Number$.txt';
 $compinfo_file = 'Adapt$AS$_compInfo';
 $comparison_folder = 'comparisonResults/';
