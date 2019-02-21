@@ -537,9 +537,9 @@ OSErr Validate_mdia_hdlr_Atom( atomOffsetEntry *aoe, void *refcon )
 	FieldMustBe( hdlrInfo->componentFlags, 0, "'hdlr' componentFlags (reserved in mp4) must be %d not 0x%lx" );
 	FieldMustBe( hdlrInfo->componentFlagsMask, 0, "'hdlr' componentFlagsMask (reserved in mp4) must be %d not 0x%lx" );
 
-		FieldMustBeOneOf11( hdlrInfo->componentSubType, OSType, 
+		FieldMustBeOneOf12( hdlrInfo->componentSubType, OSType, 
 			"'hdlr' handler type must be be one of ", 
-			('odsm', 'crsm', 'sdsm', 'vide', 'soun', 'm7sm', 'ocsm', 'ipsm', 'mjsm', 'hint', 'subt') );
+			('odsm', 'crsm', 'sdsm', 'vide', 'soun', 'm7sm', 'ocsm', 'ipsm', 'mjsm', 'hint', 'subt', 'text') );
 
 		//Explicit check for ac-4
 		if(!strcmp(vg.codecs, "ac-4") && strcmp(ostypetostr(hdlrInfo->componentSubType),"soun"))

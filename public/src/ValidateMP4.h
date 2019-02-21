@@ -1113,6 +1113,7 @@ do { if ((num) != (value)) { err = badAtomErr; warnprint(errstr "\n", (value), n
 #define FieldList9(t1,t2,t3,t4,t5,t6,t7,t8,t9) {t1,t2,t3,t4,t5,t6,t7,t8,t9};
 #define FieldList10(t1,t2,t3,t4,t5,t6,t7,t8,t9,t10) {t1,t2,t3,t4,t5,t6,t7,t8,t9,t10};
 #define FieldList11(t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11) {t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11};
+#define FieldList12(t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12) {t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12};
 
 #define FieldOneOfBegin( _value_, _valtype_, _errstr_, _list_ ) \
 	do { _valtype_ _test_array_[] = 
@@ -1164,6 +1165,10 @@ do { if ((num) != (value)) { err = badAtomErr; warnprint(errstr "\n", (value), n
 #define FieldMustBeOneOf11( _value_, _valtype_, _errstr_, _list_ ) \
 	FieldOneOfBegin( _value_, _valtype_, _errstr_, _list_ ) \
 	FieldList11 _list_ \
+	FieldOneOfEnd( _value_, _valtype_, _errstr_, _list_ )
+#define FieldMustBeOneOf12( _value_, _valtype_, _errstr_, _list_ ) \
+	FieldOneOfBegin( _value_, _valtype_, _errstr_, _list_ ) \
+	FieldList12 _list_ \
 	FieldOneOfEnd( _value_, _valtype_, _errstr_, _list_ )
 
 char *int64toxstr(UInt64 num);
