@@ -54,6 +54,7 @@ $dashif_conformance = false;
 
 # CMAF variables
 $cmaf_conformance = false;
+$cmaf_mediaProfiles;
 $infofile_template = '';
 $compinfo_file = '';
 $comparison_folder = '';
