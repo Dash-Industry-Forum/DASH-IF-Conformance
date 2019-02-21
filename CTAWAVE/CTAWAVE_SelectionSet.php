@@ -253,8 +253,12 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
               }
           }
           $brand_pos=strpos($compatible_brands,"cfsd") || strpos($compatible_brands,"cfhd");
-          if($brand_pos!==False)
-                $xml_MPParameters['brand']=substr($compatible_brands,$brand_pos,$brand_pos+3);
+          if($brand_pos!==False){
+              if(strpos($compatible_brands,"cfsd")!==FALSE)
+                $xml_MPParameters['brand']="cfsd";
+              if(strpos($compatible_brands,"cfhd")!==FALSE)
+                $xml_MPParameters['brand']="cfhd";
+          }
                   
         }
         else if($sdType=='hev1' || $sdType=='hvc1')
@@ -318,8 +322,16 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
               }
             }
             $brand_pos=strpos($compatible_brands,"chh1") || strpos($compatible_brands,"cud1")||strpos($compatible_brands,"clg1")||strpos($compatible_brands,"chd1");
-            if($brand_pos!==False)
-                $xml_MPParameters['brand']=substr($compatible_brands,$brand_pos,$brand_pos+3);
+            if($brand_pos!==False){
+                if(strpos($compatible_brands,"chh1")!==FALSE)
+                    $xml_MPParameters['brand']="chh1";
+                elseif(strpos($compatible_brands,"cud1")!==FALSE)
+                    $xml_MPParameters['brand']="cud1";
+                elseif(strpos($compatible_brands,"clg1")!==FALSE)
+                    $xml_MPParameters['brand']="clg1";
+                elseif(strpos($compatible_brands,"chd1")!==FALSE)
+                    $xml_MPParameters['brand']="chd1";
+            }
 
         }
         //check which profile the track conforms to.
@@ -341,8 +353,14 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
             $xml_MPParameters['channels']=$channels;
             $xml_MPParameters['sampleRate']=$sounSampleDes->getAttribute('sampleRate');
             $brand_pos=strpos($compatible_brands,"caaa") || strpos($compatible_brands,"caac")|| $brand_pos=strpos($compatible_brands,"camc");
-            if($brand_pos!==False)
-                $xml_MPParameters['brand']=substr($compatible_brands,$brand_pos,$brand_pos+3);
+            if($brand_pos!==False){
+                if(strpos($compatible_brands,"caaa")!==FALSE)
+                    $xml_MPParameters['brand']="caaa";
+                elseif(strpos($compatible_brands,"caac")!==FALSE)
+                    $xml_MPParameters['brand']="caac";
+                elseif(strpos($compatible_brands,"camc")!==FALSE)
+                    $xml_MPParameters['brand']="camc";
+            }
             
             $levelcomment=$xml->getElementsByTagName("iods_OD");
             if($levelcomment->length>0)
@@ -408,7 +426,7 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
                 $contentType=$mime->getAttribute("content_type");
                 $subtypePosition=strpos($contentType, "ttml+xml")|| strpos($contentType, "mp4");
                 $codecPosition=strpos($contentType, "im1t")|| strpos($contentType, "im1i");
-                $xml_MPParameters['mimetype']=(strpos($contentType, "application")!==False ? "application" : "");
+                $xml_MPParameters['mimeType']=(strpos($contentType, "application")!==False ? "application" : "");
                 $xml_MPParameters['codec']=($codecPosition!==False ? substr($contentType, $codecPosition, $codecPosition+3) : "");
                 if(strpos($contentType, "ttml+xml")!==False)
                     $xml_MPParameters['mimeSubtype']="ttml+xml";
@@ -416,8 +434,12 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
                     $xml_MPParameters['mimeSubtype']="mp4";
             }
             $brand_pos=strpos($compatible_brands,"im1t") || strpos($compatible_brands,"im1i");
-            if($brand_pos!==False)
-                $xml_MPParameters['brand']=substr($compatible_brands,$brand_pos,$brand_pos+3);
+            if($brand_pos!==False){
+                if(strpos($compatible_brands,"im1t")!==FALSE)
+                    $xml_MPParameters['brand']="im1t";
+                elseif(strpos($compatible_brands,"im1i")!==FALSE)
+                    $xml_MPParameters['brand']="im1i";
+            }
         }
         $MP=checkAndGetConformingSubtitleProfile($xml_MPParameters,$repCount,$adaptCount);
     }
@@ -652,7 +674,7 @@ function checkAndGetConformingAudioProfile($xml_MPParameters,$repCount,$adaptCou
 function checkAndGetConformingSubtitleProfile($xml_MPParameters,$repCount,$adaptCount)
 {
     $subtitleMediaProfile="unknown"; $errorMsg="";
-    if($xml_MPParameters['type']=="application" && ($xml_MPParameters['subType']=="ttml+xml" || $xml_MPParameters['subType']=="mp4"))
+    if($xml_MPParameters['mimeType']=="application" && ($xml_MPParameters['mimeSubtype']=="ttml+xml" || $xml_MPParameters['mimeSubtype']=="mp4"))
     {
         if($xml_MPParameters['codec']=="im1t")
             $subtitleMediaProfile="TTML_IMSC1_Text";

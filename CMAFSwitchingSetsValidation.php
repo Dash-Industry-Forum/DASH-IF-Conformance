@@ -189,30 +189,14 @@ function getNALUnit($nal_array){
     return NULL;
 }
 
-function checkMediaProfiles($xml, $xml_comp,$xml_handlerType,$xml_comp_handlerType){
-    $xml_ftyp=$xml->getElementsByTagName('ftyp')->item(0);
-    $brands1=(string)$xml_ftyp->getAttribute('compatible_brands');
-    $xml_comp_ftyp=$xml_comp->getElementsByTagName('ftyp')->item(0);
-    $brands2=(string)$xml_comp_ftyp->getAttribute('compatible_brands');
+function checkMediaProfiles($opfile, $rep1, $rep2){
+    global $cmaf_mediaProfiles, $current_period, $current_adaptation_set;
     
-    $err=0;
-    if($xml_handlerType==$xml_comp_handlerType && $xml_handlerType='vide'){
-        $videoCmaf1=strpos($brands1,"cfsd") || strpos($brands1,"cfhd") || strpos($brands1,"chdf");
-        $videoCmaf2=strpos($brands2,"cfsd") || strpos($brands2,"cfhd") || strpos($brands3,"chdf");
-        if($videoCmaf1==false || $videoCmaf2==false)
-            $err=1;
+    $cmaf_profile1 = $cmaf_mediaProfiles[$current_period][$current_adaptation_set][$rep1]['cmafMediaProfile'];
+    $cmaf_profile2 = $cmaf_mediaProfiles[$current_period][$current_adaptation_set][$rep2]['cmafMediaProfile'];
+    if(($cmaf_profile1 == $cmaf_profile2 && $cmaf_profile1 == 'unknown') || ($cmaf_profile1 != $cmaf_profile2 || strpos($cmaf_profile1, $cmaf_profile2) === FALSE || strpos($cmaf_profile2, $cmaf_profile1) === FALSE)){
+        fprintf($opfile, "**'CMAF check violated: Section 7.3.4.1- All CMAF Tracks in a CMAF Switching Set SHALL conform to one CMAF Media Profile', but not conforming for Representation ".($rep1)." with profile '".$cmaf_profile1."' and Representation ".($rep2)." with profile '".$cmaf_profile2."' in Adaptation Set ".($current_adaptation_set+1)." in Period ".($current_period+1).".\n");
     }
-    elseif($xml_handlerType==$xml_comp_handlerType && $xml_handlerType='soun'){
-        if(strpos($brands1,"caac") && strpos($brands2,"caac")==false )
-            $err=1;
-        else if(strpos($brands1,"caaa") && strpos($brands2,"caaa")==false)
-            $err=1;
-        else
-            $err=1;
-    }
-    //Todo : Subtitle media profile checks.
-    //elseif($xml_handlerType==$xml_comp_handlerType && $xml_handlerType='subt')
-    return $err;
 }
 
 function checkHeaders($opfile, $xml, $xml_comp, $id, $id_comp, $curr_adapt_dir, $index, $path){
@@ -436,10 +420,6 @@ function compareRest($opfile, $xml, $xml_comp, $id, $id_comp){
          if($xml_earlyCompTime+$mediaTime != $xml_comp_earlyCompTime+$mediaTime_comp)
              fprintf($opfile, "**'CMAF check violated: Section 7.3.4.1- The presentation time of earliest media sample of the earliest CMAF fragment in each CMAF track shall be equal', but unequal presentation-times found between Rep ".$id." and Rep ".$id_comp." \n");
     } //
-
-   $mediaProfileError=checkMediaProfiles($xml, $xml_comp,$xml_handlerType,$xml_comp_handlerType);//Check media profile conformance of Tracks in a Switching Set.
-   if($mediaProfileError)
-        fprintf($opfile, "**'CMAF check violated: Section 7.3.4.1- All CMAF Tracks in a CMAF Switching Set SHALL conform to one CMAF Media Profile', but not conforming for Rep ".$id." and Rep ".$id_comp." \n");
 }
 
 function checkSwitchingSets(){
@@ -482,6 +462,7 @@ function checkSwitchingSets(){
             if($xml && $xml_comp){
                 checkHeaders($opfile, $xml, $xml_comp, $id, $id_comp, $curr_adapt_dir, $ind, $path); //start comparing
                 compareHevc($opfile, $xml, $xml_comp, $id, $id_comp);
+                checkMediaProfiles($opfile, $i, $j);
                 compareRest($opfile, $xml, $xml_comp, $id, $id_comp);
             }
             
