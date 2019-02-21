@@ -1169,7 +1169,7 @@ void checkCMAFBoxOrder(long cnt, atomOffsetEntry *list, long segmentInfoSize, bo
                     
             }
         }
-        if(ord_err){
+        /*if(ord_err){
             strcat(err_order,ostypetostr(list[0].type));
             for (int z= 1; z < cnt; z++){
                 if (list[z].offset < segmentSizes[0]) {
@@ -1178,7 +1178,7 @@ void checkCMAFBoxOrder(long cnt, atomOffsetEntry *list, long segmentInfoSize, bo
                 }
             }
                 errprint("CMAF check violated (ordinality/nesting) : \"In CMAF Header, the allowed box order as per Section 7.3.1. of ISO/IEC 23000-19(E) is: ftyp--moov \", but order found is: %s \n", err_order);
-        }
+        }*/
          offset += segmentSizes[0];
     }
     

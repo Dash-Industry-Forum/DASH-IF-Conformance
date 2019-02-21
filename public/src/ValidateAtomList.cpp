@@ -386,6 +386,11 @@ OSErr Validate_minf_Atom( atomOffsetEntry *aoe, void *refcon )
 				Validate_nmhd_Atom, cnt, list, nil );
 			if (!err) err = atomerr;
 			break;
+                case 'text':
+                        atomerr = ValidateAtomOfType( 'nmhd', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
+				Validate_nmhd_Atom, cnt, list, nil );
+			if (!err) err = atomerr;
+			break;
 		default:
 			warnprint("WARNING: In %s - unknown media type '%s'\n",vg.curatompath, ostypetostr(tir->mediaType));
 	}
@@ -432,8 +437,8 @@ OSErr Validate_minf_Atom( atomOffsetEntry *aoe, void *refcon )
 		if (!err) err = atomerr;
 	}
 	
-	if(vg.cmaf)
-            checkCMAFBoxOrder_minf(cnt,list);
+	//if(vg.cmaf)
+        //    checkCMAFBoxOrder_minf(cnt,list);
 	
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -503,8 +508,8 @@ OSErr Validate_mdia_Atom( atomOffsetEntry *aoe, void *refcon )
 		if (!err) err = atomerr;
 	}
 	
-	if(vg.cmaf)
-            checkCMAFBoxOrder_mdia(cnt,list);
+	//if(vg.cmaf)
+        //    checkCMAFBoxOrder_mdia(cnt,list);
 	
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -765,8 +770,8 @@ OSErr Validate_trak_Atom( atomOffsetEntry *aoe, void *refcon )
 			break;
 	}
 	
-	if(vg.cmaf)
-            checkCMAFBoxOrder_trak(cnt,list);
+	//if(vg.cmaf)
+        //    checkCMAFBoxOrder_trak(cnt,list);
 	
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -925,8 +930,8 @@ OSErr Validate_stbl_Atom( atomOffsetEntry *aoe, void *refcon )
 		    warnprint("WARNING: STSC empty; with an empty STSC atom, chunk mapping is not verifiable\n");
 	}
 	
-	if(vg.cmaf)
-            checkCMAFBoxOrder_stbl(cnt,list);
+	//if(vg.cmaf)
+        //    checkCMAFBoxOrder_stbl(cnt,list);
 
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -1782,8 +1787,8 @@ OSErr Validate_moov_Atom( atomOffsetEntry *aoe, void *refcon )
 		// until we have processed all chunks of all tracks
 	}
 		
-        if(vg.cmaf)
-            checkCMAFBoxOrder_moov(cnt,list);
+        //if(vg.cmaf)
+        //    checkCMAFBoxOrder_moov(cnt,list);
             
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -1892,8 +1897,8 @@ OSErr Validate_moof_Atom( atomOffsetEntry *aoe, void *refcon )
     
     mir->processedFragments++;
     
-        if(vg.cmaf)
-            checkCMAFBoxOrder_moof(cnt,list);
+        //if(vg.cmaf)
+        //    checkCMAFBoxOrder_moof(cnt,list);
 
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -2057,8 +2062,8 @@ OSErr Validate_traf_Atom( atomOffsetEntry *aoe, void *refcon )
 
     moofInfo->compositionInfoMissingPerTrack[index] = moofInfo->compositionInfoMissingPerTrack[index] || trafInfo->compositionInfoMissing;
 
-        if(vg.cmaf)
-            checkCMAFBoxOrder_traf(cnt,list);
+        //if(vg.cmaf)
+        //    checkCMAFBoxOrder_traf(cnt,list);
         
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -2443,8 +2448,8 @@ OSErr Validate_sinf_Atom( atomOffsetEntry *aoe, void *refcon, UInt32 flags )
 		if (!err) err = atomerr;
 	}
 	
-	if(vg.cmaf)
-            checkCMAFBoxOrder_sinf(cnt,list);
+	//if(vg.cmaf)
+        //    checkCMAFBoxOrder_sinf(cnt,list);
 	
 	aoe->aoeflags |= kAtomValidated;
 bail:
