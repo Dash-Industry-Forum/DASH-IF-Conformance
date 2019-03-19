@@ -143,9 +143,13 @@ function analyze_results($returncode, $curr_adapt_dir, $rep_dir_name){
     rename_file($session_dir . '/' . $leafinfo_file, $session_dir . '/' . $info_log . '.txt');
     $file_location[] = relative_path($session_dir . '/' . $info_log . '.html');
 
-    if(!$hls_manifest){
+    if(!$hls_manifest){ 
         $error_log = 'Period' . $current_period . '/' . str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_error_log_template);
         rename_file($session_dir . '/' . $stderr_file, $session_dir . '/' . $error_log . '.txt');
+        
+        ## Check segment duration and start times against MPD times.
+        loadAndCheckSegmentDuration();
+        
         $temp_string = str_replace(array('$Template$'), array($error_log), $string_info);
         file_put_contents($session_dir . '/' . $error_log . '.html', $temp_string);
     }
@@ -234,4 +238,136 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     
     fclose($file);
     return (!$hls_manifest) ? ($session_dir . '/Period' . $current_period. '/' . $config_file) : ($session_dir . '/' . $config_file);
+}
+
+function loadAndCheckSegmentDuration()
+{
+    global $mpd_features, $current_period, $session_dir, $adaptation_set_error_log_template, $reprsentation_info_log_template, $string_info,$current_adaptation_set,$current_representation;
+
+    $adaptation_set = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
+
+        $timeoffset = 0;
+        $timescale = 1;
+        
+
+        
+        $segmentAlignment = ($adaptation_set['segmentAlignment']) ? $adaptation_set['segmentAlignment'] : 'false';
+        $subsegmentAlignment = ($adaptation_set['subsegmentAlignment']) ? $adaptation_set['subsegmentAlignment'] : 'false';
+        $bitstreamSwitching = ($adaptation_set['bitstreamSwitching']) ? $adaptation_set['bitstreamSwitching'] : 'false';
+
+        if ($segmentAlignment == "true" || $subsegmentAlignment == "true" || $bitstreamSwitching == "true"){
+            $leafInfo = array();
+
+            $representation = $adaptation_set['Representation'][$current_representation];
+
+                $timeoffset = 0;
+                $timescale = 1;
+
+                $duration=0;
+
+                if (!empty($adaptation_set['SegmentTemplate'][0]['timescale']))
+                    $timescale = $adaptation_set['SegmentTemplate'][0]['timescale'];
+
+                if (!empty($adaptation_set['SegmentTemplate'][0]['presentationTimeOffset']))
+                    $timeoffset = $adaptation_set['SegmentTemplate'][0]['presentationTimeOffset'];
+                
+                if (!empty($adaptation_set['SegmentTemplate'][0]['duration']))
+                    $duration = $adaptation_set['SegmentTemplate'][0]['duration'];
+
+                if (!empty($representation['SegmentTemplate'][0]['timescale']))
+                    $timescale = $representation['SegmentTemplate'][0]['timescale'];
+
+                if (!empty($representation['SegmentTemplate'][0]['presentationTimeOffset']))
+                    $timeoffset = $representation['SegmentTemplate'][0]['presentationTimeOffset'];
+                
+                if (!empty($representation['SegmentTemplate'][0]['duration']))
+                    $duration = $representation['SegmentTemplate'][0]['duration'];
+
+                if (!empty($representation['presentationTimeOffset']))
+                    $timeoffset = $representation['presentationTimeOffset'];
+
+                $offsetmod = (float)$timeoffset / $timescale;
+                $duration=(float)$duration/$timescale;
+                if(sizeof($adaptation_set['SegmentTemplate'])>0 || sizeof($representation['SegmentTemplate'])>0)
+                    loadSegmentInfoFile($offsetmod, $current_period, $current_adaptation_set, $current_representation,$duration);
+
+            
+
+        }
+
+
+    
+
+}
+function loadSegmentInfoFile($PresTimeOffset, $period, $adSet, $rep,$duration){
+    global $session_dir,$reprsentation_info_log_template;
+    $info = array();
+
+    $segmentInfoFile = open_file($session_dir.'/Period' . $period . '/' . str_replace(array('$AS$', '$R$'), array($adSet, $rep), $reprsentation_info_log_template) . '.txt', 'rt');
+    if (!$segmentInfoFile)
+        return;
+
+    fscanf($segmentInfoFile, "%lu\n", $accessUnitDurationNonIndexedTrack);
+    fscanf($segmentInfoFile, "%u\n", $info['numTracks']);
+
+    $info['leafInfo'] = array();
+    $info['numLeafs'] = array();
+    $info['trackTypeInfo'] = array();
+
+    for ($i = 0; $i < $info['numTracks']; $i++)
+        fscanf($segmentInfoFile, "%lu %lu\n", $info['trackTypeInfo'][$i]['track_ID'], $info['trackTypeInfo'][$i]['componentSubType']);
+
+    for ($i = 0; $i < $info['numTracks']; $i++){
+        fscanf($segmentInfoFile, "%u\n", $info['numLeafs'][$i]);
+        $info['leafInfo'][$i] = array();
+
+        for ($j = 0; $j < $info['numLeafs'][$i]; $j++){
+            fscanf($segmentInfoFile, "%d %f %f\n", $info['leafInfo'][$i][$j]['firstInSegment'], $info['leafInfo'][$i][$j]['earliestPresentationTime'], $info['leafInfo'][$i][$j]['lastPresentationTime']);
+            //$info['leafInfo'][$i][$j]['earliestPresentationTime'] = $info['leafInfo'][$i][$j]['earliestPresentationTime'] - round($PresTimeOffset,6);
+            //$info['leafInfo'][$i][$j]['lastPresentationTime'] = $info['leafInfo'][$i][$j]['lastPresentationTime'] - round($PresTimeOffset,6);
+        }
+    }
+    checkSegmentDurationWithMPD($info['leafInfo'],$period, $adSet, $rep, $PresTimeOffset, $duration);
+    close_file($segmentInfoFile);
+}
+
+function checkSegmentDurationWithMPD($segmentsTime,$period, $AdSet, $Rep, $PTO, $duration)
+{
+    global $session_dir, $mpd_features,$reprsentation_error_log_template,$period_timing_info;
+    
+    $trackErrorFile = open_file($session_dir . '/Period' .$period . '/' . str_replace(array('$AS$', '$R$'), array($AdSet, $Rep), $reprsentation_error_log_template) . '.txt', 'a+');
+    if (!$trackErrorFile)
+        return;
+    $segmentDur=array();
+    $num_segments= sizeof($segmentsTime[0]);
+    if($period==0)
+        $pres_start = $period_timing_info[0] + $PTO;
+    else
+        $pres_start=$PTO;
+    
+    $segmentDurMPD=$duration;
+    for($i=0;$i<$num_segments;$i++)
+    {
+        $segmentDur[$i]=$segmentsTime[0][$i]['lastPresentationTime'] - $segmentsTime[0][$i]['earliestPresentationTime'];
+        if(($i!==($num_segments-1)) && !($segmentDurMPD*0.5 <= $segmentDur[$i]  && $segmentDur[$i] <= $segmentDurMPD*1.5))
+        {
+            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1- Section 7.2.1: 'The maximum tolerance of segment duration shall be +/-50% of the signaled segment duration (@duration)',violated for segment ".($i+1).", with duration ".$segmentDur[$i]." while signaled @duration is ".$segmentDurMPD."\n");
+        }
+        //The lower threshold tolerance does not apply to the last segment, it can be smaller.
+        if(($i==($num_segments-1)) && $segmentDur[$i] > $segmentDurMPD*1.5)
+        {
+            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1- Section 7.2.1: 'The maximum tolerance of segment duration shall be +/-50% of the signaled segment duration (@duration)',violated for segment ".($i+1).", with duration ".$segmentDur[$i]." while signaled @duration is ".$segmentDurMPD."\n");
+        }
+        
+        $MPDSegmentStartTime=$pres_start+$i*$segmentDurMPD;
+        
+        if(!($MPDSegmentStartTime-(0.5*$segmentDurMPD) <= $segmentsTime[0][$i]['earliestPresentationTime']  && $segmentsTime[0][$i]['earliestPresentationTime'] <= $MPDSegmentStartTime+(0.5*$segmentDurMPD)))
+        {
+            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1- Section 7.2.1: 'The difference between MPD start time and presentation time shall not exceed +/-50% of value of @duration divided by the value of the @timescale attribute.',violated for segment ".($i+1).", with earliest presentation time ".$segmentsTime[0][$i]['earliestPresentationTime']." while signaled MPD start time is ".$MPDSegmentStartTime." and @duration is ".$segmentDurMPD."\n");
+
+        }
+    }
+    
+    fclose($trackErrorFile);
+
 }
