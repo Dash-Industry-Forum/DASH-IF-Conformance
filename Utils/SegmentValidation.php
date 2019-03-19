@@ -351,19 +351,19 @@ function checkSegmentDurationWithMPD($segmentsTime,$period, $AdSet, $Rep, $PTO, 
         $segmentDur[$i]=$segmentsTime[0][$i]['lastPresentationTime'] - $segmentsTime[0][$i]['earliestPresentationTime'];
         if(($i!==($num_segments-1)) && !($segmentDurMPD*0.5 <= $segmentDur[$i]  && $segmentDur[$i] <= $segmentDurMPD*1.5))
         {
-            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1- Section 7.2.1: 'The maximum tolerance of segment duration shall be +/-50% of the signaled segment duration (@duration)',violated for segment ".$i.", with duration ".$segmentDurMPD." while signaled @duration is ".$segmentDur[$i]."\n");
+            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1- Section 7.2.1: 'The maximum tolerance of segment duration shall be +/-50% of the signaled segment duration (@duration)',violated for segment ".($i+1).", with duration ".$segmentDur[$i]." while signaled @duration is ".$segmentDurMPD."\n");
         }
         //The lower threshold tolerance does not apply to the last segment, it can be smaller.
         if(($i==($num_segments-1)) && $segmentDur[$i] > $segmentDurMPD*1.5)
         {
-            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1- Section 7.2.1: 'The maximum tolerance of segment duration shall be +/-50% of the signaled segment duration (@duration)',violated for segment ".$i.", with duration ".$segmentDurMPD." while signaled @duration is ".$segmentDur[$i]."\n");
+            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1- Section 7.2.1: 'The maximum tolerance of segment duration shall be +/-50% of the signaled segment duration (@duration)',violated for segment ".($i+1).", with duration ".$segmentDur[$i]." while signaled @duration is ".$segmentDurMPD."\n");
         }
         
         $MPDSegmentStartTime=$pres_start+$i*$segmentDurMPD;
         
-        if(!($MPDSegmentStartTime*0.5 <= $segmentsTime[0][$i]['earliestPresentationTime']  && $segmentsTime[0][$i]['earliestPresentationTime'] <= $MPDSegmentStartTime*1.5))
+        if(!($MPDSegmentStartTime-(0.5*$segmentDurMPD) <= $segmentsTime[0][$i]['earliestPresentationTime']  && $segmentsTime[0][$i]['earliestPresentationTime'] <= $MPDSegmentStartTime+(0.5*$segmentDurMPD)))
         {
-            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1- Section 7.2.1: 'The difference between MPD start time and presentation time shall not exceed 50% of value of @duration divided by the value of the @timescale attribute.',violated for segment ".$i.", with earliest presentation time ".$segmentsTime[0][$i]['earliestPresentationTime']." while signaled MPD start time is ".$MPDSegmentStartTime."\n");
+            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1- Section 7.2.1: 'The difference between MPD start time and presentation time shall not exceed +/-50% of value of @duration divided by the value of the @timescale attribute.',violated for segment ".($i+1).", with earliest presentation time ".$segmentsTime[0][$i]['earliestPresentationTime']." while signaled MPD start time is ".$MPDSegmentStartTime." and @duration is ".$segmentDurMPD."\n");
 
         }
     }
