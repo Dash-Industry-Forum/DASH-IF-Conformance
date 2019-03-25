@@ -1211,6 +1211,13 @@ OSErr Validate_mhaC_Atom( atomOffsetEntry *aoe, void *refcon );
 OSErr Validate_dac3_Atom( atomOffsetEntry *aoe, void *refcon);
 OSErr Validate_dec3_Atom( atomOffsetEntry *aoe, void *refcon);
 OSErr Validate_dac4_Atom( atomOffsetEntry *aoe, void *refcon);
+OSErr Validate_ac4_dsi_v1( BitBuffer *bb, void *refcon);
+OSErr Validate_ac4_bitrate_dsi( BitBuffer *bb, void *refcon, UInt32* bits_counter);
+OSErr Validate_ac4_presentation_v0_dsi( BitBuffer *bb, void *refcon, UInt8* presentation_bytes, UInt64 count);
+OSErr Validate_ac4_substream_dsi( BitBuffer *bb, void *refcon, UInt64* bits_counter);
+OSErr Validate_ac4_presentation_v1_dsi( BitBuffer *bb, void *refcon, UInt8 pres_bytes, UInt8* presentation_bytes, UInt64 count);
+OSErr Validate_ac4_substream_group_dsi( BitBuffer *bb, void *refcon , UInt32 * bits_counter);
+OSErr Validate_ac4_alternative_info( BitBuffer *bb, void *refcon, UInt32 * bits_counter );
 
 OSErr Validate_avcC_Atom( atomOffsetEntry *aoe, void *refcon, char *esname );
 OSErr Validate_hvcC_Atom( atomOffsetEntry *aoe, void *refcon, char *esname );
