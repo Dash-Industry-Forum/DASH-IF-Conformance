@@ -365,7 +365,7 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
             $levelcomment=$xml->getElementsByTagName("iods_OD");
             if($levelcomment->length>0)
             {    
-                $profileLevelString=$levelcomment->getAttribute("Comment");
+                $profileLevelString=$levelcomment->item(0)->getAttribute("Comment");
                 if($profileLevelString!==NULL)
                 {
                     $profileLevel=str_replace("audio profile/level is ", "", $profileLevelString);
@@ -397,6 +397,12 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
             $brand_pos=strpos($compatible_brands,"ca4s");
             if($brand_pos!==False)
                 $xml_MPParameters['brand']=substr($compatible_brands,$brand_pos,$brand_pos+3);
+            
+            $dac4=$sounSampleDes->getElementsByTagName("dac4");
+            if($dac4->length>0){
+                if($dac4->item(0)->hasAttribute("mdcompat_0"))//if(isset($attr["mdcompat_0"]))
+                     $xml_MPParameters['level']=$dac4->item(0)->getAttribute("mdcompat_0");
+            }
         }
          elseif($sdType=="mhm1")
         {
@@ -406,8 +412,8 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
             $mhaC=$sounSampleDes->getElementsByTagName("mhaC");
             if($mhaC->length>0)
             {
-                $xml_MPParameters['profile']=$mhaC->getAttribute("mpegh3daProfileLevelIndication");
-                $xml_MPParameters['channel']=$mhaC->getAttribute("referenceChannelLayout");
+                $xml_MPParameters['profile']=$mhaC->item(0)->getAttribute("mpegh3daProfileLevelIndication");
+                $xml_MPParameters['channel']=$mhaC->item(0)->getAttribute("referenceChannelLayout");
             }
             if($brand_pos!==False)
                 $xml_MPParameters['brand']=substr($compatible_brands,$brand_pos,$brand_pos+3);
@@ -609,7 +615,7 @@ function checkAndGetConformingAudioProfile($xml_MPParameters,$repCount,$adaptCou
             {
                 //Level is checked here , however level can not be found always from the atom xml as the IODS atom is not always present in the track.
                 if($xml_MPParameters['level']!=="" && strpos($xml_MPParameters['level'], "AAC@L2")===FALSE){
-                        $errorMsg[]= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but the level found for track ".$repCount." of SwitchingSet ".$adaptCount."- ".$xml_MPParameters['level'].", expected level 2. \n";
+                        $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but the level found for track ".$repCount." of SwitchingSet ".$adaptCount."- ".$xml_MPParameters['level'].", expected level 2. \n";
                 }else
                 {
                     if(in_array($xml_MPParameters['profile'],array("0x02", "0x05", "0x1d")))
@@ -620,7 +626,7 @@ function checkAndGetConformingAudioProfile($xml_MPParameters,$repCount,$adaptCou
                             $audioMediaProfile="AAC_Core";
                     }
                     else
-                        $errorMsg[]= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but the profiles are not among the [AAC-LC, HE-AAC, HE-AAC v2] for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
+                        $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but the profiles are not among the [AAC-LC, HE-AAC, HE-AAC v2] for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
                 }
               
   
@@ -630,21 +636,25 @@ function checkAndGetConformingAudioProfile($xml_MPParameters,$repCount,$adaptCou
                 if($xml_MPParameters['profile'] == "0x05" || ($xml_MPParameters['profile'] == "0x02" && $xml_MPParameters['level'] == "High Quality Audio@L6"))
                     $audioMediaProfile="AAC_Multichannel";
                 else
-                    $errorMsg[]= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC multichannel codec found but the profiles are not among the [AAC-LC, HE-AAC] for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
+                    $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC multichannel codec found but the profiles are not among the [AAC-LC, HE-AAC] for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
 
             }
             else
-                $errorMsg[]= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but channels are not conforming, found ".$xml_MPParameters['channels']." but expected 1,2,5,6,7,12 or 14 for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
+                $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but channels are not conforming, found ".$xml_MPParameters['channels']." but expected 1,2,5,6,7,12 or 14 for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
 
         }
         else
-            $errorMsg[]= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but sampling rate is not conforming, found ".$xml_MPParameters['sampleRate']." but expected 48kHz for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
+            $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AAC codec found but sampling rate is not conforming, found ".$xml_MPParameters['sampleRate']." but expected 48kHz for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
              
     }
     elseif($xml_MPParameters['codec']=="EAC-3" ||$xml_MPParameters['codec']=="AC-3")
         $audioMediaProfile="Enhanced_AC-3";
-    elseif($xml_MPParameters['codec']=="AC-4")
-        $audioMediaProfile="AC-4_SingleStream";
+    elseif($xml_MPParameters['codec']=="AC-4"){
+        if($xml_MPParameters['level'] == 3)
+                $audioMediaProfile="AC-4_SingleStream";
+        else
+                $errorMsg= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 4.3.1: 'Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2', audio Media profiles conformance failed. AC-4 codec found but level is not conforming, level found-( ".$xml_MPParameters['level'].") but expected 3 for track ".$repCount." of SwitchingSet ".$adaptCount." \n";
+    }
     elseif($xml_MPParameters['codec']=="MPEG-H")
     {
         if($xml_MPParameters['sampleRate']<=48000)
