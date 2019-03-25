@@ -288,7 +288,7 @@ function loadAndCheckSegmentDuration()
 
                 $offsetmod = (float)$timeoffset / $timescale;
                 $duration=(float)$duration/$timescale;
-                if(sizeof($adaptation_set['SegmentTemplate'])>0 || sizeof($representation['SegmentTemplate'])>0)
+                if((sizeof($adaptation_set['SegmentTemplate'])>0 || sizeof($representation['SegmentTemplate'])>0) && $duration!=0)
                     loadSegmentInfoFile($offsetmod, $current_period, $current_adaptation_set, $current_representation,$duration);
 
             
