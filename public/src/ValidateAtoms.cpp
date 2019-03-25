@@ -3749,19 +3749,542 @@ bail:
 OSErr Validate_dac4_Atom( atomOffsetEntry *aoe, void *refcon)
 {
     OSErr err = noErr;
+    UInt32 size;
+    UInt32 type;
+    UInt64 offset;
     
+        
     atomprint("<dac4\n");
     vg.tabcnt++;
+    //
+    void* bsDataP;
+    BitBuffer bb;
     
+    // Get version/flags
+    offset = aoe->offset;
+    BAILIFERR(GetFileData( aoe, &size, offset, sizeof(size), &offset ));
+    size=EndianU32_BtoN (size);
+    atomprint("size=\"%d\"\n", size);
+    
+    BAILIFERR(GetFileData( aoe, &type, offset, sizeof(type), &offset ));
+    type=EndianU32_BtoN(type);
+    atomprint("type=\"%d\"\n", type);
+	
+
+    BAILIFNIL( bsDataP = calloc(size - 8 + bitParsingSlop, 1), allocFailedErr );
+    BAILIFERR( GetFileData( aoe, bsDataP, offset, size - 8, &offset ) );
+    BitBuffer_Init(&bb, (UInt8 *)bsDataP, size - 8);
+
+    BAILIFERR( Validate_ac4_dsi_v1( &bb, refcon)); 
+    
+  
+    
+bail:
     vg.tabcnt--;
     atomprint(">\n");
     atomprint("</dac4>\n");
+    if(err){
+         bailprint("Validate_dac4_Atom", err);
+    }
+    return err;
+}
+
+//==========================================================================================
+
+OSErr Validate_ac4_dsi_v1( BitBuffer *bb, void *refcon)
+{
+    OSErr err = noErr;
+    UInt64 offset,i;
+    UInt32 bits_counter,padding, temp;
+    UInt8 ac4_dsi_version, bitstream_version, fs_index, frame_rate_index;
+    UInt16 n_presentations, short_program_id;
+    UInt8 b_program_id, b_uuid, byte_align,presentation_version,pres_bytes,skip_area,presentation_bytes=0,skip_bytes;
+    UInt16 program_uuid[8], add_pres_bytes;
+    
+    bits_counter=0;
+    ac4_dsi_version= GetBits(bb, 3, &err); if (err) goto bail;
+    bitstream_version= GetBits(bb, 7, &err); if (err) goto bail;
+    fs_index= GetBits(bb, 1, &err); if (err) goto bail;
+    frame_rate_index=GetBits(bb, 4, &err); if (err) goto bail;
+    n_presentations= GetBits(bb, 9, &err); if (err) goto bail;
+    bits_counter+=(UInt32)24;
+    
+    if(bitstream_version>1)
+    {
+          b_program_id= GetBits(bb, 1, &err); if (err) goto bail;
+          bits_counter+=1;
+          if(b_program_id)
+          {
+              short_program_id= GetBits(bb, 16, &err); if (err) goto bail;
+              b_uuid=GetBits(bb, 1, &err); if (err) goto bail;
+              bits_counter+=17;
+              if(b_uuid)
+              {
+                  for(i=0;i<8;i++){
+                    program_uuid[i]= GetBits(bb, 16, &err); if (err) goto bail;
+                  }
+                  bits_counter+=(16*8);
+              }
+          }
+    }
+    
+     temp=GetBits(bb, 2, &err); if (err) goto bail;
+     temp=GetBits(bb, 32, &err); if (err) goto bail;
+     temp=GetBits(bb, 32, &err); if (err) goto bail;
+     bits_counter=bits_counter+66;
+     
+     padding = 8 - (bits_counter % 8);
+     byte_align=GetBits(bb, padding, &err); if (err) goto bail;
+     
+     for(i=0;i<n_presentations;i++)
+     {
+         presentation_version=GetBits(bb, 8, &err); if (err) goto bail;
+         pres_bytes=GetBits(bb, 8, &err); if (err) goto bail;
+
+         if(pres_bytes==255)
+         {
+             add_pres_bytes=GetBits(bb, 16, &err); if (err) goto bail;
+             pres_bytes+=add_pres_bytes;
+         }
+         if(presentation_version==0)
+         {
+             BAILIFERR( Validate_ac4_presentation_v0_dsi( bb, refcon, &presentation_bytes, i));
+         }
+         else
+         {
+            if(presentation_version==1)
+            {
+                BAILIFERR( Validate_ac4_presentation_v1_dsi( bb, refcon, pres_bytes, &presentation_bytes, i));
+            }
+            else
+                presentation_bytes=0;
+         }
+         skip_bytes=pres_bytes- presentation_bytes;
+         //Skip area
+         unsigned int j;
+         j=skip_bytes;
+         for(j=0;j<skip_bytes;j++){
+             skip_area=GetBits(bb, 8, &err); if (err) goto bail;
+         }
+         //
+     }
+     
+bail:
+    return err;
+}
+
+/*OSErr Validate_ac4_bitrate_dsi( atomOffsetEntry *aoe, void *refcon, UInt32* bits_counter)
+{
+    OSErr err = noErr;
+    UInt64 offset;
+    UInt32 bit_rate, bit_rate_precision;
+    UInt8 bit_rate_mode;
+    offset=aoe->offset;
+    
+    BAILIFERR(GetFileData( aoe, &bit_rate_mode, offset, 2, &offset ));
+    BAILIFERR(GetFileData( aoe, &bit_rate, offset, 32, &offset ));
+    BAILIFERR(GetFileData( aoe, &bit_rate_precision, offset, 32, &offset ));
+    *bits_counter=*bits_counter+66;
+    
+bail:
+    return err;
+}*/
+
+OSErr Validate_ac4_presentation_v0_dsi( BitBuffer *bb, void *refcon, UInt8* presentation_bytes, UInt64 count)
+{
+    OSErr err = noErr;
+    UInt64 offset, i,j, bits_counter,padding;
+    UInt8 presentation_config,b_add_emdf_substreams, mdcompat,b_presentation_id;
+    UInt8 presentation_id,dsi_frame_rate_multiply_info,presentation_emdf_version;
+    UInt16 presentation_key_id;
+    UInt32 presentation_channel_mask;
+    UInt8 b_hsf_ext,n_skip_bytes, skip_data,b_pre_virtualized, n_add_emdf_substreams, substream_emdf_version, byte_align;
+    UInt16 substream_key_id;
+    
+    bits_counter=0;
+    presentation_config=GetBits(bb, 5, &err); if (err) goto bail;
+    bits_counter+=5;
+    if(presentation_config ==6)
+    {
+        b_add_emdf_substreams=1;
+    }
+    else
+    {
+        mdcompat=GetBits(bb, 3, &err); if (err) goto bail;
+        atomprint("mdcompat_%d=\"%d\"\n", count, mdcompat);
+        b_presentation_id=GetBits(bb, 1, &err); if (err) goto bail;
+        bits_counter+=4;
+        if(b_presentation_id){
+            presentation_id=GetBits(bb, 1, &err); if (err) goto bail;
+            bits_counter+=5;
+        }
+        
+        dsi_frame_rate_multiply_info=GetBits(bb, 2, &err); if (err) goto bail;
+        presentation_emdf_version=GetBits(bb, 5, &err); if (err) goto bail;
+        presentation_key_id=GetBits(bb, 10, &err); if (err) goto bail;
+        presentation_channel_mask=GetBits(bb, 24, &err); if (err) goto bail;
+        bits_counter+=41;
+        if(presentation_config ==0x1f)
+        {
+            BAILIFERR( Validate_ac4_substream_dsi( bb, refcon, &bits_counter)); 
+        }
+        else
+        {
+            b_hsf_ext=GetBits(bb, 1, &err); if (err) goto bail;
+            bits_counter+=1;
+            if(presentation_config== 0 || presentation_config == 1 || presentation_config ==2)
+            {
+                BAILIFERR( Validate_ac4_substream_dsi( bb, refcon, &bits_counter)); 
+                BAILIFERR( Validate_ac4_substream_dsi( bb, refcon, &bits_counter)); 
+            }
+            if(presentation_config ==3 || presentation_config ==4)
+            {
+                BAILIFERR( Validate_ac4_substream_dsi( bb, refcon, &bits_counter)); 
+                BAILIFERR( Validate_ac4_substream_dsi( bb, refcon, &bits_counter)); 
+                BAILIFERR( Validate_ac4_substream_dsi( bb, refcon, &bits_counter)); 
+            }
+            if(presentation_config == 5)
+                BAILIFERR( Validate_ac4_substream_dsi( bb, refcon, &bits_counter)); 
+    
+            if(presentation_config >5)
+            {
+                n_skip_bytes=GetBits(bb, 7, &err); if (err) goto bail;
+                bits_counter+=7;
+                for(i=0;i<n_skip_bytes; i++)
+                {
+                    skip_data=GetBits(bb, 8, &err); if (err) goto bail;
+                    bits_counter+=8;
+                }
+            }
+        }
+        b_pre_virtualized=GetBits(bb, 1, &err); if (err) goto bail;
+        b_add_emdf_substreams=GetBits(bb, 1, &err); if (err) goto bail;
+        bits_counter+=2;
+    }
+    if(b_add_emdf_substreams)
+    {
+        b_add_emdf_substreams=GetBits(bb, 7, &err); if (err) goto bail;
+        bits_counter+=7;
+        for(j=0;j<n_add_emdf_substreams;j++)
+        {
+            substream_emdf_version=GetBits(bb, 5, &err); if (err) goto bail;
+            substream_key_id=GetBits(bb, 10, &err); if (err) goto bail;
+            bits_counter+=15;
+        }
+    }
+    padding= 8- (bits_counter % 8);
+    byte_align=GetBits(bb, padding, &err); if (err) goto bail;
+    *presentation_bytes=(UInt8)(bits_counter + padding)/8;
     
 bail:
     return err;
 }
 
-//==========================================================================================
+OSErr Validate_ac4_substream_dsi( BitBuffer *bb, void *refcon, UInt64* bits_counter)
+{
+    OSErr err = noErr;
+    UInt64 offset, i,j;
+    UInt8 channel_mode, dsi_sf_multiplier, b_substream_bitrate_indicator,substream_bitrate_indicator;
+    UInt8 add_ch_base, b_content_type, content_classifier, b_language_indicator, n_language_tag_bytes, language_tag_bytes;
+    
+    
+    channel_mode=GetBits(bb, 5, &err); if (err) goto bail;
+    dsi_sf_multiplier=GetBits(bb, 2, &err); if (err) goto bail;
+    b_substream_bitrate_indicator=GetBits(bb, 1, &err); if (err) goto bail;
+    *bits_counter+=8;
+    if(b_substream_bitrate_indicator){
+        substream_bitrate_indicator=GetBits(bb, 5, &err); if (err) goto bail;
+        *bits_counter+=5;
+    }
+
+    if(channel_mode == 0b1111010 || channel_mode == 0b1111011 || channel_mode == 0b1111100 || channel_mode== 0b1111101)
+    {
+        add_ch_base=GetBits(bb, 1, &err); if (err) goto bail;
+        *bits_counter+=1;
+    }
+    b_content_type=GetBits(bb, 1, &err); if (err) goto bail;
+    *bits_counter+=1;
+    if(b_content_type)
+    {
+        content_classifier=GetBits(bb, 3, &err); if (err) goto bail;
+        b_language_indicator=GetBits(bb, 1, &err); if (err) goto bail;
+        *bits_counter+=4;
+        if(b_language_indicator)
+        {
+            n_language_tag_bytes=GetBits(bb, 6, &err); if (err) goto bail;
+            *bits_counter+=6;
+            for(i=0;i<n_language_tag_bytes;i++){
+                language_tag_bytes=GetBits(bb, 8, &err); if (err) goto bail;
+                *bits_counter+=8;
+            }
+        }
+    }
+bail:
+    return err;
+}
+
+OSErr Validate_ac4_presentation_v1_dsi( BitBuffer *bb, void *refcon, UInt8 pres_bytes, UInt8* presentation_bytes, UInt64 count)
+{
+    OSErr err = noErr;
+    UInt64 offset, i,j;
+    UInt32 bits_counter, padding, temp;
+    UInt8 presentation_config_v1, b_add_emdf_substreams, mdcompat,b_presentation_id,presentation_id,
+    dsi_frame_rate_multiply_info,dsi_frame_rate_fraction_info,presentation_emdf_version,
+    b_presentation_channel_coded, dsi_presentation_ch_mode,pres_b_4_back_channels_present,pres_top_channel_pairs,
+    b_presentation_core_differs, b_presentation_core_channel_coded,
+    dsi_presentation_channel_mode_core,b_presentation_filter, b_enable_presentation, n_filter_bytes,
+    filter_data, b_multi_pid, n_substream_groups_minus2 , n_substream_groups, sg,n_skip_bytes, skip_data,
+    b_pre_virtualized,  n_add_emdf_substreams, substream_emdf_version, b_presentation_bitrate_info,
+    byte_align,de_indicator,reserved,b_extended_presentation_id;
+    UInt16 presentation_key_id, substream_key_id, b_alternative, extended_presentation_id;
+    UInt32 presentation_channel_mask_v1;
+    UInt64 bits_read;
+    
+    bits_counter=0;
+    presentation_config_v1=GetBits(bb, 5, &err); if (err) goto bail;
+    bits_counter+=5;
+    if(presentation_config_v1 == 0x06){
+        b_add_emdf_substreams=1;
+    }
+    else{
+        mdcompat=GetBits(bb, 3, &err); if (err) goto bail;
+        atomprint("mdcompat_%d=\"%d\"\n",count, mdcompat);
+        b_presentation_id=GetBits(bb, 1, &err); if (err) goto bail;
+        bits_counter+=4;
+        if(b_presentation_id){
+            b_presentation_id=GetBits(bb, 5, &err); if (err) goto bail;
+            bits_counter+=5;
+        }
+        
+        dsi_frame_rate_multiply_info=GetBits(bb, 2, &err); if (err) goto bail;
+        dsi_frame_rate_fraction_info=GetBits(bb, 2, &err); if (err) goto bail;
+        presentation_emdf_version=GetBits(bb, 5, &err); if (err) goto bail;
+        presentation_key_id=GetBits(bb, 10, &err); if (err) goto bail;
+        b_presentation_channel_coded=GetBits(bb, 1, &err); if (err) goto bail;
+        bits_counter+=20;
+        if(b_presentation_channel_coded){
+            dsi_presentation_ch_mode=GetBits(bb, 5, &err); if (err) goto bail;
+            bits_counter+=5;
+            if(dsi_presentation_ch_mode == 11 || dsi_presentation_ch_mode == 12 || 
+                dsi_presentation_ch_mode == 13 || dsi_presentation_ch_mode==14 )
+            {
+                pres_b_4_back_channels_present=GetBits(bb, 1, &err); if (err) goto bail;
+                pres_top_channel_pairs=GetBits(bb, 2, &err); if (err) goto bail;
+                bits_counter+=3;
+            }
+            presentation_channel_mask_v1=GetBits(bb, 24, &err); if (err) goto bail;
+            bits_counter+=24;
+        }
+        b_presentation_core_differs=GetBits(bb, 1, &err); if (err) goto bail;
+        bits_counter+=1;
+        if(b_presentation_core_differs)
+        {
+            b_presentation_core_channel_coded=GetBits(bb, 1, &err); if (err) goto bail;
+            bits_counter+=1;
+            if(b_presentation_core_channel_coded){
+                dsi_presentation_channel_mode_core=GetBits(bb, 2, &err); if (err) goto bail;
+                bits_counter+=2;
+            }
+            
+        }
+        b_presentation_filter=GetBits(bb, 1, &err); if (err) goto bail;
+        bits_counter+=1;
+        if(b_presentation_filter)
+        {
+            b_enable_presentation=GetBits(bb, 1, &err); if (err) goto bail;
+            n_filter_bytes=GetBits(bb, 8, &err); if (err) goto bail;
+            bits_counter+=9;
+            for(i=0;i<n_filter_bytes;i++){
+                filter_data=GetBits(bb, 8, &err); if (err) goto bail;
+                bits_counter+=8;
+            }
+        }
+        if(presentation_config_v1 == 0x1f){
+            BAILIFERR( Validate_ac4_substream_group_dsi( bb, refcon, &bits_counter)); 
+        }
+        else{
+            b_multi_pid=GetBits(bb, 8, &err); if (err) goto bail;
+            bits_counter+=1;
+            if(presentation_config_v1 ==0 || presentation_config_v1==1 || presentation_config_v1==2)
+            {
+                BAILIFERR( Validate_ac4_substream_group_dsi( bb, refcon, &bits_counter)); 
+                BAILIFERR( Validate_ac4_substream_group_dsi( bb, refcon, &bits_counter)); 
+            }
+            if(presentation_config_v1 ==3 || presentation_config_v1 ==4)
+            {
+                BAILIFERR( Validate_ac4_substream_group_dsi( bb, refcon, &bits_counter)); 
+                BAILIFERR( Validate_ac4_substream_group_dsi( bb, refcon, &bits_counter)); 
+                BAILIFERR( Validate_ac4_substream_group_dsi( bb, refcon, &bits_counter)); 
+            }
+            if(presentation_config_v1 ==5){
+                 n_substream_groups_minus2=GetBits(bb, 3, &err); if (err) goto bail;
+                 bits_counter+=3;
+                 n_substream_groups = n_substream_groups_minus2 + 2;
+                 for(sg=0;sg<n_substream_groups;sg++){
+                     BAILIFERR( Validate_ac4_substream_group_dsi( bb, refcon, &bits_counter)); 
+                }
+            }
+            if(presentation_config_v1>5){
+                n_skip_bytes=GetBits(bb, 7, &err); if (err) goto bail;
+                bits_counter+=7;
+                for(i=0;i<n_skip_bytes;i++){
+                    skip_data=GetBits(bb, 8, &err); if (err) goto bail;
+                    bits_counter+=8;
+                }
+            }
+        }
+        b_pre_virtualized=GetBits(bb, 1, &err); if (err) goto bail;
+        b_add_emdf_substreams=GetBits(bb, 1, &err); if (err) goto bail;
+        bits_counter+=2;
+            
+        }
+        if(b_add_emdf_substreams){
+            n_add_emdf_substreams=GetBits(bb, 7, &err); if (err) goto bail;
+            bits_counter+=7;
+            for(j=0;j<n_add_emdf_substreams;j++){
+               substream_emdf_version=GetBits(bb, 5, &err); if (err) goto bail;
+               substream_key_id=GetBits(bb, 10, &err); if (err) goto bail;
+               bits_counter+=15;
+            }
+        }
+        b_presentation_bitrate_info=GetBits(bb, 1, &err); if (err) goto bail;
+        bits_counter+=1;
+        if(b_presentation_bitrate_info){
+            temp=GetBits(bb, 2, &err); if (err) goto bail;
+            temp=GetBits(bb, 32, &err); if (err) goto bail;
+            temp=GetBits(bb, 32, &err); if (err) goto bail;
+            bits_counter+=66;
+        }
+        
+        b_alternative=GetBits(bb, 10, &err); if (err) goto bail;
+        bits_counter+=10;
+        if(b_alternative)
+        {
+            padding = 8 - (bits_counter % 8);
+            byte_align=GetBits(bb, padding, &err); if (err) goto bail;
+            bits_counter+=padding;
+            BAILIFERR( Validate_ac4_alternative_info( bb, refcon, &bits_counter));
+        }
+        padding = 8 - (bits_counter % 8);
+        byte_align=GetBits(bb, padding, &err); if (err) goto bail;
+        bits_counter+=padding;
+        
+        if(bits_counter <= (pres_bytes-1)*8){
+            de_indicator=GetBits(bb, 1, &err); if (err) goto bail;
+            reserved=GetBits(bb, 5, &err); if (err) goto bail;
+            b_extended_presentation_id=GetBits(bb, 1, &err); if (err) goto bail;
+            bits_counter+=7;
+            if(b_extended_presentation_id){
+                extended_presentation_id=GetBits(bb, 9, &err); if (err) goto bail;
+                bits_counter+=9;
+            }
+            else{
+                reserved=GetBits(bb, 1, &err); if (err) goto bail;
+                bits_counter+=1;
+            }
+        }
+    *presentation_bytes=(UInt8)(bits_counter)/8;
+
+bail:
+    return err;
+}
+
+OSErr Validate_ac4_substream_group_dsi( BitBuffer *bb, void *refcon , UInt32 * bits_counter)
+{
+    OSErr err = noErr;
+    UInt64 offset, i,j;
+    UInt8 b_substreams_present,b_hsf_ext,b_channel_coded,n_substreams, dsi_sf_multiplier, b_substream_bitrate_indicator,
+    substream_bitrate_indicator,b_ajoc, b_static_dmx, n_dmx_objects_minus1, n_umx_objects_minus1,
+    b_substream_contains_bed_objects,b_substream_contains_dynamic_objects, b_substream_contains_ISF_objects,
+    reserved, b_content_type, content_classifier, b_language_indicator, n_language_tag_bytes, language_tag_bytes;
+    UInt32 dsi_substream_channel_mask;
+    
+    b_substreams_present=GetBits(bb, 1, &err); if (err) goto bail;
+    b_hsf_ext=GetBits(bb, 1, &err); if (err) goto bail;
+    b_channel_coded=GetBits(bb, 1, &err); if (err) goto bail;
+    n_substreams=GetBits(bb, 8, &err); if (err) goto bail;
+    *bits_counter+=11;
+    
+    for(i=0; i<n_substreams;i++){
+        dsi_sf_multiplier=GetBits(bb, 2, &err); if (err) goto bail;
+        b_substream_bitrate_indicator=GetBits(bb, 1, &err); if (err) goto bail;
+        *bits_counter+=3;
+        if(b_substream_bitrate_indicator){
+            substream_bitrate_indicator=GetBits(bb, 5, &err); if (err) goto bail;
+            *bits_counter+=5;
+        }
+        if(b_channel_coded){
+            dsi_substream_channel_mask=GetBits(bb, 24, &err); if (err) goto bail;
+            *bits_counter+=24;
+        }
+        else{
+           b_ajoc=GetBits(bb, 1, &err); if (err) goto bail;
+           *bits_counter+=1;
+           if(b_ajoc){
+                b_static_dmx=GetBits(bb, 1, &err); if (err) goto bail;
+                *bits_counter+=1;
+                if(b_static_dmx==0){
+                    n_dmx_objects_minus1=GetBits(bb, 4, &err); if (err) goto bail;
+                    *bits_counter+=4;
+                }
+                n_umx_objects_minus1=GetBits(bb, 6, &err); if (err) goto bail;
+                *bits_counter+=6;
+           }
+           b_substream_contains_bed_objects=GetBits(bb, 1, &err); if (err) goto bail;
+           b_substream_contains_dynamic_objects=GetBits(bb, 1, &err); if (err) goto bail;
+           b_substream_contains_ISF_objects=GetBits(bb, 1, &err); if (err) goto bail;
+           reserved=GetBits(bb, 1, &err); if (err) goto bail;
+           *bits_counter+=4;
+        }
+        
+    }
+    b_content_type=GetBits(bb, 1, &err); if (err) goto bail;
+    *bits_counter+=1;
+    if(b_content_type){
+        content_classifier=GetBits(bb, 3, &err); if (err) goto bail;
+        b_language_indicator=GetBits(bb, 1, &err); if (err) goto bail;
+        *bits_counter+=4;
+        if(b_language_indicator){
+            n_language_tag_bytes=GetBits(bb, 6, &err); if (err) goto bail;
+            *bits_counter+=6;
+            for(i=0;i<n_language_tag_bytes;i++){
+                language_tag_bytes=GetBits(bb, 8, &err); if (err) goto bail;
+                *bits_counter+=8;
+            }
+        }
+            
+    }
+    
+bail:
+    return err;
+    
+}
+
+OSErr Validate_ac4_alternative_info( BitBuffer *bb, void *refcon, UInt32 * bits_counter )
+{
+    OSErr err = noErr;
+    UInt64 offset, i,t;
+    UInt8 presentation_name,target_md_compat,target_device_category,n_targets;
+    UInt16 name_len;
+    
+    name_len=GetBits(bb, 16, &err); if (err) goto bail;
+    *bits_counter+=16;
+    for(i=0;i<name_len;i++){
+        presentation_name=GetBits(bb, 8, &err); if (err) goto bail;
+        *bits_counter+=8;
+    }
+    n_targets=GetBits(bb, 5, &err); if (err) goto bail;
+    *bits_counter+=5;
+    for(t=0;t<n_targets;t++){
+        target_md_compat=GetBits(bb, 3, &err); if (err) goto bail;
+        target_device_category=GetBits(bb, 8, &err); if (err) goto bail;
+        *bits_counter+=11;
+    }
+    
+bail:
+    return err;
+}
+
 typedef struct MHADecoderConfigurationRecord {
       UInt8	configurationVersion;
       UInt8	mpegh3daProfileLevelIndication;
