@@ -5,7 +5,8 @@
 	<ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
         <ns prefix="cenc" uri="urn:mpeg:cenc:2013"/>
 	<title>Schema for validating MPDs</title>
-	<pattern name="MPD element">
+	<pattern>
+		<title>MPD element</title>
 		<!-- R1.*: Check the conformance of MPD -->
 		<rule context="dash:MPD">
 			<!-- R1.0 -->
@@ -30,7 +31,8 @@
 
                 </rule>
 	</pattern>
-	<pattern name="Period element">
+	<pattern>
+		<title>Period element</title>
 		<!-- R2.*: Check the conformance of Period -->
 		<rule context="dash:Period">
 			<!-- R2.0 -->
@@ -50,7 +52,8 @@
                         <assert test="if (contains(ancestor::dash:MPD/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011') and (child::dash:SegmentList or child::dash:SegmentTemplate)) then false() else true()">Neither the Period.SegmentList element nor the Period.SegmentTemplate element shall be present for On-Demand profile, violated here. </assert>
 		</rule>
 	</pattern>
-	<pattern name="AdaptationSet element">
+	<pattern>
+		<title>AdaptationSet element</title>
 		<!-- R3.*: Check the conformance of AdaptationSet -->
 		<rule context="dash:AdaptationSet">
 			<!-- R3.0 -->
@@ -80,14 +83,16 @@
 		</rule>
 	</pattern>
 
-	<pattern name="ContentComponent element">
+	<pattern>
+		<title>ContentComponent element</title>
 		<!-- R4.*: Check the conformance of ContentComponent -->
 		<rule context="dash:ContentComponent">
 			<!-- R4.0 -->
 			<assert test="if (@id = preceding-sibling::dash:ContentComponent/@id) then false() else true()">The id of each ContentComponent within an AdaptationSet shall be unique.</assert>
 		</rule>
 	</pattern>
-	<pattern name="Representation element">
+	<pattern>
+		<title>Representation element</title>
 		<!-- R5.*: Check the conformance of Representation -->
 		<rule context="dash:Representation">
 			<!-- R5.0 -->
@@ -109,7 +114,8 @@
                         <assert test="if (not(child::dash:SegmentTemplate or parent::dash:AdaptationSet/dash:SegmentTemplate or ancestor::dash:Period/dash:SegmentTemplate) and (contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or contains(parent::dash:AdaptationSet/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) then false() else true()">HbbTV-DVB DASH Validation Requirements check violated for HbbTV: Section 'MPD' - For HbbTV profile, the SegmentTemplate element shall be present on at least one of the three levels, the Period level containing the Representation, the Adaptation Set containing the Representation, or on Representation level itself as it is based on live profile</assert>
 		</rule>
 	</pattern>
-	<pattern name="SubRepresentation element">
+	<pattern>
+		<title>SubRepresentation element</title>
 		<!-- R6.*: Check the conformance of SubRepresentation -->
 		<rule context="dash:SubRepresentation">
 			<!-- R6.0 -->
@@ -117,7 +123,8 @@
 
 		</rule>
 	</pattern>
-	<pattern name="SegmentTemplate element">
+	<pattern>
+		<title>SegmentTemplate element</title>
 		<!-- R7.*: Check the conformance of SegmentTemplate -->
 		<rule context="dash:SegmentTemplate">
 			<!-- R7.0 -->
@@ -136,7 +143,8 @@
 			<assert test="if (matches(@media, '\$RepresentationID%.[^\$]*\$')) then false() else true()">$RepresentationID$ shall not have a format tag.</assert>
 		</rule>
 	</pattern>
-	<pattern name="SegmentList element">
+	<pattern>
+		<title>SegmentList element</title>
 		<!-- R8.*: Check the conformance of SegmentList -->
 		<rule context="dash:SegmentList">
 			<!-- R8.0 -->
@@ -147,7 +155,8 @@
 			<assert test="if (not(@indexRange) and @indexRangeExact) then false() else true()">If indexRange is not present indexRangeExact shall not be present.</assert>
 		</rule>
 	</pattern>
-	<pattern name="SegmentBase element">
+	<pattern>
+		<title>SegmentBase element</title>
 		<!-- R9.*: Check the conformance of SegmentBase -->
 		<rule context="dash:SegmentBase">
 			<!-- R9.0 -->
@@ -156,21 +165,24 @@
                         <assert test="if (@timeShiftBufferDepth) then if (@timeShiftbuffer &lt; dash:MPD/@timeShiftBufferDepth) then false() else true() else true()">The timeShiftBufferDepth shall not be smaller than timeShiftBufferDepth specified in the MPD element</assert>
 		</rule>
 	</pattern>
-	<pattern name="SegmentTimeline element">
+	<pattern>
+		<title>SegmentTimeline element</title>
 		<!-- R10.*: Check the conformance of SegmentTimeline -->
 		<rule context="dash:SegmentTimeline">
 			<!-- R10.0 -->
 			<assert test="if ((if (ancestor::dash:*[1]/@timescale) then (child::dash:S/@d div ancestor::dash:*[1]/@timescale) else child::dash:S/@d) > (years-from-duration(ancestor::dash:MPD/@maxSegmentDuration) + months-from-duration(ancestor::dash:MPD/@maxSegmentDuration) + days-from-duration(ancestor::dash:MPD/@maxSegmentDuration) + hours-from-duration(ancestor::dash:MPD/@maxSegmentDuration) + minutes-from-duration(ancestor::dash:MPD/@maxSegmentDuration) +  seconds-from-duration(ancestor::dash:MPD/@maxSegmentDuration))) then false() else true()">The d attribute of a SegmentTimeline shall not exceed the value give bei the MPD maxSegmentDuration attribute.</assert>
 		</rule>
 	</pattern>
-	<pattern name="ProgramInformation element">
+	<pattern>
+		<title>ProgramInformation element</title>
 		<!-- R11.*: Check the conformance of ProgramInformation -->
 		<rule context="dash:ProgramInformation">
 			<!-- R11.0 -->
 			<assert test="if (count(parent::dash:MPD/dash:ProgramInformation) > 1 and not(@lang)) then false() else true()">If more than one ProgramInformation element is given each ProgramInformation element shall have a lang attribute.</assert>
 		</rule>
 	</pattern>
-	<pattern name="ContentProtection element">
+	<pattern>
+		<title>ContentProtection element</title>
 		<!-- R12.*: Check the conformance of ContentProtection -->
 		<rule context="dash:ContentProtection">
 			<!-- R12.0 -->
@@ -180,7 +192,8 @@
 
 		</rule>
 	</pattern>
-	<pattern name="Role element">
+	<pattern>
+		<title>Role element</title>
 		<!-- R13.*: Check the conformance of Role -->
 		<rule context="dash:Role">
 			<!-- R13.0 -->
@@ -189,7 +202,8 @@
 			<assert test="if ((@schemeIdUri = 'urn:mpeg:dash:stereoid:2011') and not(starts-with(@value, 'l') or starts-with(@value, 'r'))) then false() else true()">The value of Role (stereoid) shall start with 'l' or 'r'.</assert>
 		</rule>
 	</pattern>	
-	<pattern name="FramePacking element">
+	<pattern>
+		<title>FramePacking element</title>
 		<!-- R14.*: Check the conformance of FramePacking -->
 		<rule context="dash:FramePacking">
 			<!-- R14.0 -->
@@ -202,7 +216,8 @@
 			<assert test="if (not(@value = '0' or @value = '1' or @value = '2' or @value = '3' or @value = '4' or @value = '5' or @value = '6')) then false() else true()">The value of FramePacking shall be 0 to 6 as defined in ISO/IEC 23001-8.</assert>
 		</rule>
 	</pattern>
-	<pattern name="AudioChannelConfiguration element">
+	<pattern>
+		<title>AudioChannelConfiguration element</title>
 		<!-- R15.*: Check the conformance of AudioChannelConfiguration -->
 		<rule context="dash:AudioChannelConfiguration">
 			<!-- R15.0 -->
@@ -211,7 +226,8 @@
 		</rule>
 	</pattern>
 	
-	<pattern name="EventStream element">
+	<pattern>
+		<title>EventStream element</title>
 		<!-- R16.*: Check the conformance of SegmentList -->
 		<rule context="dash:EventStream">
 			<!-- R16.0 -->
@@ -221,14 +237,16 @@
 		</rule>
 	</pattern>
     
-      <pattern name="Subset element">
+      <pattern>
+		<title>Subset element</title>
         <rule context="dash:Subset">
             <!--R17.1-->
            <assert test="if (@id = preceding::dash:Subset/@id) then false() else true()">The id of each Subset shall be unique.</assert>
         </rule>
     </pattern>
 	
-	<pattern name="UTCTiming element">
+	<pattern>
+		<title>UTCTiming element</title>
 		<!-- R18.*: Check the conformance of UTCTiming -->
 		<rule context="dash:UTCTiming">
             <!-- R18.1 -->
@@ -236,7 +254,8 @@
 		</rule>
 	</pattern>			
 		
-	<pattern name="SupplementalProperty element">
+	<pattern>
+		<title>SupplementalProperty element</title>
 		<!-- R19.*: Check the conformance of SupplementalProperty -->
 		<rule context="dash:SupplementalProperty">
             <!-- R19.1 -->
@@ -248,7 +267,8 @@
 		</rule>
 	</pattern>
         
-        <pattern name="SRD description element">
+        <pattern>
+                <title>SRD description element</title>
 		<!-- R19.*: Check the conformance of SRD -->
 		<rule context="dash:Period">
 			<!-- R19.1 -->
@@ -282,7 +302,8 @@
         
         
 <!-->.................................................The DASH-IF schematron checks starts from here.................................................................</-->
-        <pattern name="MPD element">
+	<pattern>
+		<title>MPD element</title>
 		<!-- R1.*: Check the conformance of MPD -->
 		<rule context="dash:MPD">
                         <assert test="if (@type = 'static' and @timeShiftBufferDepth and contains(@profiles, 'http://dashif.org/guidelines/dash')) then false() else true()">If MPD is of type "static" and if the profile contains a DASH-IF IOP profile, then the timeShiftBufferDepth shall not be defined.</assert>
@@ -292,7 +313,8 @@
 			<assert test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and @type='dynamic' and not(contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011'))) then false() else true()">DASH-IF IOP Section 3.2.2.2: For dynamic MPD, the @profile shall include urn:mpeg:dash:profile:isoff-live:2011. </assert>
                 </rule>
 	</pattern>
-        <pattern name="Period element">
+        <pattern>
+		<title>Period element</title>
 		<!-- R2.*: Check the conformance of Period -->
 		<rule context="dash:Period">
 	
@@ -303,7 +325,8 @@
                       
 		</rule>
 	</pattern>
-        <pattern name="AdaptationSet element">
+        <pattern>
+		<title>AdaptationSet element</title>
 		<!-- R3.*: Check the conformance of AdaptationSet -->
 		<rule context="dash:AdaptationSet">
                         <!-- DASH-IF v 3.3 Section 3.8  -->
@@ -333,7 +356,8 @@
                         <assert test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and ((@profiles and contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012')) or (not(@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) and (not(@segmentAlignment) or @segmentAlignment='false')) then false() else true()"> HbbTV-DVB DASH Validation Requirements check violated for HbbTV: Section 'MPD' - For HbbTV profile, @segmentAlignment shall be set to true for all Adaptation Sets as it is based on live profile</assert>
 		</rule>
 	</pattern>
-        <pattern name="Representation element">
+        <pattern>
+		<title>Representation element</title>
 		<!-- R5.*: Check the conformance of Representation -->
 		<rule context="dash:Representation">
 			
@@ -360,7 +384,8 @@
                         <assert test="if (((@profiles and contains(@profiles, 'http://dashif.org/guidelines/dash')) or (not(@profiles) and parent::dash:AdaptationSet/@profiles and contains(parent::dash:AdaptationSet/@profiles, 'http://dashif.org/guidelines/dash')) or (not(@profiles) and not(parent::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash'))) and ((@profiles and contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or (not(@profiles) and parent::dash:AdaptationSet/@profiles and contains(parent::dash:AdaptationSet/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or (not(@profiles) and not(parent::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011'))) and (not(dash:SegmentBase) and not(parent::dash:AdaptationSet/dash:SegmentBase) and not(ancestor::dash:Period/dash:SegmentBase))) then false() else true()">DASH-IF IOP 4.3 Section 3.2.1 - "For on-demand profiles, @indexRange attribute shall be present.</assert>
 		</rule>
 	</pattern>
-        <pattern name="SubRepresentation element">
+        <pattern>
+		<title>SubRepresentation element</title>          
 		<!-- R6.*: Check the conformance of SubRepresentation -->
 		<rule context="dash:SubRepresentation">
 			
@@ -368,14 +393,16 @@
                         <assert test="if (@profiles and ((parent::dash:Representation/@profiles and not(contains(parent::dash:Representation/@profiles, @profiles))) or (ancestor::dash:AdaptationSet/@profiles and not(contains(ancestor::dash:AdaptationSet/@profiles, @profiles))) or (ancestor::dash:MPD/@profiles and not(contains(ancestor::dash:MPD/@profiles, @profiles))))) then false() else true()">The value of @profiles shall be a subset of the respective value in any higher level of the document hierarchy</assert>
 		</rule>
 	</pattern>
-        <pattern name="SegmentBase element">
+        <pattern>
+		<title>SegmentBase element</title>          
             <!-- R9.*: Check the conformance of SegmentBase -->
             <rule context="dash:SegmentBase">
                     <!-- R9.2	DASH-IF IOP 4.3 Section 3.2.1 -->
                     <assert test="if (((parent::dash:Representation and ((parent::dash:Representation/@profiles and contains(parent::dash:Representation/@profiles, 'http://dashif.org/guidelines/dash')) or (not(parent::dash:Representation/@profiles) and (ancestor::dash:AdaptationSet/@profiles) and contains(ancestor::dash:AdaptationSet/@profiles, 'http://dashif.org/guidelines/dash')) or (not(parent::dash:Representation/@profiles) and not(ancestor::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash')))) or (parent::dash:AdaptationSet and ((parent::dash:AdaptationSet/@profiles and contains(parent::dash:AdaptationSet/@profiles, 'http://dashif.org/guidelines/dash')) or (not(parent::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash')))) or (parent::dash:Period and contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash'))) and ((parent::dash:Representation and ((parent::dash:Representation/@profiles and contains(parent::dash:Representation/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or (not(parent::dash:Representation/@profiles) and (ancestor::dash:AdaptationSet/@profiles) and contains(ancestor::dash:AdaptationSet/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or (not(parent::dash:Representation/@profiles) and not(ancestor::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')))) or (parent::dash:AdaptationSet and ((parent::dash:AdaptationSet/@profiles and contains(parent::dash:AdaptationSet/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or (not(parent::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')))) or (parent::dash:Period and contains(ancestor::dash:MPD/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011'))) and not(@indexRange)) then false() else true()">DASH-IF IOP 4.3 Section 3.2.1 - "For on-demand profiles, @indexRange attribute shall be present.</assert>
             </rule>
         </pattern>
-        <pattern name="ContentProtection element">
+        <pattern>
+		<title>ContentProtection element</title>          
 		<!-- R12.*: Check the conformance of ContentProtection -->
 		<rule context="dash:ContentProtection">
 			<!--  R12.2  DASH-IF IOP v4.0-->
@@ -389,7 +416,8 @@
                         </assert>
 		</rule>
 	</pattern>
-        <pattern name="AudioChannelConfiguration element">
+        <pattern>
+		<title>AudioChannelConfiguration element</title>          
 		<!-- R15.*: Check the conformance of AudioChannelConfiguration -->
 		<rule context="dash:AudioChannelConfiguration">
 			
@@ -397,7 +425,8 @@
                         <assert test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dashif#mpeg-h-3da') and not(@schemeIdUri='urn:mpeg:mpegB:cicp:ChannelConfiguration')) then false() else true()"> If profile http://dashif.org/guidelines/dashif#mpeg-h-3da is used, then schemeIdUri attribute shall be urn:mpeg:mpegB:cicp:ChannelConfiguration.</assert >
 		</rule>
 	</pattern>
-        <pattern name="EssentialProperty element">
+        <pattern>
+		<title>EssentialProperty element</title>
 		<!-- R20.*: Check the conformance of EssentialProperty -->
                 <rule context="dash:EssentialProperty">
                 <!-- R20.1 -->
