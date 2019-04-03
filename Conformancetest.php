@@ -525,6 +525,16 @@
     </div>
 </div>
 
+<footer class="site-footer">
+    <center> <p id="footerVersion"></p>
+        <p><a target="_blank" href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/issues"><b>Report issue</b></a></p>
+    </center>
+    <center> <p>
+            <a target="_blank" href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/"><b>GitHub</b></a></p>
+    </center>
+</footer>
+
+</body>
 <script type="text/javascript">
 var progressXMLRequest;
 var progressXML;
@@ -551,7 +561,7 @@ var dynamicsegtimeline = false;
 var segmentListExist = false;
 var SessionID = "id"+Math.floor(100000 + Math.random() * 900000);
 var totarrstring=[];
-var xmlDoc_progress;
+var xmlDoc_progress 
 var xmlDoc_mpdresult;
 var progressSegmentsTimer;
 var treeTimer;
@@ -564,8 +574,13 @@ var hbbtv = 0;
 var dashif=0;
 var ctawave=0;
 var downloadarray=[];
-
-/////////////////////////////////////////////////////////////
+var adaptholder = [];
+var entered_cross = false;
+var entered_hbb = false;
+var entered_cmaf = false;
+var holder = 1;
+var counter = 0;
+ /////////////////////////////////////////////////////////////
 //Check if 'drag and drop' feature is supported by the browser, if not, then traditional file upload can be used.
 var isAdvancedUpload = function() {
     var div = document.createElement('div');
@@ -1006,6 +1021,7 @@ function processmpdresults()
         var AdaptRepPeriod_count = Period_count;
         for(var p=0; p<Period_count; p++){
             Adapt_count= Periodxml[p].childNodes.length;
+            adaptholder.push(Adapt_count);
             AdaptRepPeriod_count += ' ' + Adapt_count;
             var Adaptxml = Periodxml[p].getElementsByTagName("Adaptation");
             for (var v=0; v<Adapt_count; v++){
@@ -1073,19 +1089,24 @@ function progress()
     
     if(representationid >totarr[hinindex]){
         var ComparedRepresentations = xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("ComparedRepresentations");
+        
+        if(cmaf==1 && ComparedRepresentations.length ==counter){
+            return;
+        }
+        
         if (cmaf && ComparedRepresentations.length !=0){
-            for(var i =1; i<=ComparedRepresentations.length;i++){
+            
 
-                if(ComparedRepresentations[i-1].textContent=="noerror"){
-                    tree.setItemImage2(adaptid[periodid-1][i-1],'right.jpg','right.jpg','right.jpg');
-                    automate(adaptid[periodid-1][i-1],lastloc,"CMAF Compared representations validation success");
+                if(ComparedRepresentations[holder-1].textContent=="noerror"){
+                    tree.setItemImage2(adaptid[periodid-1][holder-1],'right.jpg','right.jpg','right.jpg');
+                    automate(adaptid[periodid-1][holder-1],lastloc,"CMAF Compared representations validation success");
 
                     tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
                     lastloc++;
                 }
                 else{
-                    tree.setItemImage2(adaptid[periodid-1][i-1],'button_cancel.png','button_cancel.png','button_cancel.png');
-                    automate(adaptid[periodid-1][i-1],lastloc,"CMAF Compared representations validation error");
+                    tree.setItemImage2(adaptid[periodid-1][holder-1],'button_cancel.png','button_cancel.png','button_cancel.png');
+                    automate(adaptid[periodid-1][holder-1],lastloc,"CMAF Compared representations validation error");
 
                     tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                     lastloc++;
@@ -1093,25 +1114,34 @@ function progress()
                     automate(lastloc-1,lastloc,"log");//adaptid[i-1]
                     tree.setItemImage2(lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
                     kidsloc.push(lastloc);
-                    urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(i-1)+ "_compInfo.html");
+                    urlarray.push("temp/"+dirid+"/"+"Period"+(periodid-1)+"/"+"Adapt"+(holder-1)+ "_compInfo.html");
                     lastloc++;
                 }
-            }
+            counter++;
         }
         
         adjustFooter();
         representationid = 1;
         hinindex++;
         adaptationid++;
+        holder++;
     }
     else if(adaptationid>totarr[hinindex2]){
+        holder=1;
+        counter=0;
         var CrossRepValidation=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CrossRepresentation");
         var HbbTVDVBComparedRepresentations = xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("HbbTVDVBComparedRepresentations");
         var SelectionSet=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("SelectionSet");
         var CmafProfile=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CMAFProfile");
         var CTAWAVESelectionSet=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CTAWAVESelectionSet");
         var CTAWAVEProfile=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CTAWAVEPresentation");
-        if(CrossRepValidation.length!=0){
+        
+           if(CrossRepValidation.length != adaptholder[periodid-1]){
+           return;
+           }
+           
+            else if(entered_cross == false){
+            entered_cross = true;    
             for(var i =1; i<=CrossRepValidation.length;i++)
             {
                 if(CrossRepValidation[i-1].textContent=="noerror"){
@@ -1135,9 +1165,16 @@ function progress()
                     lastloc++;
                 }
             }
-        }
+            
+            }
         
-        if((dvb == 1 || hbbtv == 1) && HbbTVDVBComparedRepresentations.length!=0){
+        
+            if((dvb == 1 || hbbtv == 1) && HbbTVDVBComparedRepresentations.length!=adaptholder[periodid-1]){
+            return;
+            }
+        
+            if((dvb == 1 || hbbtv == 1) && entered_hbb == false){
+            entered_hbb = true;
             for(var i =1; i<=HbbTVDVBComparedRepresentations.length;i++){
                 if(HbbTVDVBComparedRepresentations[i-1].textContent=="noerror"){
                     automate(adaptid[periodid-1][i-1],lastloc,"DVB-HbbTV Compared representations validation success");
@@ -1175,11 +1212,16 @@ function progress()
             }
         }
         
-        if(cmaf){
+         if(cmaf==1 && (SelectionSet.length==0 || CmafProfile.length==0)){
+            return;
+            }
+            
+        if(cmaf && entered_cmaf == false){
+            entered_cmaf = true;
             //Additions for CMAF Selection Set and Presentation Profile.
             if(SelectionSet.length!=0){
                 if(SelectionSet[0].textContent=="noerror"){
-                        automate(perid[i-1],lastloc,"CMAF Selection Set");
+                        automate(perid[periodid-1],lastloc,"CMAF Selection Set");
 
                         tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
                         lastloc++;
@@ -1191,7 +1233,7 @@ function progress()
                         lastloc++;
                 }
                 else{
-                        automate(perid[i-1],lastloc,"CMAF Selection Set");
+                        automate(perid[periodid-1],lastloc,"CMAF Selection Set");
 
                         tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                         lastloc++;
@@ -1205,7 +1247,7 @@ function progress()
             }
             if(CmafProfile.length!=0){
                 if(CmafProfile[0].textContent=="noerror"){
-                        automate(perid[i-1],lastloc,"CMAF Presentation Profile");
+                        automate(perid[periodid-1],lastloc,"CMAF Presentation Profile");
 
                         tree.setItemImage2(lastloc,'right.jpg','right.jpg','right.jpg');
                         lastloc++;
@@ -1217,7 +1259,7 @@ function progress()
                         lastloc++;
                 }
                 else{
-                        automate(perid[i-1],lastloc,"CMAF Presentation Profile");
+                        automate(perid[periodid-1],lastloc,"CMAF Presentation Profile");
 
                         tree.setItemImage2(lastloc,'button_cancel.png','button_cancel.png','button_cancel.png');
                         lastloc++;
@@ -1229,6 +1271,10 @@ function progress()
                         lastloc++;
                 }
             }
+        }
+        
+        if(ctawave == 1 && (CTAWAVESelectionSet.length==0 || CTAWAVEProfile.length==0)){
+            return;
         }
         
         if(ctawave == 1){
@@ -1306,7 +1352,9 @@ function progress()
                 }
             }
         }
-        
+        entered_cross = false;
+        entered_hbb = false;
+        entered_cmaf = false;
         adjustFooter();
         adaptationid = 1;
         hinindex2 = hinindex ;
@@ -1683,8 +1731,8 @@ function downloadLog(url, name){
     
     document.querySelector('#downloadpar').click();
 }
-</script>
-
+</script> 
+ 
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -1694,15 +1742,4 @@ function downloadLog(url, name){
     ga('create', 'UA-48482208-1', 'dashif.org');
     ga('send', 'pageview');
 </script>
-
-<footer class="site-footer">
-    <center> <p id="footerVersion"></p>
-        <p><a target="_blank" href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/issues"><b>Report issue</b></a></p>
-    </center>
-    <center> <p>
-            <a target="_blank" href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/"><b>GitHub</b></a></p>
-    </center>
-</footer>
-
-</body>
 </html>
