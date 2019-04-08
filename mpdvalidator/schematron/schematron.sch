@@ -5,6 +5,10 @@
 	<ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
 	<ns prefix="xs" uri="http://www.w3.org/2001/XMLSchema"/>
         <ns prefix="cenc" uri="urn:mpeg:cenc:2013"/>
+
+	<!-- include some helper functions for codec specific assertions, needed for DVB DASH assertions -->
+	<extends href="helper-functions.sch"/>
+	
 	<title>Schema for validating MPDs</title>
 	<pattern>
 		<title>MPD element</title>
@@ -443,5 +447,7 @@
      
                 </rule>
         </pattern>
-</schema>
 
+	<!-- DVB DASH specific assertions -->
+	<extends href="dvb-dash.sch"/>
+</schema>
