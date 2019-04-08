@@ -377,8 +377,10 @@
                         <assert test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and ((count(tokenize(@codecs, ',')) > 1) or (count(tokenize(parent::dash:AdaptationSet/@codecs, ',')) > 1))) then false() else true()"> If profiles contain dash-if profile identifier, "codecs" attribute on AdaptationSet level OR Representation level shall not contain more than one identifiers as a comma separated list</assert >
                         
                         <!--Dual-Stream Dolby Vision check DASHIF 10.4.3-->
-                        <assert test="if(@dependencyId and not(@dependencyId = preceding-sibling::dash:Representation/@id))then false() else true()">The @dependencyId attribute on the Enhancement Layer Representation shall refer to the Base Layer Representation @id attribute.</assert>
-                        <!-- DASH-IF Section 5.3.7.2 -->
+                        <let name="codec" value="substring-before(ancestor-or-self::*/@codecs[1],'\.')"/>
+			<assert test="if($codec = ('dvhe','dvav') and @dependencyId and not(@dependencyId = preceding-sibling::dash:Representation/@id))then false() else true()">The @dependencyId attribute on the Enhancement Layer Representation shall refer to the Base Layer Representation @id attribute.</assert>
+<!--			<assert test="if(not($codec = ('dvhe','dvav')) or (@dependencyId and not(@dependencyId = preceding-sibling::dash:Representation/@id)))then false() else true()">The @dependencyId attribute on the Enhancement Layer Representation shall refer to the Base Layer Representation @id attribute.</assert>-->
+			<!-- DASH-IF Section 5.3.7.2 -->
                         <assert test="if (@profiles and ((parent::dash:AdaptationSet/@profiles and not(contains(parent::dash:AdaptationSet/@profiles, @profiles))) or (ancestor::dash:MPD/@profiles and not(contains(ancestor::dash:MPD/@profiles, @profiles))))) then false() else true()">The value of @profiles shall be a subset of the respective value in any higher level of the document hierarchy</assert>
                         
                         <!-- RD5.5	DASH-IF IOP 4.3 Section 3.2.1 -->
