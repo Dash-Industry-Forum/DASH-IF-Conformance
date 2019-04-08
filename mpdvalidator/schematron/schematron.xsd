@@ -3,6 +3,7 @@
 	<ns prefix="dash" uri="urn:mpeg:dash:schema:mpd:2011"/>
 	<ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>
 	<ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+	<ns prefix="xs" uri="http://www.w3.org/2001/XMLSchema"/>
         <ns prefix="cenc" uri="urn:mpeg:cenc:2013"/>
 	<title>Schema for validating MPDs</title>
 	<pattern>
