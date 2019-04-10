@@ -330,6 +330,8 @@
         top:10px;
         right:10px;
         border: 0;
+        font-size: 22px;
+        padding: 22px;
     }
     
     #settings_img{
