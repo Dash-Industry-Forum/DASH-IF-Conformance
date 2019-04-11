@@ -1273,7 +1273,6 @@
       1) String is not empty, 
       2) equal number of open and close parens
       3) equal number of left and right square brackets
-      4) if there is a predicate open immediately following a step separator
    It does not check balancing. It does not check inside string literals in XPaths.
    
    If there is no error, empty content is returned. If there is an error, it is given
@@ -1503,6 +1502,13 @@
 </xsl:template>
 
 
+  <!-- FIX : Use relative URI for xsl:include used in schematron -->
+  <xsl:template match="xsl:include" mode="dsdl:go" priority="1">
+<xsl:message select="string(@href), string(base-uri()), resolve-uri(@href, base-uri())" />
+    <xsl:copy>
+      <xsl:attribute name="href" select="resolve-uri(@href, base-uri())"/>
+    </xsl:copy>
+  </xsl:template>
 
 
 

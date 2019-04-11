@@ -26,11 +26,11 @@
 <!-- Schematron message -->
 
 <xsl:stylesheet
-   version="1.0"
+   version="2.0"
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:axsl="http://www.w3.org/1999/XSL/TransformAlias">
 
-<xsl:import href="iso_schematron_skeleton_for_xslt1.xsl"/>
+<xsl:import href="iso_schematron_skeleton_for_saxon.xsl"/>
 
 <xsl:template name="process-prolog">
    <axsl:output method="text" />
