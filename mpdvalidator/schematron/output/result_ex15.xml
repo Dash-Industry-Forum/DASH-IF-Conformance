@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<svrl:schematron-output xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+<svrl:schematron-output xmlns:cenc="urn:mpeg:cenc:2013" xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                        xmlns:xs="http://www.w3.org/2001/XMLSchema"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xmlns:xhtml="http://www.w3.org/1999/xhtml"
                         xmlns:schold="http://www.ascc.net/xml/schematron"
-                        xmlns:sch="http://www.ascc.net/xml/schematron"
                         xmlns:iso="http://purl.oclc.org/dsdl/schematron"
                         xmlns:dash="urn:mpeg:dash:schema:mpd:2011"
                         xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -14,30 +14,83 @@
 		 --><svrl:ns-prefix-in-attribute-values uri="urn:mpeg:dash:schema:mpd:2011" prefix="dash"/>
    <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/1999/xlink" prefix="xlink"/>
    <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi"/>
-   <svrl:active-pattern/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema" prefix="xs"/>
+   <svrl:ns-prefix-in-attribute-values uri="urn:mpeg:cenc:2013" prefix="cenc"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="MPD element"/>
    <svrl:fired-rule context="dash:MPD"/>
-   <svrl:active-pattern/>
+   <svrl:failed-assert test="if (@type = 'dynamic' and not(@publishTime)) then false() else true()"
+                       location="/*[local-name()='MPD']">
+      <svrl:text>If MPD is of type "dynamic" publishTime shall be defined.</svrl:text>
+   </svrl:failed-assert>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="Period element"/>
    <svrl:fired-rule context="dash:Period"/>
-   <svrl:failed-assert test="if (not(descendant-or-self::dash:BaseURL) and not(descendant-or-self::dash:SegmentTemplate) and not(descendant-or-self::dash:SegmentList)) then false() else true()"
-                       location="/*[local-name()='MPD' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='Period' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']">
+   <svrl:failed-assert test="if (not(descendant-or-self::dash:BaseURL) and not(descendant-or-self::dash:SegmentTemplate) and not(descendant-or-self::dash:SegmentList) and not(@xlink:href = 'urn:mpeg:dash:resolve-to-zero:2013')) then false() else true()"
+                       location="/*[local-name()='MPD']/*[local-name()='Period']">
       <svrl:text>At least one BaseURL, SegmentTemplate or SegmentList shall be defined in Period, AdaptationSet or Representation.</svrl:text>
    </svrl:failed-assert>
-   <svrl:active-pattern/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="AdaptationSet element"/>
    <svrl:fired-rule context="dash:AdaptationSet"/>
    <svrl:failed-assert test="if (count(child::dash:Representation)=0) then false() else true()"
-                       location="/*[local-name()='MPD' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='Period' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='AdaptationSet' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']">
+                       location="/*[local-name()='MPD']/*[local-name()='Period']/*[local-name()='AdaptationSet']">
       <svrl:text>An AdaptationSet shall have at least one Representation element.</svrl:text>
    </svrl:failed-assert>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="ContentComponent element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="Representation element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="SubRepresentation element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="SegmentTemplate element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="SegmentList element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="SegmentBase element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="SegmentTimeline element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="ProgramInformation element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="ContentProtection element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="Role element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="FramePacking element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="AudioChannelConfiguration element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="EventStream element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="Subset element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="UTCTiming element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="SupplementalProperty element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="SRD description element"/>
+   <svrl:fired-rule context="dash:Period"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="MPD element"/>
+   <svrl:fired-rule context="dash:MPD"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="Period element"/>
+   <svrl:fired-rule context="dash:Period"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="AdaptationSet element"/>
+   <svrl:fired-rule context="dash:AdaptationSet"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="Representation element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="SubRepresentation element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="SegmentBase element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="ContentProtection element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="AudioChannelConfiguration element"/>
+   <svrl:active-pattern document="file:/home/dfisc/code/DASH-IF-Conformance/DASH/mpdvalidator/schematron/examples/ex15.mpd"
+                        name="EssentialProperty element"/>
 </svrl:schematron-output>
