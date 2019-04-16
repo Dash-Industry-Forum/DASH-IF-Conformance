@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:saxon="http://saxon.sf.net/"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:schold="http://www.ascc.net/xml/schematron"
                 xmlns:iso="http://purl.oclc.org/dsdl/schematron"
                 xmlns:xhtml="http://www.w3.org/1999/xhtml"
-                xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 xmlns:dash="urn:mpeg:dash:schema:mpd:2011"
                 xmlns:xlink="http://www.w3.org/1999/xlink"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:cenc="urn:mpeg:cenc:2013"
-                version="1.0"><!--Implementers: please note that overriding process-prolog or process-root is 
+                xmlns:dlb="http://www.dolby.com/ns/2019/dash-if"
+                version="2.0"><!--Implementers: please note that overriding process-prolog or process-root is 
     the preferred method for meta-stylesheets to use where possible. -->
    <xsl:param name="archiveDirParameter"/>
    <xsl:param name="archiveNameParameter"/>
@@ -26,6 +29,84 @@
                indent="yes"/>
    <!--XSD TYPES FOR XSLT2-->
    <!--KEYS AND FUNCTIONS-->
+   <xsl:function xmlns="http://purl.oclc.org/dsdl/schematron"
+                 name="dlb:isAuxiliaryStream"
+                 as="xs:boolean">
+      <xsl:param name="x"/>
+      <xsl:sequence select="exists($x/dash:EssentialProperty[@schemeIdUri='urn:mpeg:dash:preselection:2016'])"/>
+   </xsl:function>
+   <xsl:function xmlns="http://purl.oclc.org/dsdl/schematron"
+                 name="dlb:getNearestCodecString"
+                 as="xs:string">
+      <xsl:param name="c"/>
+      <xsl:value-of select="$c/ancestor-or-self::*/@codecs[1]"/>
+   </xsl:function>
+   <xsl:function xmlns="http://purl.oclc.org/dsdl/schematron"
+                 name="dlb:isAdaptationSetType"
+                 as="xs:boolean">
+      <xsl:param name="x" as="element()"/>
+      <xsl:param name="t" as="xs:string"/>
+      <xsl:sequence select="matches(dlb:getNearestCodecString($x),$t)"/>
+   </xsl:function>
+   <xsl:function xmlns="http://purl.oclc.org/dsdl/schematron"
+                 name="dlb:isAdaptationSetEC3"
+                 as="xs:boolean">
+      <xsl:param name="x"/>
+      <xsl:sequence select="dlb:isAdaptationSetType($x,'ec-3')"/>
+   </xsl:function>
+   <xsl:function xmlns="http://purl.oclc.org/dsdl/schematron"
+                 name="dlb:isAdaptationSetAC4"
+                 as="xs:boolean">
+      <xsl:param name="x"/>
+      <xsl:sequence select="dlb:isAdaptationSetType($x,'ac-4')"/>
+   </xsl:function>
+   <xsl:function xmlns="http://purl.oclc.org/dsdl/schematron"
+                 name="dlb:isAdaptationSetAudio"
+                 as="xs:boolean">
+      <xsl:param name="x"/>
+      <xsl:sequence select="dlb:isAdaptationSetType($x,'mp4a|ac-3ec-3|ac-4|dtsc|dtsh|dtse|dtsl')"/>
+   </xsl:function>
+   <xsl:function xmlns="http://purl.oclc.org/dsdl/schematron"
+                 name="dlb:isAdaptationSetVideo"
+                 as="xs:boolean">
+      <xsl:param name="x"/>
+      <xsl:sequence select="dlb:isAdaptationSetType($x,'avc|hvc|hev')"/>
+   </xsl:function>
+   <xsl:function xmlns="http://purl.oclc.org/dsdl/schematron"
+                 name="dlb:dlb2mpg"
+                 as="xs:integer">
+      <xsl:param name="from"/>
+      <xsl:choose>
+         <xsl:when test="$from='000002'">1</xsl:when>
+         <xsl:when test="$from='000001'">2</xsl:when>
+         <xsl:when test="$from='000003'">3</xsl:when>
+         <xsl:when test="$from='008003'">4</xsl:when>
+         <xsl:when test="$from='000007'">5</xsl:when>
+         <xsl:when test="$from='000047'">6</xsl:when>
+         <xsl:when test="$from='020047'">7</xsl:when>
+         <xsl:when test="$from='008001'">9</xsl:when>
+         <xsl:when test="$from='000005'">10</xsl:when>
+         <xsl:when test="$from='008047'">11</xsl:when>
+         <xsl:when test="$from='00004F'">12</xsl:when>
+         <xsl:when test="$from='02FF7F'">13</xsl:when>
+         <xsl:when test="$from='06FF6F'">13</xsl:when>
+         <xsl:when test="$from='000057'">14</xsl:when>
+         <xsl:when test="$from='040047'">14</xsl:when>
+         <xsl:when test="$from='00145F'">15</xsl:when>
+         <xsl:when test="$from='04144F'">15</xsl:when>
+         <xsl:when test="$from='000077'">16</xsl:when>
+         <xsl:when test="$from='040067'">16</xsl:when>
+         <xsl:when test="$from='000A77'">17</xsl:when>
+         <xsl:when test="$from='040A67'">17</xsl:when>
+         <xsl:when test="$from='000A7F'">18</xsl:when>
+         <xsl:when test="$from='040A6F'">18</xsl:when>
+         <xsl:when test="$from='00007F'">19</xsl:when>
+         <xsl:when test="$from='04006F'">19</xsl:when>
+         <xsl:when test="$from='01007F'">20</xsl:when>
+         <xsl:when test="$from='05006F'">20</xsl:when>
+         <xsl:otherwise>0</xsl:otherwise>
+      </xsl:choose>
+   </xsl:function>
    <!--DEFAULT RULES-->
    <!--MODE: SCHEMATRON-SELECT-FULL-PATH-->
    <!--This mode can be used to generate an ugly though full XPath for locators-->
@@ -40,21 +121,23 @@
       <xsl:choose>
          <xsl:when test="namespace-uri()=''">
             <xsl:value-of select="name()"/>
-            <xsl:variable name="p_1"
-                          select="1+    count(preceding-sibling::*[name()=name(current())])"/>
-            <xsl:if test="$p_1&gt;1 or following-sibling::*[name()=name(current())]">[<xsl:value-of select="$p_1"/>]</xsl:if>
          </xsl:when>
          <xsl:otherwise>
-            <xsl:text>*[local-name()='</xsl:text>
+            <xsl:text>*:</xsl:text>
             <xsl:value-of select="local-name()"/>
+            <xsl:text>[namespace-uri()='</xsl:text>
+            <xsl:value-of select="namespace-uri()"/>
             <xsl:text>']</xsl:text>
-            <xsl:variable name="p_2"
-                          select="1+   count(preceding-sibling::*[local-name()=local-name(current())])"/>
-            <xsl:if test="$p_2&gt;1 or following-sibling::*[local-name()=local-name(current())]">[<xsl:value-of select="$p_2"/>]</xsl:if>
          </xsl:otherwise>
       </xsl:choose>
+      <xsl:variable name="preceding"
+                    select="count(preceding-sibling::*[local-name()=local-name(current())                                   and namespace-uri() = namespace-uri(current())])"/>
+      <xsl:text>[</xsl:text>
+      <xsl:value-of select="1+ $preceding"/>
+      <xsl:text>]</xsl:text>
    </xsl:template>
    <xsl:template match="@*" mode="schematron-get-full-path">
+      <xsl:apply-templates select="parent::*" mode="schematron-get-full-path"/>
       <xsl:text>/</xsl:text>
       <xsl:choose>
          <xsl:when test="namespace-uri()=''">@<xsl:value-of select="name()"/>
@@ -162,91 +245,13 @@
          <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi"/>
          <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema" prefix="xs"/>
          <svrl:ns-prefix-in-attribute-values uri="urn:mpeg:cenc:2013" prefix="cenc"/>
+         <svrl:ns-prefix-in-attribute-values uri="urn:mpeg:dash:schema:mpd:2011" prefix="dash"/>
+         <svrl:ns-prefix-in-attribute-values uri="http://www.dolby.com/ns/2019/dash-if" prefix="dlb"/>
          <svrl:active-pattern>
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
             <xsl:attribute name="name">MPD element</xsl:attribute>
-            <xsl:apply-templates/>
-         </svrl:active-pattern>
-         <xsl:apply-templates select="/" mode="M6"/>
-         <svrl:active-pattern>
-            <xsl:attribute name="document">
-               <xsl:value-of select="document-uri(/)"/>
-            </xsl:attribute>
-            <xsl:attribute name="name">Period element</xsl:attribute>
-            <xsl:apply-templates/>
-         </svrl:active-pattern>
-         <xsl:apply-templates select="/" mode="M7"/>
-         <svrl:active-pattern>
-            <xsl:attribute name="document">
-               <xsl:value-of select="document-uri(/)"/>
-            </xsl:attribute>
-            <xsl:attribute name="name">AdaptationSet element</xsl:attribute>
-            <xsl:apply-templates/>
-         </svrl:active-pattern>
-         <xsl:apply-templates select="/" mode="M8"/>
-         <svrl:active-pattern>
-            <xsl:attribute name="document">
-               <xsl:value-of select="document-uri(/)"/>
-            </xsl:attribute>
-            <xsl:attribute name="name">ContentComponent element</xsl:attribute>
-            <xsl:apply-templates/>
-         </svrl:active-pattern>
-         <xsl:apply-templates select="/" mode="M9"/>
-         <svrl:active-pattern>
-            <xsl:attribute name="document">
-               <xsl:value-of select="document-uri(/)"/>
-            </xsl:attribute>
-            <xsl:attribute name="name">Representation element</xsl:attribute>
-            <xsl:apply-templates/>
-         </svrl:active-pattern>
-         <xsl:apply-templates select="/" mode="M10"/>
-         <svrl:active-pattern>
-            <xsl:attribute name="document">
-               <xsl:value-of select="document-uri(/)"/>
-            </xsl:attribute>
-            <xsl:attribute name="name">SubRepresentation element</xsl:attribute>
-            <xsl:apply-templates/>
-         </svrl:active-pattern>
-         <xsl:apply-templates select="/" mode="M11"/>
-         <svrl:active-pattern>
-            <xsl:attribute name="document">
-               <xsl:value-of select="document-uri(/)"/>
-            </xsl:attribute>
-            <xsl:attribute name="name">SegmentTemplate element</xsl:attribute>
-            <xsl:apply-templates/>
-         </svrl:active-pattern>
-         <xsl:apply-templates select="/" mode="M12"/>
-         <svrl:active-pattern>
-            <xsl:attribute name="document">
-               <xsl:value-of select="document-uri(/)"/>
-            </xsl:attribute>
-            <xsl:attribute name="name">SegmentList element</xsl:attribute>
-            <xsl:apply-templates/>
-         </svrl:active-pattern>
-         <xsl:apply-templates select="/" mode="M13"/>
-         <svrl:active-pattern>
-            <xsl:attribute name="document">
-               <xsl:value-of select="document-uri(/)"/>
-            </xsl:attribute>
-            <xsl:attribute name="name">SegmentBase element</xsl:attribute>
-            <xsl:apply-templates/>
-         </svrl:active-pattern>
-         <xsl:apply-templates select="/" mode="M14"/>
-         <svrl:active-pattern>
-            <xsl:attribute name="document">
-               <xsl:value-of select="document-uri(/)"/>
-            </xsl:attribute>
-            <xsl:attribute name="name">SegmentTimeline element</xsl:attribute>
-            <xsl:apply-templates/>
-         </svrl:active-pattern>
-         <xsl:apply-templates select="/" mode="M15"/>
-         <svrl:active-pattern>
-            <xsl:attribute name="document">
-               <xsl:value-of select="document-uri(/)"/>
-            </xsl:attribute>
-            <xsl:attribute name="name">ProgramInformation element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M16"/>
@@ -254,7 +259,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">ContentProtection element</xsl:attribute>
+            <xsl:attribute name="name">Period element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M17"/>
@@ -262,7 +267,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">Role element</xsl:attribute>
+            <xsl:attribute name="name">AdaptationSet element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M18"/>
@@ -270,7 +275,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">FramePacking element</xsl:attribute>
+            <xsl:attribute name="name">ContentComponent element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M19"/>
@@ -278,7 +283,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">AudioChannelConfiguration element</xsl:attribute>
+            <xsl:attribute name="name">Representation element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M20"/>
@@ -286,7 +291,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">EventStream element</xsl:attribute>
+            <xsl:attribute name="name">SubRepresentation element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M21"/>
@@ -294,7 +299,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">Subset element</xsl:attribute>
+            <xsl:attribute name="name">SegmentTemplate element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M22"/>
@@ -302,7 +307,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">UTCTiming element</xsl:attribute>
+            <xsl:attribute name="name">SegmentList element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M23"/>
@@ -310,7 +315,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">SupplementalProperty element</xsl:attribute>
+            <xsl:attribute name="name">SegmentBase element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M24"/>
@@ -318,7 +323,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">SRD description element</xsl:attribute>
+            <xsl:attribute name="name">SegmentTimeline element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M25"/>
@@ -326,7 +331,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">MPD element</xsl:attribute>
+            <xsl:attribute name="name">ProgramInformation element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M26"/>
@@ -334,7 +339,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">Period element</xsl:attribute>
+            <xsl:attribute name="name">ContentProtection element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M27"/>
@@ -342,7 +347,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">AdaptationSet element</xsl:attribute>
+            <xsl:attribute name="name">Role element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M28"/>
@@ -350,7 +355,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">Representation element</xsl:attribute>
+            <xsl:attribute name="name">FramePacking element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M29"/>
@@ -358,7 +363,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">SubRepresentation element</xsl:attribute>
+            <xsl:attribute name="name">AudioChannelConfiguration element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M30"/>
@@ -366,7 +371,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">SegmentBase element</xsl:attribute>
+            <xsl:attribute name="name">EventStream element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M31"/>
@@ -374,7 +379,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">ContentProtection element</xsl:attribute>
+            <xsl:attribute name="name">Subset element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M32"/>
@@ -382,7 +387,7 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">AudioChannelConfiguration element</xsl:attribute>
+            <xsl:attribute name="name">UTCTiming element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M33"/>
@@ -390,10 +395,118 @@
             <xsl:attribute name="document">
                <xsl:value-of select="document-uri(/)"/>
             </xsl:attribute>
-            <xsl:attribute name="name">EssentialProperty element</xsl:attribute>
+            <xsl:attribute name="name">SupplementalProperty element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M34"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">SRD description element</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M35"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">MPD element</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M36"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">Period element</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M37"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">AdaptationSet element</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M38"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">Representation element</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M39"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">SubRepresentation element</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M40"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">SegmentBase element</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M41"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">ContentProtection element</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M42"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">AudioChannelConfiguration element</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M43"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">EssentialProperty element</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M44"/>
+         <svrl:ns-prefix-in-attribute-values uri="urn:mpeg:dash:schema:mpd:2011" prefix="dash"/>
+         <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/1999/xlink" prefix="xlink"/>
+         <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi"/>
+         <svrl:ns-prefix-in-attribute-values uri="http://www.dolby.com/ns/2019/dash-if" prefix="dlb"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">AdaptationSet element for DVB DASH 2017 profile</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M50"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">Preselection element for DVB DASH 2017 profile</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M51"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">AdaptationSet and Preselection element for AC-4 for DVB DASH 2017 profile</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M52"/>
       </svrl:schematron-output>
    </xsl:template>
    <!--SCHEMATRON PATTERNS-->
@@ -401,7 +514,7 @@
    <!--PATTERN MPD element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">MPD element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:MPD" priority="1000" mode="M6">
+   <xsl:template match="dash:MPD" priority="1000" mode="M16">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:MPD"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -494,16 +607,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M6"/>
+      <xsl:apply-templates select="*" mode="M16"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M6"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M6">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M6"/>
+   <xsl:template match="text()" priority="-1" mode="M16"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M16">
+      <xsl:apply-templates select="*" mode="M16"/>
    </xsl:template>
    <!--PATTERN Period element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Period element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:Period" priority="1000" mode="M7">
+   <xsl:template match="dash:Period" priority="1000" mode="M17">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:Period"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -596,16 +709,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M7"/>
+      <xsl:apply-templates select="*" mode="M17"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M7"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M7">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M7"/>
+   <xsl:template match="text()" priority="-1" mode="M17"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M17">
+      <xsl:apply-templates select="*" mode="M17"/>
    </xsl:template>
    <!--PATTERN AdaptationSet element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AdaptationSet element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:AdaptationSet" priority="1000" mode="M8">
+   <xsl:template match="dash:AdaptationSet" priority="1000" mode="M18">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:AdaptationSet"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -776,16 +889,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M8"/>
+      <xsl:apply-templates select="*" mode="M18"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M8"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M8">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M8"/>
+   <xsl:template match="text()" priority="-1" mode="M18"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M18">
+      <xsl:apply-templates select="*" mode="M18"/>
    </xsl:template>
    <!--PATTERN ContentComponent element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">ContentComponent element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:ContentComponent" priority="1000" mode="M9">
+   <xsl:template match="dash:ContentComponent" priority="1000" mode="M19">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:ContentComponent"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -800,16 +913,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M9"/>
+      <xsl:apply-templates select="*" mode="M19"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M9"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M9">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M9"/>
+   <xsl:template match="text()" priority="-1" mode="M19"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M19">
+      <xsl:apply-templates select="*" mode="M19"/>
    </xsl:template>
    <!--PATTERN Representation element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Representation element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:Representation" priority="1000" mode="M10">
+   <xsl:template match="dash:Representation" priority="1000" mode="M20">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:Representation"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -902,16 +1015,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M10"/>
+      <xsl:apply-templates select="*" mode="M20"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M10"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M10">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M10"/>
+   <xsl:template match="text()" priority="-1" mode="M20"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M20">
+      <xsl:apply-templates select="*" mode="M20"/>
    </xsl:template>
    <!--PATTERN SubRepresentation element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SubRepresentation element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:SubRepresentation" priority="1000" mode="M11">
+   <xsl:template match="dash:SubRepresentation" priority="1000" mode="M21">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                        context="dash:SubRepresentation"/>
       <!--ASSERT -->
@@ -927,16 +1040,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M11"/>
+      <xsl:apply-templates select="*" mode="M21"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M11"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M11">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M11"/>
+   <xsl:template match="text()" priority="-1" mode="M21"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M21">
+      <xsl:apply-templates select="*" mode="M21"/>
    </xsl:template>
    <!--PATTERN SegmentTemplate element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentTemplate element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:SegmentTemplate" priority="1000" mode="M12">
+   <xsl:template match="dash:SegmentTemplate" priority="1000" mode="M22">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:SegmentTemplate"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -1029,16 +1142,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M12"/>
+      <xsl:apply-templates select="*" mode="M22"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M12"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M12">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M12"/>
+   <xsl:template match="text()" priority="-1" mode="M22"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M22">
+      <xsl:apply-templates select="*" mode="M22"/>
    </xsl:template>
    <!--PATTERN SegmentList element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentList element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:SegmentList" priority="1000" mode="M13">
+   <xsl:template match="dash:SegmentList" priority="1000" mode="M23">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:SegmentList"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -1079,16 +1192,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M13"/>
+      <xsl:apply-templates select="*" mode="M23"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M13"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M13">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M13"/>
+   <xsl:template match="text()" priority="-1" mode="M23"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M23">
+      <xsl:apply-templates select="*" mode="M23"/>
    </xsl:template>
    <!--PATTERN SegmentBase element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentBase element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:SegmentBase" priority="1000" mode="M14">
+   <xsl:template match="dash:SegmentBase" priority="1000" mode="M24">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:SegmentBase"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -1116,16 +1229,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M14"/>
+      <xsl:apply-templates select="*" mode="M24"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M14"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M14">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M14"/>
+   <xsl:template match="text()" priority="-1" mode="M24"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M24">
+      <xsl:apply-templates select="*" mode="M24"/>
    </xsl:template>
    <!--PATTERN SegmentTimeline element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentTimeline element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:SegmentTimeline" priority="1000" mode="M15">
+   <xsl:template match="dash:SegmentTimeline" priority="1000" mode="M25">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:SegmentTimeline"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -1140,16 +1253,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M15"/>
+      <xsl:apply-templates select="*" mode="M25"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M15"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M15">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M15"/>
+   <xsl:template match="text()" priority="-1" mode="M25"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M25">
+      <xsl:apply-templates select="*" mode="M25"/>
    </xsl:template>
    <!--PATTERN ProgramInformation element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">ProgramInformation element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:ProgramInformation" priority="1000" mode="M16">
+   <xsl:template match="dash:ProgramInformation" priority="1000" mode="M26">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                        context="dash:ProgramInformation"/>
       <!--ASSERT -->
@@ -1165,16 +1278,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M16"/>
+      <xsl:apply-templates select="*" mode="M26"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M16"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M16">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M16"/>
+   <xsl:template match="text()" priority="-1" mode="M26"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M26">
+      <xsl:apply-templates select="*" mode="M26"/>
    </xsl:template>
    <!--PATTERN ContentProtection element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">ContentProtection element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:ContentProtection" priority="1000" mode="M17">
+   <xsl:template match="dash:ContentProtection" priority="1000" mode="M27">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                        context="dash:ContentProtection"/>
       <!--ASSERT -->
@@ -1203,16 +1316,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M17"/>
+      <xsl:apply-templates select="*" mode="M27"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M17"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M17">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M17"/>
+   <xsl:template match="text()" priority="-1" mode="M27"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M27">
+      <xsl:apply-templates select="*" mode="M27"/>
    </xsl:template>
    <!--PATTERN Role element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Role element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:Role" priority="1000" mode="M18">
+   <xsl:template match="dash:Role" priority="1000" mode="M28">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:Role"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -1240,16 +1353,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M18"/>
+      <xsl:apply-templates select="*" mode="M28"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M18"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M18">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M18"/>
+   <xsl:template match="text()" priority="-1" mode="M28"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M28">
+      <xsl:apply-templates select="*" mode="M28"/>
    </xsl:template>
    <!--PATTERN FramePacking element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">FramePacking element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:FramePacking" priority="1000" mode="M19">
+   <xsl:template match="dash:FramePacking" priority="1000" mode="M29">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:FramePacking"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -1303,16 +1416,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M19"/>
+      <xsl:apply-templates select="*" mode="M29"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M19"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M19">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M19"/>
+   <xsl:template match="text()" priority="-1" mode="M29"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M29">
+      <xsl:apply-templates select="*" mode="M29"/>
    </xsl:template>
    <!--PATTERN AudioChannelConfiguration element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AudioChannelConfiguration element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:AudioChannelConfiguration" priority="1000" mode="M20">
+   <xsl:template match="dash:AudioChannelConfiguration" priority="1000" mode="M30">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                        context="dash:AudioChannelConfiguration"/>
       <!--ASSERT -->
@@ -1328,16 +1441,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M20"/>
+      <xsl:apply-templates select="*" mode="M30"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M20"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M20">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M20"/>
+   <xsl:template match="text()" priority="-1" mode="M30"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M30">
+      <xsl:apply-templates select="*" mode="M30"/>
    </xsl:template>
    <!--PATTERN EventStream element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">EventStream element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:EventStream" priority="1000" mode="M21">
+   <xsl:template match="dash:EventStream" priority="1000" mode="M31">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:EventStream"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -1365,16 +1478,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M21"/>
+      <xsl:apply-templates select="*" mode="M31"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M21"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M21">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M21"/>
+   <xsl:template match="text()" priority="-1" mode="M31"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M31">
+      <xsl:apply-templates select="*" mode="M31"/>
    </xsl:template>
    <!--PATTERN Subset element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Subset element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:Subset" priority="1000" mode="M22">
+   <xsl:template match="dash:Subset" priority="1000" mode="M32">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:Subset"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -1389,16 +1502,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M22"/>
+      <xsl:apply-templates select="*" mode="M32"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M22"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M22">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M22"/>
+   <xsl:template match="text()" priority="-1" mode="M32"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M32">
+      <xsl:apply-templates select="*" mode="M32"/>
    </xsl:template>
    <!--PATTERN UTCTiming element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">UTCTiming element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:UTCTiming" priority="1000" mode="M23">
+   <xsl:template match="dash:UTCTiming" priority="1000" mode="M33">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:UTCTiming"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -1413,16 +1526,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M23"/>
+      <xsl:apply-templates select="*" mode="M33"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M23"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M23">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M23"/>
+   <xsl:template match="text()" priority="-1" mode="M33"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M33">
+      <xsl:apply-templates select="*" mode="M33"/>
    </xsl:template>
    <!--PATTERN SupplementalProperty element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SupplementalProperty element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:SupplementalProperty" priority="1000" mode="M24">
+   <xsl:template match="dash:SupplementalProperty" priority="1000" mode="M34">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                        context="dash:SupplementalProperty"/>
       <!--ASSERT -->
@@ -1464,16 +1577,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M24"/>
+      <xsl:apply-templates select="*" mode="M34"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M24"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M24">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M24"/>
+   <xsl:template match="text()" priority="-1" mode="M34"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M34">
+      <xsl:apply-templates select="*" mode="M34"/>
    </xsl:template>
    <!--PATTERN SRD description element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SRD description element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:Period" priority="1001" mode="M25">
+   <xsl:template match="dash:Period" priority="1001" mode="M35">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:Period"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -1566,12 +1679,12 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M25"/>
+      <xsl:apply-templates select="*" mode="M35"/>
    </xsl:template>
    <!--RULE -->
    <xsl:template match="dash:SupplementalProperty | dash:EssentialProperty"
                  priority="1000"
-                 mode="M25">
+                 mode="M35">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                        context="dash:SupplementalProperty | dash:EssentialProperty"/>
       <!--ASSERT -->
@@ -1639,16 +1752,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M25"/>
+      <xsl:apply-templates select="*" mode="M35"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M25"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M25">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M25"/>
+   <xsl:template match="text()" priority="-1" mode="M35"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M35">
+      <xsl:apply-templates select="*" mode="M35"/>
    </xsl:template>
    <!--PATTERN MPD element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">MPD element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:MPD" priority="1000" mode="M26">
+   <xsl:template match="dash:MPD" priority="1000" mode="M36">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:MPD"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -1689,16 +1802,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M26"/>
+      <xsl:apply-templates select="*" mode="M36"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M26"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M26">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M26"/>
+   <xsl:template match="text()" priority="-1" mode="M36"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M36">
+      <xsl:apply-templates select="*" mode="M36"/>
    </xsl:template>
    <!--PATTERN Period element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Period element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:Period" priority="1000" mode="M27">
+   <xsl:template match="dash:Period" priority="1000" mode="M37">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:Period"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -1726,16 +1839,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M27"/>
+      <xsl:apply-templates select="*" mode="M37"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M27"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M27">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M27"/>
+   <xsl:template match="text()" priority="-1" mode="M37"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M37">
+      <xsl:apply-templates select="*" mode="M37"/>
    </xsl:template>
    <!--PATTERN AdaptationSet element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AdaptationSet element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:AdaptationSet" priority="1000" mode="M28">
+   <xsl:template match="dash:AdaptationSet" priority="1000" mode="M38">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:AdaptationSet"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -1893,16 +2006,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M28"/>
+      <xsl:apply-templates select="*" mode="M38"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M28"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M28">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M28"/>
+   <xsl:template match="text()" priority="-1" mode="M38"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M38">
+      <xsl:apply-templates select="*" mode="M38"/>
    </xsl:template>
    <!--PATTERN Representation element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Representation element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:Representation" priority="1000" mode="M29">
+   <xsl:template match="dash:Representation" priority="1000" mode="M39">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:Representation"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -2023,16 +2136,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M29"/>
+      <xsl:apply-templates select="*" mode="M39"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M29"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M29">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M29"/>
+   <xsl:template match="text()" priority="-1" mode="M39"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M39">
+      <xsl:apply-templates select="*" mode="M39"/>
    </xsl:template>
    <!--PATTERN SubRepresentation element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SubRepresentation element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:SubRepresentation" priority="1000" mode="M30">
+   <xsl:template match="dash:SubRepresentation" priority="1000" mode="M40">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                        context="dash:SubRepresentation"/>
       <!--ASSERT -->
@@ -2048,16 +2161,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M30"/>
+      <xsl:apply-templates select="*" mode="M40"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M30"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M30">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M30"/>
+   <xsl:template match="text()" priority="-1" mode="M40"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M40">
+      <xsl:apply-templates select="*" mode="M40"/>
    </xsl:template>
    <!--PATTERN SegmentBase element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentBase element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:SegmentBase" priority="1000" mode="M31">
+   <xsl:template match="dash:SegmentBase" priority="1000" mode="M41">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:SegmentBase"/>
       <!--ASSERT -->
       <xsl:choose>
@@ -2072,16 +2185,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M31"/>
+      <xsl:apply-templates select="*" mode="M41"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M31"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M31">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M31"/>
+   <xsl:template match="text()" priority="-1" mode="M41"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M41">
+      <xsl:apply-templates select="*" mode="M41"/>
    </xsl:template>
    <!--PATTERN ContentProtection element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">ContentProtection element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:ContentProtection" priority="1000" mode="M32">
+   <xsl:template match="dash:ContentProtection" priority="1000" mode="M42">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                        context="dash:ContentProtection"/>
       <!--ASSERT -->
@@ -2126,16 +2239,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M32"/>
+      <xsl:apply-templates select="*" mode="M42"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M32"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M32">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M32"/>
+   <xsl:template match="text()" priority="-1" mode="M42"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M42">
+      <xsl:apply-templates select="*" mode="M42"/>
    </xsl:template>
    <!--PATTERN AudioChannelConfiguration element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AudioChannelConfiguration element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:AudioChannelConfiguration" priority="1000" mode="M33">
+   <xsl:template match="dash:AudioChannelConfiguration" priority="1000" mode="M43">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                        context="dash:AudioChannelConfiguration"/>
       <!--ASSERT -->
@@ -2164,16 +2277,16 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M33"/>
+      <xsl:apply-templates select="*" mode="M43"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M33"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M33">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M33"/>
+   <xsl:template match="text()" priority="-1" mode="M43"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M43">
+      <xsl:apply-templates select="*" mode="M43"/>
    </xsl:template>
    <!--PATTERN EssentialProperty element-->
    <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">EssentialProperty element</svrl:text>
    <!--RULE -->
-   <xsl:template match="dash:EssentialProperty" priority="1000" mode="M34">
+   <xsl:template match="dash:EssentialProperty" priority="1000" mode="M44">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                        context="dash:EssentialProperty"/>
       <!--ASSERT -->
@@ -2228,10 +2341,225 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M34"/>
+      <xsl:apply-templates select="*" mode="M44"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M34"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M34">
-      <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M34"/>
+   <xsl:template match="text()" priority="-1" mode="M44"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M44">
+      <xsl:apply-templates select="*" mode="M44"/>
+   </xsl:template>
+   <xsl:param name="dvbdash-profile-2017" select="'dvbdash-profile-2017'"/>
+   <!--PATTERN AdaptationSet element for DVB DASH 2017 profile-->
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AdaptationSet element for DVB DASH 2017 profile</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]/dash:Period/dash:AdaptationSet[dlb:isAdaptationSetAudio(.)][not(dlb:isAuxiliaryStream(.))]/dash:Representation"
+                 priority="1002"
+                 mode="M50">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]/dash:Period/dash:AdaptationSet[dlb:isAdaptationSetAudio(.)][not(dlb:isAuxiliaryStream(.))]/dash:Representation"/>
+      <!--REPORT -->
+      <xsl:if test="@mimeType != ancestor::dash:AdaptationSet/dash:Representation/@mimeType">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                 test="@mimeType != ancestor::dash:AdaptationSet/dash:Representation/@mimeType">
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>@mimeType shall be common between all Representations in an Adaptation Set</svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <!--REPORT warn-->
+      <xsl:if test="@codecs   != ancestor::dash:AdaptationSet/dash:Representation/@codecs">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                 test="@codecs != ancestor::dash:AdaptationSet/dash:Representation/@codecs">
+            <xsl:attribute name="role">warn</xsl:attribute>
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>@codecs should be common between all Representations in an Adaptation Set</svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <!--REPORT warn-->
+      <xsl:if test="@audioSamplingRate != ancestor::dash:AdaptationSet/dash:Representation/@audioSamplingRate">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                 test="@audioSamplingRate != ancestor::dash:AdaptationSet/dash:Representation/@audioSamplingRate">
+            <xsl:attribute name="role">warn</xsl:attribute>
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>@audioSamplingRate should be common between all Representations in an Adaptation Set</svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <xsl:apply-templates select="*" mode="M50"/>
+   </xsl:template>
+   <!--RULE -->
+   <xsl:template match="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]/dash:Period/dash:AdaptationSet[dlb:isAdaptationSetAudio(.)][not(dlb:isAuxiliaryStream(.))]/dash:Representation/dash:AudioChannelConfiguration"
+                 priority="1001"
+                 mode="M50">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]/dash:Period/dash:AdaptationSet[dlb:isAdaptationSetAudio(.)][not(dlb:isAuxiliaryStream(.))]/dash:Representation/dash:AudioChannelConfiguration"/>
+      <xsl:variable name="siu" select="@schemeIdUri"/>
+      <xsl:variable name="val" select="@value"/>
+      <!--REPORT warn-->
+      <xsl:if test="$val != ancestor::dash:AdaptationSet/dash:Representation/dash:AudioChannelConfiguration[@schemeIdUri = $siu]/@value">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                 test="$val != ancestor::dash:AdaptationSet/dash:Representation/dash:AudioChannelConfiguration[@schemeIdUri = $siu]/@value">
+            <xsl:attribute name="role">warn</xsl:attribute>
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>audioChannelConfiguration should be common between all Representations in an Adaptation Set</svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <xsl:apply-templates select="*" mode="M50"/>
+   </xsl:template>
+   <!--RULE -->
+   <xsl:template match="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]/dash:Period/dash:AdaptationSet[dlb:isAdaptationSetAudio(.)][dlb:isAuxiliaryStream(.)]"
+                 priority="1000"
+                 mode="M50">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]/dash:Period/dash:AdaptationSet[dlb:isAdaptationSetAudio(.)][dlb:isAuxiliaryStream(.)]"/>
+      <!--REPORT -->
+      <xsl:if test="dash:AudioChannelConfiguration or dash:Role or dash:Accessibility or @lang">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                 test="dash:AudioChannelConfiguration or dash:Role or dash:Accessibility or @lang">
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>All Adaptation Sets that refer to Auxiliary Audio streams may not contain the @lang attribute and Role,
+				Accessibility, AudioChannelConfiguration descriptors</svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <xsl:apply-templates select="*" mode="M50"/>
+   </xsl:template>
+   <xsl:template match="text()" priority="-1" mode="M50"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M50">
+      <xsl:apply-templates select="*" mode="M50"/>
+   </xsl:template>
+   <!--PATTERN Preselection element for DVB DASH 2017 profile-->
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Preselection element for DVB DASH 2017 profile</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]/dash:Period/dash:Preselection[dlb:isAdaptationSetAudio(.)]"
+                 priority="1000"
+                 mode="M51">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]/dash:Period/dash:Preselection[dlb:isAdaptationSetAudio(.)]"/>
+      <!--ASSERT -->
+      <xsl:choose>
+         <xsl:when test="dash:Role[@schemeIdUri='urn:mpeg:dash:role:2011']"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="dash:Role[@schemeIdUri='urn:mpeg:dash:role:2011']">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+               </xsl:attribute>
+               <svrl:text>Every AC-4 or MPEG-H Audio Preselection element shall include at least one Role element using the scheme
+				"urn:mpeg:dash:role:2011" as defined in ISO/IEC 23009-1 [1].</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <xsl:variable name="psc" select="tokenize(@preselectionComponents,' ')"/>
+      <xsl:variable name="bundleID"
+                    select="../dash:AdaptationSet[@id = $psc][not(dlb:isAuxiliaryStream(.))]/@id"/>
+      <!--REPORT -->
+      <xsl:if test="count(../dash:Preselection[$bundleID = tokenize(@preselectionComponents,' ')]) &gt; 1 and not(../dash:Preselection[$bundleID = tokenize(@preselectionComponents,' ')]/dash:Role[@schemeIdUri='urn:mpeg:dash:role:2011'][@value='main'])">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                 test="count(../dash:Preselection[$bundleID = tokenize(@preselectionComponents,' ')]) &gt; 1 and not(../dash:Preselection[$bundleID = tokenize(@preselectionComponents,' ')]/dash:Role[@schemeIdUri='urn:mpeg:dash:role:2011'][@value='main'])">
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>If there is more than one audio Preselection associated with an audio bundle, at least one of the Preselection
+				elements shall be tagged with an @value set to "main".</svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <xsl:apply-templates select="*" mode="M51"/>
+   </xsl:template>
+   <xsl:template match="text()" priority="-1" mode="M51"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M51">
+      <xsl:apply-templates select="*" mode="M51"/>
+   </xsl:template>
+   <!--PATTERN AdaptationSet and Preselection element for AC-4 for DVB DASH 2017 profile-->
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AdaptationSet and Preselection element for AC-4 for DVB DASH 2017 profile</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]//*[self::dash:AdaptationSet or self::dash:Preselection or self::Representation][dlb:isAdaptationSetAC4(.)]"
+                 priority="1000"
+                 mode="M52">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]//*[self::dash:AdaptationSet or self::dash:Preselection or self::Representation][dlb:isAdaptationSetAC4(.)]"/>
+      <xsl:variable name="cod" select="tokenize(dlb:getNearestCodecString(.),'\.')"/>
+      <xsl:variable name="bs_ver" select="$cod[2]"/>
+      <xsl:variable name="pres_ver" select="$cod[3]"/>
+      <xsl:variable name="md_compat" select="$cod[4]"/>
+      <!--ASSERT -->
+      <xsl:choose>
+         <xsl:when test="$bs_ver = '02'"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl" test="$bs_ver = '02'">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+               </xsl:attribute>
+               <svrl:text>AC-4 audio should be encoded using bitstream_version = 2 (is <xsl:text/>
+                  <xsl:value-of select="$bs_ver"/>
+                  <xsl:text/>).</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
+         <xsl:when test="$pres_ver = '01'"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl" test="$pres_ver = '01'">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+               </xsl:attribute>
+               <svrl:text>The presentation_version field according to clause 6.2.1.3 of ETSI TS 103 190-2 [46] shall be set
+				to the value 1.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
+         <xsl:when test="$md_compat = ('00','01','02','03')"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="$md_compat = ('00','01','02','03')">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+               </xsl:attribute>
+               <svrl:text>The md_compat field as defined by clause 6.3.2.2.3 of ETSI TS 103 190-2 [46] shall be less than or
+				equal to three.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
+         <xsl:when test="@audioSamplingRate = (48000,96000,192000)"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="@audioSamplingRate = (48000,96000,192000)">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+               </xsl:attribute>
+               <svrl:text>An AC-4 elementary stream shall be encoded with a sampling rate of 48 kHz, 96 kHz or 192 kHz.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
+         <xsl:when test="not(*[self::dash:SupplementalProperty or self::dash:EssentialProperty][@schemeIdUri = 'tag:dolby.com,2017:dash:audio_frame_rate:2017'])     or *[self::dash:SupplementalProperty or self::dash:EssentialProperty][@schemeIdUri = 'tag:dolby.com,2017:dash:audio_frame_rate:2017']/@value &lt;= 60     or not(ancestor::dash:Period/dash:AdaptationSet[dlb:isAdaptationSetVideo(.)]/@frameRate &lt;= 60)"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="not(*[self::dash:SupplementalProperty or self::dash:EssentialProperty][@schemeIdUri = 'tag:dolby.com,2017:dash:audio_frame_rate:2017']) or *[self::dash:SupplementalProperty or self::dash:EssentialProperty][@schemeIdUri = 'tag:dolby.com,2017:dash:audio_frame_rate:2017']/@value &lt;= 60 or not(ancestor::dash:Period/dash:AdaptationSet[dlb:isAdaptationSetVideo(.)]/@frameRate &lt;= 60)">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+               </xsl:attribute>
+               <svrl:text>An Adaptation Set shall not contain audio with a frame rate &gt; 60 Hz unless all video adaptationSets in
+				the Period contain only video with a frame rate &gt; 60 Hz.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <xsl:apply-templates select="*" mode="M52"/>
+   </xsl:template>
+   <xsl:template match="text()" priority="-1" mode="M52"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M52">
+      <xsl:apply-templates select="*" mode="M52"/>
    </xsl:template>
 </xsl:stylesheet>
