@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Assertions to test DVB DASH audio, 2017 profile -->
 <schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:dash="urn:mpeg:dash:schema:mpd:2011" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"  queryBinding='xslt2' schemaVersion='ISO19757-3'>
 	<ns prefix="dash" uri="urn:mpeg:dash:schema:mpd:2011"/>
 	<ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>
@@ -41,6 +42,7 @@
 			<let name="bundleID" value="../dash:AdaptationSet[@id = $psc][not(dlb:isAuxiliaryStream(.))]/@id"/>
 
 			<!-- If there is more than one preselection in this bundle, at least one must be main -->
+			<!-- see="https://www.etsi.org/deliver/etsi_ts/103200_103299/103285/01.02.01_60/ts_103285v010201p.pdf#page=37" -->
 			<report test="count(../dash:Preselection[$bundleID = tokenize(@preselectionComponents,' ')]) &gt; 1 and not(../dash:Preselection[$bundleID = tokenize(@preselectionComponents,' ')]/dash:Role[@schemeIdUri='urn:mpeg:dash:role:2011'][@value='main'])">If there is more than one audio Preselection associated with an audio bundle, at least one of the Preselection
 				elements shall be tagged with an @value set to "main".</report>
 		</rule>
@@ -51,8 +53,6 @@
 		<!-- Check the conformance of AdaptationSet -->
 		<rule context="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]//*[self::dash:AdaptationSet or self::dash:Preselection or self::Representation][dlb:isAdaptationSetAC4(.)]">
 			<!-- TS 103190-1, F1.2.1 and TS 103190-2, G2.3 and E.13 -->
-<!--			<let name="mstring" value="concat('^\s*(',$AC4_MIME,$delim,')+$')"/>
--->
 			<let name="cod" value="tokenize(dlb:getNearestCodecString(.),'\.')"/>
 			<let name="bs_ver" value="$cod[2]"/>
 			<let name="pres_ver" value="$cod[3]"/>
