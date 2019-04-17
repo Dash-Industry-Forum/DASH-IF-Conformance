@@ -1,56 +1,47 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xsl:stylesheet xmlns:xhtml="http://www.w3.org/1999/xhtml"
-                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:xs="http://www.w3.org/2001/XMLSchema"
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:schold="http://www.ascc.net/xml/schematron"
                 xmlns:iso="http://purl.oclc.org/dsdl/schematron"
+                xmlns:xhtml="http://www.w3.org/1999/xhtml"
+                xmlns:xs="http://www.w3.org/2001/XMLSchema"
                 xmlns:dash="urn:mpeg:dash:schema:mpd:2011"
                 xmlns:xlink="http://www.w3.org/1999/xlink"
                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 xmlns:cenc="urn:mpeg:cenc:2013"
                 version="1.0"><!--Implementers: please note that overriding process-prolog or process-root is 
     the preferred method for meta-stylesheets to use where possible. -->
-<xsl:param name="archiveDirParameter"/>
+   <xsl:param name="archiveDirParameter"/>
    <xsl:param name="archiveNameParameter"/>
    <xsl:param name="fileNameParameter"/>
    <xsl:param name="fileDirParameter"/>
    <xsl:variable name="document-uri">
       <xsl:value-of select="document-uri(/)"/>
    </xsl:variable>
-
    <!--PHASES-->
-
-
-<!--PROLOG-->
-<xsl:output xmlns:svrl="http://purl.oclc.org/dsdl/svrl" method="xml"
+   <!--PROLOG-->
+   <xsl:output xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+               method="xml"
                omit-xml-declaration="no"
                standalone="yes"
                indent="yes"/>
-
    <!--XSD TYPES FOR XSLT2-->
-
-
-<!--KEYS AND FUNCTIONS-->
-
-
-<!--DEFAULT RULES-->
-
-
-<!--MODE: SCHEMATRON-SELECT-FULL-PATH-->
-<!--This mode can be used to generate an ugly though full XPath for locators-->
-<xsl:template match="*" mode="schematron-select-full-path">
+   <!--KEYS AND FUNCTIONS-->
+   <!--DEFAULT RULES-->
+   <!--MODE: SCHEMATRON-SELECT-FULL-PATH-->
+   <!--This mode can be used to generate an ugly though full XPath for locators-->
+   <xsl:template match="*" mode="schematron-select-full-path">
       <xsl:apply-templates select="." mode="schematron-get-full-path"/>
    </xsl:template>
-
    <!--MODE: SCHEMATRON-FULL-PATH-->
-<!--This mode can be used to generate an ugly though full XPath for locators-->
-<xsl:template match="*" mode="schematron-get-full-path">
+   <!--This mode can be used to generate an ugly though full XPath for locators-->
+   <xsl:template match="*" mode="schematron-get-full-path">
       <xsl:apply-templates select="parent::*" mode="schematron-get-full-path"/>
       <xsl:text>/</xsl:text>
       <xsl:choose>
          <xsl:when test="namespace-uri()=''">
             <xsl:value-of select="name()"/>
-            <xsl:variable name="p_1" select="1+    count(preceding-sibling::*[name()=name(current())])"/>
+            <xsl:variable name="p_1"
+                          select="1+    count(preceding-sibling::*[name()=name(current())])"/>
             <xsl:if test="$p_1&gt;1 or following-sibling::*[name()=name(current())]">[<xsl:value-of select="$p_1"/>]</xsl:if>
          </xsl:when>
          <xsl:otherwise>
@@ -77,10 +68,9 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
-
    <!--MODE: SCHEMATRON-FULL-PATH-2-->
-<!--This mode can be used to generate prefixed XPath for humans-->
-<xsl:template match="node() | @*" mode="schematron-get-full-path-2">
+   <!--This mode can be used to generate prefixed XPath for humans-->
+   <xsl:template match="node() | @*" mode="schematron-get-full-path-2">
       <xsl:for-each select="ancestor-or-self::*">
          <xsl:text>/</xsl:text>
          <xsl:value-of select="name(.)"/>
@@ -95,9 +85,9 @@
       </xsl:if>
    </xsl:template>
    <!--MODE: SCHEMATRON-FULL-PATH-3-->
-<!--This mode can be used to generate prefixed XPath for humans 
+   <!--This mode can be used to generate prefixed XPath for humans 
 	(Top-level element has index)-->
-<xsl:template match="node() | @*" mode="schematron-get-full-path-3">
+   <xsl:template match="node() | @*" mode="schematron-get-full-path-3">
       <xsl:for-each select="ancestor-or-self::*">
          <xsl:text>/</xsl:text>
          <xsl:value-of select="name(.)"/>
@@ -111,9 +101,8 @@
          <xsl:text/>/@<xsl:value-of select="name(.)"/>
       </xsl:if>
    </xsl:template>
-
    <!--MODE: GENERATE-ID-FROM-PATH -->
-<xsl:template match="/" mode="generate-id-from-path"/>
+   <xsl:template match="/" mode="generate-id-from-path"/>
    <xsl:template match="text()" mode="generate-id-from-path">
       <xsl:apply-templates select="parent::*" mode="generate-id-from-path"/>
       <xsl:value-of select="concat('.text-', 1+count(preceding-sibling::text()), '-')"/>
@@ -135,9 +124,8 @@
       <xsl:text>.</xsl:text>
       <xsl:value-of select="concat('.',name(),'-',1+count(preceding-sibling::*[name()=name(current())]),'-')"/>
    </xsl:template>
-
    <!--MODE: GENERATE-ID-2 -->
-<xsl:template match="/" mode="generate-id-2">U</xsl:template>
+   <xsl:template match="/" mode="generate-id-2">U</xsl:template>
    <xsl:template match="*" mode="generate-id-2" priority="2">
       <xsl:text>U</xsl:text>
       <xsl:number level="multiple" count="*"/>
@@ -156,11 +144,12 @@
       <xsl:text>_</xsl:text>
       <xsl:value-of select="translate(name(),':','.')"/>
    </xsl:template>
-   <!--Strip characters--><xsl:template match="text()" priority="-1"/>
-
+   <!--Strip characters-->
+   <xsl:template match="text()" priority="-1"/>
    <!--SCHEMA SETUP-->
-<xsl:template match="/">
-      <svrl:schematron-output xmlns:svrl="http://purl.oclc.org/dsdl/svrl" title="Schema for validating MPDs"
+   <xsl:template match="/">
+      <svrl:schematron-output xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                              title="Schema for validating MPDs"
                               schemaVersion="ISO19757-3">
          <xsl:comment>
             <xsl:value-of select="$archiveDirParameter"/>   
@@ -407,19 +396,15 @@
          <xsl:apply-templates select="/" mode="M34"/>
       </svrl:schematron-output>
    </xsl:template>
-
    <!--SCHEMATRON PATTERNS-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Schema for validating MPDs</svrl:text>
-
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Schema for validating MPDs</svrl:text>
    <!--PATTERN MPD element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">MPD element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:MPD" priority="1000" mode="M6">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">MPD element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:MPD" priority="1000" mode="M6">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:MPD"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@type = 'dynamic' and not(@availabilityStartTime)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -431,9 +416,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@type = 'dynamic' and not(@publishTime)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -445,9 +429,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@type = 'static' and descendant::dash:Period[1]/@start and (years-from-duration(descendant::dash:Period[1]/@start) + months-from-duration(descendant::dash:Period[1]/@start) + days-from-duration(descendant::dash:Period[1]/@start) + hours-from-duration(descendant::dash:Period[1]/@start) + minutes-from-duration(descendant::dash:Period[1]/@start) +  seconds-from-duration(descendant::dash:Period[1]/@start)) &gt; 0) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -459,9 +442,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(@mediaPresentationDuration) and not(@minimumUpdatePeriod)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -473,9 +455,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(@profiles) or (contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-main:2011') or contains(@profiles, 'urn:mpeg:dash:profile:full:2011') or contains(@profiles, 'urn:mpeg:dash:profile:mp2t-main:2011') or contains(@profiles, 'urn:mpeg:dash:profile:mp2t-simple:2011') or contains (@profiles, 'http://dashif.org/guidelines/dashif#ac-4') or contains (@profiles, 'http://dashif.org/guidelines/dashif#mpeg-h-3da') or contains(@profiles, 'http://dashif.org/guidelines/dashif#vp9') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#vp9') or contains(@profiles, 'http://dashif.org/guidelines/dashif#vp9-hdr') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#vp9-hdr') or contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or contains(@profiles, 'urn:dvb:dash:profile:dvb-dash:2014') or contains(@profiles, 'http://dashif.org/guidelines/dashif#ec-3'))) then true() else false()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -487,9 +468,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or not(@type) or @type='static') then true() else false()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -501,9 +481,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(@mediaPresentationDuration) and not(@minimumUpdatePeriod) and not(dash:Period[last()]/@duration)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -521,16 +500,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M6">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M6"/>
    </xsl:template>
-
    <!--PATTERN Period element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Period element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:Period" priority="1000" mode="M7">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Period element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:Period" priority="1000" mode="M7">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:Period"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (string(@bitstreamSwitching) = 'true' and string(child::dash:AdaptationSet/@bitstreamSwitching) = 'false') then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -542,9 +518,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@id = preceding::dash:Period/@id) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -556,9 +531,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((child::dash:SegmentBase and child::dash:SegmentTemplate and child::dash:SegmentList) or (child::dash:SegmentBase and child::dash:SegmentTemplate) or (child::dash:SegmentBase and child::dash:SegmentList) or (child::dash:SegmentTemplate and child::dash:SegmentList)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -570,9 +544,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(@id) and ancestor::dash:MPD/@type = 'dynamic') then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -584,9 +557,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(descendant-or-self::dash:BaseURL) and not(descendant-or-self::dash:SegmentTemplate) and not(descendant-or-self::dash:SegmentList) and not(@xlink:href = 'urn:mpeg:dash:resolve-to-zero:2013')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -598,9 +570,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@duration = xs:duration(PT0S) and count(child::dash:AdaptationSet)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -612,9 +583,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011') and (child::dash:SegmentList or child::dash:SegmentTemplate)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -632,16 +602,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M7">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M7"/>
    </xsl:template>
-
    <!--PATTERN AdaptationSet element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AdaptationSet element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:AdaptationSet" priority="1000" mode="M8">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AdaptationSet element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:AdaptationSet" priority="1000" mode="M8">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:AdaptationSet"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@id = preceding-sibling::dash:AdaptationSet/@id) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -653,9 +620,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((@lang = descendant::dash:ContentComponent/@lang) or (@contentType = descendant::dash:ContentComponent/@contentType) or (@par = descendant::dash:ContentComponent/@par)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -667,9 +633,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((@profiles and descendant::dash:Representation/@profiles) or (@width and descendant::dash:Representation/@width) or (@height and descendant::dash:Representation/@height) or (@sar and descendant::dash:Representation/@sar) or (@frameRate and descendant::dash:Representation/@frameRate) or (@audioSamplingRate and descendant::dash:Representation/@audioSamplingRate) or (@mimeType and descendant::dash:Representation/@mimeType) or (@segmentProfiles and descendant::dash:Representation/@segmentProfiles) or (@codecs and descendant::dash:Representation/@codecs) or (@maximumSAPPeriod and descendant::dash:Representation/@maximumSAPPeriod) or (@startWithSAP and descendant::dash:Representation/@startWithSAP) or (@maxPlayoutRate and descendant::dash:Representation/@maxPlayoutRate) or (@codingDependency and descendant::dash:Representation/@codingDependency) or (@scanType and descendant::dash:Representation/@scanType)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -681,9 +646,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((@minWidth &gt; @maxWidth) or (@minHeight &gt; @maxHeight) or (@minBandwidth &gt; @maxBandwidth)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -695,9 +659,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (descendant::dash:Representation/@bandwidth &lt; @minBandwidth or descendant::dash:Representation/@bandwidth &gt; @maxBandwidth) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -709,9 +672,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (descendant::dash:Representation/@width &gt; @maxWidth) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -723,9 +685,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (descendant::dash:Representation/@height &gt; @maxHeight) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -737,9 +698,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (count(child::dash:Representation)=0) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -751,9 +711,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((child::dash:SegmentBase and child::dash:SegmentTemplate and child::dash:SegmentList) or (child::dash:SegmentBase and child::dash:SegmentTemplate) or (child::dash:SegmentBase and child::dash:SegmentList) or (child::dash:SegmentTemplate and child::dash:SegmentList)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -765,9 +724,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((@minFrameRate and (descendant::dash:Representation/@frameRate &lt; @minFrameRate)) or (@maxFrameRate and (descendant::dash:Representation/@frameRate &gt; @maxFrameRate))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -779,9 +737,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if((contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or (not(@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) and (@subsegmentAlignment = 'true')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -793,9 +750,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if((contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or (not(@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) and (@subsegmentStartsWithSAP = '1' or @subsegmentStartsWithSAP = '2')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -807,9 +763,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if((contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or (not(@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) and (@subsegmentStartsWithSAP = '3') and not (count(child::dash:Representation) &gt; 1)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -827,16 +782,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M8">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M8"/>
    </xsl:template>
-
    <!--PATTERN ContentComponent element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">ContentComponent element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:ContentComponent" priority="1000" mode="M9">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">ContentComponent element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:ContentComponent" priority="1000" mode="M9">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:ContentComponent"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@id = preceding-sibling::dash:ContentComponent/@id) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -854,16 +806,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M9">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M9"/>
    </xsl:template>
-
    <!--PATTERN Representation element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Representation element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:Representation" priority="1000" mode="M10">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Representation element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:Representation" priority="1000" mode="M10">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:Representation"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(@mimeType) and not(parent::dash:AdaptationSet/@mimeType)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -875,9 +824,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(child::dash:SegmentTemplate or parent::dash:AdaptationSet/dash:SegmentTemplate or ancestor::dash:Period/dash:SegmentTemplate) and (contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011') or contains(ancestor::dash:MPD/@profiles, 'urn:mpeg:dash:profile:isoff-live:2011') or contains(parent::dash:AdaptationSet/@profiles, 'urn:mpeg:dash:profile:isoff-live:2011'))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -889,9 +837,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((child::dash:SegmentBase and child::dash:SegmentTemplate and child::dash:SegmentList) or (child::dash:SegmentBase and child::dash:SegmentTemplate) or (child::dash:SegmentBase and child::dash:SegmentList) or (child::dash:SegmentTemplate and child::dash:SegmentList)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -903,9 +850,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((@id = preceding-sibling::dash:Representation/@id) or (@id=parent::dash:AdaptationSet/preceding-sibling::dash:AdaptationSet/dash:Representation/@id))then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -917,9 +863,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if((contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or (not(@profiles) and contains(parent::dash:AdaptationSet/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012')) or (not(@profiles) and not(parent::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) and (count(child::dash:BaseURL) &gt; 0)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -931,9 +876,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if((contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or (not(@profiles) and contains(parent::dash:AdaptationSet/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012')) or (not(@profiles) and not(parent::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) and (parent::dash:AdaptationSet/@subsegmentStartsWithSAP = '3') and (@mediaStreamStructureId = following-sibling::dash:Representation/@mediaStreamStructureId)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -945,9 +889,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(child::dash:SegmentTemplate or parent::dash:AdaptationSet/dash:SegmentTemplate or ancestor::dash:Period/dash:SegmentTemplate) and (contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or contains(parent::dash:AdaptationSet/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -965,16 +908,14 @@
    <xsl:template match="@*|node()" priority="-2" mode="M10">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M10"/>
    </xsl:template>
-
    <!--PATTERN SubRepresentation element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SubRepresentation element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:SubRepresentation" priority="1000" mode="M11">
-      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:SubRepresentation"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SubRepresentation element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:SubRepresentation" priority="1000" mode="M11">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:SubRepresentation"/>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@level and not(@bandwidth)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -992,16 +933,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M11">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M11"/>
    </xsl:template>
-
    <!--PATTERN SegmentTemplate element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentTemplate element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:SegmentTemplate" priority="1000" mode="M12">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentTemplate element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:SegmentTemplate" priority="1000" mode="M12">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:SegmentTemplate"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(@duration) and not(child::dash:SegmentTimeline) and not(@initialization) ) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1013,9 +951,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@duration and child::dash:SegmentTimeline) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1027,9 +964,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(@indexRange) and @indexRangeExact) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1041,9 +977,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@initialization and (matches(@initialization, '\$Number(%.[^\$]*)?\$') or matches(@initialization, '\$Time(%.[^\$]*)?\$'))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1055,9 +990,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@bitstreamSwitching and (matches(@bitstreamSwitching, '\$Number(%.[^\$]*)?\$') or matches(@bitstreamSwitching, '\$Time(%.[^\$]*)?\$'))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1069,9 +1003,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (matches(@media, '\$.[^\$]*\$')) then every $y in (for $x in tokenize(@media, '\$(Bandwidth|Time|Number|RepresentationID)(%.[^\$]*)?\$') return matches($x, '\$.[^\$]*\$')) satisfies $y eq false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1083,9 +1016,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (matches(@media, '\$RepresentationID%.[^\$]*\$')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1103,16 +1035,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M12">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M12"/>
    </xsl:template>
-
    <!--PATTERN SegmentList element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentList element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:SegmentList" priority="1000" mode="M13">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentList element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:SegmentList" priority="1000" mode="M13">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:SegmentList"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(@duration) and not(child::dash:SegmentTimeline)) then if (count(child::dash:SegmentURL) &gt; 1) then false() else true() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1124,9 +1053,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@duration and child::dash:SegmentTimeline) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1138,9 +1066,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(@indexRange) and @indexRangeExact) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1158,16 +1085,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M13">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M13"/>
    </xsl:template>
-
    <!--PATTERN SegmentBase element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentBase element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:SegmentBase" priority="1000" mode="M14">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentBase element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:SegmentBase" priority="1000" mode="M14">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:SegmentBase"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(@indexRange) and @indexRangeExact) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1179,9 +1103,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@timeShiftBufferDepth) then if (@timeShiftbuffer &lt; dash:MPD/@timeShiftBufferDepth) then false() else true() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1199,16 +1122,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M14">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M14"/>
    </xsl:template>
-
    <!--PATTERN SegmentTimeline element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentTimeline element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:SegmentTimeline" priority="1000" mode="M15">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentTimeline element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:SegmentTimeline" priority="1000" mode="M15">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:SegmentTimeline"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((if (ancestor::dash:*[1]/@timescale) then (child::dash:S/@d div ancestor::dash:*[1]/@timescale) else child::dash:S/@d) &gt; (years-from-duration(ancestor::dash:MPD/@maxSegmentDuration) + months-from-duration(ancestor::dash:MPD/@maxSegmentDuration) + days-from-duration(ancestor::dash:MPD/@maxSegmentDuration) + hours-from-duration(ancestor::dash:MPD/@maxSegmentDuration) + minutes-from-duration(ancestor::dash:MPD/@maxSegmentDuration) +  seconds-from-duration(ancestor::dash:MPD/@maxSegmentDuration))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1226,16 +1146,14 @@
    <xsl:template match="@*|node()" priority="-2" mode="M15">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M15"/>
    </xsl:template>
-
    <!--PATTERN ProgramInformation element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">ProgramInformation element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:ProgramInformation" priority="1000" mode="M16">
-      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:ProgramInformation"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">ProgramInformation element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:ProgramInformation" priority="1000" mode="M16">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:ProgramInformation"/>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (count(parent::dash:MPD/dash:ProgramInformation) &gt; 1 and not(@lang)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1253,16 +1171,14 @@
    <xsl:template match="@*|node()" priority="-2" mode="M16">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M16"/>
    </xsl:template>
-
    <!--PATTERN ContentProtection element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">ContentProtection element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:ContentProtection" priority="1000" mode="M17">
-      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:ContentProtection"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">ContentProtection element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:ContentProtection" priority="1000" mode="M17">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:ContentProtection"/>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((@schemeIdUri = 'urn:mpeg:dash:mp4protection:2011') and not(string-length(@value) = 4)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1274,9 +1190,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((@schemeIdUri = 'urn:mpeg:dash:13818:1:CA_descriptor:2011') and not(string-length(@value) = 4)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1294,16 +1209,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M17">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M17"/>
    </xsl:template>
-
    <!--PATTERN Role element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Role element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:Role" priority="1000" mode="M18">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Role element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:Role" priority="1000" mode="M18">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:Role"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((@schemeIdUri = 'urn:mpeg:dash:role:2011') and not(@value = 'caption' or @value = 'subtitle' or @value = 'main' or @value = 'alternate' or @value = 'supplementary' or @value = 'commentary' or @value = 'dub')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1315,9 +1227,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((@schemeIdUri = 'urn:mpeg:dash:stereoid:2011') and not(starts-with(@value, 'l') or starts-with(@value, 'r'))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1335,16 +1246,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M18">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M18"/>
    </xsl:template>
-
    <!--PATTERN FramePacking element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">FramePacking element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:FramePacking" priority="1000" mode="M19">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">FramePacking element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:FramePacking" priority="1000" mode="M19">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:FramePacking"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((@schemeIdUri = 'urn:mpeg:dash:14496:10:frame_packing_arrangement_type:2011') and not(contains(parent::dash:AdaptationSet/@codecs, 'avc') or contains(parent::dash:AdaptationSet/@codecs, 'svc') or contains(parent::dash:AdaptationSet/@codecs, 'mvc')) and not(contains(parent::dash:Representation/@codecs, 'avc') or contains(parent::dash:Representation/@codecs, 'svc') or contains(parent::dash:Representation/@codecs, 'mvc'))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1356,9 +1264,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((@schemeIdUri = 'urn:mpeg:dash:13818:1:stereo_video_format_type:2011') and not(parent::dash:AdaptationSet/@mimeType = 'video/mp2t') and not(parent::dash:Representation/@mimeType = 'video/mp2t')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1370,9 +1277,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(@schemeIdUri = 'urn:mpeg:dash:14496:10:frame_packing_arrangement_type:2011') and not(@schemeIdUri = 'urn:mpeg:dash:13818:1:stereo_video_format_type:2011')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1384,9 +1290,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(@value = '0' or @value = '1' or @value = '2' or @value = '3' or @value = '4' or @value = '5' or @value = '6')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1404,17 +1309,14 @@
    <xsl:template match="@*|node()" priority="-2" mode="M19">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M19"/>
    </xsl:template>
-
    <!--PATTERN AudioChannelConfiguration element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AudioChannelConfiguration element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:AudioChannelConfiguration" priority="1000" mode="M20">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AudioChannelConfiguration element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:AudioChannelConfiguration" priority="1000" mode="M20">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                        context="dash:AudioChannelConfiguration"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((@schemeIdUri = 'urn:mpeg:dash:outputChannelPositionList:2012') and not(count(tokenize(@value, ' ')) &gt; 1)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1432,16 +1334,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M20">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M20"/>
    </xsl:template>
-
    <!--PATTERN EventStream element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">EventStream element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:EventStream" priority="1000" mode="M21">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">EventStream element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:EventStream" priority="1000" mode="M21">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:EventStream"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@actuate and not(@href)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1453,9 +1352,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(@schemeIdUri)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1473,16 +1371,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M21">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M21"/>
    </xsl:template>
-
    <!--PATTERN Subset element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Subset element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:Subset" priority="1000" mode="M22">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Subset element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:Subset" priority="1000" mode="M22">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:Subset"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@id = preceding::dash:Subset/@id) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1500,16 +1395,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M22">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M22"/>
    </xsl:template>
-
    <!--PATTERN UTCTiming element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">UTCTiming element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:UTCTiming" priority="1000" mode="M23">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">UTCTiming element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:UTCTiming" priority="1000" mode="M23">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:UTCTiming"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((@schemeIdUri = 'urn:mpeg:dash:utc:ntp:2014') or (@schemeIdUri = 'urn:mpeg:dash:utc:sntp:2014') or (@schemeIdUri = 'urn:mpeg:dash:utc:http-head:2014') or (@schemeIdUri = 'urn:mpeg:dash:utc:http-xsdate:2014') or (@schemeIdUri = 'urn:mpeg:dash:utc:http-iso:2014') or (@schemeIdUri = 'urn:mpeg:dash:utc:http-ntp:2014') or (@schemeIdUri = 'urn:mpeg:dash:utc:direct:2014')) then true() else false()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1527,16 +1419,14 @@
    <xsl:template match="@*|node()" priority="-2" mode="M23">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M23"/>
    </xsl:template>
-
    <!--PATTERN SupplementalProperty element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SupplementalProperty element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:SupplementalProperty" priority="1000" mode="M24">
-      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:SupplementalProperty"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SupplementalProperty element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:SupplementalProperty" priority="1000" mode="M24">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:SupplementalProperty"/>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if((@schemeIdUri= 'urn:mpeg:dash:chaining:2016') and not((count(tokenize(@value, ','))=1) or (count(tokenize(@value, ','))&gt;1)) )then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1548,9 +1438,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if(not(parent::dash:MPD) and (@schemeIdUri= 'urn:mpeg:dash:fallback:2016') )then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1562,9 +1451,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if((@schemeIdUri= 'urn:mpeg:dash:fallback:2016') and not((count(tokenize(@value, ' '))=1) or (count(tokenize(@value, ' '))&gt;1)) )then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1582,16 +1470,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M24">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M24"/>
    </xsl:template>
-
    <!--PATTERN SRD description element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SRD description element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:Period" priority="1001" mode="M25">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SRD description element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:Period" priority="1001" mode="M25">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:Period"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (every $AdaptationSet in child::dash:AdaptationSet satisfies $AdaptationSet/dash:EssentialProperty/@schemeIdUri = 'urn:mpeg:dash:srd:2014') then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1603,9 +1488,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (some $source_id in (for $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014'] return subsequence(tokenize($srd/@value,','),1,1)) satisfies (every $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and subsequence(tokenize(@value,','),1,1) = $source_id] satisfies matches($srd/@value, '^(\d+,){4}\d+$') ) ) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1617,9 +1501,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (count(descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014')]) &gt; 0) then if (some $source_id in (for $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014'] return subsequence(tokenize($srd/@value,','),1,1)) satisfies ( if (count(distinct-values(for $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and subsequence(tokenize(@value,','),1,1) = $source_id and matches(@value, '^(\d+,){6}\d+')] return concat(string(subsequence(tokenize($srd/@value,','),6,1)), string(subsequence(tokenize($srd/@value,','),7,1))) ) ) &gt; 1 ) then every $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and subsequence(tokenize(@value,','),1,1) = $source_id] satisfies matches($srd/@value, '^(\d+,){6}\d+') else true() ) ) then true() else false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1631,9 +1514,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="every $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and matches(@value, '^(\d+,){6}\d+')] satisfies sum((number(subsequence(tokenize($srd/@value,','),2,1)),number(subsequence(tokenize($srd/@value,','),4,1)) ) ) le number(subsequence(tokenize($srd/@value,','),6,1))"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1645,9 +1527,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (count(descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014')]) &gt; 0) then if (some $source_id in (for $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014'] return subsequence(tokenize($srd/@value,','),1,1)) satisfies ( every $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and subsequence(tokenize(@value,','),1,1) = $source_id and matches(@value, '^(\d+,){4}\d+')] satisfies sum((number(subsequence(tokenize($srd/@value,','),2,1)),number(subsequence(tokenize($srd/@value,','),4,1)) ) ) le number(subsequence(tokenize(descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014') and (subsequence(tokenize(@value,','),1,1) = $source_id) and (matches(@value, '^(\d+,){6}\d+'))]/@value,','),6,1)) ) ) then true() else false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1659,9 +1540,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="every $srd in descendant::dash:*[@schemeIdUri = 'urn:mpeg:dash:srd:2014' and matches(@value, '^(\d+,){6}\d+')] satisfies sum((number(subsequence(tokenize($srd/@value,','),3,1)),number(subsequence(tokenize($srd/@value,','),5,1)) ) ) le number(subsequence(tokenize($srd/@value,','),7,1))"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1673,9 +1553,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (count(descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014')]) &gt; 0) then if (some $source_id in (for $srd in descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014')] return subsequence(tokenize($srd/@value,','),1,1)) satisfies ( every $srd in descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014') and (subsequence(tokenize(@value,','),1,1) = $source_id) and (matches(@value, '^(\d+,){4}\d+'))] satisfies sum((number(subsequence(tokenize($srd/@value,','),3,1)),number(subsequence(tokenize($srd/@value,','),5,1)) ) ) le number(subsequence(tokenize(descendant::dash:*[(@schemeIdUri = 'urn:mpeg:dash:srd:2014') and subsequence(tokenize(@value,','),1,1) = $source_id and matches(@value, '^(\d+,){6}\d+')]/@value,','),7,1)) ) ) then true() else false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1689,15 +1568,14 @@
       </xsl:choose>
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M25"/>
    </xsl:template>
-
-	  <!--RULE -->
-<xsl:template match="dash:SupplementalProperty | dash:EssentialProperty" priority="1000"
+   <!--RULE -->
+   <xsl:template match="dash:SupplementalProperty | dash:EssentialProperty"
+                 priority="1000"
                  mode="M25">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                        context="dash:SupplementalProperty | dash:EssentialProperty"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@schemeIdUri = 'urn:mpeg:dash:srd:2014') then if (parent::dash:AdaptationSet or parent::dash:SubRepresentation) then true() else false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1709,9 +1587,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@schemeIdUri = 'urn:mpeg:dash:srd:2014') then if (@value) then true() else false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1723,9 +1600,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@schemeIdUri = 'urn:mpeg:dash:srd:2014') then if (matches(@value, '^\d+,\d+,\d+,\d+,\d+')) then true() else false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1737,9 +1613,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@schemeIdUri = 'urn:mpeg:dash:srd:2014') then if (matches(@value, '^(\d+,){4,7}\d+$')) then true() else false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1751,9 +1626,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((@schemeIdUri = 'urn:mpeg:dash:srd:2014') and matches(@value, '^(\d+,){5}\d+$')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1771,16 +1645,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M25">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M25"/>
    </xsl:template>
-
    <!--PATTERN MPD element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">MPD element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:MPD" priority="1000" mode="M26">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">MPD element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:MPD" priority="1000" mode="M26">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:MPD"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@type = 'static' and @timeShiftBufferDepth and contains(@profiles, 'http://dashif.org/guidelines/dash')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1792,9 +1663,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@type = 'static' and @minimumUpdatePeriod and contains(@profiles, 'http://dashif.org/guidelines/dash')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1806,9 +1676,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and @type='dynamic' and not(contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011'))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1826,16 +1695,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M26">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M26"/>
    </xsl:template>
-
    <!--PATTERN Period element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Period element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:Period" priority="1000" mode="M27">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Period element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:Period" priority="1000" mode="M27">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:Period"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and dash:SegmentList) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1847,9 +1713,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and (count(child::dash:AdaptationSet[@contentType='video']) &gt; 1) and (count(descendant::dash:Role[@value='main'])=0)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1867,16 +1732,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M27">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M27"/>
    </xsl:template>
-
    <!--PATTERN AdaptationSet element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AdaptationSet element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:AdaptationSet" priority="1000" mode="M28">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AdaptationSet element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:AdaptationSet" priority="1000" mode="M28">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:AdaptationSet"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((descendant::dash:SupplementalProperty/@value = following-sibling::dash:AdaptationSet/@id) and (@segmentAlignment='true') and (following-sibling::dash:AdaptationSet/@segmentAlignment = 'false')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1888,9 +1750,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and @contentType='video' and not(@par)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1902,9 +1763,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and @contentType='video' and (@scanType and not(@scanType='progressive'))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1916,9 +1776,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and @contentType='audio' and not(@lang)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1930,9 +1789,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and @contentType='video' and not(@maxWidth) and not(@width)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1944,9 +1802,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and @contentType='video' and not(@maxHeight) and not(@height)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1958,9 +1815,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and @contentType='video' and not(@maxFrameRate) and not(@frameRate)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1972,9 +1828,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and contains(ancestor::dash:MPD/@profiles, 'urn:mpeg:dash:profile:isoff-live:2011') and (not(@segmentAlignment) or @segmentAlignment='false')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -1986,9 +1841,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and contains(ancestor::dash:MPD/@profiles, 'urn:mpeg:dash:profile:isoff-ondemand:2011') and (not(@subSegmentAlignment) or @subSegmentAlignment='false')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2000,9 +1854,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and @mimeType and not((@mimeType = 'video/mp4') or (@mimeType = 'audio/mp4') or (@mimeType = 'application/mp4') or (@mimeType = 'application/ttml+xml') or (@mimeType = 'text/vtt') or (@mimeType = 'image/jpeg'))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2014,9 +1867,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@profiles and not(contains(ancestor::dash:MPD/@profiles, @profiles))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2028,9 +1880,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and ((@profiles and contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012')) or (not(@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) and (not(@segmentAlignment) or @segmentAlignment='false')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2048,16 +1899,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M28">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M28"/>
    </xsl:template>
-
    <!--PATTERN Representation element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Representation element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:Representation" priority="1000" mode="M29">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Representation element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:Representation" priority="1000" mode="M29">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:Representation"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@mimeType and following-sibling::dash:Representation/@mimeType and not(following-sibling::dash:Representation/@mimeType = @mimeType)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2069,9 +1917,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and parent::dash:AdaptationSet/@contentType='video' and (((@width != preceding-sibling::dash:Representation/@width) and not(parent::dash:AdaptationSet/@maxWidth)) or ((@height != preceding-sibling::dash:Representation/@height) and not(parent::dash:AdaptationSet/@maxHeight)) or ((@frameRate != preceding-sibling::dash:Representation/@frameRate) and not(parent::dash:AdaptationSet/@maxFrameRate)))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2083,9 +1930,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and parent::dash:AdaptationSet/@contentType='video' and ((not(@width) and not(parent::dash:AdaptationSet/@width)) or (not(@height) and not(parent::dash:AdaptationSet/@height)) or (not(@frameRate) and not(parent::dash:AdaptationSet/@frameRate)) or not(@sar))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2097,9 +1943,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and parent::dash:AdaptationSet/@contentType='video' and (@scanType and not(@scanType='progressive')))then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2111,9 +1956,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and parent::dash:AdaptationSet/@contentType='audio' and ((not(@audioSamplingRate) and not(parent::dash:AdaptationSet/@audioSamplingRate)) or (not(dash:AudioChannelConfiguration) and not(parent::dash:AdaptationSet/dash:AudioChannelConfiguration)))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2125,9 +1969,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and ((count(tokenize(@codecs, ',')) &gt; 1) or (count(tokenize(parent::dash:AdaptationSet/@codecs, ',')) &gt; 1))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2139,10 +1982,10 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:variable name="codec" select="substring-before(ancestor-or-self::*/@codecs[1],'\.')"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <xsl:variable name="codec"
+                    select="substring-before(ancestor-or-self::*/@codecs[1],'\.')"/>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if($codec = ('dvhe','dvav') and @dependencyId and not(@dependencyId = preceding-sibling::dash:Representation/@id))then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2154,9 +1997,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@profiles and ((parent::dash:AdaptationSet/@profiles and not(contains(parent::dash:AdaptationSet/@profiles, @profiles))) or (ancestor::dash:MPD/@profiles and not(contains(ancestor::dash:MPD/@profiles, @profiles))))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2168,9 +2010,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (((@profiles and contains(@profiles, 'http://dashif.org/guidelines/dash')) or (not(@profiles) and parent::dash:AdaptationSet/@profiles and contains(parent::dash:AdaptationSet/@profiles, 'http://dashif.org/guidelines/dash')) or (not(@profiles) and not(parent::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash'))) and ((@profiles and contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or (not(@profiles) and parent::dash:AdaptationSet/@profiles and contains(parent::dash:AdaptationSet/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or (not(@profiles) and not(parent::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011'))) and (not(dash:SegmentBase) and not(parent::dash:AdaptationSet/dash:SegmentBase) and not(ancestor::dash:Period/dash:SegmentBase))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2188,16 +2029,14 @@
    <xsl:template match="@*|node()" priority="-2" mode="M29">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M29"/>
    </xsl:template>
-
    <!--PATTERN SubRepresentation element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SubRepresentation element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:SubRepresentation" priority="1000" mode="M30">
-      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:SubRepresentation"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SubRepresentation element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:SubRepresentation" priority="1000" mode="M30">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:SubRepresentation"/>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (@profiles and ((parent::dash:Representation/@profiles and not(contains(parent::dash:Representation/@profiles, @profiles))) or (ancestor::dash:AdaptationSet/@profiles and not(contains(ancestor::dash:AdaptationSet/@profiles, @profiles))) or (ancestor::dash:MPD/@profiles and not(contains(ancestor::dash:MPD/@profiles, @profiles))))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2215,16 +2054,13 @@
    <xsl:template match="@*|node()" priority="-2" mode="M30">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M30"/>
    </xsl:template>
-
    <!--PATTERN SegmentBase element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentBase element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:SegmentBase" priority="1000" mode="M31">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentBase element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:SegmentBase" priority="1000" mode="M31">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:SegmentBase"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (((parent::dash:Representation and ((parent::dash:Representation/@profiles and contains(parent::dash:Representation/@profiles, 'http://dashif.org/guidelines/dash')) or (not(parent::dash:Representation/@profiles) and (ancestor::dash:AdaptationSet/@profiles) and contains(ancestor::dash:AdaptationSet/@profiles, 'http://dashif.org/guidelines/dash')) or (not(parent::dash:Representation/@profiles) and not(ancestor::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash')))) or (parent::dash:AdaptationSet and ((parent::dash:AdaptationSet/@profiles and contains(parent::dash:AdaptationSet/@profiles, 'http://dashif.org/guidelines/dash')) or (not(parent::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash')))) or (parent::dash:Period and contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash'))) and ((parent::dash:Representation and ((parent::dash:Representation/@profiles and contains(parent::dash:Representation/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or (not(parent::dash:Representation/@profiles) and (ancestor::dash:AdaptationSet/@profiles) and contains(ancestor::dash:AdaptationSet/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or (not(parent::dash:Representation/@profiles) and not(ancestor::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')))) or (parent::dash:AdaptationSet and ((parent::dash:AdaptationSet/@profiles and contains(parent::dash:AdaptationSet/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or (not(parent::dash:AdaptationSet/@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')))) or (parent::dash:Period and contains(ancestor::dash:MPD/@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011'))) and not(@indexRange)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2242,16 +2078,14 @@
    <xsl:template match="@*|node()" priority="-2" mode="M31">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M31"/>
    </xsl:template>
-
    <!--PATTERN ContentProtection element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">ContentProtection element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:ContentProtection" priority="1000" mode="M32">
-      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:ContentProtection"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">ContentProtection element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:ContentProtection" priority="1000" mode="M32">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:ContentProtection"/>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (not(parent::dash:AdaptationSet)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2264,9 +2098,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ((@schemeIdUri = 'urn:mpeg:dash:mp4protection:2011') and (@value= 'cenc') and not(parent::dash:AdaptationSet)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2279,9 +2112,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if ( contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and (@schemeIdUri = 'urn:mpeg:dash:mp4protection:2011') and not(@cenc:default_KID) ) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2300,17 +2132,14 @@
    <xsl:template match="@*|node()" priority="-2" mode="M32">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M32"/>
    </xsl:template>
-
    <!--PATTERN AudioChannelConfiguration element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AudioChannelConfiguration element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:AudioChannelConfiguration" priority="1000" mode="M33">
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AudioChannelConfiguration element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:AudioChannelConfiguration" priority="1000" mode="M33">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                        context="dash:AudioChannelConfiguration"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dashif#ac-4') and not(@schemeIdUri='tag:dolby.com,2014:dash:audio_channel_configuration:2011')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2322,9 +2151,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dashif#mpeg-h-3da') and not(@schemeIdUri='urn:mpeg:mpegB:cicp:ChannelConfiguration')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2342,16 +2170,14 @@
    <xsl:template match="@*|node()" priority="-2" mode="M33">
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M33"/>
    </xsl:template>
-
    <!--PATTERN EssentialProperty element-->
-<svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">EssentialProperty element</svrl:text>
-
-	  <!--RULE -->
-<xsl:template match="dash:EssentialProperty" priority="1000" mode="M34">
-      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:EssentialProperty"/>
-
-		    <!--ASSERT -->
-<xsl:choose>
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">EssentialProperty element</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:EssentialProperty" priority="1000" mode="M34">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:EssentialProperty"/>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if((@schemeIdUri= 'http://dashif.org/guidelines/thumbnail_tile') and not((count(tokenize(@value, 'x'))=2)))then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2363,9 +2189,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if((@schemeIdUri= 'http://dashif.org/guidelines/thumbnail_tile') and not(parent::dash:Representation/@bandwidth))then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2377,9 +2202,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if((@schemeIdUri= 'http://dashif.org/guidelines/thumbnail_tile') and not(parent::dash:Representation/@height) and not(ancestor::dash:AdaptationSet/@height))then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
@@ -2391,9 +2215,8 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-
-		    <!--ASSERT -->
-<xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
          <xsl:when test="if((@schemeIdUri= 'http://dashif.org/guidelines/thumbnail_tile') and not(parent::dash:Representation/@width) and not(ancestor::dash:AdaptationSet/@width))then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"

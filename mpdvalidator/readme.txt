@@ -14,8 +14,7 @@ The structure of the package is as following:
 |- build.xml			<- ant build file
 |- changelog.txt		<- file for indicating changes
 |- readme.txt			<- this file
-|- saxon9.jar			<- file needed by Saxon XSLT
-|- saxon9-dom.jar		<- file needed by Saxon DOM transformation
+|- saxon9he.jar			<- file needed by Saxon XSLT
 |- xercesImpl.jar		<- file needed by Xerces
 
 
