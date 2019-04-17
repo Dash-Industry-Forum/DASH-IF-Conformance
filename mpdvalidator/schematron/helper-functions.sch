@@ -35,7 +35,7 @@
 
     <xsl:function name="dlb:isAdaptationSetAudio" as="xs:boolean">
         <xsl:param name="x"/>
-        <xsl:sequence select="dlb:isAdaptationSetType($x,'mp4a|ac-3ec-3|ac-4|dtsc|dtsh|dtse|dtsl')"/>
+        <xsl:sequence select="dlb:isAdaptationSetType($x,'mp4a|ac-3|ec-3|ac-4|dtsc|dtsh|dtse|dtsl')"/>
     </xsl:function>
 
     <xsl:function name="dlb:isAdaptationSetVideo" as="xs:boolean">
