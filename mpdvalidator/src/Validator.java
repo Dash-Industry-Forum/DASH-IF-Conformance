@@ -211,7 +211,8 @@ public class Validator {
 			// Step 3:
 			// Schematron check
 			System.out.println("\nStart Schematron validation\n===========================\n");
-			retVal = XSLTTransformer.transform(Definitions.tmpOutputFile_, Definitions.XSLTFILE);
+			SaxonTransformer xsltTransformer = new SaxonTransformer(Definitions.XSLTFILE);
+			retVal = xsltTransformer.transform(Definitions.tmpOutputFile_);
 			if (retVal){
 				System.out.println("Schematron validation successful - DASH is valid!\n\n");
 				writeToMPDResult(doc, "schematron", "true");
