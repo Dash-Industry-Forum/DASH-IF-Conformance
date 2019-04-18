@@ -87,4 +87,7 @@
 				the Period contain only video with a frame rate > 60 Hz.</assert>
 		</rule>
 	</pattern>
+
+	<!-- The normative requirements of datatypes in DVB DASH apply as well. Pull in generic AC-4 tests -->
+	<extends href="ac4-generic.sch"/>
 </schema>
