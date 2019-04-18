@@ -35,7 +35,6 @@ public class SaxonTransformer {
         transformer.transform();
 
         String xmlString = writer.toString();
-        System.out.println(xmlString);
         boolean hasNoErrors = true;
 
         int startPos = xmlString.indexOf(OPENTAG);
