@@ -45,8 +45,18 @@
 			<!-- see="https://www.etsi.org/deliver/etsi_ts/103200_103299/103285/01.02.01_60/ts_103285v010201p.pdf#page=37" -->
 			<report test="count(../dash:Preselection[$bundleID = tokenize(@preselectionComponents,' ')]) &gt; 1 and not(../dash:Preselection[$bundleID = tokenize(@preselectionComponents,' ')]/dash:Role[@schemeIdUri='urn:mpeg:dash:role:2011'][@value='main'])">If there is more than one audio Preselection associated with an audio bundle, at least one of the Preselection
 				elements shall be tagged with an @value set to "main".</report>
+
+			<!-- ISO/IEC 23009-1, 3rd edition, clause 5.3.11.3 -->
+			<report test="some $x in tokenize(@preselectionComponents,' ') satisfies not($x = preceding-sibling::dash:AdaptationSet/@id)"
+				diagnostics="preselID">
+				@preselectionComponents specifies the ids of the contained Adaptation Sets or Content Components that belong to this Preselection
+				as white space separated list in processing order.
+			</report>
 		</rule>
 	</pattern>
+	<diagnostics>
+		<diagnostic id="preselID">A preselectionComponent references a non existent AdaptationSet</diagnostic>
+	</diagnostics>
 
 	<pattern>
 		<title>AdaptationSet and Preselection element for AC-4 for DVB DASH 2017 profile</title>
