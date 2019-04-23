@@ -64,7 +64,7 @@
                  name="dlb:isAdaptationSetAudio"
                  as="xs:boolean">
       <xsl:param name="x"/>
-      <xsl:sequence select="dlb:isAdaptationSetType($x,'mp4a|ac-3ec-3|ac-4|dtsc|dtsh|dtse|dtsl')"/>
+      <xsl:sequence select="dlb:isAdaptationSetType($x,'mp4a|ac-3|ec-3|ac-4|dtsc|dtsh|dtse|dtsl')"/>
    </xsl:function>
    <xsl:function xmlns="http://purl.oclc.org/dsdl/schematron"
                  name="dlb:isAdaptationSetVideo"
@@ -506,7 +506,59 @@
             <xsl:attribute name="name">AdaptationSet and Preselection element for AC-4 for DVB DASH 2017 profile</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
-         <xsl:apply-templates select="/" mode="M52"/>
+         <xsl:apply-templates select="/" mode="M53"/>
+         <svrl:ns-prefix-in-attribute-values uri="urn:mpeg:dash:schema:mpd:2011" prefix="dash"/>
+         <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/1999/xlink" prefix="xlink"/>
+         <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi"/>
+         <svrl:ns-prefix-in-attribute-values uri="http://www.dolby.com/ns/2019/dash-if" prefix="dlb"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">AdaptationSet and Preselection element for AC-4</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M63"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">Representation for AC-4</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M64"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">Role element for AC-4</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M65"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">AC-4 supplemental property descriptors</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M66"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">AudioChannelConfiguration element for AC-4 part 1</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M67"/>
+         <svrl:active-pattern>
+            <xsl:attribute name="document">
+               <xsl:value-of select="document-uri(/)"/>
+            </xsl:attribute>
+            <xsl:attribute name="name">AudioChannelConfiguration element for AC-4 part 2</xsl:attribute>
+            <xsl:apply-templates/>
+         </svrl:active-pattern>
+         <xsl:apply-templates select="/" mode="M68"/>
       </svrl:schematron-output>
    </xsl:template>
    <!--SCHEMATRON PATTERNS-->
@@ -2470,6 +2522,21 @@
 				elements shall be tagged with an @value set to "main".</svrl:text>
          </svrl:successful-report>
       </xsl:if>
+      <!--REPORT -->
+      <xsl:if test="some $x in tokenize(@preselectionComponents,' ') satisfies not($x = preceding-sibling::dash:AdaptationSet/@id)">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                 test="some $x in tokenize(@preselectionComponents,' ') satisfies not($x = preceding-sibling::dash:AdaptationSet/@id)">
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>
+				@preselectionComponents specifies the ids of the contained Adaptation Sets or Content Components that belong to this Preselection
+				as white space separated list in processing order.
+			</svrl:text>
+            <svrl:diagnostic-reference diagnostic="preselID">
+A preselectionComponent references a non existent AdaptationSet</svrl:diagnostic-reference>
+         </svrl:successful-report>
+      </xsl:if>
       <xsl:apply-templates select="*" mode="M51"/>
    </xsl:template>
    <xsl:template match="text()" priority="-1" mode="M51"/>
@@ -2481,7 +2548,7 @@
    <!--RULE -->
    <xsl:template match="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]//*[self::dash:AdaptationSet or self::dash:Preselection or self::Representation][dlb:isAdaptationSetAC4(.)]"
                  priority="1000"
-                 mode="M52">
+                 mode="M53">
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                        context="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]//*[self::dash:AdaptationSet or self::dash:Preselection or self::Representation][dlb:isAdaptationSetAC4(.)]"/>
       <xsl:variable name="cod" select="tokenize(dlb:getNearestCodecString(.),'\.')"/>
@@ -2556,10 +2623,346 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates select="*" mode="M52"/>
+      <xsl:apply-templates select="*" mode="M53"/>
    </xsl:template>
-   <xsl:template match="text()" priority="-1" mode="M52"/>
-   <xsl:template match="@*|node()" priority="-2" mode="M52">
-      <xsl:apply-templates select="*" mode="M52"/>
+   <xsl:template match="text()" priority="-1" mode="M53"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M53">
+      <xsl:apply-templates select="*" mode="M53"/>
+   </xsl:template>
+   <xsl:param name="NSDLB_acc2014"
+              select="'tag:dolby.com,2014:dash:audio_channel_configuration:2011'"/>
+   <xsl:param name="NSDLB_acc2015"
+              select="'tag:dolby.com,2015:dash:audio_channel_configuration:2015'"/>
+   <xsl:param name="NSMPEG_acc" select="'urn:mpeg:mpegB:cicp:ChannelConfiguration'"/>
+   <xsl:param name="AC4_MIME"
+              select="'(ac-4((\.02\.01\.0[0-3])|(\.00\.00\.0[0-3])))'"/>
+   <xsl:param name="delim" select="'(^|\s+)'"/>
+   <!--PATTERN AdaptationSet and Preselection element for AC-4-->
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AdaptationSet and Preselection element for AC-4</svrl:text>
+   <!--RULE -->
+   <xsl:template match="*[self::dash:AdaptationSet or self::dash:Preselection][dlb:isAdaptationSetAC4(.)]"
+                 priority="1000"
+                 mode="M63">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="*[self::dash:AdaptationSet or self::dash:Preselection][dlb:isAdaptationSetAC4(.)]"/>
+      <xsl:variable name="codecs" select="dlb:getNearestCodecString(.)"/>
+      <xsl:variable name="mstring" select="concat('^\s*(',$AC4_MIME,$delim,')+$')"/>
+      <!--ASSERT -->
+      <xsl:choose>
+         <xsl:when test="matches($codecs,concat('(',$delim,$AC4_MIME,')+$'),'i')"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="matches($codecs,concat('(',$delim,$AC4_MIME,')+$'),'i')">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+               </xsl:attribute>
+               <svrl:text>The @codecs attribute shall conform to the syntax described in IETF RFC 6381. The value of the parameter
+				shall be set to a dot-separated list of four parts of which the last three are two-digit hexadecimal numbers.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <xsl:variable name="cod" select="tokenize($codecs,'\.')"/>
+      <xsl:variable name="bs_ver" select="$cod[2]"/>
+      <xsl:variable name="pres_ver" select="$cod[3]"/>
+      <xsl:variable name="md_compat" select="$cod[4]"/>
+      <!--REPORT -->
+      <xsl:if test="$bs_ver = '00' and @mimeType != ('audio/mp4','video/mp4')">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                 test="$bs_ver = '00' and @mimeType != ('audio/mp4','video/mp4')">
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>The value of the mimeType attribute shall be set to 'audio/mp4' or 'video/mp4'.</svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <!--REPORT -->
+      <xsl:if test="matches($codecs, 'ac-4\.(01|02)','i') and not(@audioSamplingRate)">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                 test="matches($codecs, 'ac-4\.(01|02)','i') and not(@audioSamplingRate)">
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>@audioSamplingRate shall be set to the sampling frequency derived from the parameters fs_index and
+				dsi_sf_multiplier, contained in ac4_dsi_v1.</svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <!--REPORT -->
+      <xsl:if test="$bs_ver = ('01','02') and @mimeType != 'audio/mp4'">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                 test="$bs_ver = ('01','02') and @mimeType != 'audio/mp4'">
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>The value of the mimeType attribute shall be set to 'audio/mp4'.</svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <!--REPORT -->
+      <xsl:if test="$bs_ver = ('01','02') and @startWithSAP != '1'">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                 test="$bs_ver = ('01','02') and @startWithSAP != '1'">
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>The @startWithSAP value shall be set to '1'.</svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <xsl:apply-templates select="*" mode="M63"/>
+   </xsl:template>
+   <xsl:template match="text()" priority="-1" mode="M63"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M63">
+      <xsl:apply-templates select="*" mode="M63"/>
+   </xsl:template>
+   <!--PATTERN Representation for AC-4-->
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Representation for AC-4</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:Representation[matches(dlb:getNearestCodecString(.), 'ac-4\.00','i')]"
+                 priority="1000"
+                 mode="M64">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:Representation[matches(dlb:getNearestCodecString(.), 'ac-4\.00','i')]"/>
+      <!--ASSERT -->
+      <xsl:choose>
+         <xsl:when test="dash:AudioChannelConfiguration"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="dash:AudioChannelConfiguration">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+               </xsl:attribute>
+               <svrl:text>The representation DASH element shall include an AudioChannelConfiguration DASH descriptor.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <xsl:apply-templates select="*" mode="M64"/>
+   </xsl:template>
+   <xsl:template match="text()" priority="-1" mode="M64"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M64">
+      <xsl:apply-templates select="*" mode="M64"/>
+   </xsl:template>
+   <!--PATTERN Role element for AC-4-->
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Role element for AC-4</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:Role[matches(dlb:getNearestCodecString(.), 'ac-4\.00')]"
+                 priority="1000"
+                 mode="M65">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:Role[matches(dlb:getNearestCodecString(.), 'ac-4\.00')]"/>
+      <!--REPORT -->
+      <xsl:if test="@schemeIdUri = 'urn:mpeg:dash:role:2011' and     not(@value = ('main','alternate','commentary','dub'))">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                 test="@schemeIdUri = 'urn:mpeg:dash:role:2011' and not(@value = ('main','alternate','commentary','dub'))">
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>The value of Role (role) shall be main, alternate, commentary.</svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <xsl:apply-templates select="*" mode="M65"/>
+   </xsl:template>
+   <xsl:template match="text()" priority="-1" mode="M65"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M65">
+      <xsl:apply-templates select="*" mode="M65"/>
+   </xsl:template>
+   <!--PATTERN AC-4 supplemental property descriptors-->
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AC-4 supplemental property descriptors</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:SupplementalProperty[@schemeIdUri = 'tag:dolby.com,2016:dash:virtualized_content:2016'][matches(dlb:getNearestCodecString(.),'ac-4\.(01|02)')]"
+                 priority="1000"
+                 mode="M66">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:SupplementalProperty[@schemeIdUri = 'tag:dolby.com,2016:dash:virtualized_content:2016'][matches(dlb:getNearestCodecString(.),'ac-4\.(01|02)')]"/>
+      <!--ASSERT -->
+      <xsl:choose>
+         <xsl:when test="@value='1'"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl" test="@value='1'">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+               </xsl:attribute>
+               <svrl:text>The @value attribute of the immersive audio for headphones descriptor shall be 1</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <xsl:apply-templates select="*" mode="M66"/>
+   </xsl:template>
+   <xsl:template match="text()" priority="-1" mode="M66"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M66">
+      <xsl:apply-templates select="*" mode="M66"/>
+   </xsl:template>
+   <!--PATTERN AudioChannelConfiguration element for AC-4 part 1-->
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AudioChannelConfiguration element for AC-4 part 1</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:AudioChannelConfiguration[matches(dlb:getNearestCodecString(.),'ac-4\.00')][@schemeIdUri eq $NSDLB_acc2014]"
+                 priority="1000"
+                 mode="M67">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:AudioChannelConfiguration[matches(dlb:getNearestCodecString(.),'ac-4\.00')][@schemeIdUri eq $NSDLB_acc2014]"/>
+      <!--REPORT warn-->
+      <xsl:if test="count(ancestor::*/dash:AudioChannelConfiguration[@schemeIdUri = ($NSDLB_acc2014,$NSMPEG_acc)]) &gt; 1">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                 test="count(ancestor::*/dash:AudioChannelConfiguration[@schemeIdUri = ($NSDLB_acc2014,$NSMPEG_acc)]) &gt; 1">
+            <xsl:attribute name="role">warn</xsl:attribute>
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>
+               <xsl:text/>
+               <xsl:value-of select="$NSDLB_acc2014"/>
+               <xsl:text/> or <xsl:text/>
+               <xsl:value-of select="$NSMPEG_acc"/>
+               <xsl:text/>
+            </svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <!--ASSERT -->
+      <xsl:choose>
+         <xsl:when test="matches(@value,'^[0-9a-fA-F]{4}$')"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="matches(@value,'^[0-9a-fA-F]{4}$')">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+               </xsl:attribute>
+               <svrl:text>The value element shall contain a four-digit hexadecimal representation of the 16-bit field which describes
+				the channel assignment of the referenced AC-4 elementary stream</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <xsl:variable name="val6" select="concat('00',@value)"/>
+      <xsl:variable name="x" select="dlb:dlb2mpg($val6)"/>
+      <!--REPORT -->
+      <xsl:if test="$x != 0">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl" test="$x != 0">
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>Use &lt;<xsl:text/>
+               <xsl:value-of select="name(.)"/>
+               <xsl:text/> schemeIdUri="<xsl:text/>
+               <xsl:value-of select="$NSMPEG_acc"/>
+               <xsl:text/>" value="<xsl:text/>
+               <xsl:value-of select="$x"/>
+               <xsl:text/>"/&gt;</svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <xsl:apply-templates select="*" mode="M67"/>
+   </xsl:template>
+   <xsl:template match="text()" priority="-1" mode="M67"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M67">
+      <xsl:apply-templates select="*" mode="M67"/>
+   </xsl:template>
+   <!--PATTERN AudioChannelConfiguration element for AC-4 part 2-->
+   <svrl:text xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AudioChannelConfiguration element for AC-4 part 2</svrl:text>
+   <!--RULE -->
+   <xsl:template match="dash:AudioChannelConfiguration[matches(dlb:getNearestCodecString(.),'ac-4\.(01|02)')][not(@schemeIdUri = ($NSDLB_acc2015,$NSMPEG_acc))]"
+                 priority="1002"
+                 mode="M68">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:AudioChannelConfiguration[matches(dlb:getNearestCodecString(.),'ac-4\.(01|02)')][not(@schemeIdUri = ($NSDLB_acc2015,$NSMPEG_acc))]"/>
+      <!--REPORT warn-->
+      <xsl:if test="true()">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl" test="true()">
+            <xsl:attribute name="role">warn</xsl:attribute>
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>
+				Unspecified schemeIdUri in AudioChannelConfiguration element
+			</svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <xsl:apply-templates select="*" mode="M68"/>
+   </xsl:template>
+   <!--RULE -->
+   <xsl:template match="dash:AudioChannelConfiguration[matches(dlb:getNearestCodecString(.),'ac-4\.(01|02)')][@schemeIdUri eq $NSDLB_acc2015]"
+                 priority="1001"
+                 mode="M68">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:AudioChannelConfiguration[matches(dlb:getNearestCodecString(.),'ac-4\.(01|02)')][@schemeIdUri eq $NSDLB_acc2015]"/>
+      <!--REPORT warn-->
+      <xsl:if test="count(ancestor::*/dash:AudioChannelConfiguration[@schemeIdUri = ($NSDLB_acc2015,$NSMPEG_acc)]) &gt; 1">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                 test="count(ancestor::*/dash:AudioChannelConfiguration[@schemeIdUri = ($NSDLB_acc2015,$NSMPEG_acc)]) &gt; 1">
+            <xsl:attribute name="role">warn</xsl:attribute>
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>
+               <xsl:text/>
+               <xsl:value-of select="$NSDLB_acc2015"/>
+               <xsl:text/> or <xsl:text/>
+               <xsl:value-of select="$NSMPEG_acc"/>
+               <xsl:text/>
+            </svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <!--ASSERT -->
+      <xsl:choose>
+         <xsl:when test="matches(@value,'^[0-9a-fA-F]{6}$')"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="matches(@value,'^[0-9a-fA-F]{6}$')">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+               </xsl:attribute>
+               <svrl:text>The value element shall contain a six-digit hexadecimal representation of the 24-bit field which describes
+				the channel assignment of the referenced AC-4 elementary stream</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <xsl:variable name="x" select="dlb:dlb2mpg(@value)"/>
+      <!--REPORT -->
+      <xsl:if test="$x != 0">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl" test="$x != 0">
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>For all AC-4 channel configurations that are mappable to the MPEG channel configuration scheme, the scheme described by
+				@schemeIdUri="urn:mpeg:mpegB:cicp:ChannelConfiguration" shall be used</svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <xsl:apply-templates select="*" mode="M68"/>
+   </xsl:template>
+   <!--RULE -->
+   <xsl:template match="dash:AudioChannelConfiguration[matches(dlb:getNearestCodecString(.),'ac-4\.(01|02)')][@schemeIdUri eq $NSMPEG_acc]"
+                 priority="1000"
+                 mode="M68">
+      <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                       context="dash:AudioChannelConfiguration[matches(dlb:getNearestCodecString(.),'ac-4\.(01|02)')][@schemeIdUri eq $NSMPEG_acc]"/>
+      <!--REPORT warn-->
+      <xsl:if test="count(ancestor::*/dash:AudioChannelConfiguration[@schemeIdUri = ($NSDLB_acc2015,$NSMPEG_acc)]) &gt; 1">
+         <svrl:successful-report xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                 test="count(ancestor::*/dash:AudioChannelConfiguration[@schemeIdUri = ($NSDLB_acc2015,$NSMPEG_acc)]) &gt; 1">
+            <xsl:attribute name="role">warn</xsl:attribute>
+            <xsl:attribute name="location">
+               <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+            </xsl:attribute>
+            <svrl:text>
+               <xsl:text/>
+               <xsl:value-of select="$NSDLB_acc2015"/>
+               <xsl:text/> or <xsl:text/>
+               <xsl:value-of select="$NSMPEG_acc"/>
+               <xsl:text/>
+            </svrl:text>
+         </svrl:successful-report>
+      </xsl:if>
+      <!--ASSERT -->
+      <xsl:choose>
+         <xsl:when test="matches(@value,'^[0-9]+$') and @value = (1 to 7,9 to 12,14,16 to 17,19)"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="matches(@value,'^[0-9]+$') and @value = (1 to 7,9 to 12,14,16 to 17,19)">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+               </xsl:attribute>
+               <svrl:text>Valid values are 1-7, 9-12, 14, 16-17, and 19</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <xsl:apply-templates select="*" mode="M68"/>
+   </xsl:template>
+   <xsl:template match="text()" priority="-1" mode="M68"/>
+   <xsl:template match="@*|node()" priority="-2" mode="M68">
+      <xsl:apply-templates select="*" mode="M68"/>
    </xsl:template>
 </xsl:stylesheet>
