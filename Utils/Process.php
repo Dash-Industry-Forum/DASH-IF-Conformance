@@ -34,7 +34,6 @@ include '../DASH/SchematronIssuesAnalyzer.php';
 include '../DASH/CrossValidation.php';
 include '../DASH/Representation.php';
 include '../DASH/SegmentURLs.php';
-include '../DASH/Report.php';
 include '../HLS/HLSProcessing.php';
 include '../Conformance-Frontend/Featurelist.php';
 
