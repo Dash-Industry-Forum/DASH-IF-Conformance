@@ -112,7 +112,7 @@ function period_duration_info(){
         
         if($duration == ''){
             if($i != sizeof($periods)-1){
-                $duration = $start - $starts[$i-1];
+                $duration = time_parsing($periods[$i+1]['start']) - $start;
             }
             else{
                 $duration = $mediapresentationduration - $start;
@@ -309,12 +309,15 @@ function time_parsing($var){
  *         $start - Period start time
  * @output: array of start segment and end segment number 
  */
-function dynamic_number($segment_access){
+function dynamic_number($segment_access, $segment_timings, $segmentno){
     global $mpd_features, $current_period, $period_timing_info;
     
     $bufferduration = ($mpd_features['timeShiftBufferDepth'] != NULL) ? time_parsing($mpd_features['timeShiftBufferDepth']) : INF;
     $AST = $mpd_features['availabilityStartTime'];
-    $segmentduration = ($segment_access['duration'] != NULL) ? $segment_access['duration'] : 0;
+    if($segment_access['SegmentTimeline'] != NULL)
+        $segmentduration = ($segment_timings[$segmentno-1]-$segment_timings[0])/((float)($segmentno-1));
+    else
+        $segmentduration = ($segment_access['duration'] != NULL) ? $segment_access['duration'] : 0;
     $timescale = ($segment_access['timescale'] != NULL) ? $segment_access['timescale'] : 1;
     if($segmentduration != 0)
         $segmentduration /= $timescale;
@@ -343,6 +346,13 @@ function dynamic_number($segment_access){
     $LST = $now - ($AST + $period_timing_info[0] - $segmentduration);
     $LSN = intval($LST / $segmentduration);
     $earliestsegment = $LSN - $buffercapacity * $percent;
-
-    return [intval($earliestsegment), $LSN];
+    
+    $new_array = $segment_timings;
+    $new_array[] = $LST*$timescale;
+    sort($new_array);
+    $ind = array_search($LST*$timescale, $new_array);
+    
+    $SST = ($ind-1-$buffercapacity*$percent < 0) ? 0 : $ind-1-$buffercapacity*$percent;
+    
+    return [intval($earliestsegment), $LSN, $SST];
 }
