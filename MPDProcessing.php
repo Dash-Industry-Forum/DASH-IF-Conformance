@@ -131,21 +131,13 @@ function process_MPD(){
         $PeriodXML = $ResultXML->addChild('Period');
         
         $period_info = current_period();
-        $segment_urls = derive_segment_URLs($urls, $period_info);
-        $result_for_json[] = sizeof($segment_urls);
         
-        for ($j1 = 0; $j1 < sizeof($segment_urls); $j1++){
+        for ($j1 = 0; $j1 < sizeof($mpd_features['Period'][$i1]['AdaptationSet']); $j1++){
             $AdaptationXML = $PeriodXML->addChild('Adaptation');
-            $result_for_json[] = sizeof($segment_urls[$j1]);
-            for ($k1 = 0; $k1 < sizeof($segment_urls[$j1]); $k1++){
+            
+            for ($k1 = 0; $k1 < sizeof($mpd_features['Period'][$i1]['AdaptationSet'][$j1]['Representation']); $k1++){
                 $RepXML = $AdaptationXML->addChild('Representation');
                 $RepXML->addAttribute('id', $k1 + 1);
-
-                $str = '{';
-                for($l1 = 0; $l1 < sizeof($segment_urls[$j1][$k1]); $l1++)
-                    $str = $str . $segment_urls[$j1][$k1][$l1] . ',';
-                $str = substr($str, 0, strlen($str)-1) . '}';
-                $RepXML->addAttribute('url', $str);
             }
         }
         
@@ -162,7 +154,7 @@ function process_MPD(){
     //------------------------------------------------------------------------//
     ## Perform Segment Validation for each representation in each adaptation set within the current period
     check_before_segment_validation();
-    $current_period = 0;
+    if($mpd_features['type'] !== 'dynamic') $current_period = 0;
     while($current_period < sizeof($mpd_features['Period']))
     {
         $period_info = current_period();
@@ -179,6 +171,10 @@ function process_MPD(){
         
         $period = $mpd_features['Period'][$current_period];
         processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML,$segment_urls);
+        
+        if($mpd_features['type'] === 'dynamic')
+            break;
+        
         $current_period++;
     }
     if($ctawave_conformance && $current_period>=1)
@@ -196,7 +192,7 @@ function process_MPD(){
 
 function processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML,$segment_urls)
 {
-   global  $current_period, $current_adaptation_set, $adaptation_set_template,$current_representation,$reprsentation_template,$session_dir,
+   global  $mpd_features, $current_period, $current_adaptation_set, $adaptation_set_template,$current_representation,$reprsentation_template,$session_dir,
            $progress_xml,$progress_report,$additional_flags,
            $cmaf_conformance, $cmaf_function_name, $cmaf_when_to_call,                                      // CMAF data
            $hbbtv_conformance, $dvb_conformance, $hbbtv_dvb_function_name, $hbbtv_dvb_when_to_call,         // HbbTV-DVB data
@@ -217,6 +213,9 @@ function processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML
         while($current_representation < sizeof($representations)){
             $representation = $representations[$current_representation];
             $segment_url = $segment_urls[$current_adaptation_set][$current_representation];
+            
+            $curr_rep_xml = $progress_xml->Results[0]->Period[($mpd_features['type'] !== 'dynamic') ? $current_period : 0]->Adaptation[$current_adaptation_set]->Representation[$current_representation];
+            $curr_rep_xml->addAttribute('url', '{' . implode(',', $segment_url) . '}');
             
             $rep_dir_name = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_template);
             $curr_rep_dir = $curr_period_dir . '/' . $rep_dir_name . '/';
@@ -294,7 +293,7 @@ function check_before_segment_validation($result_for_json){
         }
     }
     
-    if($mpd_dom->getElementsByTagName('SegmentTemplate')->length != 0 && $mpd_features['type'] == 'dynamic' && $mpd_dom->getElementsByTagName('SegmentTimeline')->length != 0){
+    /*if($mpd_dom->getElementsByTagName('SegmentTemplate')->length != 0 && $mpd_features['type'] == 'dynamic' && $mpd_dom->getElementsByTagName('SegmentTimeline')->length != 0){
         $progress_xml->SegmentTimeline = "true";
         session_close();
         $progress_xml->completed = "true";
@@ -302,7 +301,7 @@ function check_before_segment_validation($result_for_json){
         $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
         writeEndTime((int)$progress_xml->completed->attributes());
         exit;
-    }
+    }*/
     
     if ($mpd_dom->getElementsByTagName('SegmentList')->length !== 0){
         $progress_xml->segmentList = "true";

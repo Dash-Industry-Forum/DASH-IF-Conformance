@@ -71,13 +71,13 @@ function compute_URLs($representation, $segment_access, $segment_info, $rep_base
     }
     
     $index = 0;
+    $until = $segment_info[1];
     if($mpd_features['type'] == 'dynamic'){
-        $segment_info = dynamic_number($segment_access);
-        $index = $segment_info[0];
+        list($index, $until, $time1) = dynamic_number($segment_access, $segment_info[0], $segment_info[1]);
     }
     
-    while($index < $segment_info[1]){
-        $segmenturl = str_replace(array('$Bandwidth$', '$Number$', '$RepresentationID$', '$Time$'), array($bandwidth, $index + $startNumber, $id, $segment_info[0][$index]), $media);
+    while($index < $until){
+        $segmenturl = str_replace(array('$Bandwidth$', '$Number$', '$RepresentationID$', '$Time$'), array($bandwidth, $index + $startNumber, $id, $segment_info[0][$time1]), $media);
         $pos = strpos($segmenturl, '$Number');
         if ($pos !== false){
             if (substr($segmenturl, $pos + strlen('$Number'), 1) === '%'){
@@ -105,6 +105,7 @@ function compute_URLs($representation, $segment_access, $segment_info, $rep_base
             $segmenturl = $rep_base_url . "/" . $segmenturl;
         $segment_urls[] = $segmenturl;
         $index++;
+        $time1++;
     }
     
     return $segment_urls;
@@ -119,6 +120,7 @@ function compute_timing($presentationduration, $segment_access, $segment_access_
         case 'SegmentTemplate':
             $duration = ($segment_access['duration'] != NULL) ? $segment_access['duration'] : 0;
             $timescale = ($segment_access['timescale'] != NULL) ? $segment_access['timescale'] : 1;
+            $availabilityTimeOffset = ($segment_access['availabilityTimeOffset']) ? $segment_access['availabilityTimeOffset'] : 0;
             
             if($duration != 0){
                 $duration /= $timescale;
@@ -149,7 +151,7 @@ function compute_timing($presentationduration, $segment_access, $segment_access_
                         $t = ($S['t']) ? $S['t'] : 0;
 
                         if($r == 0){
-                            $segment_timings[] = $segment_time;
+                            $segment_timings[] = (float) $segment_time;
                             $segment_time += $d; 
                         }
                         elseif($r < 0){
@@ -159,13 +161,13 @@ function compute_timing($presentationduration, $segment_access, $segment_access_
                                 $end_time = ($S_array[$index+1]['t']);
 
                             while ($segment_time < $end_time){
-                                $segment_timings[] = $segment_time;
+                                $segment_timings[] = (float) $segment_time;
                                 $segment_time += $d;
                             }
                         }
                         else{
                             for ($st = 0; $st <= $r; $st++){
-                                $segment_timings[] = $segment_time;
+                                $segment_timings[] = (float) $segment_time;
                                 $segment_time += $d;
                             }
                         }
