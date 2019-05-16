@@ -32,7 +32,6 @@ var serverTimeOffset=0;
 var pid_old=[], pstart_old=[];
 var pid_new=[], pstart_new=[];
 
-
 var RequestCounter = 0;
 function createXMLHttpRequestObject(){ 
   var xmlHttp; // xmlHttp will store the reference to the XMLHttpRequest object
@@ -436,8 +435,8 @@ function dispatchRequest(segment,type,xmlHttp)
     if(document.getElementById("cscorrect").checked)
         urlTime = new Date(urlTime - getCSOffset());
     
-    //xmlHttp.open("HEAD",segment.url += (segment.url.match(/\?/) == null ? "?" : "&") + urlTime.getTime(),true);   //Head, not get, we just need to check if segment is available, not get it
-    xmlHttp.open("HEAD",segment.url,true); 
+    xmlHttp.open("HEAD",segment.url += (segment.url.match(/\?/) == null ? "?" : "&") + urlTime.getTime(),true);   //Head, not get, we just need to check if segment is available, not get it
+    //xmlHttp.open("HEAD",segment.url,true); 
     var timeToSend;
 
     if(type == "SAS")
