@@ -17,7 +17,7 @@ Script with main functions for loading, parsing MPD, dispatching segment checks 
 
 //Main MPD structure with all relevant information
 var MPD = {xmlHttpMPD: createXMLHttpRequestObject(), xmlData: null, FT: null, Periods: new Array(), MUP: null, segmentsDispatch: null, mpdDispatch: null, totalSegmentCount: 0, updatedSegments: 0, mpdEvents: new Array(), mpdEventCount: 5, RTTs: new Array(), numRTTs: 10, 
-clockSkew: new Array(), numClockSkew: 10, numSuccessfulChecksSAS: 0, numSuccessfulChecksSAE: 0, UTCTiming:new Array()};
+clockSkew: new Array(), numClockSkew: 10, numSuccessfulChecksSAS: 0, numSuccessfulChecksSAE: 0, UTCTiming:new Array(), AST : null};
 
 //Past or already available segments, cost a significant processing overhead at the startup, this needs to be sorted out. Right now, we keep it to a minimum
 var maxPastSegmentsPerIteration = 2;
@@ -29,6 +29,8 @@ var maxMUP = 3600;
 var UTCElementArray=[];
 var serverTimeOffsetStatus=false;
 var serverTimeOffset=0;
+var pid_old=[], pstart_old=[];
+var pid_new=[], pstart_new=[];
 
 var RequestCounter = 0;
 function createXMLHttpRequestObject(){ 
@@ -67,7 +69,7 @@ function process()
         now = new Date(now - getCSOffset());
       }
 	  MPD.xmlHttpMPD.open("GET", mpd_url += (mpd_url.match(/\?/) == null ? "?" : "&") + now.getTime(), false);  // initiate server request, trying to bypass cache using tip
-	   //MPD.xmlHttpMPD.open("GET", mpd_url, false);                                                                                                         // from 
+           //MPD.xmlHttpMPD.open("GET", mpd_url, false);                                                                                                         // from 
 	                                                                                                            // https://developer.mozilla.org/es/docs/XMLHttpRequest/Usar_XMLHttpRequest#Bypassing_the_cache,
 	                                                                                                            // same technique used for segment request
       MPD.xmlHttpMPD.onreadystatechange = mpdReceptionEventHandler;
@@ -83,7 +85,6 @@ function process()
 /*******************************************************************************************************************************
 Generate and print the important information about the last mpdEventCount times
 ********************************************************************************************************************************/
-
 function mpdStatusUpdate(mpd)
 {
 
@@ -435,7 +436,7 @@ function dispatchRequest(segment,type,xmlHttp)
         urlTime = new Date(urlTime - getCSOffset());
     
     xmlHttp.open("HEAD",segment.url += (segment.url.match(/\?/) == null ? "?" : "&") + urlTime.getTime(),true);   //Head, not get, we just need to check if segment is available, not get it
-
+    //xmlHttp.open("HEAD",segment.url,true); 
     var timeToSend;
 
     if(type == "SAS")
@@ -1051,6 +1052,7 @@ function processMPD(MPDxmlData)
     
     var numPeriods = MPDxmlData.getElementsByTagName("Period").length;
     var currentPeriod = 0;
+    var i;
     
     if(numPeriods > 1){
         currentPeriod = determineCurrentPeriod(MPD, periodInformation(MPD));
@@ -1061,8 +1063,29 @@ function processMPD(MPDxmlData)
 
     MPD.MUP = getMUP(MPD.xmlData);
     
+    old_AST=MPD.AST;
+    MPD.AST=getAST(MPD.xmlData);
+    if((old_AST !== null) && (old_AST.getTime() !=  (MPD.AST).getTime()))
+    {
+        alert("MPD@availabilityStartTime shall not be changed over MPD updates, changed from " + old_AST + " to " + MPD.AST);
+    }
     
-
+    collectPeriodInfo(MPD);
+    if(pid_old.length>0)
+    {
+        for(i=0;i<pid_new.length; i++)
+        {
+            var ind=pid_old.indexOf(pid_new[i]);
+            if(ind != -1)
+            {
+                if(pstart_old[ind] !== pstart_new[i])
+                    alert("Period@start shall not be changed over MPD updates, change observed for period id "+ pid_new[i]);
+            }
+        }
+    }
+    pid_old=pid_new;
+    pstart_old=pstart_new;
+    
     for(var periodIndex = 0; periodIndex < 1/*numPeriods*/; periodIndex++) //Currently only first period
     {
         if(MPD.Periods[periodIndex] == null)
@@ -1171,6 +1194,17 @@ function periodInformation(MPD)
     returnInfo[1] = durations;
     
     return returnInfo;
+}
+
+function collectPeriodInfo(MPD)
+{
+    var periods = MPD.xmlData.getElementsByTagName("Period");
+    var i;
+    for(i=0; i<periods.length;i++)
+    {
+        pid_new.push(periods[i].getAttribute("id"));
+        pstart_new.push(getTiming(periods[i].getAttribute("start")));
+    }
 }
 
 /******************************Time Parsing******************************************/
