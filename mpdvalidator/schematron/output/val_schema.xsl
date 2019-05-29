@@ -173,118 +173,147 @@
          <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi"/>
          <svrl:ns-prefix-in-attribute-values uri="urn:mpeg:cenc:2013" prefix="cenc"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">MPD element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M5"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">Period element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M6"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">AdaptationSet element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M7"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">ContentComponent element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M8"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">Representation element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M9"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">SubRepresentation element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M10"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">SegmentTemplate element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M11"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">SegmentList element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M12"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">SegmentBase element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M13"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">SegmentTimeline element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M14"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">ProgramInformation element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M15"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">ContentProtection element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M16"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">Role element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M17"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">FramePacking element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M18"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">AudioChannelConfiguration element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M19"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">EventStream element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M20"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">Subset element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M21"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">UTCTiming element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M22"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">SupplementalProperty element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M23"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">SRD description element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M24"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">MPD element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M25"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">Period element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M26"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">AdaptationSet element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M27"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">Representation element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M28"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">SubRepresentation element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M29"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">SegmentBase element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M30"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">ContentProtection element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M31"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">AudioChannelConfiguration element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M32"/>
          <svrl:active-pattern>
+            <xsl:attribute name="name">EssentialProperty element</xsl:attribute>
             <xsl:apply-templates/>
          </svrl:active-pattern>
          <xsl:apply-templates select="/" mode="M33"/>
@@ -296,10 +325,12 @@
               xmlns:schold="http://www.ascc.net/xml/schematron"
               xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Schema for validating MPDs</svrl:text>
 
-   <!--PATTERN -->
+   <!--PATTERN MPD element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">MPD element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:MPD" priority="1000" mode="M5">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -424,10 +455,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M5"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN Period element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Period element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:Period" priority="1000" mode="M6">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -552,10 +585,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M6"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN AdaptationSet element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AdaptationSet element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:AdaptationSet" priority="1000" mode="M7">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -776,10 +811,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M7"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN ContentComponent element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">ContentComponent element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:ContentComponent" priority="1000" mode="M8">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -808,10 +845,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M8"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN Representation element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Representation element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:Representation" priority="1000" mode="M9">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -936,10 +975,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M9"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN SubRepresentation element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SubRepresentation element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:SubRepresentation" priority="1000" mode="M10">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -968,10 +1009,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M10"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN SegmentTemplate element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentTemplate element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:SegmentTemplate" priority="1000" mode="M11">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -1096,10 +1139,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M11"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN SegmentList element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentList element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:SegmentList" priority="1000" mode="M12">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -1160,10 +1205,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M12"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN SegmentBase element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentBase element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:SegmentBase" priority="1000" mode="M13">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -1208,10 +1255,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M13"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN SegmentTimeline element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentTimeline element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:SegmentTimeline" priority="1000" mode="M14">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -1240,10 +1289,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M14"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN ProgramInformation element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">ProgramInformation element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:ProgramInformation" priority="1000" mode="M15">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -1272,10 +1323,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M15"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN ContentProtection element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">ContentProtection element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:ContentProtection" priority="1000" mode="M16">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -1320,10 +1373,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M16"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN Role element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Role element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:Role" priority="1000" mode="M17">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -1368,10 +1423,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M17"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN FramePacking element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">FramePacking element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:FramePacking" priority="1000" mode="M18">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -1448,10 +1505,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M18"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN AudioChannelConfiguration element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AudioChannelConfiguration element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:AudioChannelConfiguration" priority="1000" mode="M19">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -1480,10 +1539,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M19"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN EventStream element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">EventStream element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:EventStream" priority="1000" mode="M20">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -1528,10 +1589,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M20"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN Subset element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Subset element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:Subset" priority="1000" mode="M21">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -1560,10 +1623,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M21"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN UTCTiming element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">UTCTiming element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:UTCTiming" priority="1000" mode="M22">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -1592,10 +1657,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M22"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN SupplementalProperty element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SupplementalProperty element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:SupplementalProperty" priority="1000" mode="M23">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -1656,10 +1723,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M23"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN SRD description element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SRD description element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:Period" priority="1001" mode="M24">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -1874,10 +1943,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M24"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN MPD element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">MPD element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:MPD" priority="1000" mode="M25">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -1938,10 +2009,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M25"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN Period element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Period element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:Period" priority="1000" mode="M26">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -1986,10 +2059,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M26"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN AdaptationSet element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AdaptationSet element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:AdaptationSet" priority="1000" mode="M27">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -2194,10 +2269,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M27"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN Representation element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">Representation element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:Representation" priority="1000" mode="M28">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -2354,10 +2431,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M28"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN SubRepresentation element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SubRepresentation element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:SubRepresentation" priority="1000" mode="M29">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -2386,10 +2465,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M29"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN SegmentBase element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">SegmentBase element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:SegmentBase" priority="1000" mode="M30">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -2418,10 +2499,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M30"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN ContentProtection element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">ContentProtection element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:ContentProtection" priority="1000" mode="M31">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -2485,10 +2568,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M31"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN AudioChannelConfiguration element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">AudioChannelConfiguration element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:AudioChannelConfiguration" priority="1000" mode="M32">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
@@ -2533,10 +2618,12 @@
       <xsl:apply-templates select="*|comment()|processing-instruction()" mode="M32"/>
    </xsl:template>
 
-   <!--PATTERN -->
+   <!--PATTERN EssentialProperty element-->
+<svrl:text xmlns:xs="http://www.w3.org/2001/XMLSchema"
+              xmlns:schold="http://www.ascc.net/xml/schematron"
+              xmlns:svrl="http://purl.oclc.org/dsdl/svrl">EssentialProperty element</svrl:text>
 
-
-	<!--RULE -->
+	  <!--RULE -->
 <xsl:template match="dash:EssentialProperty" priority="1000" mode="M33">
       <svrl:fired-rule xmlns:xs="http://www.w3.org/2001/XMLSchema"
                        xmlns:schold="http://www.ascc.net/xml/schematron"
