@@ -153,7 +153,7 @@ function process_MPD(){
     
     //------------------------------------------------------------------------//
     ## Perform Segment Validation for each representation in each adaptation set within the current period
-    check_before_segment_validation();
+    check_before_segment_validation($result_for_json);
     if($mpd_features['type'] !== 'dynamic') $current_period = 0;
     while($current_period < sizeof($mpd_features['Period']))
     {
