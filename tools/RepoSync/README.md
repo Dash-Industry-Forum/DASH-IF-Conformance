@@ -18,6 +18,3 @@ The steps to be followed are:
 > ./sync.sh
 ```
 
-### Comments
-
-The script so far has not been successful in not pushing the unneeded submodules; therefore, the script itself is not in its final version.
