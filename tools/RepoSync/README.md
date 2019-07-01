@@ -23,4 +23,4 @@ The steps to be followed are:
 > ./sync.sh
 ```
 
-5. Go to your desired main repository and merge the "sync" branch
+5. **Go to your desired main repository and merge the "sync" branch. Delete the "sync" branch after merge.**
