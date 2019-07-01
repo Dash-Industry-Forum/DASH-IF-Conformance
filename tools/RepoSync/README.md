@@ -13,8 +13,14 @@ The steps to be followed are:
 > allowedmodules=("TestSubmoduleNeeded") # List the modules allowed to be pushed
 ```
 
-3. Run the script
+3. Modify the local directory path of your desired main repository in the script
+```
+> desiredlocal="/var/www/html/TestGitSync/Gitlab/Test/"
+```
+
+4. Run the script
 ```
 > ./sync.sh
 ```
 
+5. Go to your desired main repository and merge the "sync" branch
