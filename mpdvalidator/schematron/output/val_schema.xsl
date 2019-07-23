@@ -813,10 +813,10 @@
       </xsl:choose>
       <!--ASSERT -->
       <xsl:choose>
-         <xsl:when test="if ((@minWidth &gt; @maxWidth) or (@minHeight &gt; @maxHeight) or (@minBandwidth &gt; @maxBandwidth)) then false() else true()"/>
+         <xsl:when test="if ((xs:int(@minWidth) &gt; xs:int(@maxWidth)) or (xs:int(@minHeight) &gt; xs:int(@maxHeight)) or (xs:int(@minBandwidth) &gt; xs:int(@maxBandwidth))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                test="if ((@minWidth &gt; @maxWidth) or (@minHeight &gt; @maxHeight) or (@minBandwidth &gt; @maxBandwidth)) then false() else true()">
+                                test="if ((xs:int(@minWidth) &gt; xs:int(@maxWidth)) or (xs:int(@minHeight) &gt; xs:int(@maxHeight)) or (xs:int(@minBandwidth) &gt; xs:int(@maxBandwidth))) then false() else true()">
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
@@ -826,10 +826,10 @@
       </xsl:choose>
       <!--ASSERT -->
       <xsl:choose>
-         <xsl:when test="if (descendant::dash:Representation/@bandwidth &lt; @minBandwidth or descendant::dash:Representation/@bandwidth &gt; @maxBandwidth) then false() else true()"/>
+         <xsl:when test="if (descendant::dash:Representation/@bandwidth &lt; xs:int(@minBandwidth) or descendant::dash:Representation/@bandwidth &gt; xs:int(@maxBandwidth)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                test="if (descendant::dash:Representation/@bandwidth &lt; @minBandwidth or descendant::dash:Representation/@bandwidth &gt; @maxBandwidth) then false() else true()">
+                                test="if (descendant::dash:Representation/@bandwidth &lt; xs:int(@minBandwidth) or descendant::dash:Representation/@bandwidth &gt; xs:int(@maxBandwidth)) then false() else true()">
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
@@ -839,10 +839,10 @@
       </xsl:choose>
       <!--ASSERT -->
       <xsl:choose>
-         <xsl:when test="if (descendant::dash:Representation/@width &gt; @maxWidth) then false() else true()"/>
+         <xsl:when test="if (descendant::dash:Representation/@width &gt; xs:int(@maxWidth)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                test="if (descendant::dash:Representation/@width &gt; @maxWidth) then false() else true()">
+                                test="if (descendant::dash:Representation/@width &gt; xs:int(@maxWidth)) then false() else true()">
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
@@ -852,10 +852,10 @@
       </xsl:choose>
       <!--ASSERT -->
       <xsl:choose>
-         <xsl:when test="if (descendant::dash:Representation/@height &gt; @maxHeight) then false() else true()"/>
+         <xsl:when test="if (descendant::dash:Representation/@height &gt; xs:int(@maxHeight)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                test="if (descendant::dash:Representation/@height &gt; @maxHeight) then false() else true()">
+                                test="if (descendant::dash:Representation/@height &gt; xs:int(@maxHeight)) then false() else true()">
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
@@ -891,10 +891,10 @@
       </xsl:choose>
       <!--ASSERT -->
       <xsl:choose>
-         <xsl:when test="if ((@minFrameRate and (descendant::dash:Representation/@frameRate &lt; @minFrameRate)) or (@maxFrameRate and (descendant::dash:Representation/@frameRate &gt; @maxFrameRate))) then false() else true()"/>
+         <xsl:when test="if ((@minFrameRate and (descendant::dash:Representation/@frameRate &lt; xs:int(@minFrameRate))) or (@maxFrameRate and (descendant::dash:Representation/@frameRate &gt; xs:int(@maxFrameRate)))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                test="if ((@minFrameRate and (descendant::dash:Representation/@frameRate &lt; @minFrameRate)) or (@maxFrameRate and (descendant::dash:Representation/@frameRate &gt; @maxFrameRate))) then false() else true()">
+                                test="if ((@minFrameRate and (descendant::dash:Representation/@frameRate &lt; xs:int(@minFrameRate))) or (@maxFrameRate and (descendant::dash:Representation/@frameRate &gt; xs:int(@maxFrameRate)))) then false() else true()">
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
@@ -1270,10 +1270,10 @@
       </xsl:choose>
       <!--ASSERT -->
       <xsl:choose>
-         <xsl:when test="if (@timeShiftBufferDepth) then if (@timeShiftbuffer &lt; dash:MPD/@timeShiftBufferDepth) then false() else true() else true()"/>
+         <xsl:when test="if (@timeShiftBufferDepth) then if (xs:int(@timeShiftbuffer) &lt; xs:int(dash:MPD/@timeShiftBufferDepth)) then false() else true() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                test="if (@timeShiftBufferDepth) then if (@timeShiftbuffer &lt; dash:MPD/@timeShiftBufferDepth) then false() else true() else true()">
+                                test="if (@timeShiftBufferDepth) then if (xs:int(@timeShiftbuffer) &lt; xs:int(dash:MPD/@timeShiftBufferDepth)) then false() else true() else true()">
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
