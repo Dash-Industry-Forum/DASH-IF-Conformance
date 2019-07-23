@@ -4,7 +4,7 @@
 	<ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>
 	<ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
 	<ns prefix="xs" uri="http://www.w3.org/2001/XMLSchema"/>
-        <ns prefix="cenc" uri="urn:mpeg:cenc:2013"/>
+	<ns prefix="cenc" uri="urn:mpeg:cenc:2013"/>
 
 	<!-- include some helper functions for codec specific assertions, needed for DVB DASH assertions -->
 	<extends href="helper-functions.sch"/>
@@ -68,19 +68,19 @@
 			<!-- R3.2 -->
 			<assert test="if ((@profiles and descendant::dash:Representation/@profiles) or (@width and descendant::dash:Representation/@width) or (@height and descendant::dash:Representation/@height) or (@sar and descendant::dash:Representation/@sar) or (@frameRate and descendant::dash:Representation/@frameRate) or (@audioSamplingRate and descendant::dash:Representation/@audioSamplingRate) or (@mimeType and descendant::dash:Representation/@mimeType) or (@segmentProfiles and descendant::dash:Representation/@segmentProfiles) or (@codecs and descendant::dash:Representation/@codecs) or (@maximumSAPPeriod and descendant::dash:Representation/@maximumSAPPeriod) or (@startWithSAP and descendant::dash:Representation/@startWithSAP) or (@maxPlayoutRate and descendant::dash:Representation/@maxPlayoutRate) or (@codingDependency and descendant::dash:Representation/@codingDependency) or (@scanType and descendant::dash:Representation/@scanType)) then false() else true()">Common attributes for AdaptationSet and Representation shall either be in one of the elements but not in both.</assert>
 			<!-- R3.3 -->
-			<assert test="if ((@minWidth > @maxWidth) or (@minHeight > @maxHeight) or (@minBandwidth > @maxBandwidth)) then false() else true()">Each minimum value (minWidth, minHeight, minBandwidth) shall be larger than the maximum value.</assert>
+			<assert test="if ((xs:int(@minWidth) > xs:int(@maxWidth)) or (xs:int(@minHeight) > xs:int(@maxHeight)) or (xs:int(@minBandwidth) > xs:int(@maxBandwidth))) then false() else true()">Each minimum value (minWidth, minHeight, minBandwidth) shall be larger than the maximum value.</assert>
 			<!-- R3.4 -->
-			<assert test="if (descendant::dash:Representation/@bandwidth &lt; @minBandwidth or descendant::dash:Representation/@bandwidth > @maxBandwidth) then false() else true()">The value of the bandwidth attribute shall be in the range defined by the AdaptationSet.</assert>
+			<assert test="if (descendant::dash:Representation/@bandwidth &lt; xs:int(@minBandwidth) or descendant::dash:Representation/@bandwidth > xs:int(@maxBandwidth)) then false() else true()">The value of the bandwidth attribute shall be in the range defined by the AdaptationSet.</assert>
 			<!-- R3.5 -->
-			<assert test="if (descendant::dash:Representation/@width > @maxWidth) then false() else true()">The value of the width attribute shall be in the range defined by the AdaptationSet.</assert>
+			<assert test="if (descendant::dash:Representation/@width > xs:int(@maxWidth)) then false() else true()">The value of the width attribute shall be in the range defined by the AdaptationSet.</assert>
 			<!-- R3.6 -->
-			<assert test="if (descendant::dash:Representation/@height > @maxHeight) then false() else true()">The value of the height attribute shall be in the range defined by the AdaptationSet.</assert>
+			<assert test="if (descendant::dash:Representation/@height > xs:int(@maxHeight)) then false() else true()">The value of the height attribute shall be in the range defined by the AdaptationSet.</assert>
 			<!-- R3.7 -->
 			<assert test="if (count(child::dash:Representation)=0) then false() else true()">An AdaptationSet shall have at least one Representation element.</assert>
 			<!-- R3.8 -->
 			<assert test="if ((child::dash:SegmentBase and child::dash:SegmentTemplate and child::dash:SegmentList) or (child::dash:SegmentBase and child::dash:SegmentTemplate) or (child::dash:SegmentBase and child::dash:SegmentList) or (child::dash:SegmentTemplate and child::dash:SegmentList)) then false() else true()">At most one of SegmentBase, SegmentTemplate and SegmentList shall be defined in AdaptationSet.</assert>
 			<!-- R3.9 -->
-			<assert test="if ((@minFrameRate and (descendant::dash:Representation/@frameRate &lt; @minFrameRate)) or (@maxFrameRate and (descendant::dash:Representation/@frameRate > @maxFrameRate))) then false() else true()">ISO/IEC 23009-1 Section 5.3.3.2: The value of the frameRate attribute shall be in the range defined by the AdaptationSet.</assert>
+			<assert test="if ((@minFrameRate and (descendant::dash:Representation/@frameRate &lt; xs:int(@minFrameRate))) or (@maxFrameRate and (descendant::dash:Representation/@frameRate > xs:int(@maxFrameRate)))) then false() else true()">ISO/IEC 23009-1 Section 5.3.3.2: The value of the frameRate attribute shall be in the range defined by the AdaptationSet.</assert>
                         <!-- HbbTV profile checks -->
                         <assert test="if((contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or (not(@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) and (@subsegmentAlignment = 'true')) then false() else true()">HbbTV-DVB DASH Validation Requirements check violated for HbbTV: Section 'MPD' - The MPD contains an attribute that is not part of the HbbTV profile', i.e., found 'subsegmentAlignment' as true</assert>
                         <assert test="if((contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or (not(@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) and (@subsegmentStartsWithSAP = '1' or @subsegmentStartsWithSAP = '2')) then false() else true()">HbbTV-DVB DASH Validation Requirements check violated for HbbTV: Section 'MPD' - The MPD contains an attribute that is not part of the HbbTV profile', i.e., found 'subsegmentStartsWithSAP' as 1 or 2</assert>
@@ -167,7 +167,7 @@
 			<!-- R9.0 -->
 			<assert test="if (not(@indexRange) and @indexRangeExact) then false() else true()">If indexRange is not present indexRangeExact shall not be present.</assert>
                         <!-- R9.1 -->
-                        <assert test="if (@timeShiftBufferDepth) then if (@timeShiftbuffer &lt; dash:MPD/@timeShiftBufferDepth) then false() else true() else true()">The timeShiftBufferDepth shall not be smaller than timeShiftBufferDepth specified in the MPD element</assert>
+			<assert test="if (@timeShiftBufferDepth) then if (xs:int(@timeShiftbuffer) &lt; xs:int(dash:MPD/@timeShiftBufferDepth)) then false() else true() else true()">The timeShiftBufferDepth shall not be smaller than timeShiftBufferDepth specified in the MPD element</assert>
 		</rule>
 	</pattern>
 	<pattern>
