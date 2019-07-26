@@ -43,6 +43,12 @@
         <xsl:sequence select="dlb:isAdaptationSetType($x,'avc|hvc|hev')"/>
     </xsl:function>
 
+    <xsl:function name="dlb:fractionalToFloat" as="xs:float">
+        <xsl:param name="x"/>
+        <xsl:variable name="numden" select="tokenize($x,'/')"/>
+        <xsl:value-of select="if (count($numden) eq 1) then $x else xs:float($numden[1]) div xs:float($numden[2])"/>
+    </xsl:function>
+
     <!-- map from "Dolby style" channel configurations to MPEG channel configurations -->
     <xsl:function name="dlb:dlb2mpg" as="xs:integer">
         <xsl:param name="from"/>
