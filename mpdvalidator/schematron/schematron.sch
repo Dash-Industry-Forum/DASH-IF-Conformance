@@ -175,7 +175,8 @@
 		<!-- R10.*: Check the conformance of SegmentTimeline -->
 		<rule context="dash:SegmentTimeline">
 			<!-- R10.0 -->
-			<assert test="if ((if (ancestor::dash:*[1]/@timescale) then (child::dash:S/@d div ancestor::dash:*[1]/@timescale) else child::dash:S/@d) > (years-from-duration(ancestor::dash:MPD/@maxSegmentDuration) + months-from-duration(ancestor::dash:MPD/@maxSegmentDuration) + days-from-duration(ancestor::dash:MPD/@maxSegmentDuration) + hours-from-duration(ancestor::dash:MPD/@maxSegmentDuration) + minutes-from-duration(ancestor::dash:MPD/@maxSegmentDuration) +  seconds-from-duration(ancestor::dash:MPD/@maxSegmentDuration))) then false() else true()">The d attribute of a SegmentTimeline shall not exceed the value give bei the MPD maxSegmentDuration attribute.</assert>
+			<let name="timescale" value="if (ancestor::dash:*[1]/@timescale) then ancestor::dash:*[1]/@timescale else 1"/>
+			<assert test="if (some $d in child::dash:S/@d satisfies $d div $timescale > (years-from-duration(ancestor::dash:MPD/@maxSegmentDuration) + months-from-duration(ancestor::dash:MPD/@maxSegmentDuration) + days-from-duration(ancestor::dash:MPD/@maxSegmentDuration) + hours-from-duration(ancestor::dash:MPD/@maxSegmentDuration) + minutes-from-duration(ancestor::dash:MPD/@maxSegmentDuration) +  seconds-from-duration(ancestor::dash:MPD/@maxSegmentDuration))) then false() else true()">The d attribute of a SegmentTimeline shall not exceed the value give by the MPD maxSegmentDuration attribute.</assert>
 		</rule>
 	</pattern>
 	<pattern>
