@@ -68,7 +68,7 @@ function download_data($directory, $array_file, $is_subtitle_rep){
             else
                 $missing = open_file($session_dir . '/' . $missinglink_file . '.txt', 'a+b');
             fwrite($missing, $filePath . "\n");
-            error_log("downloaddata_Missing:" . $filePath);
+            //error_log("downloaddata_Missing:" . $filePath);
         }
         else{
             $sizepos = ($hls_byte_range_begin) ? $hls_byte_range_begin[$index] : 0;
@@ -254,7 +254,7 @@ function partial_download($url, $begin, $end, &$ch){
     
     $fp = open_file($temp_file, "w+");
     if (!$fp){
-        error_log("fopen:.exit!");
+        //error_log("fopen:.exit!");
         exit;
     }
     
@@ -273,12 +273,12 @@ function partial_download($url, $begin, $end, &$ch){
     # Execute the curl request
     curl_exec($ch);
     if (curl_errno($ch))
-        error_log("curl_errno:" . curl_errno($ch));
+        //error_log("curl_errno:" . curl_errno($ch));
     
     # Check the downloaded content
     $content = file_get_contents($temp_file);
     if (!$content)
-        error_log("file_get_contents:failed" . $url . "/" . $begin . "/" . $end);
+        //error_log("file_get_contents:failed" . $url . "/" . $begin . "/" . $end);
     
     fclose($fp);
     
