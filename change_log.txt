@@ -1,4 +1,9 @@
-Version v4.1a
+Version v4.2a
+
+New additions in 4.2a
+- xslt2 support
+- schematron bugfixes
+- ac-4 schematron tests
 
 New additions-
 -Support for last segment number signaling.

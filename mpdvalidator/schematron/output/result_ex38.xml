@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<svrl:schematron-output xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                        xmlns:schold="http://www.ascc.net/xml/schematron"
-                        xmlns:sch="http://www.ascc.net/xml/schematron"
+<svrl:schematron-output xmlns:schold="http://www.ascc.net/xml/schematron"
                         xmlns:iso="http://purl.oclc.org/dsdl/schematron"
+                        xmlns:saxon="http://saxon.sf.net/"
                         xmlns:dash="urn:mpeg:dash:schema:mpd:2011"
+                        xmlns:xs="http://www.w3.org/2001/XMLSchema"
                         xmlns:xlink="http://www.w3.org/1999/xlink"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xmlns:cenc="urn:mpeg:cenc:2013"
+                        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+                        xmlns:dlb="http://www.dolby.com/ns/2019/dash-if"
+                        xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                         title="Schema for validating MPDs"
                         schemaVersion="ISO19757-3"><!--   
 		   
@@ -14,31 +18,95 @@
 		 --><svrl:ns-prefix-in-attribute-values uri="urn:mpeg:dash:schema:mpd:2011" prefix="dash"/>
    <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/1999/xlink" prefix="xlink"/>
    <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi"/>
-   <svrl:active-pattern/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema" prefix="xs"/>
+   <svrl:ns-prefix-in-attribute-values uri="urn:mpeg:cenc:2013" prefix="cenc"/>
+   <svrl:ns-prefix-in-attribute-values uri="urn:mpeg:dash:schema:mpd:2011" prefix="dash"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.dolby.com/ns/2019/dash-if" prefix="dlb"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="MPD element"/>
    <svrl:fired-rule context="dash:MPD"/>
-   <svrl:active-pattern/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="Period element"/>
    <svrl:fired-rule context="dash:Period"/>
-   <svrl:active-pattern/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="AdaptationSet element"/>
    <svrl:fired-rule context="dash:AdaptationSet"/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="ContentComponent element"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="Representation element"/>
    <svrl:fired-rule context="dash:Representation"/>
    <svrl:fired-rule context="dash:Representation"/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="SubRepresentation element"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="SegmentTemplate element"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="SegmentList element"/>
    <svrl:fired-rule context="dash:SegmentList"/>
    <svrl:fired-rule context="dash:SegmentList"/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="SegmentBase element"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="SegmentTimeline element"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="ProgramInformation element"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="ContentProtection element"/>
    <svrl:fired-rule context="dash:ContentProtection"/>
    <svrl:failed-assert test="if ((@schemeIdUri = 'urn:mpeg:dash:mp4protection:2011') and not(string-length(@value) = 4)) then false() else true()"
-                       location="/*[local-name()='MPD' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='Period' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='AdaptationSet' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']/*[local-name()='ContentProtection' and namespace-uri()='urn:mpeg:dash:schema:mpd:2011']">
+                       location="/*:MPD[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][1]/*:Period[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][1]/*:AdaptationSet[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][1]/*:ContentProtection[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][1]">
       <svrl:text>The value of ContentProtection shall be the 4CC contained in the Scheme Type Box</svrl:text>
    </svrl:failed-assert>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
-   <svrl:active-pattern/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="Role element"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="FramePacking element"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="AudioChannelConfiguration element"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="EventStream element"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="Subset element"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="UTCTiming element"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="SupplementalProperty element"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="SRD description element"/>
+   <svrl:fired-rule context="dash:Period"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="MPD element"/>
+   <svrl:fired-rule context="dash:MPD"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="Period element"/>
+   <svrl:fired-rule context="dash:Period"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="AdaptationSet element"/>
+   <svrl:fired-rule context="dash:AdaptationSet"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="Representation element"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="SubRepresentation element"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="SegmentBase element"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="ContentProtection element"/>
+   <svrl:fired-rule context="dash:ContentProtection"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="AudioChannelConfiguration element"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="EssentialProperty element"/>
+   <svrl:ns-prefix-in-attribute-values uri="urn:mpeg:dash:schema:mpd:2011" prefix="dash"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/1999/xlink" prefix="xlink"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.dolby.com/ns/2019/dash-if" prefix="dlb"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="AdaptationSet element for DVB DASH 2017 profile"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="Preselection element for DVB DASH 2017 profile"/>
+   <svrl:active-pattern document="file:/C:/Users/wschi/Documents/projects/Daniel-DASHIF/DASH/mpdvalidator/schematron/examples/ex38.mpd"
+                        name="AdaptationSet and Preselection element for AC-4 for DVB DASH 2017 profile"/>
 </svrl:schematron-output>

@@ -12,7 +12,7 @@ Properties:
   build   - location where to put the compiled files
   doc     - location where to put the doc files
   input   - input path for validating
-  resolved - File (possibly including path) to place xlink resolved MPD 
+  resolved - File (possibly including path) to place xlink resolved MPD
   schema  - input path for XSD schema to use
 
 Example for running:   ant run -Dinput=test.mpd
@@ -31,7 +31,7 @@ Example for running:   ant run -Dinput=test.mpd
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build}"/>
   </target>
-	
+
   <target name="javadoc">
 	<!-- Create the doc directory structure used by javadoc -->
 	<mkdir dir="${doc}"/>
@@ -51,24 +51,24 @@ Example for running:   ant run -Dinput=test.mpd
   		</classpath>
   	</javadoc>
   </target>
-	
-		
+
+
   <target name="compile-java" depends="init"
         description="compile the source" >
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac includeantruntime="false" srcdir="${src}" destdir="${build}" classpath="xercesImpl.jar"/>	
+    <javac includeantruntime="false" srcdir="${src}" destdir="${build}" classpath="saxon9he.jar:xercesImpl.jar"/>
   </target>
-	
-	
+
+
 	<target name="run" depends="compile-java" description="runs the test file">
 		<!-- Use "failonerror" to propagate any exit codes from the validator to ant -->
-		<java fork="true" failonerror="true" classname="Validator" classpath="saxon9.jar:saxon9-dom.jar:xercesImpl.jar:${build}">
+		<java fork="true" failonerror="true" classname="Validator" classpath="saxon9he.jar:xercesImpl.jar:${build}">
 			<arg value="${input}"/>
 			<arg value="${resolved}"/>
 			<arg value="${schema}"/>
 		</java>
 	</target>
-	
+
   <target name="clean"
         description="clean up" >
     <!-- Delete the ${build} directory tree -->
