@@ -182,11 +182,12 @@ function getSchemaErrorLocation($errorElement){
     $completeElementPath = "";
     for($i=0 ; $i< sizeof($path) ; $i++){
         $postion = getDataBetweenTokens($path[$i],"[","]");
+        $pos = substr($path[$i], 1, strpos($path[$i], "[")-1);
         if(sizeof($postion)===1){
-            $completeElementPath = $completeElementPath."/".getLocalName($postion[0])."[1]";
+            $completeElementPath = $completeElementPath."/".$pos."[1]";
         }
         else if (sizeof($postion)===2){
-            $completeElementPath = $completeElementPath."/".(getLocalName($postion[0]))."[".$postion[1]."]";
+            $completeElementPath = $completeElementPath."/".$pos."[".$postion[1]."]";
         }
         else{
             //Error

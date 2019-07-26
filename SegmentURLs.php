@@ -76,6 +76,7 @@ function compute_URLs($representation, $segment_access, $segment_info, $rep_base
         list($index, $until, $time1) = dynamic_number($segment_access, $segment_info[0], $segment_info[1]);
     }
     
+    $error_info = '';
     while($index < $until){
         $segmenturl = str_replace(array('$Bandwidth$', '$Number$', '$RepresentationID$', '$Time$'), array($bandwidth, $index + $startNumber, $id, $segment_info[0][$time1]), $media);
         $pos = strpos($segmenturl, '$Number');
@@ -86,7 +87,7 @@ function compute_URLs($representation, $segment_access, $segment_info, $rep_base
                 $segmenturl = str_replace('$', '', $segmenturl);
             }
             else
-                error_log("It cannot happen! the format should be either \$Number$ or \$Number%xd$!");
+                $error_info = "It cannot happen! the format should be either \$Number$ or \$Number%xd$!";
         }
         $pos = strpos($segmenturl, '$Time');
         if ($pos !== false){
@@ -96,7 +97,7 @@ function compute_URLs($representation, $segment_access, $segment_info, $rep_base
                 $segmenturl = str_replace('$', '', $segmenturl);
             }
             else
-                error_log("It cannot happen! the format should be either \$Time$ or \$Time%xd$!");
+                $error_info = "It cannot happen! the format should be either \$Time$ or \$Time%xd$!";
         }
         
         if (substr($rep_base_url, -1) == '/')
@@ -107,6 +108,9 @@ function compute_URLs($representation, $segment_access, $segment_info, $rep_base
         $index++;
         $time1++;
     }
+    
+    if($error_info != '')
+        error_log($error_info);
     
     return $segment_urls;
 }
