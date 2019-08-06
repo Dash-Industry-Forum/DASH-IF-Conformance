@@ -272,13 +272,15 @@ function partial_download($url, $begin, $end, &$ch){
     
     # Execute the curl request
     curl_exec($ch);
-    if (curl_errno($ch))
+    if (curl_errno($ch)){
         //error_log("curl_errno:" . curl_errno($ch));
+    }
     
     # Check the downloaded content
     $content = file_get_contents($temp_file);
-    if (!$content)
+    if (!$content){
         //error_log("file_get_contents:failed" . $url . "/" . $begin . "/" . $end);
+    }
     
     fclose($fp);
     
