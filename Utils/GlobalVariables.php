@@ -170,7 +170,9 @@ $atominfo_file = 'atominfo.xml';
 $sample_data = 'sample_data';
 
 # Important for reporting
-$counter_name = (!$hls_manifest) ? dirname(__DIR__) . '/DASH/counter.txt' : dirname(__DIR__) . '/HLS/counter.txt';
+$counter_name = 'counter.txt';
+$counter_dir = '';
+$main_counter_dir = dirname(__DIR__) . ((!$hls_manifest) ? '/Conformance-Frontend/' : '/Conformance-Frontend-HLS/') . $counter_name;
 $mpd_log = 'mpdreport';
 $featurelist_log = 'featuresList.xml';
 $featurelist_log_html = 'featuretable.html';

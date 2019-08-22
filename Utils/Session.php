@@ -91,7 +91,15 @@ function session_check(){
 function get_all_sessions(){
     global $session_dir;
     
-    return array_diff(scandir($session_dir), array('..', '.'));
+    $current_dir = getcwd();
+    chdir($session_dir);
+    $output = explode("\n", shell_exec("ls -ltr | awk '{print $9}'"));
+    array_shift($output);
+    array_pop($output);
+    
+    chdir($current_dir);
+    
+    return $output;
 }
 
 /*
@@ -103,16 +111,21 @@ function get_all_sessions(){
 function should_be_deleted($folder_dir){
     $change1 = 0; //duration after conformance test is done
     $change2 = time() - filemtime($folder_dir); // duration of file implementation
-    $time_constraint = 7200; // threshold time for deleting decision
-
+    
     $progress_dir = $folder_dir . '/progress.xml';
     $progress_XML = simplexml_load_file($progress_dir);
     if($progress_XML !== FALSE){
+        $time_constraint = 7200; // threshold time for deleting decision
         if ((string) $progress_XML->completed === "true")
             $change1 = time() - (int) $progress_XML->completed->attributes();
 
         # Clean folder after 2 hours after test completed or 2 hours after test started
         if ($change1 > $time_constraint || $change2 > $time_constraint)
+            return TRUE;
+    }
+    elseif($progress_XML === FALSE || !file_exists($progress_dir)){
+        $time_constraint = 600; // threshold time for deleting decision
+        if ($change2 > $time_constraint)
             return TRUE;
     }
 
@@ -127,6 +140,7 @@ function should_be_deleted($folder_dir){
  */
 function session_delete($dir){
     if (is_dir($dir)){
+        appendToMainCounter($dir);
         $objects = scandir($dir);
         foreach ($objects as $object){
             if ($object != "." && $object != ".."){
