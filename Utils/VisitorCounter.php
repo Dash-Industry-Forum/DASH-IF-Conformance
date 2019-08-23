@@ -24,8 +24,7 @@
  *          getUserIPAddr(),
  *          writeEndTime($end_time_sec),
  *          writeMPDStatus($mpd),
- *          writeMPDEndTime(),
- *          appendToMainCounter()
+ *          writeMPDEndTime()
  *      }
  */
 ###############################################################################
@@ -64,13 +63,30 @@ function start_visitor_counter(){
  * @output: NA
  */
 function update_visitor_counter(){
-    global $session_dir, $counter_dir, $counter_name, $start_time, $mem, $cpu_avg_load;
+    global $counter_dir, $counter_file, $counter_write, $start_time, $mem, $cpu_avg_load;
     
-    $counter_dir = $session_dir . '/' . $counter_name;
+    // Find a unique individual visitor log file name for the session
+    // Default would be the session folder name
+    // If the file already exists append a random number to this file name until it is unique
+    // If unique name could not be found after the 100th try, continue testing without collecting visitor data
+    $counter_filename = $_SESSION['foldername'] . '.txt';
+    $counter_file = $counter_dir . '/' . $counter_filename;
+    $try = 0;
+    while(file_exists($counter_file)){
+        if($try < 100){
+            $counter_filename = $_SESSION['foldername'] . '_' . rand() . '.txt';
+            $counter_file = $counter_dir . '/' . $counter_filename;
+            $try++;
+        }
+    }
+    if(file_exists($counter_file)){
+        $counter_write = FALSE;
+        return;
+    }
 
     $user_IP = getUserIPAddr(); // get the IP address of the visitor.
     $user_IP_hash=md5($user_IP); // convert IP to MD5 hash.
-    $f = open_file($counter_dir, 'w');
+    $f = open_file($counter_file, 'w');
     if($f == NULL){
         return;
     }
@@ -108,13 +124,16 @@ function getUserIPAddr(){
  * @output: NA
  */
 function writeMPDStatus($mpd){
-    global $counter_dir;
+    global $counter_file, $counter_write;
+    
+    if($counter_write === FALSE)
+        return;
     
     // Check if the mpd is an uploaded file.
     $uploaded=(strpos($mpd, "uploaded.mpd")!==FALSE && strpos($mpd, "var/www")!==FALSE); 
     
     // Append MPD loading status to the end of file.
-    $f = open_file($counter_dir, 'a');
+    $f = open_file($counter_file, 'a');
     if($f == NULL){
         return;
     }
@@ -147,7 +166,10 @@ function writeMPDStatus($mpd){
  * @output: NA
  */
 function writeProfiles(){
-    global $counter_dir, $mpd_features, $dashif_conformance, $cmaf_conformance, $dvb_conformance, $hbbtv_conformance, $ctawave_conformance;
+    global $counter_file, $counter_write, $mpd_features, $dashif_conformance, $cmaf_conformance, $dvb_conformance, $hbbtv_conformance, $ctawave_conformance;
+    
+    if($counter_write === FALSE)
+        return;
     
     $mpd_profiles = str_replace(',', ';', $mpd_features['profiles']);
     $conformance_profiles = $mpd_profiles . 
@@ -158,7 +180,7 @@ function writeProfiles(){
                             (($ctawave_conformance) ? ";CTAWAVE" : '');
     
     // Append MPD and enforced profiles to the end of file.
-    $f = open_file($counter_dir, 'a');
+    $f = open_file($counter_file, 'a');
     if($f == NULL){
         return;
     }
@@ -173,11 +195,14 @@ function writeProfiles(){
  * @output: NA
  */
 function writeMPDEndTime(){
-    global $counter_dir;
+    global $counter_file, $counter_write;
+    
+    if($counter_write === FALSE)
+        return;
     
     // Append end time to the end of file.
     $mpd_end_time = date('m/d/Y h:i:s a', time());
-    $f = open_file($counter_dir, 'a');
+    $f = open_file($counter_file, 'a');
     if($f == NULL){
         return;
     }
@@ -192,48 +217,17 @@ function writeMPDEndTime(){
  * @output: NA
  */
 function writeEndTime($end_time_sec){
-    global $counter_dir;
+    global $counter_file, $counter_write;
+    
+    if($counter_write === FALSE)
+        return;
     
     // Append end time to the end of file.
     $end_time=date('m/d/Y h:i:s a', $end_time_sec);
-    $f = open_file($counter_dir, 'a');
+    $f = open_file($counter_file, 'a');
     if($f == NULL){
         return;
     }
     fwrite($f, "#8:".$end_time);
     fclose($f);
-}
-
-function appendToMainCounter($old_folder){
-    global $counter_name, $main_counter_dir;
-    
-    $old_folder_content_to_append = file_get_contents($old_folder.'/'.$counter_name);
-    if($old_folder_content_to_append === FALSE){
-        return;
-    }
-    
-    if (!file_exists($main_counter_dir)){
-        $f = open_file($main_counter_dir, 'w');
-        if($f == NULL){
-            return;
-        }
-        $timezone = date_default_timezone_get();
-        $date = date('m/d/Y h:i:s a', time());
-        fwrite($f, "The current server timezone is: " . $timezone . ", file created at: " . $date . "\n" ."No. of visitors"."\n". "0"."\n");
-        fwrite($f, "----IP hash, ID, Start-time, %CPU, Memory(total, used, free, shared,buffers,cached), MPD-Status, MPD-End-time, End-time----\n");
-        fclose($f);
-    }
-    
-    // Read the current value of visitor counter from the file.
-    $content = file_get_contents($main_counter_dir);
-    if($content === FALSE){
-        return;
-    }
-    $contents = explode("\n", $content);
-    $contents_new=$contents;
-    $counterVal=$contents[2];
-    $counterVal++;
-    $contents_new[2]=$counterVal;
-    $contents_new[] = $old_folder_content_to_append;
-    file_put_contents($main_counter_dir, implode("\n", $contents_new));
 }

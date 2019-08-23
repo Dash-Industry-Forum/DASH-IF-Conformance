@@ -170,9 +170,9 @@ $atominfo_file = 'atominfo.xml';
 $sample_data = 'sample_data';
 
 # Important for reporting
-$counter_name = 'counter.txt';
-$counter_dir = '';
-$main_counter_dir = dirname(__DIR__) . ((!$hls_manifest) ? '/Conformance-Frontend/' : '/Conformance-Frontend-HLS/') . $counter_name;
+$counter_file = '';
+$counter_dir = $main_dir . 'visitorLogs';
+$counter_write = TRUE;
 $mpd_log = 'mpdreport';
 $featurelist_log = 'featuresList.xml';
 $featurelist_log_html = 'featuretable.html';
