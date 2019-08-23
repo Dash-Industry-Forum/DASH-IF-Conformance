@@ -123,7 +123,7 @@ function should_be_deleted($folder_dir){
         if ($change1 > $time_constraint || $change2 > $time_constraint)
             return TRUE;
     }
-    elseif($progress_XML === FALSE || !file_exists($progress_dir)){
+    elseif(!file_exists($progress_dir) || $progress_XML === FALSE){
         $time_constraint = 600; // threshold time for deleting decision
         if ($change2 > $time_constraint)
             return TRUE;
@@ -140,7 +140,6 @@ function should_be_deleted($folder_dir){
  */
 function session_delete($dir){
     if (is_dir($dir)){
-        appendToMainCounter($dir);
         $objects = scandir($dir);
         foreach ($objects as $object){
             if ($object != "." && $object != ".."){
