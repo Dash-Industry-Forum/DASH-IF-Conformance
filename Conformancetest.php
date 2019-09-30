@@ -46,26 +46,32 @@
     else
         $url = "";
     
-    if(isset($_REQUEST['cmaf']) && file_get_contents("../CMAF/cmaf_OnOff.txt")==1)
+    if(isset($_REQUEST['cmaf']))
     {
         $cmaf = $_REQUEST['cmaf'];
     }
     else
-        $cmaf = "";
+        $cmaf = 0;
     
     if(isset($_REQUEST['dvb']))
     {
         $dvb = $_REQUEST['dvb'];     // To get url from POST request.
     }
     else
-        $dvb = "false";
+        $dvb = 0;
     
     if(isset($_REQUEST['hbbtv']))
     {
         $hbbtv = $_REQUEST['hbbtv'];     // To get url from POST request.
     }
     else
-        $hbbtv = "false";
+        $hbbtv = 0;
+    if(isset($_REQUEST['schema']))
+    {
+        $schema = $_REQUEST['schema'];
+    }
+    else
+        $schema = '';
 ?>
 
 <script type="text/javascript">
@@ -84,7 +90,7 @@
         ).done(function(response){
             document.getElementById("footerVersion").innerHTML=response;
         });
-
+        
         url = "<?php echo $url; ?>";
         if(url !== "")
         {
@@ -561,10 +567,11 @@ var pollingTimer;
 var mpdTimer;
 var ChainedToUrl;
 var cmaf = "<?php echo $cmaf; ?>";
-var dvb = 0;
-var hbbtv = 0;
-var dashif=0;
-var ctawave=0;
+var dvb = "<?php echo $dvb; ?>";
+var hbbtv = "<?php echo $hbbtv; ?>";
+var dashif= "<?php echo $dashif; ?>";
+var ctawave = "<?php echo $ctawave; ?>";
+var schema = "<?php echo $schema; ?>"
 var downloadarray=[];
 var adaptholder = [];
 var entered_cross = false;
@@ -793,6 +800,23 @@ function submit()
     stringurl[4]=hbbtv;
     stringurl[5]=dashif;
     stringurl[6]=ctawave;
+    stringurl[7]=schema;
+    
+    if(schema !== ""){
+        var filename = schema;
+        if (filename.split('.').pop() !== 'xsd'){
+            alert(`Provided DASH Schema is not an XSD file, default DASH schema will be used`);
+        }
+        else{
+            var schemaRequest = new XMLHttpRequest();
+            schemaRequest.open("GET", schema, false);
+            schemaRequest.send(null);
+
+            if (schemaRequest.status !== 200) { // analyze HTTP status of the response
+                alert(`\nProvided DASH Schema is not found, default DASH schema will be used`); // e.g. 404: Not Found
+            }
+        }
+    }
 
     initVariables();
     setUpTreeView();
