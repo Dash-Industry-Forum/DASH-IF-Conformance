@@ -154,7 +154,7 @@ public class Validator {
 				}
 			}
 			URL pathToXSD = null;
-			if (args.length == 3 && args[2] != null && !args[2].equals("")) {
+			if (args.length == 4 && args[2] != null && !args[2].equals("")) {
 				if (args[2].contains(":"))
 					pathToXSD = new URL(args[2]);
 				else {
