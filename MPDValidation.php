@@ -23,8 +23,10 @@ function validate_MPD(){
         exit();
 
     chdir('../DASH/mpdvalidator');
-    $mpdvalidator = syscall('java -cp "saxon9he.jar:xercesImpl.jar:bin" Validator ' . '"' . explode('#', $mpd_url)[0] . '"' . " " . "$session_dir" . "/resolved.xml schemas/DASH-MPD.xsd $session_dir/$mpd_xml_report");
+    $dash_schema_location = download_schema();
+    $mpdvalidator = syscall('java -cp "saxon9he.jar:xercesImpl.jar:bin" Validator ' . '"' . explode('#', $mpd_url)[0] . '"' . " " . "$session_dir" . "/resolved.xml $dash_schema_location $session_dir/$mpd_xml_report");
     $result = extract_relevant_text($mpdvalidator);
+    delete_schema($dash_schema_location);
 
     ## Generate mpd report
     $mpdreport = fopen($session_dir . '/' . $mpd_log . '.txt', 'a+b');
@@ -52,6 +54,55 @@ function validate_MPD(){
 
     chdir('../');
     return array(!$exit, $string);
+}
+
+function download_schema(){
+    global $schema_url;
+    
+    $default_schema_loc = 'schemas/DASH-MPD.xsd';
+    if($schema_url == '') {
+        return $default_schema_loc;
+    }
+    if(pathinfo($schema_url, PATHINFO_EXTENSION) != 'xsd'){
+        return $default_schema_loc;
+    }
+    
+    $saveTo = 'schemas/DASH-MPD_CustomSchema.xsd';
+    $fp = fopen($saveTo, 'w+');
+    if($fp === FALSE){
+        return NULL;
+    }
+
+    $ch = curl_init($schema_url);
+    curl_setopt($ch, CURLOPT_FILE, $fp);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+    
+    curl_exec($ch);
+
+    if(curl_errno($ch)){
+        return NULL;
+    }
+
+    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    fclose($fp);
+
+    if($statusCode == 200){
+        //
+    } else{
+        delete_schema($saveTo);
+        return $default_schema_loc;
+    }
+    
+    chmod($saveTo, 0777);
+    return $saveTo;
+}
+
+function delete_schema($dash_schema_location){
+    $default_schema_loc = 'schemas/DASH-MPD.xsd';
+    if($dash_schema_location !== $default_schema_loc)
+        shell_exec("sudo rm $dash_schema_location");
 }
 
 function extract_relevant_text($result){
