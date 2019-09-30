@@ -76,6 +76,9 @@ $CTApresentation_infofile = '';
 $CTAselectionset_infofile = '';
 $CTAspliceConstraitsLog = '';
 
+# DASH schema version
+$schema_url = '';
+
 if (isset($_POST['urlcode'])){
     $url_array = json_decode($_POST['urlcode']);
     $mpd_url = $url_array[0];
@@ -87,6 +90,7 @@ if (isset($_POST['urlcode'])){
     $hbbtv_conformance = $url_array[4];
     $dashif_conformance=$url_array[5];
     $ctawave_conformance=$url_array[6];
+    $schema_url = $url_array[7];
 }
 if (isset($_POST['urlcodehls'])){
     $url_array = json_decode($_POST['urlcodehls']);
@@ -145,6 +149,9 @@ if(isset($_POST['dashif'])){
 }
 if(isset($_POST['ctawave'])){
     $ctawave_conformance = 1;
+}
+if(isset($_POST['schema'])){
+    $schema_url = json_decode($_POST['schema']);
 }
 if (isset($_POST['noerror'])){
     $error_message = 0;
