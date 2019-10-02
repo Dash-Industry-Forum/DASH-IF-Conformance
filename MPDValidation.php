@@ -57,7 +57,7 @@ function validate_MPD(){
 }
 
 function download_schema(){
-    global $schema_url;
+    global $session_id, $schema_url;
     
     $default_schema_loc = 'schemas/DASH-MPD.xsd';
     if($schema_url == '') {
@@ -67,7 +67,7 @@ function download_schema(){
         return $default_schema_loc;
     }
     
-    $saveTo = 'schemas/DASH-MPD_CustomSchema.xsd';
+    $saveTo = "schemas/DASH-MPD_CustomSchema_$session_id.xsd";
     $fp = fopen($saveTo, 'w+');
     if($fp === FALSE){
         return NULL;
