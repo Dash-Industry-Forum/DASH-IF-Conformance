@@ -66,6 +66,24 @@
     }
     else
         $hbbtv = 0;
+    if(isset($_REQUEST['dashif']))
+    {
+        $dashif = $_REQUEST['dashif'];     // To get url from POST request.
+    }
+    else
+        $dashif = 0;
+    if(isset($_REQUEST['ctawave']))
+    {
+        $ctawave = $_REQUEST['ctawave'];     // To get url from POST request.
+    }
+    else
+        $ctawave = 0;
+    if(isset($_REQUEST['mpdonly']))
+    {
+        $mpdonly = $_REQUEST['mpdonly'];     // To get url from POST request.
+    }
+    else
+        $mpdonly = 0;
     if(isset($_REQUEST['schema']))
     {
         $schema = $_REQUEST['schema'];
@@ -571,6 +589,7 @@ var dvb = "<?php echo $dvb; ?>";
 var hbbtv = "<?php echo $hbbtv; ?>";
 var dashif= "<?php echo $dashif; ?>";
 var ctawave = "<?php echo $ctawave; ?>";
+var mpdonly = "<?php echo $mpdonly; ?>";
 var schema = "<?php echo $schema; ?>"
 var downloadarray=[];
 var adaptholder = [];
@@ -780,10 +799,7 @@ function submit()
     stringurl[0] = url;
 
     if($("#mpdvalidation").is(':checked'))
-        stringurl[1] = 1;
-    else
-   	stringurl[1] = 0 ;
-    
+        mpdonly = 1;
     if($("#dvbprofile").is(':checked'))
         dvb = 1;
     if($("#hbbtvprofile").is(':checked'))
@@ -795,6 +811,7 @@ function submit()
     if($("#ctawaveprofile").is(':checked'))
         ctawave = 1;
     
+    stringurl[1]=mpdonly;
     stringurl[2]=cmaf;
     stringurl[3]=dvb;
     stringurl[4]=hbbtv;
