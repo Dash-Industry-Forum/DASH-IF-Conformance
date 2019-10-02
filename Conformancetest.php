@@ -109,6 +109,13 @@
             document.getElementById("footerVersion").innerHTML=response;
         });
         
+        var mpdonlyvalidation = "<?php echo $mpdonly; ?>";
+        if(mpdonlyvalidation === "1"){
+            if(!($("#mpdvalidation").is(':checked'))){
+                document.getElementById("mpdvalidation").checked = true;
+            }
+        }
+        
         url = "<?php echo $url; ?>";
         if(url !== "")
         {
