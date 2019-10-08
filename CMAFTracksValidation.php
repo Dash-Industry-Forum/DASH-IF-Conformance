@@ -42,7 +42,7 @@ $CMAFMediaProfileAttributesSubtitle = array(
 
 function checkCMAFTracks(){
     global $session_dir, $mpd_features, $current_period, $current_adaptation_set, $current_representation, 
-            $adaptation_set_template, $reprsentation_template, $reprsentation_error_log_template, $profiles,
+            $adaptation_set_template, $reprsentation_template, $reprsentation_error_log_template, $profiles, $cmaf_mediaTypes,
             $progress_report, $progress_xml, $cmaf_mediaProfiles;
     
     $adapt_dir = str_replace('$AS$', $current_adaptation_set, $adaptation_set_template);
@@ -60,6 +60,10 @@ function checkCMAFTracks(){
             echo 'Error opening/creating CMAF Tracks conformance check file: '.$session_dir.'/'.$error_file.'.txt';
             return;
         }
+        
+        # Store media type for selection set checks later
+        $cmaf_media_type = $xml->getElementsByTagName('hdlr')->item(0)->getAttribute('handler_type');
+        $cmaf_mediaTypes[$current_period][$current_adaptation_set][$current_representation] = $cmaf_media_type;
         
         $Adapt = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
         
