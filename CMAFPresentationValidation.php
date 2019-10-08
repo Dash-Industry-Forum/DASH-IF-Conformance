@@ -339,86 +339,129 @@ function checkCMAFPresentation(){
     fclose($opfile);
 }
 
+function getSelectionSets(){
+    global $cmaf_mediaTypes, $current_period;
+    
+    # Selection set here currently is treated as group of DASH Adaptation Sets with same media type.
+    # However, final alignment to MPEG WD is eventually needed (see CMAF issue #49).
+    $selection_sets = array('video' => array(), 'audio' => array(), 'subtitle' => array());
+    $cmaf_mediaTypesInPeriod = $cmaf_mediaTypes[$current_period];
+    foreach ($cmaf_mediaTypesInPeriod as $adaptation_num => $cmaf_mediaTypesInAdaptation){
+        if (count(array_unique($cmaf_mediaTypesInAdaptation)) === 1) {
+            $type = end($cmaf_mediaTypesInAdaptation);
+            if($type === 'vide')
+                $selection_sets['video'][] = $adaptation_num;
+            elseif($type === 'soun')
+                $selection_sets['audio'][] = $adaptation_num;
+            elseif($type === 'subt')
+                $selection_sets['subtitle'][] = $adaptation_num;
+        }
+    }
+    
+    return $selection_sets;
+}
+
 function checkSelectionSet(){
-    global $session_dir, $mpd_features, $current_period, $adaptation_set_template, $selectionset_infofile;
-    $longFragDur=0;
-    $firstEntryflag=1;
-    $SwSetDurArray=array();
+    global $session_dir, $current_period, $cmaf_mediaTypes, $adaptation_set_template, $selectionset_infofile;
+    
     if(!($opfile = open_file($session_dir. '/Period' . $current_period . '/' . $selectionset_infofile . '.txt', 'w'))){
         echo "Error opening/creating SelectionSet_infofile conformance check file: "."SelectionSet_infofile.txt";
         return;
     }
     
-    $adapts = $mpd_features['Period'][$current_period]['AdaptationSet'];
-    if(sizeof($adapts)<1)
-        fprintf ($opfile,"**'CMAF check violated: Section 7.3.5-'A CMAF Selection Set SHALL contain one or more CMAF Switching Sets', but found none. \n");
-
-    for($adapt_count=0; $adapt_count<sizeof($adapts); $adapt_count++){
-        $Adapt=$adapts[$adapt_count];
+    $selection_sets = getSelectionSets();
+    foreach ($selection_sets as $selection_set){
+        if(empty($selection_set)){
+            continue;
+        }
         
-        $adapt_dir = str_replace('$AS$', $adapt_count, $adaptation_set_template);
-        $loc = $session_dir . '/Period' . $current_period . '/' . $adapt_dir.'/';
-        $filecount = 0;
-        $files = glob($loc . "*.xml");
-        if($files)
-            $filecount = count($files);
+        $selection_set_length = sizeof($selection_set);
+        if($selection_set_length < 1){
+            fprintf ($opfile,"**'CMAF check violated: Section 7.3.5-'A CMAF Selection Set SHALL contain one or more CMAF Switching Sets', but found none. \n");
+        }
         
-        if(!file_exists($loc))
-            fprintf ($opfile, "Tried to retrieve data from a location that does not exist. \n (Possible cause: Representations are not valid and no file/directory for box info is created.) for Switching Set ".$adapt_count."\n");
-        else if($filecount>0){
-            $filename = $files[0];
-            $xml = get_DOM($filename, 'atomlist');
+        $SwSetDurArray = array();
+        $longestFragmentDuration = 0;
+        for($i=0; $i<$selection_set_length; $i++){
+            $adapt_num = $selection_set[$i];
             
-            if($xml){
-                $xml_hdlr=$xml->getElementsByTagName('hdlr')->item(0);
-                $xml_handlerType=$xml_hdlr->getAttribute('handler_type');
-                if($firstEntryflag){
-                    $firstEntryflag=0;
-                    $firstSwSetType=$xml_handlerType;
-                    continue;
+            # Compare media types of CMAF switching sets within CMAF selection set
+            $cmaf_mediaTypesInSwitchingSet_i = $cmaf_mediaTypes[$current_period][$adapt_num];
+            for($j=$i+1; $j<$selection_set_length; $j++){
+                $cmaf_mediaTypesInSwitchingSet_j = $cmaf_mediaTypes[$current_period][$selection_set[$j]];
+                
+                if(count(array_unique($cmaf_mediaTypesInSwitchingSet_i)) === 1 && count(array_unique($cmaf_mediaTypesInSwitchingSet_j)) === 1 && end($cmaf_mediaTypesInSwitchingSet_i) == end($cmaf_mediaTypesInSwitchingSet_j)){
+                    // Positive
                 }
                 else{
-                    if($firstSwSetType!=$xml_handlerType)
-                         fprintf ($opfile,"**'CMAF check violated: Section 7.3.5-'All CMAF Switching Sets within a CMAF Selection Set SHALL be of the same media type', but not matching between Switching Set 1 and ".($adapt_count+1)." \n");
+                    fprintf ($opfile,"**'CMAF check violated: Section 7.3.5-'All CMAF Switching Sets within a CMAF Selection Set SHALL be of the same media type', but not matching between Switching Set " . ($adapt_num+1) . " and ". ($selection_set[$j]+1) . " in Period " . ($current_period+1) . ".\n");
                 }
-
-                $xml_mehd=$xml->getElementsByTagName('mehd');
-                if($xml_mehd->length>0){
-                    $trackDur=$xml_mehd->item(0)->getAttribute('fragmentDuration');
-                    $trackDur=$trackDur/1000; // Convert to seconds.
-                    array_push($SwSetDurArray, $trackDur);
-
-                    //Check that needs data from all Tracks
-                    for($i=0; $i<$filecount; $i++){
-                        $filename = $files[$i];
-                        $xml = get_DOM($filename, 'atomlist');
-                        if($xml){
-                            $xml_moof=$xml->getElementsByTagName('moof');
-                            $xml_tfhd=$xml->getElementsByTagName('tfhd');
-                            $xml_trun=$xml->getElementsByTagName('trun');
-                            $xml_mdhd=$xml->getElementsByTagName('mdhd');
-                            $timescale=$xml_mdhd->item(0)->getAttribute('timescale');
-                            for($j=0;$j<$xml_moof->length;$j++){
-                                //$sampleDur=$xml_tfhd[$j]->getAttribute('defaultSampleDuration');
-                                //$sampleCount=$xml_trun[$j]->getAttribute('sampleCount');
-                                $cummulatedSampleDur=$xml_trun->item($j)->getAttribute('cummulatedSampleDuration');
-                                if($longFragDur< $cummulatedSampleDur/$timescale) // Process in seconds.
-                                    $longFragDur= $cummulatedSampleDur/$timescale;
+            }
+            
+            $adapt_dir = str_replace('$AS$', $adapt_num, $adaptation_set_template);
+            $loc = $session_dir . '/Period' . $current_period . '/' . $adapt_dir.'/';
+            $filecount = 0;
+            $files = glob($loc . "*.xml");
+            if($files)
+                $filecount = count($files);
+            
+            if(!file_exists($loc))
+                fprintf ($opfile, "Tried to retrieve data from a location that does not exist. \n (Possible cause: Representations are not valid and no file/directory for box info is created.) for Switching Set ".$adapt_count."\n");
+            
+            $longestTrackDuration = 0;
+            for($f=0; $f<$filecount; $f++){
+                $filename = $files[$f];
+                $xml = get_DOM($filename, 'atomlist');
+                
+                if($xml){
+                    $timescale=$xml->getElementsByTagName('mdhd')->item(0)->getAttribute('timescale');
+                    $xml_mehds=$xml->getElementsByTagName('mehd');
+                    $xml_moofs = $xml->getElementsByTagName('moof');
+                    $xml_num_moofs = $xml_moofs->length;
+                    
+                    $cum_fragmentDur = 0;
+                    for($m=0; $m<$xml_num_moofs; $m++){
+                        $xml_trafs = $xml_moofs->item($m)->getElementsByTagName('traf');
+                        if($xml_trafs->length != 0){
+                            $xml_truns = $xml_trafs->item(0)->getElementsByTagName('trun');
+                            if($xml_truns->length != 0){
+                                $cmaf_fragment_duration = ($xml_truns->item(0)->getAttribute('cummulatedSampleDuration'))/$timescale;
+                                
+                                if($cmaf_fragment_duration > $longestFragmentDuration){
+                                    $longestFragmentDuration = $cmaf_fragment_duration;
+                                }
+                                
+                                if($xml_mehds->length == 0){
+                                    $cum_fragmentDur += $cmaf_fragment_duration;
+                                }
                             }
                         }
                     }
+                    if($xml_mehds->length > 0){
+                        $cum_fragmentDur = ($xml_mehds->item(0)->getAttribute('fragmentDuration'))/1000;
+                    }
+                    
+                    if($cum_fragmentDur > $longestTrackDuration){
+                        $longestTrackDuration = $cum_fragmentDur;
+                    }
                 }
             }
+            
+            array_push($SwSetDurArray, $longestTrackDuration);
         }
-    }
-    if(count($SwSetDurArray)>0){
-        $min_dur=min($SwSetDurArray);
-        for($k=0;$k<count($SwSetDurArray);$k++){
-            $SwSetDurArray[$k]=$SwSetDurArray[$k]-$min_dur;
-        }
-        for($k=0;$k<count($SwSetDurArray);$k++){
-            if($SwSetDurArray[$k]>$longFragDur)
-               fprintf ($opfile,"**'CMAF check violated: Section 7.3.5-'All Switching Sets within a CMAF Selection Set SHALL be of the same duration, withing a tolerance of the longest CMAF Fragment duration of any Track in the Selection Set', but not found \n");
+        
+        if(count($SwSetDurArray) > 0){
+            $min_dur = min($SwSetDurArray);
+            for($s1=0; $s1<sizeof($SwSetDurArray); $s1++){
+                $SwSetDur_s1 = $SwSetDurArray[$s1];
+                for($s2=$s1+1; $s2<sizeof($SwSetDurArray); $s2++){
+                    $SwSetDur_s2 = $SwSetDurArray[$s2];
+                    
+                    if(abs($SwSetDur_s2 - $SwSetDur_s1) > $longestFragmentDuration){
+                        fprintf ($opfile,"**'CMAF check violated: Section 7.3.5-'All Switching Sets within a CMAF Selection Set SHALL be of the same duration, within a tolerance of the longest CMAF Fragment duration of any Track in the Selection Set', but not matching between Switching Set " . ($adapt_num+1) . " and " . ($selection_set[$j]+1) . " in Period " . ($current_period+1) . ".\n");
+                    }
+                }
+            }
         }
     }
     
@@ -426,6 +469,7 @@ function checkSelectionSet(){
 }
 
 function checkAlignedSwitchingSets(){
+    ## Here the implementation follows the DASH-IF IOP guideline for signaling the switchable adaptation sets
     global $session_dir, $mpd_features, $current_period, $alignedswitching_infofile;
     $index=array();
     //Todo:More generalized approach with many Aligned Sw Sets.
