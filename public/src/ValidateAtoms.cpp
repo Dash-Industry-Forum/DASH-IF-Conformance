@@ -3027,14 +3027,14 @@ OSErr Validate_emsg_Atom( atomOffsetEntry *aoe, void *refcon )
 	BAILIFERR( GetFileData( aoe,message_data, offset, aoe->maxOffset - offset , &offset ) );
     
      atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-     atomprint("timeScale=\"%ld\"\n", EndianU32_BtoN(timescale));
-     atomprint("presentationTimeDelta=\"%ld\"\n", EndianU32_BtoN(presentation_time_delta));
-     atomprint("eventDuration=\"%ld\"\n", EndianU32_BtoN(event_duration));
-     atomprint("id=\"%ld\"\n", EndianU32_BtoN(id));
+     atomprint("timeScale=\"%ld\"\n", timescale);
+     atomprint("presentationTimeDelta=\"%ld\"\n", presentation_time_delta);
+     atomprint("eventDuration=\"%ld\"\n", event_duration);
+     atomprint("id=\"%ld\"\n", id);
      atomprint(">\n");
 	
      if(vg.cmaf){
-         if(EndianU32_BtoN(timescale) !=vg.mediaHeaderTimescale)
+         if(timescale != vg.mediaHeaderTimescale)
              errprint("CMAF check violated: Section 7.4.5. \"The DASHEventMessageBox in a CMAF Track SHALL contain its timescale field value equal to the timescale in the MediaHeaderBox of CMAF Track that contains it. \", found timescale as %ld instead of %ld \n",timescale, vg.mediaHeaderTimescale);
     }
     // All done
@@ -3765,7 +3765,7 @@ OSErr Validate_dac4_Atom( atomOffsetEntry *aoe, void *refcon)
     BAILIFERR(GetFileData( aoe, &size, offset, sizeof(size), &offset ));
     size=EndianU32_BtoN (size);
     atomprint("size=\"%d\"\n", size);
-    
+//     
     BAILIFERR(GetFileData( aoe, &type, offset, sizeof(type), &offset ));
     type=EndianU32_BtoN(type);
     atomprint("type=\"%d\"\n", type);
