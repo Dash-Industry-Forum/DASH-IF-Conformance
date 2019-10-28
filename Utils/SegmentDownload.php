@@ -95,9 +95,16 @@ function download_data($directory, $array_file, $is_subtitle_rep){
                 
                 # Assure that the pointer doesn't exceed size of downloaded bytes
                 while ($location < sizeof($byte_array)){
-                    $box_size = $byte_array[$location] * 16777216 + $byte_array[$location + 1] * 65536 + $byte_array[$location + 2] * 256 + $byte_array[$location + 3];
+                    $diff = sizeof($byte_array) - $location;
+                    if($diff < 3){
+                        //$prev_data = array_slice($byte_array, $location, $diff);
+                        break;
+                    }
+                    else{
+                        $box_size = $byte_array[$location] * 16777216 + $byte_array[$location + 1] * 65536 + $byte_array[$location + 2] * 256 + $byte_array[$location + 3];
+                    }
                     
-                    $size_copy = $box_size; // keep a cope of size to add to $location when it is replaced by remaining 
+                    $size_copy = $box_size; // keep a copy of size to add to $location when it is replaced by remaining 
                     if ($box_size > $remaining)
                         $size_copy = $remaining;
                     
