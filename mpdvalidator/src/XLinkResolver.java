@@ -214,7 +214,16 @@ public class XLinkResolver {
 			// it is not a valid xml file. The reason is that there can be only one root element. We fix this by
             // manually adding a root element around the multi period content. Note that if it is a normal .xml file,
             // then it is being parsed as it was before (the if condition takes care of this).
-            String type = (xmlURI.lastIndexOf('?') == -1) ? xmlURI.substring(xmlURI.lastIndexOf('.') + 1) : xmlURI.substring(xmlURI.lastIndexOf('.') + 1, xmlURI.lastIndexOf('?'));
+            String type = "";
+            if(xmlURI.lastIndexOf('?') == -1) {
+                type = xmlURI.substring(xmlURI.lastIndexOf('.') + 1);
+                                                                                                                                                                                                                                                                
+            }
+            else {
+                String mpdName = xmlURI.substring(0, xmlURI.lastIndexOf('?'));
+                type = mpdName.substring(mpdName.lastIndexOf('.') +1);
+            }
+            
             if(!type.equals("mpd")) {
 				// Add manual <root> element around the xml file.
                 List<InputStream> streams = Arrays.asList(
