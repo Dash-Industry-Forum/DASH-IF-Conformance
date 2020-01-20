@@ -66,7 +66,7 @@ function checkAlignment($leafInfoA, $leafInfoB, $opfile, $segmentAlignment, $sub
             }
 
             if (!$correspondingTrackFound)
-                fprintf($opfile, "Error: No corresponding track found in representation id \"%s\" for representation id \"%s\" track ID \"%s\" with type \"%s\", bitstream switching is not possible: Section 7.3.3.2. of ISO/IEC 23009-1:2012(E): The track IDs for the same media content component are identical for each Representation in each Adaptation Set \n", $leafInfoB['id'], $leafInfoA['id'], $leafInfoA['trackTypeInfo'][$i]['track_ID'], $leafInfoA['trackTypeInfo'][$i]['componentSubType']);
+                fprintf($opfile, "Error: No corresponding track found in representation id \"%s\" for representation id \"%s\" track ID \"%s\" with type \"%s\", bitstream switching is not possible: ISO/IEC 23009-1:2012(E), 7.3.3.2: The track IDs for the same media content component are identical for each Representation in each Adaptation Set \n", $leafInfoB['id'], $leafInfoA['id'], $leafInfoA['trackTypeInfo'][$i]['track_ID'], $leafInfoA['trackTypeInfo'][$i]['componentSubType']);
         }
     }
 

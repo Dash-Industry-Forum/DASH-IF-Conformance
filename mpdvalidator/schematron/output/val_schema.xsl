@@ -905,7 +905,7 @@
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
-               <svrl:text>ISO/IEC 23009-1:2019 Section 5.3.3.1: The value of the frameRate attribute shall be in the range defined by the AdaptationSet.</svrl:text>
+               <svrl:text>ISO/IEC 23009-1:2019, 5.3.3.1: The value of the frameRate attribute shall be in the range defined by the AdaptationSet.</svrl:text>
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
