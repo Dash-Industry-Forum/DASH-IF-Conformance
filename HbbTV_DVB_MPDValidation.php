@@ -1129,7 +1129,7 @@ function DVB_audio_checks($adapt, $reps, $mpdreport, $i, $contentTemp_aud_found)
     
     ## Information from this part is for Section 6.1: distinguishing Adaptation Sets
     if($adapt->getAttribute('contentType') == 'audio' && $adapt_specific_role_count == 0)
-        fwrite($mpdreport, "###'DVB check violated: Section 6.1.2- Every audio Adaptation Set SHALL include at least one Role Element using the scheme \"urn:mpeg:dash:role:2011\" as defined in ISO/IEC 23009-1', could not be found in Period $period_count Adaptation Set " . ($i+1) . ".\n");
+        fwrite($mpdreport, "###'DVB check violated: Section 6.1.2- Every audio Adaptation Set SHALL include at least one Role Element using the scheme \"urn:mpeg:dash:role:2011\" as defined in ISO/IEC 23009-1:2014', could not be found in Period $period_count Adaptation Set " . ($i+1) . ".\n");
     ##
     
     ## Information from this part is for Section 6.3:Dolby and 6.4:DTS
@@ -1797,7 +1797,7 @@ function DVB_mpd_anchor_check($mpdreport){
             $key = substr($anchor, 0, strpos($anchor, '='));
             $value = substr($anchor, strpos($anchor, '=')+1);
             if(!in_array($key, $allowed_keys))
-                fwrite($mpdreport, "Information on HbbTV-DVB DASH Validation Requirements conformance for DVB: Section 'DVB DASH Specifics' - Provided MPD anchor key \"$key\" is not one of the keys listed in Table C.1 in clause C.4 in ISO/IEC 23009-1.\n");
+                fwrite($mpdreport, "Information on HbbTV-DVB DASH Validation Requirements conformance for DVB: Section 'DVB DASH Specifics' - Provided MPD anchor key \"$key\" is not one of the keys listed in Table C.1 in clause C.4 in ISO/IEC 23009-1:2014.\n");
             
             if($key == 'period'){
                 $period_exists = true;
