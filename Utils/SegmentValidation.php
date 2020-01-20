@@ -363,7 +363,7 @@ function checkSegmentDurationWithMPD($segmentsTime,$period, $AdSet, $Rep, $PTO, 
         
         if(!($MPDSegmentStartTime-(0.5*$segmentDurMPD) <= $segmentsTime[0][$i]['earliestPresentationTime']  && $segmentsTime[0][$i]['earliestPresentationTime'] <= $MPDSegmentStartTime+(0.5*$segmentDurMPD)))
         {
-            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1- Section 7.2.1: 'The difference between MPD start time and presentation time shall not exceed +/-50% of value of @duration divided by the value of the @timescale attribute.',violated for segment ".($i+1).", with earliest presentation time ".$segmentsTime[0][$i]['earliestPresentationTime']." while signaled MPD start time is ".$MPDSegmentStartTime." and @duration is ".$segmentDurMPD."\n");
+            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1:2019 - Section 7.2.1: 'The difference between MPD start time and presentation time shall not exceed +/-50% of value of @duration divided by the value of the @timescale attribute.',violated for segment ".($i+1).", with earliest presentation time ".$segmentsTime[0][$i]['earliestPresentationTime']." while signaled MPD start time is ".$MPDSegmentStartTime." and @duration is ".$segmentDurMPD."\n");
 
         }
     }
