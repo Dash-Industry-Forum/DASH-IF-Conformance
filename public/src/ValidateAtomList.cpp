@@ -166,7 +166,7 @@ OSErr ValidateFileAtoms( atomOffsetEntry *aoe, void *refcon )
                         errprint("'sidx' boxes are not to be expected in a non-fragmented movie\n");
 
                     if(!vg.initializationSegment && !vg.dashInFtyp)
-                        errprint("'sidx' found for self-initializing media, violating Section 6.3.5.2. of ISO/IEC 23009-1:2012(E): The Indexed Self-Initializing Media Segment ... shall carry 'dash' as a compatible brand. \n");
+                        errprint("'sidx' found for self-initializing media, violating ISO/IEC 23009-1:2012(E), 6.3.5.2: The Indexed Self-Initializing Media Segment ... shall carry 'dash' as a compatible brand. \n");
                     
                     atomerr = ValidateAtomOfType( 'sidx', 0, 
                         Validate_sidx_Atom, cnt, list, vg.mir);
@@ -982,7 +982,7 @@ OSErr Validate_mvex_Atom( atomOffsetEntry *aoe, void *refcon )
     	}
 
         if(!levaFound)
-            errprint("leva box not found in intialization segment, violating: Section 7.3.4. of ISO/IEC 23009-1:2012(E): The Initialization Segment shall contain the Level Assignment ('leva') box");
+            errprint("leva box not found in intialization segment, violating: ISO/IEC 23009-1:2012(E), 7.3.4: The Initialization Segment shall contain the Level Assignment ('leva') box");
         
     }
 	// Process 'mehd' atoms
@@ -1365,7 +1365,7 @@ OSErr Validate_styp_Atom( atomOffsetEntry *aoe, void *refcon )
 				vg.dashSegment = true;
 				lmsgFoundInCompatibleBrands = true;
 				if(segmentFound && segmentNum != (vg.segmentInfoSize-1))
-                    errprint("Brand 'lmsg' found as a compatible brand for segment number %d (not the last segment %d); violates Section 7.3.1. of ISO/IEC 23009-1:2012(E): In all cases for which a Representation contains more than one Media Segment ... If the Media Segment is not the last Media Segment in the Representation, the 'lmsg' compatibility brand shall not be present.\n",segmentNum+1,vg.segmentInfoSize);
+                    errprint("Brand 'lmsg' found as a compatible brand for segment number %d (not the last segment %d); violates ISO/IEC 23009-1:2012(E), 7.3.1: In all cases for which a Representation contains more than one Media Segment ... If the Media Segment is not the last Media Segment in the Representation, the 'lmsg' compatibility brand shall not be present.\n",segmentNum+1,vg.segmentInfoSize);
 			}
             else if(currentBrand == 'cmfc'){
                                 vg.dashSegment = true; // Equivalent to CMAF Fragment. Can be directly used in CMAF Fragment conformances.
@@ -1394,15 +1394,15 @@ OSErr Validate_styp_Atom( atomOffsetEntry *aoe, void *refcon )
 		}
 
 		if (!msdhFound) {
-				errprint("Brand msdh not found as a compatible brand; violates Section 6.3.4.2. of ISO/IEC 23009-1:2012(E)\n");
+				errprint("Brand msdh not found as a compatible brand; violates ISO/IEC 23009-1:2012(E), 6.3.4.2\n");
 			}
         
 		if (!msixFound && (vg.mir->numSidx > 0)) {
-				warnprint("Warning: msix not found in styp of a segment, while indxing info found, violating: Section 6.3.4.3. of ISO/IEC 23009-1:2012(E): Each Media Segment shall carry 'msix' as a compatible brand \n");
+				warnprint("Warning: msix not found in styp of a segment, while indxing info found, violating: ISO/IEC 23009-1:2012(E), 6.3.4.3: Each Media Segment shall carry 'msix' as a compatible brand \n");
 			}
 
         if (vg.isomain && (vg.startWithSAP <= 0 || vg.startWithSAP > 3) && !msixFound)
-            errprint("msix not found in styp of a segment, with main profile and startWithSAP %d, violating: Section 8.5.3. of ISO/IEC 23009-1:2012(E): Each Media Segment of the Representations not having @startWithSAP present or having @startWithSAP value 0 or greater than 3 shall comply with the formats defined in 6.3.4.3, i.e. the brand 'msix'\n",vg.startWithSAP);
+            errprint("msix not found in styp of a segment, with main profile and startWithSAP %d, violating: ISO/IEC 23009-1:2012(E), 8.5.3: Each Media Segment of the Representations not having @startWithSAP present or having @startWithSAP value 0 or greater than 3 shall comply with the formats defined in 6.3.4.3, i.e. the brand 'msix'\n",vg.startWithSAP);
         
 /*
 		if (vg.checklevel && segmentFound && !vg.simsInStyp[segmentNum]) {
@@ -1447,7 +1447,7 @@ OSErr Validate_moov_Atom( atomOffsetEntry *aoe, void *refcon )
 	BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
 
     if(vg.initializationSegment && ((aoe->offset + aoe->size) > vg.segmentSizes[0]))
-        errprint("Complete moov not found in initialization segment: Section 6.3.3. of ISO/IEC 23009-1:2012(E): The Initialization Segment shall contain an \"ftyp\" box, and a \"moov\" box\n");	
+        errprint("Complete moov not found in initialization segment: ISO/IEC 23009-1:2012(E), 6.3.3: The Initialization Segment shall contain an \"ftyp\" box, and a \"moov\" box\n");	
 
 	// find out how many tracks we have so we can allocate our struct. Also check if we have encryption-related boxes
 	for (i = 0; i < cnt; i++) {
@@ -1865,7 +1865,7 @@ OSErr Validate_moof_Atom( atomOffsetEntry *aoe, void *refcon )
         moofInfo->trafInfo = NULL;
 
     if(vg.dashSegment && moofInfo->numTrackFragments == 0)
-        errprint("Section 6.3.4.2. of ISO/IEC 23009-1:2012(E): 16: Each 'moof' box shall contain at least one track fragment.\n");
+        errprint("ISO/IEC 23009-1:2012(E), 6.3.4.2: 16: Each 'moof' box shall contain at least one track fragment.\n");
     if(vg.hbbtv && moofInfo->numTrackFragments != 1)
         errprint("###HbbTV check violated Section E.3.1.1: 'The movie fragment boxx (moof) shall contain only one track fragment box(traf)', but found %d\n",moofInfo->numTrackFragments);
 

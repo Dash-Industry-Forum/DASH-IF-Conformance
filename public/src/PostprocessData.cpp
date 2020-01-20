@@ -35,9 +35,9 @@ void checkDASHBoxOrder(long cnt, atomOffsetEntry *list, long segmentInfoSize, bo
         for (int i = 0; i < cnt; i++) {
             if (list[i].offset < segmentSizes[0]) {
                 if (list[i].type == 'moof') {
-                    errprint("moof found in initialization segment: Section 6.3.3. of ISO/IEC 23009-1:2012(E): It shall not contain any \"moof\" boxes\n");
+                    errprint("moof found in initialization segment: ISO/IEC 23009-1:2012(E), 6.3.3: It shall not contain any \"moof\" boxes\n");
                 } else if (list[i].type == 'mdat') {
-                    errprint("mdat found in initialization segment: Section 6.3.4.2. of ISO/IEC 23009-1:2012(E): The Initialization Segment shall not contain any media data with an assigned presentation time.\n");
+                    errprint("mdat found in initialization segment: ISO/IEC 23009-1:2012(E), 6.3.4.2: The Initialization Segment shall not contain any media data with an assigned presentation time.\n");
                 }
             }
         }
@@ -91,7 +91,7 @@ void checkDASHBoxOrder(long cnt, atomOffsetEntry *list, long segmentInfoSize, bo
 
                     if (list[j].type == 'moof') {
                         if (j == (cnt - 1) || list[j + 1].offset >= (offset + segmentSizes[index]) || list[j + 1].type != 'mdat'){
-                            errprint("mdat not found following a moof in segment %d (at file absolute offset %lld), violating: Section 6.3.4.2. of ISO/IEC 23009-1:2012(E): Each Media Segment shall contain one or more whole self-contained movie fragments. A whole, self-contained movie fragment is a movie fragment ('moof') box and a media data ('mdat') box that contains all the media samples that do not use external data references referenced by the track runs in the movie fragment box.\n", index, list[j].offset);
+                            errprint("mdat not found following a moof in segment %d (at file absolute offset %lld), violating: ISO/IEC 23009-1:2012(E), 6.3.4.2: Each Media Segment shall contain one or more whole self-contained movie fragments. A whole, self-contained movie fragment is a movie fragment ('moof') box and a media data ('mdat') box that contains all the media samples that do not use external data references referenced by the track runs in the movie fragment box.\n", index, list[j].offset);
 			    if(vg.cmaf){
 				errprint("CMAF check violated: Section 7.5.19. \"Each CMAF Fragment SHALL contain one or more Media Data Box(es)\", not found in Segment/Fragment %d (at file absolute offset %lld).\n",index, list[j].offset);
                                 errprint("CMAF check violated: Section 7.3.2.4. \"A CMAF Fragment SHALL consist of one or more ISO Base Media segments that contains one MovieFragmentBox followed by one or more Media Data Box(es) containing the samples it references\", but mdat not found following a moof in Segment/Fragment %d (at file absolute offset %lld).\n",index, list[j].offset);
@@ -107,7 +107,7 @@ void checkDASHBoxOrder(long cnt, atomOffsetEntry *list, long segmentInfoSize, bo
 
                     if (list[j].type == 'sidx' && vg.simsInStyp[index] && !ssixFoundInSegment) {
                         if (j == (cnt - 1) || list[j + 1].offset >= (offset + segmentSizes[index]) || list[j + 1].type != 'ssix')
-                            errprint("ssix not found following the sidx in segment %d (at file absolute offset %lld), violating: Section 6.3.4.4. of ISO/IEC 23009-1:2012(E): The Subsegment Index box ('ssix') shall be present and shall follow immediately after the 'sidx' box that documents the same Subsegment\n", index, list[j].offset);
+                            errprint("ssix not found following the sidx in segment %d (at file absolute offset %lld), violating: ISO/IEC 23009-1:2012(E), 6.3.4.4: The Subsegment Index box ('ssix') shall be present and shall follow immediately after the 'sidx' box that documents the same Subsegment\n", index, list[j].offset);
 
                         ssixFoundInSegment = true;
                     }
@@ -117,11 +117,11 @@ void checkDASHBoxOrder(long cnt, atomOffsetEntry *list, long segmentInfoSize, bo
                             errprint("Indexing information (sidx/ssix) found in segment %d (at file absolute offset %lld) following a moof, violating: ", index, list[j].offset);
 
                             if (vg.isoondemand)
-                                errprint("Section 8.3.3. of ISO/IEC 23009-1:2012(E): All Segment Index ('sidx') and Subsegment Index ('ssix') boxes shall be placed before any Movie Fragment ('moof') boxes\n");
+                                errprint("ISO/IEC 23009-1:2012(E), 8.3.3: All Segment Index ('sidx') and Subsegment Index ('ssix') boxes shall be placed before any Movie Fragment ('moof') boxes\n");
                             else
                                 errprint("Section 3.2.3. Interoperability Point DASH264: In Media Segments, all Segment Index ('sidx') and Subsegment Index ('ssix') boxes, if present, shall be placed before any Movie Fragment ('moof') boxes.\n");
                         } else if (vg.isoLive)
-                            errprint("Indexing information (sidx/ssix) found in segment %d (at file absolute offset %lld) following a moof, violating: Section 8.4.3. of ISO/IEC 23009-1:2012(E): In Media Segments, all Segment Index ('sidx') and Subsegment Index ('ssix') boxes shall be placed before any Movie Fragment ('moof') boxes\n", index, list[j].offset);
+                            errprint("Indexing information (sidx/ssix) found in segment %d (at file absolute offset %lld) following a moof, violating: ISO/IEC 23009-1:2012(E), 8.4.3: In Media Segments, all Segment Index ('sidx') and Subsegment Index ('ssix') boxes shall be placed before any Movie Fragment ('moof') boxes\n", index, list[j].offset);
                     }
                 }
 
@@ -156,14 +156,14 @@ void checkDASHBoxOrder(long cnt, atomOffsetEntry *list, long segmentInfoSize, bo
                     sidxFound = true;
 
                     if (!initializationSegment && !vg.msixInFtyp)
-                        warnprint("Warning: msix not found in ftyp of a self-intializing segment %d, indxing info found, violating: Section 6.3.4.3. of ISO/IEC 23009-1:2012(E): Each Media Segment shall carry 'msix' as a compatible brand \n", index);
+                        warnprint("Warning: msix not found in ftyp of a self-intializing segment %d, indxing info found, violating: ISO/IEC 23009-1:2012(E), 6.3.4.3: Each Media Segment shall carry 'msix' as a compatible brand \n", index);
 
                 }
 
                 if (list[i].type == 'ssix') {
                     ssixFoundInSegment = true;
                     if (!vg.simsInStyp[index])
-                        warnprint("Warning: ssix found in Segment %d, but brand 'sims' not found in the styp for the segment, violating: Section 6.3.4.4. of ISO/IEC 23009-1:2012(E): It shall carry 'sims' in the Segment Type box ('styp') as a compatible brand.", index);
+                        warnprint("Warning: ssix found in Segment %d, but brand 'sims' not found in the styp for the segment, violating: ISO/IEC 23009-1:2012(E), 6.3.4.4: It shall carry 'sims' in the Segment Type box ('styp') as a compatible brand.", index);
                 }
             }
 
@@ -175,9 +175,9 @@ void checkDASHBoxOrder(long cnt, atomOffsetEntry *list, long segmentInfoSize, bo
         if (index > (initializationSegment ? 1 : 0) && (sidxFoundInSegment != sidxFoundInPreviousSegment)) //Change of coding after first segment
         {
             if (sidxFoundInSegment)
-                errprint("sidx found in Segment number %d, while it was missing in an the previous segment, violating: Section 6.3.4.3. of ISO/IEC 23009-1:2012(E): Each Media Segment shall contain one or more 'sidx' boxes. \n", index + 1);
+                errprint("sidx found in Segment number %d, while it was missing in an the previous segment, violating: ISO/IEC 23009-1:2012(E), 6.3.4.3: Each Media Segment shall contain one or more 'sidx' boxes. \n", index + 1);
             else
-                errprint("sidx not found in Segment number %d, while it has been found at least in the previous segment, violating: Section 6.3.4.3. of ISO/IEC 23009-1:2012(E): Each Media Segment shall contain one or more 'sidx' boxes. \n", index + 1);
+                errprint("sidx not found in Segment number %d, while it has been found at least in the previous segment, violating: ISO/IEC 23009-1:2012(E), 6.3.4.3: Each Media Segment shall contain one or more 'sidx' boxes. \n", index + 1);
         }
 
         sidxFoundInPreviousSegment = sidxFoundInSegment;
@@ -186,7 +186,7 @@ void checkDASHBoxOrder(long cnt, atomOffsetEntry *list, long segmentInfoSize, bo
     }
 
     if (vg.msixInFtyp && !sidxFound)
-        errprint("No indexing info found while 'msix' was a compatible brand: Section 6.3.4.3. of ISO/IEC 23009-1:2012(E): Each Media Segment shall carry 'msix' as a compatible brand \n");
+        errprint("No indexing info found while 'msix' was a compatible brand: ISO/IEC 23009-1:2012(E), 6.3.4.3: Each Media Segment shall carry 'msix' as a compatible brand \n");
 
 }
 
@@ -530,12 +530,12 @@ void checkNonIndexedSamples(MovieInfoRec *mir) {
                                 accessUnitDuration = moof->trafInfo[k].trunInfo[l].sample_duration[m];
 
                             if (!currentTrackIndexed && indexedTrackFound && reportInequalDuration && moof->trafInfo[k].trunInfo[l].sample_duration[m] != accessUnitDuration) {
-                                errprint("Sample duration (%lu) of at least one sample of a non-index track (%d) is inequal to a previously reported duration (%lu), violating Section 7.2.2. of ISO/IEC 23009-1:2012(E): non-indexed media streams in all Representations of an Adaptation Set shall have the same access unit duration\n", moof->trafInfo[k].trunInfo[l].sample_duration[m], mir->tirList[i].trackID, accessUnitDuration);
+                                errprint("Sample duration (%lu) of at least one sample of a non-index track (%d) is inequal to a previously reported duration (%lu), violating ISO/IEC 23009-1:2012(E), 7.2.2: non-indexed media streams in all Representations of an Adaptation Set shall have the same access unit duration\n", moof->trafInfo[k].trunInfo[l].sample_duration[m], mir->tirList[i].trackID, accessUnitDuration);
                                 reportInequalDuration = false;
                             }
 
                             if (!currentTrackIndexed && indexedTrackFound && vg.accessUnitDurationNonIndexedTrack != 0 && reportInequalControlDuration && moof->trafInfo[k].trunInfo[l].sample_duration[m] != vg.accessUnitDurationNonIndexedTrack) {
-                                errprint("Control sample duration %lu is inequal to the sample duration of this stream (%lu) for non-indexed track (%d), violating Section 7.2.2. of ISO/IEC 23009-1:2012(E): non-indexed media streams in all Representations of an Adaptation Set shall have the same access unit duration\n", vg.accessUnitDurationNonIndexedTrack, moof->trafInfo[k].trunInfo[l].sample_duration[m], mir->tirList[i].trackID);
+                                errprint("Control sample duration %lu is inequal to the sample duration of this stream (%lu) for non-indexed track (%d), violating ISO/IEC 23009-1:2012(E), 7.2.2: non-indexed media streams in all Representations of an Adaptation Set shall have the same access unit duration\n", vg.accessUnitDurationNonIndexedTrack, moof->trafInfo[k].trunInfo[l].sample_duration[m], mir->tirList[i].trackID);
                                 reportInequalControlDuration = false;
                             }
                         }
@@ -545,7 +545,7 @@ void checkNonIndexedSamples(MovieInfoRec *mir) {
         }
 
         if (!currentTrackIndexed && indexedTrackFound && nonSyncSamples > 0)
-            errprint("%lld non-sync samples found out of total %lld samples, for non-indexed track %d, violating Section 6.2.3.2. of ISO/IEC 23009-1:2012(E): every access unit of the non-indexed streams shall be a SAP of type 1.\n", nonSyncSamples, nonSyncSamples + syncSamples, mir->tirList[i].trackID);
+            errprint("%lld non-sync samples found out of total %lld samples, for non-indexed track %d, violating ISO/IEC 23009-1:2012(E), 6.2.3.2: every access unit of the non-indexed streams shall be a SAP of type 1.\n", nonSyncSamples, nonSyncSamples + syncSamples, mir->tirList[i].trackID);
     }
 
     vg.accessUnitDurationNonIndexedTrack = nonIndexTrackFound ? accessUnitDuration : 0; //To store for this represntation in file
@@ -587,7 +587,7 @@ void checkNonIndexedSamples(MovieInfoRec *mir) {
                         }
 
                         if (samplesWithLessPresentationTime != 1)
-                            errprint("%d samples of the non-indexed track %d with composition time <= the indexed track %d with EPT %LF found, violating Section 6.3.4.3. of ISO/IEC 23009-1:2012(E): for each Subsegment, every non-indexed stream must contain exactly one access unit within the Subsegment with presentation time less than or equal to the earliest presentation time of the Subsegment\n",
+                            errprint("%d samples of the non-indexed track %d with composition time <= the indexed track %d with EPT %LF found, violating ISO/IEC 23009-1:2012(E), 6.3.4.3: for each Subsegment, every non-indexed stream must contain exactly one access unit within the Subsegment with presentation time less than or equal to the earliest presentation time of the Subsegment\n",
                                 samplesWithLessPresentationTime, nonIndexedTir->trackID, tir->trackID, leaf->earliestPresentationTime);
 
                     }
@@ -650,7 +650,7 @@ void verifyBSS(MovieInfoRec *mir) {
         }
 
         if (!correspondingTrackFound)
-            errprint("No corresponding track found in control info for track ID %lu with type %s, bitstream switching is not possible: Section 7.3.3.2. of ISO/IEC 23009-1:2012(E): The track IDs for the same media content component are identical for each Representation in each Adaptation Set", tir->trackID, ostypetostr(tir->hdlrInfo->componentSubType));
+            errprint("No corresponding track found in control info for track ID %lu with type %s, bitstream switching is not possible: ISO/IEC 23009-1:2012(E), 7.3.3.2: The track IDs for the same media content component are identical for each Representation in each Adaptation Set", tir->trackID, ostypetostr(tir->hdlrInfo->componentSubType));
     }
 
 }
@@ -731,7 +731,7 @@ OSErr processIndexingInfo(MovieInfoRec *mir) {
 
             for (UInt32 j = 0; j < mir->numFragments; j++) {
                 if (mir->moofInfo[j].offset >= segmentOffset && mir->moofInfo[j].offset < firstSidxOfSegment->offset)
-                    errprint("Section 6.3.4.3. of ISO/IEC 23009-1:2012(E): If 'sidx' is present in a Media Segment, the first 'sidx' box shall be placed before any 'moof' box. Violated for fragment number %d\n", j + 1);
+                    errprint("ISO/IEC 23009-1:2012(E), 6.3.4.3: If 'sidx' is present in a Media Segment, the first 'sidx' box shall be placed before any 'moof' box. Violated for fragment number %d\n", j + 1);
 
                 if (mir->moofInfo[j].samplesToBePresented && mir->moofInfo[j].offset >= segmentOffset && mir->moofInfo[j].offset < (segmentOffset + vg.segmentSizes[i])) {
                     segmentDurationSec += (mir->moofInfo[j].moofPresentationEndTimePerTrack[trackIndex] - mir->moofInfo[j].moofEarliestPresentationTimePerTrack[trackIndex]);
@@ -741,7 +741,7 @@ OSErr processIndexingInfo(MovieInfoRec *mir) {
             long double diff = ABS(segmentDurationSec - firstSidxOfSegment->cumulatedDuration);
 
             if (diff > (long double) 1.0 / (long double) mir->tirList[trackIndex].mediaTimeScale)
-                errprint("Section 6.3.4.3. of ISO/IEC 23009-1:2012(E): If 'sidx' is present in a Media Segment, the first 'sidx' box ... shall document the entire Segment. Violated for Media Segment %d. Segment duration %Lf, Sidx documents %Lf for track %d, diff %Lf\n", i - firstMediaSegment + 1, segmentDurationSec, firstSidxOfSegment->cumulatedDuration, mir->tirList[trackIndex].trackID, diff);
+                errprint("ISO/IEC 23009-1:2012(E), 6.3.4.3: If 'sidx' is present in a Media Segment, the first 'sidx' box ... shall document the entire Segment. Violated for Media Segment %d. Segment duration %Lf, Sidx documents %Lf for track %d, diff %Lf\n", i - firstMediaSegment + 1, segmentDurationSec, firstSidxOfSegment->cumulatedDuration, mir->tirList[trackIndex].trackID, diff);
 
             segmentOffset += vg.segmentSizes[i];
         }
@@ -749,7 +749,7 @@ OSErr processIndexingInfo(MovieInfoRec *mir) {
 
 
     if (vg.isoLive && mir->numTIRs > 1 && !vg.msixInFtyp)
-        errprint("Check failed for DASH ISO Base media file format live profile, multiple streams yet no 'msix' compatible brand, violating Section 8.4.3. of ISO/IEC 23009-1:2012(E): Media Segments containing multiple Media Components shall comply with the formats defined in 6.3.4.3, i.e. the brand 'msix'\n");
+        errprint("Check failed for DASH ISO Base media file format live profile, multiple streams yet no 'msix' compatible brand, violating ISO/IEC 23009-1:2012(E), 8.4.3: Media Segments containing multiple Media Components shall comply with the formats defined in 6.3.4.3, i.e. the brand 'msix'\n");
 
     for (i = 0; i < mir->numSidx; i++) {
         UInt32 j;
@@ -859,7 +859,7 @@ OSErr processIndexingInfo(MovieInfoRec *mir) {
                 }
 
                 if (vg.isomain && !(mir->sidxInfo[i].references[j].SAP_type >= 1 && mir->sidxInfo[i].references[j].SAP_type <= 3))
-                    errprint("SAP type %d found for sidx %d, reference %d, violating Section 8.5.3. of ISO/IEC 23009-1:2012(E): At least one SAP of type 1 to 3, inclusive, shall be present for each track in each Subsegment\n", mir->sidxInfo[i].references[j].SAP_type, i + 1, j);
+                    errprint("SAP type %d found for sidx %d, reference %d, violating ISO/IEC 23009-1:2012(E), 8.5.3: At least one SAP of type 1 to 3, inclusive, shall be present for each track in each Subsegment\n", mir->sidxInfo[i].references[j].SAP_type, i + 1, j);
 
                 if (mir->sidxInfo[i].references[j].SAP_type > 0 || mir->sidxInfo[i].references[j].starts_with_SAP > 0) {
                     long double SAP_time = (long double) (mir->sidxInfo[i].references[j].SAP_delta_time + referenceEPT) / (long double) mir->sidxInfo[i].timescale;
@@ -1206,7 +1206,7 @@ void checkCMAFBoxOrder(long cnt, atomOffsetEntry *list, long segmentInfoSize, bo
                     }
                     if (list[j].type == 'moof') { //This condition is also implemented in Dash box order.
                         if (j == (cnt - 1) || list[j + 1].offset >= (offset + segmentSizes[index]) || list[j + 1].type != 'mdat'){
-                            errprint("mdat not found following a moof in segment %d (at file absolute offset %lld), violating: CMAF Section 7.3.1 (ordinality/nesting), 'mdat' follows 'moof' in box order and Section 6.3.4.2. of ISO/IEC 23009-1:2012(E): Each Media Segment shall contain one or more whole self-contained movie fragments. A whole, self-contained movie fragment is a movie fragment ('moof') box and a media data ('mdat') box that contains all the media samples that do not use external data references referenced by the track runs in the movie fragment box.\n", index, list[j].offset);
+                            errprint("mdat not found following a moof in segment %d (at file absolute offset %lld), violating: CMAF Section 7.3.1 (ordinality/nesting), 'mdat' follows 'moof' in box order and ISO/IEC 23009-1:2012(E), 6.3.4.2: Each Media Segment shall contain one or more whole self-contained movie fragments. A whole, self-contained movie fragment is a movie fragment ('moof') box and a media data ('mdat') box that contains all the media samples that do not use external data references referenced by the track runs in the movie fragment box.\n", index, list[j].offset);
 			}
 
                         cmafFragmentInCMAFSegmentFound = true;

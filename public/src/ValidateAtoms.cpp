@@ -892,7 +892,7 @@ OSErr Validate_url_Entry( atomOffsetEntry *aoe, void *refcon )
 	} else {
 	
         if(vg.dashSegment)
-            errprint("url pointing to external data found in 'dref', violating Section 6.3.4.2. of ISO/IEC 23009-1:2012(E):  The 'moof' boxes shall use movie-fragment relative addressing for media data that does not use external data references.\n");
+            errprint("url pointing to external data found in 'dref', violating ISO/IEC 23009-1:2012(E), 6.3.4.2:  The 'moof' boxes shall use movie-fragment relative addressing for media data that does not use external data references.\n");
 
         BAILIFERR( GetFileCString( aoe, &locationP, offset, aoe->maxOffset - offset, &offset ) );
 	}
@@ -935,7 +935,7 @@ OSErr Validate_urn_Entry( atomOffsetEntry *aoe, void *refcon )
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
     if ((flags & 1) == 0 && vg.dashSegment)
-            errprint("urn entry with pointing to external data found in 'dref', violating Section 6.3.4.2. of ISO/IEC 23009-1:2012(E):  The 'moof' boxes shall use movie-fragment relative addressing for media data that does not use external data references.\n");
+            errprint("urn entry with pointing to external data found in 'dref', violating ISO/IEC 23009-1:2012(E), 6.3.4.2:  The 'moof' boxes shall use movie-fragment relative addressing for media data that does not use external data references.\n");
 
 	// Get data 
 	// name is required
@@ -1086,7 +1086,7 @@ OSErr Validate_stts_Atom( atomOffsetEntry *aoe, void *refcon )
 	vg.tabcnt++;
 
     if(vg.dashSegment && entryCount != 0)
-        errprint("stts atom, entry_count %d, violating\nSection 6.3.3. of ISO/IEC 23009-1:2012(E): The tracks in the \"moov\" box shall contain no samples \n(i.e. the entry_count in the \"stts\", \"stsc\", and \"stco\" boxes shall be set to 0)\n",entryCount);
+        errprint("stts atom, entry_count %d, violating\n ISO/IEC 23009-1:2012(E), 6.3.3: The tracks in the \"moov\" box shall contain no samples \n(i.e. the entry_count in the \"stts\", \"stsc\", and \"stco\" boxes shall be set to 0)\n",entryCount);
     
 	if(vg.cmaf && entryCount != 0){
 		errprint("CMAF check violated: Section 7.5.12. \"All boxes in SampleTableBox SHALL have or compute a sample count of 0\", found %d\n", entryCount);
@@ -1377,7 +1377,7 @@ OSErr Validate_stsc_Atom( atomOffsetEntry *aoe, void *refcon )
 	BAILIFERR( GetFileDataN32( aoe, &entryCount, offset, &offset ) );
 
     if(vg.dashSegment && entryCount != 0)
-        errprint("stsc atom, entry_count %d, violating\nSection 6.3.3. of ISO/IEC 23009-1:2012(E): The tracks in the \"moov\" box shall contain no samples \n(i.e. the entry_count in the \"stts\", \"stsc\", and \"stco\" boxes shall be set to 0)\n",entryCount);
+        errprint("stsc atom, entry_count %d, violating\n of ISO/IEC 23009-1:2012(E), 6.3.3: The tracks in the \"moov\" box shall contain no samples \n(i.e. the entry_count in the \"stts\", \"stsc\", and \"stco\" boxes shall be set to 0)\n",entryCount);
 
     if (!vg.dashSegment && entryCount == 0) warnprint("WARNING: STSC atom has no entries so is un-needed. If this is a DASH file, then 'dash' is missing as a compatible brand and this is a conformance issue, hence the following program execution is not reliable!!!\n");
 	
@@ -1467,7 +1467,7 @@ OSErr Validate_stco_Atom( atomOffsetEntry *aoe, void *refcon )
 	atomprint("entryCount=\"%ld\"\n", entryCount);
 
     if(vg.dashSegment && entryCount != 0)
-        errprint("stco atom, entry_count %d, violating\nSection 6.3.3. of ISO/IEC 23009-1:2012(E): The tracks in the \"moov\" box shall contain no samples \n(i.e. the entry_count in the \"stts\", \"stsc\", and \"stco\" boxes shall be set to 0)\n",entryCount);
+        errprint("stco atom, entry_count %d, violating\n ISO/IEC 23009-1:2012(E), 6.3.3: The tracks in the \"moov\" box shall contain no samples \n(i.e. the entry_count in the \"stts\", \"stsc\", and \"stco\" boxes shall be set to 0)\n",entryCount);
 
 	atomprint(">\n");
 	vg.tabcnt++;
@@ -2591,10 +2591,10 @@ OSErr Validate_tfhd_Atom( atomOffsetEntry *aoe, void *refcon )
     trafInfo->default_base_is_moof =  ((tf_flags & 0x020000) != 0);
 
     if(vg.dashSegment && !trafInfo->default_base_is_moof)
-        errprint("default-base-is-moof is not set, violating Section 6.3.4.2. of ISO/IEC 23009-1:2012(E): ... the flag 'default-base-is-moof' shall be set\n");
+        errprint("default-base-is-moof is not set, violating ISO/IEC 23009-1:2012(E), 6.3.4.2: ... the flag 'default-base-is-moof' shall be set\n");
     
     if(vg.dashSegment && trafInfo->base_data_offset_present)
-        errprint("base-data-offset-present is set, violating Section 6.3.4.2. of ISO/IEC 23009-1:2012(E): ... base-data-offset-present shall not be used\n");
+        errprint("base-data-offset-present is set, violating ISO/IEC 23009-1:2012(E), 6.3.4.2: ... base-data-offset-present shall not be used\n");
     
     if(trafInfo->base_data_offset_present)
         BAILIFERR( GetFileDataN64( aoe, &trafInfo->base_data_offset, offset, &offset ) );
@@ -3005,10 +3005,10 @@ OSErr Validate_emsg_Atom( atomOffsetEntry *aoe, void *refcon )
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
     
     if(version != 0)
-        errprint("version = 0 for emsg box according to Section 5.10.3.3.3 of ISO/IEC 23009-1:2013(E)\n");
+        errprint("version = 0 for emsg box according to ISO/IEC 23009-1:2013(E), 5.10.3.3.3\n");
         
     if(flags != 0)
-        errprint("flags = 0 for emsg box according to Section 5.10.3.3.3 of ISO/IEC 23009-1:2013(E)\n");
+        errprint("flags = 0 for emsg box according to ISO/IEC 23009-1:2013(E), 5.10.3.3.3\n");
 
     BAILIFERR( GetFileCString( aoe, &scheme_id_uri, offset, aoe->maxOffset - offset, &offset ) );
     
@@ -3207,7 +3207,7 @@ OSErr Validate_sidx_Atom( atomOffsetEntry *aoe, void *refcon )
         }else
         {   //indexRange missing, check if it's a IOP test vector without @RepresentationIndex
             if (vg.dash264base)
-              errprint("DASH-IF IOP 4.2 check violated - Section 3.2.1. \" For on-demand profiles the Indexed Media Segment as defined in ISI/IEC 23009-1, clause 6.3.4.4 shall be used. In this case the @indexRange attribute shall be present.\"; however, sidx present without @indexRange.\n");
+              errprint("DASH-IF IOP 4.2 check violated - Section 3.2.1. \" For on-demand profiles the Indexed Media Segment as defined in ISO/IEC 23009-1, clause 6.3.4.4 shall be used. In this case the @indexRange attribute shall be present.\"; however, sidx present without @indexRange.\n");
         }
     }
     
