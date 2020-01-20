@@ -80,7 +80,7 @@
 			<!-- R3.8 -->
 			<assert test="if ((child::dash:SegmentBase and child::dash:SegmentTemplate and child::dash:SegmentList) or (child::dash:SegmentBase and child::dash:SegmentTemplate) or (child::dash:SegmentBase and child::dash:SegmentList) or (child::dash:SegmentTemplate and child::dash:SegmentList)) then false() else true()">At most one of SegmentBase, SegmentTemplate and SegmentList shall be defined in AdaptationSet.</assert>
 			<!-- R3.9 -->
-			<assert test="if ((@minFrameRate and (some $fr in descendant::dash:Representation/@frameRate satisfies dlb:fractionalToFloat($fr) lt dlb:fractionalToFloat(@minFrameRate))) or (@maxFrameRate and (some $fr in descendant::dash:Representation/@frameRate satisfies dlb:fractionalToFloat($fr) gt dlb:fractionalToFloat(@maxFrameRate)))) then false() else true()">ISO/IEC 23009-1 Section 5.3.3.2: The value of the frameRate attribute shall be in the range defined by the AdaptationSet.</assert>
+			<assert test="if ((@minFrameRate and (some $fr in descendant::dash:Representation/@frameRate satisfies dlb:fractionalToFloat($fr) lt dlb:fractionalToFloat(@minFrameRate))) or (@maxFrameRate and (some $fr in descendant::dash:Representation/@frameRate satisfies dlb:fractionalToFloat($fr) gt dlb:fractionalToFloat(@maxFrameRate)))) then false() else true()">ISO/IEC 23009-1:2019 Section 5.3.3.1: The value of the frameRate attribute shall be in the range defined by the AdaptationSet.</assert>
                         <!-- HbbTV profile checks -->
                         <assert test="if((contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or (not(@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) and (@subsegmentAlignment = 'true')) then false() else true()">HbbTV-DVB DASH Validation Requirements check violated for HbbTV: Section 'MPD' - The MPD contains an attribute that is not part of the HbbTV profile', i.e., found 'subsegmentAlignment' as true</assert>
                         <assert test="if((contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or (not(@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) and (@subsegmentStartsWithSAP = '1' or @subsegmentStartsWithSAP = '2')) then false() else true()">HbbTV-DVB DASH Validation Requirements check violated for HbbTV: Section 'MPD' - The MPD contains an attribute that is not part of the HbbTV profile', i.e., found 'subsegmentStartsWithSAP' as 1 or 2</assert>
@@ -219,7 +219,7 @@
 			<!-- R14.2 -->
 			<assert test="if (not(@schemeIdUri = 'urn:mpeg:dash:14496:10:frame_packing_arrangement_type:2011') and not(@schemeIdUri = 'urn:mpeg:dash:13818:1:stereo_video_format_type:2011')) then false() else true()">schemeIdUri for FramePacking descriptor shall be urn:mpeg:dash:14496:10:frame_packing_arrangement_type:2011 or urn:mpeg:dash:13818:1:stereo_video_format_type:2011.</assert>
 			<!-- R14.3 -->
-			<assert test="if (not(@value = '0' or @value = '1' or @value = '2' or @value = '3' or @value = '4' or @value = '5' or @value = '6')) then false() else true()">The value of FramePacking shall be 0 to 6 as defined in ISO/IEC 23001-8.</assert>
+			<assert test="if (not(@value = '0' or @value = '1' or @value = '2' or @value = '3' or @value = '4' or @value = '5' or @value = '6')) then false() else true()">The value of FramePacking shall be 0 to 6 as defined in ISO/IEC 23091(all parts).</assert>
 		</rule>
 	</pattern>
 	<pattern>
@@ -227,7 +227,7 @@
 		<!-- R15.*: Check the conformance of AudioChannelConfiguration -->
 		<rule context="dash:AudioChannelConfiguration">
 			<!-- R15.0 -->
-			<assert test="if ((@schemeIdUri = 'urn:mpeg:dash:outputChannelPositionList:2012') and not(count(tokenize(@value, ' ')) > 1)) then false() else true()">If URI urn:mpeg:dash:outputChannelPositionList:2012 is used the value attribute shall be a space-delimited list as defined in ISO/IEC 23001-8.</assert>
+			<assert test="if ((@schemeIdUri = 'urn:mpeg:dash:outputChannelPositionList:2012') and not(count(tokenize(@value, ' ')) > 1)) then false() else true()">If URI urn:mpeg:dash:outputChannelPositionList:2012 is used the value attribute shall be a space-delimited list as defined in ISO/IEC 23091(all parts).</assert>
 
 		</rule>
 	</pattern>

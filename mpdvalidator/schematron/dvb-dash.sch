@@ -35,7 +35,7 @@
 		<title>Preselection element for DVB DASH 2017 profile</title>
 		<rule context="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]/dash:Period/dash:Preselection[dlb:isAdaptationSetAudio(.)]">
 			<assert test="dash:Role[@schemeIdUri='urn:mpeg:dash:role:2011']">Every AC-4 or MPEG-H Audio Preselection element shall include at least one Role element using the scheme
-				"urn:mpeg:dash:role:2011" as defined in ISO/IEC 23009-1 [1].</assert>
+				"urn:mpeg:dash:role:2011" as defined in ISO/IEC 23009-1:2019 [1].</assert>
 
 			<!-- the ID of the bundle is that ID which points to an AdapationSet which is not an Auxiliary -->
 			<let name="psc" value="tokenize(@preselectionComponents,' ')"/>

@@ -905,7 +905,7 @@
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
-               <svrl:text>ISO/IEC 23009-1 Section 5.3.3.2: The value of the frameRate attribute shall be in the range defined by the AdaptationSet.</svrl:text>
+               <svrl:text>ISO/IEC 23009-1:2019 Section 5.3.3.1: The value of the frameRate attribute shall be in the range defined by the AdaptationSet.</svrl:text>
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
@@ -1473,7 +1473,7 @@
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
-               <svrl:text>The value of FramePacking shall be 0 to 6 as defined in ISO/IEC 23001-8.</svrl:text>
+               <svrl:text>The value of FramePacking shall be 0 to 6 as defined in ISO/IEC 23091(all parts).</svrl:text>
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
@@ -1498,7 +1498,7 @@
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
-               <svrl:text>If URI urn:mpeg:dash:outputChannelPositionList:2012 is used the value attribute shall be a space-delimited list as defined in ISO/IEC 23001-8.</svrl:text>
+               <svrl:text>If URI urn:mpeg:dash:outputChannelPositionList:2012 is used the value attribute shall be a space-delimited list as defined in ISO/IEC 23091(all parts).</svrl:text>
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
@@ -2513,7 +2513,7 @@
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
                <svrl:text>Every AC-4 or MPEG-H Audio Preselection element shall include at least one Role element using the scheme
-				"urn:mpeg:dash:role:2011" as defined in ISO/IEC 23009-1 [1].</svrl:text>
+				"urn:mpeg:dash:role:2011" as defined in ISO/IEC 23009-1:2019 [1].</svrl:text>
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
