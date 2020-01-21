@@ -64,7 +64,7 @@ function checkPresentation(){
 }
 
 function checkCMAFPresentation(){   
-    global $session_dir, $mpd_features, $current_period, $profiles, 
+    global $session_dir, $mpd_features, $current_period, $profiles, $period_timing_info,
             $cfhd_SwSetFound,$caac_SwSetFound, $encryptedSwSetFound, 
             $presentation_infofile, $adaptation_set_template;
     
@@ -87,7 +87,7 @@ function checkCMAFPresentation(){
         return;
     }
     
-    $PresentationDur = time_parsing($mpd_features['mediaPresentationDuration']);
+    $PresentationDur = $period_timing_info[1];
     $adapts = $mpd_features['Period'][$current_period]['AdaptationSet'];
     for($adapt_count=0; $adapt_count<sizeof($adapts); $adapt_count++){
         $Adapt = $adapts[$adapt_count];
@@ -311,13 +311,18 @@ function checkCMAFPresentation(){
     }
     
     //Check if presentation duration is same as longest track duration.
-    if(round($PresentationDur,1)!=round(max($trackDurArray),1))
-        fprintf($opfile, "**'CMAF check violated: Section 7.3.6 - 'The duration of a CMAF presentation shall be the duration of its longest CMAF track', but not found (Presentation time= ".$PresentationDur." and longest Track= ".max($trackDurArray).") \n");
+    if($PresentationDur == 0) {
+        fprintf($opfile, "Warning for CMAF validation -Presentation duration is unknown, therefore the validation checks regarding CMAF presentation duration (Section 7.3.6) will be skipped.\n");
+    }
+    else{
+        if(round($PresentationDur,1)!=round(max($trackDurArray),1))
+            fprintf($opfile, "**'CMAF check violated: Section 7.3.6 - 'The duration of a CMAF presentation shall be the duration of its longest CMAF track', but not found (Presentation time= ".$PresentationDur." and longest Track= ".max($trackDurArray).") \n");
     
-    for($y=0;$y<count($trackDurArray);$y++){
-        if(!((round($trackDurArray[$y],1)>=round($PresentationDur-$maxFragDur,1)) && (round($trackDurArray[$y],1)<=round($PresentationDur+$maxFragDur,1))))
-            fprintf ($opfile,"**'CMAF check violated: Section 7.3.6-'CMAF Tracks in a CMAF Presentation SHALL equal the CMAF Presentation duration within a tolerance of the longest video CMAF Fragment duration ', but not found in the Track ".$y." \n");
+        for($y=0;$y<count($trackDurArray);$y++){
+            if(!((round($trackDurArray[$y],1)>=round($PresentationDur-$maxFragDur,1)) && (round($trackDurArray[$y],1)<=round($PresentationDur+$maxFragDur,1))))
+                fprintf ($opfile,"**'CMAF check violated: Section 7.3.6-'CMAF Tracks in a CMAF Presentation SHALL equal the CMAF Presentation duration within a tolerance of the longest video CMAF Fragment duration ', but not found in the Track ".$y." \n");
 
+        }
     }
     
     if(($profile_cmfhd || $profile_cmfhdc ||$profile_cmfhds) && $videoFound && $cfhd_SwSetFound!=1)
