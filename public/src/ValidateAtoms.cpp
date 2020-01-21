@@ -2657,6 +2657,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
     UInt32 i;
     UInt64 prevTrunCummulatedSampleDuration = 0;
     TrafInfoRec *trafInfo = (TrafInfoRec *) refcon;
+    UInt64 sampleSizesTotal = 0;
     
     TrunInfoRec *trunInfo = &trafInfo->trunInfo[trafInfo->processedTrun];
 
@@ -2792,6 +2793,10 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
     
     vg.tabcnt++;
     for(int i=0; i<trunInfo->sample_count; i++){
+        if(vg.cmaf){
+            sampleSizesTotal += trunInfo->sample_size[i];
+        }
+        
 	sampleprint("<sampleInfo sampleDuration=\"%ld\"", trunInfo->sample_duration[i]);
 	sampleprintnotab(" sampleSize=\"%ld\"", trunInfo->sample_size[i]);
 	sampleprintnotab(" sampleFlags=\"%ld\"", EndianU32_BtoN(trunInfo->sample_flags[i]));
@@ -2804,6 +2809,9 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
     atomprint("cummulatedSampleDuration=\"%lld\"\n", trunInfo->cummulatedSampleDuration);
     atomprint("earliestCompositionTime=\"%ld\"\n", trafInfo->earliestCompositionTimeInTrackFragment);
     atomprint("data_offset=\"%ld\"\n", trunInfo->data_offset);
+    if(vg.cmaf) {
+        atomprint("sampleSizeTotal=\"%ld\"\n", sampleSizesTotal);
+    }
     atomprint(">\n");
     
     // All done
