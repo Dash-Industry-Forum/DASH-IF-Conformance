@@ -42,7 +42,7 @@ $CMAFMediaProfileAttributesSubtitle = array(
 
 function checkCMAFTracks(){
     global $session_dir, $mpd_features, $current_period, $current_adaptation_set, $current_representation, 
-            $adaptation_set_template, $reprsentation_template, $reprsentation_error_log_template, $profiles, $cmaf_mediaTypes,
+            $adaptation_set_template, $reprsentation_template, $reprsentation_error_log_template, $reprsentation_mdat_template, $profiles, $cmaf_mediaTypes,
             $progress_report, $progress_xml, $cmaf_mediaProfiles;
     
     $adapt_dir = str_replace('$AS$', $current_adaptation_set, $adaptation_set_template);
@@ -118,6 +118,9 @@ function checkCMAFTracks(){
                 $errorInTrack=1;
             }
         }
+        
+        $offsetinfo = 'Period' . $current_period . '/' . str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_mdat_template);
+        $mdat_file = open_file($session_dir . '/' . $offsetinfo . '.txt', 'r');
         for($j=0;$j<$xml_num_moofs;$j++){
             if($xml_trun->item($j)->getAttribute('version') ==1){
                 $firstSampleCompTime=$xml_trun->item($j)->getAttribute('earliestCompositionTime');
@@ -125,11 +128,25 @@ function checkCMAFTracks(){
                 if($firstSampleCompTime!=$firstDecTime)
                     fprintf($opfile, "**'CMAF check violated: Section 7.5.17- For 'trun' version 1, the composition time of 1st presented sample in a CMAF Segment SHALL be same as 1st Sample decode time (baseMediaDecodeTime), but not found in Rep ".$id." \n");
             }
-            $moofSize=$xml_moof->item($j)->getAttribute('size');
-            $dataOffset=$xml_trun->item($j)->getAttribute('data_offset');
-            if($dataOffset != $moofSize + 8)
-                fprintf($opfile, "**'CMAF check violated: Section 7.3.2.3- All media samples in a CMAF Chunk SHALL be addressed by byte offsets in the TrackRunBox relative to first byte of the MovieFragmentBox', but not found for Rep ".$id." Chunk ".($j+1)."\n");
+            
+            if($mdat_file != NULL){
+                $mdat_info = array();
+                if(!feof($mdat_file)){
+                    $mdat_info = explode(" ", fgets($mdat_file));
+                }
+                if(!empty($mdat_info)){
+                    $moofFirstByte = $xml_moof->item($j)->getAttribute('offset');
+                    $dataOffset = $xml_trun->item($j)->getAttribute('data_offset');
+                    $trunSampleSize = $xml_trun->item($j)->getAttribute('sampleSizeTotal');
+                    // Check that $dataOffset leads to a position within the mdat and that the total length of content in the trun doesn't, when added to this value, go beyond the end of the mdat.
+                    if(!($moofFirstByte+$dataOffset >= $mdat_info[0] && $moofFirstByte+$dataOffset+$trunSampleSize <= $mdat_info[0]+$mdat_info[1] )) {
+                        fprintf($opfile, "**'CMAF check violated: Section 7.3.2.3- All media samples in a CMAF Chunk SHALL be addressed by byte offsets in the TrackRunBox relative to first byte of the MovieFragmentBox', but not found for Rep ".$id." Chunk ".($j+1)."\n");
+                    }
+                }
+            }
         }
+        fclose($mdat_file);
+        
         if($errorInTrack)
             fprintf($opfile, "**'CMAF check violated: Section 7.3.2.2- The concatenation of a CMAF Header and all CMAF Fragments in the CMAF Track in consecutive decode order SHALL be a valid fragmented ISOBMFF file', but not found for Rep ".$id."\n");
         
