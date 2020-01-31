@@ -802,21 +802,71 @@ function submit()
 	url="upload";
     
     var stringurl = [];
-	
+    var	checkstr = "";
+
     stringurl[0] = url;
 
     if($("#mpdvalidation").is(':checked'))
+    {
         mpdonly = 1;
+		checkstr += 'M';
+    }
+	else
+	{
+		mpdonly = 0;
+		checkstr += 'm';
+	}
+
     if($("#dvbprofile").is(':checked'))
+    {
         dvb = 1;
+        checkstr += "V";
+    }
+    else
+    {
+        checkstr += "v";
+    }
+
     if($("#hbbtvprofile").is(':checked'))
+    {        
         hbbtv= 1;
+        checkstr += "H";
+    }
+    else
+    {
+        checkstr += "h";
+    }
+
     if($("#cmafprofile").is(':checked'))
+    {
+        checkstr += "C";
         cmaf = 1;
+    }
+    else
+    {
+        checkstr += "c";
+    }
+
     if($("#dashifprofile").is(':checked'))
+    {
+        checkstr += "D";
         dashif = 1;
+    }
+    else
+    {
+        checkstr += "d";
+    }
+
+
     if($("#ctawaveprofile").is(':checked'))
+	{
+		checkstr += "W";
         ctawave = 1;
+    }
+	else
+	{
+		checkstr += "w";
+	}
     
     stringurl[1]=mpdonly;
     stringurl[2]=cmaf;
@@ -850,8 +900,24 @@ function submit()
     document.getElementById("drop_div").disabled="true";
     //document.getElementById('img').style.visibility='visible';
     //document.getElementById('par').style.visibility='visible';
-    //Generate a random folder name for results in "temp" folder
-    dirid="id"+Math.floor((Math.random() * 10000000000) + 1);
+
+    //Generate a unique timestamped folder name for results in "temp" folder
+    var url_parts = url.split(".");
+    var base_name = url_parts[url_parts.length - 2]; // the stream name
+    
+    now=new Date();
+    var date_str = "";
+    date_str += now.getFullYear().toString();
+    date_str += (now.getMonth()+1).toString();
+    date_str += now.getDate().toString();
+    date_str += now.getHours().toString();
+    date_str += now.getMinutes().toString();
+    date_str += now.getSeconds().toString();
+    date_str += ".";
+    date_str += now.getMilliseconds().toString();
+    
+    base_name+="_" + checkstr + "_" + date_str;
+    dirid=base_name;
 
     if(uploaded===true){ // In the case of file upload.
         fd.append("foldername", dirid);
