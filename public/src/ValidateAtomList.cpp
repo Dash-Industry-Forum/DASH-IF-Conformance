@@ -51,7 +51,9 @@ OSErr ValidateFileAtoms( atomOffsetEntry *aoe, void *refcon )
 	OSErr atomerr = noErr;
 	atomOffsetEntry *entry;
 	UInt64 minOffset, maxOffset;
-	
+    char *test = NULL;
+    UInt32 atom_length = 0;
+    	
 	minOffset = aoe->offset + aoe->atomStartSize;
 	maxOffset = aoe->offset + aoe->size - aoe->atomStartSize;
 	
@@ -127,11 +129,30 @@ OSErr ValidateFileAtoms( atomOffsetEntry *aoe, void *refcon )
 		entry = &list[i];
 
 		switch (entry->type) {
-			case 'mdat':
 			case 'skip':
             case 'ssix':
 			case 'free':
-				break;
+			    break;
+            case 'mdat':
+                BAILIFERR ( PeekFileDataN32( entry, &atom_length, entry->offset )); 
+                printf( "<%s> : atom_length %08X\n", __FUNCTION__, atom_length);
+
+                BAILIFNIL ( test = (char*)malloc(atom_length), allocFailedErr );
+                if (!PeekFileData( entry, test, entry->offset, atom_length ))
+                {
+                    printf("<%s> : mdat read OK\n", __FUNCTION__);
+                    toggleprintsample( 1 );
+                    BAILIFERR ( Validate_mdat_Atom(entry, NULL) );
+                    //sampleprinthexandasciidata(test, atom_length);
+                    toggleprintsample( 0 );
+                }
+                else
+                {
+                    fprintf(stderr, "<%s> : atom read failed\n", __FUNCTION__);
+                }
+
+                free(test);
+                break;
 
             case 'styp':
                 atomerr = ValidateAtomOfType( 'styp', 0, 
@@ -226,11 +247,16 @@ OSErr ValidateFileAtoms( atomOffsetEntry *aoe, void *refcon )
         logLeafInfo(vg.mir);
    }
    
-   --vg.tabcnt; atomprint("</atomlist>\n");
    
- 	aoe->aoeflags |= kAtomValidated;
-	
+
+    goto exit_ok;
+    	
 bail:
+    fprintf(stderr, "BAILED\n");
+
+exit_ok:
+   --vg.tabcnt; atomprint("</atomlist>\n");
+ 	aoe->aoeflags |= kAtomValidated;
 	if ( vg.mir != NULL) {
 		dispose_mir(vg.mir);
 	}
@@ -1919,6 +1945,7 @@ OSErr Validate_traf_Atom( atomOffsetEntry *aoe, void *refcon )
     MoofInfoRec *moofInfo = (MoofInfoRec *)refcon;
     
     TrafInfoRec *trafInfo = &moofInfo->trafInfo[moofInfo->processedTrackFragments];
+    trafInfo->moofInfo = moofInfo;
 
     moofInfo->processedTrackFragments++;
     trafInfo->cummulatedSampleDuration = 0;

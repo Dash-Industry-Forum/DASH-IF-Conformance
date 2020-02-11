@@ -60,6 +60,61 @@ UInt64 inflateOffset(UInt64 offset64)
 
 	return adjustedOffset;
 }
+
+int PeekFileDataN32 ( atomOffsetEntry *aoe, void *dataP, UInt64 offset64 )
+{
+#pragma unused(aoe)
+	int err = 0;
+    fpos_t f_pos;
+    	
+	if (offset64 > 0x7FFFFFFFL) {
+		fprintf(stderr,"sorry - can't handle file offsets > 31-bits\n");
+		err = noCanDoErr;
+		goto bail;
+	}
+	
+    err = fgetpos(vg.inFile, &f_pos);
+	if (err) goto bail;
+    
+    err = GetFileDataN32(aoe, dataP, offset64, NULL);
+	if (err) goto bail;
+
+    err = fsetpos(vg.inFile, &f_pos);
+	if (err) goto bail;
+
+bail:
+	return err;
+}
+
+
+int PeekFileData( atomOffsetEntry *aoe, void *dataP, UInt64 offset64, UInt64 size64 )
+{
+#pragma unused(aoe)
+	int err = 0;
+	long amtRead = 0;
+	long size = size64;
+    fpos_t f_pos;
+    	
+	if (offset64 > 0x7FFFFFFFL) {
+		fprintf(stderr,"sorry - can't handle file offsets > 31-bits\n");
+		err = noCanDoErr;
+		goto bail;
+	}
+	
+    err = fgetpos(vg.inFile, &f_pos);
+	if (err) goto bail;
+    
+    err = GetFileData(aoe, dataP, offset64, size64, NULL);
+	if (err) goto bail;
+
+    err = fsetpos(vg.inFile, &f_pos);
+	if (err) goto bail;
+
+bail:
+	return err;
+}
+
+
 //==========================================================================================
 
 int GetFileData( atomOffsetEntry *aoe, void *dataP, UInt64 offset64, UInt64 size64, UInt64 *newoffset64 )

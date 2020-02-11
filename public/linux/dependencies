@@ -1,5 +1,9 @@
 ./obj/ValidateBitStreams.o: ../src/ValidateBitStreams.cpp ../src/ValidateMP4.h \
  ../src/EndianMP4.h
+./obj/ValidateDolby.o: ../src/ValidateDolby.cpp ../src/ValidateMP4.h \
+ ../src/EndianMP4.h
+./obj/ValidateMdatAtom.o: ../src/ValidateMdatAtom.cpp ../src/ValidateMP4.h \
+ ../src/EndianMP4.h
 ./obj/PostprocessData.o: ../src/PostprocessData.cpp ../src/HelperMethods.h \
  ../src/ValidateMP4.h ../src/EndianMP4.h ../src/PostprocessData.h
 ./obj/ValidateHints.o: ../src/ValidateHints.cpp ../src/ValidateMP4.h \

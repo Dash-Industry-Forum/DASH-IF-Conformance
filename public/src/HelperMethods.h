@@ -35,6 +35,9 @@ SidxInfoRec *getSidxByOffset(SidxInfoRec *sidxInfo, UInt32 numSidx, UInt64 offse
 bool checkSegmentBoundry(UInt64 offsetLow, UInt64 offsetHigh);
 int getSegmentNumberByOffset(UInt64 offset);
 void logLeafInfo(MovieInfoRec *mir);
+UInt64 GetVariableLengthData(BitBuffer *bb, UInt32 wordLength, OSErr *errout);
+void SetVariableLengthData(BitBuffer *bb, UInt32 wordLength, UInt64 data64, OSErr *errout);
+
 
 #endif //#define _SRC_HELPER_METHODS_H_
 

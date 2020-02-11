@@ -123,10 +123,12 @@ void expandArgv(int srcArgc, char** srcArgV, int &dstArgc, char** &dstArgv)
         {
           char * pch;
           pch = strtok(line,"\n, ");                  //remove \n character and space
-          pch=strtok(pch," ");
-
-          int dummy;
-          writeEntry(pch,dummy,dstArgv[dstIndex],dstIndex,maxArgc); //Dont change srcIndex any further 
+          while (pch != NULL)
+          {
+              int dummy;
+              writeEntry(pch,dummy,dstArgv[dstIndex],dstIndex,maxArgc); //Dont change srcIndex any further 
+              pch=strtok(NULL,"\n ");
+          }
         }
         
         fclose(f);        
@@ -250,8 +252,16 @@ int main(void)
     char ** arrayArgc;
     int uArgc;
     expandArgv(argc,argv,uArgc,arrayArgc);   
-    
-		
+   
+
+    fprintf (stdout, "<%s> : argc %d\n", __FUNCTION__, argc);
+    for (int i=0; i < argc; i++)
+    {
+        fprintf (stdout, "<%s> : argv[%d] <%s>\n", __FUNCTION__,  i, argv[i]);
+    }
+
+    //return (0);
+    		
 	// Check the parameters
 	for( argn = 1; argn < uArgc ; argn++ )
 	{
@@ -726,7 +736,10 @@ bail:
 		fclose(stderr);
 	}
 	if(vg.atomxml){
-		fclose(f);
+		if (f)
+		{
+			fclose(f);
+		}
 	}
 
 	return err;
@@ -891,13 +904,31 @@ void atomprintnotab(const char *formatStr, ...)
 	va_end(ap);
 }
 
+void atomtable_begin ( const char *name )
+{
+    if (vg.tabcnt != 0)
+    {
+        atomprint("<\n");
+    }
+    atomprint("<%s>\n", name);
+    vg.tabcnt++;
+}
+
+void atomtable_end ( const char *name )
+{
+    vg.tabcnt++;
+    atomprint("<\%s>\n", name);
+}
+
+
 void atomprint(const char *formatStr, ...)
 {
 	va_list 		ap;
 	va_start(ap, formatStr);
 	
 	if (vg.printatom) {
-		long tabcnt = vg.tabcnt;
+	    printf ("vg.printatom\n");
+    	long tabcnt = vg.tabcnt;
 		while (tabcnt--) {
 			fprintf(_stdout,myTAB);
 		}
@@ -1082,7 +1113,7 @@ void sampleprinthexandasciidata(char *dataP, UInt32 size)
 }
 
 
-void warnprint(const char *formatStr, ...)
+void _warnprint(const char *formatStr, ...)
 {
 	va_list 		ap;
 	va_start(ap, formatStr);
@@ -1094,7 +1125,7 @@ void warnprint(const char *formatStr, ...)
 }
 
 
-void errprint(const char *formatStr, ...)
+void _errprint(const char *formatStr, ...)
 {
 	va_list 		ap;
 	va_start(ap, formatStr);

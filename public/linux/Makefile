@@ -23,9 +23,10 @@ OBJDIR= ./obj
 
 CC=     $(shell which g++)
 
-LIBS= #-lcurl
-FLAGS= -ffloat-store -Wall -I$(INCDIR) -DLITTLEENDIAN -Wno-multichar -Wno-unknown-pragmas -fpermissive -Wno-write-strings -fno-stack-protector
-
+LIBS= -lgcov #-lcurl
+FLAGS=-ffloat-store -Wall -I$(INCDIR) -DLITTLEENDIAN -Wno-multichar -Wno-unknown-pragmas -fpermissive -Wno-write-strings -fno-stack-protector
+FLAGS+=-fprofile-generate -fprofile-arcs -ftest-coverage -Wl,-lgcov
+LDFLAGS+=" -lgcov --coverage -WL -lgcov"
 ifdef DBG
 SUFFIX= #.dbg
 FLAGS+= -g
@@ -33,6 +34,8 @@ else
 SUFFIX=
 FLAGS+= -O2 -DGCC
 endif
+
+FLAGS+=-ftest-coverage -fprofile-arcs
 
 OBJSUF= .o$(SUFFIX)
 
