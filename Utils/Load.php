@@ -47,6 +47,50 @@ function mpd_load(){
     return $MPD;
 }
 
+assert_options(ASSERT_ACTIVE, 1);
+assert_options(ASSERT_BAIL, 1);
+assert_options(ASSERT_QUIET_EVAL, 1);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+function show_errors()
+{
+	$errors = libxml_get_errors();
+	foreach ($errors as $error) {
+		echo display_xml_error($error, $xml);
+	}
+	libxml_clear_errors();
+}
+
+function display_xml_error($error, $xml)
+{
+    $return  = $xml[$error->line - 1] . "\n";
+    $return .= str_repeat('-', $error->column) . "^\n";
+
+    switch ($error->level) {
+	   case LIBXML_ERR_WARNING:
+		    $return .= "Warning $error->code: ";
+	    break;
+	   case LIBXML_ERR_ERROR:
+		  $return .= "Error $error->code: ";
+	   break;
+	   case LIBXML_ERR_FATAL:
+		  $return .= "Fatal Error $error->code: ";
+	   break;
+    }
+
+    $return .= trim($error->message) .
+	       "\n  Line: $error->line" .
+	"\n  Column: $error->column";
+
+    if ($error->file) {
+	$return .= "\n  File: $error->file";
+    }
+
+    return "$return\n\n--------------------------------------------\n\n";
+}	
+
+
 /*
  * Get the DOM document provided by the $path
  * @name: get_doc
@@ -55,7 +99,9 @@ function mpd_load(){
  */
 function get_doc($path){
     $return_val = FALSE;
-    
+
+    $contents  = file_get_contents($path);
+
     $loaded = simplexml_load_file($path);
     if(!$loaded)
         return $return_val;

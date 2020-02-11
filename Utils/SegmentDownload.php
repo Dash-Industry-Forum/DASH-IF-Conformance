@@ -49,6 +49,7 @@ function download_data($directory, $array_file, $is_subtitle_rep){
     $totalDataProcessed = 0; // bytes processed within segments
     $totalDataDownloaded = 0;
     $downloadMdat=0;
+    $downloadAll=1;
     $byte_range_array = array();
     # Initialize curl object
     $ch = curl_init();
@@ -116,7 +117,7 @@ function download_data($directory, $array_file, $is_subtitle_rep){
                         $percent = (int) (100 * $index / (sizeof($array_file) - 1)); // percent of remaining segments
                     
                     $name = substr($content, $location + 3, 4); //get box name exist in the next 4 bytes from the bytes containing the size
-                    if ($name != 'mdat'){
+                    if ($downloadAll || ($name != 'mdat') ){
                         # If it is not mdat box download it
                         # The total size being downloaded is location + size
                         # If the amount of byte processed < the data downloaded at begining

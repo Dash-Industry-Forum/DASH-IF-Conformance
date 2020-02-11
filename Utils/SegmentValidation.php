@@ -27,7 +27,9 @@ function validate_segment($curr_adapt_dir, $dir_in_use, $period, $adaptation_set
         
         ## Run the backend
         $returncode = run_backend($config_file_loc);
-        
+
+        $varinfo = var_export($adaptation_set, TRUE);
+
         ## Analyse the results and report them
         $file_location = analyze_results($returncode, $curr_adapt_dir, $rep_dir_name);
     }
@@ -225,8 +227,8 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     else
         $offsetinfo = $rep_dir_name . '_' . $hls_mdat_file;
     
-    fwrite($file, "-offsetinfo" . "\n");
-    fwrite($file, $session_dir . '/' . $offsetinfo . '.txt' . "\n");
+    //fwrite($file, "-offsetinfo" . "\n");
+    //fwrite($file, $session_dir . '/' . $offsetinfo . '.txt' . "\n");
     
     $flags = (!$hls_manifest) ? construct_flags($period, $adaptation_set, $representation) . $additional_flags : $additional_flags;
     $piece = explode(" ", $flags);
