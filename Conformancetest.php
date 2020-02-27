@@ -35,31 +35,31 @@
     <link rel="STYLESHEET" type="text/css" href="tree/dhtmlxTree/codebase/dhtmlxtree.css">
     <script type="text/javascript"  src="tree/dhtmlxTree/codebase/dhtmlxtree.js"></script>
     <script type="text/javascript" src="tree/dhtmlxTree/codebase/ext/dhtmlxtree_json.js"></script>
-    
+
     <link href="gdpr/css/jquery-eu-cookie-law-popup.css" rel="stylesheet">
     <script src="gdpr/js/jquery-eu-cookie-law-popup.js"></script>
-<?php 
+<?php
     if(isset($_REQUEST['mpdurl']))
     {
         $url = $_REQUEST['mpdurl'];     // To get url from POST request.
     }
     else
         $url = "";
-    
+
     if(isset($_REQUEST['cmaf']))
     {
         $cmaf = $_REQUEST['cmaf'];
     }
     else
         $cmaf = 0;
-    
+
     if(isset($_REQUEST['dvb']))
     {
         $dvb = $_REQUEST['dvb'];     // To get url from POST request.
     }
     else
         $dvb = 0;
-    
+
     if(isset($_REQUEST['hbbtv']))
     {
         $hbbtv = $_REQUEST['hbbtv'];     // To get url from POST request.
@@ -101,21 +101,21 @@
         //To aid the localhost testing of the page, use CSP upgrade only if page is on https server.
         if(window.location.protocol== "https:")
             $('head').append('<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />');
-        
-        //Display the version number after refering to change log.     
+
+        //Display the version number after refering to change log.
         $.post(
                 "../DASH/IOPVersion.php",
         ).done(function(response){
             document.getElementById("footerVersion").innerHTML=response;
         });
-        
+
         var mpdonlyvalidation = "<?php echo $mpdonly; ?>";
         if(mpdonlyvalidation === "1"){
             if(!($("#mpdvalidation").is(':checked'))){
                 document.getElementById("mpdvalidation").checked = true;
             }
         }
-        
+
         url = "<?php echo $url; ?>";
         if(url !== "")
         {
@@ -143,37 +143,37 @@
     }
 
 </script>
-    
-    
+
+
 <style>
 
     * {
         margin: 0;
       }
-      
+
     html, body {
         height: 100%;
         /*background-image: url("http://localhost/Conformance-Software/webfe/img/background_image/page_background4.jpg");
-        background-size:     cover;                     
+        background-size:     cover;
         background-repeat:   no-repeat;
         background-position: center center; */
      }
-     
+
     .page-wrap {
         min-height: 100%;
         /* equal to footer height */
-        margin-bottom: -90px; 
+        margin-bottom: -90px;
     }
-    
+
     .page-wrap:after {
         content: "";
         display: block;
     }
-    
+
     .site-footer, .page-wrap:after {
-        height: 10%; 
+        height: 10%;
     }
-    
+
     .site-footer {
         background: #909090;
         margin-top: auto;
@@ -181,25 +181,25 @@
     .mytext {
         width: 600px;
     }
-    
+
     div.hidden{
         display: none;
     }
-    
+
     div.normal{
         display: block;
     }
-    
+
     #tot{
         text-align:center;
     }
-    
+
     #groupA{
         text-align:center;
         margin-left:-5%;
         margin-top:1%;
     }
-    
+
     .box{
         display:inline-block;
         text-align:center;
@@ -209,26 +209,26 @@
         color: #fff;
         margin-top:0.2%;
     }
-    
+
     #progressbar{
         text-align:center;
     }
-    
+
     #to{
         text-align:center;
         border-width:medium;
     }
-    
+
     #dash{
         text-align:center;
         margin-top: 15%;
-        
+
     }
-    
+
     p.sansserif {
         font-family: Arial, Helvetica, sans-serif;
     }
-    
+
     #btn8 {
         background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #007bff), color-stop(1, #007bff) );
         filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#bddbfa', endColorstr='#80b5ea');
@@ -265,20 +265,20 @@
         -moz-border-radius: 5px;
         border-radius: 5px;
     }
-    
+
     #btn8:hover:enabled {
         background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #0069d9), color-stop(1, #0069d9) );
         background:-moz-linear-gradient( center top, #0062cc 5%, #0062cc 100% );
         filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#80b5ea', endColorstr='#bddbfa');
         background-color:#80b5ea;
     }
-    
+
     #btn8:active:enabled {
         transform: translateY(4px);
         /*position:relative;
         top:1px;*/
     }
-    
+
     #btn8:disabled {
         background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #fff), color-stop(1, #007bff) );
         background:-moz-linear-gradient( center top, #007bff 5%, #007bff 100% );
@@ -289,39 +289,39 @@
         -moz-border-radius: 5px;
         border-radius: 5px;
     }
-    
+
     input{
         text-align:center;
     }
-    
+
     #not{
         position:center;
     }
-    
+
     #treeboxbox_tree{
         position:absolute;
         margin-left: 32%;
     }
-    
+
     .box__dragndrop{
         display: none;
     }
-    
+
     .box.has-advanced-upload {
         background-color: #007bff;
         outline: 1px dashed #007bff;
         outline-offset: -3px;
         background-color: #007bff;
     }
-    
+
     .box.has-advanced-upload .box__dragndrop {
         display: inline;
     }
-    
+
     .box.is-dragover {
         background-color: #b4f7fa;
     }
-    
+
     .box__file {
 	width: 0.1px;
 	height: 0.1px;
@@ -330,7 +330,7 @@
 	position: absolute;
 	z-index: -1;
     }
-    
+
     .box__file + label {
         position: relative;
         margin-top:2.5%;
@@ -338,24 +338,24 @@
         display: inline-block;
         cursor: pointer; /* "hand" cursor */
     }
-    
+
     .box__button {
         position: absolute;
         margin-top:0.8%;
         margin-left: 8%;
         display: none;
     }
-    
+
     .profiles{
         margin-top: -1%;
     }
-    
+
     .topright {
         position: absolute;
         top: 0px;
         right: 0px;
     }
-    
+
     #settings_button{
         position:absolute;
         top:10px;
@@ -364,14 +364,14 @@
         font-size: 22px;
         padding: 22px;
     }
-    
+
     #settings_img{
         position:absolute;
         top:0px;
         right:0px;
         background-size: 100%;
     }
-    
+
     #demo{
         position:absolute;
         top:10px;
@@ -379,13 +379,13 @@
         width:200px;
         height:80px;
     }
-    
+
     #cont{
         position:absolute;
         top:40px;
         right:60px;
     }
-    
+
     .chkbox {
         display: block;
         position: relative;
@@ -414,9 +414,9 @@
         height: 20px;
         width: 20px;
         background-color: #9bd3ec;
-       
+
     }
-    
+
     /* On mouse-over, add a grey background color */
     .chkbox:hover input ~ .checkmark {
         background-color: #7de5eb;
@@ -438,7 +438,7 @@
     .chkbox input:checked ~ .checkmark:after {
         display: block;
     }
-    
+
     /* Style the checkmark/indicator */
     .chkbox .checkmark:after {
         left: 9px;
@@ -451,24 +451,24 @@
         -ms-transform: rotate(45deg);
         transform: rotate(45deg);
     }
-    
+
     #conformance_only{
         position: absolute;
         left: 42%;
     }
-    
+
 </style>
 <body>
 <div class="eupopup"></div>
 <div class="eupopup eupopup-fixedtop"></div>
 <div class="eupopup eupopup-color-default"></div>
 
-<div class="page-wrap">    
+<div class="page-wrap">
     <div class="container">
         <button type="submit" class="btn btn-info" id="settings_button" data-toggle="collapse" data-target="#demo" >
         <img src="img/settings.jpg" class="settings_img" id="settings_img"  width="45" height="45" />
-        </button>  
-        <div id="demo" class="collapse">    
+        </button>
+        <div id="demo" class="collapse">
             <legend>Enforce profile(s):</legend>
             <div data-role="controlgroup" id="cont">
                 <label class="chkbox" for="dashifprofile">DASH-IF
@@ -491,8 +491,8 @@
                     <input type="checkbox" name="ctawaveprofile" id="ctawaveprofile" >
                     <span class="checkmark"></span>
                 </label>
-            </div>  
-        </div>  
+            </div>
+        </div>
     </div>
 
     <div id="dash">
@@ -517,18 +517,18 @@
             </div>
             <button id="btn8" onclick="submit()"> GO </button>
         </div>
-        
+
         <a id="dynamic" href="url" target="_blank" style="visibility:hidden;" >Dynamic timing validation</a>
     </div>
-    
+
     <div id="conformance_only">
         <label class="chkbox">MPD conformance only
             <input type="checkbox" id="mpdvalidation"  value="0">
             <span class="checkmark"></span>
         </label>
-    </div>        
-    
-    
+    </div>
+
+
     <div id="progressbar" style="width:100px;background:#FFFFF;"></div>
 
     <div id = "not">
@@ -540,7 +540,7 @@
         <p id="par" class="sansserif" style="visibility:hidden;">Loading....</p>
         <p id="profile" class="sansserif" style="visibility:hidden;">Profiles: </p>
     </div>
-    
+
     <br><br>
     <div id="treepos">
         <table>
@@ -573,7 +573,7 @@ var adaptationid = 1;
 var periodid = 1;
 var hinindex = 2;
 var hinindex2 = 1;
-var repid =[];	
+var repid =[];
 var totarr = [];
 var adaptid=[];
 var perid=[];
@@ -584,7 +584,7 @@ var dynamicsegtimeline = false;
 var segmentListExist = false;
 var SessionID = "id"+Math.floor(100000 + Math.random() * 900000);
 var totarrstring=[];
-var xmlDoc_progress; 
+var xmlDoc_progress;
 var xmlDoc_mpdresult;
 var progressSegmentsTimer;
 var treeTimer;
@@ -642,7 +642,7 @@ $('.box__file').on('change', function(e) { // when drag & drop is NOT supported
 
 //document.querySelector('#btn8').addEventListener('change', function(e) {
 $form.on('submit', function(e) {
- 
+
     file=droppedFile[0];
     //file = this.files[0];
     fd = new FormData();
@@ -684,7 +684,7 @@ function CheckKey(e) //receives event object as parameter
    }
 }
 
-function createXMLHttpRequestObject(){ 
+function createXMLHttpRequestObject(){
     var xmlHttp; // xmlHttp will store the reference to the XMLHttpRequest object
     try{         // try to instantiate the native XMLHttpRequest object
         xmlHttp = new XMLHttpRequest(); // create an XMLHttpRequest object
@@ -704,9 +704,9 @@ function createXMLHttpRequestObject(){
 
 function  progressEventHandler(){
     if (progressXMLRequest.readyState == 4){    // continue if the process is completed
-        if (progressXMLRequest.status == 200) {       // continue only if HTTP status is "OK" 
+        if (progressXMLRequest.status == 200) {       // continue only if HTTP status is "OK"
             try {
-        
+
                 response = progressXMLRequest.responseXML;          // retrieve the response
 
                 // do something with the response
@@ -722,32 +722,32 @@ function  progressEventHandler(){
                 var lastRep = progressXML.getElementsByTagName("CurrentRep")[0].childNodes[0].nodeValue;
                 var lastAdapt =progressXML.getElementsByTagName("CurrentAdapt")[0].childNodes[0].nodeValue;
                 var lastPeriod = progressXML.getElementsByTagName("CurrentPeriod")[0].childNodes[0].nodeValue;
-                
+
                 var progressText;
                 if (lastRep == 1 && lastAdapt == 1 && progressPercent == 0 && dataDownloaded == 0 && dataProcessed == 0) //initial state
                     progressText = "Processing MPD, please wait...";
                 else
                     progressText = "Processing Representation "+lastRep+" in Adaptationset "+lastAdapt+" in Period "+lastPeriod+", "+progressPercent+"% done ( "+dataDownloaded+" KB downloaded, "+dataProcessed+" MB processed )";
-		
+
                 if( dynamicsegtimeline)
 		{
                     progressText = progressText + "<br><font color='red'> Segment timeline for type dynamic is not supported, only MPD will be tested. </font>"
 		}
-                
+
                 if(segmentListExist)
 		{
                     progressText = progressText + "<br><font color='red'> SegmentList is not supported, only MPD will be tested. </font>"
 		}
-                
+
                 document.getElementById("par").innerHTML=progressText;
-                
+
                 //update only once
                 if (document.getElementById("profile").innerHTML === "Profiles: ")
                 {
                     var profileList = progressXML.getElementsByTagName("Profile")[0].childNodes[0].nodeValue;
                     if(dashif && profileList.search("http://dashif.org/guidelines/dash264")===-1)
                         profileList+= ", http://dashif.org/guidelines/dash264";
-                    document.getElementById("profile").innerHTML="Profiles: " + profileList;            
+                    document.getElementById("profile").innerHTML="Profiles: " + profileList;
                     document.getElementById('profile').style.visibility='visible';
                 }
             }
@@ -772,8 +772,8 @@ function progressupdate()
         {
             var progressDocURL='temp/'+dirid+'/progress.xml';
             var now = new Date();
-            progressXMLRequest.open("GET", progressDocURL += (progressDocURL.match(/\?/) == null ? "?" : "&") + now.getTime(), false);  
-            //initiate server request, trying to bypass cache using tip from 
+            progressXMLRequest.open("GET", progressDocURL += (progressDocURL.match(/\?/) == null ? "?" : "&") + now.getTime(), false);
+            //initiate server request, trying to bypass cache using tip from
             //https://developer.mozilla.org/es/docs/XMLHttpRequest/Usar_XMLHttpRequest#Bypassing_the_cache,
             progressXMLRequest.onreadystatechange = progressEventHandler;
             progressXMLRequest.send(null);
@@ -789,18 +789,18 @@ function submit()
 {
     //document.getElementById("dash").style.marginTop="1%";
     mpdprocessed = false;
-    url = document.getElementById("urlinput").value; 
-    
+    url = document.getElementById("urlinput").value;
+
     if(window.location.href.indexOf('https') !== -1){
         if(url && url.indexOf('https') === -1){
             setStatusTextlabel("HTTP content is detected. <span style=\"color:red\"><b>This secure (HTTPS) site cannot process the HTTP content.</b></span> If you wish to continue using this content, please use <a target=\"_blank\" href=\"http://54.72.87.160/conformance/current/Conformance-Frontend/Conformancetest.php\">HTTP-based interface</a> instead.");
             return false;
         }
     }
- 
+
     if (uploaded===true)
 	url="upload";
-    
+
     var stringurl = [];
     var	checkstr = "";
 
@@ -828,7 +828,7 @@ function submit()
     }
 
     if($("#hbbtvprofile").is(':checked'))
-    {        
+    {
         hbbtv= 1;
         checkstr += "H";
     }
@@ -867,7 +867,7 @@ function submit()
 	{
 		checkstr += "w";
 	}
-    
+
     stringurl[1]=mpdonly;
     stringurl[2]=cmaf;
     stringurl[3]=dvb;
@@ -875,7 +875,7 @@ function submit()
     stringurl[5]=dashif;
     stringurl[6]=ctawave;
     stringurl[7]=schema;
-    
+
     if(schema !== ""){
         var filename = schema;
         if (filename.split('.').pop() !== 'xsd'){
@@ -904,7 +904,7 @@ function submit()
     //Generate a unique timestamped folder name for results in "temp" folder
     var url_parts = url.split("/");
     var base_name = url_parts[url_parts.length - 1]; // the stream name
-    
+
     now=new Date();
     var date_str = "";
     date_str += now.getFullYear().toString();
@@ -915,7 +915,7 @@ function submit()
     date_str += now.getSeconds().toString();
     date_str += ".";
     date_str += now.getMilliseconds().toString();
-    
+
     base_name+="_" + checkstr + "_" + date_str;
     dirid=base_name;
 
@@ -937,14 +937,14 @@ function submit()
                 }
                 else{ //if(urlStatus === 404){
                    window.alert("Error loading the MPD, please check the URL.");
-                   clearInterval( pollingTimer);	
-                   finishTest(); 
+                   clearInterval( pollingTimer);
+                   finishTest();
                 }
             });
-        
+
         //$.post("process.php",{urlcode:JSON.stringify(stringurl),sessionid:JSON.stringify(SessionID),foldername: dirid});
     }
-    
+
     //Start polling of progress.xml for the progress percentage results.
     progressTimer = setInterval(function(){progressupdate()},100);
     pollingTimer = setInterval(function(){pollingProgress()},800);//Start polling of progress.xml for the MPD conformance results.
@@ -958,20 +958,20 @@ function pollingProgress()
         return;
     else
         var MPDError=xmlDoc_progress.getElementsByTagName("MPDError");
-    
+
     if(MPDError.length === 0)
         return;
-    else    
+    else
         totarrstring=MPDError[0].childNodes[0].nodeValue;
 
     if (totarrstring == 1)//Check for the error in MPD loading.
     {
         window.alert("Error loading the MPD, please check the URL.");
-        clearInterval( pollingTimer);	
-        finishTest();            
+        clearInterval( pollingTimer);
+        finishTest();
         return false;
     }
-    
+
     clearInterval(pollingTimer);
     tree.loadJSONObject({
         id: 0,
@@ -999,17 +999,17 @@ var shouldFinishTest = false;
 
 function mpdProgress(){
     xmlDoc_mpdresult = loadXMLDoc("temp/"+dirid+"/mpdresult.xml");
-    
+
     if(xmlDoc_mpdresult === null)
         return;
-    
+
     var mpd_node_index_until = xmlDoc_mpdresult.documentElement.childNodes.length;
     if(mpd_node_index === mpd_node_index_until){
         clearInterval(mpdTimer);
 
         if(!mpdprocessed){
             mpdprocessed = true;
-            
+
             automate(mpdresult_y, mpdresult_x, 'Feature list');
             tree.setItemImage2(mpdresult_x, 'csh_winstyle/iconText.gif', 'csh_winstyle/iconText.gif', 'csh_winstyle/iconText.gif');
             kidsloc.push(mpdresult_x);
@@ -1022,7 +1022,7 @@ function mpdProgress(){
             tree.setItemImage2(mpdresult_x, 'csh_winstyle/iconText.gif', 'csh_winstyle/iconText.gif', 'csh_winstyle/iconText.gif');
             kidsloc.push(mpdresult_x);
             urlarray.push("temp/"+dirid+"/mpdreport.html");
-            
+
             var i;
             for(i=0; i<3; i++){
                 if(xmlDoc_mpdresult.documentElement.childNodes[i].childNodes[0].nodeValue === 'error'){
@@ -1030,7 +1030,7 @@ function mpdProgress(){
                     break;
                 }
             }
-            
+
             if(shouldFinishTest){
                 finishTest();
                 return false;
@@ -1041,14 +1041,14 @@ function mpdProgress(){
             }
         }
     }
-    
+
     var node = xmlDoc_mpdresult.documentElement.childNodes[mpd_node_index];
     if(!node){
-        clearInterval(mpdTimer);	
-        finishTest();            
+        clearInterval(mpdTimer);
+        finishTest();
         return false;
     }
-    
+
     var node_result = node.childNodes[0].nodeValue;
     if(node_result === 'No Result'){
         addToTree(0);
@@ -1079,7 +1079,7 @@ function addToTree(button){
         branch_added[mpd_node_index] = mpdresult_x;
         mpdresult_x++;
     }
-    
+
     if(button === 0)
         tree.setItemImage2(branch_added[mpd_node_index], 'ajax-loader.gif', 'ajax-loader.gif', 'ajax-loader.gif');
     else if(button === 1)
@@ -1093,7 +1093,7 @@ function addToTree(button){
 function processmpdresults()
 {
     xmlDoc_progress=loadXMLDoc("temp/"+dirid+"/progress.xml");
-    
+
     // Check if the MPD is dynamic.
     if(xmlDoc_progress.getElementsByTagName("dynamic").length !== 0){
         if (xmlDoc_progress.getElementsByTagName("dynamic")[0].innerHTML === "true"){
@@ -1108,7 +1108,7 @@ function processmpdresults()
     // Check if SegmentList exist
     if(xmlDoc_progress.getElementsByTagName("segmentList").length !== 0)
         segmentListExist = true;
-    
+
     if (dynamicsegtimeline || segmentListExist){
         finishTest();
         return;
@@ -1119,10 +1119,10 @@ function processmpdresults()
     if (Treexml.length==0){
         var complete=xmlDoc_progress.getElementsByTagName("completed");
         if(complete[0].textContent == "true")
-            finishTest();     
+            finishTest();
         return;
     }else{
-        var Periodxml = xmlDoc_progress.getElementsByTagName("Period"); 
+        var Periodxml = xmlDoc_progress.getElementsByTagName("Period");
         Period_count = Periodxml.length;
         var AdaptRepPeriod_count = Period_count;
         for(var p=0; p<Period_count; p++){
@@ -1135,7 +1135,7 @@ function processmpdresults()
             }
         }
     }
-    
+
     totarr = AdaptRepPeriod_count.split(" ");
     var x = mpdresult_x+1;
     var y = 1;
@@ -1147,15 +1147,15 @@ function processmpdresults()
         automate(y,x,"Period "+(i+1));
         perid.push(x);
         tree.setItemImage2(x,'adapt.jpg','adapt.jpg','adapt.jpg');
-        
+
         id++;
         var adaptid_temp = [];
         for(var j=0; j<totarr[childno]; j++){
             automate(x,id,"Adaptationset "+(j+1));
-            
+
             adaptid_temp.push(id);
             tree.setItemImage2(id,'adapt.jpg','adapt.jpg','adapt.jpg');
-            
+
             var parentid = id;
             id++;
             for(var k=0; k<totarr[childno2]; k++){
@@ -1164,16 +1164,16 @@ function processmpdresults()
                 id++;
                 adjustFooter();
             }
-            
+
             childno2++;
         }
-        
+
         adaptid.push(adaptid_temp);
         childno = childno2;
         childno2++;
         x = id;
     }
-    
+
     var period_count = xmlDoc_progress.getElementsByTagName('PeriodCount');
     if(period_count[0].childNodes.length != 0)
         numPeriods = period_count[0].childNodes[0].nodeValue;
@@ -1195,7 +1195,7 @@ function progress()
         if(cmaf==1 && ComparedRepresentations.length ==counter){
             return;
         }
-        
+
         if(cmaf && ComparedRepresentations.length !=0){
             if(ComparedRepresentations[holder-1].textContent=="noerror"){
                 tree.setItemImage2(adaptid[periodid-1][holder-1],'right.jpg','right.jpg','right.jpg');
@@ -1231,13 +1231,13 @@ function progress()
         var CmafProfile=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CMAFProfile");
         var CTAWAVESelectionSet=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CTAWAVESelectionSet");
         var CTAWAVEProfile=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("CTAWAVEPresentation");
-        
+
         if(CrossRepValidation.length != adaptholder[periodid-1]){
             return;
         }
-        
+
         else if(entered_cross == false){
-            entered_cross = true;    
+            entered_cross = true;
             for(var i =1; i<=CrossRepValidation.length;i++)
             {
                 if(CrossRepValidation[i-1].textContent=="noerror"){
@@ -1258,14 +1258,14 @@ function progress()
                     lastloc++;
                     }
             }
-            
+
         }
-        
-        
+
+
         if((dvb == 1 || hbbtv == 1) && HbbTVDVBComparedRepresentations.length!=adaptholder[periodid-1]){
             return;
         }
-        
+
         if((dvb == 1 || hbbtv == 1) && entered_hbb == false){
             entered_hbb = true;
             for(var i =1; i<=HbbTVDVBComparedRepresentations.length;i++){
@@ -1302,11 +1302,11 @@ function progress()
                 }
             }
         }
-        
+
         if(cmaf==1 && (SelectionSet.length==0 || CmafProfile.length==0)){
             return;
         }
-            
+
         if(cmaf && entered_cmaf == false){
             entered_cmaf = true;
             //Additions for CMAF Selection Set and Presentation Profile.
@@ -1355,11 +1355,11 @@ function progress()
                 }
             }
         }
-        
+
         if(ctawave == 1 && (CTAWAVESelectionSet.length==0 || CTAWAVEProfile.length==0)){
             return;
         }
-        
+
         if(ctawave == 1){
             //Additions for CTA WAVE Selection Set and Presentation Profile.
             if(CTAWAVESelectionSet.length!=0)
@@ -1479,12 +1479,12 @@ function progress()
         return;
     }
     else{
-        var AdaptXML=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("Adaptation"); 
+        var AdaptXML=xmlDoc_progress.getElementsByTagName("Period")[periodid-1].getElementsByTagName("Adaptation");
         if(AdaptXML[adaptationid-1]== null)
             return;
         else if(AdaptXML[adaptationid-1].getElementsByTagName("Representation")[representationid-1] == null)
             return;
-        else{   
+        else{
             var RepXML=AdaptXML[adaptationid-1].getElementsByTagName("Representation")[representationid-1].textContent;
             if(RepXML == "")
                 return;
@@ -1497,7 +1497,7 @@ function progress()
             tree.setItemImage2( repid[counting],'log.jpg','log.jpg','log.jpg');
         else
             tree.setItemImage2( repid[counting],'button_cancel.png','button_cancel.png','button_cancel.png');
-        
+
         automate(repid[counting],lastloc,"log");
         tree.setItemImage2( lastloc,'csh_winstyle/iconText.gif','csh_winstyle/iconText.gif','csh_winstyle/iconText.gif');
         kidsloc.push(lastloc);
@@ -1537,7 +1537,7 @@ function tonsingleclick(id)
     var urlto="";
     var position = kidsloc.indexOf(id);
     urlto=urlarray[position];
-    
+
     if(urlto)
         window.open(urlto, "_blank");
 }
@@ -1550,7 +1550,7 @@ function tonsingleclick(id)
             //and function automaticalyy enters into if statement above and a button is created with next right click.
     }
         );
-        
+
     document.addEventListener("contextmenu",function()//delete the download button when anywhere in the dom file is right clicked.
     {
         if(buttoncontroller)
@@ -1564,11 +1564,11 @@ function adjuststylein(id)//This function is created to adjust the style of the 
 {
     var urlto="";
     var position = kidsloc.indexOf(id);
-  
+
         if(position !== -1){//when id is not in the kidsloc, it returns -1. Therefore this if statement is created.
-        urlto=urlarray[position];// url corresponding to this id, in other words the url of the webpage opened when this element is clicked. 
+        urlto=urlarray[position];// url corresponding to this id, in other words the url of the webpage opened when this element is clicked.
         if(urlto){//if url exists, change the cursor to pointer on this tree element.
-        tree.style_pointer = "pointer";//This makes the cursor pointer when the pointer is exactly on this tree element(it works for texts) 
+        tree.style_pointer = "pointer";//This makes the cursor pointer when the pointer is exactly on this tree element(it works for texts)
         document.getElementById("treeboxbox_tree").style.cursor = "pointer";//This makes the cursor pointer when the pointer is exactly on this tree element(it works for the icons)
         }
     }
@@ -1599,10 +1599,10 @@ function tonrightclick(id)
 {
     var intvariable=buttoncontroller;
     $(document).ready(function()//cretaed to remove the custom right click popup menu from this page
-{ 
+{
     $(document).bind("contextmenu",function(e){
         return false;
-    }); 
+    });
 });
     aPos=event.clientX;//position of the x coordinate of the right click point in terms of pixels.
     bPos=event.clientY;//position of the y coordinate of the right click point in terms of pixels.
@@ -1611,14 +1611,14 @@ function tonrightclick(id)
     var urlto="";
     var position = kidsloc.indexOf(id);
     urlto=urlarray[position];
-    
+
     if(urlto){//if this tree element has a corresponding url
         var locarray = urlto.split("/");
         var htmlname = locarray[locarray.length-1];
         var textname = htmlname.split(".")[0] + ".txt";
         var textloc = window.location.href + "/../" + urlto.split(".")[0] + ".txt";
         var arrayurl= textloc.split(".");
-        if(intvariable==false && arrayurl[3]!=="/Estimate"){//if intvariable is false execute 
+        if(intvariable==false && arrayurl[3]!=="/Estimate"){//if intvariable is false execute
         downloadButtonHandle = document.createElement("BUTTON");//create a dynamic button
         var t = document.createTextNode("click to download");//put this text in to the button
         downloadButtonHandle.appendChild(t);
@@ -1629,14 +1629,14 @@ function tonrightclick(id)
         downloadButtonHandle.style.left = str1;//x coordinate assigned
         downloadButtonHandle.style.top =  str2;//y coordinate assigned
         downloadButtonHandle.style.background= "white";
-       
+
         downloadButtonHandle.onmouseover = function(){
         downloadButtonHandle.style.background = "Gainsboro ";
         }
         downloadButtonHandle.onmouseout = function(){
         downloadButtonHandle.style.background = "white";
         }
-    
+
         /*downloadButtonHandle : hover{ = "#F0F8FF";}*/
         downloadButtonHandle.onclick=function(){//when button is clicked, this function executes
         downloadLog(textloc,textname);
@@ -1647,28 +1647,28 @@ function tonrightclick(id)
         downloadButtonHandle.remove();
         buttoncontroller=false;
        }
-    
-        
+
+
         else{//if intvariable is correct it means there is already a button in the page so remove it.
         downloadButtonHandle.remove();
         }
-        if(intvariable==false&& arrayurl[3]!=="/Estimate"){//int variable is created because both in the if statement and between the curly braces of if statement having buttoncontroller cretae some problems during new assignments. 
+        if(intvariable==false&& arrayurl[3]!=="/Estimate"){//int variable is created because both in the if statement and between the curly braces of if statement having buttoncontroller cretae some problems during new assignments.
             buttoncontroller=true;//if intvariable is false, a button is created after the execution of rightclick. Therefore change the global variable buttoncontroller to be true so that intvariable becomes true...
             //and function automaticalyy enters into else statement above and button is removed with next right click.
-            
-        }       
+
+        }
         else{//if intvariable is correct, a button is removed after the execution of rightclick. Therefore change the global variable buttoncontroller to be false so that intvariable becomes false...
             //and function automaticalyy enters into if statement above and a button is created with next right click.
            buttoncontroller=false;
         }
               }
-         else{//if any tree element, other than the ones which have corresponding ids, are right clicked remove the button 
+         else{//if any tree element, other than the ones which have corresponding ids, are right clicked remove the button
         downloadButtonHandle.remove();
         buttoncontroller=false;//because button is removed, change buttoncontroller to be false so that intvariable becomes false...
             //and function automaticalyy enters into if statement above and a button is created with next right click.
     }
-              
-    }     
+
+    }
 
 function loadXMLDoc(dname)
 {
@@ -1688,7 +1688,7 @@ function loadXMLDoc(dname)
 function finishTest()
 {
     adjustFooter();
-    
+
     document.getElementById("btn8").disabled=false;
     document.getElementById("drop_div").disabled=false;
 
@@ -1696,7 +1696,7 @@ function finishTest()
     clearInterval( progressSegmentsTimer);
     clearInterval( mpdTimer);
     clearInterval( treeTimer);
-    
+
     //Open a new window for checking Conformance of Chained-to MPD (if present).
     xmlDoc_progress=loadXMLDoc("temp/"+dirid+"/progress.xml");
     if (xmlDoc_progress !== null){
@@ -1727,7 +1727,7 @@ function initVariables()
     //uploaded = false;
     dynamicsegtimeline = false;
     segmentListExist = false;
-    
+
     mpd_node_index = 0;
     mpdresult_x = 2;
     mpdresult_y = 1;
@@ -1737,11 +1737,11 @@ function initVariables()
 
 function setUpTreeView()
 {
-    if (typeof tree === "undefined"){		
+    if (typeof tree === "undefined"){
     }
     else{
         tree.deleteChildItems(0);
-        tree.destructor(); 
+        tree.destructor();
     }
 
     tree = new dhtmlXTreeObject('treeboxbox_tree', '100%', '100%', 0);
@@ -1750,7 +1750,7 @@ function setUpTreeView()
     tree.setSkin('dhx_skyblue');
     tree.setImagePath("img/");
     tree.enableDragAndDrop(true);
-    tree.attachEvent("onMouseIn", function(id){adjuststylein(id);});//Dhtmlx onMouseIn function is customized. 
+    tree.attachEvent("onMouseIn", function(id){adjuststylein(id);});//Dhtmlx onMouseIn function is customized.
     tree.attachEvent("onMouseout", function(id){adjuststyleout(id);});//Dhtmlx onMouseout function is customized.
 
 }
@@ -1788,7 +1788,7 @@ function adjustFooter(){
                     );
     var footerHeight = $('.site-footer').height();
     var footerTop = $('.site-footer').position().top + footerHeight;
-    
+
     if (footerTop < docHeight) {
      $('.site-footer').css('margin-top', 0.75*footerHeight + (docHeight - footerTop) + 'px');
     }
@@ -1798,11 +1798,11 @@ function downloadLog(url, name){
     var element = document.getElementById("downloadpar");
     element.href = url;
     element.download = name;
-    
+
     document.querySelector('#downloadpar').click();
 }
-</script> 
- 
+</script>
+
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
