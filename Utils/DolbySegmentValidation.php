@@ -20,7 +20,7 @@ class AC4_TOC
     public $bitstream_version;
     public $fs_index;
     public $frame_rate_index;
-    public $b_single_presentation;  
+    public $b_single_presentation;
     public $short_program_id;
     public $presentation_version;
     public $n_presentations;
@@ -32,7 +32,7 @@ class DAC4
     public $bitstream_version;
     public $fs_index;
     public $frame_rate_index;
-    public $b_single_presentation;  
+    public $b_single_presentation;
     public $short_program_id;
     public $presentation_version;
     public $n_presentations;
@@ -85,15 +85,15 @@ function CompareDoms($xml, $log, $d1, $d2, &$el)
     foreach ($el as $e)
     {
         $d1_e = $d1_dom->item(0)->getAttribute($e);
-        $d2_e = $d2_dom->item(0)->getAttribute($e);     
-   
+        $d2_e = $d2_dom->item(0)->getAttribute($e);
+
         printf("%-8s %-8s\n", $d1_e, $d2_e);
         if ($d1_e != $d2_e)
         {
             $errs++;
         }
     }
- 
+
     printf ("errs %d\n", $errs);
     return $errs;
 }
@@ -124,7 +124,7 @@ function CompareTocWithDac4_1($xml, $log, &$ac4_toc_array, &$ac4_dac4_array)
         {
             fprintf($log, "###error- DOLBY <<- ETSI_TS_103_190-2_V1.2.1 E.6.5 [14209] ->> toc[%d]->frame_rate_index %d ac4_dac4->frame_rate_index %d\n", $toc_index, $toc->frame_rate_index, $ac4_dac4->frame_rate_index );
         }
-        
+
         if ($ac4_dac4->n_presentations != $toc->n_presentations)
         {
             fprintf($log, "###error- DOLBY <<- ETSI_TS_103_190-2_V1.2.1 E.6.6 [14215] ->> toc[%d]->n_presentations ac4_dac4->n_presentations %d\n", $toc_index, $toc->n_presentations, $ac4_dac4->n_presentations );
@@ -165,7 +165,7 @@ function CompareTocWithDac4($xml, $log, &$ac4_toc_array, &$ac4_dac4_array)
         {
             fprintf($log, "###error- DOLBY <<- ETSI_TS_103_190-2_V1.2.1 E.6.5 [14209] ->> toc[%d]->frame_rate_index %d ac4_dac4->frame_rate_index %d\n", $toc_index, $toc->frame_rate_index, $ac4_dac4->frame_rate_index );
         }
-        
+
         if ($ac4_dac4->n_presentations != $toc->n_presentations)
         {
             fprintf($log, "###error- DOLBY <<- ETSI_TS_103_190-2_V1.2.1 E.6.6 [14215] ->> toc[%d]->n_presentations ac4_dac4->n_presentations %d\n", $toc_index, $toc->n_presentations, $ac4_dac4->n_presentations );
@@ -185,18 +185,18 @@ function SingleTest( $xml_file, $item1, $item2, $msg )
     $xml = get_DOM($xml_file, 'atomlist');
     $dom  = $xml->getElementsByTagName('ac4_toc');
     #printf("count %d\n",count($dom));
-    #printf("%s\n", print_r($dom->item(0), true) );    
+    #printf("%s\n", print_r($dom->item(0), true) );
     #$ab = simplexml_load_file($xml_file);
-    #printf("%s\n", print_r($ab, true) );    
+    #printf("%s\n", print_r($ab, true) );
 
     #$result = $ab->xpath('atomlist/moov/trak/mdia');
-    #printf("%s\n", print_r($result->item(0), true) );    
+    #printf("%s\n", print_r($result->item(0), true) );
     #$xml_doc = new DOMDocument();
     #$xml_doc->load($xml_file);
     #$xml_dom = $xml_doc->getElementsByTagName('atomlist')->item(0);
-    #printf("%s\n", print_r($xml_dom, true) );    
+    #printf("%s\n", print_r($xml_dom, true) );
     #$result = $xml_doc->xpath('dac4');
-    #printf("%s\n", print_r($result, true) );    
+    #printf("%s\n", print_r($result, true) );
     return true;
 }
 
@@ -206,11 +206,11 @@ function ValidateDolby($adaptation_set, $representation)
     global $session_dir, $current_period, $reprsentation_error_log_template;
     global $current_adaptation_set, $current_representation;
     global $ac4_toc, $ac4_dac4;
- 
+
     $trackErrorFileName =  $session_dir . '/Period' . $current_period .
                             '/' . str_replace(
                                     array('$AS$', '$R$'),
-                                    array($current_adaptation_set, $current_representation), 
+                                    array($current_adaptation_set, $current_representation),
                            $reprsentation_error_log_template)  .  '.txt';
 
 
@@ -225,11 +225,10 @@ function ValidateDolby($adaptation_set, $representation)
     if ($representation['mimeType'] == 'audio/mp4' )
     {
         $AtomXMLFileName=
-            $session_dir . '/Period' . $current_period . '/' .  
+            $session_dir . '/Period' . $current_period . '/' .
             str_replace(array('$AS$', '$R$'),array($current_adaptation_set), 'Adapt$AS$' )  . '/' .
             str_replace(array('$AS$', '$R$'),array($current_adaptation_set, $current_representation), 'Adapt$AS$rep$R$' )  . '.xml';
 
-        
         $xml = get_DOM($AtomXMLFileName, 'atomlist');
         CompareTocWithDac4($xml, $trackErrorFile, $ac4_toc_array, $ac4_dac4_array);
     }
