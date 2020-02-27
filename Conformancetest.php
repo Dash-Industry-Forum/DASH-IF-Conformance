@@ -902,8 +902,8 @@ function submit()
     //document.getElementById('par').style.visibility='visible';
 
     //Generate a unique timestamped folder name for results in "temp" folder
-    var url_parts = url.split(".");
-    var base_name = url_parts[url_parts.length - 2]; // the stream name
+    var url_parts = url.split("/");
+    var base_name = url_parts[url_parts.length - 1]; // the stream name
     
     now=new Date();
     var date_str = "";
