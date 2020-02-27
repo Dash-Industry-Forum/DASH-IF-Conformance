@@ -3008,9 +3008,9 @@ OSErr Validate_subs_Atom( atomOffsetEntry *aoe, void *refcon )
                 atomprint("sample_delta_n=\"%d%ld\"\n", i, sample_delta);
                 atomprint("subsample_count_n=\"%d%ld\"\n", i, subsample_count);
 
-                if (sample_delta != 1536)
+                if (vg.dolby && (sample_delta != 1536))
                 {
-                    errprint("ETSI TS 102 366 v1.4.1 Annex F Line 12806 : sample delta should be 1535 not %d", sample_delta);
+                    errprint("ETSI TS 102 366 v1.4.1 Annex F Line 12806 : sample delta should be 1536 not %d", sample_delta);
                 }
 
                 for(j=0; j < subsample_count; j++){
@@ -3414,7 +3414,7 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	atomprint("sampleSize=\"%d\"\n", ssdi.sampleSize);
 	atomprint("sampleRate=\"%s\"\n", fixedU32str(ssdi.sampleRate));
 	
-    if (ssdi.sampleSize != 16)
+    if (vg.dolby && (ssdi.sampleSize != 16))
     {
         errprint("ETSI TS 103 190-2 v1.2.1 Annex E Line  00013976: sampleSize shall be set to 16 but is %d\n", ssdi.sampleSize );
     }
@@ -3422,7 +3422,7 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	sampleratelo = (ssdi.sampleRate) & 0xFFFF;
 	sampleratehi = (ssdi.sampleRate >> 16) & 0xFFFF;
 	
-	if (sampleratehi != tir->mediaTimeScale) {
+	if (vg.dolby && (sampleratehi != tir->mediaTimeScale)) {
         errprint("ETSI_TS_102_366_V1.4.1 Annex F Line  12729: Track timescale %d not equal to the (integer part of) the Sample entry sample rate %d.%d\n",
 				tir->mediaTimeScale, sampleratehi, sampleratelo);
 		}

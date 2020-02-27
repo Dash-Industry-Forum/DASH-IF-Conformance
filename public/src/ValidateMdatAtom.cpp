@@ -1062,10 +1062,12 @@ OSErr Validate_AC4_Toc( BitBuffer *bb, void *refcon)
         }
     }
 
-    BAILIFERR(Validate_substream_index_table(bb, table));
-
 bail:
     atomprint (">\n");
+    if (err == noErr)
+    {
+        err = Validate_substream_index_table(bb, table);
+    }
     vg.tabcnt--;
     atomprint("</ac4_toc>\n");
 
@@ -1105,7 +1107,10 @@ OSErr Validate_mdat_Atom( atomOffsetEntry *aoe, void *refcon)
 
     BitBuffer_Init(bb, (UInt8 *)bsDataP, size - 8);
 
+    if (vg.dolby)
+    {
     BAILIFERR(Validate_AC4_Toc(bb, &ac4_toc));
+    }
 
 bail:
     atomprint (">\n");
