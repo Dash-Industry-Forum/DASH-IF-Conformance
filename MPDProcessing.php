@@ -238,6 +238,8 @@ function processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML
             if($hbbtv_conformance || $dvb_conformance)
                 $return_seg_val[] = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[3]);
             
+            ValidateDolby($adaptation_set, $representation);
+
             ## Report to client
             $send_string = json_encode($return_seg_val);
             error_log('RepresentationDownloaded_Return:' . $send_string);

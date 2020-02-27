@@ -88,6 +88,13 @@ function construct_flags($period, $adaptation_set, $representation){
         $codecs = 0;
     $processArguments .= ' -codecs ' . $codecs;
     
+    if ((substr($codecs, 0, 4) == "ac-3") or
+        (substr($codecs, 0, 4) == "ec-3") or
+        (substr($codecs, 0, 4) == "ac-4"))
+    {
+        $processArguments .= ' -dolby';
+    }
+
     ## @indexRange
     $indexRange = find_attribute(array($period, $adaptation_set, $representation), 'indexRange');
     if($indexRange != NULL)
