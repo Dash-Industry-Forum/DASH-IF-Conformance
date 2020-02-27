@@ -1109,7 +1109,7 @@ OSErr Validate_mdat_Atom( atomOffsetEntry *aoe, void *refcon)
 
     if (vg.dolby)
     {
-    BAILIFERR(Validate_AC4_Toc(bb, &ac4_toc));
+        BAILIFERR(Validate_AC4_Toc(bb, &ac4_toc));
     }
 
 bail:

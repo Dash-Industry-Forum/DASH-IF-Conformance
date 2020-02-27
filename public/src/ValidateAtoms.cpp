@@ -42,7 +42,7 @@ OSErr CheckMatrixForUnity( MatrixRecord mr )
 		||  (mr[2][2] != 0x40000000)
 		) {
 		err = badAtomErr;
-		errprint("has non-identity matrix" "\n"); 
+		errprint("has non-identity matrix" "\n");
 	}
 	return err;
 }
@@ -54,14 +54,14 @@ OSErr GetFullAtomVersionFlags( atomOffsetEntry *aoe, UInt32 *version, UInt32 *fl
 	OSErr err = noErr;
 	UInt32 versFlags;
 	UInt64 offset;
-	
+
 	// Get version/flags
 	offset = aoe->offset + aoe->atomStartSize;
 	BAILIFERR( GetFileDataN32( aoe, &versFlags, offset, &offset ) );
 	*version = (versFlags >> 24) & 0xFF;
 	*flags   =  versFlags & 0x00ffffff;
 	*offsetOut = offset;
-	
+
 bail:
 	return err;
 }
@@ -77,20 +77,20 @@ OSErr Validate_iods_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt64 offset;
 	Ptr odDataP = nil;
 	unsigned long odSize;
-	
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 	FieldMustBe( flags, 0, "'iods' version must be %d not %d" );
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-	atomprint(">\n"); 
-	
+	atomprint(">\n");
+
 	// Get the ObjectDescriptor
 	BAILIFERR( GetFileBitStreamDataToEndOfAtom( aoe, &odDataP, &odSize, offset, &offset ) );
 	BAILIFERR( Validate_iods_OD_Bits( odDataP, odSize, true ) );
-		
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	if (odDataP)
 		free(odDataP);
@@ -136,7 +136,7 @@ typedef struct MovieHeaderVers1Record {
     UInt32            		timeScale;
     UInt64					duration;
 } MovieHeaderVers1Record;
-	
+
 OSErr Validate_mvhd_Atom( atomOffsetEntry *aoe, void *refcon )
 {
 	OSErr err = noErr;
@@ -146,10 +146,10 @@ OSErr Validate_mvhd_Atom( atomOffsetEntry *aoe, void *refcon )
 	MovieHeaderVers1Record	mvhdHead;
 	MovieHeaderCommonRecord	mvhdHeadCommon;
 	MovieInfoRec	*mir = (MovieInfoRec	*)refcon;
-	
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
-	
+
 
 	// Get data based on version
 	if (version == 0) {
@@ -173,7 +173,7 @@ OSErr Validate_mvhd_Atom( atomOffsetEntry *aoe, void *refcon )
 		err = badAtomErr;
 		goto bail;
 	}
-	
+
 	BAILIFERR( GetFileData( aoe, &mvhdHeadCommon, offset, sizeof(mvhdHeadCommon), &offset ) );
     mvhdHeadCommon.preferredRate = EndianU32_BtoN(mvhdHeadCommon.preferredRate);
     mvhdHeadCommon.preferredVolume = EndianS16_BtoN(mvhdHeadCommon.preferredVolume);
@@ -188,7 +188,7 @@ OSErr Validate_mvhd_Atom( atomOffsetEntry *aoe, void *refcon )
     mvhdHeadCommon.selectionDuration = EndianS32_BtoN(mvhdHeadCommon.selectionDuration);
     mvhdHeadCommon.currentTime = EndianS32_BtoN(mvhdHeadCommon.currentTime);
     mvhdHeadCommon.nextTrackID = EndianS32_BtoN(mvhdHeadCommon.nextTrackID);
-	
+
 	if(vg.cmaf){
 		if(mvhdHeadCommon.preferredRate != 0x00010000){
 			errprint("CMAF check violated: Section 7.5.1. \"The field rate SHALL be set to its default value\", found 0x%lx\n", mvhdHeadCommon.preferredRate);
@@ -200,7 +200,7 @@ OSErr Validate_mvhd_Atom( atomOffsetEntry *aoe, void *refcon )
 			errprint("CMAF check violated: Section 7.5.1. \"The field matrix SHALL be set to its default value\", found (0x%lx, 0x%lx, 0x%lx)\n", mvhdHeadCommon.matrix[0][0], mvhdHeadCommon.matrix[1][1], mvhdHeadCommon.matrix[2][2]);
 		}
 	}
-    
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("creationTime=\"%s\"\n", int64toxstr(mvhdHead.creationTime));
@@ -208,7 +208,7 @@ OSErr Validate_mvhd_Atom( atomOffsetEntry *aoe, void *refcon )
 	atomprint("timeScale=\"%s\"\n", int64todstr(mvhdHead.timeScale));
 	atomprint("duration=\"%s\"\n", int64todstr(mvhdHead.duration));
 	atomprint("nextTrackID=\"%ld\"\n", mvhdHeadCommon.nextTrackID);
-	atomprint(">\n"); 
+	atomprint(">\n");
 
 	mir->mvhd_timescale = mvhdHead.timeScale;    //Used for edit lists
 
@@ -225,7 +225,7 @@ OSErr Validate_mvhd_Atom( atomOffsetEntry *aoe, void *refcon )
 	FieldMustBe( mvhdHeadCommon.selectionTime, 0, "'mvhd' has a non-zero reserved field, should be %d is %d" );
 	FieldMustBe( mvhdHeadCommon.selectionDuration, 0, "'mvhd' has a non-zero reserved field, should be %d is %d" );
 	FieldMustBe( mvhdHeadCommon.currentTime, 0, "'mvhd' has a non-zero reserved field, should be %d is %d" );
-		
+
 	BAILIFERR( CheckMatrixForUnity( mvhdHeadCommon.matrix ) );
 
 	// All done
@@ -267,7 +267,7 @@ typedef struct TrackHeaderVers1Record {
     UInt32					reserved;
     UInt64					duration;
 } TrackHeaderVers1Record;
-	
+
 OSErr Validate_tkhd_Atom( atomOffsetEntry *aoe, void *refcon )
 {
 	OSErr err = noErr;
@@ -278,10 +278,10 @@ OSErr Validate_tkhd_Atom( atomOffsetEntry *aoe, void *refcon )
 	TrackHeaderCommonRecord	tkhdHeadCommon;
 	TrackInfoRec			*tir = (TrackInfoRec*)refcon;
 
-	
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
-	
+
 
 	// Get data based on version
 	if (version == 0) {
@@ -292,7 +292,7 @@ OSErr Validate_tkhd_Atom( atomOffsetEntry *aoe, void *refcon )
 		tkhdHead.trackID = EndianU32_BtoN(tkhdHead0.trackID);
 		tkhdHead.reserved = EndianU32_BtoN(tkhdHead0.reserved);
 		tkhdHead.duration = EndianU32_BtoN(tkhdHead0.duration);
-		
+
 		FieldMustBe( EndianU32_BtoN(tkhdHead0.reserved), 0, "'tkhd' reserved must be %d not %d" );
 	} else if (version == 1) {
 		BAILIFERR( GetFileData( aoe, &tkhdHead.creationTime, offset, sizeof(tkhdHead.creationTime), &offset ) );
@@ -320,7 +320,7 @@ OSErr Validate_tkhd_Atom( atomOffsetEntry *aoe, void *refcon )
 	EndianMatrix_BtoN(&tkhdHeadCommon.matrix);
 	tkhdHeadCommon.trackWidth = EndianS32_BtoN(tkhdHeadCommon.trackWidth);
 	tkhdHeadCommon.trackHeight = EndianS32_BtoN(tkhdHeadCommon.trackHeight);
-	
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("creationTime=\"%s\"\n", int64toxstr(tkhdHead.creationTime));
@@ -330,7 +330,7 @@ OSErr Validate_tkhd_Atom( atomOffsetEntry *aoe, void *refcon )
 	atomprint("volume=\"%s\"\n", fixed16str(tkhdHeadCommon.volume));
 	atomprint("width=\"%s\"\n", fixedU32str(tkhdHeadCommon.trackWidth));
 	atomprint("height=\"%s\"\n", fixedU32str(tkhdHeadCommon.trackHeight));
-	atomprint(">\n"); 
+	atomprint(">\n");
 
 	// Check required field values
 	// else FieldMustBe( flags, 1, "'tkhd' flags must be 1" );
@@ -344,7 +344,7 @@ OSErr Validate_tkhd_Atom( atomOffsetEntry *aoe, void *refcon )
 	FieldMustBe( tkhdHeadCommon.layer, 0, "'tkhd' layer must be %d not %d" );
 	FieldMustBe( tkhdHeadCommon.alternateGroup, 0, "'tkhd' alternateGroup must be %d not %d" );
 	FieldMustBe( tkhdHeadCommon.reserved, 0, "'tkhd' reserved must be %d not %d" );
-	
+
 	// ���� CHECK for audio/video
 	{
 		FieldMustBeOneOf2( tkhdHeadCommon.volume, SInt16, "'tkhd' volume must be set to one of ", (0, 0x0100) );
@@ -353,22 +353,22 @@ OSErr Validate_tkhd_Atom( atomOffsetEntry *aoe, void *refcon )
 			FieldMustBeOneOf2( tkhdHeadCommon.trackHeight, Fixed, "'tkhd' trackHeight must be set to one of ", (0, (240L << 16)) );
 		}
 	}
-	
+
 	if(vg.cmaf){
 		if(tkhdHead.duration != 0){
 			errprint("CMAF check violated: Section 7.5.4. \"The value of the duration field SHALL be set to a value of zero\", found %llu\n",tkhdHead.duration);
 		}
-	
+
 		if((tkhdHeadCommon.matrix[0][0] != 0 && tkhdHeadCommon.matrix[1][1] != 0 && tkhdHeadCommon.matrix[2][2] != 0x40000000) || (tkhdHeadCommon.matrix[0][0] != 0x00010000 && tkhdHeadCommon.matrix[1][1] != 0x00010000 && tkhdHeadCommon.matrix[2][2] != 0x40000000)){
 			errprint("CMAF check violated: Section 7.5.4. \"The field matrix SHALL be set their default values\", found (0x%lx, 0x%lx, 0x%lx)\n", tkhdHeadCommon.matrix[0][0], tkhdHeadCommon.matrix[1][1], tkhdHeadCommon.matrix[2][2]);
 		}
-	
+
 		if(tir->mediaType == 'soun'){
 			if(tkhdHeadCommon.trackWidth != 0 && tkhdHeadCommon.trackHeight != 0)
 				errprint("CMAF check violated: Section 7.5.4. \"The width and height fields for a non-visual track SHALL be 0\", found width=\"%s\", height=\"%s\"\n", fixedU32str(tkhdHeadCommon.trackWidth), fixedU32str(tkhdHeadCommon.trackHeight));
 		}
 	}
-	
+
 		// save off some of the fields in the rec
 	if (tir != NULL) {
 		tir->trackID = tkhdHead.trackID;
@@ -408,7 +408,7 @@ typedef struct MediaHeaderVers1Record {
     UInt32	            	timescale;
     UInt64					duration;
 } MediaHeaderVers1Record;
-	
+
 
 OSErr Validate_mdhd_Atom( atomOffsetEntry *aoe, void *refcon )
 {
@@ -419,7 +419,7 @@ OSErr Validate_mdhd_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt64 offset;
 	MediaHeaderVers1Record	mdhdHead;
 	MediaHeaderCommonRecord	mdhdHeadCommon;
-	
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
@@ -450,9 +450,9 @@ OSErr Validate_mdhd_Atom( atomOffsetEntry *aoe, void *refcon )
         vg.mediaHeaderTimescale=mdhdHead.timescale;
 
 	BAILIFERR( GetFileData( aoe, &mdhdHeadCommon, offset, sizeof(mdhdHeadCommon), &offset ) );
-	mdhdHeadCommon.language = EndianU16_BtoN(mdhdHeadCommon.language); 
-	mdhdHeadCommon.quality = EndianU16_BtoN(mdhdHeadCommon.quality); 
-	
+	mdhdHeadCommon.language = EndianU16_BtoN(mdhdHeadCommon.language);
+	mdhdHeadCommon.quality = EndianU16_BtoN(mdhdHeadCommon.quality);
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("creationTime=\"%s\"\n", int64toxstr(mdhdHead.creationTime));
@@ -461,8 +461,8 @@ OSErr Validate_mdhd_Atom( atomOffsetEntry *aoe, void *refcon )
 	atomprint("duration=\"%s\"\n", int64todstr(mdhdHead.duration));
 	atomprint("language=\"%s\"\n", langtodstr(mdhdHeadCommon.language));
 	if (mdhdHeadCommon.language==0) warnprint("Warning: Media Header language code of 0 not strictly legit -- 'und' preferred\n");
-	
-	atomprint(">\n"); 
+
+	atomprint(">\n");
 
 	// Check required field values
 	FieldMustBe( flags, 0, "'mdvd' flags must be %d not %d" );
@@ -511,7 +511,7 @@ OSErr Validate_mdia_hdlr_Atom( atomOffsetEntry *aoe, void *refcon )
 	FieldMustBe( version, 0, "version must be %d not %d" );
 	FieldMustBe( flags, 0, "flags must be %d not %d" );
 
-	// Get Handler Info (minus name) 
+	// Get Handler Info (minus name)
 	BAILIFERR( GetFileData( aoe, hdlrInfo, offset, (UInt64)fieldOffset(HandlerInfoRecord, Name), &offset ) );
 	hdlrInfo->componentType = EndianU32_BtoN(hdlrInfo->componentType);
 	hdlrInfo->componentSubType = EndianU32_BtoN(hdlrInfo->componentSubType);
@@ -526,7 +526,7 @@ OSErr Validate_mdia_hdlr_Atom( atomOffsetEntry *aoe, void *refcon )
 	}
 	tir->mediaType = hdlrInfo->componentSubType;
 	atomprint("handler_type=\"%s\"\n", ostypetostr(hdlrInfo->componentSubType));
-	
+
 	// Get Handler Info Name
 	BAILIFERR( GetFileCString( aoe, &nameP, offset, aoe->maxOffset - offset, &offset ) );
 	//atomprint("name=\"%s\"\n", nameP);
@@ -537,14 +537,14 @@ OSErr Validate_mdia_hdlr_Atom( atomOffsetEntry *aoe, void *refcon )
 	FieldMustBe( hdlrInfo->componentFlags, 0, "'hdlr' componentFlags (reserved in mp4) must be %d not 0x%lx" );
 	FieldMustBe( hdlrInfo->componentFlagsMask, 0, "'hdlr' componentFlagsMask (reserved in mp4) must be %d not 0x%lx" );
 
-		FieldMustBeOneOf12( hdlrInfo->componentSubType, OSType, 
-			"'hdlr' handler type must be be one of ", 
+		FieldMustBeOneOf12( hdlrInfo->componentSubType, OSType,
+			"'hdlr' handler type must be be one of ",
 			('odsm', 'crsm', 'sdsm', 'vide', 'soun', 'm7sm', 'ocsm', 'ipsm', 'mjsm', 'hint', 'subt', 'text') );
 
 		//Explicit check for ac-4
 		if(!strcmp(vg.codecs, "ac-4") && strcmp(ostypetostr(hdlrInfo->componentSubType),"soun"))
-		    errprint("handler_type is not 'soun', 'soun' is expected for 'ac-4'\n" );	
-	
+		    errprint("handler_type is not 'soun', 'soun' is expected for 'ac-4'\n" );
+
 		//Explicit check for ec-3
 		if(!strcmp(vg.codecs, "ec-3") && strcmp(ostypetostr(hdlrInfo->componentSubType),"soun"))
 		    errprint("handler_type is not 'soun', 'soun' is expected for 'ec-3'\n" );
@@ -555,7 +555,7 @@ OSErr Validate_mdia_hdlr_Atom( atomOffsetEntry *aoe, void *refcon )
 
 	tir->hdlrInfo = hdlrInfo;
 	// All done
-	atomprint(">\n"); 
+	atomprint(">\n");
 	aoe->aoeflags |= kAtomValidated;
 
 bail:
@@ -577,7 +577,7 @@ OSErr Validate_hdlr_Atom( atomOffsetEntry *aoe, void *refcon )
 	FieldMustBe( version, 0, "version must be %d not %d" );
 	FieldMustBe( flags, 0, "flags must be %d not %d" );
 
-	// Get Handler Info (minus name) 
+	// Get Handler Info (minus name)
 	BAILIFERR( GetFileData( aoe, hdlrInfo, offset, (UInt64)fieldOffset(HandlerInfoRecord, Name), &offset ) );
 	hdlrInfo->componentType = EndianU32_BtoN(hdlrInfo->componentType);
 	hdlrInfo->componentSubType = EndianU32_BtoN(hdlrInfo->componentSubType);
@@ -591,7 +591,7 @@ OSErr Validate_hdlr_Atom( atomOffsetEntry *aoe, void *refcon )
 		fprintf(stdout,"\t\tHandler subtype = '%s'\n", ostypetostr(hdlrInfo->componentSubType));
 	}
 	atomprint("handler_type=\"%s\"\n", ostypetostr(hdlrInfo->componentSubType));
-	
+
 	// Get Handler Info Name
 	BAILIFERR( GetFileCString( aoe, &nameP, offset, aoe->maxOffset - offset, &offset ) );
 	atomprint("name=\"%s\"\n", nameP);
@@ -601,7 +601,7 @@ OSErr Validate_hdlr_Atom( atomOffsetEntry *aoe, void *refcon )
 	FieldMustBe( hdlrInfo->componentManufacturer, 0, "'hdlr' componentManufacturer (reserved in mp4) must be %d not 0x%lx" );
 	FieldMustBe( hdlrInfo->componentFlags, 0, "'hdlr' componentFlags (reserved in mp4) must be %d not 0x%lx" );
 	FieldMustBe( hdlrInfo->componentFlagsMask, 0, "'hdlr' componentFlagsMask (reserved in mp4) must be %d not 0x%lx" );
-	
+
 	// All done
 	atomprint(">\n");
 	aoe->aoeflags |= kAtomValidated;
@@ -619,17 +619,17 @@ OSErr Validate_elng_Atom( atomOffsetEntry *aoe, void *refcon )
         UInt32 flags;
         UInt64 offset;
         char* extended_languages;
-        
+
         // Get version/flags
         BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
         atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-        
+
         // Get related attributes
         BAILIFERR( GetFileCString( aoe, &extended_languages, offset, aoe->maxOffset - offset, &offset ) );
         atomprint("extended_languages=\"%s\"\n", extended_languages);
-        
-        atomprint(">\n"); 
-        
+
+        atomprint(">\n");
+
         // All done
         aoe->aoeflags |= kAtomValidated;
 
@@ -659,16 +659,16 @@ OSErr Validate_vmhd_Atom( atomOffsetEntry *aoe, void *refcon )
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileData( aoe, &vmhdInfo, offset, sizeof(vmhdInfo), &offset ) );
     vmhdInfo.graphicsMode = EndianU16_BtoN(vmhdInfo.graphicsMode);
 	vmhdInfo.opColorRed = EndianU16_BtoN(vmhdInfo.opColorRed);
 	vmhdInfo.opColorGreen = EndianU16_BtoN(vmhdInfo.opColorGreen);
 	vmhdInfo.opColorBlue = EndianU16_BtoN(vmhdInfo.opColorBlue);
-	
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-	atomprint(">\n"); 
+	atomprint(">\n");
 
 	if(vg.cmaf){
 		if(version != 0){
@@ -681,7 +681,7 @@ OSErr Validate_vmhd_Atom( atomOffsetEntry *aoe, void *refcon )
 			errprint("CMAF check violated: Section 7.5.6. \"The following field SHALL be set to its default value: opcolor={0, 0, 0}\", found {0x%lx, 0x%lx, 0x%lx}\n",vmhdInfo.opColorRed, vmhdInfo.opColorGreen, vmhdInfo.opColorBlue);
 		}
 	}
-	
+
 	// Check required field values
 	FieldMustBe( version, 0, "'vmhd' version must be %d not %d" );
 	FieldMustBe( flags, 1, "'vmhd' flags must be %d not 0x%lx" );
@@ -717,14 +717,14 @@ OSErr Validate_smhd_Atom( atomOffsetEntry *aoe, void *refcon )
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileData( aoe, &smhdInfo, offset, sizeof(smhdInfo), &offset ) );
 	smhdInfo.balance = EndianU16_BtoN(smhdInfo.balance);
 	smhdInfo.rsrvd = EndianU16_BtoN(smhdInfo.rsrvd);
 
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-	atomprint(">\n"); 
+	atomprint(">\n");
 
 	// Check required field values
 	FieldMustBe( flags, 0, "'smhd' flags must be %d not 0x%lx" );
@@ -733,7 +733,7 @@ OSErr Validate_smhd_Atom( atomOffsetEntry *aoe, void *refcon )
 
         if(vg.cmaf && smhdInfo.balance !=0)
             errprint("CMAF check violated: Section 7.5.7. \"The balance field in SoundMediaHeaderBox SHALL be set to its default value 0\", found %d\n",smhdInfo.balance);
-        
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
 
@@ -764,14 +764,14 @@ OSErr Validate_hmhd_Atom( atomOffsetEntry *aoe, void *refcon )
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileData( aoe, &hmhdInfo, offset, sizeof(hmhdInfo), &offset ) );
 	hmhdInfo.maxPDUsize = EndianU16_BtoN(hmhdInfo.maxPDUsize);
 	hmhdInfo.avgPDUsize = EndianU16_BtoN(hmhdInfo.avgPDUsize);
 	hmhdInfo.maxbitrate = EndianU32_BtoN(hmhdInfo.maxbitrate);
 	hmhdInfo.avgbitrate = EndianU32_BtoN(hmhdInfo.avgbitrate);
 	hmhdInfo.slidingavgbitrate = EndianU32_BtoN(hmhdInfo.slidingavgbitrate);
-	
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("maxPDUsize=\"%ld\"\n", hmhdInfo.maxPDUsize);
@@ -779,7 +779,7 @@ OSErr Validate_hmhd_Atom( atomOffsetEntry *aoe, void *refcon )
 	atomprint("maxbitrate=\"%ld\"\n", hmhdInfo.maxbitrate);
 	atomprint("avgbitrate=\"%ld\"\n", hmhdInfo.avgbitrate);
 	atomprint("slidingavgbitrate=\"%ld\"\n", hmhdInfo.slidingavgbitrate);
-	atomprint(">\n"); 
+	atomprint(">\n");
 
 	// Check required field values
 	FieldMustBe( flags, 0, "'hmdh' flags must be %d not 0x%lx" );
@@ -800,17 +800,17 @@ OSErr Validate_sthd_Atom( atomOffsetEntry *aoe, void *refcon )
         UInt32 version;
         UInt32 flags;
         UInt64 offset;
-        
+
         // Get version/flags
         BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
-        
+
         // Print atom contents non-required fields
         atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-        atomprint(">\n"); 
-        
+        atomprint(">\n");
+
         // Check required field values
         FieldMustBe( flags, 0, "'sthd' flags must be %d not 0x%lx" );
-        
+
         // All done
         aoe->aoeflags |= kAtomValidated;
 
@@ -831,11 +831,11 @@ OSErr Validate_nmhd_Atom( atomOffsetEntry *aoe, void *refcon )
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// There is no data 
-	
+	// There is no data
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-	atomprint(">\n"); 
+	atomprint(">\n");
 
 //����� need to check for underrun
 
@@ -864,11 +864,11 @@ OSErr Validate_mp4s_Atom( atomOffsetEntry *aoe, void *refcon )
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
 	// There is no data
-		
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 
-	atomprint("/>\n"); 
+	atomprint("/>\n");
 
 	// Check required field values
 	FieldMustBe( flags, 0, "'mp4s' flags must be %d not 0x%lx" );
@@ -894,24 +894,24 @@ OSErr Validate_url_Entry( atomOffsetEntry *aoe, void *refcon )
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	if (flags & 1) {
 		// no more data
 	} else {
-	
+
         if(vg.dashSegment)
             errprint("url pointing to external data found in 'dref', violating ISO/IEC 23009-1:2012(E), 6.3.4.2:  The 'moof' boxes shall use movie-fragment relative addressing for media data that does not use external data references.\n");
 
         BAILIFERR( GetFileCString( aoe, &locationP, offset, aoe->maxOffset - offset, &offset ) );
 	}
-	
-		
+
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	if (locationP) {
 		atomprint("location=\"%s\"\n", locationP);
 	}
-	atomprint("/>\n"); 
+	atomprint("/>\n");
 
 	// Check required field values
 //���	FieldMustBe( flags, 0, "'mp4s' flags must be 0" );
@@ -919,7 +919,7 @@ OSErr Validate_url_Entry( atomOffsetEntry *aoe, void *refcon )
         if(vg.cmaf && flags != 0x000001){
 		errprint("CMAF check violated: Section 7.5.9. \"The Data Reference Box ('dref') SHALL contain a single entry with the entry_flags set to 0x000001 \", found 0x%lx\n", flags); //Single entry has been checked in 'dref' validation.
 	}
-	
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
 
@@ -945,20 +945,20 @@ OSErr Validate_urn_Entry( atomOffsetEntry *aoe, void *refcon )
     if ((flags & 1) == 0 && vg.dashSegment)
             errprint("urn entry with pointing to external data found in 'dref', violating ISO/IEC 23009-1:2012(E), 6.3.4.2:  The 'moof' boxes shall use movie-fragment relative addressing for media data that does not use external data references.\n");
 
-	// Get data 
+	// Get data
 	// name is required
 	BAILIFERR( GetFileCString( aoe, &nameP, offset, aoe->maxOffset - offset, &offset ) );
 	if (offset >= (aoe->offset + aoe->size)) {
 		BAILIFERR( GetFileCString( aoe, &locationP, offset, aoe->maxOffset - offset, &offset ) );
 	}
-		
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("name=\"%s\"\n", nameP);
 	if (locationP) {
 		atomprint("location=\"%s\"\n", locationP);
 	}
-	atomprint("/>\n"); 
+	atomprint("/>\n");
 
 	// Check required field values
 //���	FieldMustBe( flags, 0, "'mp4s' flags must be 0" );
@@ -966,7 +966,7 @@ OSErr Validate_urn_Entry( atomOffsetEntry *aoe, void *refcon )
         if(vg.cmaf && flags != 0x000001){
 		errprint("CMAF check violated: Section 7.5.9. \"The Data Reference Box ('dref') SHALL contain a single entry with the entry_flags set to 0x000001 \", found 0x%lx\n", flags); //Single entry has been checked in 'dref' validation.
 	}
-	
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
 
@@ -990,17 +990,17 @@ OSErr Validate_dref_Atom( atomOffsetEntry *aoe, void *refcon )
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileDataN32( aoe, &entryCount, offset, &offset ) );
-	
+
 	if(vg.cmaf && entryCount != 1){
 		errprint("CMAF check violated: Section 7.5.9. \"The Data Reference Box ('dref') SHALL contain a single entry \", found %ld\n", entryCount);
 	}
-	
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("entryCount=\"%ld\"\n", entryCount);
-	atomprint(">\n"); //vg.tabcnt++; 
+	atomprint(">\n"); //vg.tabcnt++;
 
 	// Check required field values
 	FieldMustBe( flags, 0, "'dref' flags must be %d not 0x%lx" );
@@ -1012,17 +1012,17 @@ OSErr Validate_dref_Atom( atomOffsetEntry *aoe, void *refcon )
 		long cnt;
 		atomOffsetEntry *list;
 		int i;
-		
+
 		minOffset = offset;
 		maxOffset = aoe->offset + aoe->size;
-		
+
 		BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
-		
+
 		for (i = 0; i < cnt; i++) {
 			entry = &list[i];
-			
+
 			atomprint("<%s",ostypetostr(entry->type)); vg.tabcnt++;
-			
+
 			switch( entry->type ) {
 				case 'url ':
 					Validate_url_Entry( entry, refcon );
@@ -1031,21 +1031,21 @@ OSErr Validate_dref_Atom( atomOffsetEntry *aoe, void *refcon )
 				case 'urn ':
 					Validate_urn_Entry( entry, refcon );
 					break;
-					
+
 				default:
 				// �� should warn
 					warnprint("WARNING: In %s unknown/unexpected dref entry '%s'\n",vg.curatompath, ostypetostr(entry->type));
 					atomprint("???? />\n");
 					break;
 			}
-			--vg.tabcnt; 
+			--vg.tabcnt;
 
 		}
 
 	}
-	
+
 //	vg.tabcnt--;
-	
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
 
@@ -1075,7 +1075,7 @@ OSErr Validate_stts_Atom( atomOffsetEntry *aoe, void *refcon )
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileDataN32( aoe, &entryCount, offset, &offset ) );
 		//  adding 1 to entryCount to make this 1 based array
 	listSize = entryCount * sizeof(TimeToSampleNum);
@@ -1095,11 +1095,11 @@ OSErr Validate_stts_Atom( atomOffsetEntry *aoe, void *refcon )
 
     if(vg.dashSegment && entryCount != 0)
         errprint("stts atom, entry_count %d, violating\n ISO/IEC 23009-1:2012(E), 6.3.3: The tracks in the \"moov\" box shall contain no samples \n(i.e. the entry_count in the \"stts\", \"stsc\", and \"stco\" boxes shall be set to 0)\n",entryCount);
-    
+
 	if(vg.cmaf && entryCount != 0){
 		errprint("CMAF check violated: Section 7.5.12. \"All boxes in SampleTableBox SHALL have or compute a sample count of 0\", found %d\n", entryCount);
 	}
-    
+
 		//  changes to i stuff where needed to make it 1 based
 	for ( i = 1; i <= entryCount; i++ ) {
 		atomprintdetailed("<sttsEntry sampleCount=\"%d\" sampleDelta/duration=\"%d\" />\n", listP[i].sampleCount, listP[i].sampleDuration);
@@ -1129,7 +1129,7 @@ OSErr Validate_stts_Atom( atomOffsetEntry *aoe, void *refcon )
 					 int64todstr_r(totalDuration, tempStr1), int64todstr_r(tir->mediaDuration, tempStr2));
 		}
 	}
-	
+
 
 	// All done
 	aoe->aoeflags |= kAtomValidated;
@@ -1140,7 +1140,7 @@ bail:
 	tir->timeToSampleSampleCnt = numSamples;
 	tir->timeToSampleDuration = totalDuration;
 	tir->timeToSampleEntryCnt = entryCount;
-	
+
 	return err;
 }
 
@@ -1165,11 +1165,11 @@ OSErr Validate_ctts_Atom( atomOffsetEntry *aoe, void *refcon )
 	CompositionTimeToSampleNum *listP;
 	UInt32 listSize;
 	UInt32 i;
-	
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileDataN32( aoe, &entryCount, offset, &offset ) );
 	listSize = entryCount * sizeof(TimeToSampleNum);
 	BAILIFNIL( listP = (CompositionTimeToSampleNum *)malloc(listSize), allocFailedErr );
@@ -1178,15 +1178,15 @@ OSErr Validate_ctts_Atom( atomOffsetEntry *aoe, void *refcon )
 		listP[i].sampleCount = EndianS32_BtoN(listP[i].sampleCount);
 		listP[i].sampleOffset = EndianS32_BtoN(listP[i].sampleOffset);
 	}
-	
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("entryCount=\"%ld\"\n", entryCount);
 	atomprint(">\n");
 	vg.tabcnt++;
-	
+
 	totalcount = 0;  allzero = 1;
-	
+
 	for ( i = 0; i < entryCount; i++ ) {
 		atomprintdetailed("<cttsEntry sampleCount=\"%d\" sampleDelta/duration=\"%d\" />\n", listP[i].sampleCount, listP[i].sampleOffset);
 		if (listP[i].sampleOffset < 0) {
@@ -1195,7 +1195,7 @@ OSErr Validate_ctts_Atom( atomOffsetEntry *aoe, void *refcon )
 		totalcount += listP[i].sampleCount;
 		if (listP[i].sampleOffset != 0) allzero = 0;
 	}
-	
+
 	if (totalcount == 0) warnprint("WARNING: CTTS atom has no entries so is un-needed\n");
 	if (allzero == 1) warnprint("WARNING: CTTS atom has no entry with a non-zero offset so is un-needed\n");
 	--vg.tabcnt;
@@ -1225,11 +1225,11 @@ OSErr Validate_stsz_Atom( atomOffsetEntry *aoe, void *refcon )
 	SampleSizeRecord *listP = NULL;
 	UInt32 listSize;
 	UInt32 i;
-	
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileDataN32( aoe, &sampleSize, offset, &offset ) );
 	BAILIFERR( GetFileDataN32( aoe, &entryCount, offset, &offset ) );
 	if ((sampleSize == 0) && entryCount) {
@@ -1241,13 +1241,13 @@ OSErr Validate_stsz_Atom( atomOffsetEntry *aoe, void *refcon )
 			listP[i].sampleSize = EndianS32_BtoN(listP[i].sampleSize);
 		}
 	}
-	
+
 	if(vg.cmaf){
 		if(entryCount != 0){
 			errprint("CMAF check violated: Section 7.5.12. \"All boxes in SampleTableBox SHALL have or compute a sample count of 0\", found %d\n", entryCount);
 		}
 	}
-	
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("sampleSize=\"%ld\"\n", sampleSize);
@@ -1264,7 +1264,7 @@ OSErr Validate_stsz_Atom( atomOffsetEntry *aoe, void *refcon )
 		}
 		--vg.tabcnt;
 	}
-	
+
 	// Check required field values
 	FieldMustBe( flags, 0, "'stsz' flags must be %d not 0x%lx" );
 
@@ -1273,7 +1273,7 @@ OSErr Validate_stsz_Atom( atomOffsetEntry *aoe, void *refcon )
 	tir->sampleSizeEntryCnt = entryCount;
 	tir->singleSampleSize = sampleSize;
 	tir->sampleSize = listP;
-	
+
 bail:
 	return err;
 }
@@ -1291,22 +1291,22 @@ OSErr Validate_stz2_Atom( atomOffsetEntry *aoe, void *refcon )
 	SampleSizeRecord *listP;
 	UInt32 listSize;
 	UInt32 i;
-	
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileData( aoe, &temp, offset, 3, &offset ) );
 	BAILIFERR( GetFileData( aoe, &fieldSize, offset, 1, &offset ) );
 	BAILIFERR( GetFileDataN32( aoe, &entryCount, offset, &offset ) );
 	listSize = entryCount * sizeof(SampleSizeRecord);
 		// 1 based array + room for one over for the 4-bit case loop
 	BAILIFNIL( listP = (SampleSizeRecord *)malloc(listSize + sizeof(SampleSizeRecord) + sizeof(SampleSizeRecord)), allocFailedErr );
-	
+
 	if(vg.cmaf && entryCount != 0){
 		errprint("CMAF check violated: Section 7.5.12. \"All boxes in SampleTableBox SHALL have or compute a sample count of 0\", found %d\n", entryCount);
 	}
-	
+
 	if (entryCount) switch (fieldSize) {
 		case 4:
 			for (i=0; i<((entryCount+1)/2); i++) {
@@ -1332,7 +1332,7 @@ OSErr Validate_stz2_Atom( atomOffsetEntry *aoe, void *refcon )
 			break;
 		default: errprint("You can't have a field size of %d in stz2\n", fieldSize);
 	}
-	
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("fieldSize=\"%ld\"\n", fieldSize);
@@ -1349,7 +1349,7 @@ OSErr Validate_stz2_Atom( atomOffsetEntry *aoe, void *refcon )
 		}
 		--vg.tabcnt;
 	}
-	
+
 	// Check required field values
 	FieldMustBe( flags, 0, "'stz2' flags must be %d not 0x%lx" );
 
@@ -1358,7 +1358,7 @@ OSErr Validate_stz2_Atom( atomOffsetEntry *aoe, void *refcon )
 	tir->sampleSizeEntryCnt = entryCount;
 	tir->singleSampleSize = 0;
 	tir->sampleSize = listP;
-	
+
 bail:
 	return err;
 }
@@ -1377,18 +1377,18 @@ OSErr Validate_stsc_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt32 listSize;
 	UInt32 i;
 	UInt32 sampleToChunkSampleSubTotal = 0;		// total accounted for all but last entry
-	
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileDataN32( aoe, &entryCount, offset, &offset ) );
 
     if(vg.dashSegment && entryCount != 0)
         errprint("stsc atom, entry_count %d, violating\n of ISO/IEC 23009-1:2012(E), 6.3.3: The tracks in the \"moov\" box shall contain no samples \n(i.e. the entry_count in the \"stts\", \"stsc\", and \"stco\" boxes shall be set to 0)\n",entryCount);
 
     if (!vg.dashSegment && entryCount == 0) warnprint("WARNING: STSC atom has no entries so is un-needed. If this is a DASH file, then 'dash' is missing as a compatible brand and this is a conformance issue, hence the following program execution is not reliable!!!\n");
-	
+
 	listSize = entryCount * sizeof(SampleToChunk);
 			// 1 based array
 	BAILIFNIL( listP = (SampleToChunk *)malloc(listSize + sizeof(SampleToChunk)), allocFailedErr );
@@ -1398,7 +1398,7 @@ OSErr Validate_stsc_Atom( atomOffsetEntry *aoe, void *refcon )
 		listP[i].samplesPerChunk = EndianU32_BtoN(listP[i].samplesPerChunk);
 		listP[i].sampleDescriptionIndex = EndianU32_BtoN(listP[i].sampleDescriptionIndex);
 		if (i > 1) {
-			sampleToChunkSampleSubTotal += 
+			sampleToChunkSampleSubTotal +=
 				( listP[i].firstChunk - listP[i-1].firstChunk )
 					* ( listP[i-1].samplesPerChunk );
 		}
@@ -1409,16 +1409,16 @@ OSErr Validate_stsc_Atom( atomOffsetEntry *aoe, void *refcon )
 	atomprint("entryCount=\"%ld\"\n", entryCount);
 	atomprint(">\n");
 	vg.tabcnt++;
-	
+
 	if(vg.cmaf && entryCount != 0){
 		errprint("CMAF check violated: Section 7.5.12. \"All boxes in SampleTableBox SHALL have or compute a sample count of 0\", found %d\n", entryCount);
 	}
-	
+
 	listP[0].firstChunk = listP[0].samplesPerChunk = listP[0].sampleDescriptionIndex = 0;
 	for ( i = 1; i <= entryCount; i++ ) {
-		atomprintdetailed("<stscEntry firstChunk=\"%d\" samplesPerChunk=\"%d\" sampleDescriptionIndex=\"%d\" />\n", 
+		atomprintdetailed("<stscEntry firstChunk=\"%d\" samplesPerChunk=\"%d\" sampleDescriptionIndex=\"%d\" />\n",
 			listP[i].firstChunk, listP[i].samplesPerChunk, listP[i].sampleDescriptionIndex);
-		
+
 	}
 	--vg.tabcnt;
 
@@ -1427,11 +1427,11 @@ OSErr Validate_stsc_Atom( atomOffsetEntry *aoe, void *refcon )
 
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 	tir->sampleToChunkEntryCnt = entryCount;
 	tir->sampleToChunk = listP;
 	tir->sampleToChunkSampleSubTotal = sampleToChunkSampleSubTotal;		// total accounted for all but last entry
-	
+
 bail:
 	return err;
 }
@@ -1454,7 +1454,7 @@ OSErr Validate_stco_Atom( atomOffsetEntry *aoe, void *refcon )
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileDataN32( aoe, &entryCount, offset, &offset ) );
 	listSize = entryCount * sizeof(ChunkOffsetRecord);
 			// 1 based array
@@ -1465,11 +1465,11 @@ OSErr Validate_stco_Atom( atomOffsetEntry *aoe, void *refcon )
 	for ( i = 1; i <= entryCount; i++ ) {
 		listP[i].chunkOffset = EndianU32_BtoN(listP[i].chunkOffset);
 	}
-	
+
 	if(vg.cmaf && entryCount != 0){
 		errprint("CMAF check violated: Section 7.5.12. \"All boxes in SampleTableBox SHALL have or compute a sample count of 0\", found %d\n", entryCount);
 	}
-	
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("entryCount=\"%ld\"\n", entryCount);
@@ -1497,7 +1497,7 @@ OSErr Validate_stco_Atom( atomOffsetEntry *aoe, void *refcon )
 	tir->chunkOffsetEntryCnt = entryCount;
 	tir->chunkOffset = list64P;
 	free(listP);
-	
+
 bail:
 	return err;
 }
@@ -1515,11 +1515,11 @@ OSErr Validate_co64_Atom( atomOffsetEntry *aoe, void *refcon )
 	ChunkOffset64Record *listP;
 	UInt32 listSize;
 	UInt32 i;
-	
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileDataN32( aoe, &entryCount, offset, &offset ) );
 	listSize = entryCount * sizeof(ChunkOffset64Record);
 		// 1 based table
@@ -1528,7 +1528,7 @@ OSErr Validate_co64_Atom( atomOffsetEntry *aoe, void *refcon )
 	for ( i = 1; i <= entryCount; i++ ) {
 		listP[i].chunkOffset = EndianU64_BtoN(listP[i].chunkOffset);
 	}
-	
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("entryCount=\"%ld\"\n", entryCount);
@@ -1550,7 +1550,7 @@ OSErr Validate_co64_Atom( atomOffsetEntry *aoe, void *refcon )
 	aoe->aoeflags |= kAtomValidated;
 	tir->chunkOffsetEntryCnt = entryCount;
 	tir->chunkOffset = listP;
-	
+
 bail:
 	return err;
 }
@@ -1573,11 +1573,11 @@ OSErr Validate_stss_Atom( atomOffsetEntry *aoe, void *refcon )
 	SyncSampleRecord *listP;
 	UInt32 listSize;
 	UInt32 i;
-	
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileDataN32( aoe, &entryCount, offset, &offset ) );
 	listSize = entryCount * sizeof(SyncSampleRecord);
 	BAILIFNIL( listP = (SyncSampleRecord *)malloc(listSize), allocFailedErr );
@@ -1585,17 +1585,17 @@ OSErr Validate_stss_Atom( atomOffsetEntry *aoe, void *refcon )
 	for ( i = 0; i < entryCount; i++ ) {
 		listP[i].sampleNum = EndianU32_BtoN(listP[i].sampleNum);
 	}
-	
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("entryCount=\"%ld\"\n", entryCount);
 	atomprint(">\n");
 	vg.tabcnt++;
-	
+
 	if(vg.cmaf && entryCount != 0){
 		errprint("CMAF check violated: Section 7.5.12. \"All boxes in SampleTableBox SHALL have or compute a sample count of 0\", found %d\n", entryCount);
 	}
-	
+
 	for ( i = 0; i < entryCount; i++ ) {
 		atomprintdetailed("<stssEntry sampleNum=\"%d\" />\n", listP[i].sampleNum);
 		if (listP[i].sampleNum == 0) {
@@ -1632,11 +1632,11 @@ OSErr Validate_stsh_Atom( atomOffsetEntry *aoe, void *refcon )
 	ShadowSyncEntry *listP;
 	UInt32 listSize;
 	UInt32 i;
-	
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileDataN32( aoe, &entryCount, offset, &offset ) );
 	listSize = entryCount * sizeof(ShadowSyncEntry);
 	BAILIFNIL( listP = (ShadowSyncEntry *)malloc(listSize), allocFailedErr );
@@ -1645,14 +1645,14 @@ OSErr Validate_stsh_Atom( atomOffsetEntry *aoe, void *refcon )
 		listP[i].shadowSyncNumber = EndianU32_BtoN(listP[i].shadowSyncNumber);
 		listP[i].syncSampleNumber = EndianU32_BtoN(listP[i].syncSampleNumber);
 	}
-	
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("entryCount=\"%ld\"\n", entryCount);
 	atomprint("/>\n");
 	vg.tabcnt++;
 	for ( i = 0; i < entryCount; i++ ) {
-		atomprintdetailed("<stshEntry shadowSyncNumber=\"%d\" syncSampleNumber=\"%d\" />\n", 
+		atomprintdetailed("<stshEntry shadowSyncNumber=\"%d\" syncSampleNumber=\"%d\" />\n",
 			listP[i].shadowSyncNumber, listP[i].syncSampleNumber );
 //		if (listP[i].sampleOffset < 0) {
 //			errprint("You can't have a negative offset in the ctts table\n");
@@ -1688,27 +1688,27 @@ OSErr Validate_stdp_Atom( atomOffsetEntry *aoe, void *refcon )
 	DegradationPriority *listP;
 	UInt32 listSize;
 	UInt32 i;
-	
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	//BAILIFERR( GetFileDataN32( aoe, &entryCount, offset, &offset ) );
 	entryCount = tir->sampleSizeEntryCnt;
-	
-	if (entryCount==0) { 
+
+	if (entryCount==0) {
 		errprint("Cannot validate stdp box as it must follow sample size box to get entry count\n");
 		err = badAtomErr;
 		goto bail;
 	}
-	
+
 	listSize = entryCount * sizeof(DegradationPriority);
 	BAILIFNIL( listP = (DegradationPriority *)malloc(listSize), allocFailedErr );
 	BAILIFERR( GetFileData( aoe, listP, offset, listSize, &offset ) );
 	for ( i = 0; i < entryCount; i++ ) {
 		listP[i].priority = EndianU16_BtoN(listP[i].priority);
 	}
-	
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("entryCount=\"%ld\"\n", entryCount);
@@ -1745,13 +1745,13 @@ OSErr Validate_sdtp_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt8 *listP;
 	UInt32 listSize;
 	UInt32 i;
-	
+
 	static char* sample_depends_on[] = {
-		(char *)"unk", 
+		(char *)"unk",
 		(char *)"dpnds",
 		(char *)"not-dpnds",
 		(char *)"res" };
-	static char * sample_is_depended_on[] = { 
+	static char * sample_is_depended_on[] = {
 		(char *)"unk",
 		(char *)"dpdned-on",
 		(char *)"not-depnded-on",
@@ -1765,20 +1765,20 @@ OSErr Validate_sdtp_Atom( atomOffsetEntry *aoe, void *refcon )
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	//BAILIFERR( GetFileDataN32( aoe, &entryCount, offset, &offset ) );
 	entryCount = tir->sampleSizeEntryCnt;
-	
-	if (entryCount==0) { 
+
+	if (entryCount==0) {
 		errprint("Cannot validate sdtp box as it must follow sample size box to get entry count\n");
 		err = badAtomErr;
 		goto bail;
 	}
-	
+
 	listSize = entryCount * sizeof(UInt8);
 	BAILIFNIL( listP = (UInt8 *)malloc(listSize), allocFailedErr );
 	BAILIFERR( GetFileData( aoe, listP, offset, listSize, &offset ) );
-	
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("entryCount=\"%ld\"\n", entryCount);
@@ -1790,10 +1790,10 @@ OSErr Validate_sdtp_Atom( atomOffsetEntry *aoe, void *refcon )
 		depends =	 ((listP[i]) >> 4) & 3;
 		dependedon = ((listP[i]) >> 2) & 3;
 		red =		 ((listP[i]) >> 0) & 3;
-		
-		atomprintdetailed("<sdtpEntry %d=\"%s,%s,%s\" />\n", 
+
+		atomprintdetailed("<sdtpEntry %d=\"%s,%s,%s\" />\n",
 			i,
-			sample_depends_on[depends], 
+			sample_depends_on[depends],
 			sample_is_depended_on[dependedon],
 			sample_has_redundancy[red] );
 		if (resvd != 0) {
@@ -1824,11 +1824,11 @@ OSErr Validate_padb_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt8 *listP;
 	UInt32 listSize;
 	UInt32 i;
-	
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileDataN32( aoe, &entryCount, offset, &offset ) );
 
 	listSize = entryCount * sizeof(UInt8);
@@ -1849,7 +1849,7 @@ OSErr Validate_padb_Atom( atomOffsetEntry *aoe, void *refcon )
 	atomprint("/>\n");
 	vg.tabcnt++;
 	for ( i = 1; i <= entryCount; i++ ) {
-		atomprintdetailed("<paddingBitsEntry %d=%d />\n", 
+		atomprintdetailed("<paddingBitsEntry %d=%d />\n",
 			i,
 			listP[i] );
 	}
@@ -1881,20 +1881,20 @@ OSErr Validate_elst_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt32 listSize;
 	UInt32 i;
  //   Fixed mediaRate_1_0 = EndianU32_BtoN(0x10000);
-	Fixed mediaRate_1_0 = 0x10000;	
+	Fixed mediaRate_1_0 = 0x10000;
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
-        
- 
 
 
-	// Get data 
+
+
+	// Get data
 	BAILIFERR( GetFileDataN32( aoe, &entryCount, offset, &offset ) );
 	if (entryCount == 0) {
 		errprint("Edit list has an illegal entryCount of zero\n");
 	}
 	if (entryCount) {
-    
+
 
 		listSize = entryCount * sizeof(EditListEntryVers1Record);
 		BAILIFNIL( listP = (EditListEntryVers1Record *)malloc(listSize), allocFailedErr );
@@ -1902,7 +1902,7 @@ OSErr Validate_elst_Atom( atomOffsetEntry *aoe, void *refcon )
 		if (version == 0) {
 			UInt32 list0Size;
 			EditListEntryVers0Record *list0P;
-		
+
 			list0Size = entryCount * sizeof(EditListEntryVers0Record);
 			BAILIFNIL( list0P = (EditListEntryVers0Record *)malloc(list0Size), allocFailedErr );
 			BAILIFERR( GetFileData( aoe, list0P, offset, list0Size, &offset ) );
@@ -1915,7 +1915,7 @@ OSErr Validate_elst_Atom( atomOffsetEntry *aoe, void *refcon )
                 //listP[i].duration = list0P[i].duration;
                 //listP[i].mediaTime = (SInt64)((Int32)list0P[i].mediaTime);
                 //listP[i].mediaRate = list0P[i].mediaRate;
-                
+
 			}
 		} else if (version == 1) {
 			BAILIFERR( GetFileData( aoe, listP, offset, listSize, &offset ) );
@@ -1930,7 +1930,7 @@ OSErr Validate_elst_Atom( atomOffsetEntry *aoe, void *refcon )
 			goto bail;
 		}
 	}
-	
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("entryCount=\"%ld\"\n", entryCount);
@@ -1940,7 +1940,7 @@ OSErr Validate_elst_Atom( atomOffsetEntry *aoe, void *refcon )
             if(entryCount!=1)
                 errprint("CMAF check violated: Section 7.5.13. \"An offset edit list SHALL be a single EditListBox in an EditBox, i.e., entryCount SHALL be 1\", found %ld\n", entryCount);
         }
-        
+
 	vg.tabcnt++;
 	for ( i = 0; i < entryCount; i++ ) {
 		atomprint("<elstEntry duration=\"%s\"", int64todstr(listP[i].duration));
@@ -1948,7 +1948,7 @@ OSErr Validate_elst_Atom( atomOffsetEntry *aoe, void *refcon )
 		if ((listP[i].mediaTime < 0) && (listP[i].mediaTime != -1))
 			errprint("Edit list:  the only allowed negative value for media time is -1\n");
 		atomprintnotab(" mediaRate=\"%s\" />\n", fixed32str(listP[i].mediaRate));
-		
+
 		if(vg.cmaf){
 			if(version == 0 || version == 1){
 				if(listP[i].duration != 0){
@@ -1960,7 +1960,7 @@ OSErr Validate_elst_Atom( atomOffsetEntry *aoe, void *refcon )
 				if(strcmp(fixed32str(listP[i].mediaRate), "1.000000")!=0){
 					errprint("CMAF check violated: Section 7.5.13. \"A start offset edit list SHALL be defined as a single Edit List Box with media-rate = 1\", found %s\n", fixed32str(listP[i].mediaRate));
 				}
-				
+
 				if( strstr(fixed32str(listP[i].mediaRate), ".000000") == NULL ){
                                         errprint("CMAF check violated: Section 7.5.13. \"The value of media_rate_fraction field SHALL be set to 0\", media_rate found %s\n", fixed32str(listP[i].mediaRate));
                                 }
@@ -1969,7 +1969,7 @@ OSErr Validate_elst_Atom( atomOffsetEntry *aoe, void *refcon )
 
 		switch (vg.filetype) {
 			default:		// ISO family
-				if ((listP[i].mediaRate != mediaRate_1_0) && (listP[i].mediaRate != 0))	
+				if ((listP[i].mediaRate != mediaRate_1_0) && (listP[i].mediaRate != 0))
 					errprint("Edit list: media rate can only be 0 or 1, not 0x%0X\n", listP[i].mediaRate);
 		}
 
@@ -1983,7 +1983,7 @@ OSErr Validate_elst_Atom( atomOffsetEntry *aoe, void *refcon )
     tir->numEdits = entryCount;
 
 	// Check required field values
-	
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
 
@@ -2008,7 +2008,7 @@ OSErr Validate_tref_type_Atom( atomOffsetEntry *aoe, void *refcon, OSType trefTy
 	UInt32 listSize;
 	UInt32 i;
 
-	// Get data 
+	// Get data
 	offset = aoe->offset + aoe->atomStartSize;
 	listSize = (UInt32)(aoe->size - aoe->atomStartSize);
 	entryCount = listSize / sizeof(UInt32);
@@ -2088,26 +2088,26 @@ OSErr Validate_stsd_Atom( atomOffsetEntry *aoe, void *refcon )
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileDataN32( aoe, &entryCount, offset, &offset ) );
 		// 1 based table
 	BAILIFNULL( sampleDescriptionPtrArray = (SampleDescriptionPtr *)calloc((entryCount + 1), sizeof(SampleDescriptionPtr)), allocFailedErr );
 	BAILIFNULL( validatedSampleDescriptionRefCons = (UInt32 *)calloc((entryCount + 1), sizeof(UInt32)), allocFailedErr );
-	
+
 	if(vg.cmaf){
 		if(version != 0){
 			errprint("CMAF check violated: Section 7.5.10. \"Sample Description Boxes in a CMAF Track SHALL conform to verion 0\", found %d\n", version);
 		}
-	
+
 		//if(entryCount != 0){
 		//	errprint("CMAF check violated: Section 7.5.11. \"All boxes in SampleTableBox SHALL have or compute a sample count of 0\", found %d\n", entryCount);
 		//}
 	}
-	
+
 	// Print atom contents non-required fields
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("entryCount=\"%ld\"\n", entryCount);
-	atomprint(">\n"); //vg.tabcnt++; 
+	atomprint(">\n"); //vg.tabcnt++;
 
 	// Check required field values
 	FieldMustBe( flags, 0, "'dref' flags must be %d not 0x%lx" );
@@ -2122,20 +2122,20 @@ OSErr Validate_stsd_Atom( atomOffsetEntry *aoe, void *refcon )
 		long cnt;
 		atomOffsetEntry *list;
 		int i;
-		
+
 		minOffset = offset;
 		maxOffset = aoe->maxOffset;
-		
+
 		BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
-		
+
 		if (cnt != 1) {
 			errprint( "MPEG-4 only allows 1 sample description\n" );
 			err = badAtomErr;
 		}
-		
+
 		for (i = 0; i < cnt; i++) {
 			entry = &list[i];
-			
+
 
 			{  // stash the sample description
 				SampleDescriptionPtr sdp;
@@ -2145,7 +2145,7 @@ OSErr Validate_stsd_Atom( atomOffsetEntry *aoe, void *refcon )
 			}
 			atomprint("<%s_sampledescription\n",ostypetostr(tir->mediaType)); vg.tabcnt++;
 			tir->currentSampleDescriptionIndex = i+1;
-			
+
 			switch( tir->mediaType ) {
 				case 'vide':
 					err = Validate_vide_SD_Entry( entry, refcon );
@@ -2154,23 +2154,23 @@ OSErr Validate_stsd_Atom( atomOffsetEntry *aoe, void *refcon )
 				case 'soun':
 					err = Validate_soun_SD_Entry( entry, refcon );
 					break;
-					
+
 				case 'hint':
 					err = Validate_hint_SD_Entry( entry, refcon );
 					break;
-					
+
 				case 'sdsm':
 					err = Validate_mp4_SD_Entry( entry, refcon, Validate_sdsm_ES_Bitstream, (char *)"sdsm_ES" );
 					break;
-					
+
 				case 'odsm':
 					err = Validate_mp4_SD_Entry( entry, refcon, Validate_odsm_ES_Bitstream, (char *)"odsm_ES" );
 					break;
-					
+
                                 case 'subt':
                                         err = Validate_subt_SD_Entry( entry, refcon );
                                         break;
-					
+
 				default:
 					// why does MP4 say it must be an MpegSampleEntry?
 					//   So by default you can't have any other media type!!!
@@ -2182,8 +2182,8 @@ OSErr Validate_stsd_Atom( atomOffsetEntry *aoe, void *refcon )
 		}
 
 	}
-	
-	
+
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -2205,10 +2205,10 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	OSErr atomerr = noErr;
 	offset = aoe->offset;
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileData( aoe, &sdh, offset, sizeof(sdh), &offset ) );
 	EndianSampleDescriptionHead_BtoN( &sdh );
-	
+
 	// Note the sample description for both 'mp4v' and 's263' are the same in all these fields
 	BAILIFERR( GetFileData( aoe, &vsdi, offset, (UInt64)fieldOffset(VideoSampleDescriptionInfo,extensions) /* sizeof(vsdi) */, &offset ) );
 	vsdi.version = EndianS16_BtoN(vsdi.version);
@@ -2218,9 +2218,9 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	vsdi.spatialQuality = EndianU32_BtoN(vsdi.spatialQuality);
 	vsdi.width = EndianS16_BtoN(vsdi.width);
 	vsdi.height = EndianS16_BtoN(vsdi.height);
-	
+
 	char vsdi_name[strlen(vsdi.name)];
-	
+
 	tir->sampleDescWidth = vsdi.width; tir->sampleDescHeight = vsdi.height;
 	/*if ((tir->trackWidth>>16) != vsdi.width) {
 		warnprint("WARNING: Sample description width %d not the same as track width %s\n",vsdi.width,fixedU32str(tir->trackWidth));
@@ -2231,7 +2231,7 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	if ((vsdi.width==0) || (vsdi.height==0)) {
 		errprint("Visual Sample description height (%d) or width (%d) zero\n",vsdi.height,vsdi.width);
 	}
-	
+
 	if(vg.width != 0 && vg.height != 0){
             float mpd_ratio = ((float)(vg.width * vg.sarx))/((float)(vg.height * vg.sary));
             float tkhd_ratio = ((float)(tir->trackWidth>>16))/((float)(tir->trackHeight>>16));
@@ -2239,7 +2239,7 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
                 errprint("Track header box width:height %f:%f is not matching the MPD width:height %d:%d on a grid determined by the @sar attribute %d:%d.\n",((float)(tir->trackWidth>>16)), ((float)(tir->trackHeight>>16)), vg.width, vg.height, vg.sarx, vg.sary);
             }
         }
-	
+
 	vsdi.hRes = EndianU32_BtoN(vsdi.hRes);
 	vsdi.vRes = EndianU32_BtoN(vsdi.vRes);
 	vsdi.dataSize = EndianU32_BtoN(vsdi.dataSize);
@@ -2250,7 +2250,7 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	// Print atom contents non-required fields
 	atomprint("sdType=\"%s\"\n", ostypetostr(sdh.sdType));
 	atomprint("dataRefIndex=\"%ld\"\n", sdh.dataRefIndex);
-	// atomprint(">\n"); //vg.tabcnt++; 
+	// atomprint(">\n"); //vg.tabcnt++;
 
 	if(vsdi_name[0] == '\v' || vsdi_name[0]== '\017')	//to make the vsdi.name be acceptable by xml
 	  vsdi_name[0] = '\\';
@@ -2271,7 +2271,7 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	atomprint("clutID=\"%hd\"\n", vsdi.clutID);
 	atomprint(">\n");
 		FieldMustBeOneOf8( sdh.sdType, OSType, "SampleDescription sdType must be 'mp4v', 'avc1', 'avc3', 'avc4', 'encv', 'hev1','hvc1', or 'vp09'", ('mp4v', 'avc1', 'avc3', 'avc4', 'encv', 'hev1','hvc1','vp09') );
-		
+
 	FieldMustBe( sdh.resvd1, 0, "SampleDescription resvd1 must be %d not %d" );
 	FieldMustBe( sdh.resvdA, 0, "SampleDescription resvd1 must be %d not %d" );
 
@@ -2294,14 +2294,14 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	FieldMustBe( vsdi.name[0], 0, "ImageDescription name must be '%d' not '%d'" );
 	FieldMustBe( vsdi.depth, 24, "ImageDescription depth must be %d not %d" );
 	FieldMustBe( vsdi.clutID, -1, "ImageDescription clutID must be %d not %d" );
-        
+
         // Check whether height and width are matching with those from MPD
         if(vsdi.width != vg.width)
-        { 
+        {
             errprint("Width in video sample description (%d) is not matching with the width in the MPD (%d) \n",vsdi.width, vg.width);
         }
         if(vsdi.height != vg.height)
-        { 
+        {
             errprint("Height in video sample description (%d) is not matching with othe width in the MPD (%d) \n",vsdi.height, vg.height);
         }
 
@@ -2314,48 +2314,48 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 			int i;
 			int is_protected = 0;
 			int sinfFound =0;
-                        
+
 			minOffset = offset;
 			maxOffset = aoe->offset + aoe->size;
-			
+
 			is_protected = ( sdh.sdType == 'drmi' ) || (( (sdh.sdType & 0xFFFFFF00) | ' ') == 'enc ' );
-			
+
 			BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
 			if ((cnt != 1) && (sdh.sdType == 'mp4v')) {
 				errprint( "MPEG-4 only allows 1 sample description extension\n" );
 				err = badAtomErr;
 			}
-			
+
 			for (i = 0; i < cnt; i++) {
 				entry = &list[i];
-				
+
 				if (entry->type == 'esds') {
 					BAILIFERR( Validate_ESDAtom( entry, refcon, Validate_vide_ES_Bitstream, (char *)"vide_ES" ) );
 				}
-				else if ( entry->type == 'uuid' ) 
+				else if ( entry->type == 'uuid' )
 				{
 					// Process 'uuid' atoms
 					atomprint("<uuid"); vg.tabcnt++;
 					BAILIFERR( Validate_uuid_Atom( entry, refcon ) );
 					--vg.tabcnt; atomprint("</uuid>\n");
 				}
-				else if ( entry->type == 'sinf' ) 
+				else if ( entry->type == 'sinf' )
 				{
 					// Process 'sinf' atoms
                                         sinfFound=1;
 					atomprint("<sinf"); vg.tabcnt++;
 					BAILIFERR( Validate_sinf_Atom( entry, refcon, kTypeAtomFlagMustHaveOne ) );
 					--vg.tabcnt; atomprint("</sinf>\n");
-				}				
-				else if ( entry->type == 'colr' ) 
+				}
+				else if ( entry->type == 'colr' )
 				{
 					// Process 'colr' atoms
 					atomprint("<colr"); vg.tabcnt++;
 					BAILIFERR( Validate_colr_Atom( entry, refcon ) );
 					--vg.tabcnt; atomprint("</colr>\n");
-				}				
+				}
 
-				else if ((sdh.sdType == 'avc1' || sdh.sdType == 'avc3') || (is_protected && entry->type != 'hvcC')) 
+				else if ((sdh.sdType == 'avc1' || sdh.sdType == 'avc3') || (is_protected && entry->type != 'hvcC'))
 				{
 					if (entry->type == 'avcC') {
 						atomerr= Validate_avcC_Atom( entry, refcon, (char *)"avcC" );
@@ -2373,11 +2373,11 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 					else if ( entry->type == 'm4ds' ){
 						BAILIFERR( Validate_m4ds_Atom( entry, refcon, (char *)"m4ds" ) );
 					}
-					else if (entry->type == 'pasp') 
+					else if (entry->type == 'pasp')
                                         {
                                             BAILIFERR( Validate_pasp_Atom( entry, refcon, (char *)"pasp" ) );
                                         }
-					else { 
+					else {
 						err = badAtomErr;
 						warnprint("Warning: In %s - unknown atom found \"%s\": video sample descriptions would not normally contain this\n",vg.curatompath, ostypetostr(entry->type));
 						//goto bail;
@@ -2389,25 +2389,25 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 						atomerr= Validate_hvcC_Atom( entry, refcon, (char *)"hvcC" );
                                                 if (!err) err = atomerr;
 					}
-					else { 
+					else {
 						err = badAtomErr;
 						warnprint("Warning: In %s - unknown atom found \"%s\": video sample descriptions would not normally contain this\n",vg.curatompath, ostypetostr(entry->type));
 						//goto bail;
 					}
 				}
-				else { 
+				else {
 					err = badAtomErr;
 					warnprint("Warning: %s - unknown atom found \"%s\": video sample descriptions would not normally contain this\n",vg.curatompath, ostypetostr(entry->type));
 					// goto bail;
 				}
-				
+
 			}
 			if(vg.cmaf && is_protected && sinfFound!=1)
                             errprint("CMAF check violated: Section 7.5.10. \"Sample Entries for encrypted tracks SHALL encapsulate the existing sample entry with a Protection Scheme Information Box ('sinf')\", but 'sinf' not found. \n");
 			if(vg.cmaf && vg.dash264enc && sinfFound!=1)
                             errprint("CMAF check violated: Section 7.5.11. \"An encrypted CMAF Track SHALL include at least one Protection Scheme Information Box ('sinf') \", found %d\n", 0);
 		}
-	
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
 
@@ -2427,30 +2427,30 @@ OSErr Validate_trex_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt64 offset;
     UInt32 track_ID;
 	TrackInfoRec *tir;
-    
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
-    
-	// Get data 
+
+	// Get data
 	BAILIFERR( GetFileDataN32( aoe, &track_ID, offset, &offset ) );
 
     tir = check_track(track_ID);
-    
+
     if(tir == 0)
         return badAtomErr;
 
-    // Get data 
+    // Get data
 	BAILIFERR( GetFileDataN32( aoe, &tir->default_sample_description_index, offset, &offset ) );
 
-    // Get data 
+    // Get data
 	BAILIFERR( GetFileDataN32( aoe, &tir->default_sample_duration, offset, &offset ) );
 
-    // Get data 
+    // Get data
 	BAILIFERR( GetFileDataN32( aoe, &tir->default_sample_size, offset, &offset ) );
 
-    // Get data 
+    // Get data
 	BAILIFERR( GetFileDataN32( aoe, &tir->default_sample_flags, offset, &offset ) );
-	
+
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("trackID=\"%ld\"\n", track_ID);
 	atomprint("sampleDescriptionIndex=\"%ld\"\n", tir->default_sample_description_index);
@@ -2479,11 +2479,11 @@ OSErr Validate_mehd_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt64 offset;
 	UInt32 temp;
 	MovieInfoRec	*mir = (MovieInfoRec	*)refcon;
-    
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
-    
-	// Get data 
+
+	// Get data
 	if(version == 1)
 	    BAILIFERR( GetFileDataN64( aoe, &mir->fragment_duration, offset, &offset ) );
     else
@@ -2491,11 +2491,11 @@ OSErr Validate_mehd_Atom( atomOffsetEntry *aoe, void *refcon )
         BAILIFERR( GetFileDataN32( aoe, &temp, offset, &offset ) );
         mir->fragment_duration = temp;
     }
-	
+
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("fragmentDuration=\"%lld\"\n", (mir->fragment_duration));
 	atomprint(">\n");
-        
+
         if(vg.cmaf && mir->fragment_duration <=0)
             errprint("CMAF checks violated: Section 7.3.2.1. \"If 'mehd' is present, SHALL provide the overall duration of a fragmented movie. If duration \
             is unknown, this box SHALL be omitted.\", but duration found as %d",mir->fragment_duration);
@@ -2519,15 +2519,15 @@ OSErr Validate_trep_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt32 flags;
 	UInt64 offset;
         UInt32 track_id;
-        
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
         BAILIFERR( GetFileDataN32( aoe, &track_id, offset, &offset ) );
-        
+
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("track_id=\"%lld\"\n", track_id);
 	atomprint(">\n");
-        
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -2546,13 +2546,13 @@ OSErr Validate_mfhd_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt32 flags;
 	UInt64 offset;
     MoofInfoRec *moofInfo = (MoofInfoRec *)refcon;
-    
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
-    
-	// Get data 
+
+	// Get data
 	BAILIFERR( GetFileDataN32( aoe, &moofInfo->sequence_number, offset, &offset ) );
-	
+
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint("sequenceNumber=\"%ld\"\n", moofInfo->sequence_number);
 	atomprint(">\n");
@@ -2575,21 +2575,21 @@ OSErr Validate_tfhd_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt32 tf_flags;
 	UInt64 offset;
     TrafInfoRec *trafInfo = (TrafInfoRec *)refcon;
-    
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &tf_flags, &offset ) );
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, tf_flags);
-    
-	// Get data 
+
+	// Get data
 	BAILIFERR( GetFileDataN32( aoe, &trafInfo->track_ID, offset, &offset ) );
 	atomprint("trackID=\"%ld\"\n", trafInfo->track_ID);
 
     TrackInfoRec *tir;
 	tir = check_track(trafInfo->track_ID);
-    
+
     if(tir == 0)
         return badAtomErr;
-    
+
     trafInfo->base_data_offset_present =  ((tf_flags & 0x000001) != 0);
     trafInfo->sample_description_index_present =  ((tf_flags & 0x000002) != 0);
     trafInfo->default_sample_duration_present =  ((tf_flags & 0x000008) != 0);
@@ -2600,35 +2600,35 @@ OSErr Validate_tfhd_Atom( atomOffsetEntry *aoe, void *refcon )
 
     if(vg.dashSegment && !trafInfo->default_base_is_moof)
         errprint("default-base-is-moof is not set, violating ISO/IEC 23009-1:2012(E), 6.3.4.2: ... the flag 'default-base-is-moof' shall be set\n");
-    
+
     if(vg.dashSegment && trafInfo->base_data_offset_present)
         errprint("base-data-offset-present is set, violating ISO/IEC 23009-1:2012(E), 6.3.4.2: ... base-data-offset-present shall not be used\n");
-    
+
     if(trafInfo->base_data_offset_present)
         BAILIFERR( GetFileDataN64( aoe, &trafInfo->base_data_offset, offset, &offset ) );
-    
+
     if(trafInfo->sample_description_index_present)
         BAILIFERR( GetFileDataN32( aoe, &trafInfo->sample_description_index, offset, &offset ) );
     else{
         if(vg.cmaf)
             errprint("CMAF check violated: Section 7.5.14. \"Default values or per sample values SHALL be stored in each CMAF chunk's TrackFragmentBoxHeader and/or TrackRunBox\", 'sample_description_index' not found.\n");
     }
-    
+
     if(trafInfo->default_sample_duration_present)
         BAILIFERR( GetFileDataN32( aoe, &trafInfo->default_sample_duration, offset, &offset ) );
     else
         trafInfo->default_sample_duration = tir->default_sample_duration;   //"Effective" default in that case
-    
+
     if(trafInfo->default_sample_size_present)
         BAILIFERR( GetFileDataN32( aoe, &trafInfo->default_sample_size, offset, &offset ) );
     else
         trafInfo->default_sample_size = tir->default_sample_size;   //"Effective" default in that case
-    
+
     if(trafInfo->default_sample_flags_present)
         BAILIFERR( GetFileDataN32( aoe, &trafInfo->default_sample_flags, offset, &offset ) );
 	else
             trafInfo->default_sample_flags = tir->default_sample_flags;
-    
+
     if(vg.cmaf){
  	if(trafInfo->track_ID != tir->trackID){
  		errprint("CMAF check violated: Section 7.5.16. \"The track_ID field SHALL contain the same value as the track_ID in the matching CMAF Header\", found %ld\n", trafInfo->track_ID);
@@ -2640,14 +2640,14 @@ OSErr Validate_tfhd_Atom( atomOffsetEntry *aoe, void *refcon )
 		errprint("CMAF check violated: Section 7.5.16. \"The default-base-is-moof flag SHALL be set to one\", found %d\n", trafInfo->default_base_is_moof);
 	}
     }
-	
+
     atomprint("baseDataOffset=\"%ld\"\n", EndianU64_BtoN(trafInfo->base_data_offset));
     atomprint("sampleDescriptionIndex=\"%ld\"\n", trafInfo->sample_description_index);
     atomprint("defaultSampleDuration=\"%ld\"\n", trafInfo->default_sample_duration);
     atomprint("defaultSampleSize=\"%ld\"\n", EndianU32_BtoN(trafInfo->default_sample_size));
     atomprint("defaultSampleFlags=\"%ld\"\n", EndianU32_BtoN(trafInfo->default_sample_flags));
     atomprint(">\n");
-    
+
     // All done
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -2671,7 +2671,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
     char TOC [8192];
 
     trunInfo->cummulatedSampleDuration = 0;
-    
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &trunInfo->version, &tr_flags, &offset ) );
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", trunInfo->version, tr_flags);
@@ -2716,7 +2716,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
             trunInfo->sampleToBePresented = (Boolean *)malloc(trunInfo->sample_count*sizeof(Boolean));   //For later use after applying edits
             trunInfo->sap3 = (Boolean *)malloc(trunInfo->sample_count*sizeof(Boolean));
             trunInfo->sap4 = (Boolean *)malloc(trunInfo->sample_count*sizeof(Boolean));
-            
+
             for(i = 0 ; i < trunInfo->sample_count ; i++)
             {
                 trunInfo->samplePresentationTime[i] = 0.0;
@@ -2736,7 +2736,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
     {
          UInt64 savedCummulatedSampleDuration = trunInfo->cummulatedSampleDuration;
          UInt32 currentSampleDecodeDelta;
-        
+
         if(trunInfo->sample_duration_present)
         {
             BAILIFERR( GetFileDataN32( aoe, &trunInfo->sample_duration[i], offset, &offset ) );
@@ -2751,7 +2751,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
         }
 
         trunInfo->cummulatedSampleDuration += currentSampleDecodeDelta;
-        
+
         if(trunInfo->sample_size_present)
             BAILIFERR( GetFileDataN32( aoe, &trunInfo->sample_size[i], offset, &offset ) );
 		else{
@@ -2772,7 +2772,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
                                 errprint("CMAF check violated: Section 7.5.14. \"default_sample_flags, sample_flags and first_sample_flags SHALL be set in the TrackFragmentBoxHeader and/or TrackRunBox to provide sample dependency information within each CMAF chunk and CMAF fragment\", not found in any of them.\n");
                     }
                 }
-       
+
         //Use it as a signed int when version is non-zero
         if(trunInfo->sample_composition_time_offsets_present)
         {
@@ -2785,21 +2785,21 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
 
         if(compositionTimeInTrackFragment < trafInfo->earliestCompositionTimeInTrackFragment)
             trafInfo->earliestCompositionTimeInTrackFragment = compositionTimeInTrackFragment;
-        
+
         if((compositionTimeInTrackFragment + currentSampleDecodeDelta) > trafInfo->compositionEndTimeInTrackFragment)
             trafInfo->compositionEndTimeInTrackFragment = compositionTimeInTrackFragment + currentSampleDecodeDelta;
-        
+
         if(compositionTimeInTrackFragment > trafInfo->latestCompositionTimeInTrackFragment)
             trafInfo->latestCompositionTimeInTrackFragment = compositionTimeInTrackFragment;
-        
+
     }
-    
+
 	if(vg.cmaf && trunInfo->data_offset_present != true){
 		errprint("CMAF check violated: Section 7.5.17. \"The data-offset-present flag SHALL be set to true\", found %d\n", trunInfo->data_offset_present);
 	}
 	if(vg.hbbtv && trunInfo->version ==0)
             errprint("### HbbTV check violated: Section E.3.1.1. \"The track run box (trun) shall allow negative composition offsets in order to maintain audio visual presentation synchronization\", but unsigned offsets found \n");
-    
+
     vg.tabcnt++;
     toggleprintsample( 1 );
 
@@ -2836,7 +2836,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
         if(vg.cmaf){
             sampleSizesTotal += trunInfo->sample_size[i];
         }
-        
+
         sampleprint("<sampleInfo sampleDuration=\"%ld\"", trunInfo->sample_duration[i]);
         sampleprintnotab(" sampleSize=\"%ld\"", trunInfo->sample_size[i]);
         sampleprintnotab(" sampleFlags=\"%ld\"", EndianU32_BtoN(trunInfo->sample_flags[i]));
@@ -2844,9 +2844,9 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
     }
     toggleprintsample( 0 );
     --vg.tabcnt;
-  
+
     trafInfo->processedTrun++;
-    
+
     atomprint("cummulatedSampleDuration=\"%lld\"\n", trunInfo->cummulatedSampleDuration);
     atomprint("earliestCompositionTime=\"%ld\"\n", trafInfo->earliestCompositionTimeInTrackFragment);
     atomprint("data_offset=\"%ld\"\n", trunInfo->data_offset);
@@ -2854,7 +2854,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
         atomprint("sampleSizeTotal=\"%ld\"\n", sampleSizesTotal);
     }
     atomprint(">\n");
-    
+
     // All done
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -2872,9 +2872,9 @@ OSErr Validate_sbgp_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt64 offset;
 
     TrafInfoRec *trafInfo = (TrafInfoRec *) refcon;
-    
+
     SbgpInfoRec *sbgpInfo = &trafInfo->sbgpInfo[trafInfo->processedSbgp];
-    
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &sbgpInfo->version, &flags, &offset ) );
 
@@ -2882,7 +2882,7 @@ OSErr Validate_sbgp_Atom( atomOffsetEntry *aoe, void *refcon )
 
     if(sbgpInfo->version == 1)
         BAILIFERR( GetFileDataN32( aoe, &sbgpInfo->grouping_type_parameter, offset, &offset ) );
-    
+
     BAILIFERR( GetFileDataN32( aoe, &sbgpInfo->entry_count, offset, &offset ));
 
     sbgpInfo->sample_count = (UInt32 *)malloc(sbgpInfo->entry_count*sizeof(UInt32));
@@ -2895,7 +2895,7 @@ OSErr Validate_sbgp_Atom( atomOffsetEntry *aoe, void *refcon )
     }
 
     trafInfo->processedSbgp++;
-    
+
     // Print data
     atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", sbgpInfo->version, flags);
     atomprint("groupingType=\"%ld\"\n", EndianU32_BtoN(sbgpInfo->grouping_type));
@@ -2903,14 +2903,14 @@ OSErr Validate_sbgp_Atom( atomOffsetEntry *aoe, void *refcon )
     atomprint("entryCount=\"%ld\"\n", sbgpInfo->entry_count);
     atomprint(">\n");
     vg.tabcnt++;
-    
+
     for ( UInt32 i = 0; i < sbgpInfo->entry_count; i++ ) {
 	sampleprint("<sampleInfo sampleCount=\"%ld\"", EndianU32_BtoN(sbgpInfo->sample_count[i]));
 	sampleprintnotab(" group_description_index=\"%ld\"/>\n", EndianU32_BtoN(sbgpInfo->group_description_index[i]));
     }
-    
+
     --vg.tabcnt;
-    
+
     // All done
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -2929,9 +2929,9 @@ OSErr Validate_sgpd_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt64 offset;
 
     TrafInfoRec *trafInfo = (TrafInfoRec *) refcon;
-    
+
     SgpdInfoRec *sgpdInfo = &trafInfo->sgpdInfo[trafInfo->processedSgpd];
-    
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &sgpdInfo->version, &flags, &offset ) );
 
@@ -2939,7 +2939,7 @@ OSErr Validate_sgpd_Atom( atomOffsetEntry *aoe, void *refcon )
 
     if(sgpdInfo->version == 1)
         BAILIFERR( GetFileDataN32( aoe, &sgpdInfo->default_length, offset, &offset ) );
-    
+
     BAILIFERR( GetFileDataN32( aoe, &sgpdInfo->entry_count, offset, &offset ));
 
     sgpdInfo->description_length = (UInt32 *)malloc(sgpdInfo->entry_count*sizeof(UInt32));
@@ -2959,20 +2959,20 @@ OSErr Validate_sgpd_Atom( atomOffsetEntry *aoe, void *refcon )
     }
 
     trafInfo->processedSgpd++;
-    
+
     atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", sgpdInfo->version, flags);
     atomprint("groupingType=\"%ld\"\n", EndianU32_BtoN(sgpdInfo->grouping_type));
     atomprint("entryCount=\"%ld\"\n", sgpdInfo->entry_count);
     atomprint(">\n");
     vg.tabcnt++;
-    
+
     for(UInt32 i=0; i<sgpdInfo->entry_count; i++){
 	sampleprint("<sgpdEntry descriptionLength=\"%ld\"", EndianU32_BtoN(sgpdInfo->description_length[i]));
 	sampleprintnotab(" sampleGroupDescriptionEntry=\"%ld\"/>\n", EndianU32_BtoN(sgpdInfo->SampleGroupDescriptionEntry[i]));
     }
-    
+
     --vg.tabcnt;
-    
+
     // All done
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -2991,10 +2991,10 @@ OSErr Validate_subs_Atom( atomOffsetEntry *aoe, void *refcon )
         UInt64 offset;
         UInt32 entry_count;
         UInt32 i, j;
-        
+
         // Get version/flags
         BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
-        
+
         BAILIFERR( GetFileDataN32( aoe, &entry_count, offset, &offset ));
 
         atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
@@ -3004,7 +3004,7 @@ OSErr Validate_subs_Atom( atomOffsetEntry *aoe, void *refcon )
                 UInt16 subsample_count;
                 BAILIFERR( GetFileDataN32( aoe, &sample_delta, offset, &offset ));
                 BAILIFERR( GetFileDataN16( aoe, &subsample_count, offset, &offset ));
-                
+
                 atomprint("sample_delta_n=\"%d%ld\"\n", i, sample_delta);
                 atomprint("subsample_count_n=\"%d%ld\"\n", i, subsample_count);
 
@@ -3022,22 +3022,19 @@ OSErr Validate_subs_Atom( atomOffsetEntry *aoe, void *refcon )
                                 UInt16 subsample_size;
                                 BAILIFERR( GetFileDataN16( aoe, &subsample_size, offset, &offset ));
                         }
-                        
+
                         UInt16 subsample_priority_and_discardable;
                         UInt32 codec_specific_parameters;
                         BAILIFERR( GetFileDataN16( aoe, &subsample_priority_and_discardable, offset, &offset ));
                         BAILIFERR( GetFileDataN32( aoe, &codec_specific_parameters, offset, &offset ));
                 }
         }
-        
 
-
-        
         //CMAF check
         if(vg.cmaf && entry_count != 1){
                 errprint("CMAF check violated: Section 7.5.20. \"The field entry_count in 'subs' box SHALL equal 1.\", instead found %d", entry_count);
         }
-        
+
         // All done
         aoe->aoeflags |= kAtomValidated;
 bail:
@@ -3058,41 +3055,41 @@ OSErr Validate_emsg_Atom( atomOffsetEntry *aoe, void *refcon )
     UInt32  presentation_time_delta;
     UInt32  event_duration;
     UInt32  id;
-    UInt8  *message_data;    
+    UInt8  *message_data;
     //TrafInfoRec *trafInfo = (TrafInfoRec *)refcon;
-    
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
-    
+
     if(version != 0)
         errprint("version = 0 for emsg box according to ISO/IEC 23009-1:2013(E), 5.10.3.3.3\n");
-        
+
     if(flags != 0)
         errprint("flags = 0 for emsg box according to ISO/IEC 23009-1:2013(E), 5.10.3.3.3\n");
 
     BAILIFERR( GetFileCString( aoe, &scheme_id_uri, offset, aoe->maxOffset - offset, &offset ) );
-    
+
     BAILIFERR( GetFileCString( aoe, &value, offset, aoe->maxOffset - offset, &offset ) );
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileDataN32( aoe, &timescale, offset, &offset ) );
-	
+
 	BAILIFERR( GetFileDataN32( aoe, &presentation_time_delta, offset, &offset ) );
-	
+
 	BAILIFERR( GetFileDataN32( aoe, &event_duration, offset, &offset ) );
-	
+
 	BAILIFERR( GetFileDataN32( aoe, &id, offset, &offset ) );
 
 	message_data = new UInt8[aoe->maxOffset - offset];
 	BAILIFERR( GetFileData( aoe,message_data, offset, aoe->maxOffset - offset , &offset ) );
-    
+
      atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
      atomprint("timeScale=\"%ld\"\n", timescale);
      atomprint("presentationTimeDelta=\"%ld\"\n", presentation_time_delta);
      atomprint("eventDuration=\"%ld\"\n", event_duration);
      atomprint("id=\"%ld\"\n", id);
      atomprint(">\n");
-	
+
      if(vg.cmaf){
          if(timescale != vg.mediaHeaderTimescale)
              errprint("CMAF check violated: Section 7.4.5. \"The DASHEventMessageBox in a CMAF Track SHALL contain its timescale field value equal to the timescale in the MediaHeaderBox of CMAF Track that contains it. \", found timescale as %ld instead of %ld \n",timescale, vg.mediaHeaderTimescale);
@@ -3114,11 +3111,11 @@ OSErr Validate_tfdt_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt32 flags, temp;
 	UInt64 offset;
     TrafInfoRec *trafInfo = (TrafInfoRec *)refcon;
-    
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
-    
-	// Get data 
+
+	// Get data
 	if(version == 1)
 	    BAILIFERR( GetFileDataN64( aoe, &trafInfo->baseMediaDecodeTime, offset, &offset ) );
     else
@@ -3128,11 +3125,11 @@ OSErr Validate_tfdt_Atom( atomOffsetEntry *aoe, void *refcon )
     }
 
     trafInfo->tfdtFound = true;
-    
+
     atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
     atomprint("baseMediaDecodeTime=\"%lld\"\n", (trafInfo->baseMediaDecodeTime));//EndianU64_BtoN
     atomprint(">\n");
-    
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -3147,23 +3144,23 @@ OSErr Validate_pssh_Atom( atomOffsetEntry *aoe, void *refcon )
     UInt32 version;
     UInt32 flags;
     UInt64 offset;
-    
+
     // Get version/flags
     BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
-    
-    // Get data 
-	UInt8	SystemID[16]; 
+
+    // Get data
+	UInt8	SystemID[16];
     BAILIFERR( GetFileData( aoe,SystemID, offset, 16 , &offset ) );
 
 	UInt32 DataSize;
     BAILIFERR( GetFileDataN32( aoe, &DataSize, offset, &offset ) );
-    
+
 	UInt8 *Data;
-    
-    Data = (UInt8 *)malloc(DataSize*sizeof(UInt8)); 
+
+    Data = (UInt8 *)malloc(DataSize*sizeof(UInt8));
     BAILIFERR( GetFileData( aoe,Data, offset, DataSize , &offset ) );
-    
-    
+
+
     atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
     //Adjust SystemID before printing, ascii to integer.
     char print_SysID[50], SysID_char[20];
@@ -3179,38 +3176,38 @@ OSErr Validate_pssh_Atom( atomOffsetEntry *aoe, void *refcon )
     atomprint("dataSize=\"%ld\"\n", EndianU32_BtoN(DataSize));
     atomprint(">\n");
     //Compare pssh box contents with the cenc:pssh element of MPD
-    
+
     char *pssh_contents;
     if(vg.pssh_count > 0)
     {
       sprintf(pssh_contents, "%lu %lu %s %lu %s",version, flags, SystemID, DataSize, Data);
-    
+
       //Get pssh mentioned in MPD from a saved file
       char *pssh_file_contents;
       long pssh_file_size;
-    
+
       for(int i=0; i<vg.pssh_count; i++)
       {
 	char pssh_file_name[300];
 	strcpy(pssh_file_name,vg.psshfile[i]);
-	
+
 	if(pssh_file_name != '\0'){
 	FILE *pssh_file = fopen(vg.psshfile[i], "rb");
-	
+
 	  fseek(pssh_file, 0, SEEK_END);
 	  pssh_file_size = ftell(pssh_file);
 	  rewind(pssh_file);
 	  pssh_file_contents = (char *)malloc(pssh_file_size * (sizeof(char)));
 	  fread(pssh_file_contents, sizeof(char), pssh_file_size, pssh_file);
-	
+
 	  fclose(pssh_file);
-	     
+
 	  int rc = 0;
 	  int bufferlen = 128;
 	  char encodedoutput[] = "";
 	  //Convert box contents to base64
 	  rc = Base64Encode(pssh_contents, encodedoutput, bufferlen);
-	  
+
 	  if(strcmp(encodedoutput, pssh_file_contents)!=0)
 	  {
 	    if(i<(vg.pssh_count-1))
@@ -3219,12 +3216,12 @@ OSErr Validate_pssh_Atom( atomOffsetEntry *aoe, void *refcon )
 	      errprint("pssh box including header is not equivalent to a cenc:pssh element of MPD");
 	  }
        }
-      
+
       }
     }
- 
+
     free(Data);
-    
+
     // All done
     aoe->aoeflags |= kAtomValidated;
 bail:
@@ -3241,21 +3238,21 @@ OSErr Validate_sidx_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt32 version;
 	UInt32 flags, temp;
 	UInt64 offset;
-    
+
     MovieInfoRec *mir = (MovieInfoRec *)refcon;
 
     SidxInfoRec *sidxInfo = &mir->sidxInfo[mir->processedSdixs];
 
     sidxInfo->offset = aoe->offset;
     sidxInfo->size = aoe->size;
-    
-    /*for the index range, verify that 
-  sidxInfo->offset > starting of index range && 
+
+    /*for the index range, verify that
+  sidxInfo->offset > starting of index range &&
   sidxInfo->offset + sidxInfo->size - 1 < ending of index range */
-    
+
     int offs=sidxInfo->offset;       //convert to int value and store it in a variable
     int siz=sidxInfo->size;
-  
+
     if (vg.isoondemand) //only check for ondemand profile
     {
         if (vg.lowerindexRange!=-1 && vg.higherindexRange!=-1)
@@ -3270,39 +3267,39 @@ OSErr Validate_sidx_Atom( atomOffsetEntry *aoe, void *refcon )
               errprint("DASH-IF IOP 4.2 check violated - Section 3.2.1. \" For on-demand profiles the Indexed Media Segment as defined in ISO/IEC 23009-1, clause 6.3.4.4 shall be used. In this case the @indexRange attribute shall be present.\"; however, sidx present without @indexRange.\n");
         }
     }
-    
+
     // Get version/flags
     BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
-    
+
     BAILIFERR( GetFileDataN32( aoe, &sidxInfo->reference_ID, offset, &offset ) );
 
     TrackInfoRec *tir;
 
     tir = check_track(sidxInfo->reference_ID);
-    
+
     if(tir == 0){
         atomprint(">\n");
         return badAtomErr;
     }
-    
-    
+
+
     atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
     atomprint("referenceID=\"%ld\"\n", sidxInfo->reference_ID);
-    
-    
+
+
     BAILIFERR( GetFileDataN32( aoe, &sidxInfo->timescale, offset, &offset ) );
     atomprint("timeScale=\"%ld\"\n", sidxInfo->timescale);
-    
+
 
     if(tir->mediaTimeScale != sidxInfo->timescale)
         warnprint("Warning: sidx timescale %d != track timescale %d for track ID %d, Section 8.16.3.3 of ISO/IEC 14496-12 4th edition: it is recommended that this match the timescale of the reference stream or track\n",sidxInfo->timescale,tir->mediaTimeScale,sidxInfo->reference_ID);
-        
-	// Get data 
+
+	// Get data
 	if(version == 0)
 	{
 	    BAILIFERR( GetFileDataN32( aoe, &temp, offset, &offset ) );
         sidxInfo->earliest_presentation_time = temp;
-        
+
 	    BAILIFERR( GetFileDataN32( aoe, &temp, offset, &offset ) );
         sidxInfo->first_offset = temp;
 	}
@@ -3311,13 +3308,13 @@ OSErr Validate_sidx_Atom( atomOffsetEntry *aoe, void *refcon )
 	    BAILIFERR( GetFileDataN64( aoe, &sidxInfo->earliest_presentation_time, offset, &offset ) );
 	    BAILIFERR( GetFileDataN64( aoe, &sidxInfo->first_offset, offset, &offset ) );
     }
-    
+
     atomprint("earliestPresentationTime=\"%lld\"\n",sidxInfo->earliest_presentation_time); //int64todstr(EndianU64_BtoN(sidxInfo->earliest_presentation_time)));
     atomprint("firstOffset=\"%lld\"\n", (EndianU64_BtoN(sidxInfo->first_offset)));
 
     BAILIFERR( GetFileDataN32( aoe, &temp, offset, &offset ) );
     sidxInfo->reference_count = (UInt16)(temp & 0xFFFF);
-    
+
     atomprint("referenceCount=\"%ld\"\n", sidxInfo->reference_count);
 
     sidxInfo->references = (Reference *)malloc(((UInt32)sidxInfo->reference_count)*sizeof(Reference));
@@ -3325,16 +3322,16 @@ OSErr Validate_sidx_Atom( atomOffsetEntry *aoe, void *refcon )
     sidxInfo->cumulatedDuration = 0;
 
     for(i=0; i < sidxInfo->reference_count; i++)
-    { 
+    {
         BAILIFERR( GetFileDataN32( aoe, &temp, offset, &offset ) );
         sidxInfo->references[i].reference_type = (UInt8)(temp >> 31);
-            
+
         atomprint("reference_type_%d=\"%d\"\n", i+1, sidxInfo->references[i].reference_type);
         if(sidxInfo->references[i].reference_type == 0)
             tir->numLeafs++;
-            
+
         sidxInfo->references[i].referenced_size = temp & 0x7FFFFFFF;
-        
+
         BAILIFERR( GetFileDataN32( aoe, &sidxInfo->references[i].subsegment_duration, offset, &offset ) );
 
         sidxInfo->cumulatedDuration+=((long double)sidxInfo->references[i].subsegment_duration/(long double)sidxInfo->timescale);
@@ -3347,7 +3344,7 @@ OSErr Validate_sidx_Atom( atomOffsetEntry *aoe, void *refcon )
     }
 
     mir->processedSdixs++;
-    
+
     atomprint("cumulatedDuration=\"%Lf\"\n", sidxInfo->cumulatedDuration);
     //atomprint(">\n");
     vg.tabcnt++;
@@ -3358,7 +3355,7 @@ OSErr Validate_sidx_Atom( atomOffsetEntry *aoe, void *refcon )
 	    sampleprintnotab(" SAP_delta_time=\"%ld\" />\n", sidxInfo->references[i].SAP_delta_time);
 	}
     --vg.tabcnt;
-    
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -3391,10 +3388,10 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	SampleDescriptionHead sdh;
 	SoundSampleDescriptionInfo ssdi;
 	UInt16 sampleratelo, sampleratehi;
-	
+
 	offset = aoe->offset;
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileData( aoe, &sdh, offset, sizeof(sdh), &offset ) );
 	EndianSampleDescriptionHead_BtoN( &sdh );
 	BAILIFERR( GetFileData( aoe, &ssdi, offset, sizeof(ssdi), &offset ) );
@@ -3406,33 +3403,33 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	ssdi.compressionID = EndianS16_BtoN(ssdi.compressionID);
 	ssdi.packetSize = EndianS16_BtoN(ssdi.packetSize);
 	ssdi.sampleRate = EndianU32_BtoN(ssdi.sampleRate);
-	
+
 	// Print atom contents non-required fields
 	atomprint("sdType=\"%s\"\n", ostypetostr(sdh.sdType));
 	atomprint("dataRefIndex=\"%ld\"\n", sdh.dataRefIndex);
 	atomprint("channelCount=\"%d\"\n", ssdi.numChannels);
 	atomprint("sampleSize=\"%d\"\n", ssdi.sampleSize);
 	atomprint("sampleRate=\"%s\"\n", fixedU32str(ssdi.sampleRate));
-	
+
     if (vg.dolby && (ssdi.sampleSize != 16))
     {
         errprint("ETSI TS 103 190-2 v1.2.1 Annex E Line  00013976: sampleSize shall be set to 16 but is %d\n", ssdi.sampleSize );
     }
-    
+
 	sampleratelo = (ssdi.sampleRate) & 0xFFFF;
 	sampleratehi = (ssdi.sampleRate >> 16) & 0xFFFF;
-	
+
 	if (vg.dolby && (sampleratehi != tir->mediaTimeScale)) {
         errprint("ETSI_TS_102_366_V1.4.1 Annex F Line  12729: Track timescale %d not equal to the (integer part of) the Sample entry sample rate %d.%d\n",
 				tir->mediaTimeScale, sampleratehi, sampleratelo);
 		}
-	atomprint(">\n"); //vg.tabcnt++; 
+	atomprint(">\n"); //vg.tabcnt++;
 
 	// Check required field values
 	FieldMustBeOneOf11( sdh.sdType, OSType, "SampleDescription sdType must be 'mp4a' or 'enca' or 'ac-4' or 'mha1' or 'mha2' or 'ac-3' or 'ec-3' or 'dtsc' or 'dtsh', 'dtse', 'dtsl' ", ( 'mp4a', 'enca','ac-4', 'mha1','mha2','ac-3','ec-3','dtsc','dtsh','dtse','dtsl' ) );
-	
-	if( (sdh.sdType != 'mp4a') && (sdh.sdType != 'enca') && (sdh.sdType != 'ac-4') && (sdh.sdType != 'mha1') && (sdh.sdType != 'mha2') && (sdh.sdType != 'ac-3') && (sdh.sdType != 'ec-3') && (sdh.sdType != 'dtsc') && (sdh.sdType != 'dtsh') && (sdh.sdType != 'dtse') && (sdh.sdType != 'dtsl') && !fileTypeKnown ){	
-			warnprint("WARNING: Don't know about this sound descriptor type \"%s\"\n", 
+
+	if( (sdh.sdType != 'mp4a') && (sdh.sdType != 'enca') && (sdh.sdType != 'ac-4') && (sdh.sdType != 'mha1') && (sdh.sdType != 'mha2') && (sdh.sdType != 'ac-3') && (sdh.sdType != 'ec-3') && (sdh.sdType != 'dtsc') && (sdh.sdType != 'dtsh') && (sdh.sdType != 'dtse') && (sdh.sdType != 'dtsl') && !fileTypeKnown ){
+			warnprint("WARNING: Don't know about this sound descriptor type \"%s\"\n",
 				ostypetostr(sdh.sdType));
 			// goto bail;
 	}
@@ -3463,7 +3460,7 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 
 
 	FieldMustBe( ssdi.sampleRate & 0x0000ffff, 0, "SoundDescription sampleRate's low long must be %d not 0x%lx" );
-	
+
 	// Now we have the Sample Extensions
 
 	{
@@ -3474,43 +3471,43 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 		atomOffsetEntry *list;
 		int i;
 		int sinfFound=0;
-                
+
 		minOffset = offset;
 		maxOffset = aoe->offset + aoe->size;
-		
+
 		BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
-		
+
 		if ((cnt != 1) && (sdh.sdType == 'mp4v')) {
 			errprint( "MPEG-4 only allows 1 sample description extension\n" );
 			err = badAtomErr;
 		}
-		
+
 		for (i = 0; i < cnt; i++) {
 			entry = &list[i];
-			
-			if (entry->type == 'esds') { 
-				BAILIFERR( Validate_ESDAtom( entry, refcon, Validate_soun_ES_Bitstream, (char *)"soun_ES" ) ); 
+
+			if (entry->type == 'esds') {
+				BAILIFERR( Validate_ESDAtom( entry, refcon, Validate_soun_ES_Bitstream, (char *)"soun_ES" ) );
 			}
-			
-			else if ( entry->type == 'sinf' ) 
+
+			else if ( entry->type == 'sinf' )
 			{
 				// Process 'sinf' atoms
                                 sinfFound=1;
 				atomprint("<sinf"); vg.tabcnt++;
 				BAILIFERR( Validate_sinf_Atom( entry, refcon, kTypeAtomFlagMustHaveOne ) );
 				--vg.tabcnt; atomprint("</sinf>\n");
-			}				
+			}
 			else if (entry->type == 'mhaC' ){
-			        BAILIFERR( Validate_mhaC_Atom( entry, refcon)); 
+			        BAILIFERR( Validate_mhaC_Atom( entry, refcon));
 			}
 			else if (entry->type == 'dac3' ){
-			        BAILIFERR( Validate_dac3_Atom( entry, refcon)); 
+			        BAILIFERR( Validate_dac3_Atom( entry, refcon));
 			}
 			else if (entry->type == 'dec3' ){
-			        BAILIFERR( Validate_dec3_Atom( entry, refcon)); 
+			        BAILIFERR( Validate_dec3_Atom( entry, refcon));
 			}
 			else if (entry->type == 'dac4' ){
-			        BAILIFERR( Validate_dac4_Atom( entry, refcon)); 
+			        BAILIFERR( Validate_dac4_Atom( entry, refcon));
 			}
 			else if (entry->type == 'lac4' ){
 			        BAILIFERR( Validate_lac4_Atom( entry, refcon));
@@ -3518,7 +3515,7 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 			else {
 				warnprint("Warning: In %s - unknown atom found \"%s\": audio sample descriptions would not normally contain this\n",vg.curatompath, ostypetostr(entry->type));
 			}
-			
+
             //
             //Explicit check for ec-3
             if(!strcmp(vg.codecs, "ec-3") && (entry->type != 'dec3'))
@@ -3527,7 +3524,7 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
             //Explicit check for ec-3 with mp4a
             if(!strcmp(vg.codecs, "mp4a") && (entry->type == 'dec3'))
                 errprint("sample type 'dec3' not allowed for m4a\n" );
-			
+
             //Explicit check for ac-3 with mp4a
             if(!strcmp(vg.codecs, "mp4a") && (entry->type == 'dac3'))
                 errprint("sample type 'dac3' not allowed for m4a\n" );
@@ -3544,7 +3541,7 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
             if(!strcmp(vg.codecs, "ac-4") && (entry->type != 'dac4'))
                 errprint("sample type not 'dac4' as it should be for codec 'ac-4'\n" );
         }
-        
+
 		if(vg.cmaf && ((sdh.sdType == 'drmi' ) || (( (sdh.sdType & 0xFFFFFF00) | ' ') == 'enc ' )) && sinfFound!=1)
                     errprint("CMAF check violated: Section 7.5.10. \"Sample Entries for encrypted tracks SHALL encapsulate the existing sample entry with a Protection Scheme Information Box ('sinf')\", but 'sinf' not found. \n");
 		if(vg.cmaf && vg.dash264enc && sinfFound!=1)
@@ -3567,18 +3564,18 @@ OSErr Validate_hint_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	OSErr err = noErr;
 	UInt64 offset;
 	SampleDescriptionHead sdh;
-	
+
 	offset = aoe->offset;
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileData( aoe, &sdh, offset, sizeof(sdh), &offset ) );
 	EndianSampleDescriptionHead_BtoN( &sdh );
 //����how to cope with hint data
-	
+
 	// Print atom contents non-required fields
 	atomprint("sdType=\"%s\"\n", ostypetostr(sdh.sdType));
 	atomprint("dataRefIndex=\"%ld\"\n", sdh.dataRefIndex);
-	atomprint(">\n"); //vg.tabcnt++; 
+	atomprint(">\n"); //vg.tabcnt++;
 
 	if(vg.cmaf && ((sdh.sdType == 'drmi' ) || (( (sdh.sdType & 0xFFFFFF00) | ' ') == 'enc ' )) && aoe->type != 'sinf'){
 		char entry_type_name[5] = {0};
@@ -3591,9 +3588,9 @@ OSErr Validate_hint_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	// Check required field values
 	FieldMustBe( sdh.resvd1, 0, "SampleDescription resvd1 must be %d not 0x%lx" );
 	FieldMustBe( sdh.resvdA, 0, "SampleDescription resvd1 must be %d not 0x%lx" );
-	
+
 //��� hint data
-	
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
 
@@ -3608,46 +3605,46 @@ OSErr Validate_subt_SD_Entry( atomOffsetEntry *aoe, void *refcon )
     OSErr err = noErr;
     UInt64 offset;
     SampleDescriptionHead sdh;
-    
+
     offset = aoe->offset;
-    
-    // Get data 
+
+    // Get data
     BAILIFERR( GetFileData( aoe, &sdh, offset, sizeof(sdh), &offset ) );
     EndianSampleDescriptionHead_BtoN( &sdh );
-    
+
     atomprint("sdType=\"%s\"\n", ostypetostr(sdh.sdType));
     atomprint("dataRefIndex=\"%ld\"\n", sdh.dataRefIndex);
-    atomprint(">\n"); //vg.tabcnt++; 
-    
+    atomprint(">\n"); //vg.tabcnt++;
+
     {
         UInt64 minOffset, maxOffset;
         atomOffsetEntry *entry;
         atomOffsetEntry *list;
         long cnt;
         int i;
-        
+
         minOffset = offset;
         maxOffset = aoe->offset + aoe->size;
-        
+
         BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
-        
+
         for(i=0; i<cnt; i++)
         {
             entry = &list[i];
-            
+
             if(sdh.sdType == 'stpp')
             {
                 BAILIFERR( Validate_stpp_Atom( entry, refcon, (char *)"stpp" ) );
             }
         }
     }
-    
+
     // All done
 	aoe->aoeflags |= kAtomValidated;
 
 bail:
 	return err;
-    
+
 }
 
 //==========================================================================================
@@ -3657,25 +3654,25 @@ OSErr Validate_mp4_SD_Entry( atomOffsetEntry *aoe, void *refcon, ValidateBitstre
 	OSErr err = noErr;
 	UInt64 offset;
 	SampleDescriptionHead sdh;
-	
+
 	offset = aoe->offset;
 
-	// Get data 
+	// Get data
 	BAILIFERR( GetFileData( aoe, &sdh, offset, sizeof(sdh), &offset ) );
 	EndianSampleDescriptionHead_BtoN( &sdh );
 //����how to cope with hint data
-	
+
 	// Print atom contents non-required fields
 	atomprint("sdType=\"%s\"\n", ostypetostr(sdh.sdType));
 	atomprint("dataRefIndex=\"%ld\"\n", sdh.dataRefIndex);
-	atomprint(">\n"); //vg.tabcnt++; 
+	atomprint(">\n"); //vg.tabcnt++;
 
 
 
 	FieldMustBe( sdh.sdType, 'mp4s', "SampleDescription sdType must be 'mp4s'" );
 	FieldMustBe( sdh.resvd1, 0, "SampleDescription resvd1 must be %d not 0x%lx" );
 	FieldMustBe( sdh.resvdA, 0, "SampleDescription resvd1 must be %d not 0x%lx" );
-	
+
 	// Now we have the Sample Extensions
 	{
 		UInt64 minOffset, maxOffset;
@@ -3683,21 +3680,21 @@ OSErr Validate_mp4_SD_Entry( atomOffsetEntry *aoe, void *refcon, ValidateBitstre
 		long cnt;
 		atomOffsetEntry *list;
 		int i;
-		
+
 		minOffset = offset;
 		maxOffset = aoe->offset + aoe->size;
-		
+
 		BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
-		
+
 		if (cnt != 1) {
 
 				errprint( "MPEG-4 only allows 1 ESD\n" );
 			err = badAtomErr;
 		}
-		
+
 		for (i = 0; i < cnt; i++) {
 			entry = &list[i];
-			
+
 			if(vg.cmaf && ((sdh.sdType == 'drmi' ) || (( (sdh.sdType & 0xFFFFFF00) | ' ') == 'enc ' )) && entry->type != 'sinf'){
 				char entry_type_name[5] = {0};
 				entry_type_name[0] = (entry->type >> 24) & 0xff;
@@ -3706,13 +3703,13 @@ OSErr Validate_mp4_SD_Entry( atomOffsetEntry *aoe, void *refcon, ValidateBitstre
 				entry_type_name[3] = (entry->type >>  0) & 0xff;
 				errprint("CMAF check violated: Section 7.5.10. \"Sample Entries for encrypted tracks SHALL encapsulate the existing sample entry with a Protection Scheme Information Box ('sinf')\", found %s\n", entry_type_name);
 			}
-			
+
 			BAILIFERR( Validate_ESDAtom( entry, refcon, validateBitstreamProc, esname) );
-			
+
 		}
 	}
-	
-	
+
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
 
@@ -3735,27 +3732,27 @@ OSErr Validate_mhaC_Atom( atomOffsetEntry *aoe, void *refcon)
         TrackInfoRec *tir = (TrackInfoRec *)refcon;
 	OSErr err = noErr;
 	UInt64 offset;
-		
+
 	offset = aoe->offset + aoe->atomStartSize;
 	MHADecoderConfigurationRecord mhaDecoderConfigurationRecord;
         //errprint( "offset= %d\n",offset );
-	
-	atomprint("<mhaC\n"); 
+
+	atomprint("<mhaC\n");
 	vg.tabcnt++;
 
-	BAILIFERR( GetFileData( aoe, &mhaDecoderConfigurationRecord.configurationVersion , offset, sizeof(mhaDecoderConfigurationRecord.configurationVersion), &offset ) );	
-	BAILIFERR( GetFileData( aoe, &mhaDecoderConfigurationRecord.mpegh3daProfileLevelIndication , offset, sizeof(mhaDecoderConfigurationRecord.mpegh3daProfileLevelIndication), &offset ) );	
+	BAILIFERR( GetFileData( aoe, &mhaDecoderConfigurationRecord.configurationVersion , offset, sizeof(mhaDecoderConfigurationRecord.configurationVersion), &offset ) );
+	BAILIFERR( GetFileData( aoe, &mhaDecoderConfigurationRecord.mpegh3daProfileLevelIndication , offset, sizeof(mhaDecoderConfigurationRecord.mpegh3daProfileLevelIndication), &offset ) );
 	BAILIFERR( GetFileData( aoe, &mhaDecoderConfigurationRecord.referenceChannelLayout , offset, sizeof(mhaDecoderConfigurationRecord.referenceChannelLayout) , &offset ) );
-	BAILIFERR( GetFileData( aoe, &mhaDecoderConfigurationRecord.mpegh3daConfigLength, offset, sizeof(mhaDecoderConfigurationRecord.mpegh3daConfigLength), &offset ) );	
+	BAILIFERR( GetFileData( aoe, &mhaDecoderConfigurationRecord.mpegh3daConfigLength, offset, sizeof(mhaDecoderConfigurationRecord.mpegh3daConfigLength), &offset ) );
         BAILIFERR( GetFileData( aoe, &mhaDecoderConfigurationRecord.mpegh3daConfig, offset, sizeof(mhaDecoderConfigurationRecord.mpegh3daConfigLength*8), &offset ) );
-	
+
 	atomprint("configurationVersion=\"%d\"\n", mhaDecoderConfigurationRecord.configurationVersion);
 	atomprint("mpegh3daProfileLevelIndication=\"%d\"\n", mhaDecoderConfigurationRecord.mpegh3daProfileLevelIndication);
 	atomprint("referenceChannelLayout=\"%d\"\n", mhaDecoderConfigurationRecord.referenceChannelLayout);
 	atomprint("mpegh3daConfigLength=\"%ld\"\n", EndianU16_BtoN(mhaDecoderConfigurationRecord.mpegh3daConfigLength));
 	atomprint("mpegh3daConfig=\"%ld\"\n", EndianU32_BtoN(mhaDecoderConfigurationRecord.mpegh3daConfig));
 	atomprint(">\n");
-	
+
         FieldMustBe( mhaDecoderConfigurationRecord.configurationVersion , 1, "ConfigurationVersion must be %d not %d" );
         if(vg.dash264base){
             if(vg.audioChValue != mhaDecoderConfigurationRecord.referenceChannelLayout){
@@ -3767,10 +3764,10 @@ OSErr Validate_mhaC_Atom( atomOffsetEntry *aoe, void *refcon)
             )
                 errprint( "DASH-IF IOP 4.2 check violated - Section 9.2.5.2. \"The mpegh3daProfileLevelIndication shall be set to 0x0B, 0x0C or 0x0D\", found %d.\n", mhaDecoderConfigurationRecord.mpegh3daProfileLevelIndication);
         }
-	
-	--vg.tabcnt; 
+
+	--vg.tabcnt;
 	atomprint("</mhaC>\n");
-	
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
 
@@ -3791,37 +3788,37 @@ OSErr Validate_ESDAtom( atomOffsetEntry *aoe, void *refcon, ValidateBitstreamPro
 	Ptr esDataP = nil;
 	unsigned long esSize;
 	BitBuffer bb;
-	
+
 	atomprint("<ESD"); vg.tabcnt++;
-	
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
-	
+
 
 		FieldMustBe( flags, 0, "'ESDAtom' flags must be %d not 0x%lx" );
 		FieldMustBe( version, 0, "ESDAtom version must be %d not 0x%2x" );
 
-	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags); 
+	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
 	atomprint(">\n");
-	
+
 	// Get the ObjectDescriptor
 	//atomprint("<%s>", esname); vg.tabcnt++;
 	BAILIFERR( GetFileBitStreamDataToEndOfAtom( aoe, &esDataP, &esSize, offset, &offset ) );
-	
+
 	BitBuffer_Init(&bb, (UInt8 *)esDataP, esSize);
 
 	BAILIFERR( CallValidateBitstreamProc( validateBitstreamProc, &bb, refcon ) );
-	
+
 	if (NumBytesLeft(&bb) > 1) {
 		err = tooMuchDataErr;
 	}
-		
+
 	//--vg.tabcnt; atomprint("</%s>\n", esname);
-	
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
-	
+
+
 bail:
         --vg.tabcnt; atomprint("</ESD>\n");
 	if (esDataP)
@@ -3839,26 +3836,26 @@ OSErr Validate_uuid_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt64 offset;
 	UInt32 residual;
 	//char	tempStr[100];
-	
+
 	// atomprint("<uuid "); vg.tabcnt++;
 	residual = aoe->size - sizeof( AtomSizeType ) - sizeof( uuidType );
-	
-	atomprintnotab("\tuuid=\"%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x\" more_data_length=\"%d\" %s\n", 
-		aoe->uuid[0],  aoe->uuid[1],  aoe->uuid[2],  aoe->uuid[3], 
-		aoe->uuid[4],  aoe->uuid[5],  aoe->uuid[6],  aoe->uuid[7], 
-		aoe->uuid[8],  aoe->uuid[9],  aoe->uuid[10], aoe->uuid[11], 
-		aoe->uuid[12], aoe->uuid[13], aoe->uuid[14], aoe->uuid[15], 
+
+	atomprintnotab("\tuuid=\"%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x\" more_data_length=\"%d\" %s\n",
+		aoe->uuid[0],  aoe->uuid[1],  aoe->uuid[2],  aoe->uuid[3],
+		aoe->uuid[4],  aoe->uuid[5],  aoe->uuid[6],  aoe->uuid[7],
+		aoe->uuid[8],  aoe->uuid[9],  aoe->uuid[10], aoe->uuid[11],
+		aoe->uuid[12], aoe->uuid[13], aoe->uuid[14], aoe->uuid[15],
 		residual, ">" ); // (residual > 0 ? ">" : "/>")
-	
+
 	offset = aoe->offset + 8 + 16;
-	
+
 	vg.tabcnt++;
 	vg.printsample = true;
 
 	while (residual>0) {
 		UInt32 to_read;
 		char buff[16];
-		
+
 		to_read = (residual > 16 ? 16 : residual);
 		BAILIFERR( GetFileData( aoe, &(buff[0]), offset, to_read, &offset ) );
 		sampleprinthexandasciidata( &(buff[0]), to_read );
@@ -3866,11 +3863,11 @@ OSErr Validate_uuid_Atom( atomOffsetEntry *aoe, void *refcon )
 	}
 	--vg.tabcnt; vg.printsample = false;
 	residual = aoe->size - sizeof( AtomSizeType ) - sizeof( uuidType );
-	// if (residual > 0) atomprint("</uuid>\n");  --vg.tabcnt; 
-	
+	// if (residual > 0) atomprint("</uuid>\n");  --vg.tabcnt;
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	return err;
 }
@@ -3883,7 +3880,7 @@ OSErr Validate_colr_Atom( atomOffsetEntry *aoe, void *refcon )
 	ColrInfo colrHeader;
 	static char* primaries[] = {
 		(char *)"Reserved", (char *)"BT.709", (char *)"Unspecified", (char *)"Reserved",(char *)"BT.470-2 System M",
-		(char *)"EBU Tech. 3213 (was BT.470-2 System B,G)", (char *)"SMPTE 170M", (char *)"SMPTE 240M", (char *)"Linear/Film", 
+		(char *)"EBU Tech. 3213 (was BT.470-2 System B,G)", (char *)"SMPTE 170M", (char *)"SMPTE 240M", (char *)"Linear/Film",
 		(char *)"Log 100:1", (char *)"Log 316.22777:1"};
 	static char* matrices[] = {
 		(char *)"Reserved", (char *)"BT.709", (char *)"Unspecified", (char *)"Reserved",(char *)"FCC",
@@ -3891,7 +3888,7 @@ OSErr Validate_colr_Atom( atomOffsetEntry *aoe, void *refcon )
 	char* prim;
 	char* func;
 	char* matr;
-			
+
 	// Get version/flags
 	offset = aoe->offset;
 	BAILIFERR( GetFileData( aoe, &colrHeader.start.atomSize, offset, sizeof( AtomSizeType ), &offset ) );
@@ -3905,28 +3902,28 @@ OSErr Validate_colr_Atom( atomOffsetEntry *aoe, void *refcon )
 	if ((colrHeader.colrtype == 'nclc') && ( 18 == colrHeader.start.atomSize )) {
 		colrHeader.primaries = EndianU16_BtoN( colrHeader.primaries );
 		if (colrHeader.primaries < 11) prim = primaries[colrHeader.primaries]; else prim = (char *)"unknown";
-		
+
 		colrHeader.function  = EndianU16_BtoN( colrHeader.function );
 		if (colrHeader.function < 11) func = primaries[colrHeader.function]; else func = (char *)"unknown";
 
 		colrHeader.matrix    = EndianU16_BtoN( colrHeader.matrix );
 		if (colrHeader.matrix < 8) matr = matrices[colrHeader.matrix]; else matr = (char *)"unknown";
-		atomprintnotab("\tavg(Colr/nclc)Primaries=\"%d\" (%s), function=\"%d\" (%s), matrix=\"%d\" (%s)\n", 
+		atomprintnotab("\tavg(Colr/nclc)Primaries=\"%d\" (%s), function=\"%d\" (%s), matrix=\"%d\" (%s)\n",
 			colrHeader.primaries, prim,
 			colrHeader.function, func,
 			colrHeader.matrix, matr);
-			
-		atomprint(">\n"); 
+
+		atomprint(">\n");
 	}
-	else if(colrHeader.colrtype == 'nclx'){ //errprint( "colr atom size or type not as expected; size %d, should be %d; or type %s not nclc\n", 
+	else if(colrHeader.colrtype == 'nclx'){ //errprint( "colr atom size or type not as expected; size %d, should be %d; or type %s not nclc\n",
 	     	//colrHeader.start.atomSize, 18, ostypetostr(colrHeader.colrtype) );
             atomprint(">\n");
            warnprint("colr atom of type nclx found, the software does not handle colr atoms of this type. \n");
         }
-        
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	return err;
 }
@@ -3939,21 +3936,21 @@ OSErr Validate_avcC_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
 	AvcConfigInfo avcHeader;
 	void* bsDataP;
 	BitBuffer bb;
-	
+
 	atomprint("<%s", esname); vg.tabcnt++;
-	
+
 	// Get version/flags
 	offset = aoe->offset;
 	BAILIFERR( GetFileData( aoe, &avcHeader.start.atomSize, offset, sizeof( AtomSizeType ), &offset ) );
 	avcHeader.start.atomSize = EndianU32_BtoN( avcHeader.start.atomSize );
 	avcHeader.start.atomType = EndianU32_BtoN( avcHeader.start.atomType );
-	
+
 
 	BAILIFNIL( bsDataP = calloc(avcHeader.start.atomSize - 8 + bitParsingSlop, 1), allocFailedErr );
 	BAILIFERR( GetFileData( aoe, bsDataP, offset, avcHeader.start.atomSize - 8, &offset ) );
 	BitBuffer_Init(&bb, (UInt8 *)bsDataP, avcHeader.start.atomSize - 8);
 
-	BAILIFERR( Validate_AVCConfigRecord( &bb, refcon ) );		
+	BAILIFERR( Validate_AVCConfigRecord( &bb, refcon ) );
 	//--vg.tabcnt; atomprint("</%s>\n", esname);
 
 
@@ -3961,7 +3958,7 @@ OSErr Validate_avcC_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
 
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	--vg.tabcnt; atomprint("</%s>\n", esname);
 	return err;
@@ -3974,10 +3971,10 @@ OSErr Validate_btrt_Atom( atomOffsetEntry *aoe, void *refcon, char *esName )
 	UInt64 offset;
 	AvcBtrtInfo bitrHeader;
 	//char	tempStr[100];
-	
+
 	atomprint("<btrt"); vg.tabcnt++;
-	
-		
+
+
 	// Get version/flags
 	offset = aoe->offset;
 	BAILIFERR( GetFileData( aoe, &bitrHeader.start.atomSize, offset, sizeof( AtomSizeType ), &offset ) );
@@ -3988,21 +3985,21 @@ OSErr Validate_btrt_Atom( atomOffsetEntry *aoe, void *refcon, char *esName )
 	bitrHeader.buffersizeDB = EndianU32_BtoN( bitrHeader.buffersizeDB );
 	bitrHeader.maxBitrate   = EndianU32_BtoN( bitrHeader.maxBitrate );
 	bitrHeader.avgBitrate   = EndianU32_BtoN( bitrHeader.avgBitrate );
-	
-	atomprintnotab("\tBuffzersizeDB=\"%d\"  maxBitrate=\"%d\" avgBitrate=\"%d\"\n", 
+
+	atomprintnotab("\tBuffzersizeDB=\"%d\"  maxBitrate=\"%d\" avgBitrate=\"%d\"\n",
 		bitrHeader.buffersizeDB, bitrHeader.maxBitrate, bitrHeader.avgBitrate );
-	
+
 	if( sizeof( AvcBtrtInfo ) != bitrHeader.start.atomSize ){
 		err = badAtomSize;
 		errprint( "atom size for 'btrt' atom (%d) != sizeof( AvcBtrtInfo )(%d) \n", bitrHeader.start.atomSize, sizeof( AvcBtrtInfo ) );
 		goto bail;
 	}
-		
+
 	--vg.tabcnt; atomprint("/>\n");
 
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	return err;
 }
@@ -4014,23 +4011,23 @@ OSErr Validate_m4ds_Atom( atomOffsetEntry *aoe, void *refcon, char *esName )
 	Ptr esDataP = nil;
 	unsigned long esSize;
 	BitBuffer bb;
-	
+
 	atomprint("<m4ds>\n"); vg.tabcnt++;
 	offset = aoe->offset + aoe->atomStartSize;
-	
+
 	// Get the Descriptors
 	BAILIFERR( GetFileBitStreamDataToEndOfAtom( aoe, &esDataP, &esSize, offset, &offset ) );
-	
+
 	BitBuffer_Init(&bb, (UInt8 *)esDataP, esSize);
 
 	while (NumBytesLeft(&bb) >= 1) {
 		BAILIFERR( Validate_Random_Descriptor(  &bb, (char *)"Descriptor" ) );
 	}
-	
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
 	--vg.tabcnt; atomprint("</m4ds>\n");
-	
+
 bail:
 	if (esDataP)
 		free(esDataP);
@@ -4053,11 +4050,11 @@ OSErr Validate_stpp_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
     long cnt;
     atomOffsetEntry *list;
     int i;
-    
+
     atomprint("<%s", esname); vg.tabcnt++;
-    
+
     offset = aoe->offset;
-    
+
     // Get data
     BAILIFERR( GetFileCString( aoe, &name_space, offset, aoe->maxOffset - offset, &offset ) );
     atomprint("namespace=\"%s\"\n", name_space);
@@ -4065,15 +4062,15 @@ OSErr Validate_stpp_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
     atomprint("schema_location=\"%s\"\n", schema_location);
     BAILIFERR( GetFileCString( aoe, &auxiliary_mime_types, offset, aoe->maxOffset - offset, &offset ) );
     atomprint("auxiliary_mime_types=\"%s\"\n", auxiliary_mime_types);
-    
+
     minOffset = offset;
     maxOffset = aoe->offset + aoe->size;
     BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
     for (i = 0; i < cnt; i++) {
             entry = &list[i];
-            
+
             atomprint("<%s",ostypetostr(entry->type)); vg.tabcnt++;
-            
+
             switch( entry->type ) {
                     case 'mime':
                             Validate_mime_Atom( entry, refcon, (char *)"mime" );
@@ -4082,10 +4079,10 @@ OSErr Validate_stpp_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
                     default:
                             break;
             }
-            --vg.tabcnt; 
+            --vg.tabcnt;
 
     }
-    
+
     // All done
 	aoe->aoeflags |= kAtomValidated;
 
@@ -4099,15 +4096,15 @@ OSErr Validate_mime_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
     OSErr err = noErr;
     UInt64 offset;
     char *contenttype;
-    
+
     atomprint("<%s", esname); vg.tabcnt++;
-    
+
     offset = aoe->offset;
-    
+
     // Get data
     BAILIFERR( GetFileCString( aoe, &contenttype, offset, aoe->maxOffset - offset, &offset ) );
     atomprint("content_type=\"%s\"\n", contenttype);
-    
+
     // All done
 	aoe->aoeflags |= kAtomValidated;
 
@@ -4131,13 +4128,13 @@ OSErr Validate_cprt_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt16 stringSize;
 	int textIsUTF16 = false;		// otherwise, UTF-8
 	int utf16TextIsLittleEndian = false;
-	
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 	FieldMustBe( version, 0, "cprt version must be %d not %d" );
 	FieldMustBe( flags, 0, "cprt flags must be %d not 0x%lx" );
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-	
+
 	// Get data
 	BAILIFERR( GetFileDataN16( aoe, &language, offset, &offset ) );
 	FieldMustBe( (language & 0x8000), 0, "cprt language's high bit must be 0" );
@@ -4147,16 +4144,16 @@ OSErr Validate_cprt_Atom( atomOffsetEntry *aoe, void *refcon )
 
 #if 1
 	// This may be a UTF-16 string so we can't just grab a C string
-	
+
 	stringSize = aoe->maxOffset - offset;
 	noticeP = (char*) calloc(stringSize, 1);
-	
+
 	BAILIFERR( GetFileData( aoe, noticeP, offset, stringSize, &offset ) );
 
 	// check string type
 	if (stringSize > 2) {
 		UInt16 possibleBOM = EndianU16_BtoN(*(UInt16*)noticeP);
-		
+
 		if (possibleBOM == 0x0feff) {			// big endian
 			textIsUTF16 = true;
 		}
@@ -4165,35 +4162,35 @@ OSErr Validate_cprt_Atom( atomOffsetEntry *aoe, void *refcon )
 			utf16TextIsLittleEndian = true;
 		}
 	}
-	
+
 	// if text is UTF-16, we will generate ASCII text for output
 	if (textIsUTF16) {
 		char * utf8noticeP = nil;
 		char * pASCII = nil;
 		UInt16 * pUTF16 = nil;
 		int numChars = (stringSize - 2)/2;
-		
+
 		if (numChars == 0) { // no actual text
 			errprint("UTF-16 text has BOM but no terminator\n");
 		}
 		else {
 			int ix;
-			
+
 			// �� clf -- The right solution is probably to generate "\uNNNN" for Unicode characters not in the range 0-0x7f. That
 			// will require the array be 5 times as large in the worst case.
 			utf8noticeP = (char *)calloc(numChars, 1);
 			pASCII= utf8noticeP;
-			
+
 			pUTF16 = (UInt16*) (noticeP + 2);
-			
+
 			for (ix=0; ix < numChars-1; ix++, pUTF16++) {
 				UInt16 utf16Char = utf16TextIsLittleEndian ? EndianU16_LtoN(*pUTF16) : EndianU16_BtoN(*pUTF16);
-				
+
 				*pASCII	= (utf16Char & 0xff80) ? ((char) '\?') : (char)(utf16Char & 0x7f);
-				
+
 				pASCII++;
 			}
-			
+
 			free(noticeP);
 			noticeP = utf8noticeP;
 		}
@@ -4203,7 +4200,7 @@ OSErr Validate_cprt_Atom( atomOffsetEntry *aoe, void *refcon )
 #endif
 	atomprint("notice=\"%s\"\n", noticeP);
 
-	atomprint(">\n"); 
+	atomprint(">\n");
 
 	// All done
 	aoe->aoeflags |= kAtomValidated;
@@ -4218,27 +4215,27 @@ bail:
 //==========================================================================================
 
 OSErr Validate_kind_Atom( atomOffsetEntry *aoe, void *refcon )
-{       
+{
         OSErr err = noErr;
         UInt32 version;
         UInt32 flags;
         UInt64 offset;
         char *schemeURI;    // null terminated C string
         char *value;        // null terminated C string
-        
-        
+
+
         // Get version/flags
         BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
         atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-        
+
         // Get related attributes
         BAILIFERR( GetFileCString( aoe, &schemeURI, offset, aoe->maxOffset - offset, &offset ) );
         atomprint("schemeURI=\"%s\"\n", schemeURI);
         BAILIFERR( GetFileCString( aoe, &value, offset, aoe->maxOffset - offset, &offset ) );
         atomprint("value=\"%s\"\n", value);
-        
-        atomprint(">\n"); 
-        
+
+        atomprint(">\n");
+
         // All done
         aoe->aoeflags |= kAtomValidated;
 
@@ -4262,36 +4259,36 @@ OSErr Validate_loci_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt16 stringSize;
 	SInt32 lngi, lati, alti;
 	UInt8 role;
-	
+
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 	FieldMustBe( version, 0, "loci version must be %d not %d" );
 	FieldMustBe( flags, 0, "loci flags must be %d not 0x%lx" );
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-	
+
 	// Get data
 	BAILIFERR( GetFileDataN16( aoe, &language, offset, &offset ) );
 	FieldMustBe( (language & 0x8000), 0, "loci language's high bit must be 0" );
 	atomprint("language=\"%s\"\n", langtodstr(language));
 	if (language==0) warnprint("WARNING: Location language code of 0 not strictly legit -- 'und' preferred\n");
-	
+
 	stringSize = aoe->maxOffset - offset;
 	noticeP = (char*) calloc(stringSize, 1);
-		
+
 	BAILIFERR( GetFileUTFString( aoe, &noticeP, offset, aoe->maxOffset - offset, &offset ) );
 	atomprint("Name=\"%s\"\n", noticeP);
-	
+
 	BAILIFERR( GetFileData( aoe, &role,  offset, 1, &offset ) );
 	BAILIFERR( GetFileData( aoe, &lngi, offset, 4, &offset ) ); lngi = EndianS32_BtoN(lngi);
 	BAILIFERR( GetFileData( aoe, &lati, offset, 4, &offset ) ); lati = EndianS32_BtoN(lati);
 	BAILIFERR( GetFileData( aoe, &alti, offset, 4, &offset ) ); alti = EndianS32_BtoN(alti);
-	
+
 	atomprint("role=\"%d\"\n", role );
-	
+
 	atomprint("longitude=\"%d.%d\"\n", lngi >> 16, ((UInt32) lngi) && 0xFFFF );
 	atomprint("latitude=\"%d.%d\"\n",  lati >> 16, ((UInt32) lati) && 0xFFFF );
 	atomprint("altitude=\"%d.%d\"\n",  alti >> 16, ((UInt32) alti) && 0xFFFF );
-	
+
 
 	BAILIFERR( GetFileUTFString( aoe, &noticeP, offset, aoe->maxOffset - offset, &offset ) );
 	atomprint("Body=\"%s\"\n", noticeP);
@@ -4299,15 +4296,15 @@ OSErr Validate_loci_Atom( atomOffsetEntry *aoe, void *refcon )
 	BAILIFERR( GetFileUTFString( aoe, &noticeP, offset, aoe->maxOffset - offset, &offset ) );
 	atomprint("Notes=\"%s\"\n", noticeP);
 
-	atomprint(">\n"); 
-	
+	atomprint(">\n");
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	if (esDataP)
 		free(esDataP);
-	
+
 	return err;
 }
 
@@ -4323,7 +4320,7 @@ OSErr Validate_frma_Atom( atomOffsetEntry *aoe, void *refcon )
 	AtomSizeType ahdr;
 	UInt32 format;
 	//char	tempStr[100];
-	
+
 	// Get version/flags
 	offset = aoe->offset;
 	BAILIFERR( GetFileData( aoe, &ahdr, offset, sizeof( AtomSizeType ), &offset ) );
@@ -4333,19 +4330,19 @@ OSErr Validate_frma_Atom( atomOffsetEntry *aoe, void *refcon )
 
 	BAILIFERR( GetFileData( aoe, &format, offset, sizeof( UInt32 ), &offset ) );
 	format = EndianU32_BtoN( format );
-	
+
 	atomprintnotab("\toriginal_format=\"%s\"\n", ostypetostr(format) );
-	atomprint(">\n"); 
-	
+	atomprint(">\n");
+
 	if( ahdr.atomSize != (sizeof(UInt32) + sizeof(AtomSizeType)) ){
 		err = badAtomSize;
 		errprint( "wrong atom size for 'frma' atom (%d) should be %d \n", ahdr.atomSize, (sizeof(UInt32) + sizeof(AtomSizeType)) );
 		goto bail;
 	}
-		
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	return err;
 }
@@ -4359,7 +4356,7 @@ OSErr Validate_schm_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt32 scheme, s_version, vers, flags;
 	//char	tempStr[100];
 	char *locationP = nil;
-	
+
 	// Get version/flags
 	offset = aoe->offset;
 	BAILIFERR( GetFileData( aoe, &ahdr, offset, sizeof( AtomStartRecord ), &offset ) );
@@ -4372,27 +4369,27 @@ OSErr Validate_schm_Atom( atomOffsetEntry *aoe, void *refcon )
 	BAILIFERR( GetFileData( aoe, &s_version, offset, sizeof( UInt32 ), &offset ) );
 	scheme    = EndianU32_BtoN( scheme );
 	s_version = EndianU32_BtoN( s_version );
-	
+
 	atomprintnotab("\tscheme=\"%s\" version=\"%d\"\n", ostypetostr(scheme), s_version );
-	// Get data 
+	// Get data
 	if (flags & 1) {
 		BAILIFERR( GetFileCString( aoe, &locationP, offset, aoe->maxOffset - offset, &offset ) );
 		atomprint("location=\"%s\"\n", locationP);
 	}
-	
-	atomprint(">\n"); 
-        
+
+	atomprint(">\n");
+
 	if(vg.cmaf){
          if( scheme!= 'cenc' && scheme!='cbc1' && scheme!='cens' && scheme!='cbcs')
             errprint("CMAF check violated: Section 7.5.11. \"CMAF SHALL use Common Encryption for Tracks containing encrypted Segments.\",Scheme type 'cenc/cbc1/cens/cbcs' expected, but found %s\n",ostypetostr(scheme));
-         
+
          if(s_version !=0x00010000)
              errprint("CMAF check violated: Section 7.5.11. \"CMAF SHALL use Common Encryption for Tracks containing encrypted Segments, scheme version SHALL be set to 0x00010000 \", but found %d\n",s_version);
         }
-        
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	return err;
 }
@@ -4406,23 +4403,23 @@ OSErr Validate_schi_Atom( atomOffsetEntry *aoe, void *refcon )
 	OSErr atomerr = noErr;
 	atomOffsetEntry *entry;
 	UInt64 minOffset, maxOffset;
-	
-	atomprintnotab(">\n"); 
-	
+
+	atomprintnotab(">\n");
+
 	minOffset = aoe->offset + aoe->atomStartSize;
 	maxOffset = aoe->offset + aoe->size - aoe->atomStartSize;
-	
+
 	BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
 	atomprint(" comment=\"%d contained atoms\" >\n",cnt);
 
     // Process 'tenc' atoms
         if(vg.cmaf){
-            atomerr = ValidateAtomOfType( 'tenc', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
+            atomerr = ValidateAtomOfType( 'tenc', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne,
 		Validate_tenc_Atom, cnt, list, nil );
             if (!err) err = atomerr;
         }
         else{
-            atomerr = ValidateAtomOfType( 'tenc', kTypeAtomFlagCanHaveAtMostOne, 
+            atomerr = ValidateAtomOfType( 'tenc', kTypeAtomFlagCanHaveAtMostOne,
                     Validate_tenc_Atom, cnt, list, nil );
             if (!err) err = atomerr;
         }
@@ -4437,11 +4434,11 @@ OSErr Validate_schi_Atom( atomOffsetEntry *aoe, void *refcon )
 		if (entry->aoeflags & kAtomValidated) continue;
 
 		switch (entry->type) {
-            
+
 			case 'schi':
                 schiFound = true;
             break;
-            
+
 			default:
 				warnprint("WARNING: In %s - unknown schi atom '%s' length %ld\n",vg.curatompath, ostypetostr(entry->type), entry->size);
 				break;
@@ -4449,13 +4446,13 @@ OSErr Validate_schi_Atom( atomOffsetEntry *aoe, void *refcon )
 
         if(vg.dash264enc && schiFound == false)
             errprint("No 'tenc' atom found within 'schi' content when checks involed for encrypted content, violating SEction 8.2.1 of ISO-IEC_23001-7\n");
-		
+
 		if (!err) err = atomerr;
 	}
-	
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	return err;
 }
@@ -4466,27 +4463,27 @@ OSErr Validate_tenc_Atom( atomOffsetEntry *aoe, void *refcon )
     UInt32 version;
     UInt32 flags;
     UInt64 offset;
-    
+
     // Get version/flags
     BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
     atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-    
-    // Get data 
+
+    // Get data
     UInt8    temp1[3];
     BAILIFERR( GetFileData( aoe,temp1, offset, 3 , &offset ) );
-    
+
     UInt32 default_IsEncrypted;
     default_IsEncrypted = (temp1[2] << 16) || (temp1[1] << 8) || temp1[0];
 
     //For now, no use of it, just play around to supress compiler warnings.
     default_IsEncrypted = default_IsEncrypted;
-    
+
 	UInt8   default_IV_size;
     BAILIFERR( GetFileData( aoe,&default_IV_size, offset, 1 , &offset ) );
 
-	UInt8	default_KID[16]; 
+	UInt8	default_KID[16];
     BAILIFERR( GetFileData( aoe,default_KID, offset, 16 , &offset ) );
-    
+
     atomprint("default_IsEncrypted=\"%d\"\n", default_IsEncrypted);
     atomprint("default_IV_size=\"%d\"\n", default_IV_size);
     //Adjust KID before printing, ascii to integer.
@@ -4500,15 +4497,15 @@ OSErr Validate_tenc_Atom( atomOffsetEntry *aoe, void *refcon )
     }
     atomprint("default_KID=\"%s\"\n", tenc_KID);
     atomprint(">\n");
-    
+
     vg.tencInInit=true;// As the 'tenc' box is present in moov box (initialization segment).
-    
+
     if((vg.ctawave || vg.cmaf) && default_IsEncrypted!=1){
         errprint("CMAF Check violated : Section 8.2.3.2. \"In an encrypted Track, the isProtected flag in the TrackEncryptionBox SHALL be set to 1.\",found %ld \n",default_IsEncrypted);
     }
-    
+
     //Check the default_KID is matching with the one mentioned in the MPD
-    
+
      char *st;
      //st[0]={'\0'};
      char mpd_kid[50],buf;
@@ -4518,7 +4515,7 @@ OSErr Validate_tenc_Atom( atomOffsetEntry *aoe, void *refcon )
 	remove_all_chars(st, '-'); //
 	int length,i,j;
 	length= strlen(st);
-	    
+
 	//j=0;
 	buf= 0;
 	for(i = 0; i < length; i++){
@@ -4529,9 +4526,9 @@ OSErr Validate_tenc_Atom( atomOffsetEntry *aoe, void *refcon )
 		    buf = st[i];
 		}
 	}
-	    
+
 	//mpd_kid[j]='\0';
-	    
+
 	//sprintf(tenc_kid,"%s",default_KID);
 
 	if(strcmp(tenc_KID, mpd_kid)!=0)
@@ -4555,7 +4552,7 @@ OSErr Validate_xml_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt32 vers, flags;
 	//char	tempStr[100];
 	char *xmlP = nil;
-	
+
 	// Get version/flags
 	offset = aoe->offset;
 	BAILIFERR( GetFileData( aoe, &ahdr, offset, sizeof( AtomStartRecord ), &offset ) );
@@ -4563,19 +4560,19 @@ OSErr Validate_xml_Atom( atomOffsetEntry *aoe, void *refcon )
 	ahdr.atomType = EndianU32_BtoN( ahdr.atomType );
 
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &vers, &flags, &offset));
-	
-	// Get data 
+
+	// Get data
 	if (ahdr.atomType == 'xml ') {
 		BAILIFERR( GetFileCString( aoe, &xmlP, offset, aoe->maxOffset - offset, &offset ) );
 		atomprint("XML=\"%s\"\n", xmlP);
 	}
 	else atomprintnotab("\t..contains %d bytes\n", ahdr.atomSize - 8 );
 
-	atomprint(">\n"); 
-	
+	atomprint(">\n");
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	return err;
 }
@@ -4590,7 +4587,7 @@ OSErr Validate_iloc_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt16 item_count;
 	UInt8 temp8;
 	//char	tempStr[100];
-	
+
 	// Get version/flags
 	offset = aoe->offset;
 	BAILIFERR( GetFileData( aoe, &ahdr, offset, sizeof( AtomStartRecord ), &offset ) );
@@ -4608,7 +4605,7 @@ OSErr Validate_iloc_Atom( atomOffsetEntry *aoe, void *refcon )
 	BAILIFERR( GetFileData( aoe, &item_count, offset, 2, &offset ) );
 	item_count    = EndianU16_BtoN( item_count );
 
-	atomprintnotab("\toffset_size=\"%d\" length_size=\"%d\" base_offset_size=\"%d\" item_count=\"%d\">\n", 
+	atomprintnotab("\toffset_size=\"%d\" length_size=\"%d\" base_offset_size=\"%d\" item_count=\"%d\">\n",
 			offset_size, length_size, base_offset_size, item_count);
 
 	vg.tabcnt++;
@@ -4622,11 +4619,11 @@ OSErr Validate_iloc_Atom( atomOffsetEntry *aoe, void *refcon )
 		dref_idx    = EndianU16_BtoN( dref_idx );
 		switch (base_offset_size) {
 			case 0: base_offset = 0; break;
-			case 4: 
+			case 4:
 				BAILIFERR( GetFileData( aoe, &temp, offset, 4, &offset ) );
 				base_offset    = EndianU32_BtoN( temp );
 				break;
-			case 8: 
+			case 8:
 				BAILIFERR( GetFileData( aoe, &base_offset, offset, 8, &offset ) );
 				base_offset    = EndianU64_BtoN( base_offset );
 				break;
@@ -4635,7 +4632,7 @@ OSErr Validate_iloc_Atom( atomOffsetEntry *aoe, void *refcon )
 		}
 		BAILIFERR( GetFileData( aoe, &ext_count, offset, 2, &offset ) );
 		ext_count    = EndianU16_BtoN( ext_count );
-		atomprint("<item item_id=\"%d\" dref_idx=\"%d\" base_offset=\"%s\" ext_count=\"%d\">\n", 
+		atomprint("<item item_id=\"%d\" dref_idx=\"%d\" base_offset=\"%s\" ext_count=\"%d\">\n",
 			item_id, dref_idx, int64todstr(base_offset), ext_count);
 		vg.tabcnt++;
 		for (j=0; j<ext_count; j++) {
@@ -4644,11 +4641,11 @@ OSErr Validate_iloc_Atom( atomOffsetEntry *aoe, void *refcon )
 			char temp2[100];
 			switch (offset_size) {
 				case 0: e_offset = 0; break;
-				case 4: 
+				case 4:
 					BAILIFERR( GetFileData( aoe, &temp, offset, 4, &offset ) );
 					e_offset    = EndianU32_BtoN( temp );
 					break;
-				case 8: 
+				case 8:
 					BAILIFERR( GetFileData( aoe, &e_offset, offset, 8, &offset ) );
 					e_offset    = EndianU64_BtoN( e_offset );
 					break;
@@ -4657,11 +4654,11 @@ OSErr Validate_iloc_Atom( atomOffsetEntry *aoe, void *refcon )
 			}
 			switch (length_size) {
 				case 0: e_length = 0; break;
-				case 4: 
+				case 4:
 					BAILIFERR( GetFileData( aoe, &temp, offset, 4, &offset ) );
 					e_length    = EndianU32_BtoN( temp );
 					break;
-				case 8: 
+				case 8:
 					BAILIFERR( GetFileData( aoe, &e_length, offset, 8, &offset ) );
 					e_length    = EndianU64_BtoN( e_length );
 					break;
@@ -4674,10 +4671,10 @@ OSErr Validate_iloc_Atom( atomOffsetEntry *aoe, void *refcon )
 		atomprint("<\\item>\n");
 	}
 	--vg.tabcnt;
-		
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	return err;
 }
@@ -4691,7 +4688,7 @@ OSErr Validate_pitm_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt16 item_id;
 	UInt32 vers, flags;
 	//char	tempStr[100];
-	
+
 	// Get version/flags
 	offset = aoe->offset;
 	BAILIFERR( GetFileData( aoe, &ahdr, offset, sizeof( AtomSizeType ), &offset ) );
@@ -4702,19 +4699,19 @@ OSErr Validate_pitm_Atom( atomOffsetEntry *aoe, void *refcon )
 
 	BAILIFERR( GetFileData( aoe, &item_id, offset, sizeof( UInt16 ), &offset ) );
 	item_id = EndianU16_BtoN( item_id );
-	
+
 	atomprintnotab("\tprimary_item_ID=\"%d\"\n", item_id );
-	atomprint(">\n"); 
-	
+	atomprint(">\n");
+
 	if( ahdr.atomSize != (6 + sizeof(AtomSizeType)) ){
 		err = badAtomSize;
 		errprint( "wrong atom size for 'pitm' atom (%d) should be %d \n", ahdr.atomSize, (6 + sizeof(AtomSizeType)) );
 		goto bail;
 	}
-		
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	return err;
 }
@@ -4728,7 +4725,7 @@ OSErr Validate_ipro_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt16 prot_count;
 	UInt32 vers, flags;
 	//char	tempStr[100];
-	
+
 	// Get version/flags
 	offset = aoe->offset;
 	BAILIFERR( GetFileData( aoe, &ahdr, offset, sizeof( AtomSizeType ), &offset ) );
@@ -4739,7 +4736,7 @@ OSErr Validate_ipro_Atom( atomOffsetEntry *aoe, void *refcon )
 
 	BAILIFERR( GetFileData( aoe, &prot_count, offset, sizeof( UInt16 ), &offset ) );
 	prot_count = EndianU16_BtoN( prot_count );
-	
+
 	atomprintnotab("\tprot_count=\"%d\"\n", prot_count );
 	vg.tabcnt++;
 	{
@@ -4749,35 +4746,35 @@ OSErr Validate_ipro_Atom( atomOffsetEntry *aoe, void *refcon )
 		long cnt;
 		atomOffsetEntry *list;
 		int i;
-		
+
 		minOffset = offset;
 		maxOffset = aoe->offset + aoe->size;
-		
+
 		BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
-		
+
 		if (cnt != prot_count) errprint("Found %d atoms but expected %d\n", cnt, prot_count);
-		
+
 		for (i = 0; i < cnt; i++) {
 			entry = &list[i];
-			
-			if ( entry->type == 'sinf' ) 
+
+			if ( entry->type == 'sinf' )
 			{
 				// Process 'sinf' atoms
 				atomprint("<sinf"); vg.tabcnt++;
 				BAILIFERR( Validate_sinf_Atom( entry, refcon, 0 ) );
 				--vg.tabcnt; atomprint("</sinf>\n");
-			}				
-			
+			}
+
 			else warnprint("Warning: In %s - unknown atom found \"%s\": ipro atoms would not normally contain this\n",vg.curatompath, ostypetostr(entry->type));
-			
+
 		}
 	}
 	--vg.tabcnt;
-	atomprint(">\n"); 
-	
+	atomprint(">\n");
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	return err;
 }
@@ -4794,7 +4791,7 @@ OSErr Validate_infe_Atom( atomOffsetEntry *aoe, void *refcon )
 	char *typeP = nil;
 	char *encodP = nil;
 	UInt16 item_id, prot_idx;
-	
+
 	// Get version/flags
 	offset = aoe->offset;
 	BAILIFERR( GetFileData( aoe, &ahdr, offset, sizeof( AtomStartRecord ), &offset ) );
@@ -4807,7 +4804,7 @@ OSErr Validate_infe_Atom( atomOffsetEntry *aoe, void *refcon )
 	BAILIFERR( GetFileData( aoe, &prot_idx, offset, sizeof( UInt16 ), &offset ) );
 	item_id  = EndianU16_BtoN( item_id );
 	prot_idx = EndianU16_BtoN( prot_idx );
-	
+
 	atomprintnotab("\t item_id=\"%d\" protection_index=\"%d\"\n", item_id, prot_idx );
 	BAILIFERR( GetFileCString( aoe, &nameP, offset, aoe->maxOffset - offset, &offset ) );
 	atomprint("item_name=\"%s\"\n", nameP);
@@ -4815,12 +4812,12 @@ OSErr Validate_infe_Atom( atomOffsetEntry *aoe, void *refcon )
 	atomprint("content_type=\"%s\"\n", typeP);
 	BAILIFERR( GetFileCString( aoe, &encodP, offset, aoe->maxOffset - offset, &offset ) );
 	atomprint("content_encoding=\"%s\"\n", encodP);
-	
-	atomprint(">\n"); 
-	
+
+	atomprint(">\n");
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	return err;
 }
@@ -4834,7 +4831,7 @@ OSErr Validate_iinf_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt16 inf_count;
 	UInt32 vers, flags;
 	//char	tempStr[100];
-	
+
 	// Get version/flags
 	offset = aoe->offset;
 	BAILIFERR( GetFileData( aoe, &ahdr, offset, sizeof( AtomSizeType ), &offset ) );
@@ -4845,7 +4842,7 @@ OSErr Validate_iinf_Atom( atomOffsetEntry *aoe, void *refcon )
 
 	BAILIFERR( GetFileData( aoe, &inf_count, offset, sizeof( UInt16 ), &offset ) );
 	inf_count = EndianU16_BtoN( inf_count );
-	
+
 	atomprintnotab("\tinf_count=\"%d\"\n", inf_count );
 	vg.tabcnt++;
 	{
@@ -4855,35 +4852,35 @@ OSErr Validate_iinf_Atom( atomOffsetEntry *aoe, void *refcon )
 		long cnt;
 		atomOffsetEntry *list;
 		int i;
-		
+
 		minOffset = offset;
 		maxOffset = aoe->offset + aoe->size;
-		
+
 		BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
-		
+
 		if (cnt != inf_count) errprint("Found %d atoms but expected %d\n", cnt, inf_count);
-		
+
 		for (i = 0; i < cnt; i++) {
 			entry = &list[i];
-			
-			if ( entry->type == 'infe' ) 
+
+			if ( entry->type == 'infe' )
 			{
 				// Process 'infe' atoms
 				atomprint("<infe"); vg.tabcnt++;
 				BAILIFERR( Validate_infe_Atom( entry, refcon ) );
 				--vg.tabcnt; atomprint("</infe>\n");
-			}				
-			
+			}
+
 			else warnprint("Warning: In %s - unknown atom found \"%s\": iinf atoms would not normally contain this\n",vg.curatompath, ostypetostr(entry->type));
-			
+
 		}
 	}
 	--vg.tabcnt;
-	atomprint(">\n"); 
-	
+	atomprint(">\n");
+
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	return err;
 }
@@ -4894,29 +4891,29 @@ OSErr Validate_senc_Atom( atomOffsetEntry *aoe, void *refcon )
         UInt32 version;
         UInt32 flags;
         UInt64 offset;
-        
+
         // Get version/flags
         BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
         atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
         atomprint("offset=\"%ld\"\n", aoe->offset);
-        
+
         UInt32   sample_count;
         BAILIFERR( GetFileData( aoe,&sample_count, offset, 4 , &offset ) );
         sample_count=EndianU32_BtoN(sample_count);
-        
+
         UInt8   initializationVector;
         UInt16 subsample_count;
         UInt16 BytesOfClearData;
         UInt32 BytesOfProtectedData;
         //TODO Allocate resources to above members according to sample and subsample counts.
-        
+
         atomprint("sample_count=\"%ld\"\n", sample_count);
         atomprint(">\n");
-        
+
         vg.sencFound= true;
     	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	return err;
 }
@@ -4927,15 +4924,15 @@ OSErr Validate_saio_Atom( atomOffsetEntry *aoe, void *refcon )
         UInt32 version;
         UInt32 flags;
         UInt64 offset,temp1;
-        
+
         // Get version/flags
         BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
         atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-        
+
         UInt32 aux_info_typ;
         UInt32 aux_info_type_parameter;
         UInt32 entry_count, temp;
-        
+
         if(flags & 1){
             BAILIFERR( GetFileData( aoe, &aux_info_typ,  offset, sizeof( UInt32 ), &offset ) );
 	    aux_info_typ= EndianU32_BtoN(aux_info_typ);
@@ -4943,12 +4940,12 @@ OSErr Validate_saio_Atom( atomOffsetEntry *aoe, void *refcon )
             if(vg.cmaf && aux_info_typ!='cenc')
                 errprint("CMAF check violated: Section 8.2.2.1: \"For encrypted Fragments that contain Sample Auxiliary Informantion, 'saio' SHALL be present with aux_info_type value of 'cenc'\", but found %s\n",ostypetostr(aux_info_typ));
         }
-        
+
         BAILIFERR( GetFileData( aoe, &entry_count,  offset, sizeof( UInt32 ), &offset ) );
         entry_count = EndianU32_BtoN(entry_count);
         atomprint("entry_count=\"%ld\"\n", entry_count);
         //atomprint("aux_info_typ=\"%s\"\n", ostypetostr(aux_info_typ));
-        
+
         //TODO Allocate saio_offset based on entry_count.
         if(version ==0)
         {
@@ -4959,7 +4956,7 @@ OSErr Validate_saio_Atom( atomOffsetEntry *aoe, void *refcon )
                 saio_offset[i] = EndianU32_BtoN(temp);
                 atomprint("saio_offset_%d=\"%ld\"\n", i, saio_offset[i]);
             }
-            
+
         }
         else
         {
@@ -4971,16 +4968,16 @@ OSErr Validate_saio_Atom( atomOffsetEntry *aoe, void *refcon )
                 atomprint("saio_offset_%d=\"%ld\"\n", i, saio_offset[i]);
             }
         }
-        
-      
+
+
         atomprint(">\n");
-        
+
         if(vg.cmaf && entry_count!=1)
             errprint("CMAF check violated: Section 8.2.2.1: \"The entry_count field of the SampleAuxiliaryInformationOffsetsBox SHALL equal 1\", but found %ld\n",entry_count);
-        
+
     	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	return err;
 }
@@ -4993,21 +4990,21 @@ OSErr Validate_hvcC_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
 	HevcConfigInfo hevcHeader;
 	void* bsDataP;
 	BitBuffer bb;
-	
+
 	atomprint("<%s", esname); vg.tabcnt++;
-	
+
 	// Get version/flags
 	offset = aoe->offset;
 	BAILIFERR( GetFileData( aoe, &hevcHeader.start.atomSize, offset, sizeof( AtomSizeType ), &offset ) );
 	hevcHeader.start.atomSize = EndianU32_BtoN( hevcHeader.start.atomSize );
 	hevcHeader.start.atomType = EndianU32_BtoN( hevcHeader.start.atomType );
-	
+
 
 	BAILIFNIL( bsDataP = calloc(hevcHeader.start.atomSize - 8 + bitParsingSlop, 1), allocFailedErr );
 	BAILIFERR( GetFileData( aoe, bsDataP, offset, hevcHeader.start.atomSize - 8, &offset ) );
 	BitBuffer_Init(&bb, (UInt8 *)bsDataP, hevcHeader.start.atomSize - 8);
 
-	BAILIFERR( Validate_HEVCConfigRecord( &bb, refcon ) );		
+	BAILIFERR( Validate_HEVCConfigRecord( &bb, refcon ) );
 	//--vg.tabcnt; atomprint("</%s>\n", esname);
 
 
@@ -5015,7 +5012,7 @@ OSErr Validate_hvcC_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
 
 	// All done
 	aoe->aoeflags |= kAtomValidated;
-	
+
 bail:
 	--vg.tabcnt; atomprint("</%s>\n", esname);
 	return err;
@@ -5027,25 +5024,25 @@ OSErr Validate_pasp_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
     UInt32 version;
     UInt32 flags;
     UInt64 offset;
-    
+
     atomprint("<pasp"); vg.tabcnt++;
-    
+
     // Get version/flags
     BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
     atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-    
-    // Get data 
+
+    // Get data
     UInt32 hSpacing;
     UInt32 vSpacing;
     BAILIFERR( GetFileData( aoe,&hSpacing, offset, 4 , &offset ) );
     BAILIFERR( GetFileData( aoe,&vSpacing, offset, 4 , &offset ) );
-    
+
     --vg.tabcnt; atomprint("/>\n");
-    
+
     // All done
 	aoe->aoeflags |= kAtomValidated;
-       
-	
+
+
 bail:
 	return err;
 }

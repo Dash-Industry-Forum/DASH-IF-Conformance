@@ -31,7 +31,7 @@ limitations under the License.
 #include <string.h>
 
 #if defined(__GNUC__) && ( defined(__APPLE_CPP__) || defined(__APPLE_CC__) || defined(__MACOS_CLASSIC__) )
- #if defined(__i386__) || defined(__x86_64__) 
+ #if defined(__i386__) || defined(__x86_64__)
   #define LITTLEENDIAN 1
  #endif
 #endif
@@ -113,14 +113,14 @@ typedef struct atomOffsetEntry {
 	OSType 		type;			// if atomId == 'uuid', use uuid field
 	uuidType 	uuid;
 	UInt64 		size;			// if atomSize == 1, use longSize field
-	
-	UInt64 		offset;			// offset into file of atom's start	
-	UInt64 		maxOffset;		// max offset into file of atom's start	
+
+	UInt64 		offset;			// offset into file of atom's start
+	UInt64 		maxOffset;		// max offset into file of atom's start
 
 	UInt32		atomStartSize;	// size of id & size info, so it is easy to skip
 
-	UInt32 		aoeflags;			// used for processing	
-	UInt32 		refconOverride;		// used for processing	
+	UInt32 		aoeflags;			// used for processing
+	UInt32 		refconOverride;		// used for processing
 } atomOffsetEntry;
 
 enum {
@@ -151,7 +151,7 @@ typedef struct {
 	UInt8 cbyte;
 	SInt32 curbits;
 	UInt32 bits_left;
-	
+
 	UInt8 prevent_emulation;	// true or false
 	UInt8 emulation_position;	// 0 usually, 1 after 1 zero byte, 2 after 2 zero bytes, 3
 								// after 00 00 03, and the 3 gets stripped
@@ -179,7 +179,7 @@ enum {
 	kMPEG4StartCode_VO		= 0xB5,
 
 	kMPEG4StartCode_VOLMin	= 0x20,
-	kMPEG4StartCode_VOLMax	= 0x2F, 
+	kMPEG4StartCode_VOLMax	= 0x2F,
 
 	kMPEG4StartCode_GOV		= 0xB3,
 	kMPEG4StartCode_VOP		= 0xB6
@@ -288,7 +288,7 @@ typedef struct {
 
     UInt32 data_offset;
     UInt32 first_sample_flags;
-    
+
     UInt32 *sample_duration;
     UInt32 *sample_size;
     UInt32 *sample_flags;
@@ -298,7 +298,7 @@ typedef struct {
     Boolean *sampleToBePresented;  //After applying edits
     Boolean *sap3;
     Boolean *sap4;
-    
+
     UInt64  cummulatedSampleDuration;
 
 } TrunInfoRec;
@@ -306,12 +306,12 @@ typedef struct {
 typedef struct {
 
     UInt32 version;
-    UInt32 grouping_type; 
+    UInt32 grouping_type;
     UInt32 grouping_type_parameter;
     UInt32 entry_count;
-    UInt32 *sample_count; 
+    UInt32 *sample_count;
     UInt32 *group_description_index;
-    
+
 } SbgpInfoRec;
 
 
@@ -323,36 +323,36 @@ typedef struct {
     UInt32 entry_count;
     UInt32 *description_length;
     UInt32 **SampleGroupDescriptionEntry;
-    
+
 } SgpdInfoRec;
 
 // Section 8.8.7. of ISO/IEC 14496-12 4th edition
 
 typedef struct {
-    UInt32    default_sample_duration;              
-    UInt32    default_sample_size;                
-    UInt32    default_sample_flags;               
+    UInt32    default_sample_duration;
+    UInt32    default_sample_size;
+    UInt32    default_sample_flags;
 
-    Boolean base_data_offset_present;             
-    Boolean sample_description_index_present;     
-    Boolean default_sample_duration_present;      
-    Boolean default_sample_size_present;          
-    Boolean default_sample_flags_present;         
-    Boolean duration_is_empty;                    
-    Boolean default_base_is_moof;                 
+    Boolean base_data_offset_present;
+    Boolean sample_description_index_present;
+    Boolean default_sample_duration_present;
+    Boolean default_sample_size_present;
+    Boolean default_sample_flags_present;
+    Boolean duration_is_empty;
+    Boolean default_base_is_moof;
 
-    UInt32  track_ID;                             
-    UInt64  base_data_offset;                     
-    UInt32  sample_description_index;             
+    UInt32  track_ID;
+    UInt64  base_data_offset;
+    UInt32  sample_description_index;
 
     UInt32 numTrun;
     UInt32 processedTrun;
     TrunInfoRec *trunInfo;
-    
+
     UInt32 numSgpd;
     UInt32 processedSgpd;
     SgpdInfoRec *sgpdInfo;
-    
+
     UInt32 numSbgp;
     UInt32 processedSbgp;
     SbgpInfoRec *sbgpInfo;
@@ -366,7 +366,7 @@ typedef struct {
     UInt64  compositionEndTimeInTrackFragment;
     UInt64  latestCompositionTimeInTrackFragment;
     void    *moofInfo;
-        
+
 } TrafInfoRec;
 
 
@@ -378,17 +378,17 @@ typedef struct {
     Boolean firstFragmentInSegment;
     Boolean samplesToBePresented;    //Is there any sample to be presented?
     Boolean announcedSAP;   //For @minBufferTime/@bandwidth checks
-    
+
     Boolean *compositionInfoMissingPerTrack;
-    
+
     long double  *moofEarliestPresentationTimePerTrack;
     long double  *moofPresentationEndTimePerTrack;
     long double  *moofLastPresentationTimePerTrack; //Differs from moofPresentationEndTimePerTrack by the sample delta
-    
+
     UInt64  *tfdt;
-    
+
     TrafInfoRec *trafInfo;
-    
+
     UInt32 sequence_number;
 } MoofInfoRec;
 
@@ -398,7 +398,7 @@ typedef struct {
     UInt32 subsegment_duration;
     UInt8  starts_with_SAP;
     UInt8  SAP_type;
-    UInt32 SAP_delta_time;    
+    UInt32 SAP_delta_time;
 } Reference;
 
 typedef struct {
@@ -406,9 +406,9 @@ typedef struct {
     UInt64 offset;
     UInt64 size;
     long double cumulatedDuration;
-    
+
     UInt32 reference_ID;
-    UInt32 timescale; 
+    UInt32 timescale;
     UInt64 earliest_presentation_time;
     UInt64 first_offset;
     UInt16 reference_count;
@@ -471,11 +471,11 @@ typedef struct {
 
 	//==== enough sample table information to read through the data sequentially
 	UInt32 currentSampleDescriptionIndex;
-	
+
 	UInt32 sampleDescriptionCnt;		// number of sampleDescriptions
 	SampleDescriptionPtr *sampleDescriptions;	// 1 based array of sample description pointers
 	UInt32 *validatedSampleDescriptionRefCons;  // available for SampleDescriptionValidator to stash info for SampleValidator
-	
+
 	UInt32 sampleSizeEntryCnt;			// number of sample size entries
 	UInt32 singleSampleSize;			// set if there is a constant sample size
 	SampleSizeRecord *sampleSize;		// 1 based array of sample sizes
@@ -491,7 +491,7 @@ typedef struct {
 	TimeToSampleNum *timeToSample;             // 1-based array of TimeToSampleNum entries
 
 	UInt32 timeToSampleSampleCnt;			// number of samples described in the timeToSampleAtom
-	UInt64 timeToSampleDuration;			// duration described by timeToSampleAtom (this is Total duration of all samples, 
+	UInt64 timeToSampleDuration;			// duration described by timeToSampleAtom (this is Total duration of all samples,
 											//   not a single sample's duration)
     UInt32    default_sample_description_index;     // Section 8.3.3. of ISO/IEC 14496-12 4th edition
     UInt32    default_sample_duration;              // Section 8.3.3. of ISO/IEC 14496-12 4th edition
@@ -513,7 +513,7 @@ int GetChunkOffsetSize( TrackInfoRec *tir, UInt32 chunkNum, UInt64 *offsetOut, U
 
 // movie Globals
 typedef struct {
-    
+
     Boolean	fragmented;
     UInt32  numFragments;
     UInt32  processedFragments;
@@ -570,16 +570,16 @@ typedef struct {
 	FILE *inFile;
 	long inOffset;
 	long inMaxOffset;
-	
+
 	atompathType curatompath;
-	Boolean printatom; 
+	Boolean printatom;
 	Boolean printsample;
 	long tabcnt;
 
 	atomOffsetEntry *fileaoe;		// used when you need to read file & size from the file
-	
+
 	Boolean warnings;
-	
+
 	MovieInfoRec	*mir;
 
     UInt64 *segmentSizes;
@@ -661,7 +661,7 @@ typedef struct {
 	Boolean	print_sample;
 	Boolean	print_sampleraw;
 	Boolean	print_hintpayload;
-	
+
 	UInt32  visualProfileLevelIndication;// to validate if IOD corresponds to VSC
 	 argstr default_KID;
          char *psshfile[10];
@@ -672,7 +672,7 @@ typedef struct {
          Boolean cmafChunk;
          Boolean cmafFragment;
          Boolean sencFound;
-	 
+
 } ValidateGlobals;
 
 extern ValidateGlobals vg;
@@ -748,8 +748,8 @@ typedef struct {
 	UInt64 chunkStart;
 	UInt64 chunkStop;
 	UInt32 trackID;
-	OSType  mediaType;  
-	
+	OSType  mediaType;
+
 } chunkOverlapRec;
 
 
@@ -807,7 +807,7 @@ typedef struct ColrInfo {
 	UInt16			matrix;
 } ColrInfo;
 
-	
+
 OSErr GetFullAtomVersionFlags( atomOffsetEntry *aoe, UInt32 *version, UInt32 *flags, UInt64 *offsetOut);
 
 #define FOUR_CHAR_CODE(a) a
@@ -882,7 +882,7 @@ enum {
 
 
     IODSAID	= FOUR_CHAR_CODE('iods')
-    
+
 };
 
 enum {
@@ -934,7 +934,7 @@ enum {
 	ExtDescrTagEndRange = 0xfe,
 	OCIDescrTagStartRange = 0x40,
 	OCIDescrTagEndRange = 0x5f
-};	
+};
 
 enum {
 	Object_Systems_1 = 0x01,
@@ -975,7 +975,7 @@ OSErr GetDescriptorTagAndSize(BitBuffer *bb, UInt32 *tag, UInt32 *size);
 OSErr Validate_iods_OD_Bits( Ptr dataP, unsigned long dataSize, Boolean fileForm );
 
 
-int FindAtomOffsets( atomOffsetEntry *aoe, UInt64 startOffset, UInt64 maxOffset, 
+int FindAtomOffsets( atomOffsetEntry *aoe, UInt64 startOffset, UInt64 maxOffset,
 			long *atomCountOut, atomOffsetEntry **atomOffsetsOut );
 UInt64 getAdjustedFileOffset(UInt64 offset64);
 UInt64 inflateOffset(UInt64 offset64);
@@ -1133,7 +1133,7 @@ OSErr Validate_colr_Atom( atomOffsetEntry *aoe, void *refcon );
 
 OSErr Validate_pasp_Atom( atomOffsetEntry *aoe, void *refcon, char *esname );
 
-enum { 
+enum {
 	kTypeAtomFlagMustHaveOne = 1<<0,
 	kTypeAtomFlagCanHaveAtMostOne = 1<<1,
 	kTypeAtomFlagMustBeFirst = 1<<2
@@ -1143,7 +1143,7 @@ typedef OSErr (*ValidateAtomTypeProcPtr)( atomOffsetEntry *aoe, void *refcon );
 #define CallValidateAtomTypeProc(userRoutine, aoe, refcon)		\
 		(*(userRoutine))((aoe),(refcon))
 
-OSErr ValidateAtomOfType( OSType theType, long flags, ValidateAtomTypeProcPtr validateProc, 
+OSErr ValidateAtomOfType( OSType theType, long flags, ValidateAtomTypeProcPtr validateProc,
 		long cnt, atomOffsetEntry *list, void *refcon );
 
 #define FieldMustBe( num, value, errstr ) \
@@ -1164,7 +1164,7 @@ do { if ((num) != (value)) { err = badAtomErr; warnprint(errstr "\n", (value), n
 #define FieldList12(t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12) {t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12};
 
 #define FieldOneOfBegin( _value_, _valtype_, _errstr_, _list_ ) \
-	do { _valtype_ _test_array_[] = 
+	do { _valtype_ _test_array_[] =
 #define FieldOneOfEnd( _value_, _valtype_, _errstr_, _list_ ) \
 	  int num_entries = sizeof(_test_array_)/sizeof(_valtype_); \
 	  int i = 0; \
