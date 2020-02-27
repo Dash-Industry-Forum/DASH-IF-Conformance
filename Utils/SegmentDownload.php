@@ -36,7 +36,8 @@
  */
 function download_data($directory, $array_file, $is_subtitle_rep){
     global $session_dir, $progress_report, $progress_xml, $current_period, $reprsentation_mdat_template, $missinglink_file, $current_adaptation_set, $current_representation, 
-            $hls_byte_range_begin, $hls_byte_range_size, $hls_manifest, $hls_mdat_file;
+            $hls_byte_range_begin, $hls_byte_range_size, $hls_manifest, $hls_mdat_file,
+            $cmaf_conformance, $ctawave_conformance;
     
     if(!$hls_manifest)
         $mdat_file = 'Period' . $current_period .'/' . str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_mdat_template);
@@ -49,7 +50,7 @@ function download_data($directory, $array_file, $is_subtitle_rep){
     $totalDataProcessed = 0; // bytes processed within segments
     $totalDataDownloaded = 0;
     $downloadMdat=0;
-    $downloadAll=1;
+    $downloadAll = ($cmaf_conformance or $ctawave_conformance);
     $byte_range_array = array();
     # Initialize curl object
     $ch = curl_init();
