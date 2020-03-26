@@ -32,7 +32,7 @@ function derive_segment_URLs($urls, $period_info){
             
             if($segment_template_low){
                 $segment_access[] = $segment_template_low;
-                $segment_info = compute_timing($period_info[1], $segment_template_low[0], 'SegmentTemplate');
+                $segment_info = compute_timing($period_info[1], $segment_template_low[0], 'SegmentTemplate', $urls[$i][$j]);
                 $segment_urls[] = compute_URLs($representation, $segment_template_low[0], $segment_info, $urls[$i][$j]);
             }
             elseif($segment_base_low){
@@ -115,7 +115,7 @@ function compute_URLs($representation, $segment_access, $segment_info, $rep_base
     return $segment_urls;
 }
 
-function compute_timing($presentationduration, $segment_access, $segment_access_type){
+function compute_timing($presentationduration, $segment_access, $segment_access_type, $rep_base_url){
     $segment_timings = array();
     $segmentno = 0;
     $start = 0;
@@ -124,35 +124,30 @@ function compute_timing($presentationduration, $segment_access, $segment_access_
         case 'SegmentTemplate':
             $duration = ($segment_access['duration'] != NULL) ? $segment_access['duration'] : 0;
             $timescale = ($segment_access['timescale'] != NULL) ? $segment_access['timescale'] : 1;
-            $availabilityTimeOffset = ($segment_access['availabilityTimeOffset']) ? $segment_access['availabilityTimeOffset'] : 0;
+            $availabilityTimeOffset = ($segment_access['availabilityTimeOffset'] != NULL && $segment_access['availabilityTimeOffset'] != 'INF') ? $segment_access['availabilityTimeOffset'] : 0;
+            $availabilityTimeOffset += ($rep_base_url['availabilityTimeOffset']) ? $rep_base_url['availabilityTimeOffset'] : 0;
+            $pto = ($segment_access['presentationTimeOffset'] != '') ? (int)($segment_access['presentationTimeOffset'])/$timescale : 0;
             
             if($duration != 0){
                 $duration /= $timescale;
                 $segmentno = ceil(($presentationduration - $start) / $duration); 
             }
-
-            $segmentbase = $segment_access['SegmentBase'];
+            
             $segment_timeline = $segment_access['SegmentTimeline'];
-            if($segmentbase != NULL){
-                $presentationduration = ($segmentbase['presentationDuration'] != NULL) ? $segmentbase['presentationDuration'] : $presentationduration;
-                $timescale = ($segmentbase['timescale'] != NULL) ? $segmentbase['timescale'] : $timescale;
-                
-                $segment_timing = $duration;
-                while($segment_timing < $presentationduration * $timescale){
-                    $segment_timings[] = $segment_timing;
-                    $segment_timing += $duration;
-                }
-            }
-            elseif($segment_timeline != NULL){
+            if($segment_timeline != NULL){
                 $S_array = $segment_timeline[0]['S'];
 
                 if($S_array != NULL){
                     $segment_time = ($S_array[0]['t']) ? $S_array[0]['t'] : 0;
+                    $segment_time -= $pto;
+                    $segment_time -= $availabilityTimeOffset;
                     
                     foreach($S_array as $index => $S){
                         $d = $S['d'];
                         $r = ($S['r']) ? $S['r'] : 0;
                         $t = ($S['t']) ? $S['t'] : 0;
+                        $t -= $pto;
+                        $t -= $availabilityTimeOffset;
 
                         if($r == 0){
                             $segment_timings[] = (float) $segment_time;
@@ -183,13 +178,17 @@ function compute_timing($presentationduration, $segment_access, $segment_access_
             }
             else{
                 $index = 0;
-                $segment_time = $start;
+                $segment_time = $start - $pto - $availabilityTimeOffset;
                 while($index < $segmentno){
                     $segment_timings[] = $segment_time;
                     $segment_time += $duration;
                     $index++;
                 }
             }
+            break;
+        case 'SegmentBase':
+            $segment_timings[] = $start;
+            $segmentno = 1;
             break;
         default:
             break;

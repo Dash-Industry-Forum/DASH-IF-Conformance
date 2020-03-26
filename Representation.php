@@ -14,7 +14,7 @@
  */
 
 function construct_flags($period, $adaptation_set, $representation){
-    global $session_dir, $mpd_features, $dashif_conformance;
+    global $session_dir, $mpd_features, $dashif_conformance, $current_period, $current_adaptation_set, $current_representation, $profiles;
     
     ## @minimumBufferTime 
     $timeSeconds = (string) time_parsing($mpd_features['minBufferTime']);
@@ -55,26 +55,26 @@ function construct_flags($period, $adaptation_set, $representation){
     $live = array('urn:mpeg:dash:profile:isoff-live:2011', 'urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014');
     $main = array('urn:mpeg:dash:profile:isoff-main:2011');
     $dash264 = array('http://dashif.org/guidelines/dash264');
+    $dashif_ondemand = array('http://dashif.org/guidelines/dash-if-ondemand');
+    $dashif_mixed_ondemand = array('http://dashif.org/guidelines/dash-if-mixed');
     
-    $profiles = $mpd_features['profiles'];
-    if($adaptation_set['profiles'] != NULL)
-        $profiles = $adaptation_set['profiles'];
-    if($representation['profiles'] != NULL)
-        $profiles = $representation['profiles'];
-    
-    $profiles = explode(',', $profiles);
-    foreach($profiles as $profile){
-        if(strpos($profile, ' ') !== FALSE)
-            $profile = str_replace(' ', '', $profile);
+    $rep_profiles = explode(',', $profiles[$current_period][$current_adaptation_set][$current_representation]);
+    foreach($rep_profiles as $rep_profile){
+        if(strpos($rep_profile, ' ') !== FALSE)
+            $rep_profile = str_replace(' ', '', $rep_profile);
         
-        if(in_array($profile, $ondemand))
+        if(in_array($rep_profile, $ondemand))
             $processArguments .= ' -isoondemand';
-        if(in_array($profile, $live))
+        if(in_array($rep_profile, $live))
             $processArguments .= ' -isolive';
-        if(in_array($profile, $main))
+        if(in_array($rep_profile, $main))
             $processArguments .= ' -isomain';
-        if(strpos($profile, $dash264) !== FALSE || $dashif_conformance)
+        if(strpos($rep_profile, $dash264) !== FALSE || $dashif_conformance)
             $processArguments .= ' -dash264base';
+        if(strpos($rep_profile, $dashif_ondemand) !== FALSE)
+            $processArguments .= ' -dashifondemand';
+        if(strpos($rep_profile, $dashif_mixed_ondemand) !== FALSE)
+            $processArguments .= ' -dashifmixed';
     }
     
     ## ContentProtection

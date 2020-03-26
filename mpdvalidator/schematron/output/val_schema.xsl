@@ -629,14 +629,14 @@
       </xsl:choose>
       <!--ASSERT -->
       <xsl:choose>
-         <xsl:when test="if (not(@profiles) or (contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-main:2011') or contains(@profiles, 'urn:mpeg:dash:profile:full:2011') or contains(@profiles, 'urn:mpeg:dash:profile:mp2t-main:2011') or contains(@profiles, 'urn:mpeg:dash:profile:mp2t-simple:2011') or contains (@profiles, 'http://dashif.org/guidelines/dashif#ac-4') or contains (@profiles, 'http://dashif.org/guidelines/dashif#mpeg-h-3da') or contains(@profiles, 'http://dashif.org/guidelines/dashif#vp9') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#vp9') or contains(@profiles, 'http://dashif.org/guidelines/dashif#vp9-hdr') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#vp9-hdr') or contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or contains(@profiles, 'urn:dvb:dash:profile:dvb-dash:2014') or contains(@profiles, 'http://dashif.org/guidelines/dashif#ec-3'))) then true() else false()"/>
+         <xsl:when test="if (not(@profiles) or (contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-main:2011') or contains(@profiles, 'urn:mpeg:dash:profile:full:2011') or contains(@profiles, 'urn:mpeg:dash:profile:mp2t-main:2011') or contains(@profiles, 'urn:mpeg:dash:profile:mp2t-simple:2011') or contains(@profiles, 'http://dashif.org/guidelines/dash264') or contains(@profiles, 'http://dashif.org/guidelines/dash264#sd') or contains(@profiles, 'http://dashif.org/guidelines/dash264#hd') or contains(@profiles, 'http://dashif.org/guidelines/dash264main') or contains(@profiles, 'http://dashif.org/guidelines/dash264high') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-simple') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-main') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-ondemand') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-mixed') or contains(@profiles, 'http://dashif.org/guidelines/dashif#ec-3') or contains(@profiles, 'http://dashif.org/guidelines/dashif#mlpa') or contains (@profiles, 'http://dashif.org/guidelines/dashif#ac-4') or contains (@profiles, 'http://dashif.org/guidelines/dashif#dtsc') or contains (@profiles, 'http://dashif.org/guidelines/dashif#dtsh') or contains (@profiles, 'http://dashif.org/guidelines/dashif#dtse') or contains (@profiles, 'http://dashif.org/guidelines/dashif#dtsl') or contains (@profiles, 'http://dashif.org/guidelines/dashif#mps') or contains (@profiles, 'http://dashif.org/guidelines/dashif#heaac-mc51') or contains (@profiles, 'http://dashif.org/guidelines/dashif#heaac-mc71') or contains (@profiles, 'http://dashif.org/guidelines/dashif#mpeg-h-3da') or contains(@profiles, 'http://dashif.org/guidelines/dashif#cxha') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#4k') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#hdr-pq10') or contains(@profiles, 'http://dashif.org/guidelines/dashif#vp9') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#vp9') or contains(@profiles, 'http://dashif.org/guidelines/dashif#vp9-hdr') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#vp9-hdr') or contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or contains(@profiles, 'urn:dvb:dash:profile:dvb-dash:2014'))) then true() else false()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                test="if (not(@profiles) or (contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-main:2011') or contains(@profiles, 'urn:mpeg:dash:profile:full:2011') or contains(@profiles, 'urn:mpeg:dash:profile:mp2t-main:2011') or contains(@profiles, 'urn:mpeg:dash:profile:mp2t-simple:2011') or contains (@profiles, 'http://dashif.org/guidelines/dashif#ac-4') or contains (@profiles, 'http://dashif.org/guidelines/dashif#mpeg-h-3da') or contains(@profiles, 'http://dashif.org/guidelines/dashif#vp9') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#vp9') or contains(@profiles, 'http://dashif.org/guidelines/dashif#vp9-hdr') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#vp9-hdr') or contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or contains(@profiles, 'urn:dvb:dash:profile:dvb-dash:2014') or contains(@profiles, 'http://dashif.org/guidelines/dashif#ec-3'))) then true() else false()">
+                                test="if (not(@profiles) or (contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-main:2011') or contains(@profiles, 'urn:mpeg:dash:profile:full:2011') or contains(@profiles, 'urn:mpeg:dash:profile:mp2t-main:2011') or contains(@profiles, 'urn:mpeg:dash:profile:mp2t-simple:2011') or contains(@profiles, 'http://dashif.org/guidelines/dash264') or contains(@profiles, 'http://dashif.org/guidelines/dash264#sd') or contains(@profiles, 'http://dashif.org/guidelines/dash264#hd') or contains(@profiles, 'http://dashif.org/guidelines/dash264main') or contains(@profiles, 'http://dashif.org/guidelines/dash264high') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-simple') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-main') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-ondemand') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-mixed') or contains(@profiles, 'http://dashif.org/guidelines/dashif#ec-3') or contains(@profiles, 'http://dashif.org/guidelines/dashif#mlpa') or contains (@profiles, 'http://dashif.org/guidelines/dashif#ac-4') or contains (@profiles, 'http://dashif.org/guidelines/dashif#dtsc') or contains (@profiles, 'http://dashif.org/guidelines/dashif#dtsh') or contains (@profiles, 'http://dashif.org/guidelines/dashif#dtse') or contains (@profiles, 'http://dashif.org/guidelines/dashif#dtsl') or contains (@profiles, 'http://dashif.org/guidelines/dashif#mps') or contains (@profiles, 'http://dashif.org/guidelines/dashif#heaac-mc51') or contains (@profiles, 'http://dashif.org/guidelines/dashif#heaac-mc71') or contains (@profiles, 'http://dashif.org/guidelines/dashif#mpeg-h-3da') or contains(@profiles, 'http://dashif.org/guidelines/dashif#cxha') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#4k') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#hdr-pq10') or contains(@profiles, 'http://dashif.org/guidelines/dashif#vp9') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#vp9') or contains(@profiles, 'http://dashif.org/guidelines/dashif#vp9-hdr') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#vp9-hdr') or contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or contains(@profiles, 'urn:dvb:dash:profile:dvb-dash:2014'))) then true() else false()">
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
-               <svrl:text>An unknown profile string (other than the On-Demand profile -"urn:mpeg:dash:profile:isoff-on-demand:2011", the live profile -"urn:mpeg:dash:profile:isoff-live:2011", the main profile- "urn:mpeg:dash:profile:isoff-main:2011", the full profile "urn:mpeg:dash:profile:full:2011", the mp2t-main profile -"urn:mpeg:dash:profile:mp2t-main:2011", the mp2t-simple profile -"urn:mpeg:dash:profile:mp2t-simple:2011", the Dolby AC-4 profile -"http://dashif.org/guidelines/dashif#ac-4", -the multichannel audio extension with MPEG-H 3D Audio profile -"http://dashif.org/guidelines/dashif#mpeg-h-3da", the VP9-HD profile -"http://dashif.org/guidelines/dashif#vp9", the VP9-UHD profile -"http://dashif.org/guidelines/dash-if-uhd#vp9", the VP9-HDR profile -"http://dashif.org/guidelines/dashif#vp9-hdr" or "http://dashif.org/guidelines/dash-if-uhd#vp9-hdr", the DVB-DASH profile -"urn:dvb:dash:profile:dvb-dash:2014", the HbbTV 1.5 profile -"urn:hbbtv:dash:profile:isoff-live:2012", the DASH-IF multchannel audio extension with Enhanced AC-3 -"http://dashif.org/guidelines/dashif#ec-3")found.</svrl:text>
+               <svrl:text>An unknown profile string (other than the On-Demand profile -"urn:mpeg:dash:profile:isoff-on-demand:2011", the live profile -"urn:mpeg:dash:profile:isoff-live:2011", the main profile- "urn:mpeg:dash:profile:isoff-main:2011", the full profile "urn:mpeg:dash:profile:full:2011", the mp2t-main profile -"urn:mpeg:dash:profile:mp2t-main:2011", the mp2t-simple profile -"urn:mpeg:dash:profile:mp2t-simple:2011", the DASH-IF profile - 'http://dashif.org/guidelines/dash264', the DASH-IF SD profile - 'http://dashif.org/guidelines/dash264#sd', the DASH-IF HD profile - 'http://dashif.org/guidelines/dash264#hd', the DASH-IF main profile - 'http://dashif.org/guidelines/dash264#main', the DASH-IF high profile - 'http://dashif.org/guidelines/dash264#high', the DASH-IF IOP simple profile - 'http://dashif.org/guidelines/dash-if-simple', the DASH-IF IOP main profile - 'http://dashif.org/guidelines/dash-if-main', the DASH-IF IOP on demand profile - 'http://dashif.org/guidelines/dash-if-ondemand', the DASH-IF IOP mixed on demand profile - 'http://dashif.org/guidelines/dash-if-mixed', the DASH-IF multichannel audio extension with Enhanced AC-3 -"http://dashif.org/guidelines/dashif#ec-3, the DASH-IF multichannel extension with Dolby TrueHD -"http://dashif.org/guidelines/dashif#mlpa", the Dolby AC-4 profile -"http://dashif.org/guidelines/dashif#ac-4", the DASH-IF multichannel extension with DTS Digital Surround -"http://dashif.org/guidelines/dashif#dtsc", the DASH-IF multichannel audio extension with DTS-HD High Resolution and DTS-HD Master Audio -"http://dashif.org/guidelines/dashif#dtsh", the DASH-IF multichannel audio extension with DTS Express -"http://dashif.org/guidelines/dashif#dtse", the DASH-IF multichannel audio extension with DTS-HD Lossless profile -"http://dashif.org/guidelines/dashif#dtsl", the DASH-IF multichannel audio extension with MPEG Surround profile -"http://dashif.org/guidelines/dashif#mps", the DASH-IF multichannel audio extension with HEAACv2 Level 4 profile -"http://dashif.org/guidelines/dashif#heaac-mc51", the DASH-IF multichannel audio extension with HEAACv2 Level 6 profile -"http://dashif.org/guidelines/dashif#heaac-mc71", the DASH-IF multichannel audio extension with MPEG-H 3D Audio profile -"http://dashif.org/guidelines/dashif#mpeg-h-3da", the DASH-IF audio extension with USAC profile -"http://dashif.org/guidelines/dashif#cxha", the DASH-IF UHD HEVC 4K profile -"http://dashif.org/guidelines/dash-if-uhd#4k", the DASH-IF HEVC HDR PQ10 profile - "http://dashif.org/guidelines/dash-if-uhd#hdr-pq10", the DASH-IF VP9-HD profile -"http://dashif.org/guidelines/dashif#vp9", the DASH-IF VP9-UHD profile -"http://dashif.org/guidelines/dash-if-uhd#vp9", the DASH-IF VP9-HDR profile -"http://dashif.org/guidelines/dashif#vp9-hdr" or "http://dashif.org/guidelines/dash-if-uhd#vp9-hdr", the DVB-DASH profile -"urn:dvb:dash:profile:dvb-dash:2014", the HbbTV 1.5 profile -"urn:hbbtv:dash:profile:isoff-live:2012"")found.</svrl:text>
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
@@ -1852,14 +1852,27 @@
       </xsl:choose>
       <!--ASSERT -->
       <xsl:choose>
-         <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and @type='dynamic' and not(contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011'))) then false() else true()"/>
+         <xsl:when test="if (contains(@profiles, 'http://dashif.org/guidelines/dash') and @type='dynamic' and not(contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011'))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and @type='dynamic' and not(contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011'))) then false() else true()">
+                                test="if (contains(@profiles, 'http://dashif.org/guidelines/dash') and @type='dynamic' and not(contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011'))) then false() else true()">
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
                <svrl:text>DASH-IF IOP Section 3.2.2.2: For dynamic MPD, the @profile shall include urn:mpeg:dash:profile:isoff-live:2011. </svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
+         <xsl:when test="if (((contains(@profiles, 'http://dashif.org/guidelines/dash') and contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011')) or (contains(@profiles, 'http://dashif.org/guidelines/dash') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or (contains(@profiles, 'http://dashif.org/guidelines/dash-if-ondemand'))) and not(@minBufferTime)) then false() else true()"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="if (((contains(@profiles, 'http://dashif.org/guidelines/dash') and contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011')) or (contains(@profiles, 'http://dashif.org/guidelines/dash') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or (contains(@profiles, 'http://dashif.org/guidelines/dash-if-ondemand'))) and not(@minBufferTime)) then false() else true()">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+               </xsl:attribute>
+               <svrl:text>DASH-IF IOP Section 3.10.2/3.10.3: "MPD@minBufferTime shall be present", not found.</svrl:text>
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
@@ -1900,6 +1913,19 @@
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
+         <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash-if-mixed') and @profiles and contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011') and (contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-ondemand'))) then false() else true()"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash-if-mixed') and @profiles and contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011') and (contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-ondemand'))) then false() else true()">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+               </xsl:attribute>
+               <svrl:text>DASH-IF IOP Section 3.10.4: "All Representations in one Period shall either conform to a DASH Live profile or DASH On-Demand profile", both Live and On-Demand profiles are signaled for the Period.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
       <xsl:apply-templates select="*" mode="M38"/>
    </xsl:template>
    <xsl:template match="text()" priority="-1" mode="M38"/>
@@ -1913,10 +1939,10 @@
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:AdaptationSet"/>
       <!--ASSERT -->
       <xsl:choose>
-         <xsl:when test="if ((descendant::dash:SupplementalProperty/@value = following-sibling::dash:AdaptationSet/@id) and (@segmentAlignment='true') and (following-sibling::dash:AdaptationSet/@segmentAlignment = 'false')) then false() else true()"/>
+         <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and (descendant::dash:SupplementalProperty/@value = following-sibling::dash:AdaptationSet/@id) and (@segmentAlignment='true') and (following-sibling::dash:AdaptationSet/@segmentAlignment = 'false')) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                test="if ((descendant::dash:SupplementalProperty/@value = following-sibling::dash:AdaptationSet/@id) and (@segmentAlignment='true') and (following-sibling::dash:AdaptationSet/@segmentAlignment = 'false')) then false() else true()">
+                                test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and (descendant::dash:SupplementalProperty/@value = following-sibling::dash:AdaptationSet/@id) and (@segmentAlignment='true') and (following-sibling::dash:AdaptationSet/@segmentAlignment = 'false')) then false() else true()">
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
@@ -2043,14 +2069,40 @@
       </xsl:choose>
       <!--ASSERT -->
       <xsl:choose>
-         <xsl:when test="if (@profiles and not(contains(ancestor::dash:MPD/@profiles, @profiles))) then false() else true()"/>
+         <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and @profiles and not(contains(ancestor::dash:MPD/@profiles, @profiles))) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                test="if (@profiles and not(contains(ancestor::dash:MPD/@profiles, @profiles))) then false() else true()">
+                                test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and @profiles and not(contains(ancestor::dash:MPD/@profiles, @profiles))) then false() else true()">
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
                <svrl:text>The value of @profiles shall be a subset of the respective value in any higher level of the document hierarchy</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
+         <xsl:when test="if (contains(@profiles, 'http://dashif.org/guidelines/dash-if-ondemand') and (not(@subsegmentAlignment) or (@subsegmentAlignment and not(@subsegmentAlignment='true')))) then false() else true()"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="if (contains(@profiles, 'http://dashif.org/guidelines/dash-if-ondemand') and (not(@subsegmentAlignment) or (@subsegmentAlignment and not(@subsegmentAlignment='true')))) then false() else true()">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+               </xsl:attribute>
+               <svrl:text>DASH-IF IOP Section 3.10.3: "AdaptationSet@subsegmentAlignment SHALL be present and set to true", not set appropriately.</svrl:text>
+            </svrl:failed-assert>
+         </xsl:otherwise>
+      </xsl:choose>
+      <!--ASSERT -->
+      <xsl:choose>
+         <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash-if-ondemand') and (not(subsegmentStartsWithSAP) or (subsegmentStartsWithSAP and (not(subsegmentStartsWithSAP='1') or not(subsegmentStartsWithSAP='2'))))) then false() else true()"/>
+         <xsl:otherwise>
+            <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                                test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash-if-ondemand') and (not(subsegmentStartsWithSAP) or (subsegmentStartsWithSAP and (not(subsegmentStartsWithSAP='1') or not(subsegmentStartsWithSAP='2'))))) then false() else true()">
+               <xsl:attribute name="location">
+                  <xsl:apply-templates select="." mode="schematron-select-full-path"/>
+               </xsl:attribute>
+               <svrl:text>DASH-IF IOP Section 3.10.3: "AdaptationSet@subsegmentStartsWithSAP SHALL be present and set to 1 or 2", not set appropriately.</svrl:text>
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
@@ -2080,10 +2132,10 @@
       <svrl:fired-rule xmlns:svrl="http://purl.oclc.org/dsdl/svrl" context="dash:Representation"/>
       <!--ASSERT -->
       <xsl:choose>
-         <xsl:when test="if (@mimeType and following-sibling::dash:Representation/@mimeType and not(following-sibling::dash:Representation/@mimeType = @mimeType)) then false() else true()"/>
+         <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and @mimeType and following-sibling::dash:Representation/@mimeType and not(following-sibling::dash:Representation/@mimeType = @mimeType)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                test="if (@mimeType and following-sibling::dash:Representation/@mimeType and not(following-sibling::dash:Representation/@mimeType = @mimeType)) then false() else true()">
+                                test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and @mimeType and following-sibling::dash:Representation/@mimeType and not(following-sibling::dash:Representation/@mimeType = @mimeType)) then false() else true()">
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
@@ -2160,10 +2212,10 @@
                     select="substring-before(ancestor-or-self::*/@codecs[1],'\.')"/>
       <!--ASSERT -->
       <xsl:choose>
-         <xsl:when test="if($codec = ('dvhe','dvav') and @dependencyId and not(@dependencyId = preceding-sibling::dash:Representation/@id))then false() else true()"/>
+         <xsl:when test="if(contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and $codec = ('dvhe','dvav') and @dependencyId and not(@dependencyId = preceding-sibling::dash:Representation/@id))then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                test="if($codec = ('dvhe','dvav') and @dependencyId and not(@dependencyId = preceding-sibling::dash:Representation/@id))then false() else true()">
+                                test="if(contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and $codec = ('dvhe','dvav') and @dependencyId and not(@dependencyId = preceding-sibling::dash:Representation/@id))then false() else true()">
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
@@ -2180,7 +2232,7 @@
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
-               <svrl:text>The value of @profiles shall be a subset of the respective value in any higher level of the document hierarchy</svrl:text>
+               <svrl:text>The value of @profiles shall be a subset of the respective value in any higher level of the document hierarchy.</svrl:text>
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>
@@ -2260,10 +2312,10 @@
                        context="dash:ContentProtection"/>
       <!--ASSERT -->
       <xsl:choose>
-         <xsl:when test="if (not(parent::dash:AdaptationSet)) then false() else true()"/>
+         <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and not(parent::dash:AdaptationSet)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                test="if (not(parent::dash:AdaptationSet)) then false() else true()">
+                                test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and not(parent::dash:AdaptationSet)) then false() else true()">
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
@@ -2274,10 +2326,10 @@
       </xsl:choose>
       <!--ASSERT -->
       <xsl:choose>
-         <xsl:when test="if ((@schemeIdUri = 'urn:mpeg:dash:mp4protection:2011') and (@value= 'cenc') and not(parent::dash:AdaptationSet)) then false() else true()"/>
+         <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and (@schemeIdUri = 'urn:mpeg:dash:mp4protection:2011') and (@value= 'cenc') and not(parent::dash:AdaptationSet)) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                test="if ((@schemeIdUri = 'urn:mpeg:dash:mp4protection:2011') and (@value= 'cenc') and not(parent::dash:AdaptationSet)) then false() else true()">
+                                test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and (@schemeIdUri = 'urn:mpeg:dash:mp4protection:2011') and (@value= 'cenc') and not(parent::dash:AdaptationSet)) then false() else true()">
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
@@ -2288,10 +2340,10 @@
       </xsl:choose>
       <!--ASSERT -->
       <xsl:choose>
-         <xsl:when test="if ( contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and (@schemeIdUri = 'urn:mpeg:dash:mp4protection:2011') and not(@cenc:default_KID) ) then false() else true()"/>
+         <xsl:when test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and (@schemeIdUri = 'urn:mpeg:dash:mp4protection:2011') and not(@cenc:default_KID) ) then false() else true()"/>
          <xsl:otherwise>
             <svrl:failed-assert xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-                                test="if ( contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and (@schemeIdUri = 'urn:mpeg:dash:mp4protection:2011') and not(@cenc:default_KID) ) then false() else true()">
+                                test="if (contains(ancestor::dash:MPD/@profiles, 'http://dashif.org/guidelines/dash') and (@schemeIdUri = 'urn:mpeg:dash:mp4protection:2011') and not(@cenc:default_KID) ) then false() else true()">
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>

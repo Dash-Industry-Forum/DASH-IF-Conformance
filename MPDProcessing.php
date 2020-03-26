@@ -18,6 +18,7 @@ function process_MPD(){
             $current_period, $current_adaptation_set, $current_representation, $profiles,                    // MPD process data
             $progress_report, $progress_xml, $reprsentation_template, $adaptation_set_template, $mpd_log,    // Reporting
             $additional_flags,
+            $dashif_conformance, $iop_function_name, $iop_when_to_call,                                      // DASH-IF IOP data
             $cmaf_conformance, $cmaf_function_name, $cmaf_when_to_call,                                      // CMAF data
             $hbbtv_conformance, $dvb_conformance, $hbbtv_dvb_function_name, $hbbtv_dvb_when_to_call,         // HbbTV-DVB data
             $ctawave_conformance, $ctawave_function_name, $ctawave_when_to_call;                             // CTA WAVE data
@@ -48,6 +49,13 @@ function process_MPD(){
     
     writeMPDStatus($mpd_url);
     
+    ## Check if dashif conformance is desired or if its profiles are in the MPD
+    if(!$dashif_conformance) {
+        if(strpos($mpd_dom->getAttribute('profiles'), 'http://dashif.org/guidelines/dash') !== FALSE){
+            $dashif_conformance = 1;
+            include '../DASH/IOP/IOP_Initialization.php';
+        }
+    }
     ## Check if hbbtv-dvb conformance is desired or if their profiles are in the MPD
     ## If yes, call HbbTV_DVB_Handle for Before-MPD validation
     if(!$hbbtv_conformance){
@@ -70,7 +78,10 @@ function process_MPD(){
     
     ## Get MPD features into an array
     $mpd_features = MPD_features($mpd_dom);
+    $profiles = derive_profiles();
     writeProfiles();
+    $progress_xml->Profile = $mpd_features['profiles'];
+    $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
     
     //------------------------------------------------------------------------//
     ## Perform MPD Validation
@@ -81,12 +92,16 @@ function process_MPD(){
     $valid_mpd = validate_MPD();
     $result_for_json[] = $valid_mpd[1];
     
+    ## If DASH-IF IOP conformance, call DASH-IF IOP MPD validation
+    $return_dashif = '';
+    if($dashif_conformance)
+        $return_dashif = $iop_function_name($iop_when_to_call[0]);
     ## If HbbTV_DVB_Handle, call HbbTV_DVB_Handle for MPD validation
     $return_val = '';
     if($hbbtv_conformance || $dvb_conformance)
         $return_val = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[1]);
     
-    MPD_report($valid_mpd[1] . $return_val);
+    MPD_report($valid_mpd[1] . $return_dashif . $return_val);
     writeMPDEndTime();
     print_console($session_dir.'/'.$mpd_log.'.txt', "MPD Validation Results");
     
@@ -160,7 +175,6 @@ function process_MPD(){
         $period_info = current_period();
         $urls = process_base_url();
         $segment_urls = derive_segment_URLs($urls, $period_info);
-        $profiles = derive_profiles();
         
         $period_dir_name = "Period".$current_period;
         $curr_period_dir = $session_dir . '/' . $period_dir_name;
@@ -194,6 +208,7 @@ function processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML
 {
    global  $mpd_features, $current_period, $current_adaptation_set, $adaptation_set_template,$current_representation,$reprsentation_template,$session_dir,
            $progress_xml,$progress_report,$additional_flags,
+           $dashif_conformance, $iop_function_name, $iop_when_to_call,                                      // DASH-IF IOP data
            $cmaf_conformance, $cmaf_function_name, $cmaf_when_to_call,                                      // CMAF data
            $hbbtv_conformance, $dvb_conformance, $hbbtv_dvb_function_name, $hbbtv_dvb_when_to_call,         // HbbTV-DVB data
            $ctawave_conformance, $ctawave_function_name, $ctawave_when_to_call;                             // CTA WAVE data;
@@ -233,6 +248,8 @@ function processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML
                 $return_cta = $ctawave_function_name($ctawave_when_to_call[0]);
             
             $return_seg_val = validate_segment($curr_adapt_dir, $curr_rep_dir, $period, $adaptation_set, $representation, $segment_url, $rep_dir_name, $is_subtitle_rep);
+            if($dashif_conformance)
+                $return_seg_val[] = $iop_function_name($iop_when_to_call[1]);
             if($cmaf_conformance)
                 $return_seg_val[] = $cmaf_function_name($cmaf_when_to_call[1]);
             if($hbbtv_conformance || $dvb_conformance)
@@ -257,6 +274,8 @@ function processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML
     
     ## Adaptation Sets in current Period finished
     crossRepresentationProcess();
+    if($dashif_conformance)
+        $iop_function_name($iop_when_to_call[2]);
     $file_error = adapt_result($ResultXML);
     
     if($cmaf_conformance){
@@ -278,7 +297,6 @@ function processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML
 function check_before_segment_validation($result_for_json){
     global $session_dir, $mpd_features, $mpd_dom, $progress_report, $progress_xml;
     
-    $progress_xml->Profile = $mpd_features['profiles'];
     $progress_xml->dynamic = ($mpd_features['type'] == 'dynamic') ? 'true' : 'false';
     $progress_xml->PeriodCount = sizeof($mpd_features['Period']);
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
@@ -340,7 +358,7 @@ function adapt_result($ResultXML){
         
         if (file_exists($session_dir . '/Period' . $current_period . '/' . $adapt_log_file . '.txt')){
             $searchadapt = file_get_contents($session_dir . '/Period' . $current_period . '/' . $adapt_log_file . '.txt');
-            if(strpos($searchadapt, "Error") == false){
+            if(strpos($searchadapt, "Error") == false && strpos($searchadapt, "violated") == false){
                 $ResultXML->Period[$current_period]->Adaptation[$i]->addChild('CrossRepresentation', 'noerror');
                 $file_error[] = "noerror";
             }
