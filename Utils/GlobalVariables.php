@@ -66,6 +66,8 @@ $alignedswitching_infofile= '';
 # HbbTV_DVB variables
 $hbbtv_conformance = false;
 $dvb_conformance = false;
+$dvb_conformance_2018 = false;
+$dvb_conformance_2019 = false;
 $bitrate_script = '';
 $segment_duration_script = '';
 $subtitle_segments_location = '';
@@ -87,11 +89,13 @@ if (isset($_POST['urlcode'])){
     
     $mpd_validation_only = $url_array[1];
     $cmaf_conformance = $url_array[2];
-    $dvb_conformance = $url_array[3];
-    $hbbtv_conformance = $url_array[4];
-    $dashif_conformance=$url_array[5];
-    $ctawave_conformance=$url_array[6];
-    $schema_url = $url_array[7];
+    $dvb_conformance_2019 = $url_array[3];
+    $dvb_conformance_2018 = $url_array[4];
+    $dvb_conformance = ($dvb_conformance_2018 || $dvb_conformance_2019) ? 1 : 0;
+    $hbbtv_conformance = $url_array[5];
+    $dashif_conformance=$url_array[6];
+    $ctawave_conformance=$url_array[7];
+    $schema_url = $url_array[8];
 }
 if (isset($_POST['urlcodehls'])){
     $url_array = json_decode($_POST['urlcodehls']);
@@ -133,8 +137,10 @@ if(isset($_POST['cmaf'])){
 if(isset($_POST['dvb'])){
     if($hls_manifest)
         echo "\n\n\033[".'0;34'."m"."The option 'dvb' can only be used for DASH manifests, ignoring for this test..."."\033[0m"."\n\n";
-    else
+    else {
         $dvb_conformance = 1;
+        $dvb_conformance_2018 = 1;
+    }
 }
 if(isset($_POST['hbbtv'])){
     if($hls_manifest)
@@ -376,6 +382,9 @@ function addParagraph(string, color){
 </html>';
 
 # Initialize CMAF and/or HbbTV_DVB only when it is requested
+if($dashif_conformance){
+    include '../DASH/IOP/IOP_Initialization.php';
+}
 if($cmaf_conformance){
     include '../CMAF/CMAFInitialization.php';
 }
