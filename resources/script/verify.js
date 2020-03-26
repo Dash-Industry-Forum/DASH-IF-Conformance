@@ -16,8 +16,7 @@ Script with main functions for loading, parsing MPD, dispatching segment checks 
 ********************************************************************************************************************************/
 
 //Main MPD structure with all relevant information
-var MPD = {xmlHttpMPD: createXMLHttpRequestObject(), xmlData: null, FT: null, Periods: new Array(), MUP: null, segmentsDispatch: null, mpdDispatch: null, totalSegmentCount: 0, updatedSegments: 0, mpdEvents: new Array(), mpdEventCount: 5, RTTs: new Array(), numRTTs: 10, 
-clockSkew: new Array(), numClockSkew: 10, numSuccessfulChecksSAS: 0, numSuccessfulChecksSAE: 0, UTCTiming:new Array(), AST : null};
+var MPD = {xmlHttpMPD: createXMLHttpRequestObject(), xmlData: null, FT: null, Periods: new Array(), MUP: null, segmentsDispatch: null, mpdDispatch: null, totalSegmentCount: 0, updatedSegments: 0, mpdEvents: new Array(), mpdEventCount: 5, RTTs: new Array(), numRTTs: 10, clockSkew: new Array(), numClockSkew: 10, numSuccessfulChecksSAS: 0, numSuccessfulChecksSAE: 0, UTCTiming:new Array(), AST : null, Location: new Array()};
 
 //Past or already available segments, cost a significant processing overhead at the startup, this needs to be sorted out. Right now, we keep it to a minimum
 var maxPastSegmentsPerIteration = 2;
@@ -31,6 +30,8 @@ var serverTimeOffsetStatus=false;
 var serverTimeOffset=0;
 var pid_old=[], pstart_old=[];
 var pid_new=[], pstart_new=[];
+var LocationElementArray=[];
+var first_MPD=true;
 
 var RequestCounter = 0;
 function createXMLHttpRequestObject(){ 
@@ -60,8 +61,13 @@ function process()
   if (MPD.xmlHttpMPD)     // continue only if xmlHttp isn't void
   {
     try          // try to connect to the server
-    {	
-	  var mpd_url=document.getElementById("mpdbox").value;
+    {
+      var mpd_url=document.getElementById("mpdbox").value;
+      if(!first_MPD) {
+        if(LocationElementArray.length>0) {
+          mpd_url=LocationElementArray[0];
+        }
+      }
 
       var now = new Date();
       if(document.getElementById("cscorrect").checked)
@@ -1046,9 +1052,22 @@ function UTCSchemesEvaluate(UTCElement){
                 
 }
 
+function processLocation(MPDxmlData)
+{
+    var Location=MPDxmlData.getElementsByTagName("Location");
+    for(var i=0; i<Location.length; i++)
+    {
+        if(MPD.Location[i]==null)
+            MPD.Location[i]="";
+        MPD.Location[i]=Location.item(i).firstChild.data
+    }
+    LocationElementArray=MPD.Location;
+}
+
 function processMPD(MPDxmlData)
 {
     processUTCTiming(MPDxmlData);
+    processLocation(MPDxmlData);
     
     var numPeriods = MPDxmlData.getElementsByTagName("Period").length;
     var currentPeriod = 0;
