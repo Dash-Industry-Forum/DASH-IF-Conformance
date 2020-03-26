@@ -110,9 +110,9 @@ function checkCMAFPresentation(){
                 $xml = get_DOM($filename, 'atomlist');
                 $id = $Adapt['Representation'][$i]['id'];
                 
-                $profile_cmfhd=strpos($profiles[$adapt_count][$i], 'urn:mpeg:cmaf:presentation_profile:cmfhd:2017');
-                $profile_cmfhdc=strpos($profiles[$adapt_count][$i], 'urn:mpeg:cmaf:presentation_profile:cmfhdc:2017');
-                $profile_cmfhds=strpos($profiles[$adapt_count][$i], 'urn:mpeg:cmaf:presentation_profile:cmfhds:2017');
+                $profile_cmfhd=strpos($profiles[$current_period][$adapt_count][$i], 'urn:mpeg:cmaf:presentation_profile:cmfhd:2017');
+                $profile_cmfhdc=strpos($profiles[$current_period][$adapt_count][$i], 'urn:mpeg:cmaf:presentation_profile:cmfhdc:2017');
+                $profile_cmfhds=strpos($profiles[$current_period][$adapt_count][$i], 'urn:mpeg:cmaf:presentation_profile:cmfhds:2017');
                 
                 if($xml){
                     //Check Section 7.3.4 conformance

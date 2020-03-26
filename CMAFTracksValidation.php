@@ -86,7 +86,7 @@ function checkCMAFTracks(){
         $adapt_mime_type = $Adapt['mimeType'];
         $rep_mime_type = $Adapt['Representation'][$current_representation]['mimeType'];
         if(strpos($rep_mime_type, 'video') !== FALSE || strpos($adapt_mime_type, 'video') !== FALSE){
-            if(strpos($profiles[$current_adaptation_set][$current_representation], 'urn:mpeg:dash:profile:isoff-live:2011') !== FALSE){
+            if(strpos($profiles[$current_period][$current_adaptation_set][$current_representation], 'urn:mpeg:dash:profile:isoff-live:2011') !== FALSE){
                 for($j=0;$j<$xml_num_moofs;$j++){
                     $trun_version = $xml_trun->item($j)->getAttribute('version');
                     if($trun_version != "1")
@@ -254,7 +254,7 @@ function checkCMAFTracks(){
         }
         
         $dash264 = false;
-        if(strpos($profiles[$current_adaptation_set][$current_representation], "http://dashif.org/guidelines/dash264") !== false)
+        if(strpos($profiles[$current_period][$current_adaptation_set][$current_representation], "http://dashif.org/guidelines/dash264") !== false)
             $dash264 = true;
         
         $content_protection_len = (!$Adapt['ContentProtection']) ? sizeof($Adapt['Representation'][$current_representation]['ContentProtection']) : sizeof($Adapt['ContentProtection']);
