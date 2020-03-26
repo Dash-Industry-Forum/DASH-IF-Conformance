@@ -620,6 +620,8 @@ typedef struct {
     bool    dash264base;
     bool    dashifbase;
     bool    dash264enc;
+    bool    dashifondemand;
+    bool    dashifmixed;
     bool    RepresentationIndex;
     bool    atomxml;
     bool    cmaf;
@@ -1071,6 +1073,7 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon );
 OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon );
 OSErr Validate_hint_SD_Entry( atomOffsetEntry *aoe, void *refcon );
 OSErr Validate_subt_SD_Entry( atomOffsetEntry *aoe, void *refcon );
+OSErr Validate_text_SD_Entry( atomOffsetEntry *aoe, void *refcon );
 
 
 OSErr ValidateElementaryVideoStream( atomOffsetEntry *aoe, void *refcon );
@@ -1226,6 +1229,10 @@ OSErr Validate_m4ds_Atom( atomOffsetEntry *aoe, void *refcon, char *esname );
 
 OSErr Validate_stpp_Atom( atomOffsetEntry *aoe, void *refcon, char *esname );
 OSErr Validate_mime_Atom( atomOffsetEntry *aoe, void *refcon, char *esname );
+
+OSErr Validate_wvtt_Atom( atomOffsetEntry *aoe, void *refcon, char *esname );
+OSErr Validate_vttC_Atom( atomOffsetEntry *aoe, void *refcon, char *esname );
+OSErr Validate_vlab_Atom( atomOffsetEntry *aoe, void *refcon, char *esname );
 
 OSErr Validate_ftyp_Atom( atomOffsetEntry *aoe, void *refcon );
 OSErr Validate_styp_Atom( atomOffsetEntry *aoe, void *refcon );

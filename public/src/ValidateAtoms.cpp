@@ -2163,6 +2163,10 @@ OSErr Validate_stsd_Atom( atomOffsetEntry *aoe, void *refcon )
                                         err = Validate_subt_SD_Entry( entry, refcon );
                                         break;
 					
+                                case 'text':
+                                        err = Validate_text_SD_Entry( entry, refcon );
+                                        break;
+						
 				default:
 					// why does MP4 say it must be an MpegSampleEntry?
 					//   So by default you can't have any other media type!!!
@@ -2375,7 +2379,7 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 						//goto bail;
 					}
 				}
-				else if (((( sdh.sdType == 'hev1' ) || ( sdh.sdType == 'hvc1' )) || is_protected) && (vg.cmaf || vg.dvb || vg.hbbtv || vg.ctawave))
+				else if (((( sdh.sdType == 'hev1' ) || ( sdh.sdType == 'hvc1' )) || is_protected) && (vg.cmaf || vg.dvb || vg.hbbtv || vg.ctawave || vg.dash264base))
 				{
 					if (entry->type == 'hvcC') {
 						atomerr= Validate_hvcC_Atom( entry, refcon, (char *)"hvcC" );
@@ -3184,11 +3188,11 @@ bail:
 
 OSErr Validate_sidx_Atom( atomOffsetEntry *aoe, void *refcon )
 {
-	OSErr err = noErr;
+    OSErr err = noErr;
     int i;
-	UInt32 version;
-	UInt32 flags, temp;
-	UInt64 offset;
+    UInt32 version;
+    UInt32 flags, temp;
+    UInt64 offset;
     
     MovieInfoRec *mir = (MovieInfoRec *)refcon;
 
@@ -3245,19 +3249,19 @@ OSErr Validate_sidx_Atom( atomOffsetEntry *aoe, void *refcon )
     if(tir->mediaTimeScale != sidxInfo->timescale)
         warnprint("Warning: sidx timescale %d != track timescale %d for track ID %d, Section 8.16.3.3 of ISO/IEC 14496-12 4th edition: it is recommended that this match the timescale of the reference stream or track\n",sidxInfo->timescale,tir->mediaTimeScale,sidxInfo->reference_ID);
         
-	// Get data 
-	if(version == 0)
-	{
-	    BAILIFERR( GetFileDataN32( aoe, &temp, offset, &offset ) );
-        sidxInfo->earliest_presentation_time = temp;
-        
-	    BAILIFERR( GetFileDataN32( aoe, &temp, offset, &offset ) );
-        sidxInfo->first_offset = temp;
-	}
+    // Get data 
+    if(version == 0)
+    {
+        BAILIFERR( GetFileDataN32( aoe, &temp, offset, &offset ) );
+    sidxInfo->earliest_presentation_time = temp;
+    
+        BAILIFERR( GetFileDataN32( aoe, &temp, offset, &offset ) );
+    sidxInfo->first_offset = temp;
+    }
     else
     {
-	    BAILIFERR( GetFileDataN64( aoe, &sidxInfo->earliest_presentation_time, offset, &offset ) );
-	    BAILIFERR( GetFileDataN64( aoe, &sidxInfo->first_offset, offset, &offset ) );
+        BAILIFERR( GetFileDataN64( aoe, &sidxInfo->earliest_presentation_time, offset, &offset ) );
+        BAILIFERR( GetFileDataN64( aoe, &sidxInfo->first_offset, offset, &offset ) );
     }
     
     atomprint("earliestPresentationTime=\"%lld\"\n",sidxInfo->earliest_presentation_time); //int64todstr(EndianU64_BtoN(sidxInfo->earliest_presentation_time)));
@@ -3537,6 +3541,57 @@ OSErr Validate_subt_SD_Entry( atomOffsetEntry *aoe, void *refcon )
             if(sdh.sdType == 'stpp')
             {
                 BAILIFERR( Validate_stpp_Atom( entry, refcon, (char *)"stpp" ) );
+            }
+        }
+    }
+    
+    // All done
+	aoe->aoeflags |= kAtomValidated;
+
+bail:
+	return err;
+    
+}
+
+//==========================================================================================
+
+//==========================================================================================
+
+OSErr Validate_text_SD_Entry( atomOffsetEntry *aoe, void *refcon )
+{
+    OSErr err = noErr;
+    UInt64 offset;
+    SampleDescriptionHead sdh;
+    
+    offset = aoe->offset;
+    
+    // Get data 
+    BAILIFERR( GetFileData( aoe, &sdh, offset, sizeof(sdh), &offset ) );
+    EndianSampleDescriptionHead_BtoN( &sdh );
+    
+    atomprint("sdType=\"%s\"\n", ostypetostr(sdh.sdType));
+    atomprint("dataRefIndex=\"%ld\"\n", sdh.dataRefIndex);
+    atomprint(">\n"); //vg.tabcnt++; 
+    
+    {
+        UInt64 minOffset, maxOffset;
+        atomOffsetEntry *entry;
+        atomOffsetEntry *list;
+        long cnt;
+        int i;
+        
+        minOffset = offset;
+        maxOffset = aoe->offset + aoe->size;
+        
+        BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
+        
+        for(i=0; i<cnt; i++)
+        {
+            entry = &list[i];
+            
+            if(sdh.sdType == 'wvtt')
+            {
+                BAILIFERR( Validate_wvtt_Atom( entry, refcon, (char *)"wvtt" ) );
             }
         }
     }
@@ -4685,6 +4740,100 @@ OSErr Validate_mime_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
 bail:
         atomprint("/>\n"); vg.tabcnt--;
 	return err;
+}
+
+//==========================================================================================
+
+OSErr Validate_wvtt_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
+{
+    OSErr err = noErr;
+    UInt64 offset;
+    UInt64 minOffset, maxOffset;
+    atomOffsetEntry *entry;
+    atomOffsetEntry *list;
+    long cnt;
+    int i;
+    
+    atomprint("<%s", esname); vg.tabcnt++;
+    
+    // Get data
+    offset = aoe->offset;
+    minOffset = offset;
+    maxOffset = aoe->offset + aoe->size;
+    BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
+    for (i = 0; i < cnt; i++) {
+        entry = &list[i];
+        
+        atomprint("<%s",ostypetostr(entry->type)); vg.tabcnt++;
+        switch( entry->type ) {
+            case 'vttC':
+                Validate_vttC_Atom( entry, refcon, (char *)"vttC" );
+                break;
+                
+            case 'vlab':
+                Validate_vlab_Atom( entry, refcon, (char *)"vlab" );
+                break;
+                
+            case 'btrt':
+                Validate_btrt_Atom( entry, refcon, (char *)"btrt" );
+                break;
+                
+            default:
+                break;
+        }
+        --vg.tabcnt; 
+    }
+    
+    // All done
+    aoe->aoeflags |= kAtomValidated;
+
+bail:
+    atomprint("/>\n"); vg.tabcnt--;
+    return err;
+}
+
+OSErr Validate_vttC_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
+{
+    OSErr err = noErr;
+    UInt64 offset;
+    char *config;
+    
+    atomprint("<%s", esname); vg.tabcnt++;
+    
+    offset = aoe->offset;
+    
+    // Get data
+    BAILIFERR( GetFileCString( aoe, &config, offset, aoe->maxOffset - offset, &offset ) );
+    atomprint("config=\"%s\"\n", config);
+    
+    // All done
+    aoe->aoeflags |= kAtomValidated;
+
+bail:
+    atomprint("/>\n"); vg.tabcnt--;
+    return err;
+}
+
+OSErr Validate_vlab_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
+{
+    OSErr err = noErr;
+    UInt64 offset;
+    char *source_label;
+    
+    atomprint("<%s", esname); vg.tabcnt++;
+    
+    offset = aoe->offset;
+    
+    // Get data
+    BAILIFERR( GetFileCString( aoe, &source_label, offset, aoe->maxOffset - offset, &offset ) );
+    atomprint("source_label=\"%s\"\n", source_label);
+    
+    // All done
+    aoe->aoeflags |= kAtomValidated;
+
+bail:
+    atomprint("/>\n"); vg.tabcnt--;
+    return err;
 }
 
 //==========================================================================================
