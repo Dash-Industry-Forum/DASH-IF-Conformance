@@ -392,7 +392,7 @@ function common_validation_DVB($opfile, $xml_rep, $media_types){
     ## Segment checks
     $moof_boxes = $xml_rep->getElementsByTagName('moof');
     // Section 4.3 on on-demand profile periods containing sidx boxes
-    if(strpos($profiles[$current_adaptation_set][$current_representation], 'urn:mpeg:dash:profile:isoff-on-demand:2011') !== FALSE || strpos($profiles[$current_adaptation_set][$current_representation], 'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014') !== FALSE){
+    if(strpos($profiles[$current_period][$current_period][$current_adaptation_set][$current_representation], 'urn:mpeg:dash:profile:isoff-on-demand:2011') !== FALSE || strpos($profiles[$current_adaptation_set][$current_representation], 'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014') !== FALSE){
         if($xml_rep->getElementsByTagName('sidx')->length != 1)
             fwrite($opfile, "###'HbbTV-DVB DASH Validation Requirements check violated for DVB: Section 'Segments' - 'Segment includes features that are not required by the profile being validated against', found ". $xml_rep->getElementsByTagName('sidx')->length ." sidx boxes while according to Section 4.3 \"(For On Demand profile) The segment SHALL contain only one single Segment Index box ('sidx) for the entire segment\"'.\n");
         
