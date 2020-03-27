@@ -115,7 +115,42 @@
                 document.getElementById("mpdvalidation").checked = true;
             }
         }
-
+        
+        var cmafvalidation = "<?php echo $cmaf; ?>";
+        if(cmafvalidation === "1"){
+            if(!($("#cmafprofile").is(':checked'))){
+                document.getElementById("cmafprofile").checked = true;
+            }
+        }
+        
+        var hbbtvvalidation = "<?php echo $hbbtv; ?>";
+        if(hbbtvvalidation === "1"){
+            if(!($("#hbbtvprofile").is(':checked'))){
+                document.getElementById("cmafprofile").checked = true;
+            }
+        }
+        
+        var dvbvalidation = "<?php echo $dvb; ?>";
+        if(dvbvalidation === "1"){
+            if(!($("#dvbprofile2018").is(':checked'))){
+                document.getElementById("dvbprofile2018").checked = true;
+            }
+        }
+        
+        var ctawavevalidation = "<?php echo $ctawave; ?>";
+        if(ctawavevalidation === "1"){
+            if(!($("#ctawaveprofile").is(':checked'))){
+                document.getElementById("ctawaveprofile").checked = true;
+            }
+        }
+        
+        var dashifvalidation = "<?php echo $dashif; ?>";
+        if(dashifvalidation === "1"){
+            if(!($("#dashifprofile").is(':checked'))){
+                document.getElementById("dashifprofile").checked = true;
+            }
+        }
+        
         url = "<?php echo $url; ?>";
         if(url !== "")
         {
@@ -475,8 +510,12 @@
                     <input type="checkbox" name="dashifprofile" id="dashifprofile" >
                     <span class="checkmark"></span>
                 </label>
-                <label class="chkbox" for="dvbprofile">DVB
-                    <input type="checkbox" name="dvbprofile" id="dvbprofile" >
+                <label class="chkbox" for="dvbprofile2019">DVB (2019)
+                    <input type="checkbox" name="dvbprofile2019" id="dvbprofile2019" onclick="dvbSelect(this.id);">
+                    <span class="checkmark"></span>
+                </label>
+                <label class="chkbox" for="dvbprofile2018">DVB (2018)
+                    <input type="checkbox" name="dvbprofile2018" id="dvbprofile2018" onclick="dvbSelect(this.id);">
                     <span class="checkmark"></span>
                 </label>
                 <label class="chkbox" for="hbbtvprofile">HbbTV
@@ -597,7 +636,9 @@ var hbbtv = "<?php echo $hbbtv; ?>";
 var dashif= "<?php echo $dashif; ?>";
 var ctawave = "<?php echo $ctawave; ?>";
 var mpdonly = "<?php echo $mpdonly; ?>";
-var schema = "<?php echo $schema; ?>"
+var schema = "<?php echo $schema; ?>";
+var dvb2018 = dvb;
+var dvb2019 = dvb;
 var downloadarray=[];
 var adaptholder = [];
 var entered_cross = false;
@@ -684,7 +725,16 @@ function CheckKey(e) //receives event object as parameter
    }
 }
 
-function createXMLHttpRequestObject(){
+function dvbSelect(id) {
+    if(id == "dvbprofile2018" && ($("#dvbprofile2019").is(':checked'))) {
+        document.getElementById("dvbprofile2019").checked = false;
+    }
+    else if(id == "dvbprofile2019" && ($("#dvbprofile2018").is(':checked'))) {
+        document.getElementById("dvbprofile2018").checked = false;
+    }
+}
+
+function createXMLHttpRequestObject(){ 
     var xmlHttp; // xmlHttp will store the reference to the XMLHttpRequest object
     try{         // try to instantiate the native XMLHttpRequest object
         xmlHttp = new XMLHttpRequest(); // create an XMLHttpRequest object
@@ -745,7 +795,7 @@ function  progressEventHandler(){
                 if (document.getElementById("profile").innerHTML === "Profiles: ")
                 {
                     var profileList = progressXML.getElementsByTagName("Profile")[0].childNodes[0].nodeValue;
-                    if(dashif && profileList.search("http://dashif.org/guidelines/dash264")===-1)
+                    if(dashif && profileList.search("http://dashif.org/guidelines/dash264")!==-1)
                         profileList+= ", http://dashif.org/guidelines/dash264";
                     document.getElementById("profile").innerHTML="Profiles: " + profileList;
                     document.getElementById('profile').style.visibility='visible';
@@ -868,14 +918,24 @@ function submit()
 		checkstr += "w";
 	}
 
+    mpdonly = ($("#mpdvalidation").is(':checked')) ? 1 : 0;
+    dvb2019 = ($("#dvbprofile2019").is(':checked')) ? 1 : 0;
+    dvb2018 = ($("#dvbprofile2018").is(':checked')) ? 1 : 0;
+    dvb = (dvb2018 || dvb2019) ? 1 : 0;
+    hbbtv = ($("#hbbtvprofile").is(':checked')) ? 1 : 0;
+    cmaf = ($("#cmafprofile").is(':checked')) ? 1 : 0;
+    dashif = ($("#dashifprofile").is(':checked')) ? 1 : 0;
+    ctawave = ($("#ctawaveprofile").is(':checked')) ? 1 : 0;
+  
     stringurl[1]=mpdonly;
     stringurl[2]=cmaf;
-    stringurl[3]=dvb;
-    stringurl[4]=hbbtv;
-    stringurl[5]=dashif;
-    stringurl[6]=ctawave;
-    stringurl[7]=schema;
-
+    stringurl[3]=dvb2019;
+    stringurl[4]=dvb2018;    
+    stringurl[5]=hbbtv;
+    stringurl[6]=dashif;
+    stringurl[7]=ctawave;
+    stringurl[8]=schema;
+    
     if(schema !== ""){
         var filename = schema;
         if (filename.split('.').pop() !== 'xsd'){
@@ -980,6 +1040,7 @@ function pollingProgress()
             text: "Mpd"
         }]
     });
+    
     mpdTimer = setInterval(function(){mpdProgress()},50);
     adjustFooter();
 }
@@ -987,24 +1048,39 @@ function pollingProgress()
 var mpd_node_index = 0;
 var mpdresult_x = 2;
 var mpdresult_y = 1;
-var branch_added = [0, 0, 0, 0];
+var branch_added = [0, 0, 0, 0, 0];
 var branchName = [
     "XLink resolving",
     "MPD validation",
     "Schematron validation",
-    "HbbTv DVB validation"
+    "DASH-IF validation",
+    "HbbTV DVB validation"
 ];
 var log_brancName = "mpd log";
 var shouldFinishTest = false;
 
 function mpdProgress(){
+    // Check the profiles within MPD
+    xmlDoc_progress=loadXMLDoc("temp/"+dirid+"/progress.xml");
+    if (xmlDoc_progress === null)
+        return;
+    
+    var profiles=xmlDoc_progress.getElementsByTagName("Profile");
+    if(profiles === null)
+        return;
+    
+    var profiles = profiles[0].childNodes[0].nodeValue;
+    var is_hbbtv = (hbbtv || (profiles.indexOf('urn:hbbtv:dash:profile:isoff-live:2012') !== -1)) ? 1 : 0;
+    var is_dvb = (dvb || (profiles.indexOf('urn:dvb:dash:profile:dvb-dash') !== -1)) ? 1: 0;
+    var is_dashif = (dashif || (profiles.indexOf('http://dashif.org/guidelines/dash') !== -1)) ? 1 : 0;
+    
     xmlDoc_mpdresult = loadXMLDoc("temp/"+dirid+"/mpdresult.xml");
 
     if(xmlDoc_mpdresult === null)
         return;
 
     var mpd_node_index_until = xmlDoc_mpdresult.documentElement.childNodes.length;
-    if(mpd_node_index === mpd_node_index_until){
+    if(mpd_node_index >= mpd_node_index_until){
         clearInterval(mpdTimer);
 
         if(!mpdprocessed){
@@ -1048,26 +1124,33 @@ function mpdProgress(){
         finishTest();
         return false;
     }
-
+    
+    var node_name = node.childNodes[0].nodeName;
     var node_result = node.childNodes[0].nodeValue;
     if(node_result === 'No Result'){
+        if(mpd_node_index > 2 && !is_dashif && (is_hbbtv || is_dvb))
+            return;
         addToTree(0);
         return;
     }
     else if(node_result === 'true'){
+        if(mpd_node_index > 2 && !is_dashif && (is_hbbtv || is_dvb))
+            mpd_node_index++;
         addToTree(1);
         mpd_node_index++;
     }
     else if(node_result === 'warning'){
+        if(mpd_node_index > 2 && !is_dashif && (is_hbbtv || is_dvb))
+            mpd_node_index++;
         addToTree(2);
         mpd_node_index++;
         log_branchName = "mpd warning log";
     }
     else if(node_result === 'error'){
-        while(mpd_node_index !== mpd_node_index_until){
-            addToTree(3);
+        if(mpd_node_index > 2 && !is_dashif && (is_hbbtv || is_dvb))
             mpd_node_index++;
-        }
+        addToTree(3);
+        mpd_node_index++;
         log_brancName = "mpd error log";
     }
     adjustFooter();
@@ -1731,7 +1814,7 @@ function initVariables()
     mpd_node_index = 0;
     mpdresult_x = 2;
     mpdresult_y = 1;
-    branch_added = [0, 0, 0, 0];
+    branch_added = [0, 0, 0, 0, 0];
     shouldFinishTest = false;
 }
 
