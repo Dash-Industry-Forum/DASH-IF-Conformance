@@ -17,7 +17,12 @@ function validate_segment($curr_adapt_dir, $dir_in_use, $period, $adaptation_set
     global $sizearray, $current_adaptation_set, $current_representation, $progress_xml;
 
     $sizearray = array();
-    $sizearray = download_data($dir_in_use, $segment_url, $is_subtitle_rep);
+    $codecs = ($adaptation_set['codecs'] == NULL) ? $representation['codecs'] : $adaptation_set['codecs'];
+    $is_dolby = (($codecs != NULL) and
+                 ((substr($codecs, 0, 4) == "ac-3") or
+                  (substr($codecs, 0, 4) == "ec-3") or
+                  (substr($codecs, 0, 4) == "ac-4")));
+    $sizearray = download_data($dir_in_use, $segment_url, $is_subtitle_rep, $is_dolby);
     if($sizearray != 0){
         ## Put segments in one file
         assemble($dir_in_use, $segment_url, $sizearray);

@@ -32,9 +32,10 @@
  * @name: download_data
  * @input: $directory - download directory for the segment(s)
  *         $array_file - URL of the segment(s) to be downloaded
+ *         $is_dolby - Boolean: is the media a Dolby codec?
  * @output: $file_sizearr - array of original size(s) of the segment(s)
  */
-function download_data($directory, $array_file, $is_subtitle_rep){
+function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby){
     global $session_dir, $progress_report, $progress_xml, $current_period, $reprsentation_mdat_template, $missinglink_file, $current_adaptation_set, $current_representation,
             $hls_byte_range_begin, $hls_byte_range_size, $hls_manifest, $hls_mdat_file,
             $cmaf_conformance, $ctawave_conformance;
@@ -50,7 +51,7 @@ function download_data($directory, $array_file, $is_subtitle_rep){
     $totalDataProcessed = 0; // bytes processed within segments
     $totalDataDownloaded = 0;
     $downloadMdat=0;
-    $downloadAll = ($cmaf_conformance or $ctawave_conformance);
+    $downloadAll = $is_dolby;
     $byte_range_array = array();
     # Initialize curl object
     $ch = curl_init();
