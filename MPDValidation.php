@@ -57,9 +57,17 @@ function validate_MPD(){
 }
 
 function download_schema(){
-    global $session_id, $schema_url;
+    global $session_id, $schema_url, $dvb_conformance, $dvb_conformance_2018, $dvb_conformance_2019;
     
     $default_schema_loc = 'schemas/DASH-MPD.xsd';
+    
+    if($dvb_conformance && $dvb_conformance_2018) {
+        $default_schema_loc = 'schemas/DASH-MPD-2nd.xsd';
+    }
+    elseif($dvb_conformance && $dvb_conformance_2019) {
+        $default_schema_loc = 'schemas/DASH-MPD-4th-amd1.xsd';
+    }
+    
     if($schema_url == '') {
         return $default_schema_loc;
     }
@@ -100,8 +108,8 @@ function download_schema(){
 }
 
 function delete_schema($dash_schema_location){
-    $default_schema_loc = 'schemas/DASH-MPD.xsd';
-    if($dash_schema_location !== $default_schema_loc)
+    global $session_id;
+    if($dash_schema_location === "schemas/DASH-MPD_CustomSchema_$session_id.xsd")
         shell_exec("sudo rm $dash_schema_location");
 }
 

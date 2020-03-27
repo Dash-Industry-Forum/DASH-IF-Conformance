@@ -140,7 +140,7 @@ function mdp_timing_info(){
         $duration = ($seg_acc['duration'] != '') ? (int)($seg_acc['duration']) : 0;
         $timescale = ($seg_acc['timescale'] != '') ? (int)($seg_acc['timescale']) : 1;
         
-        $pres_start = $period_timing_info[0] + $pto/$timescale;
+        $pres_start = $period_timing_info[0] - $pto/$timescale;
         
         $segtimeline = $seg_acc['SegmentTimeline'];
         if(sizeof($segtimeline) != 0){
@@ -207,29 +207,34 @@ function mdp_timing_info(){
  *          adaptation set in the current period
  */
 function derive_profiles(){
-    global $mpd_features, $current_period;
+    global $mpd_features;
     
     $profiles_array = array();
-    $period = $mpd_features['Period'][$current_period];
-    $adapts = $period['AdaptationSet'];
-    foreach($adapts as $adapt){
-        $reps = $adapt['Representation'];
-        $rep_profiles = array();
-        foreach($reps as $rep){
-            $profiles = $mpd_features['profiles'];
+    $periods = $mpd_features['Period'];
+    
+    foreach($periods as $period) {
+        $adapts = $period['AdaptationSet'];
+        $adapt_profiles = array();
+        foreach($adapts as $adapt){
+            $reps = $adapt['Representation'];
+            $rep_profiles = array();
+            foreach($reps as $rep){
+                $profiles = $mpd_features['profiles'];
 
-            if($period['profiles'])
-                $profiles = $period['profiles'];
+                if($period['profiles'])
+                    $profiles = $period['profiles'];
 
-            if($adapt['profile'])
-                $profiles = $adapt['profiles'];
-            
-            if($rep['profile'])
-                $profiles = $rep['profiles'];
-            
-            $rep_profiles[] = $profiles;
+                if($adapt['profile'])
+                    $profiles = $adapt['profiles'];
+
+                if($rep['profile'])
+                    $profiles = $rep['profiles'];
+
+                $rep_profiles[] = $profiles;
+            }
+            $adapt_profiles[] = $rep_profiles;
         }
-        $profiles_array[] = $rep_profiles;
+        $profiles_array[] = $adapt_profiles;
     }
     
     return $profiles_array;
