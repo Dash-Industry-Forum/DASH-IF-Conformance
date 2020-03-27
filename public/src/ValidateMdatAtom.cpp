@@ -1092,23 +1092,23 @@ OSErr Validate_mdat_Atom( atomOffsetEntry *aoe, void *refcon)
     // Get version/flags
     offset = aoe->offset;
 
-    BAILIFERR(GetFileData( aoe, &size, offset, sizeof(size), &offset ));
+    BAILIFERR(GetFileData( aoe, &size, offset, 4, &offset ));
     size=EndianU32_BtoN (size);
 
     atomprint("<mdat size=\"%d\"\n", size);
     vg.tabcnt++;
 
-    BAILIFERR(GetFileData( aoe, &type, offset, sizeof(type), &offset ));
+    BAILIFERR(GetFileData( aoe, &type, offset, 4, &offset ));
     type=EndianU32_BtoN(type);
 
+    if (vg.dolby)
+    {
     BAILIFNIL( bsDataP = calloc(size - 8 + bitParsingSlop, 1), allocFailedErr );
 
     BAILIFERR( GetFileData( aoe, bsDataP, offset, size - 8, &offset ) );
 
     BitBuffer_Init(bb, (UInt8 *)bsDataP, size - 8);
 
-    if (vg.dolby)
-    {
         BAILIFERR(Validate_AC4_Toc(bb, &ac4_toc));
     }
 

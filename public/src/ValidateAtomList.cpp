@@ -134,24 +134,14 @@ OSErr ValidateFileAtoms( atomOffsetEntry *aoe, void *refcon )
 			case 'free':
 			    break;
             case 'mdat':
-                BAILIFERR ( PeekFileDataN32( entry, &atom_length, entry->offset )); 
-                printf( "<%s> : atom_length %08X\n", __FUNCTION__, atom_length);
-
-                BAILIFNIL ( test = (char*)malloc(atom_length), allocFailedErr );
-                if (!PeekFileData( entry, test, entry->offset, atom_length ))
-                {
-                    printf("<%s> : mdat read OK\n", __FUNCTION__);
                     toggleprintsample( 1 );
-                    BAILIFERR ( Validate_mdat_Atom(entry, NULL) );
+        err = Validate_mdat_Atom(entry, NULL);
                     //sampleprinthexandasciidata(test, atom_length);
                     toggleprintsample( 0 );
+        if (err) {
+            fprintf(stderr, "<%s> : mdat atom read failed\n", __FUNCTION__);
                 }
-                else
-                {
-                    fprintf(stderr, "<%s> : atom read failed\n", __FUNCTION__);
-                }
-
-                free(test);
+        BAILIFERR (err);
                 break;
 
             case 'styp':

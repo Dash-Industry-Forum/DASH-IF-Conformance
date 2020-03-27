@@ -981,7 +981,6 @@ UInt64 getAdjustedFileOffset(UInt64 offset64);
 UInt64 inflateOffset(UInt64 offset64);
 int GetFileDataN64( atomOffsetEntry *aoe, void *dataP, UInt64 offset64, UInt64 *newoffset64 );
 int GetFileDataN32( atomOffsetEntry *aoe, void *dataP, UInt64 offset64, UInt64 *newoffset64 );
-int PeekFileDataN32( atomOffsetEntry *aoe, void *dataP, UInt64 offset64 );
 int GetFileDataN16( atomOffsetEntry *aoe, void *dataP, UInt64 offset64, UInt64 *newoffset64 );
 int GetFileData( atomOffsetEntry *aoe, void *dataP, UInt64 offset64, UInt64 size64, UInt64 *newoffset64 );
 int PeekFileData( atomOffsetEntry *aoe, void *dataP, UInt64 offset64, UInt64 size64 );
