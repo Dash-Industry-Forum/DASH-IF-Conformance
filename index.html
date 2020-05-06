@@ -80,18 +80,21 @@ function checkMPD()
 
 function parseURL()
 {
-	var url = document.createElement('a');
-	url.href = document.URL;
-	var urlAux = url.href.split('?');
-	if (urlAux[1] && urlAux[1].split('=')[0] == "mpdurl" )
-	  userMPD = urlAux[1].split('=')[1];
-	if(userMPD && userMPD.length > 0)
-	{
-		document.getElementById("mpdbox").value = userMPD;
-		document.getElementById("mpdURL").selectedIndex = document.getElementById("mpdURL").length-1;
-	}
-	if(urlAux[2]=="start=yes")
-	  process();
+    var url = document.createElement('a');
+    url.href = document.URL;
+    var urlAux = url.href.split('?');
+    
+    if (urlAux[1] && urlAux[1].split('=')[0] === "mpdurl" )
+        userMPD = urlAux[1].split('=')[1];
+    
+    if(userMPD && userMPD.length > 0)
+    {
+        document.getElementById("mpdbox").value = userMPD;
+        document.getElementById("mpdURL").selectedIndex = document.getElementById("mpdURL").length-1;
+    }
+    
+    if(urlAux[2] === "start=yes")
+        process();
 }
 
 function advancedOptions() {
