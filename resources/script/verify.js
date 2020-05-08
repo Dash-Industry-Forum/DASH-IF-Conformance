@@ -37,7 +37,9 @@ var MPD = {
     UTCTiming: new Array(),
     AST: null,
     Location: new Array(),
-    isLowLatency: false};
+    isLowLatency: false, 
+    ServiceDescription: new Array()
+};
 
 //Past or already available segments, cost a significant processing overhead at the startup, this needs to be sorted out. Right now, we keep it to a minimum
 var maxPastSegmentsPerIteration = 2;
@@ -630,6 +632,52 @@ function hierarchyLevelInfoGathering(higherLevel, lowerLevel)
     }
 }
 
+
+/**
+ * Merge the ProducerReferenceTimeInfo high level information from AdaptationSet
+ * into the low level information of a Representation.
+ * 
+ * This is done for preventing the loss of possible extra information provided 
+ * in higher layers. Lower level information takes precedence for the 
+ * information provided for same functionalities.
+ * 
+ * @param {AdaptationSet}  higherLevel AdaptationSet element
+ * @param {Representation} lowerLevel  Representation element
+ */
+function mergeProducerReferenceTimeInfo(higherLevel, lowerLevel)
+{
+    if (higherLevel.ProducerReferenceTime !== null) {
+        var highProducerReferenceTime = higherLevel.ProducerReferenceTime;
+        var highAttributes = highProducerReferenceTime.attributes;
+        var highAttributesLen = highAttributes.length;        
+
+        if (lowerLevel.ProducerReferenceTime !== null) {
+            var lowProducerReferenceTime = lowerLevel.ProducerReferenceTime;
+            var lowAttribute;            
+            var i;
+            
+            for (i = 0; i < highAttributesLen; i++) {
+                lowAttribute = lowProducerReferenceTime.getAttribute(highAttributes[i].nodeName);
+                if (!lowAttribute) {
+                    var newAttribute = document.createAttribute(highAttributes[i].nodeName);
+                    newAttribute.value = highAttributes[i].nodeValue;
+                    lowerLevel.ProducerReferenceTime.attributes.setNamedItem(newAttribute);
+                }
+            }
+
+            if (higherLevel.ProducerReferenceTime.getElementsByTagName("UTCTiming").length !== 0) {
+                var highUTCTiming = higherLevel.ProducerReferenceTime.getElementsByTagName("UTCTiming")[0].cloneNode(true);
+
+                if (lowerLevel.ProducerReferenceTime.getElementsByTagName("UTCTiming").length === 0) {
+                    lowerLevel.ProducerReferenceTime.appendChild(highUTCTiming);
+                }
+            }
+        } else {
+            lowerLevel.ProducerReferenceTime = highProducerReferenceTime;
+        }
+    }
+}
+
 /*******************************************************************************************************************************
  Generate URLs and availability times for segment timeline based template.
  ********************************************************************************************************************************/
@@ -762,6 +810,7 @@ function processSegmentTemplate(Representation, Period)
         var availabilityTimeComplete = Representation.SegmentTemplate.getAttribute("availabilityTimeComplete");
         var wallclockTime = Representation.ProducerReferenceTime.getAttribute("wallclockTime");
         var presentationTime = Representation.ProducerReferenceTime.getAttribute("presentationTime");
+        var inbandOn = Representation.ProducerReferenceTime.getAttribute("inband");
     }
 
     if (media.indexOf("$Number") == -1)
@@ -869,6 +918,9 @@ function processRepresentation(Representation, AdaptationSet, Period)
 
     if (MPD.isLowLatency) {
         Representation.ProducerReferenceTime = getChildByTagName(Representation, "ProducerReferenceTime");
+        // Merge High level (if present) with the low level ProducerReferenceTime information        
+        mergeProducerReferenceTimeInfo(AdaptationSet, Representation);
+        
     }
 
     if (Representation.SegmentTemplate.getElementsByTagName("SegmentTimeline").length == 0)
@@ -1116,9 +1168,42 @@ function processLocation(MPDxmlData)
     {
         if (MPD.Location[i] == null)
             MPD.Location[i] = "";
-        MPD.Location[i] = Location.item(i).firstChild.data
+        MPD.Location[i] = Location.item(i).firstChild.data;
     }
     LocationElementArray = MPD.Location;
+}
+
+function processLatency(Latency)
+{   
+    Latency.referenceId = Latency.xmlData.getAttribute("referenceId");
+    Latency.target = Latency.xmlData.getAttribute("target");
+    Latency.max = Latency.xmlData.getAttribute("max");
+    Latency.min = Latency.xmlData.getAttribute("min");
+    // TODO: get QualityLatency_type
+}
+
+function processServiceDescription(ServiceDescription)
+{
+    var numLatencyElements = ServiceDescription.xmlData.getElementsByTagName("Latency").length;
+  
+    for (var index = 0; index < numLatencyElements; index++)
+    {
+        if (ServiceDescription.Latency[index] == null) {
+            ServiceDescription.Latency[index] = {
+                xmlData: null,
+                referenceId: null,
+                target: null,
+                max: null,
+                min: null,
+                QualityLatency_type: null
+            }
+        }
+        
+        //Initializations
+        ServiceDescription.Latency[index].xmlData = ServiceDescription.xmlData.getElementsByTagName("Latency")[index];
+        
+        processLatency(ServiceDescription.Latency[index]);
+    }
 }
 
 function processMPD(MPDxmlData)
@@ -1126,6 +1211,30 @@ function processMPD(MPDxmlData)
     processUTCTiming(MPDxmlData);
     processLocation(MPDxmlData);
     MPD.isLowLatency = hasLowLatencyProfile(MPDxmlData);
+    if (MPD.isLowLatency)
+    {
+        var numServiceDescription = MPDxmlData.getElementsByTagName("ServiceDescription").length;
+        for (var index = 0; index < numServiceDescription; index++)
+        {
+            if (MPD.ServiceDescription[index] == null) {
+                MPD.ServiceDescription[index] = {
+                    xmlData: null, 
+                    id: "", 
+                    Scope: new Array(),
+                    Latency: new Array(),
+                    PlaybackRate: new Array(),
+                    OperatingQuality: new Array(),
+                    OperatingBandwidth: new Array()
+                }
+            }
+
+            //Initializations
+            MPD.ServiceDescription[index].xmlData = MPDxmlData.getElementsByTagName("ServiceDescription")[index];
+            MPD.ServiceDescription[index].id = MPD.ServiceDescription[index].xmlData.getAttribute("id");
+                    
+            processServiceDescription(MPD.ServiceDescription[index]);
+        }
+    }
 
     var numPeriods = MPDxmlData.getElementsByTagName("Period").length;
     var currentPeriod = 0;
