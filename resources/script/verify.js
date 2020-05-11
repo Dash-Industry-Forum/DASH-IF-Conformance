@@ -634,46 +634,47 @@ function hierarchyLevelInfoGathering(higherLevel, lowerLevel)
 
 
 /**
- * Merge the ProducerReferenceTimeInfo high level information from AdaptationSet
- * into the low level information of a Representation.
+ * Merge ProducerReferenceTimeInfo low level and high level
  * 
  * This is done for preventing the loss of possible extra information provided 
  * in higher layers. Lower level information takes precedence for the 
  * information provided for same functionalities.
  * 
- * @param {AdaptationSet}  higherLevel AdaptationSet element
- * @param {Representation} lowerLevel  Representation element
+ * @param {xmlData}   source 
+ * @param {xmlData}   target 
  */
-function mergeProducerReferenceTimeInfo(higherLevel, lowerLevel)
-{
-    if (higherLevel.ProducerReferenceTime !== null) {
-        var highProducerReferenceTime = higherLevel.ProducerReferenceTime;
-        var highAttributes = highProducerReferenceTime.attributes;
-        var highAttributesLen = highAttributes.length;        
+function mergeProducerReferenceTime(source, target)
+{       
+    if (source !== null) {
+        var sourceAttributes = source.attributes;
+        var sourceAttributesLen = sourceAttributes.length;        
 
-        if (lowerLevel.ProducerReferenceTime !== null) {
-            var lowProducerReferenceTime = lowerLevel.ProducerReferenceTime;
-            var lowAttribute;            
-            var i;
-            
-            for (i = 0; i < highAttributesLen; i++) {
-                lowAttribute = lowProducerReferenceTime.getAttribute(highAttributes[i].nodeName);
-                if (!lowAttribute) {
-                    var newAttribute = document.createAttribute(highAttributes[i].nodeName);
-                    newAttribute.value = highAttributes[i].nodeValue;
-                    lowerLevel.ProducerReferenceTime.attributes.setNamedItem(newAttribute);
+        if (target !== null) {           
+            // merge attributes
+            for (var i = 0; i < sourceAttributesLen; i++) {
+                if (target.hasAttribute(sourceAttributes[i].nodeName)) {
+                    target.setAttribute(sourceAttributes[i].nodeName, sourceAttributes[i].nodeValue);
+                }
+                else {
+                    var newAttribute = document.createAttribute(sourceAttributes[i].nodeName);
+                    newAttribute.value = sourceAttributes[i].nodeValue;
+                    target.attributes.setNamedItem(newAttribute);
                 }
             }
 
-            if (higherLevel.ProducerReferenceTime.getElementsByTagName("UTCTiming").length !== 0) {
-                var highUTCTiming = higherLevel.ProducerReferenceTime.getElementsByTagName("UTCTiming")[0].cloneNode(true);
-
-                if (lowerLevel.ProducerReferenceTime.getElementsByTagName("UTCTiming").length === 0) {
-                    lowerLevel.ProducerReferenceTime.appendChild(highUTCTiming);
-                }
+            // merge Elements. No looping as ProducerReferenceTime has only one 
+            // child element, UTCTiming  either present or not (0...1)
+            if (source.getElementsByTagName("UTCTiming").length != 0) {
+                var newChild = source.getElementsByTagName("UTCTiming")[0];
+                if (target.getElementsByTagName("UTCTiming").length != 0) {
+                    // override
+                    var oldChild = target.getElementsByTagName("UTCTiming")[0];
+                    target.replaceChild(newChild, oldChild );
+                }else {
+                    //add
+                    target.appendChild(newChild);
+                }                    
             }
-        } else {
-            lowerLevel.ProducerReferenceTime = highProducerReferenceTime;
         }
     }
 }
@@ -808,9 +809,10 @@ function processSegmentTemplate(Representation, Period)
     if (MPD.isLowLatency) {
         var availabilityTimeOffset = Representation.SegmentTemplate.getAttribute("availabilityTimeOffset");
         var availabilityTimeComplete = Representation.SegmentTemplate.getAttribute("availabilityTimeComplete");
-        var wallclockTime = Representation.ProducerReferenceTime.getAttribute("wallclockTime");
-        var presentationTime = Representation.ProducerReferenceTime.getAttribute("presentationTime");
-        var inbandOn = Representation.ProducerReferenceTime.getAttribute("inband");
+        // TODO: [FRV] how to deal with ProducerReferenceTime that is an array
+        var wallClockTime = Representation.ProducerReferenceTime[0].wallClockTime;
+        var presentationTime = Representation.ProducerReferenceTime[0].presentationTime;
+        var inbandOn = Representation.ProducerReferenceTime[0].inband;
     }
 
     if (media.indexOf("$Number") == -1)
@@ -884,6 +886,32 @@ function processSegmentTemplate(Representation, Period)
 
 }
 
+/**
+ * 
+ * @param {type} ProducerReferenceTime
+ * @returns {undefined}
+ */
+function processProducerReferenceTime(ProducerReferenceTime)
+{
+    ProducerReferenceTime.id = ProducerReferenceTime.xmlData.getAttribute("id");
+    if (ProducerReferenceTime.xmlData.hasAttribute("inband"))
+    {
+        ProducerReferenceTime.inband = ProducerReferenceTime.xmlData.getAttribute("inband");
+    }       
+    if (ProducerReferenceTime.xmlData.hasAttribute("type"))
+    {
+        ProducerReferenceTime.type = ProducerReferenceTime.xmlData.getAttribute("type");
+    }
+    // Note: Skipping applicationScheme as it is not under consideration for Low latency Validation
+    // applicationScheme  --> Coditional Mandatory (type == application )
+    //ProducerReferenceTime.applicationScheme = ProducerReferenceTime.xmlData.getAttribute("applicationScheme");
+    
+    ProducerReferenceTime.wallClockTime = ProducerReferenceTime.xmlData.getAttribute("wallClockTime");
+    ProducerReferenceTime.presentationTime = ProducerReferenceTime.xmlData.getAttribute("presentationTime");
+        
+    ProducerReferenceTime.UTCTiming = getChildByTagName(ProducerReferenceTime, "UTCTiming");
+}
+
 /*******************************************************************************************************************************
  Process all data pertaining a representation, mainly SAEs and SASs of all the segments for different addressing methods
  ********************************************************************************************************************************/
@@ -917,10 +945,50 @@ function processRepresentation(Representation, AdaptationSet, Period)
     }
 
     if (MPD.isLowLatency) {
-        Representation.ProducerReferenceTime = getChildByTagName(Representation, "ProducerReferenceTime");
-        // Merge High level (if present) with the low level ProducerReferenceTime information        
-        mergeProducerReferenceTimeInfo(AdaptationSet, Representation);
+        // ----------------- Start ProducerReferenceTime------------------------
         
+        // Bring any ProducerReferenceTime from higher layer, if any
+        var numProdRefTimeHighLayer = AdaptationSet.ProducerReferenceTime.length;
+        for (var i = 0; i < numProdRefTimeHighLayer; i++)
+        {
+            Representation.ProducerReferenceTime.push(AdaptationSet.ProducerReferenceTime[i]);
+        }
+        
+        // add or update if already existing entry with same id        
+        var numProducerReferenceTime = Representation.xmlData.getElementsByTagName("ProducerReferenceTime").length;        
+        for (var index = 0; index < numProducerReferenceTime; index++)
+        {
+            var id = Representation.xmlData.getElementsByTagName("ProducerReferenceTime")[index].getAttribute("id");
+            
+            var indexToUpdate = Representation.ProducerReferenceTime.findIndex(element => element.id == id);            
+            if (indexToUpdate > -1)
+            {
+                // Merge entry with values from lower layer
+                mergeProducerReferenceTime(Representation.xmlData.getElementsByTagName("ProducerReferenceTime")[index], 
+                                           Representation.ProducerReferenceTime[indexToUpdate].xmlData);                
+            }
+            else
+            {
+                // add new entry 
+                var newProducerReferenceTime = {
+                    xmlData: null, 
+                    id: "", 
+                    inband: false,
+                    type: "encoder",
+                    applicationScheme: "",
+                    wallClockTime: "",
+                    presentationTime: "",
+                    UTCTiming: null
+                };                
+                
+                //Initializations
+                newProducerReferenceTime.xmlData = Representation.xmlData.getElementsByTagName("ProducerReferenceTime")[index];
+                processProducerReferenceTime(newProducerReferenceTime);
+                
+                Representation.ProducerReferenceTime.push(newProducerReferenceTime);
+            }           
+        }
+        //-------------------- End ProducerReferenceTime------------------------        
     }
 
     if (Representation.SegmentTemplate.getElementsByTagName("SegmentTimeline").length == 0)
@@ -931,8 +999,6 @@ function processRepresentation(Representation, AdaptationSet, Period)
 
 function processAdaptationSet(AdaptationSet, Period)
 {
-    var numRepresentations = AdaptationSet.xmlData.getElementsByTagName("Representation").length;
-
     var SegmentTemplate = getChildByTagName(AdaptationSet, "SegmentTemplate");
 
     if (SegmentTemplate != null)
@@ -944,7 +1010,60 @@ function processAdaptationSet(AdaptationSet, Period)
     if (SegmentBase != null)
         AdaptationSet.SegmentBase = SegmentBase;
 
+    if (MPD.isLowLatency) 
+    {        
+        // ----------------- Start ProducerReferenceTime------------------------
+        var prodRefTimeChildIndex = getChildsIndexByTagName(AdaptationSet.xmlData, "ProducerReferenceTime");
+        var numProdRefTime = prodRefTimeChildIndex.length;        
+        
+        for (var index = 0; index < numProdRefTime; index++)
+        {
+            if (AdaptationSet.ProducerReferenceTime[index] == null) {
+                AdaptationSet.ProducerReferenceTime[index] = {
+                    xmlData: null, 
+                    id: "", 
+                    inband: false,
+                    type: "encoder",
+                    applicationScheme: "",
+                    wallClockTime: "",
+                    presentationTime: "",
+                    UTCTiming: null
+                }
+            }
 
+            //Initializations
+            AdaptationSet.ProducerReferenceTime[index].xmlData = AdaptationSet.xmlData.childNodes[prodRefTimeChildIndex[index]];
+            
+            processProducerReferenceTime(AdaptationSet.ProducerReferenceTime[index]);        
+        }
+        //-------------------- End ProducerReferenceTime------------------------        
+        
+        //------------------------ Start Resync --------------------------------
+        var resyncChildIndex = getChildsIndexByTagName(AdaptationSet.xmlData, "Resync");
+        var numResyncChild = resyncChildIndex.length;        
+
+        for (var index = 0; index < numResyncChild; index++)
+        {
+            if (AdaptationSet.Resync[index] == null) {
+                AdaptationSet.Resync[index] = {
+                    xmlData: null, 
+                    dT: "", 
+                    type: ""
+                }
+            }
+
+            //Initializations
+            AdaptationSet.Resync[index].xmlData = AdaptationSet.xmlData.childNodes[resyncChildIndex[index]];
+                        
+            AdaptationSet.Resync[index].dT = AdaptationSet.Resync[index].xmlData.getAttribute("dT");
+            AdaptationSet.Resync[index].type = AdaptationSet.Resync[index].xmlData.getAttribute("type");
+        }
+        
+        //------------------------ End Resync ----------------------------------
+    }
+
+    //------------------------ Start Representation ----------------------------    
+    var numRepresentations = AdaptationSet.xmlData.getElementsByTagName("Representation").length;
     for (var repIndex = 0; repIndex < numRepresentations; repIndex++)
     {
         //printOutput("Processing rep: " + (repIndex+1));
@@ -963,7 +1082,7 @@ function processAdaptationSet(AdaptationSet, Period)
                 dispatchedSAERequests: 0,
                 processedSASRequests: 0,
                 processedSAERequests: 0,
-                ProducerReferenceTime: null
+                ProducerReferenceTime: new Array()
             };
         }
 
@@ -974,6 +1093,7 @@ function processAdaptationSet(AdaptationSet, Period)
 
         processRepresentation(AdaptationSet.Representations[repIndex], AdaptationSet, Period);
     }
+    //------------------------ End Representation ------------------------------
 }
 
 
@@ -981,9 +1101,6 @@ function processPeriod(Period)
 {
     Period.SegmentTemplate = getChildByTagName(Period, "SegmentTemplate");
     Period.SegmentBase = getChildByTagName(Period, "SegmentBase");
-    if (MPD.isLowLatency) {
-        Period.ProducerReferenceTime = getChildByTagName(Period, "ProducerReferenceTime");
-    }
 
     var id = Period.xmlData.getAttribute('id');
 
@@ -1011,7 +1128,8 @@ function processPeriod(Period)
                 SegmentTemplate: null,
                 SegmentBase: null,
                 Representations: new Array(),
-                ProducerReferenceTime: null
+                ProducerReferenceTime: new Array(),
+                Resync: new Array()
             };
         }
 
@@ -1019,10 +1137,7 @@ function processPeriod(Period)
         Period.AdaptationSets[asIndex].xmlData = Period.xmlData.getElementsByTagName("AdaptationSet")[asIndex];
         Period.AdaptationSets[asIndex].SegmentTemplate = Period.SegmentTemplate;
         Period.AdaptationSets[asIndex].SegmentBase = Period.SegmentBase;
-        if (MPD.isLowLatency) {
-            Period.AdaptationSets[asIndex].ProducerReferenceTime = Period.ProducerReferenceTime;
-        }
-
+        
         processAdaptationSet(Period.AdaptationSets[asIndex], Period);
     }
 }
@@ -1213,7 +1328,8 @@ function processMPD(MPDxmlData)
     MPD.isLowLatency = hasLowLatencyProfile(MPDxmlData);
     if (MPD.isLowLatency)
     {
-        var numServiceDescription = MPDxmlData.getElementsByTagName("ServiceDescription").length;
+        var srvDescChildIndex = getChildsIndexByTagName(MPDxmlData, "ServiceDescription");
+        var numServiceDescription = srvDescChildIndex.length;
         for (var index = 0; index < numServiceDescription; index++)
         {
             if (MPD.ServiceDescription[index] == null) {
@@ -1229,7 +1345,7 @@ function processMPD(MPDxmlData)
             }
 
             //Initializations
-            MPD.ServiceDescription[index].xmlData = MPDxmlData.getElementsByTagName("ServiceDescription")[index];
+            MPD.ServiceDescription[index].xmlData = MPDxmlData.childNodes[srvDescChildIndex[index]];
             MPD.ServiceDescription[index].id = MPD.ServiceDescription[index].xmlData.getAttribute("id");
                     
             processServiceDescription(MPD.ServiceDescription[index]);
@@ -1282,6 +1398,25 @@ function processMPD(MPDxmlData)
         processPeriod(MPD.Periods[periodIndex]);
     }
 
+}
+
+/**
+ * Return an array with the index of those element matching a TagName in a given 
+ * parent Node
+ * 
+ * @param {type} parent
+ * @param {type} tagName
+ * @returns {Array|getChildsIndexByTagName.children}
+ */
+function getChildsIndexByTagName(parent, tagName)
+{
+    var children = new Array();
+    for(var child in parent.childNodes) {
+        if(parent.childNodes[child].nodeName == tagName) {
+            children.push(child);
+        }
+    }
+    return children;
 }
 
 function getChildByTagName(parent, tagName)
