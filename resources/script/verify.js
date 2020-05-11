@@ -912,6 +912,54 @@ function processProducerReferenceTime(ProducerReferenceTime)
     ProducerReferenceTime.UTCTiming = getChildByTagName(ProducerReferenceTime, "UTCTiming");
 }
 
+
+/**
+ * 
+ * @param {type} ParentNode
+ * @returns {undefined}
+ */
+function ProcessResync(ParentNode)
+{
+    var resyncChildIndex = getChildsIndexByTagName(ParentNode.xmlData, "Resync");
+    var numResyncChild = resyncChildIndex.length;        
+
+    for (var index = 0; index < numResyncChild; index++)
+    {
+        if (ParentNode.Resync[index] == null) {
+            ParentNode.Resync[index] = {
+                xmlData: null, 
+                type: "",
+                dT: "", 
+                dImax: "",
+                dImin: 0,                    
+                marker: false, 
+                index: ""
+            }
+        }
+
+        //Initializations
+        ParentNode.Resync[index].xmlData = ParentNode.xmlData.childNodes[resyncChildIndex[index]];
+        if (ParentNode.Resync[index].xmlData.hasAttribute("type")){
+            ParentNode.Resync[index].type = ParentNode.Resync[index].xmlData.getAttribute("type");
+        }            
+        if (ParentNode.Resync[index].xmlData.hasAttribute("dT")){
+            ParentNode.Resync[index].dT = ParentNode.Resync[index].xmlData.getAttribute("dT");
+        }
+        if (ParentNode.Resync[index].xmlData.hasAttribute("dImax")){
+            ParentNode.Resync[index].dImax = ParentNode.Resync[index].xmlData.getAttribute("dImax");
+        }
+        if (ParentNode.Resync[index].xmlData.hasAttribute("dImin")){
+            ParentNode.Resync[index].dImin = ParentNode.Resync[index].xmlData.getAttribute("dImin");
+        }
+        if (ParentNode.Resync[index].xmlData.hasAttribute("marker")){
+            ParentNode.Resync[index].marker = ParentNode.Resync[index].xmlData.getAttribute("marker");
+        }
+        if (ParentNode.Resync[index].xmlData.hasAttribute("index")){
+            ParentNode.Resync[index].index = ParentNode.Resync[index].xmlData.getAttribute("index");
+        }
+    }        
+}
+
 /*******************************************************************************************************************************
  Process all data pertaining a representation, mainly SAEs and SASs of all the segments for different addressing methods
  ********************************************************************************************************************************/
@@ -989,8 +1037,10 @@ function processRepresentation(Representation, AdaptationSet, Period)
             }           
         }
         //-------------------- End ProducerReferenceTime------------------------        
+        
+        ProcessResync(Representation);
     }
-
+   
     if (Representation.SegmentTemplate.getElementsByTagName("SegmentTimeline").length == 0)
         processSegmentTemplate(Representation, Period);
     else
@@ -1037,29 +1087,8 @@ function processAdaptationSet(AdaptationSet, Period)
             processProducerReferenceTime(AdaptationSet.ProducerReferenceTime[index]);        
         }
         //-------------------- End ProducerReferenceTime------------------------        
-        
-        //------------------------ Start Resync --------------------------------
-        var resyncChildIndex = getChildsIndexByTagName(AdaptationSet.xmlData, "Resync");
-        var numResyncChild = resyncChildIndex.length;        
-
-        for (var index = 0; index < numResyncChild; index++)
-        {
-            if (AdaptationSet.Resync[index] == null) {
-                AdaptationSet.Resync[index] = {
-                    xmlData: null, 
-                    dT: "", 
-                    type: ""
-                }
-            }
-
-            //Initializations
-            AdaptationSet.Resync[index].xmlData = AdaptationSet.xmlData.childNodes[resyncChildIndex[index]];
-                        
-            AdaptationSet.Resync[index].dT = AdaptationSet.Resync[index].xmlData.getAttribute("dT");
-            AdaptationSet.Resync[index].type = AdaptationSet.Resync[index].xmlData.getAttribute("type");
-        }
-        
-        //------------------------ End Resync ----------------------------------
+                
+        ProcessResync(AdaptationSet);
     }
 
     //------------------------ Start Representation ----------------------------    
@@ -1082,7 +1111,8 @@ function processAdaptationSet(AdaptationSet, Period)
                 dispatchedSAERequests: 0,
                 processedSASRequests: 0,
                 processedSAERequests: 0,
-                ProducerReferenceTime: new Array()
+                ProducerReferenceTime: new Array(),
+                Resync: new Array()
             };
         }
 
@@ -1290,11 +1320,11 @@ function processLocation(MPDxmlData)
 
 function processLatency(Latency)
 {   
-    Latency.referenceId = Latency.xmlData.getAttribute("referenceId");
-    Latency.target = Latency.xmlData.getAttribute("target");
-    Latency.max = Latency.xmlData.getAttribute("max");
-    Latency.min = Latency.xmlData.getAttribute("min");
-    // TODO: get QualityLatency_type
+    Latency.referenceId = Latency.xmlData.getAttribute("referenceId");  // CM
+    Latency.target = Latency.xmlData.getAttribute("target");            // O
+    Latency.max = Latency.xmlData.getAttribute("max");                  // O
+    Latency.min = Latency.xmlData.getAttribute("min");                  // O
+    // TODO: get QualityLatency_type                                    // 0...N, O
 }
 
 function processServiceDescription(ServiceDescription)
