@@ -692,7 +692,26 @@ function processSegmentTimeline(Representation, Period)
     var timescale;
     var mpd = MPD;
     var newSegmentCount = 0;
-
+    
+    var availabilityTimeOffset = 0.0;
+    
+    var wallClockTime = 0;
+    var presentationTime = 0;
+    var inbandOn = false;
+    
+    if (MPD.isLowLatency) {
+        availabilityTimeOffset = parseFloat(Representation.SegmentTemplate.getAttribute("availabilityTimeOffset"));
+        var availabilityTimeComplete = Representation.SegmentTemplate.getAttribute("availabilityTimeComplete");
+        // TODO: [FRV] how to deal with ProducerReferenceTime that is an array
+        if (Representation.ProducerReferenceTime.length > 0) {
+            wallClockTime = Representation.ProducerReferenceTime[0].wallClockTime;
+            presentationTime = Representation.ProducerReferenceTime[0].presentationTime;
+            inbandOn = Representation.ProducerReferenceTime[0].inband;
+        }
+    }    
+    
+    var adjustedSegmentAvailabilityTime = getAST(mpd.xmlData).getTime() - availabilityTimeOffset;
+        
     var k = 0;
     var MST = Array();
     var MD = Array();
@@ -752,8 +771,8 @@ function processSegmentTimeline(Representation, Period)
         for (var stlIndex = 0; stlIndex < MST.length; stlIndex++)
         {
             var urlObj = getBaseURL(mpd.xmlData) + ((media.replace("$RepresentationID$", Representation.xmlData.getAttribute("id"))).replace("$Time$", MST[stlIndex])).replace("$Bandwidth$", Representation.xmlData.getAttribute("bandwidth"));
-            var sasObj = {time: new Date((getAST(mpd.xmlData).getTime() + Period.PeriodStart * 1000 + (MST[stlIndex] / timescale) * 1000)), deltaTime: 0, timeOutRet: 0, xmlHttp: null, requestDispatched: false, intrinsicDispatchTime: null, dispatchTimeOffset: null};
-            var saeObj = {time: new Date((getAST(mpd.xmlData).getTime() + Period.PeriodStart * 1000 + (MST[stlIndex] / timescale) * 1000) + getTSBD(mpd.xmlData) * 1000), deltaTime: 0, timeOutRet: 0, xmlHttp: null, requestDispatched: false, intrinsicDispatchTime: null, dispatchTimeOffset: null};
+            var sasObj = {time: new Date((adjustedSegmentAvailabilityTime + Period.PeriodStart * 1000 + (MST[stlIndex] / timescale) * 1000)), deltaTime: 0, timeOutRet: 0, xmlHttp: null, requestDispatched: false, intrinsicDispatchTime: null, dispatchTimeOffset: null};
+            var saeObj = {time: new Date((adjustedSegmentAvailabilityTime + Period.PeriodStart * 1000 + (MST[stlIndex] / timescale) * 1000) + getTSBD(mpd.xmlData) * 1000), deltaTime: 0, timeOutRet: 0, xmlHttp: null, requestDispatched: false, intrinsicDispatchTime: null, dispatchTimeOffset: null};
 
             if (sasObj.time.getTime() < mpd.FT.getTime())
                 LSN = segNum;
@@ -806,13 +825,22 @@ function processSegmentTemplate(Representation, Period)
 {
     var init = Representation.SegmentTemplate.getAttribute("initialization");
     var media = Representation.SegmentTemplate.getAttribute("media");
+    
+    var availabilityTimeOffset = 0.0;
+    
+    var wallClockTime = 0;
+    var presentationTime = 0;
+    var inbandOn = false;
+    
     if (MPD.isLowLatency) {
-        var availabilityTimeOffset = Representation.SegmentTemplate.getAttribute("availabilityTimeOffset");
+        availabilityTimeOffset = parseFloat(Representation.SegmentTemplate.getAttribute("availabilityTimeOffset"));
         var availabilityTimeComplete = Representation.SegmentTemplate.getAttribute("availabilityTimeComplete");
         // TODO: [FRV] how to deal with ProducerReferenceTime that is an array
-        var wallClockTime = Representation.ProducerReferenceTime[0].wallClockTime;
-        var presentationTime = Representation.ProducerReferenceTime[0].presentationTime;
-        var inbandOn = Representation.ProducerReferenceTime[0].inband;
+        if (Representation.ProducerReferenceTime.length > 0) {
+            wallClockTime = Representation.ProducerReferenceTime[0].wallClockTime;
+            presentationTime = Representation.ProducerReferenceTime[0].presentationTime;
+            inbandOn = Representation.ProducerReferenceTime[0].inband;
+        }
     }
 
     if (media.indexOf("$Number") == -1)
@@ -822,6 +850,7 @@ function processSegmentTemplate(Representation, Period)
     }
 
     var mpd = MPD;
+    var adjustedSegmentAvailabilityTime = getAST(mpd.xmlData).getTime() - availabilityTimeOffset;
 
     //if timescale is not defined, then its default value is 1
     if (Representation.SegmentTemplate.getAttribute("timescale")) {
@@ -839,9 +868,11 @@ function processSegmentTemplate(Representation, Period)
     else
         Representation.SSN = 1;
 
+
+
     // start to check from the start number, but we need to to calculate the GSN
-    var LSN = Math.floor((mpd.FT.getTime() + serverTimeOffset - (getAST(mpd.xmlData).getTime() + Period.PeriodStart * 1000) - d * 1000) / (d * 1000)) + Representation.SSN;
-    Representation.GSN = Math.ceil((mpd.FT.getTime() + serverTimeOffset + getMUP(mpd.xmlData) * 1000 - (getAST(mpd.xmlData).getTime() + Period.PeriodStart * 1000) - d * 1000) / (d * 1000)) + Representation.SSN;
+    var LSN = Math.floor((mpd.FT.getTime() + serverTimeOffset - (adjustedSegmentAvailabilityTime + Period.PeriodStart * 1000) - d * 1000) / (d * 1000)) + Representation.SSN;
+    Representation.GSN = Math.ceil((mpd.FT.getTime() + serverTimeOffset + getMUP(mpd.xmlData) * 1000 - (adjustedSegmentAvailabilityTime + Period.PeriodStart * 1000) - d * 1000) / (d * 1000)) + Representation.SSN;
     Representation.firstAvailableSsegment = Math.floor(Math.max(LSN - Math.ceil(getTSBD(mpd.xmlData) + d) / d - 100, Representation.SSN));
 
     var newSegmentCount = 0;
@@ -862,8 +893,25 @@ function processSegmentTemplate(Representation, Period)
         } else
             urlObj = urlObj.replace("$Number$", num);
         //
-        var sasObj = {time: new Date((getAST(mpd.xmlData).getTime() + Period.PeriodStart * 1000 + (num - Representation.SSN) * d * 1000)), deltaTime: 0, timeOutRet: 0, xmlHttp: null, requestDispatched: false, intrinsicDispatchTime: null, dispatchTimeOffset: null};
-        var saeObj = {time: new Date((getAST(mpd.xmlData).getTime() + Period.PeriodStart * 1000 + (num - Representation.SSN) * d * 1000) + getTSBD(mpd.xmlData) * 1000), deltaTime: 0, timeOutRet: 0, xmlHttp: null, requestDispatched: false, intrinsicDispatchTime: null, dispatchTimeOffset: null};
+        var sasObj = {
+            time: new Date((adjustedSegmentAvailabilityTime + Period.PeriodStart * 1000 + (num - Representation.SSN) * d * 1000)), 
+            deltaTime: 0, 
+            timeOutRet: 0, 
+            xmlHttp: null, 
+            requestDispatched: false, 
+            intrinsicDispatchTime: null, 
+            dispatchTimeOffset: null
+        };
+        
+        var saeObj = {
+            time: new Date((adjustedSegmentAvailabilityTime + Period.PeriodStart * 1000 + (num - Representation.SSN) * d * 1000) + getTSBD(mpd.xmlData) * 1000), 
+            deltaTime: 0, 
+            timeOutRet: 0, 
+            xmlHttp: null, 
+            requestDispatched: false, 
+            intrinsicDispatchTime: null, 
+            dispatchTimeOffset: null
+        };
 
         if (Representation.Segments[num] == null)
         {
