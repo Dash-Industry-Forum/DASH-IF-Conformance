@@ -28,7 +28,7 @@ function validate_segment($curr_adapt_dir, $dir_in_use, $period, $adaptation_set
         assemble($dir_in_use, $segment_url, $sizearray);
 
         ## Create config file with the flags for segment validation
-        $config_file_loc = config_file_for_backend($period, $adaptation_set, $representation, $rep_dir_name);
+        $config_file_loc = config_file_for_backend($period, $adaptation_set, $representation, $rep_dir_name, $is_dolby);
 
         ## Run the backend
         $returncode = run_backend($config_file_loc);
@@ -47,15 +47,26 @@ function validate_segment($curr_adapt_dir, $dir_in_use, $period, $adaptation_set
     return $file_location;
 }
 
-function validate_segment_hls($URL_array){
+function validate_segment_hls($URL_array, $CodecArray){
     global $session_dir, $hls_stream_inf_file, $hls_x_media_file, $hls_iframe_file, $hls_tag, $progress_xml, $progress_report;
+ 
+    $is_dolby = false;
+    for($i=0; $i<sizeof($CodecArray); $i++){
+        $is_dolby = (($CodecArray[$i] != NULL) and
+                     ((substr($CodecArray[$i], 0, 4) == "ac-3") or
+                     (substr($CodecArray[$i], 0, 4) == "ec-3") or
+                     (substr($CodecArray[$i], 0, 4) == "ac-4")));
+        if ($is_dolby) {
+            break;
+        }
+    }
 
     $tag_array = array($hls_stream_inf_file, $hls_iframe_file, $hls_x_media_file);
     for($i=0; $i<sizeof($URL_array); $i++){
         $progress_xml->Progress->CurrentAdapt = $tag_array[$i];
         $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
 
-        list($segmentURL, $sizeArray) = segmentDownload($URL_array[$i], $tag_array[$i]);
+        list($segmentURL, $sizeArray) = segmentDownload($URL_array[$i], $tag_array[$i], $is_dolby);
 
         for($j=0; $j<sizeof($segmentURL); $j++){
             if($sizeArray[$j] != 0){
@@ -65,7 +76,7 @@ function validate_segment_hls($URL_array){
                 assemble($session_dir.'/'.$tag_array[$i].'/'.$j.'/', $segmentURL[$j], $sizeArray[$j]);
 
                 ## Create config file with the flags for segment validation
-                $config_file_loc = config_file_for_backend(NULL, NULL, NULL, $hls_tag);
+                $config_file_loc = config_file_for_backend(NULL, NULL, NULL, $hls_tag, $is_dolby);
 
                 ## Run the backend
                 $returncode = run_backend($config_file_loc);
@@ -211,7 +222,7 @@ function run_backend($config_file){
     return $returncode;
 }
 
-function config_file_for_backend($period, $adaptation_set, $representation, $rep_dir_name){
+function config_file_for_backend($period, $adaptation_set, $representation, $rep_dir_name, $is_dolby){
     global $session_dir, $config_file, $additional_flags, $suppressatomlevel, $reprsentation_mdat_template, $current_period, $current_adaptation_set, $current_representation, $hls_manifest, $hls_mdat_file;
 
     if(!$hls_manifest){
@@ -232,8 +243,10 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     else
         $offsetinfo = $rep_dir_name . '_' . $hls_mdat_file;
 
-    //fwrite($file, "-offsetinfo" . "\n");
-    //fwrite($file, $session_dir . '/' . $offsetinfo . '.txt' . "\n");
+    if(!$is_dolby){
+        fwrite($file, "-offsetinfo" . "\n");
+        fwrite($file, $session_dir . '/' . $offsetinfo . '.txt' . "\n");
+    }
 
     $flags = (!$hls_manifest) ? construct_flags($period, $adaptation_set, $representation) . $additional_flags : $additional_flags;
     $piece = explode(" ", $flags);
