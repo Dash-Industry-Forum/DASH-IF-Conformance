@@ -174,7 +174,7 @@ public class Validator {
 
 			// Step 1:
 			// XLink resolving and validation
-			System.out.println("\nStart XLink resolving\n=====================\n");
+			//System.out.println("\nStart XLink resolving\n=====================\n");
 			
 			XLinkResolver xlinkResolver = new XLinkResolver();
 			xlinkResolver.resolveXLinks(pathToMPD);		
@@ -195,7 +195,7 @@ public class Validator {
 			
 			// Step 2:
 			// MPD validation
-			System.out.println("\nStart MPD validation\n====================\n");
+			//System.out.println("\nStart MPD validation\n====================\n");
 			retVal = parseDASH(url, pathToXSD);
 			if (retVal){
 				System.out.println("MPD validation successful - DASH is valid!\n\n");
@@ -210,7 +210,7 @@ public class Validator {
 			
 			// Step 3:
 			// Schematron check
-			System.out.println("\nStart Schematron validation\n===========================\n");
+			//System.out.println("\nStart Schematron validation\n===========================\n");
 			SaxonTransformer xsltTransformer = new SaxonTransformer(Definitions.XSLTFILE);
 			retVal = xsltTransformer.transform(Definitions.tmpOutputFile_);
 			if (retVal){

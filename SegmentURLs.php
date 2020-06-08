@@ -33,7 +33,7 @@ function derive_segment_URLs($urls, $period_info){
             if($segment_template_low){
                 $segment_access[] = $segment_template_low;
                 $segment_info = compute_timing($period_info[1], $segment_template_low[0], 'SegmentTemplate', $urls[$i][$j]);
-                $segment_urls[] = compute_URLs($representation, $segment_template_low[0], $segment_info, $urls[$i][$j]);
+                $segment_urls[] = compute_URLs($representation, $i, $j, $segment_template_low[0], $segment_info, $urls[$i][$j]);
             }
             elseif($segment_base_low){
                 $segment_access[] = $segment_base_low;
@@ -52,7 +52,7 @@ function derive_segment_URLs($urls, $period_info){
     return $adapt_segment_urls;
 }
 
-function compute_URLs($representation, $segment_access, $segment_info, $rep_base_url){
+function compute_URLs($representation, $adaptation_set_id, $representation_id, $segment_access, $segment_info, $rep_base_url){
     global $mpd_features;
     $startNumber = ($segment_access['startNumber'] != NULL) ? $segment_access['startNumber'] : 1;
     $initialization = $segment_access['initialization'];
@@ -63,17 +63,22 @@ function compute_URLs($representation, $segment_access, $segment_info, $rep_base
     
     if($initialization != NULL){
         $init = str_replace(array('$Bandwidth$', '$RepresentationID$'), array($bandwidth, $id), $initialization);
-        if (substr($rep_base_url, -1) == '/')
-            $init_url = $rep_base_url . $init;
-        else
-            $init_url = $rep_base_url . "/" . $init;
+        if(isAbsoluteURL($init)) {
+            $init_url = $init;
+        }
+        else {
+            if (substr($rep_base_url, -1) == '/')
+                $init_url = $rep_base_url . $init;
+            else
+                $init_url = $rep_base_url . "/" . $init;
+        }
         $segment_urls[] = $init_url;
     }
     
     $index = 0;
     $until = $segment_info[1];
     if($mpd_features['type'] == 'dynamic'){
-        list($index, $until, $time1) = dynamic_number($segment_access, $segment_info[0], $segment_info[1]);
+        list($index, $until, $time1) = dynamic_number($adaptation_set_id, $representation_id, $segment_access, $segment_info[0], $segment_info[1]);
     }
     
     $error_info = '';
@@ -100,17 +105,19 @@ function compute_URLs($representation, $segment_access, $segment_info, $rep_base
                 $error_info = "It cannot happen! the format should be either \$Time$ or \$Time%xd$!";
         }
         
-        if (substr($rep_base_url, -1) == '/')
-            $segmenturl = $rep_base_url . $segmenturl;
-        else
-            $segmenturl = $rep_base_url . "/" . $segmenturl;
+        if(!isAbsoluteURL($segmenturl)) {
+            if (substr($rep_base_url, -1) == '/')
+                $segmenturl = $rep_base_url . $segmenturl;
+            else
+                $segmenturl = $rep_base_url . "/" . $segmenturl;
+        }
         $segment_urls[] = $segmenturl;
         $index++;
         $time1++;
     }
     
-    if($error_info != '')
-        error_log($error_info);
+    //if($error_info != '')
+    //    error_log($error_info);
     
     return $segment_urls;
 }
@@ -125,7 +132,7 @@ function compute_timing($presentationduration, $segment_access, $segment_access_
             $duration = ($segment_access['duration'] != NULL) ? $segment_access['duration'] : 0;
             $timescale = ($segment_access['timescale'] != NULL) ? $segment_access['timescale'] : 1;
             $availabilityTimeOffset = ($segment_access['availabilityTimeOffset'] != NULL && $segment_access['availabilityTimeOffset'] != 'INF') ? $segment_access['availabilityTimeOffset'] : 0;
-            $availabilityTimeOffset += ($rep_base_url['availabilityTimeOffset']) ? $rep_base_url['availabilityTimeOffset'] : 0;
+            //$availabilityTimeOffset += ($rep_base_url['availabilityTimeOffset']) ? $rep_base_url['availabilityTimeOffset'] : 0;
             $pto = ($segment_access['presentationTimeOffset'] != '') ? (int)($segment_access['presentationTimeOffset'])/$timescale : 0;
             
             if($duration != 0){

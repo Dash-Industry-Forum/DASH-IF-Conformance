@@ -21,7 +21,8 @@ function process_MPD(){
             $dashif_conformance, $iop_function_name, $iop_when_to_call,                                      // DASH-IF IOP data
             $cmaf_conformance, $cmaf_function_name, $cmaf_when_to_call,                                      // CMAF data
             $hbbtv_conformance, $dvb_conformance, $hbbtv_dvb_function_name, $hbbtv_dvb_when_to_call,         // HbbTV-DVB data
-            $ctawave_conformance, $ctawave_function_name, $ctawave_when_to_call;                             // CTA WAVE data
+            $ctawave_conformance, $ctawave_function_name, $ctawave_when_to_call,                             // CTA WAVE data
+            $low_latency_dashif_conformance, $low_latency_function_name, $low_latency_when_to_call;          // Low Latency DASH-IF data
 
     ## Open related files
     $progress_xml = simplexml_load_string('<root><Profile></Profile><PeriodCount></PeriodCount><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><CurrentPeriod>1</CurrentPeriod><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
@@ -56,7 +57,13 @@ function process_MPD(){
             include '../DASH/IOP/IOP_Initialization.php';
         }
     }
-
+    ## Check if low latency dashif conformance is desired or if its profiles are in the MPD
+    if(!$low_latency_dashif_conformance){
+        if(strpos($mpd_dom->getAttribute('profiles'), 'http://www.dashif.org/guidelines/low-latency-live-v5') !== FALSE){
+            $low_latency_dashif_conformance = 1;
+            include '../DASH/LowLatency/LowLatency_Initialization.php';
+        }
+    }
     ## Check if hbbtv-dvb conformance is desired or if their profiles are in the MPD
     ## If yes, call HbbTV_DVB_Handle for Before-MPD validation
     if(!$hbbtv_conformance){
@@ -81,7 +88,6 @@ function process_MPD(){
     $mpd_features = MPD_features($mpd_dom);
     $profiles = derive_profiles();
     writeProfiles();
-
     $progress_xml->Profile = $mpd_features['profiles'];
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
 
@@ -98,16 +104,20 @@ function process_MPD(){
     $return_dashif = '';
     if($dashif_conformance)
         $return_dashif = $iop_function_name($iop_when_to_call[0]);
-
+    ## If Low Latency DASH-IF cnformance, call MPD validation for low latency
+    $returnValue = '';
+    if($low_latency_dashif_conformance){
+        $returnValue = $low_latency_function_name($low_latency_when_to_call[0]);
+    }
     ## If HbbTV_DVB_Handle, call HbbTV_DVB_Handle for MPD validation
     $return_val = '';
     if($hbbtv_conformance || $dvb_conformance)
         $return_val = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[1]);
 
-    MPD_report($valid_mpd[1] . $return_dashif . $return_val);
-
+    MPD_report($valid_mpd[1] . $return_dashif . $returnValue . $return_val);
     writeMPDEndTime();
     print_console($session_dir.'/'.$mpd_log.'.txt', "MPD Validation Results");
+    tabulateResults($session_dir . '/' . $mpd_log . '.txt', 'MPD');
 
     if($uploaded){ // Check if absolute URL is provided in the uploaded MPD for segment fetching.
                    // Otherwise, only the mpd validation will be performed.
@@ -148,12 +158,8 @@ function process_MPD(){
     $ResultXML = $progress_xml->addChild('Results');
     for ($i1 = 0; $i1 < sizeof($mpd_features['Period']); $i1++){
         $PeriodXML = $ResultXML->addChild('Period');
-
-        $period_info = current_period();
-
         for ($j1 = 0; $j1 < sizeof($mpd_features['Period'][$i1]['AdaptationSet']); $j1++){
             $AdaptationXML = $PeriodXML->addChild('Adaptation');
-
             for ($k1 = 0; $k1 < sizeof($mpd_features['Period'][$i1]['AdaptationSet'][$j1]['Representation']); $k1++){
                 $RepXML = $AdaptationXML->addChild('Representation');
                 $RepXML->addAttribute('id', $k1 + 1);
@@ -200,7 +206,7 @@ function process_MPD(){
 
     session_close();
     $send_string = json_encode($file_error);
-    error_log("ReturnFinish:" . $send_string);
+    #error_log("ReturnFinish:" . $send_string);
     $progress_xml->completed = "true";
     $progress_xml->completed->addAttribute('time', time());
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
@@ -208,14 +214,14 @@ function process_MPD(){
     exit;
 }
 
-function processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML,$segment_urls)
-{
+function processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML,$segment_urls) {
    global  $mpd_features, $current_period, $current_adaptation_set, $adaptation_set_template,$current_representation,$reprsentation_template,$session_dir,
-           $progress_xml,$progress_report,$additional_flags,
+           $progress_xml, $progress_report, $reprsentation_error_log_template, $additional_flags,
            $dashif_conformance, $iop_function_name, $iop_when_to_call,                                      // DASH-IF IOP data
            $cmaf_conformance, $cmaf_function_name, $cmaf_when_to_call,                                      // CMAF data
            $hbbtv_conformance, $dvb_conformance, $hbbtv_dvb_function_name, $hbbtv_dvb_when_to_call,         // HbbTV-DVB data
-           $ctawave_conformance, $ctawave_function_name, $ctawave_when_to_call;                             // CTA WAVE data;
+           $ctawave_conformance, $ctawave_function_name, $ctawave_when_to_call,                             // CTA WAVE data
+           $low_latency_dashif_conformance, $low_latency_function_name, $low_latency_when_to_call;          // Low Latency DASH-IF data
 
     $adaptation_sets = $period['AdaptationSet'];
     while($current_adaptation_set < sizeof($adaptation_sets)){
@@ -252,6 +258,7 @@ function processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML
                 $return_cta = $ctawave_function_name($ctawave_when_to_call[0]);
 
             $return_seg_val = validate_segment($curr_adapt_dir, $curr_rep_dir, $period, $adaptation_set, $representation, $segment_url, $rep_dir_name, $is_subtitle_rep);
+            ValidateDolby($adaptation_set, $representation);
             if($dashif_conformance)
                 $return_seg_val[] = $iop_function_name($iop_when_to_call[1]);
             if($cmaf_conformance)
@@ -259,18 +266,22 @@ function processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML
             if($hbbtv_conformance || $dvb_conformance)
                 $return_seg_val[] = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[3]);
 
-            ValidateDolby($adaptation_set, $representation);
-
             ## Report to client
             $send_string = json_encode($return_seg_val);
-            error_log('RepresentationDownloaded_Return:' . $send_string);
+            #error_log('RepresentationDownloaded_Return:' . $send_string);
 
             err_file_op(1);
             print_console(dirname(__DIR__) . '/' . explode('.', $return_seg_val[1])[0] . '.txt', "Period " . ($current_period+1) . " Adaptation Set " . ($current_adaptation_set+1) . " Representation " . ($current_representation+1) . " Results");
+            $segment_log = 'Period' . $current_period . '/' . str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_error_log_template);
+            tabulateResults($session_dir . '/' . $segment_log . '.txt', 'Segment');
+            
             $current_representation++;
         }
 
         ## Representations in current Adaptation Set finished
+        crossRepresentationProcess();
+        if($hbbtv_conformance || $dvb_conformance)
+            $return_seg_val[] = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[4]);
         if($cmaf_conformance)
             $return_arr = $cmaf_function_name($cmaf_when_to_call[2]);
 
@@ -279,28 +290,26 @@ function processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML
     }
 
     ## Adaptation Sets in current Period finished
-    crossRepresentationProcess();
+    $file_error = adapt_result($ResultXML);
     if($dashif_conformance)
         $iop_function_name($iop_when_to_call[2]);
-    $file_error = adapt_result($ResultXML);
-
     if($cmaf_conformance){
         $return_arr = $cmaf_function_name($cmaf_when_to_call[3]);
         foreach($return_arr as $return_item)
             $file_error[] = $return_item;
     }
     if($hbbtv_conformance || $dvb_conformance)
-        $return_arr = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[4]);
+        $return_arr = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[5]);
     if($ctawave_conformance)
         $return_arr = $ctawave_function_name($ctawave_when_to_call[1]);
+    if($low_latency_dashif_conformance)
+        $return_arr = $low_latency_function_name($low_latency_when_to_call[1]);
 
     err_file_op(2);
-    //------------------------------------------------------------------------//
-
     $current_adaptation_set = 0;
 }
 
-function check_before_segment_validation($result_for_json){
+function check_before_segment_validation($result_for_json) {
     global $session_dir, $mpd_features, $mpd_dom, $progress_report, $progress_xml;
 
     $progress_xml->dynamic = ($mpd_features['type'] == 'dynamic') ? 'true' : 'false';
@@ -317,16 +326,6 @@ function check_before_segment_validation($result_for_json){
         }
     }
 
-    /*if($mpd_dom->getElementsByTagName('SegmentTemplate')->length != 0 && $mpd_features['type'] == 'dynamic' && $mpd_dom->getElementsByTagName('SegmentTimeline')->length != 0){
-        $progress_xml->SegmentTimeline = "true";
-        session_close();
-        $progress_xml->completed = "true";
-        $progress_xml->completed->addAttribute('time', time());
-        $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
-        writeEndTime((int)$progress_xml->completed->attributes());
-        exit;
-    }*/
-
     if ($mpd_dom->getElementsByTagName('SegmentList')->length !== 0){
         $progress_xml->segmentList = "true";
         json_encode($result_for_json);
@@ -340,16 +339,13 @@ function check_before_segment_validation($result_for_json){
 }
 
 function adapt_result($ResultXML){
-    global $session_dir, $current_period, $missinglink_file, $progress_xml, $progress_report, $string_info,
-            $current_adaptation_set, $adaptation_set_error_log_template;
+    global $session_dir, $current_period, $missinglink_file, $progress_xml, $progress_report;
 
     $file_error[] = "done";
 
     $missingexist = file_exists($session_dir . '/Period' . $current_period . '/' . $missinglink_file . '.txt');
     if($missingexist){
-        $temp_string = str_replace(array('$Template$'), array("$missinglink_file"), $string_info);
-        file_put_contents($session_dir . '/Period' . $current_period . '/' . $missinglink_file . '.html', $temp_string);
-
+        tabulateResults($session_dir . '/Period' . $current_period . '/' . $missinglink_file . '.txt', 'Missing');
         $ResultXML->Period[$current_period]->addChild('BrokenURL', "error");
         $ResultXML->Period[$current_period]->BrokenURL->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $session_dir . '/' . $missinglink_file . '.txt'));
         $file_error[] = relative_path($session_dir . '/Period' . $current_period . '/' . $missinglink_file . '.html');
@@ -358,29 +354,7 @@ function adapt_result($ResultXML){
         $ResultXML->Period[$current_period]->addChild('BrokenURL', "noerror");
         $file_error[] = "noerror";
     }
-
-    for ($i = 0; $i < $current_adaptation_set; $i++){
-        $adapt_log_file = str_replace('$AS$', $i, $adaptation_set_error_log_template);
-
-        if (file_exists($session_dir . '/Period' . $current_period . '/' . $adapt_log_file . '.txt')){
-            $searchadapt = file_get_contents($session_dir . '/Period' . $current_period . '/' . $adapt_log_file . '.txt');
-            if(strpos($searchadapt, "Error") == false && strpos($searchadapt, "violated") == false){
-                $ResultXML->Period[$current_period]->Adaptation[$i]->addChild('CrossRepresentation', 'noerror');
-                $file_error[] = "noerror";
-            }
-            else{
-                $ResultXML->Period[$current_period]->Adaptation[$i]->addChild('CrossRepresentation', 'error');
-                $file_error[] = relative_path($session_dir . '/Period' . $current_period . '/' . $adapt_log_file . '.html');
-            }
-        }
-        else{
-            $ResultXML->Period[$current_period]->Adaptation[$i]->addChild('CrossRepresentation', 'noerror');
-            $file_error[] = "noerror";
-        }
-
-        $ResultXML->Period[$current_period]->Adaptation[$i]->CrossRepresentation->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $session_dir . '/' . $adapt_log_file . '.txt'));
-        $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
-    }
-
+    $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+    
     return $file_error;
 }

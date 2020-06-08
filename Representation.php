@@ -14,8 +14,7 @@
  */
 
 function construct_flags($period, $adaptation_set, $representation){
-
-    global $session_dir, $mpd_features, $dashif_conformance, $current_period, $current_adaptation_set, $current_representation, $profiles;
+    global $session_dir, $mpd_features, $dashif_conformance, $low_latency_dashif_conformance, $inband_event_stream_info, $current_period, $current_adaptation_set, $current_representation, $profiles;
     
     ## @minimumBufferTime 
     $timeSeconds = (string) time_parsing($mpd_features['minBufferTime']);
@@ -52,11 +51,10 @@ function construct_flags($period, $adaptation_set, $representation){
         $processArguments .= ' -startwithsap ' . $startWithSAP;
 
     ## @profiles
-    $ondemand = array('urn:mpeg:dash:profile:isoff-on-demand:2011', 'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014');
-    $live = array('urn:mpeg:dash:profile:isoff-live:2011', 'urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014');
+    $ondemand = array('urn:mpeg:dash:profile:isoff-on-demand:2011', 'urn:mpeg:dash:profile:isoff-ext-on-demand:2014', 'http://dashif.org/guidelines/dash-if-ondemand', 'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014');
+    $live = array('urn:mpeg:dash:profile:isoff-live:2011', 'urn:mpeg:dash:profile:isoff-ext-live:2014', 'urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014');
     $main = array('urn:mpeg:dash:profile:isoff-main:2011');
     $dash264 = array('http://dashif.org/guidelines/dash264');
-
     $dashif_ondemand = array('http://dashif.org/guidelines/dash-if-ondemand');
     $dashif_mixed_ondemand = array('http://dashif.org/guidelines/dash-if-mixed');
     
@@ -145,6 +143,16 @@ function construct_flags($period, $adaptation_set, $representation){
                 fclose($pssh_file);
                 $processArguments = $processArguments . $pssh_file_loc;
             }
+        }
+    }
+    
+    ## Inband Event Stream for LL
+    if($low_latency_dashif_conformance){
+        $processArguments .= ' -dashifll';
+        if($inband_event_stream_info[$current_period] !== NULL &&
+           $inband_event_stream_info[$current_period][$current_adaptation_set] !== NULL &&
+           $inband_event_stream_info[$current_period][$current_adaptation_set][$current_representation] !== NULL) {
+            $processArguments .= ' -inbandeventstreamll';
         }
     }
 

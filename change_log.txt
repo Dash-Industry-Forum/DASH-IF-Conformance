@@ -1,4 +1,12 @@
-Version v4.2a
+Version v4.3
+
+New additions in 4.2a
+- New profiles
+- Low latency support
+- MPEG DASH 4th edition support
+- CMAF 2nd edition support
+- Bug fixes
+- Schema selection
 
 New additions in 4.2a
 - xslt2 support

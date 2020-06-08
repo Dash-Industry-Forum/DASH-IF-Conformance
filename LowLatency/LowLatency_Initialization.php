@@ -13,13 +13,14 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-include 'IOP_Handle.php';
-include 'IOP_MPDValidation.php';
-include 'IOP_SegmentValidation.php';
-include 'IOP_CrossValidation.php';
+include 'LowLatency_Handle.php';
+include 'LowLatency_MPDValidation.php';
+include 'LowLatency_RepresentationValidation.php';
+include 'LowLatency_CrossValidation.php';
 
 global $mpd_xml_string;
 
-$iop_function_name = 'IOP_Handle';
-$iop_when_to_call = array('MPD', 'Representation', 'AdaptationSet');
-$mpd_xml_string = xml_string_update($mpd_xml_string, '<dashif>No Result</dashif>', '<');
+$low_latency_function_name = 'LL_DASHIF_Handle';
+$low_latency_when_to_call = array('MPD', 'AdaptationSet');
+$low_latency_cross_validation_file = 'LowLatencyCrossValidation_compInfo';
+$mpd_xml_string = xml_string_update($mpd_xml_string, '<dashif_ll>No Result</dashif_ll>', '<');

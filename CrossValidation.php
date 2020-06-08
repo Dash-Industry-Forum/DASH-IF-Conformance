@@ -100,60 +100,74 @@ function checkAlignment($leafInfoA, $leafInfoB, $opfile, $segmentAlignment, $sub
 }
 
 function crossRepresentationProcess(){
-    global $mpd_features, $current_period, $session_dir, $adaptation_set_error_log_template, $reprsentation_info_log_template, $string_info;
+    global $mpd_features, $current_period, $current_adaptation_set, $session_dir, $adaptation_set_error_log_template, $reprsentation_info_log_template, $string_info, $progress_xml, $progress_report;
 
-    $adaptation_sets = $mpd_features['Period'][$current_period]['AdaptationSet'];
-    for ($i = 0; $i < sizeof($adaptation_sets); $i++){
-        $timeoffset = 0;
-        $timescale = 1;
-        $adaptation_set = $adaptation_sets[$i];
+    $adaptation_set = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
+    $timeoffset = 0;
+    $timescale = 1;
 
-        $file_path = str_replace('$AS$', $i, $adaptation_set_error_log_template) . '.txt';
-        $opfile = open_file($session_dir . '/Period' .$current_period.'/' . $file_path, 'w');
-        
-        $segmentAlignment = ($adaptation_set['segmentAlignment']) ? $adaptation_set['segmentAlignment'] : 'false';
-        $subsegmentAlignment = ($adaptation_set['subsegmentAlignment']) ? $adaptation_set['subsegmentAlignment'] : 'false';
-        $bitstreamSwitching = ($adaptation_set['bitstreamSwitching']) ? $adaptation_set['bitstreamSwitching'] : 'false';
+    $file_path = str_replace('$AS$', $current_adaptation_set, $adaptation_set_error_log_template) . '.txt';
+    $opfile = open_file($session_dir . '/Period' .$current_period.'/' . $file_path, 'w');
 
-        if ($segmentAlignment == "true" || $subsegmentAlignment == "true" || $bitstreamSwitching == "true"){
-            $leafInfo = array();
+    $segmentAlignment = ($adaptation_set['segmentAlignment']) ? $adaptation_set['segmentAlignment'] : 'false';
+    $subsegmentAlignment = ($adaptation_set['subsegmentAlignment']) ? $adaptation_set['subsegmentAlignment'] : 'false';
+    $bitstreamSwitching = ($adaptation_set['bitstreamSwitching']) ? $adaptation_set['bitstreamSwitching'] : 'false';
 
-            $representations = $adaptation_set['Representation'];
-            for ($j = 0; $j < sizeof($representations); $j++){
-                $timeoffset = 0;
-                $timescale = 1;
-                $representation = $representations[$j];
+    if ($segmentAlignment == "true" || $subsegmentAlignment == "true" || $bitstreamSwitching == "true"){
+        $leafInfo = array();
 
-                if (!empty($adaptation_set['SegmentTemplate']['timescale']))
-                    $timescale = $adaptation_set['SegmentTemplate']['timescale'];
+        $representations = $adaptation_set['Representation'];
+        for ($j = 0; $j < sizeof($representations); $j++){
+            $timeoffset = 0;
+            $timescale = 1;
+            $representation = $representations[$j];
 
-                if (!empty($adaptation_set['SegmentTemplate']['presentationTimeOffset']))
-                    $timeoffset = $adaptation_set['SegmentTemplate']['presentationTimeOffset'];
+            if (!empty($adaptation_set['SegmentTemplate']['timescale']))
+                $timescale = $adaptation_set['SegmentTemplate']['timescale'];
 
-                if (!empty($representation['SegmentTemplate']['timescale']))
-                    $timescale = $representation['SegmentTemplate']['timescale'];
+            if (!empty($adaptation_set['SegmentTemplate']['presentationTimeOffset']))
+                $timeoffset = $adaptation_set['SegmentTemplate']['presentationTimeOffset'];
 
-                if (!empty($representation['SegmentTemplate']['presentationTimeOffset']))
-                    $timeoffset = $representation['SegmentTemplate']['presentationTimeOffset'];
+            if (!empty($representation['SegmentTemplate']['timescale']))
+                $timescale = $representation['SegmentTemplate']['timescale'];
 
-                if (!empty($representation['presentationTimeOffset']))
-                    $timeoffset = $representation['presentationTimeOffset'];
+            if (!empty($representation['SegmentTemplate']['presentationTimeOffset']))
+                $timeoffset = $representation['SegmentTemplate']['presentationTimeOffset'];
 
-                $offsetmod = $timeoffset / $timescale;
-                $leafInfo[$j] = loadLeafInfoFile('Period' . $current_period . '/' . str_replace(array('$AS$', '$R$'), array($i, $j), $reprsentation_info_log_template) . '.txt', $offsetmod);
-                $leafInfo[$j]['id'] = $representation['id'];
-            }
+            if (!empty($representation['presentationTimeOffset']))
+                $timeoffset = $representation['presentationTimeOffset'];
 
-            for ($j = 0; $j < sizeof($representations)-1; $j++){
-                for ($k = $j + 1; $k < sizeof($representations); $k++){
-                    checkAlignment($leafInfo[$j], $leafInfo[$k], $opfile, $segmentAlignment, $subsegmentAlignment, $bitstreamSwitching);
-                }
-            }
+            $offsetmod = $timeoffset / $timescale;
+            $leafInfo[$j] = loadLeafInfoFile('Period' . $current_period . '/' . str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $j), $reprsentation_info_log_template) . '.txt', $offsetmod);
+            $leafInfo[$j]['id'] = $representation['id'];
         }
 
-        close_file($opfile);
-        $temp_string = str_replace('$Template$', explode('.', $file_path)[0], $string_info);
-        file_put_contents($session_dir . '/Period' .$current_period.'/' . explode('.', $file_path)[0] . '.html', $temp_string);
-        print_console($session_dir . '/Period' .$current_period.'/' . $file_path, "Period " . ($current_period+1) . " Adaptation Set " . ($i+1) . " DASH Cross Validation Results");
+        for ($j = 0; $j < sizeof($representations)-1; $j++){
+            for ($k = $j + 1; $k < sizeof($representations); $k++){
+                checkAlignment($leafInfo[$j], $leafInfo[$k], $opfile, $segmentAlignment, $subsegmentAlignment, $bitstreamSwitching);
+            }
+        }
     }
+    close_file($opfile);
+    
+    if (file_exists($session_dir . '/Period' . $current_period . '/' . $file_path . '.txt')){
+        $searchadapt = file_get_contents($session_dir . '/Period' . $current_period . '/' . $file_path . '.txt');
+        if(strpos($searchadapt, "Error") == false && strpos($searchadapt, "violated") == false){
+            $progress_xml->Results[0]->Period[$current_period]->Adaptation[$current_adaptation_set]->addChild('CrossRepresentation', 'noerror');
+            $file_error[] = "noerror";
+        }
+        else{
+            $progress_xml->Results[0]->Period[$current_period]->Adaptation[$current_adaptation_set]->addChild('CrossRepresentation', 'error');
+            $file_error[] = relative_path($session_dir . '/Period' . $current_period . '/' . $file_path . '.html');
+        }
+    }
+    else{
+        $progress_xml->Results[0]->Period[$current_period]->Adaptation[$current_adaptation_set]->addChild('CrossRepresentation', 'noerror');
+        $file_error[] = "noerror";
+    }
+    $progress_xml->Results[0]->Period[$current_period]->Adaptation[$current_adaptation_set]->CrossRepresentation->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $session_dir . '/' . $file_path . '.txt'));
+    $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
+    
+    tabulateResults($session_dir . '/Period' .$current_period.'/' . explode('.', $file_path)[0] . '.txt', 'Cross');
+    print_console($session_dir . '/Period' .$current_period.'/' . $file_path, "Period " . ($current_period+1) . " Adaptation Set " . ($current_adaptation_set+1) . " DASH Cross Validation Results");
 }

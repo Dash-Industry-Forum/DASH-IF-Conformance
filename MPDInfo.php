@@ -122,7 +122,7 @@ function period_duration_info(){
             $duration = time_parsing($duration);
         
         $starts[] = $start;
-        $durations[] = $duration;
+        $durations[] = min([$duration, 1800]);
     }
     
     return [$starts, $durations];
@@ -314,8 +314,8 @@ function time_parsing($var){
  *         $start - Period start time
  * @output: array of start segment and end segment number 
  */
-function dynamic_number($segment_access, $segment_timings, $segmentno){
-    global $mpd_features, $current_period, $period_timing_info;
+function dynamic_number($adaptation_set_id, $representation_id, $segment_access, $segment_timings, $segmentno){
+    global $mpd_features, $current_period, $period_timing_info, $low_latency_dashif_conformance, $availability_times;
     
     $bufferduration = ($mpd_features['timeShiftBufferDepth'] != NULL) ? time_parsing($mpd_features['timeShiftBufferDepth']) : INF;
     $AST = $mpd_features['availabilityStartTime'];
@@ -324,6 +324,9 @@ function dynamic_number($segment_access, $segment_timings, $segmentno){
     else
         $segmentduration = ($segment_access['duration'] != NULL) ? $segment_access['duration'] : 0;
     $timescale = ($segment_access['timescale'] != NULL) ? $segment_access['timescale'] : 1;
+    $availabilityTimeOffset = ($segment_access['availabilityTimeOffset'] != NULL && $segment_access['availabilityTimeOffset'] != 'INF') ? $segment_access['availabilityTimeOffset'] : 0;
+    $pto = ($segment_access['presentationTimeOffset'] != '') ? (int)($segment_access['presentationTimeOffset'])/$timescale : 0;
+    
     if($segmentduration != 0)
         $segmentduration /= $timescale;
     
@@ -348,7 +351,7 @@ function dynamic_number($segment_access, $segment_timings, $segmentno){
     date_default_timezone_set("UTC"); //Set default timezone to UTC
     $now = time(); // Get actual time
     $AST = strtotime($AST);
-    $LST = $now - ($AST + $period_timing_info[0] - $segmentduration);
+    $LST = $now - ($AST + $period_timing_info[0] - $pto - $availabilityTimeOffset - $segmentduration);
     $LSN = intval($LST / $segmentduration);
     $earliestsegment = $LSN - $buffercapacity * $percent;
     
@@ -358,6 +361,18 @@ function dynamic_number($segment_access, $segment_timings, $segmentno){
     $ind = array_search($LST*$timescale, $new_array);
     
     $SST = ($ind-1-$buffercapacity*$percent < 0) ? 0 : $ind-1-$buffercapacity*$percent;
+    
+    if($low_latency_dashif_conformance) {
+        $ASAST = array();
+        $NSAST = array();
+        $count = $LSN - intval($earliestsegment);
+        for($i=$count; $i>0; $i--) {
+            $ASAST[] = $now - $LST - $bufferduration*$i;
+            $NSAST[] = $now - ($LST - $bufferduration*$i + $availabilityTimeOffset);
+        }
+        $availability_times[$adaptation_set_id][$representation_id]['ASAST'] = $ASAST;
+        $availability_times[$adaptation_set_id][$representation_id]['NSAST'] = $NSAST;
+    }
     
     return [intval($earliestsegment), $LSN, $SST];
 }

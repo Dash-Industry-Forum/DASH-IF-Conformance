@@ -19,8 +19,9 @@ function validate_MPD(){
 
     $mpd_xml = simplexml_load_string($mpd_xml_string);
     $mpd_xml->asXml($session_dir . '/' . $mpd_xml_report);
-    if(!$mpd_xml)
-        exit();
+    if(!$mpd_xml) {
+        exit;
+    }
 
     chdir('../DASH/mpdvalidator');
     $dash_schema_location = download_schema();
@@ -49,15 +50,16 @@ function validate_MPD(){
     ## Featurelist generate
     if(!is_valid($mpdvalidator, 'Schematron validation successful'))
         $schematronIssuesReport = analyzeSchematronIssues($mpdvalidator);
-    copy($main_dir . "/" . $featurelist_log_html, $session_dir . '/' . $featurelist_log_html);
-    createMpdFeatureList($mpd_dom, $schematronIssuesReport);
+    #copy($main_dir . "/" . $featurelist_log_html, $session_dir . '/' . $featurelist_log_html);
+    createMpdFeatureList($mpd_dom, $schematronIssuesReport); 
+    convertToHtml();
 
     chdir('../');
     return array(!$exit, $string);
 }
 
 function download_schema(){
-    global $session_id, $schema_url, $dvb_conformance, $dvb_conformance_2018, $dvb_conformance_2019;
+    global $session_id, $schema_url, $dvb_conformance, $dvb_conformance_2018, $dvb_conformance_2019, $low_latency_dashif_conformance;
     
     $default_schema_loc = 'schemas/DASH-MPD.xsd';
     
@@ -65,6 +67,9 @@ function download_schema(){
         $default_schema_loc = 'schemas/DASH-MPD-2nd.xsd';
     }
     elseif($dvb_conformance && $dvb_conformance_2019) {
+        $default_schema_loc = 'schemas/DASH-MPD-4th-amd1.xsd';
+    }
+    elseif($low_latency_dashif_conformance) {
         $default_schema_loc = 'schemas/DASH-MPD-4th-amd1.xsd';
     }
     

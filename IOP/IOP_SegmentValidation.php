@@ -54,8 +54,6 @@ function IOP_ValidateSegment() {
         $file_location[] = "error";
     }
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
-    $temp_string = str_replace('$Template$', '/Period'.$current_period.'/'.$rep_dir . "log", $string_info);
-    file_put_contents($session_dir . '/Period' . $current_period . '/' . $rep_log_file . '.html', $temp_string);
     
     return $file_location;
 }
