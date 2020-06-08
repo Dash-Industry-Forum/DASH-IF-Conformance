@@ -28,36 +28,30 @@ function checkPresentation(){
     if(file_exists($session_dir.'/Period'.$current_period.'/'.$selectionset_infofile.'.txt')){
         $selSetFile=file_get_contents($session_dir.'/Period'.$current_period.'/'.$selectionset_infofile.'.txt');
         if(strpos($selSetFile, "CMAF check violated") == false){
-             $progress_xml->Results[0]->Period[$current_period]->addChild('SelectionSet', 'noerror');
-             $tempr_string = str_replace('$Template$', '/Period'.$current_period.'/'.$selectionset_infofile, $string_info); // this string shows a text file on HTML
-             file_put_contents($session_dir.'/Period'.$current_period.'/'.$selectionset_infofile.'.html', $tempr_string); // Create html file containing log file result
-             $file_error[] = "noerror"; // no error found in text file
+            $progress_xml->Results[0]->Period[$current_period]->addChild('SelectionSet', 'noerror');
+            $file_error[] = "noerror"; // no error found in text file
         }
         else{
             $progress_xml->Results[0]->Period[$current_period]->addChild('SelectionSet', 'error');
-            $tempr_string = str_replace('$Template$', '/Period'.$current_period.'/'.$selectionset_infofile, $string_info); // this string shows a text file on HTML
-            file_put_contents($session_dir.'/Period'.$current_period.'/'.$selectionset_infofile.'.html', $tempr_string); // Create html file containing log file result
             $file_error[] = $session_dir.'/Period'.$current_period.'/'.$selectionset_infofile.'.html'; // add error file location to array
         }
         $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
         print_console($session_dir.'/Period'.$current_period.'/'.$selectionset_infofile.'.txt', "Period " . ($current_period+1) . " CMAF Selection Set Results");
+        tabulateResults($session_dir.'/Period'.$current_period.'/'.$selectionset_infofile.'.txt', 'Cross');
     }
     if(file_exists($session_dir.'/Period'.$current_period.'/'.$presentation_infofile.'.txt')){
         $presentnFile=file_get_contents($session_dir.'/Period'.$current_period.'/'.$presentation_infofile.'.txt');
         if(strpos($presentnFile, "CMAF check violated") == false){
-             $progress_xml->Results[0]->Period[$current_period]->addChild('CMAFProfile', 'noerror');
-             $tempr_string = str_replace('$Template$', '/Period'.$current_period.'/'.$presentation_infofile, $string_info); // this string shows a text file on HTML
-             file_put_contents($session_dir.'/Period'.$current_period.'/'.$presentation_infofile.'.html', $tempr_string); // Create html file containing log file result
-             $file_error[] = "noerror"; // no error found in text file
+            $progress_xml->Results[0]->Period[$current_period]->addChild('CMAFProfile', 'noerror');
+            $file_error[] = "noerror"; // no error found in text file
         }
         else{
             $progress_xml->Results[0]->Period[$current_period]->addChild('CMAFProfile', 'error');
-            $tempr_string = str_replace('$Template$', '/Period'.$current_period.'/'.$presentation_infofile, $string_info); // this string shows a text file on HTML
-            file_put_contents($session_dir.'/Period'.$current_period.'/'.$presentation_infofile.'.html', $tempr_string); // Create html file containing log file result
             $file_error[] = $session_dir.'/Period'.$current_period.'/'.$presentation_infofile.'.html'; // add error file location to array
         }
         $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
         print_console($session_dir.'/Period'.$current_period.'/'.$presentation_infofile.'.txt', "Period " . ($current_period+1) . " CMAF Presentation Results");
+        tabulateResults($session_dir.'/Period'.$current_period.'/'.$presentation_infofile.'.txt', 'Cross');
     }
     
     return $file_error;

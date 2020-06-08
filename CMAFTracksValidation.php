@@ -61,6 +61,13 @@ function checkCMAFTracks(){
             return;
         }
         
+        $return_array = checkCMAFMessages($error_file);
+        
+        $messages = '';
+        $messages_cmf2 = '';
+        $cmaf_cmfc = $return_array[0];
+        $cmaf_cmf2 = $return_array[1];
+        
         # Store media type for selection set checks later
         $cmaf_media_type = $xml->getElementsByTagName('hdlr')->item(0)->getAttribute('handler_type');
         $cmaf_mediaTypes[$current_period][$current_adaptation_set][$current_representation] = $cmaf_media_type;
@@ -89,9 +96,14 @@ function checkCMAFTracks(){
             if(strpos($profiles[$current_period][$current_adaptation_set][$current_representation], 'urn:mpeg:dash:profile:isoff-live:2011') !== FALSE){
                 for($j=0;$j<$xml_num_moofs;$j++){
                     $trun_version = $xml_trun->item($j)->getAttribute('version');
-                    if($trun_version != "1")
-                        fprintf($opfile, "**'CMAF check violated: Section 7.5.17- Version 1 SHALL be used for video CMAF tracks, except in case of a video CMAF track file', but " . $trun_version . " found for Rep ".$id." Track ".($j+1)."\n");
+                    if($trun_version != "1") 
+                        $messages_cmf2 .= "**'CMAF check violated: Section 7.7.3- For video CMAF tracks not contained in Track Files, Version 1 SHALL be used', but " . $trun_version . " found for Rep ".$id." Track ".($j+1)."\n";
                 }
+            }
+            
+            $xml_elst = $xml->getElementsByTagName('elst');
+            if($xml_elst->length != 0) {
+                $messages_cmf2 .= "**'CMAF check violated: Section 7.7.2- For video CMAF tracks, the EditListBox SHALL NOT be present', elst box found for Rep $id.\n";
             }
         }
         
@@ -102,7 +114,7 @@ function checkCMAFTracks(){
                 $temp_moof = $xml_moof[$j];
                 $xml_subs = $temp_moof->getElementsByTagName('subs');
                 if($xml_subs->length == 0)
-                    fprintf($opfile, "**'CMAF check violated: Section 7.5.20- Each CMAF fragment in a TTML image subtitle track of CMAF media profile 'im1i' SHALL contain a SubSampleInformationBox in the TrackFragmentBox, but " . $xml_subs->length . " found for Rep ".$id." Fragment ".($j+1)."\n");
+                    $messages .= "**'CMAF check violated: Section 7.5.20- Each CMAF fragment in a TTML image subtitle track of CMAF media profile 'im1i' SHALL contain a SubSampleInformationBox in the TrackFragmentBox, but " . $xml_subs->length . " found for Rep ".$id." Fragment ".($j+1)."\n";
             }
         }
         
@@ -114,7 +126,8 @@ function checkCMAFTracks(){
             $decodeTimeFragCurr=$xml_tfdt->item($j)->getAttribute('baseMediaDecodeTime');
             
             if($decodeTimeFragCurr!=$decodeTimeFragPrev+$cummulatedSampleDurFragPrev){//($sampleDurFragPrev*$sampleCountFragPrev)){
-                fprintf($opfile, "**'CMAF check violated: Section 7.3.2.2- Each CMAF Fragment in a CMAF Track SHALL have baseMediaDecodeTime equal to the sum of all prior Fragment durations added to the first Fragment's baseMediaDecodeTime', but not found for Rep ".$id." Fragment ".($j+1)."\n");
+                $messages .= "**'CMAF check violated: Section 7.3.2.2- Each CMAF Fragment in a CMAF Track SHALL have baseMediaDecodeTime equal to the sum of all prior Fragment durations added to the first Fragment's baseMediaDecodeTime', but not found for Rep ".$id." Fragment ".($j+1)."\n";
+                $messages .= "**'CMAF check violated: Section 7.3.2.3- CMAF Chunks in a CMAF Track SHALL NOT overlap or have gaps in decode time', overlap or gap found for the Rep/Track $id at Chunk ".($j+1)."\n";
                 $errorInTrack=1;
             }
         }
@@ -126,7 +139,7 @@ function checkCMAFTracks(){
                 $firstSampleCompTime=$xml_trun->item($j)->getAttribute('earliestCompositionTime');
                 $firstDecTime=$xml_tfdt->item(0)->getAttribute('baseMediaDecodeTime');
                 if($firstSampleCompTime!=$firstDecTime)
-                    fprintf($opfile, "**'CMAF check violated: Section 7.5.17- For 'trun' version 1, the composition time of 1st presented sample in a CMAF Segment SHALL be same as 1st Sample decode time (baseMediaDecodeTime), but not found in Rep ".$id." \n");
+                    $messages .= "**'CMAF check violated: Section 7.5.17- For 'trun' version 1, the composition time of 1st presented sample in a CMAF Segment SHALL be same as 1st Sample decode time (baseMediaDecodeTime), but not found in Rep ".$id." \n";
             }
             
             if($mdat_file != NULL){
@@ -140,7 +153,7 @@ function checkCMAFTracks(){
                     $trunSampleSize = $xml_trun->item($j)->getAttribute('sampleSizeTotal');
                     // Check that $dataOffset leads to a position within the mdat and that the total length of content in the trun doesn't, when added to this value, go beyond the end of the mdat.
                     if(!($moofFirstByte+$dataOffset >= $mdat_info[0] && $moofFirstByte+$dataOffset+$trunSampleSize <= $mdat_info[0]+$mdat_info[1] )) {
-                        fprintf($opfile, "**'CMAF check violated: Section 7.3.2.3- All media samples in a CMAF Chunk SHALL be addressed by byte offsets in the TrackRunBox relative to first byte of the MovieFragmentBox', but not found for Rep ".$id." Chunk ".($j+1)."\n");
+                        $messages .= "**'CMAF check violated: Section 7.3.2.3- All media samples in a CMAF Chunk SHALL be addressed by byte offsets in the TrackRunBox relative to first byte of the MovieFragmentBox', but not found for Rep ".$id." Chunk ".($j+1)."\n";
                     }
                 }
             }
@@ -158,7 +171,24 @@ function checkCMAFTracks(){
             $firstSampleCompTime=$xml_trun->item(0)->getAttribute('earliestCompositionTime');
             $mediaTime=$xml_elst->item(0)->getAttribute('mediaTime');
             if($mediaTime != $firstSampleCompTime)
-                fprintf($opfile, "**'CMAF check violated: Section 7.5.13- In video CMAF track, an EditListBox shall be used to adjust the earliest video sample to movie presentation time zero, i.e., media-time equal to composition-time of earliest presented sample in the 1st Fragment', but media-time is not equal to composition-time for Rep ".$id."\n");
+                $messages .= "**'CMAF check violated: Section 7.5.13- In video CMAF track, an EditListBox SHALL be used to adjust the earliest video sample to movie presentation time zero, i.e., media-time equal to composition-time of earliest presented sample in the 1st Fragment', but media-time is not equal to composition-time for Rep ".$id."\n";
+        }
+        
+        $xml_meta = $xml->getElementsByTagName('meta');
+        if($xml_meta->length > 0) {
+            foreach ($xml_meta as $i => $xml_meta_i) {
+                if($xml_meta_i->parentNode->nodeName == 'atomlist') {
+                    $messages .= "**'CMAF check violated: Section 7.5.2- When Metadata carried in MetaBox is present, it SHALL NOT occur at the file level', but a meta box found at the file level for Rep ".$id."\n";
+                }
+            }
+        }
+        $xml_udta = $xml->getElementsByTagName('udta');
+        if($xml_udta->length > 0) {
+            foreach ($xml_udta as $i => $xml_udta_i) {
+                if($xml_udta_i->parentNode->nodeName == 'atomlist') {
+                    $messages .= "**'CMAF check violated: Section 7.5.2- When Metadata carried in UserDataBox is present, it SHALL NOT occur at the file level', but a udta box found at the file level for Rep ".$id."\n";
+                }
+            }
         }
         
         /*$ParamSetPresent=0;
@@ -186,7 +216,7 @@ function checkCMAFTracks(){
             if($sdType == "hvc1" || $sdType =="hev1"){
                 $xml_hvcc=$xml_videSample->item(0)->getElementsByTagName('hvcC');
                 if($xml_hvcc->length!=1)
-                    fprintf($opfile, "**'CMAF check violated: Section B.2.3. - The HEVCSampleEntry SHALL contain an HEVCConfigurationBox (hvcC) containing an HEVCDecoderConfigurationRecord, but found ".$xml_hvcc->length." box in the Rep/Track ".$id."\n");
+                    $messages .= "**'CMAF check violated: Section B.2.3. - The HEVCSampleEntry SHALL contain an HEVCConfigurationBox (hvcC) containing an HEVCDecoderConfigurationRecord, but found ".$xml_hvcc->length." box in the Rep/Track ".$id."\n";
             }
             if( $sdType =="hev1"){
                 $vui_flag=0;
@@ -200,13 +230,12 @@ function checkCMAFTracks(){
                     $colr=$xml_videSample->item(0)->getElementsByTagName('colr');
                     $pasp=$xml_videSample->item(0)->getElementsByTagName('pasp');
                     if($pasp->length==0)
-                        fprintf($opfile, "**'CMAF check violated: Section B.2.3. - The HEVCSampleEntry SHALL contain PixelAspectRatioBox (pasp), but not found in the Rep/Track ".$id."\n");
+                        $messages .= "**'CMAF check violated: Section B.2.3. - The HEVCSampleEntry SHALL contain PixelAspectRatioBox (pasp), but not found in the Rep/Track ".$id."\n";
                     if($colr->length==0)
-                        fprintf($opfile, "**'CMAF check violated: Section B.2.3. - The HEVCSampleEntry SHALL contain ColorInformationBox (colr), but not found in the Rep/Track ".$id."\n");
+                        $messages .= "**'CMAF check violated: Section B.2.3. - The HEVCSampleEntry SHALL contain ColorInformationBox (colr), but not found in the Rep/Track ".$id."\n";
                     else{
                         if($colr->item(0)->getAttribute('colrtype') !='nclx')
-                            fprintf($opfile, "**'CMAF check violated: Section B.2.3. - The HEVCSampleEntry SHALL contain ColorInformationBox (colr) with colour_type 'nclx', but this colour_type ".$colr->item(0)->getAttribute('colrtype')." found in the Rep/Track ".$id."\n");
-
+                            $messages .= "**'CMAF check violated: Section B.2.3. - The HEVCSampleEntry SHALL contain ColorInformationBox (colr) with colour_type 'nclx', but this colour_type ".$colr->item(0)->getAttribute('colrtype')." found in the Rep/Track ".$id."\n";
                     }
                 }
             }
@@ -227,15 +256,15 @@ function checkCMAFTracks(){
                     $level_idc=$xml_NALComment->item(0)->getAttribute('level_idc');
                 }
                 if($width== NULL )
-                    fprintf($opfile, "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decoded and displayed when independently accessed, but 'width' missing in the Header of Rep/Track ".$id."\n");
+                    $messages .= "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decoded and displayed when independently accessed, but 'width' missing in the Header of Rep/Track ".$id."\n";
                 if($height==NULL)
-                    fprintf($opfile, "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decoded and displayed when independently accessed, but 'height' missing in the Header of Rep/Track ".$id."\n");
+                    $messages .= "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decoded and displayed when independently accessed, but 'height' missing in the Header of Rep/Track ".$id."\n";
                 if($sdType =='avc1' && $profile_idc ==NULL)
-                    fprintf($opfile, "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decoded and displayed when independently accessed, but 'profile_idc' missing in the Header of Rep/Track ".$id."\n");
+                    $messages .= "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decoded and displayed when independently accessed, but 'profile_idc' missing in the Header of Rep/Track ".$id."\n";
                 if($sdType =='avc1' && $level_idc==NULL)
-                    fprintf($opfile, "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decoded and displayed when independently accessed, but 'level_idc' missing in the Header of Rep/Track ".$id."\n");
+                    $messages .= "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decoded and displayed when independently accessed, but 'level_idc' missing in the Header of Rep/Track ".$id."\n";
                 if($sdType =='avc1' && ($num_ticks==NULL || $time_scale==NULL))
-                    fprintf($opfile, "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decoded and displayed when independently accessed, but FPS info (num_ticks & time_scale) missing in the Header of Rep/Track ".$id."\n");
+                    $messages .= "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decoded and displayed when independently accessed, but FPS info (num_ticks & time_scale) missing in the Header of Rep/Track ".$id."\n";
             }
         }
         if($xml_handlerType=='soun'){
@@ -246,11 +275,11 @@ function checkCMAFTracks(){
             if($xml_audioDec->length>0)
                 $channelConfig=$xml_audioDec->item(0)->getAttribute('channelConfig');
             if($sdType==NULL  )
-                fprintf($opfile, "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decoded and displayed when independently accessed, but audio 'sdTtype' missing in the Header of Rep/Track ".$id."\n");
+                $messages .= "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decoded and displayed when independently accessed, but audio 'sdTtype' missing in the Header of Rep/Track ".$id."\n";
             if($samplingRate==NULL)
-                fprintf($opfile, "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decoded and displayed when independently accessed, but audio 'samplingRate' missing in the Header of Rep/Track ".$id."\n");
+                $messages .= "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decoded and displayed when independently accessed, but audio 'samplingRate' missing in the Header of Rep/Track ".$id."\n";
             if($channelConfig==NULL)
-                fprintf($opfile, "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decoded and displayed when independently accessed, but audio 'channelConfig' missing in the Header of Rep/Track ".$id."\n");
+                $messages .= "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decoded and displayed when independently accessed, but audio 'channelConfig' missing in the Header of Rep/Track ".$id."\n";
         }
         
         $dash264 = false;
@@ -260,7 +289,7 @@ function checkCMAFTracks(){
         $content_protection_len = (!$Adapt['ContentProtection']) ? sizeof($Adapt['Representation'][$current_representation]['ContentProtection']) : sizeof($Adapt['ContentProtection']);
         if($content_protection_len > 0 && $dash264 == true){
             if($xml->getElementsByTagName('tenc')->length ==0)
-                fprintf($opfile, "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decrypted when independently accessed, but missing in the Header of Rep/Track ".$id."\n");
+                $messages .= "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decrypted when independently accessed, but missing in the Header of Rep/Track ".$id."\n";
             else{
                 $xml_tenc=$xml->getElementsByTagName('tenc');
                 $AuxInfoPresent=($xml_tenc->item(0)->getAttribute('default_IV_size')!=0);
@@ -269,8 +298,8 @@ function checkCMAFTracks(){
                         $xml_traf=$xml_moof->item($j)->getElementsByTagName('traf');
                         $xml_senc=$xml_traf->item(0)->getElementsByTagName('senc');
                         if($xml_senc->length==0){
-                           fprintf($opfile, "**'CMAF check violated: Section 7.4.2. - When Sample Encryption Sample Auxiliary Info is used, 'senc' SHALL be present in each CMAF Fragment, but not found in Rep/Track ".$id." Fragment ".($j+1)."\n");
-                           fprintf($opfile, "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decrypted when independently accessed, but missing in the Fragment ".($j+1)." of Rep/Track ".$id."\n");
+                            $messages .= "**'CMAF check violated: Section 7.4.2. - When Sample Encryption Sample Auxiliary Info is used, 'senc' SHALL be present in each CMAF Fragment, but not found in Rep/Track ".$id." Fragment ".($j+1)."\n";
+                            $messages .= "**'CMAF check violated: Section 7.3.2.4. - Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be decrypted when independently accessed, but missing in the Fragment ".($j+1)." of Rep/Track ".$id."\n";
                         }
                     }
                 }
@@ -286,7 +315,7 @@ function checkCMAFTracks(){
                 for($z=0; $z<$ref_count; $z++){
                     $ref_type=$sidx->item($j)->getAttribute('reference_type_'.($z+1));
                     if($ref_type!=0)
-                        fprintf($opfile, "**'CMAF check violated: Section 7.3.3.3. - If SegmentIndexBoxes exist, each subsegment referenced in the SegmentIndexBox SHALL be a single CMAF Fragment contained in the CMAF Track File, but reference to Fragment not found in Rep/Track ".$id.", Segment ".($z+1)."\n");
+                        $messages .= "**'CMAF check violated: Section 7.3.3.3. - If SegmentIndexBoxes exist, each subsegment referenced in the SegmentIndexBox SHALL be a single CMAF Fragment contained in the CMAF Track File, but reference to Fragment not found in Rep/Track ".$id.", Segment ".($z+1)."\n";
                 //Check on non_sync_sample
                  /*   if($xml_handlerType=='vide'){
                     $sap_type=intval($sidx[$j]->getAttribute('SAP_type_'.($z+1)));
@@ -314,7 +343,31 @@ function checkCMAFTracks(){
         
         $cmaf_mediaprofile_res = determineCMAFMediaProfiles($xml);
         $cmaf_mediaProfiles[$current_period][$current_adaptation_set][$current_representation]['cmafMediaProfile'] = $cmaf_mediaprofile_res[0];
-        fprintf($opfile, $cmaf_mediaprofile_res[1]);
+        $messages .= $cmaf_mediaprofile_res[1];
+        
+        if($messages != '' || !$cmaf_cmfc) {
+            $cmaf_cmfc = FALSE;
+            $messages .= $messages_cmf2;
+            $messages .= "**'CMAF check violated: Section 7.3.2.2. - A CMAF Track SHALL conform to at least one structural brand', conformance to a structural brand is not found for Rep/Track ".$id."\n";
+            fprintf($opfile, $messages);
+            fclose($opfile);
+        }
+        else {
+            if(!$cmaf_cmf2) {
+                fclose($opfile);
+                $logs_array = explode("\n", file_get_contents($session_dir . '/Period' . $current_period . '/' . $error_file . '.txt'));
+                $size = sizeof($logs_array);
+                for($log_index=0; $log_index<$size; $log_index++) {
+                    if(strpos($logs_array[$log_index], 'CMAF check violated Section 7.7.3') !== FALSE) {
+                        unset($logs_array[$log_index]);
+                    }
+                }
+                file_put_contents($session_dir . '/Period' . $current_period . '/' . $error_file . '.txt', $logs_array);
+            }
+            elseif($messages_cmf2 != '') {
+                $cmaf_cmf2 = FALSE;
+            }
+        }
     }
     
     ## For reporting
@@ -336,6 +389,24 @@ function checkCMAFTracks(){
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
     
     return $file_location;
+}
+
+function checkCMAFMessages($log_file) {
+    global $session_dir, $current_period;
+    
+    $cmaf_cmfc = TRUE;
+    $cmaf_cmf2 = TRUE;
+    
+    $logs = file_get_contents($session_dir . '/Period' . $current_period . '/' . $log_file . '.txt');
+    if(strpos($logs, "CMAF check violated Section 7.7.3") !== FALSE) {
+        $cmaf_cmf2 = FALSE;
+    }
+    if(strpos($logs, "CMAF check violated") !== FALSE) {
+        $cmaf_cmfc = FALSE;
+        $cmaf_cmf2 = FALSE;
+    }
+    
+    return [$cmaf_cmfc, $cmaf_cmf2];
 }
 
 function determineCMAFMediaProfiles($xml){

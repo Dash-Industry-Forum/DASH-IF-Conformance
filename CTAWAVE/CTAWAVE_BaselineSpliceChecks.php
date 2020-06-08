@@ -35,9 +35,6 @@ function CTABaselineSpliceChecks()
     
     WAVEProgramChecks();
     
-    $temp_string = str_replace(array('$Template$'),array($CTAspliceConstraitsLog),$string_info);
-    file_put_contents($session_dir.'/'.$CTAspliceConstraitsLog.'.html',$temp_string);
-    
     $searchfiles = file_get_contents($session_dir.'/'.$CTAspliceConstraitsLog.'.txt');
     if(strpos($searchfiles, "CTAWAVE check violated") !== FALSE){
         $progress_xml->Results[0]->addChild('CTAWAVESpliceConstraints', 'error');
@@ -51,13 +48,9 @@ function CTABaselineSpliceChecks()
         $progress_xml->Results[0]->addChild('CTAWAVESpliceConstraints', 'noerror');
         $file_error[] = "noerror";
     }
-    
-    $tempr_string = str_replace('$Template$', '/'.$CTAspliceConstraitsLog, $string_info);
-    file_put_contents($session_dir.'/'.$CTAspliceConstraitsLog.'.html', $tempr_string);
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
-    
+    tabulateResults($session_dir.'/'.$CTAspliceConstraitsLog.'.txt', 'Cross');
     print_console($session_dir.'/'.$CTAspliceConstraitsLog.'.txt', " CTA WAVE Baseline Splice Constraints Results");
-
 }
 
 function checkSequentialSwSetMProfile($MediaProfDatabase)

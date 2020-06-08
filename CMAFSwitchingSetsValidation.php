@@ -484,13 +484,11 @@ function checkSwitchingSets(){
         }
         $progress_xml->Results[0]->Period[$current_period]->Adaptation[$current_adaptation_set]->ComparedRepresentations->addAttribute('url', str_replace($_SERVER['DOCUMENT_ROOT'], 'http://' . $_SERVER['SERVER_NAME'], $session_dir.'/Period'.$current_period.'/'.$compinfo.'.txt'));
         $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
-        
-        $temp_string = str_replace ('$Template$','/Period'.$current_period.'/'.$compinfo,$string_info);
-        file_put_contents($session_dir.'/Period'.$current_period.'/'.$compinfo.'.html',$temp_string);
     }
     
     err_file_op(2);
     print_console($session_dir.'/Period'.$current_period.'/'.$compinfo.'.txt', "Period " . ($current_period+1) . " Adaptation Set " . ($current_adaptation_set+1) . " CMAF Switching Set Results");
+    tabulateResults($session_dir.'/Period'.$current_period.'/'.$compinfo.'.txt', 'Cross');
     
     return $file_error;
 }
