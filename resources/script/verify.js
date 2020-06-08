@@ -484,7 +484,8 @@ function dispatchRequest(segment, type, xmlHttp)
     }
 
     //xmlHttp.setRequestHeader("Date",timeToSend); // Forbidden header name
-    xmlHttp.setRequestHeader("Content-Type", "application/dash+xml"); // This avoid to fall into HTTP 415 Unsupported Media Type
+    if(MPD.isLowLatency)
+        xmlHttp.setRequestHeader("Content-Type", "application/dash+xml"); // This avoid to fall into HTTP 415 Unsupported Media Type
 
     xmlHttp.send(null);//if the request method is post, it will not be null
 }
@@ -1842,12 +1843,10 @@ function getProfiles(mpd)
 function hasLowLatencyProfile(mpd)
 {
     var result = false;
-    var profiles = getProfiles(mpd)
+    var profiles = getProfiles(mpd);
 
     var numProfiles = profiles.length;
-    // TODO: restore the right urn for low latency
-    //var lowLatencyProfile = "https://dashif.org/guidelines/low-latency-livev5";
-    var lowLatencyProfile = "urn:mpeg:dash:profile:isoff-live:2011";
+    var lowLatencyProfile = "https://dashif.org/guidelines/low-latency-livev5";
 
     for (var i = 0; i < numProfiles; i++) {
         var res = profiles[i].localeCompare(lowLatencyProfile);

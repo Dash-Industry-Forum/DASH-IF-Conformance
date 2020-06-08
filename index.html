@@ -19,19 +19,52 @@
         <script type="text/javascript" src="resources/script/verify.js"></script>
         <title>Dynamic Service Conformance</title>
         <style type="text/css">
+            #btn {
+                border: 1px solid #007bff;
+                background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #007bff), color-stop(1, #007bff) ) repeat scroll 0% 50%;
+                background-color:#007bff;
+                cursor: pointer;
+                width: 150px;
+                height: 28px;
+                color: #fff;
+            }
+            
+            #dropdown {
+                border: 1px solid #007bff;
+                background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #007bff), color-stop(1, #007bff) ) repeat scroll 0% 50%;
+                background-color:#007bff;
+                cursor: pointer;
+                width: 180px;
+                height: 28px;
+                color: #fff;
+            }
+            
+            #dropdownlist {
+                border: 1px solid #007bff;
+                background-color:#ffffff;
+                cursor: pointer;
+                width: 180px;
+                height: 28px;
+                color: #000;
+            }
+            
             #btnstart {
-                border:  none;
-                background: transparent url(resources/images/btnstart.png) repeat scroll 0% 50%;
+                border: 1px solid #007bff;
+                background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #007bff), color-stop(1, #007bff) ) url(resources/images/btnstart.png) repeat scroll 0% 50%;
+                background-color:#007bff;
                 cursor: pointer;
                 width: 78px;
                 height: 28px;
+                color: #fff;
             }
             #btnstop {
-                border:  none;
-                background: transparent url(resources/images/btnstop.png) repeat scroll 0% 50%;
+                border: 1px solid #007bff;
+                background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #007bff), color-stop(1, #007bff) ) url(resources/images/btnstop.png) repeat scroll 0% 50%;
+                background-color:#007bff;
                 cursor: pointer;
                 width: 78px;
                 height: 28px;
+                color: #fff;
             }
 
             #SegmentOutput
@@ -51,12 +84,23 @@
                 background-color:rgb(221,221,221);
                 box-shadow: 10px 10px 5px #888888;
             }
+            
+            #container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+             }
+
+            .block {
+                margin: 10px;        
+            }
 
         </style>
         <style>
-        </style></head>
-    <body bgcolor="#e7ebff" onload=parseURL();>
-
+        </style>
+    </head>
+    
+    <body bgcolor="#FFFFFF" onload=parseURL();>
         <script type="text/javascript">
             var userMPD;
             function checkRTT()
@@ -72,12 +116,15 @@
 
             function checkMPD()
             {
-                if (document.getElementById('mpdURL').options[document.getElementById('mpdURL').selectedIndex].text == "Customized")
+                if (document.getElementById('dropdown').options[document.getElementById('dropdown').selectedIndex].text == "Customized")
                 {
-                    document.getElementById("mpdbox").value = userMPD;
+                    if(userMPD)
+                        document.getElementById("mpdbox").value = userMPD;
+                    else
+                        document.getElementById("mpdbox").value = "";
                 } else
                 {
-                    document.getElementById("mpdbox").value = document.getElementById('mpdURL').options[document.getElementById('mpdURL').selectedIndex].value;
+                    document.getElementById("mpdbox").value = document.getElementById('dropdown').options[document.getElementById('dropdown').selectedIndex].value;
                 }
             }
 
@@ -91,7 +138,7 @@
                 if (userMPD && userMPD.length > 0)
                 {
                     document.getElementById("mpdbox").value = userMPD;
-                    document.getElementById("mpdURL").selectedIndex = document.getElementById("mpdURL").length - 1;
+                    document.getElementById("dropdown").selectedIndex = document.getElementById("dropdown").length - 1;
                 }
                 if (urlAux[2] == "start=yes")
                     process();
@@ -117,42 +164,64 @@
                 }
             }
         </script>
-        <h3 style="font-family: Helvetica,Arial,sans-serif; text-align: center; color: rgb(102, 102, 102);"><big>Dynamic Service Conformance</big></h3>
-        <div style="text-align: center;"><select style="font-family: Helvetica,Arial,sans-serif;" name="mpd URL" id="mpdURL" onchange="checkMPD()"><option value="http://livesim.dashif.org/livesim/mup_60/testpic_2s/Manifest.mpd">Number-based Template</option><option value="http://livesim.dashif.org/livesim/segtimeline_1/mup_60/testpic_2s/Manifest.mpd">SegmentTimeline</option><option value="http://livesim.dashif.org/livesim/periods_60/xlink_30/testpic_2s/Manifest.mpd">Access via Xlink</option><option>Customized</option></select><span style="font-family: Helvetica,Arial,sans-serif;">
-            </span><textarea style="font-family: Helvetica,Arial,sans-serif;" id="mpdbox" rows="1" cols="80">http://livesim.dashif.org/livesim/mup_60/testpic_2s/Manifest.mpd</textarea><span style="font-family: Helvetica,Arial,sans-serif;">
+        
+        <div id="container">
+            <br>
+            <img id="dashLogo" class="block" border="0" src="../Conformance-Frontend/dash_img/Dash2.png" width="191" height="61">
+            <h1 class="block" style="font-family: Helvetica,Arial,sans-serif; color: #007BFF; margin-top:20px">Dynamic Service Conformance Tool</h1>
+            <br><br>
+        </div>
+        <br><br><br><br>
+        
+        <div style="text-align: center;">
+            <select id="dropdown" name="mpd URL" onchange="checkMPD()">
+                <option id="dropdownlist" value="http://livesim.dashif.org/livesim/mup_60/testpic_2s/Manifest.mpd">Number-based Template</option>
+                <option id="dropdownlist" value="http://livesim.dashif.org/livesim/segtimeline_1/mup_60/testpic_2s/Manifest.mpd">SegmentTimeline</option>
+                <option id="dropdownlist" value="http://livesim.dashif.org/livesim/periods_60/xlink_30/testpic_2s/Manifest.mpd">Access via Xlink</option>
+                <option id="dropdownlist">Customized</option>
+            </select>
+            
+            <textarea id="mpdbox" style="font-family: Helvetica,Arial,sans-serif;" rows="1" cols="80">http://livesim.dashif.org/livesim/mup_60/testpic_2s/Manifest.mpd</textarea>
+            <button id="btnstart" type="button" onclick="process()">START</button>
+            <button id="btnstop" type="button" onclick="exit()">STOP</button>
+        </div>
+        <br>
+        
+        <button id="btn" onclick="advancedOptions()">Advanced Options</button>
 
-            </span><button id="btnstart" style="font-family: Helvetica,Arial,sans-serif;" type="button" onclick="process()"></button><span style="font-family: Helvetica,Arial,sans-serif;">
-
-            </span><button id="btnstop" style="font-family: Helvetica,Arial,sans-serif;" type="button" onclick="exit()"></button><span style="font-family: Helvetica,Arial,sans-serif;">
-
-            </span><br style="font-family: Helvetica,Arial,sans-serif;"></div><br style="font-family: Helvetica,Arial,sans-serif;">
-        <button onclick="advancedOptions()">Advanced Options</button>
-
-        <div class="adv" style="display:none"><input style="font-family: Helvetica,Arial,sans-serif;" name="group1" onchange="checkRTT()" id="rttsel" checked="checked" type="radio"><span style="font-family: Helvetica,Arial,sans-serif;">
-                RTT correction to SAE times </span><small style="font-family: Helvetica,Arial,sans-serif;">(in msec)</small><span style="font-family: Helvetica,Arial,sans-serif;"> : </span><input style="font-family: Helvetica,Arial,sans-serif;" name="rtt" min="1" max="1000000" step="1" value="300" id="rtt" type="number"><span style="font-family: Helvetica,Arial,sans-serif;">
+        <div class="adv" style="display:none"><input style="font-family: Helvetica,Arial,sans-serif;" name="group1" onchange="checkRTT()" id="rttsel" checked="checked" type="radio"><span style="color: #007BFF; font-family: Helvetica,Arial,sans-serif;">
+                RTT correction to SAE times </span><small style="color: #007BFF; font-family: Helvetica,Arial,sans-serif;">(in msec)</small><span style="font-family: Helvetica,Arial,sans-serif;"> : </span><input style="font-family: Helvetica,Arial,sans-serif;" name="rtt" min="1" max="1000000" step="1" value="300" id="rtt" type="number"><span style="font-family: Helvetica,Arial,sans-serif;">
             </span><input style="font-family: Helvetica,Arial,sans-serif;" name="group1" onchange="checkRTT()" type="radio"><span style="font-family: Helvetica,Arial,sans-serif;"> None
 
-            </span><br style="font-family: Helvetica,Arial,sans-serif;"></div><br style="font-family: Helvetica,Arial,sans-serif;">
+            </span><br style="font-family: Helvetica,Arial,sans-serif;">
+        </div>
+        <br style="font-family: Helvetica,Arial,sans-serif;">
 
-        <div class="adv" style="display:none"><input style="font-family: Helvetica,Arial,sans-serif;" id="cscorrect" type="checkbox"><span style="font-family: Helvetica,Arial,sans-serif;">Dynamic clock skew correction</span><br style="font-family: Helvetica,Arial,sans-serif;"></div>
+        <div class="adv" style="display:none"><input style="font-family: Helvetica,Arial,sans-serif;" id="cscorrect" type="checkbox">
+            <span style="color: #007BFF; font-family: Helvetica,Arial,sans-serif;">Dynamic clock skew correction</span>
+            <br style="font-family: Helvetica,Arial,sans-serif;">
+        </div>
+        
         <div style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; font-size: 80%; text-align: center;" id="access"></div>
-        <br style="font-family: Helvetica,Arial,sans-serif; color: rgb(102, 102, 102);">
+        <br style="font-family: Helvetica,Arial,sans-serif; color: #007BFF;">
 
-        <button onclick="details()">Process in details</button>
+        <button id="btn" onclick="details()">Process in details</button>
         <div  class="detail" style="display:none">
-            <h4 style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; color: rgb(51, 51, 51);"><big>Response information for the MPD request .....</big></h4>
+            <h4 style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; color: #007BFF;"><big>Response information for the MPD request .....</big></h4>
             <br style="font-family: Helvetica,Arial,sans-serif;">
             <div style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; font-size: 80%;" id="MPDOutput"></div>
-            <br style="font-family: Helvetica,Arial,sans-serif; color: rgb(102, 102, 102);">
+            <br style="font-family: Helvetica,Arial,sans-serif; color: #007BFF;">
 
-            <h4 style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; color: rgb(51, 51, 51);"><big>Overall progress of segment requests .....</big></h4>
+            <h4 style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; color: #007BFF;"><big>Overall progress of segment requests .....</big></h4>
             <br style="font-family: Helvetica,Arial,sans-serif;">
             <div style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; font-size: 80%;" id="Progress"></div>
             <br style="font-family: Helvetica,Arial,sans-serif;">
 
-            <h4 style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; color: rgb(51, 51, 51);"><big>Response information for the segments requests .....</big></h4>
+            <h4 style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; color: #007BFF;"><big>Response information for the segments requests .....</big></h4>
             <br>
             <div style="font-family: Helvetica,Arial,sans-serif; font-weight: normal; font-size: 80%;" id="SegmentOutput"> <br></div>
-            <br></div>
-    </body></html>
+            <br>
+        </div>
+    </body>
+</html>
 
