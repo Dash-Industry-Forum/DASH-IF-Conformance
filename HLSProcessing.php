@@ -24,6 +24,7 @@ function processHLS(){
     $StreamInfURLArray = array();
     $IframeURLArray = array();
     $XMediaURLArray = array();
+    $CodecArray = array();
     
     ## Open related files
     $progress_xml = simplexml_load_string('<root><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed><allDownloadComplete>false</allDownloadComplete></root>');
@@ -38,7 +39,7 @@ function processHLS(){
         ## If the manifest is a media playlist
         ## extract the urls to either stream_inf or iframe and save it into arrays
         if($hls_manifest_type=="MasterPlaylist"){
-            list($StreamInfURLArray, $IframeURLArray,$XMediaURLArray) = playlistURLs($m3u8);
+            list($StreamInfURLArray, $IframeURLArray,$XMediaURLArray, $CodecArray) = playlistURLs($m3u8);
         }
         else{
             if(strpos(file_get_contents($mpd_url),"#EXT-X-I-FRAMES-ONLY")) 
@@ -52,7 +53,7 @@ function processHLS(){
             $return_arr = $cmaf_function_name($cmaf_when_to_call[0]);
         if($ctawave_conformance)
             $return_arr = $ctawave_function_name($ctawave_when_to_call[0]);
-        $file_location = validate_segment_hls(array($StreamInfURLArray, $IframeURLArray,$XMediaURLArray));
+        $file_location = validate_segment_hls(array($StreamInfURLArray, $IframeURLArray,$XMediaURLArray), $CodecArray);
         
         ## Group the playlists together
         groupPlaylists($file_location);
@@ -158,10 +159,30 @@ function playlistURLs($array){
                     $XMediaURLArray[] = $XMediaURL;
                 }
             }
+
+            //getting the CODECS
+            if(strpos($line,"CODECS") !== FALSE) {
+                $sub = substr($line, strpos($line,"CODECS=")+8);
+                $codecStr = substr($sub,0,strpos($sub,"\""));
+
+                $pos = strpos($codecStr,",");
+                while($pos !== FALSE) {
+                    $codec = substr($codecStr,0,$pos);
+                    if($codec && !in_array($codec, $CodecArray)){ //check the codec not to be a duplicate
+                        $CodecArray[] = $codec;
+                    }
+                    $codecStr = substr($codecStr,$pos+1);
+                    $pos = strpos($codecStr,",");
+                }
+                $codec = $codecStr;
+                if($codec && !in_array($codec, $CodecArray)){ //check the codec not to be a duplicate
+                    $CodecArray[] = $codec;
+                }
+            }
         }    
     }
 
-    return [$StreamInfURLArray, $IframeURLArray,$XMediaURLArray];
+    return [$StreamInfURLArray, $IframeURLArray, $XMediaURLArray, $CodecArray];
 }
 
 //returns the absolute url 
@@ -210,7 +231,7 @@ function segmentURLs($url){
  * segmentDonload downloads the segments of a playlist and returns the size of downloaded the content
  * inputs are the url to the playlist and the type of the playlist
  */
-function segmentDownload($urlarray, $type){
+function segmentDownload($urlarray, $type, $is_dolby){
     global $session_dir, $hls_iframe_file, $hls_mdat_file, $hls_current_index, $hls_byte_range_begin, $hls_byte_range_size, $progress_xml, $progress_report;
     
     $segment_urls = array();
@@ -243,7 +264,8 @@ function segmentDownload($urlarray, $type){
         
         // download data of the playlist into the folder and return size of the downloaded content 
         $segment_urls[] = $segmentURLs;
-        $sizearray[] = download_data($tmpdir, ($type == $hls_iframe_file) ? $array : $segmentURLs);
+        $is_subtitle_rep = false; // this is not used in HLS always false
+        $sizearray[] = download_data($tmpdir, ($type == $hls_iframe_file) ? $array : $segmentURLs, $is_subtitle_rep, $is_dolby);
         
         rename_file($session_dir . '/' . $hls_mdat_file . '.txt', $session_dir . '/' . $type . '_' . $hls_current_index . '_' . $hls_mdat_file . '.txt');
         if($type == $hls_iframe_file){
