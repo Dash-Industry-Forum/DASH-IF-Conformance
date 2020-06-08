@@ -59,8 +59,8 @@ function CrossValidation_HbbTV_DVB(){
         
         ## Reporting
         fclose($opfile);
-        $temp_string = str_replace('$Template$','/Period'.$current_period.'/'.$log_file,$string_info);
-        file_put_contents($session_dir.'/Period'.$current_period.'/'.$log_file.'.html',$temp_string);
+        add_remove_images('REMOVE');
+        tabulateResults($session_dir.'/Period'.$current_period.'/'.$log_file.'.txt', 'Cross');
         
         $searchfiles = file_get_contents($session_dir.'/Period'.$current_period.'/'.$log_file.'.txt');
         if(strpos($searchfiles, "DVB check violated") !== FALSE || strpos($searchfiles, "HbbTV check violated") !== FALSE || strpos($searchfiles, 'ERROR') !== FALSE){
@@ -487,40 +487,6 @@ function crossValidation_HbbTV_Representations($opfile, $xml_r, $xml_d, $i, $r, 
         }
     }
     ##
-}
-
-// Check if the nodes and their descendandts are the same
-function nodes_equal($node_1, $node_2){
-    $equal = true;
-    foreach($node_1->childNodes as $index => $ch_1){
-        $ch_2 = $node_2->childNodes->item($index);
-        
-        if($ch_1->nodeType == XML_ELEMENT_NODE && $ch_2->nodeType == XML_ELEMENT_NODE){
-            if($ch_1->nodeName != $ch_2->nodeName){
-                $equal = false;
-                break;
-            }
-           
-            $atts_1 = $ch_1->attributes;
-            $atts_2 = $ch_2->attributes;
-            if($atts_1->length != $atts_2->length){
-                $equal = false;
-                break;
-            }
-            for($i=0; $i<$atts_1->length; $i++){
-                if($atts_1->item($i)->name != $atts_2->item($i)->name || $atts_1->item($i)->value != $atts_2->item($i)->value){
-                    $equal = false;
-                    break;
-                }
-            }
-            
-            $equal = nodes_equal($ch_1, $ch_2);
-            if($equal == false)
-                break;
-        }
-    }
-    
-    return $equal;
 }
 
 function init_seg_commonCheck($files,$opfile){

@@ -67,14 +67,30 @@ function RepresentationValidation_HbbTV_DVB(){
     }
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
     
-    $copy_string_info=$string_info;
-    $index = strpos($copy_string_info, '</body>');
-    $copy_string_info = substr($copy_string_info, 0, $index) ."<img id=\"segmentReport\" src=\"$segment_duration_name\" width=\"650\" height=\"350\">".
-    "<img id=\"bitrateReport\" src=\"$bitrate_report_name\" width=\"650\" height=\"350\"/>\n" .substr($copy_string_info, $index);
-    $temp_string = str_replace('$Template$', '/Period'.$current_period.'/'.$rep_dir . "log", $copy_string_info);
-    file_put_contents($session_dir . '/Period' . $current_period . '/' . $rep_error_file . '.html', $temp_string);
+    add_remove_images('REMOVE');
+    $hbbtv_string_info = "<img id=\"segmentReport\" src=\"$segment_duration_name\" width=\"650\" height=\"350\">" .
+                         "<img id=\"bitrateReport\" src=\"$bitrate_report_name\" width=\"650\" height=\"350\"/>\n";
+    add_remove_images('ADD', $hbbtv_string_info);
     
     return $file_location;
+}
+
+function add_remove_images($request, $hbbtv_string_info=NULL) {
+    global $string_info;
+    
+    if($request == 'ADD') {
+        $index = strpos($string_info, '</body>');
+        $string_info = substr($string_info, 0, $index) . $hbbtv_string_info .substr($string_info, $index);
+    }
+    elseif($request == 'REMOVE') {
+        $start_index = strpos($string_info, '<img');
+        $end_index = strpos($string_info, '>', $start_index);
+        
+        while($start_index !== FALSE) {
+            $string_info = substr($string_info, 0, $start_index) . substr($string_info, $end_index+1);
+            $start_index = strpos($string_info, '<img');
+        }
+    }
 }
 
 function HbbTV_DVB_flags(){

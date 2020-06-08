@@ -30,6 +30,9 @@ function HbbTV_DVB_Handle($request){
         case 'Representation':
             $return_val = RepresentationValidation_HbbTV_DVB();
             break;
+        case 'BeforeAdaptationSet':
+            $return_val = add_remove_images('REMOVE');
+            break;
         case 'AdaptationSet':
             $return_val = CrossValidation_HbbTV_DVB();
             break;

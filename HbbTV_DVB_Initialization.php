@@ -22,10 +22,10 @@ include 'HbbTV_DVB_CrossValidation.php';
 global $adaptation_set_template, $reprsentation_template, $bitrate_script, $segment_duration_script, $subtitle_segments_location, $hbbtv_dvb_crossvalidation_logfile, $mpd_xml_string;
 
 $hbbtv_dvb_function_name = 'HbbTV_DVB_Handle';
-$hbbtv_dvb_when_to_call = array('BeforeMPD', 'MPD', 'BeforeRepresentation', 'Representation', 'AdaptationSet');
+$hbbtv_dvb_when_to_call = array('BeforeMPD', 'MPD', 'BeforeRepresentation', 'Representation', 'BeforeAdaptationSet', 'AdaptationSet');
 
 $bitrate_script = 'bitratereport.py';
 $segment_duration_script = 'seg_duration.py';
 $subtitle_segments_location = $reprsentation_template . '/Subtitles/';
 $hbbtv_dvb_crossvalidation_logfile =  $adaptation_set_template . '_hbbtv_dvb_compInfo';
-$mpd_xml_string = '<mpdresult><xlink>No Result</xlink><schema>No Result</schema><schematron>No Result</schematron><hbbtv_dvb>No Result</hbbtv_dvb></mpdresult>';
+$mpd_xml_string = xml_string_update($mpd_xml_string, '<hbbtv_dvb>No Result</hbbtv_dvb>', '<');
