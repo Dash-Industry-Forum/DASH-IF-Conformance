@@ -98,6 +98,9 @@ void checkDASHBoxOrder(long cnt, atomOffsetEntry *list, long segmentInfoSize, bo
                                 if(vg.cmafChunk)
                                     errprint("CMAF check violated: Section 7.3.2.3 \"A CMAF Chunk SHALL contain one ISOBMFF segment contraints to include one MovieFragmentBox followed by one Media Data Box\", but mdat not found following a moof in Chunk %d (at file absolute offset %lld).\n", index, list[j].offset);
                             }
+                            if(vg.dashifll){
+                                errprint("CMAF check violated: Section 7.3.2.4. \"A CMAF Fragment SHALL consist of one or more ISO Base Media segments that contains one MovieFragmentBox followed by one or more Media Data Box(es) containing the samples it references\", but mdat not found following a moof in Segment/Fragment %d (at file absolute offset %lld).\n",index, list[j].offset);
+                            }
                             if(vg.hbbtv)
                                 errprint("### HbbTV check violated Section E.3.2: 'Each Segment shall consists of a whole self-contained movie fragment', mdat not found following a moof in segment %d (at file absolute offset %lld),\n", index, list[j].offset);
 			}
@@ -128,6 +131,11 @@ void checkDASHBoxOrder(long cnt, atomOffsetEntry *list, long segmentInfoSize, bo
                 if (!fragmentInSegmentFound && !initializationSegment){
                     errprint("No fragment found in segment %d\n", index + 1);
                     if(vg.cmaf){
+                        errprint("CMAF check violated: Section 7.3.2.4 \"A CMAF Fragment SHALL consist of one or more ISO Base Media segments that contains one MovieFragmentBox followed by one or more Media Data Box(es)\", but moof not found in Segment/Fragment %d \n",index);
+                        if(vg.cmafChunk)
+                            errprint("CMAF check violated: Section 7.3.2.3 \"A CMAF Chunk SHALL contain one ISOBMFF segment contraints to include one MovieFragmentBox followed by one Media Data Box\", but moof not found in Chunk %d \n", index);
+                    }
+                    if(vg.dashifll){
                         errprint("CMAF check violated: Section 7.3.2.4 \"A CMAF Fragment SHALL consist of one or more ISO Base Media segments that contains one MovieFragmentBox followed by one or more Media Data Box(es)\", but moof not found in Segment/Fragment %d \n",index);
                         if(vg.cmafChunk)
                             errprint("CMAF check violated: Section 7.3.2.3 \"A CMAF Chunk SHALL contain one ISOBMFF segment contraints to include one MovieFragmentBox followed by one Media Data Box\", but moof not found in Chunk %d \n", index);
@@ -213,7 +221,10 @@ OSErr postprocessFragmentInfo(MovieInfoRec *mir) {
                     return badAtomErr;
 
                 if (mir->moofInfo[i].trafInfo[j].tfdtFound) {
-                    if (mir->moofInfo[i].trafInfo[j].baseMediaDecodeTime != mir->tirList[index].cumulatedTackFragmentDecodeTime) {
+                    long double cumulatedTackFragmentDecodeTime = (long double) mir->tirList[index].cumulatedTackFragmentDecodeTime / (long double) mir->tirList[index].mediaTimeScale;
+                    long double baseMediaDecodeTime = (long double) mir->moofInfo[i].trafInfo[j].baseMediaDecodeTime / (long double) mir->tirList[index].mediaTimeScale;
+                    if(abs(cumulatedTackFragmentDecodeTime - baseMediaDecodeTime) > 0.001) {
+                    //if (mir->moofInfo[i].trafInfo[j].baseMediaDecodeTime != mir->tirList[index].cumulatedTackFragmentDecodeTime) {
                         if (i == 0 && vg.dashSegment) {
                             warnprint("Warning: tfdt base media decode time %Lf not equal to accumulated decode time %Lf for track %d for the first fragment of the movie. \n", (long double) mir->moofInfo[i].trafInfo[j].baseMediaDecodeTime / (long double) mir->tirList[index].mediaTimeScale, (long double) mir->tirList[index].cumulatedTackFragmentDecodeTime / (long double) mir->tirList[index].mediaTimeScale, mir->moofInfo[i].trafInfo[j].track_ID);
                             mir->tirList[index].cumulatedTackFragmentDecodeTime = mir->moofInfo[i].trafInfo[j].baseMediaDecodeTime;

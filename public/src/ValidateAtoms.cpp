@@ -2503,6 +2503,9 @@ OSErr Validate_mehd_Atom( atomOffsetEntry *aoe, void *refcon )
         if(vg.cmaf && mir->fragment_duration <=0)
             errprint("CMAF checks violated: Section 7.3.2.1. \"If 'mehd' is present, SHALL provide the overall duration of a fragmented movie. If duration \
             is unknown, this box SHALL be omitted.\", but duration found as %d",mir->fragment_duration);
+        if(vg.dashifll && mir->fragment_duration <=0)
+            errprint("CMAF checks violated: Section 7.3.2.1. \"If 'mehd' is present, SHALL provide the overall duration of a fragmented movie. If duration \
+            is unknown, this box SHALL be omitted.\", but duration found as %d",mir->fragment_duration);
 
 	// All done
 	aoe->aoeflags |= kAtomValidated;
@@ -2615,7 +2618,7 @@ OSErr Validate_tfhd_Atom( atomOffsetEntry *aoe, void *refcon )
         BAILIFERR( GetFileDataN32( aoe, &trafInfo->sample_description_index, offset, &offset ) );
     else{
         if(vg.cmaf)
-            errprint("CMAF check violated: Section 7.5.14. \"Default values or per sample values SHALL be stored in each CMAF chunk's TrackFragmentBoxHeader and/or TrackRunBox\", 'sample_description_index' not found.\n");
+            errprint("CMAF check violated: Section 7.7.3. \"Default values or per sample values SHALL be stored in each CMAF chunk's TrackFragmentBoxHeader and/or TrackRunBox\", 'sample_description_index' not found.\n");
     }
 
     if(trafInfo->default_sample_duration_present)
@@ -2751,7 +2754,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
             trunInfo->sample_duration[i] = trafInfo->default_sample_duration;
             currentSampleDecodeDelta = trafInfo->default_sample_duration;
             if(vg.cmaf && !trafInfo->default_sample_duration_present)
-                errprint("CMAF check violated: Section 7.5.14. \"Default values or per sample values SHALL be stored in each CMAF chunk's TrackFragmentBoxHeader and/or TrackRunBox\", 'duration' not found in any of them. \n");
+                errprint("CMAF check violated: Section 7.7.3. \"Default values or per sample values SHALL be stored in each CMAF chunk's TrackFragmentBoxHeader and/or TrackRunBox\", 'duration' not found in any of them. \n");
         }
 
         trunInfo->cummulatedSampleDuration += currentSampleDecodeDelta;
@@ -2761,7 +2764,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
 		else{
 			trunInfo->sample_size[i] = trafInfo->default_sample_size;
                         if(vg.cmaf && !trafInfo->default_sample_size_present)
-                            errprint("CMAF check violated: Section 7.5.14. \"Default values or per sample values SHALL be stored in each CMAF chunk's TrackFragmentBoxHeader and/or TrackRunBox\", 'size' not found in any of them. \n");
+                            errprint("CMAF check violated: Section 7.7.3. \"Default values or per sample values SHALL be stored in each CMAF chunk's TrackFragmentBoxHeader and/or TrackRunBox\", 'size' not found in any of them. \n");
                 }
 
         if(trunInfo->sample_flags_present)
@@ -2773,7 +2776,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
                 else{
 			    trunInfo->sample_flags[i] = trafInfo->default_sample_flags;
                             if(vg.cmaf && !trafInfo->default_sample_flags_present)
-                                errprint("CMAF check violated: Section 7.5.14. \"default_sample_flags, sample_flags and first_sample_flags SHALL be set in the TrackFragmentBoxHeader and/or TrackRunBox to provide sample dependency information within each CMAF chunk and CMAF fragment\", not found in any of them.\n");
+                                errprint("CMAF check violated: Section 7.7.3. \"default_sample_flags, sample_flags and first_sample_flags SHALL be set in the TrackFragmentBoxHeader and/or TrackRunBox to provide sample dependency information within each CMAF chunk and CMAF fragment\", not found in any of them.\n");
                     }
                 }
 
@@ -2798,8 +2801,11 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
 
     }
 
-	if(vg.cmaf && trunInfo->data_offset_present != true){
+	if(vg.cmaf){
+            if(trunInfo->data_offset_present != true)
 		errprint("CMAF check violated: Section 7.5.17. \"The data-offset-present flag SHALL be set to true\", found %d\n", trunInfo->data_offset_present);
+            if(trunInfo->version != 0 && trunInfo->version != 1)
+                errprint("CMAF check violated: Section 7.5.17. \"The version field SHALL be set to either '0' or '1'\", found %d\n", trunInfo->version);
 	}
 	if(vg.hbbtv && trunInfo->version ==0)
             errprint("### HbbTV check violated: Section E.3.1.1. \"The track run box (trun) shall allow negative composition offsets in order to maintain audio visual presentation synchronization\", but unsigned offsets found \n");
@@ -3061,6 +3067,8 @@ OSErr Validate_emsg_Atom( atomOffsetEntry *aoe, void *refcon )
     UInt32  id;
     UInt8  *message_data;
     //TrafInfoRec *trafInfo = (TrafInfoRec *)refcon;
+    
+    UInt64 emsg_offset = aoe->offset;
 
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
@@ -3088,6 +3096,7 @@ OSErr Validate_emsg_Atom( atomOffsetEntry *aoe, void *refcon )
 	BAILIFERR( GetFileData( aoe,message_data, offset, aoe->maxOffset - offset , &offset ) );
 
      atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
+     atomprint("offset=\"%ld\"\n", emsg_offset);
      atomprint("timeScale=\"%ld\"\n", timescale);
      atomprint("presentationTimeDelta=\"%ld\"\n", presentation_time_delta);
      atomprint("eventDuration=\"%ld\"\n", event_duration);
@@ -3352,14 +3361,22 @@ OSErr Validate_sidx_Atom( atomOffsetEntry *aoe, void *refcon )
     mir->processedSdixs++;
 
     atomprint("cumulatedDuration=\"%Lf\"\n", sidxInfo->cumulatedDuration);
-    //atomprint(">\n");
+    if(vg.dashifll) { atomprint(">\n"); }
     vg.tabcnt++;
-	for ( i = 0; i < sidxInfo->reference_count; i++ ) {
-	    sampleprint("<subsegment subsegment_duration=\"%ld\"", sidxInfo->references[i].subsegment_duration);
-	    sampleprintnotab(" starts_with_SAP=\"%d\"", sidxInfo->references[i].starts_with_SAP);
-	    sampleprintnotab(" SAP_type=\"%d\"", sidxInfo->references[i].SAP_type);
-	    sampleprintnotab(" SAP_delta_time=\"%ld\" />\n", sidxInfo->references[i].SAP_delta_time);
-	}
+    for ( i = 0; i < sidxInfo->reference_count; i++ ) {
+        if(vg.dashifll) {
+            atomprint("<subsegment subsegment_duration=\"%ld\"", sidxInfo->references[i].subsegment_duration);
+            atomprintnotab(" starts_with_SAP=\"%d\"", sidxInfo->references[i].starts_with_SAP);
+            atomprintnotab(" SAP_type=\"%d\"", sidxInfo->references[i].SAP_type);
+            atomprintnotab(" SAP_delta_time=\"%ld\" />\n", sidxInfo->references[i].SAP_delta_time);
+        }
+        else {
+            sampleprint("<subsegment subsegment_duration=\"%ld\"", sidxInfo->references[i].subsegment_duration);
+            sampleprintnotab(" starts_with_SAP=\"%d\"", sidxInfo->references[i].starts_with_SAP);
+            sampleprintnotab(" SAP_type=\"%d\"", sidxInfo->references[i].SAP_type);
+            sampleprintnotab(" SAP_delta_time=\"%ld\" />\n", sidxInfo->references[i].SAP_delta_time);
+        }
+    }
     --vg.tabcnt;
 
 	// All done

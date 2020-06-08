@@ -423,6 +423,10 @@ int main(void)
                          vg.hbbtv = true;
                 } else if ( keymatch( arg, "ctawave", 1)) {
                         vg.ctawave = true;
+                } else if ( keymatch( arg, "dashifll", 1)) {
+                        vg.dashifll = true;
+                } else if ( keymatch( arg, "inbandeventstreamll", 1)) {
+                        vg.inbandeventstreamll = true;
                 } else if ( keymatch( arg, "suppressatomlevel", 1)) {
                     vg.suppressAtomLevel = true;
                 } else {
@@ -676,7 +680,7 @@ int main(void)
 
 usageError:
 	fprintf( stderr, "Usage: %s [-filetype <type>] "
-								"[-printtype <options>] [-checklevel <level>] [-infofile <Segment Info File>] [-leafinfo <Leaf Info File>] [-segal] [-ssegal] [-startwithsap TYPE] [-level] [-bss] [-isolive] [-isoondemand] [-isomain] [-dynamic] [-dash264base] [-dashifbase] [-dash264enc] [-dashifondemand] [-dashifmixed] [-repindex] [-atomxml] [-cmaf] [-dvb] [-hbbtv] [-ctawave] [-suppressatomlevel]", "ValidateMP4" );
+								"[-printtype <options>] [-checklevel <level>] [-infofile <Segment Info File>] [-leafinfo <Leaf Info File>] [-segal] [-ssegal] [-startwithsap TYPE] [-level] [-bss] [-isolive] [-isoondemand] [-isomain] [-dynamic] [-dash264base] [-dashifbase] [-dash264enc] [-dashifondemand] [-dashifmixed] [-dashifll] [-repindex] [-atomxml] [-cmaf] [-dvb] [-hbbtv] [-ctawave] [-suppressatomlevel]", "ValidateMP4" );
 	fprintf( stderr, " [-samplenumber <number>] [-verbose <options>] [-offsetinfo <Offset Info File>] [-logconsole ] [-help] inputfile\n" );
 	fprintf( stderr, "    -a[tompath]      <atompath> - limit certain operations to <atompath> (e.g. moov-1:trak-2)\n" );
 	fprintf( stderr, "                     this effects -checklevel and -printtype (default is everything) \n" );
@@ -713,6 +717,7 @@ usageError:
 	fprintf( stderr, "    -dash264enc       Make checks specific for encrypted DASH264 content\n" );
         fprintf( stderr, "    -dashifondemand   Make checks specific for encrypted DASH-IF IOP On Demand content\n" );
 	fprintf( stderr, "    -dashifmixed      Make checks specific for encrypted DASH-IF IOP Mixed On Demand content\n" );
+        fprintf( stderr, "    -dashifll         Make checks specific for Low Latency DASH-IF content\n" );
 	fprintf( stderr, "    -repindex         Make checks specific for @RepresentationIndex");
 	fprintf( stderr, "    -indexrange       Byte range where sidx is expected\n");
 	fprintf( stderr, "    -width            Expected width of the video track\n");

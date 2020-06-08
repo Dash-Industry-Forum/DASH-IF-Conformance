@@ -630,6 +630,8 @@ typedef struct {
     bool    hbbtv;
     bool    ctawave;
     bool    dolby;
+    bool    dashifll;
+    bool    inbandeventstreamll;
     unsigned int  numControlTracks;
     unsigned int  *numControlLeafs;
     LeafInfo **controlLeafInfo;
@@ -1149,10 +1151,10 @@ OSErr ValidateAtomOfType( OSType theType, long flags, ValidateAtomTypeProcPtr va
 		long cnt, atomOffsetEntry *list, void *refcon );
 
 #define FieldMustBe( num, value, errstr ) \
-do { if ((num) != (value)) { err = badAtomErr; warnprint(errstr "\n", (value), num); } } while (false)
+do { if ((num) != (value)) { err = badAtomErr; warnprint("Warning for ISO/IEC 14496-12 " errstr "\n", (value), num); } } while (false)
 
 #define FieldCheck( _condition_, errstr ) \
-	do { if (!(_condition_)) { err = badAtomErr; errprint(errstr "\n"); }} while (false)
+	do { if (!(_condition_)) { err = badAtomErr; errprint("Error for ISO/IEC 14496-12 " errstr "\n"); }} while (false)
 
 #define FieldList2(t1,t2) {t1,t2};
 #define FieldList3(t1,t2,t3) {t1,t2,t3};

@@ -319,8 +319,14 @@ OSErr Validate_edts_Atom( atomOffsetEntry *aoe, void *refcon )
 	BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
 	
 	// Process 'elst' atoms
-	atomerr = ValidateAtomOfType( 'elst', kTypeAtomFlagCanHaveAtMostOne, 
-		Validate_elst_Atom, cnt, list, tir );
+	if(vg.cmaf) {
+            atomerr = ValidateAtomOfType( 'elst', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
+                    Validate_elst_Atom, cnt, list, tir );
+        }
+        else {
+            atomerr = ValidateAtomOfType( 'elst', kTypeAtomFlagCanHaveAtMostOne, 
+                    Validate_elst_Atom, cnt, list, tir );
+        }
 	if (!err) err = atomerr;
 
 	//
@@ -1216,8 +1222,8 @@ OSErr Validate_ftyp_Atom( atomOffsetEntry *aoe, void *refcon )
 	}
 	
 	if(vg.cmaf){
-            if(majorBrand=='cmfc' && version != 0)
-                errprint("CMAF Check violated : Section 7.2. \"If 'cmfc' is the major_brand, the minor_version SHALL be 0.\", found %ld\n",version);
+            if((majorBrand=='cmfc' || majorBrand=='cmf2') && version != 0)
+                errprint("CMAF Check violated : Section 7.2. \"If any of the structural CMAF brands is the major_brand, the minor_version SHALL be 0.\", found %ld\n",version);
         }
 	
 	compatBrandListSize = (aoe->size - 8 - aoe->atomStartSize);
@@ -1262,7 +1268,7 @@ OSErr Validate_ftyp_Atom( atomOffsetEntry *aoe, void *refcon )
 				vg.dsms[0] = true;
 				vg.dashSegment = true;
 			}
-			else if(currentBrand == 'cmfc'){
+			else if(currentBrand == 'cmfc'  || currentBrand == 'cmf2'){
 				vg.dashSegment = true; // Equivalent to CMAF Fragment. Can be directly used in CMAF Fragment conformances.
 				//vg.cmaf = true; //Niteesh: This might not be required if -cmaf is passed as an arg.
 			}
@@ -1383,7 +1389,7 @@ OSErr Validate_styp_Atom( atomOffsetEntry *aoe, void *refcon )
 				if(segmentFound && segmentNum != (vg.segmentInfoSize-1))
                     errprint("Brand 'lmsg' found as a compatible brand for segment number %d (not the last segment %d); violates ISO/IEC 23009-1:2012(E), 7.3.1: In all cases for which a Representation contains more than one Media Segment ... If the Media Segment is not the last Media Segment in the Representation, the 'lmsg' compatibility brand shall not be present.\n",segmentNum+1,vg.segmentInfoSize);
 			}
-            else if(currentBrand == 'cmfc'){
+            else if(currentBrand == 'cmfc'  || currentBrand == 'cmf2'){
                                 vg.dashSegment = true; // Equivalent to CMAF Fragment. Can be directly used in CMAF Fragment conformances.
 				//vg.cmaf = true; //Niteesh: This might not be required if -cmaf is passed as an arg.
 			}
