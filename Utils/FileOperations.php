@@ -183,3 +183,46 @@ function remove_duplicate($error_array){
     
     return $new_array;
 }
+
+function xml_string_update($string_to_update, $string_to_add, $last_occured_string_on) {
+    $position = strrpos($string_to_update, $last_occured_string_on);
+    return substr($string_to_update, 0, $position) . $string_to_add . substr($string_to_update, $position);
+}
+
+// Check if the nodes and their descendandts are the same
+function nodes_equal($node_1, $node_2){
+    $equal = true;
+    
+    $atts_1 = $node_1->attributes;
+    $atts_2 = $node_2->attributes;
+    if($atts_1->length != $atts_2->length){
+        return false;
+    }
+    
+    for($i=0; $i<$atts_1->length; $i++){
+        if($atts_1->item($i)->name != $atts_2->item($i)->name || $atts_1->item($i)->value != $atts_2->item($i)->value){
+            $equal = false;
+            break;
+        }
+    }
+    if(!$equal) {
+        return false;
+    }
+    
+    foreach($node_1->childNodes as $index => $ch_1){
+        $ch_2 = $node_2->childNodes->item($index);
+
+        if($ch_1->nodeType == XML_ELEMENT_NODE && $ch_2->nodeType == XML_ELEMENT_NODE){
+            if($ch_1->nodeName != $ch_2->nodeName){
+                $equal = false;
+                break;
+            }
+
+            $equal = nodes_equal($ch_1, $ch_2);
+            if($equal == false)
+                break;
+        }
+    }
+
+    return $equal;
+}

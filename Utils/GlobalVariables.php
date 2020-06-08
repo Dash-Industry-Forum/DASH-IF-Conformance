@@ -52,6 +52,14 @@ $hls_media_types = array('video' => array(), 'iframe' => array(), 'audio' => arr
 # DASH-IF IOP variables
 $dashif_conformance = false;
 
+# DASH-IF IOP LL variables
+$low_latency_dashif_conformance = false;
+$low_latency_cross_validation_file = '';
+$inband_event_stream_info = array();
+$utc_timing_info = array();
+$service_description_info = array();
+$availability_times = array();
+
 # CMAF variables
 $cmaf_conformance = false;
 $cmaf_mediaTypes;
@@ -95,7 +103,8 @@ if (isset($_POST['urlcode'])){
     $hbbtv_conformance = $url_array[5];
     $dashif_conformance=$url_array[6];
     $ctawave_conformance=$url_array[7];
-    $schema_url = $url_array[8];
+    $low_latency_dashif_conformance = $url_array[8];
+    $schema_url = $url_array[9];
 }
 if (isset($_POST['urlcodehls'])){
     $url_array = json_decode($_POST['urlcodehls']);
@@ -153,6 +162,12 @@ if(isset($_POST['dashif'])){
         echo "\n\n\033[".'0;34'."m"."The option 'dashif' can only be used for DASH manifests, ignoring for this test..."."\033[0m"."\n\n";
     else
         $dashif_conformance = 1;
+}
+if(isset($_POST['lldashif'])){
+    if($hls_manifest)
+        echo "\n\n\033[".'0;34'."m"."The option 'dashif' can only be used for DASH manifests, ignoring for this test..."."\033[0m"."\n\n";
+    else
+        $low_latency_dashif_conformance = 1;
 }
 if(isset($_POST['ctawave'])){
     $ctawave_conformance = 1;
@@ -213,178 +228,24 @@ $string_info = '<!doctype html>
   <meta charset="utf-8">
   <title>Log detail</title>
   <style>
-  #info {
-    color: blue;
-    margin: 8px;
-  }
-  #warning {
-    color: orange;
-    margin: 8px;
-  }
-  #error {
-    color: red;
-    margin: 8px;
-  }
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
   </style>
-  <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
   <p>***Legend: <font color="red">Errors</font>, <font color="orange">Warnings</font>, <font color="blue">Information</font> ***  </p>
 </head>
 <body>
- 
-<p id="init">Processing...</p>
-<p id="info"></p>
-<p id="warning"></p>
-<p id="error"></p>
-
-<div id="mpddiv"></div>
- 
-<script>
-window.onload = tester;
-
-function tester(){
-var url = document.URL.split("/");
-var newPathname = url[0];
-var loc = window.location.pathname.split("/");
-var txtloc = "";
-var txtloc_start_ind = (loc.indexOf("Conformance-Frontend") != -1) ? loc.indexOf("Conformance-Frontend") : loc.indexOf("Conformance-Frontend-HLS");
-var txtlocuntil = (document.URL.search("mpdreport") !== -1 || document.URL.search("SpliceConstraints") !== -1) ? 1 : 2
-var pathnameuntil = (document.URL.search("mpdreport") !== -1 || document.URL.search("SpliceConstraints") !== -1) ? 4 : 5
-
-for ( j = txtloc_start_ind; j < loc.length-txtlocuntil; j++){
-    txtloc += "/";
-    txtloc += loc[j];
-}
-
-for ( i = 1; i < url.length-pathnameuntil; i++ ) {
-  newPathname += "/";
-  newPathname += url[i];
-}
-var location = newPathname+"/Utils/Give.php";
-$.post (location,
-{val:txtloc+"/$Template$"},
-function(result){
-$( "#init" ).remove();
-resultant=JSON.parse(result);
-
-var end0 = "";
-var end1 = "";
-var end2 = "";
-
-if(document.URL.search("mpdreport") !== -1){
-    var until = 0;
-    var from = 0;
-    var tempContent;
-    var content = resultant.join("\n");
-    
-    while(1){
-        from = content.indexOf("Start ", until);
-        until = content.indexOf("Start ", from+1);
-        
-        tempContent = (until !== -1) ? content.substring(from, until) : content.substring(from);
-        var array = tempContent.split("\n");
-        if(tempContent.search("not successful") !== -1){
-            for(var i=0; i<array.length; i++){
-                var endn = "";
-                if(array[i].search("Start ") !== -1 || array[i].search("===") !== -1){
-                    endn = endn+" "+array[i];
-                    addParagraph(endn, "blue");
-                }
-                else{
-                    endn = endn+" "+array[i];
-                    addParagraph(endn, "red");
-                }
-            }
-            addParagraph("<br/>", "blue");
-        }
-        else{
-            if(tempContent.search("HbbTV-DVB") !== -1){
-                for(var i=0; i<array.length; i++){
-                    var endn = "";
-                    if(array[i].search("Start ") !== -1 || array[i].search("===") !== -1){
-                        array[i] = array[i] + "<br />";
-                        endn = endn+" "+array[i];
-                        addParagraph(endn, "blue");
-                    }
-                    else{
-                        endn = endn+" "+array[i];
-                        
-                        var Warning=array[i].search("Warning") ;
-                        var WARNING=array[i].search("WARNING");
-                        var errorFound=array[i].search("###");
-                        var cmafError=array[i].search("CMAF check violated");
-
-                        if(Warning===-1 && WARNING===-1 && errorFound===-1 && cmafError===-1)
-                            addParagraph(endn, "blue");
-                        else if(errorFound===-1 && cmafError===-1)
-                            addParagraph(endn, "orange");
-                        else
-                            addParagraph(endn, "red");
-                    }
-                }
-            }
-            else{
-                for(var i=0; i<array.length; i++){
-                    var endn = "";
-                    endn = endn+" "+array[i];
-                    addParagraph(endn, "blue");
-                }
-                addParagraph("<br/>", "blue");
-            }
-        }
-
-        if(until === -1)
-            break;
-    }
-}
-else{
-    for(var i =0;i<resultant.length;i++){
-        resultant[i]=resultant[i]+"<br />";
-        var Warning=resultant[i].search("Warning") ;
-        var WARNING=resultant[i].search("WARNING");
-        var errorFound=resultant[i].search("###");
-        var cmafError=resultant[i].search("CMAF check violated");
-
-        if(Warning===-1 && WARNING===-1 && errorFound===-1 && cmafError===-1){
-            end0 = end0+" "+resultant[i];
-            $( "#info" ).html( end0);
-        }
-        else if(errorFound===-1 && cmafError===-1){
-            end1 = end1+" "+resultant[i];
-            $( "#warning" ).html( end1);
-        }
-        else{
-            end2 = end2+" "+resultant[i];
-            $( "#error" ).html( end2);
-        }
-    }
-}
-
-});
-
-}
-
-var index = 0;
-function addParagraph(string, color){
-    index++;
-    var ind = index.toString();
-    
-    var para = document.createElement("p");
-    para.setAttribute("id", ind);
-    para.style.fontSize = "16px";
-    para.style.color = color;
-    var element = document.getElementById("mpddiv");
-    element.appendChild(para);
-    
-    document.getElementById(ind).innerHTML = string;
-}
-</script>
-
+    <div id="logtable">$Table$</div>
 </body>
 </html>';
 
-# Initialize CMAF and/or HbbTV_DVB only when it is requested
+# Initialize DASH-IF IOP, Low Latency DASH, CMAF, HbbTV_DVB, CTA WAVE modules only when it is requested
 if($dashif_conformance){
     include '../DASH/IOP/IOP_Initialization.php';
+}
+if($low_latency_dashif_conformance){
+    include '../DASH/LowLatency/LowLatency_Initialization.php';
 }
 if($cmaf_conformance){
     include '../CMAF/CMAFInitialization.php';

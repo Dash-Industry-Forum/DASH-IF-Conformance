@@ -24,7 +24,6 @@ include 'VisitorCounter.php';
 include 'GlobalVariables.php';
 include 'PrettyPrint.php';
 include 'SegmentDownload.php';
-#include 'SegmentAssemble.php';
 include 'SegmentValidation.php';
 include 'DolbySegmentValidation.php';
 include '../DASH/MPDProcessing.php';
@@ -37,6 +36,7 @@ include '../DASH/Representation.php';
 include '../DASH/SegmentURLs.php';
 include '../HLS/HLSProcessing.php';
 include '../Conformance-Frontend/Featurelist.php';
+include '../Conformance-Frontend/TabulateResults.php';
 
 set_time_limit(0);
 ini_set("log_errors", 1);
@@ -45,7 +45,7 @@ ini_set("error_log", "myphp-error.log");
 $session_id = json_decode($_POST['sessionid']);
 session_name($session_id);
 session_start();
-error_log("session_start:" . session_name());
+#error_log("session_start:" . session_name());
 
 session_create();
 if(!$hls_manifest)
