@@ -201,6 +201,7 @@ $adaptation_set_template = 'Adapt$AS$';
 $adaptation_set_error_log_template = $adaptation_set_template . '_CrossInfofile';
 
 $reprsentation_template = 'Adapt$AS$rep$R$';
+$reprsentation_xml_template = $reprsentation_template;
 $reprsentation_error_log_template = $reprsentation_template . 'log';
 $reprsentation_info_log_template = $reprsentation_template . '_infofile';
 $reprsentation_index_template = $reprsentation_template . '.txt';
