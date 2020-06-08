@@ -28,7 +28,7 @@ $.fn.euCookieLawPopup = (function() {
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// PARAMETERS (MODIFY THIS PART) //////////////////////////////////////////////////////////////
 	_self.params = {
-		cookiePolicyUrl : document.URL.substr(0, document.URL.lastIndexOf('/')) + '/gdpr/privacy.html',
+		cookiePolicyUrl : document.URL.substr(0, document.URL.lastIndexOf('Conformance-Frontend')) + 'Conformance-Frontend/gdpr/privacy.html',
 		popupPosition : 'top',
 		colorStyle : 'default',
 		compactStyle : false,

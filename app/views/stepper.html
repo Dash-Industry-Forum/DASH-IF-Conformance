@@ -1,0 +1,277 @@
+<div id="xx-stepper" ng-controller="stepperController as vm" layout="row">
+    <md-content class='content1' flex="nogrow">
+        <div>
+            <md-card id='step1-2'>
+                <md-stepper-card-content class="md-no-padding">
+                    <md-steppers md-dynamic-height md-stretch-steppers="always" md-selected="vm.selectedStep"> <!--md-busy-text="'Processing...'" md-busy="vm.showBusyText"-->
+                        <md-step label="Input" ng-disabled="vm.stepProgress < 1" ng-init="vm.checkAutoRun()">
+                            <md-step-body>
+                                <form id="xx-form" class='form1' name="step1">
+                                    <md-content class="md-padding" layout='column' flex>
+                                        <div id="step1-3" class='container1' layout='row' layout-xs='column' flex-order='1' layout-align="start center" flex fileread style="justify-content: space-between;">
+                                            <div layout="column" flex flex-order='1' id="step1-4" class='urlContainer'>
+                                                <input type="file" style="visibility:hidden" fileread id="upload">
+                                                <md-input-container class="md-block" flex='90' flex-order='1' id='urlInput' style='margin: 0'>
+                                                    <label id='label-text'>Enter URL or drag FILE here</label>
+                                                    <input type="text" id="urlinput" name="urlinput" class="mytext" ng-model="vm.stepData[0].data.url">
+                                                </md-input-container>
+                                            </div>
+                                            <div id='fileTag' class='fileTag' flex-order='0'>
+                                                <span>
+                                                    <md-icon aria-label='file' flex='100' class="fileIcon md-default-theme material-icons" md-svg-src="dash_img/file.svg">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" height="100%" width="100%" />
+                                                    </md-icon>
+                                                    <div style="display: inline; overflow-wrap:break-word; ">
+                                                        {{vm.stepData[0].data.file.name}}
+                                                    </div>
+                                                    <md-button id="deleteFile" style="position: relative" class="md-icon-button" aria-label="Delete" ng-click="vm.deleteFile();">
+                                                        <!--                                                        <md-tooltip id="profileTip1" md-direction='bottom'>Delete File</md-tooltip>-->
+                                                        <md-icon flex='100' flex-xs='100' class="cancelIcon md-default-theme material-icons" md-svg-src="dash_img/cancel.svg">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" height="100%" width="100%" />
+                                                        </md-icon>
+                                                    </md-button>
+                                                </span>
+                                            </div>
+                                            <div flex-order='3' id='uploadContainer'>
+                                                <md-button id='triggerUpload' style="color:#007bff" class="md-raised uploadButton" type="button" onclick="document.getElementById('upload').click();">
+                                                    <!--                                                    <md-tooltip id="profileTip1" md-direction='left'>Upload</md-tooltip>-->
+                                                    <span>
+                                                        <md-icon id="uploadIcon" class="md-default-theme" class="material-icons" md-svg-src="dash_img/upload.svg" aria-label='upload'>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" />
+                                                        </md-icon>
+                                                    </span>
+                                                    <span>Upload</span>
+                                                </md-button>
+                                            </div>
+                                        </div>
+                                        <div layout="column" flex flex-order='2' layout-align="start center" flex fileread style="justify-content: space-between;">
+                                            <div id="alertMessage"></div>
+                                        </div>
+                                        <!--                                        <hr id ='hrbreak' style='width: 88%;margin:0px 2px 0px 0px ;border-color:#077bff; display: none'  flex-order='1'>-->
+                                        <div layout="column" layout-margin flex-order='3' data-role="controlgroup" id="step2-2">
+                                            <h1 class='md-headline text1' id='step2-1' >
+                                                Include additional tests:
+                                            </h1>
+                                            <div id='step2-3' style="margin-bottom: 0">
+                                                <md-checkbox class='checkprofile' aria-label="segmentValidation" id="segmentValidation" ng-model="vm.stepData[0].data.segmentvalidation">
+                                                    Segment Validation
+                                                    <span id='info-icon'>
+                                                        <md-icon id="helpIcon" aria-label="segmentValidation" class="md-default-theme" class="material-icons" md-svg-src="dash_img/help.svg">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" />
+                                                        </md-icon>
+                                                        <md-tooltip id="profileTip" md-direction='right'>By default, only MPD validation (Xlink resolving, DASH schema validation, MPD-level checks) is performed against the existing profiles in @profiles attribute and the enforced profiles, if any. By checking this option, the media in each Representation pointed to by the MPD will also be validated according to provided profiles and ISO/IEC 14496-12 for base media file format.</md-tooltip>
+                                                    </span>
+                                                </md-checkbox>
+                                                <br>
+                                                <md-checkbox class='checkprofile' aria-label="dashifprofile" id="dashifprofile" ng-model="vm.stepData[0].data.dashIf">
+                                                    DASH-IF
+                                                    <span id='info-icon'>
+                                                        <md-icon id="helpIcon" aria-label="dashifprofile" class="md-default-theme" class="material-icons" md-svg-src="dash_img/help.svg">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" />
+                                                        </md-icon>
+                                                        <md-tooltip id="profileTip" md-direction='right'> Enables validation checks against https://dashif.org/guidelines/dash264 profile according to DASH-IF IOP guidelines v4.3.</md-tooltip>
+                                                    </span>
+                                                </md-checkbox>
+                                            </div>
+                                            <md-checkbox style='margin-top: 0' class='checkprofile' aria-label="dashifllprofile" id="dashifprofile" ng-model="vm.stepData[0].data.dashIfll">
+                                                LL DASH-IF
+                                                <span id='info-icon'>
+                                                    <md-icon id="helpIcon" aria-label="dashifllprofile" class="md-default-theme" class="material-icons" md-svg-src="dash_img/help.svg">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" />
+                                                    </md-icon>
+                                                    <md-tooltip id="profileTip" md-direction='right'> Enables validation checks against http://www.dashif.org/guidelines/low-latency-live-v5 profile according to Low Latency DASH-IF IOP guidelines v4.3 CR.</md-tooltip>
+                                                </span>
+                                            </md-checkbox>
+                                            <md-checkbox class='checkprofile' aria-label="hbbtvprofile" id="dvbprofile2019" ng-click="vm.stepData[0].data.dvb2018=false;" ng-model="vm.stepData[0].data.dvb2019">
+                                                DVB (2019)
+                                                <span id='info-icon'>
+                                                    <md-icon id="helpIcon" aria-label="hbbtvprofile" class="md-default-theme" class="material-icons" md-svg-src="dash_img/help.svg">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" />
+                                                    </md-icon>
+                                                    <md-tooltip id="profileTip" md-direction='right'>Enables validation checks against urn:dvb:dash:profile:dvb-dash:2014 profile according to ETSI TS 103 285 v1.1.1, using MPEG-DASH 4th edition schema.</md-tooltip>
+                                                </span>
+                                            </md-checkbox>
+                                            <md-checkbox class='checkprofile' aria-label="hbbtvprofile" id="dvbprofile2018" ng-click="vm.stepData[0].data.dvb2019=false;" ng-model="vm.stepData[0].data.dvb2018">
+                                                DVB (2018)
+                                                <span id='info-icon'>
+                                                    <md-icon id="helpIcon" aria-label="hbbtvprofile" class="md-default-theme" class="material-icons" md-svg-src="dash_img/help.svg">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" />
+                                                    </md-icon>
+                                                    <md-tooltip id="profileTip" md-direction='right'>Enables validation checks against urn:dvb:dash:profile:dvb-dash:2014 profile according to ETSI TS 103 285 v1.1.1, using MPEG-DASH 2nd edition schema.</md-tooltip>
+                                                </span>
+                                            </md-checkbox>
+                                            <md-checkbox class='checkprofile' aria-label="hbbtvprofile" id="hbbtvprofile" ng-model="vm.stepData[0].data.hbbTv">
+                                                HbbTV
+                                                <span id='info-icon'>
+                                                    <md-icon id="helpIcon" aria-label="hbbtvprofile" class="md-default-theme" class="material-icons" md-svg-src="dash_img/help.svg">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" />
+                                                    </md-icon>
+                                                    <md-tooltip id="profileTip" md-direction='right'>Enables validation checks against urn:hbbtv:dash:profile:isoff-live:2012 profile according to HbbTV 1.5 and ETSI TS 102 796 v1.4.1.</md-tooltip>
+                                                </span>
+                                            </md-checkbox>
+                                            <md-checkbox class='checkprofile' aria-label="cmafprofile" id="cmafprofile" ng-model="vm.stepData[0].data.cmaf">
+                                                CMAF
+                                                <span id='info-icon'>
+                                                    <md-icon id="helpIcon" aria-label="cmafprofile" class="md-default-theme" class="material-icons" md-svg-src="dash_img/help.svg">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" />
+                                                    </md-icon>
+                                                    <md-tooltip id="profileTip" md-direction='right'>Enables validation checks against CMAF specification for segmented media according to ISO/IEC 23000-19.</md-tooltip>
+                                                </span>
+                                            </md-checkbox>
+                                            <md-checkbox class='checkprofile' aria-label="ctawaveprofile" id="ctawaveprofile" ng-model="vm.stepData[0].data.ctawave">
+                                                CTA-WAVE
+                                                <span id='info-icon'>
+                                                    <md-icon id="helpIcon" aria-label="ctawaveprofile" class="md-default-theme" class="material-icons" md-svg-src="dash_img/help.svg">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" />
+                                                    </md-icon>
+                                                    <md-tooltip id="profileTip" md-direction='right'>Enables validation checks against WAVE content specification according to CTA-5001.</md-tooltip>
+                                                </span>
+                                            </md-checkbox>
+                                            <md-checkbox aria-label="blank" style="display: none"></md-checkbox>
+                                        </div>
+                                    </md-content>
+                                    <md-step-actions layout="row">
+                                        <div flex layout="row" layout-align="end top">
+                                            <md-button id="run" type="submit" ng-disabled="(!vm.stepData[0].data.url && !vm.stepData[0].data.file) || vm.showBusyText" class="md-primary md-raised" ng-disabled="vm.showBusyText" ng-click="vm.submitCurrentStep(vm.stepData[0].data);vm.submitRun();">
+                                                RUN
+                                            </md-button>
+                                        </div>
+                                    </md-step-actions>
+                                </form>
+                            </md-step-body>
+                        </md-step>
+                        <md-step label="Progress / Result" md-complete="vm.stepData[1].data.completed" ng-disabled="vm.stepProgress < 2">
+                            <md-step-body>
+                                <form id="xx-form" name="step2">
+                                    <md-content class="md-padding">
+                                        <md-collapsible class="md-accordion">
+                                            <md-collapsible-item id='summaryItem'>
+                                                <md-collapsible-header ng-click="vm.isSummaryDrop = !vm.isSummaryDrop; vm.isResultDrop = false; vm.isContentDrop = false"layout='row' layout-align="start center">
+                                                    <md-icon ng-show = "!vm.isSummaryDrop" style='margin: 5px;' id="summaryDropDown" aria-label="dropdown" class="md-default-theme material-icons" md-svg-src="dash_img/dropdownarrow.svg">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" />
+                                                    </md-icon>
+                                                    <md-icon ng-show = "vm.isSummaryDrop" style='margin: 5px;' id="summaryDropUp" aria-label="dropup" class="md-default-theme material-icons" md-svg-src="dash_img/dropuparrow.svg">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" />
+                                                    </md-icon>
+                                                    Input Summary
+                                                </md-collapsible-header>
+                                                <md-collapsible-body>
+                                                    <h1 style='color: #007bff;' class="md-title">MPD :</h1>
+                                                    <md-divider style='background-color: #007bff;'></md-divider>
+                                                    <div style="overflow-wrap:break-word;">
+                                                        <h1 class='md-subhead' style='padding-left : 5%'>
+                                                            {{ (vm.selected_file_method === "MPD_URL") ? vm.stepData[0].data.url : vm.stepData[0].data.file.name}}
+                                                        </h1>
+                                                    </div>
+                                                    <br>
+                                                    <h1 class='md-title' style="color : #007bff;">
+                                                        Additional Tests :
+                                                    </h1>
+                                                    <md-divider style='background-color: #007bff;'></md-divider>
+                                                    <h1 class='md-subhead' style='padding-left : 5%'>
+                                                        {{!(vm.stepData[0].data.segmentvalidation || vm.stepData[0].data.dashIf || vm.stepData[0].data.dvb2019 || vm.stepData[0].data.dvb2018 || vm.stepData[0].data.hbbTv || vm.stepData[0].data.cmaf || vm.stepData[0].data.ctawave) ? "None selected" : "" }}
+                                                        {{vm.stepData[0].data.segmentvalidation ? "Segment Validation": ""}}
+                                                        <br ng-if="vm.stepData[0].data.segmentvalidation">
+                                                        {{vm.stepData[0].data.dashIf ? "DASH-IF": ""}}
+                                                        <br ng-if="vm.stepData[0].data.dashIf">
+                                                        {{vm.stepData[0].data.dashIfll ? "LL DASH-IF": ""}}
+                                                        <br ng-if="vm.stepData[0].data.dashIfll">
+                                                        {{vm.stepData[0].data.dvb2019?"DVB (2019)":""}}
+                                                        <br ng-if="vm.stepData[0].data.dvb2019">
+                                                        {{vm.stepData[0].data.dvb2018?"DVB (2018)":""}}
+                                                        <br ng-if="vm.stepData[0].data.dvb2018">
+                                                        {{vm.stepData[0].data.hbbTv?"HbbTV":""}}
+                                                        <br ng-if="vm.stepData[0].data.hbbTv">
+                                                        {{vm.stepData[0].data.cmaf?"CMAF":""}}
+                                                        <br ng-if="vm.stepData[0].data.cmaf">
+                                                        {{vm.stepData[0].data.ctawave?"CTA WAVE":""}}
+                                                    </h1>
+                                                </md-collapsible-body>
+                                            </md-collapsible-item>
+
+                                            <md-collapsible-item id='contentItem' onclick="document.getElementById('featureIframe').style.height=  (document.getElementById('featureIframe').contentWindow.document.getElementsByTagName('html')[0].offsetHeight+5)+'px';">
+                                                <!--                                                style='pointer-events: none;' -->
+                                                <md-collapsible-header ng-click="vm.isContentDrop = !vm.isContentDrop; vm.isResultDrop = false; vm.isSummaryDrop = false;" id='contentItemHeader' layout='row' layout-align="start center">
+                                                    <md-icon ng-show = "!vm.isContentDrop" style='margin: 5px;' id="contentDropDown" aria-label="dropdown" class="md-default-theme material-icons" md-svg-src="dash_img/dropdownarrow.svg">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" />
+                                                    </md-icon>
+                                                    <md-icon ng-show = "vm.isContentDrop" style='margin: 5px;' id="contentDropUp" aria-label="dropup" class="md-default-theme material-icons" md-svg-src="dash_img/dropuparrow.svg">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" />
+                                                    </md-icon>
+                                                    Content Information
+                                                </md-collapsible-header>
+                                                <md-collapsible-body id='contentBody'>
+                                                    <span id='waitMessage' style='align-self: center;color: #007bff;'>Please wait until MPD progress is complete to see the content information.</span>
+                                                    <div id='step3-1'>
+                                                        <h1 style='display:none; color: #007bff;' class="md-title" id = "profileHead">Profiles :</h1>
+                                                        <md-divider id='profileDivider' style='display:none; background-color: #007bff; '></md-divider>
+                                                        <p id="profile" class="sansserif" style="overflow-wrap:break-word;padding-left:5%;display:none;"></p>
+                                                    </div>
+                                                    <div id='step3-2'>
+                                                    <h1 class='md-title' id='listName' style='display:none; color: #007bff; '>Feature List :</h1>
+                                                    <md-divider id='insetDivider' style='display:none; background-color: #007bff;'></md-divider>
+                                                    <iframe id='featureIframe' src="" style='width: 100%' frameborder="0" name='featureframe'></iframe>
+                                                    </div>
+                                                </md-collapsible-body>
+                                            </md-collapsible-item>
+                                            <md-collapsible-item 
+                                                                 id='resultItem'
+                                                                 class='active'
+                                                                 onclick="document.getElementById('resultBody').style.height=(document.getElementById('to').offsetHeight +document.getElementById('treepos').offsetHeight+document.getElementById('treeboxbox_tree').offsetHeight+50)+'px';">
+                                                <md-collapsible-header ng-click="vm.isResultDrop = !vm.isResultDrop; vm.isSummaryDrop = false; vm.isContentDrop = false" id='resultItemHeader' layout='row' layout-align="start center">
+                                                    <md-icon ng-show = "!vm.isResultDrop" style='margin: 5px;' id="resultDropDown" aria-label="dropdown" class="md-default-theme material-icons" md-svg-src="dash_img/dropdownarrow.svg">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" />
+                                                    </md-icon>
+                                                    <md-icon ng-show = "vm.isResultDrop" style='margin: 5px;' id="resultDropUp" aria-label="dropup" class="md-default-theme material-icons" md-svg-src="dash_img/dropuparrow.svg">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" />
+                                                    </md-icon>
+                                                    Results
+                                                </md-collapsible-header>
+                                                <md-collapsible-body id='resultBody'>
+                                                    <div id="to">
+                                                        <p align="center"></p>
+                                                        <p id="par" class="sansserif" style="visibility:hidden;">Loading....</p>
+                                                        <div layout=row layout-xs=column layout-align='center center' id='step3-3' >
+                                                            <h1 class='md-subhead' flex-order= '1' flex = '20' >
+                                                                Overall Progress
+                                                            </h1>
+                                                            <md-progress-linear flex-order= '2' id='mpdProgess' md-mode="determinate" value="{{ (!vm.stepData[0].data.segmentvalidation || vm.flag)? vm.mpdPercentage : (vm.mpdPercentage * 0.1) + (vm.segmentPercentage * 0.9) }}"></md-progress-linear>
+                                                        </div>
+                                                        <br>
+                                                        <div id="dynamicMain" layout='row' layout-align='center' style="display:none;">
+                                                            <h1 class='md-subhead'>
+                                                                Dynamic validation possible for this content
+                                                                <a  id="dynamic" href='' target="_blank" style="color: #077bff">here</a>
+                                                            </h1></div>
+                                                    </div>
+                                                    <div id="treepos">
+                                                        <table>
+                                                            <tr>
+                                                                <td layout='row' valign="top">
+                                                                    <div flex-offset-gt-xs ='33' id="treeboxbox_tree" style="background-color:#0000; overflow:hidden; border:none;">
+                                                                        <a id="downloadpar" href="" download="" style="visibility:hidden;"></a>
+                                                                    </div>
+                                                                </td>
+                                                                <td rowspan="2" style="padding-left:25" valign="top">
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </md-collapsible-body>
+                                            </md-collapsible-item>
+                                        </md-collapsible>
+                                    </md-content>
+                                    <md-step-actions layout="row">
+                                        <div flex layout="row" layout-align="end top">
+                                            <md-button class="md-primary md-raised" id='customButton' ng-click="vm.buttonChange();">STOP</md-button>
+                                        </div>
+                                    </md-step-actions>
+                                </form>
+                            </md-step-body>
+                        </md-step>
+                    </md-steppers>
+                </md-stepper-card-content>
+            </md-card>
+        </div>
+    </md-content>
+</div>

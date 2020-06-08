@@ -1,0 +1,35 @@
+<div 
+     layout="column"
+     layout-align="center center"
+     flex-offset-xs="5"
+     >     
+    <md-content
+                layout-margin
+                layout-padding
+                flex="auto"
+                flex-order="1"
+                id="some-info"
+                style="border: 2px solid #007BFF; border-radius: 1%">
+        {{ appSetting.title }} <br> DASH-IF Conformance Tool is used to validate DASH content according to DASH-related media specifications. It aims to give information about the validity of the content against one or more developed media standards. Consequently, it reports on (un)expected behavior that can be observed in provided media services that are aimed to be working in alignment to these standards.
+        <br><br>
+        The development of the tool started in 2012 funded by DASH-IF and has been continuously updated with newer versions of the already supported standards and/or new standards as required. Currently, the tool is aligned with a large set of specifications, namely MPEG-DASH,ISO BMFF, DASH-IF IOP, CMAF, DVB-DASH, HbbTV and CTA WAVE. It also integrates file format header level parsing of media codecs, including AVC, HEVC, AAC,HE-AAC, HE-AACv2, AC-3, AC-4, E-AC-3, WebVTT and TTML.
+        <br><br>
+        For each corresponding specification, the scope of the validation covers: 
+        <ul> 
+            <li> <i> Media PresentationDescription (MPD) validation </i> where the MPD is checked if it is a well-formed XML file, appropriate according to DASH schema and MPD-level signaling is done correctly,</li>
+            <li> <i> Segment validation </i> where the media content pointed to by the MPD is validated at container level,</li>
+            <li> <i> Cross validation </i> of the MPD-level elements and attributes as well as of the mediacontent(s) signaled at the same hierarchy.</li>
+        </ul>
+        
+        The DASH-IF Conformance Tool is an open source software available on<a style="margin-left:0%;margin-right:0%;" href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance" target="_blank">GitHub</a>. A live demo of the tool is also provided<a style="margin-left:0%;margin-right:0%;" href="https://conformance.dashif.org/" target="_blank">here</a>.
+    </md-content>
+    <md-button 
+               id='step-2'
+               layout-margin
+               flex-order="2"
+               style="background-color:#007BFF;top: 2%;display:block;max-width: 10%;margin-left: auto;margin-right: auto;"
+               class="md-raised md-primary" 
+               ng-href="#/start">
+        Start
+    </md-button>
+</div>

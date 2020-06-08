@@ -350,3 +350,53 @@ function getDataBetweenTokens($string, $initChar, $endChar){
         $tempString = substr($tempString, $endPos + 1);
     }
 }
+
+function convertToHtml() {
+    global $session_dir, $featurelist_log, $featurelist_log_html;
+    
+    $html_str = '<html><body><div>';
+    $feature_dom = get_DOM("$session_dir/$featurelist_log", 'MPD');
+    $html_str = populateList($feature_dom, $html_str);
+    $html_str .= '</div></body></html>';
+    file_put_contents("$session_dir/$featurelist_log_html", $html_str);
+}
+
+function populateList($xml, $html_str) {
+    $name = $xml->nodeName;
+    $attributes = $xml->attributes;
+    $children = $xml->childNodes;
+    
+    $html_str .= '<li><b>' . $name . '</b></li><ul>';
+    
+    foreach($attributes as $attribute) {
+        $attr_str = '<font ';
+        
+        if (strpos($attribute->name, 'xmlns') !== FALSE || 
+            strpos($attribute->name, 'xsi') !== FALSE) {
+            continue;
+        }
+        elseif ($attribute->name == "elementIssue") {
+            $attr_str .= 'color="red">';
+            $attr_str .= "Issues of Missing Attributes: " . $attribute->value . "\r\n";
+        }
+        elseif ($attribute->value == "false") { //No Schema Error
+            $attr_str .= 'color="green">';
+            $attr_str .= $attribute->name . "\r\n";
+        }
+        else { //If other than "false", means that a schema error is found in that attribute
+            $attr_str .= 'color="red">';
+            $attr_str .= $attribute->name . ':' . $attribute->value . "\r\n";
+        }
+        
+        $attr_str .= '</font>';
+        $html_str .= '<li>' . $attr_str . '</li>';
+    }
+    
+    foreach($children as $child){
+        if(!empty($child->nodeName) && $child->nodeType == XML_ELEMENT_NODE)
+            $html_str = populateList($child, $html_str);
+    }
+    
+    $html_str .= '</ul>';
+    return $html_str;
+}
