@@ -37,6 +37,8 @@ int FindAtomOffsets( atomOffsetEntry *aoe, UInt64 minOffset, UInt64 maxOffset,
 	UInt64 curOffset = minOffset;
 	long minAtomSize;
 	
+    printf ("<%s> : min %08X max %08X\n", __FUNCTION__, minOffset, maxOffset);
+
 	BAILIFNULL( atomOffsets = (atomOffsetEntry *)calloc( max, sizeof(atomOffsetEntry)), allocFailedErr );
 	
 	while (curOffset< maxOffset) {
@@ -53,7 +55,15 @@ int FindAtomOffsets( atomOffsetEntry *aoe, UInt64 minOffset, UInt64 maxOffset,
 			minAtomSize += sizeof(largeSize);
 			
 		}
-		if (startAtom.type == 'uuid') {
+
+        char atom_name[5] = {};
+        atom_name[0] = ((char*)(&startAtom.type))[3];
+        atom_name[1] = ((char*)(&startAtom.type))[2];
+        atom_name[2] = ((char*)(&startAtom.type))[1];
+        atom_name[3] = ((char*)(&startAtom.type))[0];
+        printf ("atom_name <%s> offset %08X\n",atom_name, curOffset - sizeof(startAtom.type));
+		
+        if (startAtom.type == 'uuid') {
 			BAILIFERR( GetFileData( aoe, &uuid, curOffset, sizeof(uuid), &curOffset ) );
 			//atomOffsets[cnt].uuid = uuid;
 			memcpy(&atomOffsets[cnt].uuid, &uuid, sizeof(uuid));
@@ -231,6 +241,9 @@ void logtempInfo(MovieInfoRec *mir)
 void logLeafInfo(MovieInfoRec *mir)
 {
     FILE *leafInfoFile = fopen("leafinfo.txt","wt");
+
+    printf("<%s> \n", __FUNCTION__);
+    
     if(leafInfoFile == NULL)
     {
         printf("Error opening leafinfo.txt, logging will not be done!\n");
@@ -272,5 +285,51 @@ void logLeafInfo(MovieInfoRec *mir)
     logtempInfo(mir);
 }
 
+/*
+H.2.1.2.1     variable_bits - variable bit-length field format
+Syntax
+variable_bits (n_bits)
+{
+    value = 0;
+    do {
+            value += read ...................................................................... n_bits
+            read_more ............................................................................... 1
+            if (read_more)
+            {
+                value <<= n_bits;
+                value += (1<<n_bits);
+            }
+            } while (read_more);
+            return value;
+}
+*/
+
+UInt64 GetVariableLengthData(BitBuffer *bb, UInt32 wordLength, OSErr *errout)
+{
+    OSErr err = noErr;
+    UInt64 data64 = 0;
+    UInt64 dataTemp =0;
+    UInt64 testMask = ( 1 << wordLength );
+
+    do
+    {
+        data64 <<= wordLength;
+        dataTemp = GetBits(bb, wordLength + 1, &err); if (err) GOTOBAIL; 
+        data64 |= (dataTemp & ~testMask);
+        printf ("dataTemp %ld data64 %ld testMask %ld\n", dataTemp, data64, testMask);
+    }    
+    while ((dataTemp & testMask) != 0);
+
+    bail:
+    printf ("return %ld\n", data64);
+    *errout = err;
+    return data64;
+}
+
+void SetVariableLengthData(BitBuffer *bb, UInt32 wordLength, UInt64 data64, OSErr *errout)
+{
+	OSErr err = noErr;
+    *errout = err;
+}
 
 

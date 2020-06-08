@@ -45,7 +45,7 @@ FILE *f;		//to print atom content to xml file (later use for xml creation)
 
 static int keymatch (const char * arg, const char * keyword, int minchars);
 
-void expandArgv(int srcArgc, const char** srcArgV, int &dstArgc, const char** &dstArgv);   
+void expandArgv(int srcArgc, const char** srcArgV, int &dstArgc, const char** &dstArgv);
 
 //#define STAND_ALONE_APP 1  //  #define this if you're using a source level debugger (i.e. Visual C++ in Windows)
 							  //  also, near the beginning of main(), hard-code your arguments (e.g. your test file)
@@ -94,21 +94,21 @@ void writeEntry(char* srcPtr, int &srcIndex, char* &dstPtr, int &dstIndex, int m
 }
 
 void expandArgv(int srcArgc, char** srcArgV, int &dstArgc, char** &dstArgv)
-{  
+{
 #define maxArgc 255
 
   dstArgv= (char**)malloc(sizeof(char*) * maxArgc);		//allocate memory for no. of rows
-  
+
   int dstIndex = 0;
-  
+
   for (int srcIndex = 0 ; ; )					//read line from text file
   {
-  
+
     if(strcmp(srcArgV[srcIndex],"-configfile") == 0)
     {
         srcIndex++;
-        
-        FILE* f = fopen( srcArgV[srcIndex], "r" );          //location of text file to be opened specified by str 
+
+        FILE* f = fopen( srcArgV[srcIndex], "r" );          //location of text file to be opened specified by str
         if(f == NULL)
         {
             fprintf(stderr,"-configfile %s used, file not found, exiting!\n",srcArgV[srcIndex]);
@@ -116,20 +116,22 @@ void expandArgv(int srcArgc, char** srcArgV, int &dstArgc, char** &dstArgv)
         }
 
         srcIndex++;
-        
+
         char line[ 1000 ];
-                        
+
         while (fgets( line, 1000, f ))                 //read line from text file
         {
           char * pch;
           pch = strtok(line,"\n, ");                  //remove \n character and space
-          pch=strtok(pch," ");
-
-          int dummy;
-          writeEntry(pch,dummy,dstArgv[dstIndex],dstIndex,maxArgc); //Dont change srcIndex any further 
+          while (pch != NULL)
+          {
+              int dummy;
+              writeEntry(pch,dummy,dstArgv[dstIndex],dstIndex,maxArgc); //Dont change srcIndex any further
+              pch=strtok(NULL,"\n ");
+          }
         }
-        
-        fclose(f);        
+
+        fclose(f);
     }
     else
         writeEntry(srcArgV[srcIndex],srcIndex,dstArgv[dstIndex],dstIndex,maxArgc);
@@ -140,7 +142,7 @@ void expandArgv(int srcArgc, char** srcArgV, int &dstArgc, char** &dstArgv)
         break;
     }
   }
-  
+
   return;
 }
 
@@ -162,8 +164,8 @@ void expandArgv(int srcArgc, char** srcArgV, int &dstArgc, char** &dstArgv)
 			err = -1; \
 			goto usageError; \
 		} \
-		strcpy(*(_str_), arg); 
-		
+		strcpy(*(_str_), arg);
+
 
 #if !STAND_ALONE_APP
 int main(int argc, char *argv[]);
@@ -192,7 +194,7 @@ int main(void)
     char sapType[1024];
     char temp[1024];
 	int usedefaultfiletype = true;
-	
+
 	FILE *infile = nil;
 	atomOffsetEntry aoe = {0};
 
@@ -209,7 +211,7 @@ int main(void)
     // this is simply the wrong place for this;  it's not a program parameter, it's the mpeg-4
     //   profile/level indication as found in the video stream.
     // But neither movie info nor track info are available at the right points.  Ugh [dws]
-    
+
     vg.checkSegAlignment = false;
     vg.checkSubSegAlignment = false;
     vg.minBufferTime = -1;
@@ -243,27 +245,36 @@ int main(void)
     vg.dvb=false;
     vg.hbbtv=false;
     vg.ctawave=false;
+    vg.dolby=false;
     //vg.indexRange='\0';
     vg.pssh_count = 0;
     vg.sencFound=false;
     vg.suppressAtomLevel=false;
-    
+
     int boxCount = 0;
     char ** arrayArgc;
     int uArgc;
-    expandArgv(argc,argv,uArgc,arrayArgc);   
-    
-		
+    expandArgv(argc,argv,uArgc,arrayArgc);
+
+
+    fprintf (stdout, "<%s> : argc %d\n", __FUNCTION__, argc);
+    for (int i=0; i < argc; i++)
+    {
+        fprintf (stdout, "<%s> : argv[%d] <%s>\n", __FUNCTION__,  i, argv[i]);
+    }
+
+    //return (0);
+
 	// Check the parameters
 	for( argn = 1; argn < uArgc ; argn++ )
 	{
 		const char *arg = arrayArgc[argn];	     //instead of reading from argv[], now read from array
 		//const char * arg=argv[argn];
-		
+
 		if( '-' != arg[0] )
 		{
 			char *extensionstartp = nil;
-			
+
 			if (gotInputFile) {
 				fprintf( stderr, "Unexpected argument \"%s\"\n", arg );
 				err = -1;
@@ -271,12 +282,12 @@ int main(void)
 			}
 			strcpy(gInputFileFullPath, arg);
 			gotInputFile = true;
-			
+
 #ifdef USE_STRCASECMP
 	#define rStrCaseCmp(a,b)		strcasecmp(a,b)
 #else
 	#define rStrCaseCmp(a,b)		my_stricmp(a,b)
-#endif			
+#endif
 			extensionstartp = strrchr(gInputFileFullPath,'.');
 			if (extensionstartp) {
 				if (rStrCaseCmp(extensionstartp,".mp4") == 0) {
@@ -284,12 +295,12 @@ int main(void)
 					usedefaultfiletype = false;
 				}
 			}
-			
+
 			continue;
 		}
-		
+
 		arg++;	// skip '-'
-		
+
 		if( keymatch( arg, "help", 1 ) ) {
 			goto usageError;
 		} else if( keymatch( arg, "warnings", 1 ) ) {
@@ -323,7 +334,7 @@ int main(void)
         } else if ( keymatch( arg, "dynamic", 7 ) ) {
                 vg.dynamic = true;
         } else if ( keymatch( arg, "indexrange", 10 ) ) {
-                getNextArgStr( &vg.indexRange, "indexrange" );	  			  
+                getNextArgStr( &vg.indexRange, "indexrange" );
         } else if ( keymatch( arg, "level", 5 ) ) {
                 vg.subRepLevel = true;
         } else if ( keymatch( arg, "startwithsap", 6 ) ) {
@@ -366,7 +377,7 @@ int main(void)
                               pch = strstr(temp, "/");
                               strncpy (pch," ",1);
                               puts(temp);
-                              
+
                               char * pEnd;
                               vg.framerate = strtof(temp, &pEnd)/strtof(pEnd, NULL);
                           }
@@ -374,8 +385,10 @@ int main(void)
                               vg.framerate = strtof(temp, NULL);
                           }
                 } else if ( keymatch( arg, "codecs", 6 ) ) {
-                          getNextArgStr( &vg.codecs, "codecs" ); 
-	        } else if ( keymatch( arg, "codecprofile", 12 ) ) {
+                    getNextArgStr( &vg.codecs, "codecs" );
+                } else if ( keymatch( arg, "dolby", 5 ) ) {
+                    vg.dolby=true;
+    	        } else if ( keymatch( arg, "codecprofile", 12 ) ) {
                           getNextArgStr( &temp, "codecprofile" ); vg.codecprofile = atoi(temp);
                 } else if ( keymatch( arg, "codeclevel", 10 ) ) {
                           getNextArgStr( &temp, "codeclevel" ); vg.codeclevel = atoi(temp);
@@ -387,18 +400,18 @@ int main(void)
                               vg.codectier = 1;
                 } else if ( keymatch( arg, "audiochvalue", 12 ) ) {
                          getNextArgStr( &temp, "audiochvalue" ); vg.audioChValue = atoi(temp);
-                 		  			  
+
 		} else if ( keymatch( arg, "default_kid", 11 ) ) { //Related to the case of encrypted content.
                          getNextArgStr( &vg.default_KID, "default_kid" );
-                 		  			  
+
 		}else if ( keymatch( arg, "pssh_count", 10 ) ) { //Related to the case of encrypted content.
                          getNextArgStr( &temp, "pssh_count" ); vg.pssh_count=atoi(temp);
-			
-                 		  			  
+
+
 		}else if ( keymatch( arg, "psshbox", 7 ) ) { //Related to the case of encrypted content.
                          getNextArgStr( &temp, "psshbox" );
 			 vg.psshfile[boxCount++]=temp;
-                 		  			  
+
 
 		} else if ( keymatch( arg, "atomxml", 1)) {
 			 vg.atomxml = true;
@@ -418,20 +431,20 @@ int main(void)
 			goto usageError;
 		}
 	}
-	
-	
-	for(int i = 0; i < uArgc; i++)		
+
+
+	for(int i = 0; i < uArgc; i++)
 	{
 	  char * currentPtr = arrayArgc[i];
 	  free(currentPtr);			//free the memory allocated by malloc in doubleduplicateArgv
 	}
-	
+
 	free(arrayArgc);
-	
-	
+
+
 	if (vg.indexRange!='\0')
 	  sscanf (vg.indexRange,"%d-%d",&vg.lowerindexRange,&vg.higherindexRange);
-	
+
 
 	//=====================
 	// Process input parameters
@@ -446,7 +459,7 @@ int main(void)
 		if (tempfp == NULL)
 			fprintf(stderr, "Error creating redirect file stderr.txt!\n");
 	}
-	
+
 	if ((usedefaultfiletype && (vg.filetypestr[0] == 0)) ||				// default to mp4
 		      (strcmp(vg.filetypestr, "mp4") == 0)) {
 		vg.filetype = filetype_mp4;
@@ -531,7 +544,7 @@ int main(void)
 	}
 
 	fprintf(stdout,"\n\n\n<!-- Source file is '%s' -->\n", gInputFileFullPath);
-	
+
 	if(vg.atomxml){
 		f = fopen("atominfo.xml", "w");
 	}
@@ -554,13 +567,13 @@ int main(void)
 	aoe.offset = 0;
 	aoe.atomStartSize = 0;
 	aoe.maxOffset = aoe.size;
-	
+
 	vg.fileaoe = &aoe;		// used when you need to read file & size from the file
-	
+
     if(gotSegmentInfoFile)
     {
         int numSegments = 0;
-        
+
         for(int ii = 0 ; ii < 2 ; ii++)
         {
             FILE *segmentOffsetInfoFile = fopen(vg.segmentOffsetInfo, "rb");
@@ -589,7 +602,7 @@ int main(void)
                 int ret = fscanf(segmentOffsetInfoFile,"%d %lld\n",&temp1,&temp2);
                 if(ret < 2)
                     break;
-                
+
                 if(ii == 1)
                 {
                     vg.segmentSizes[numSegments] = temp2;
@@ -603,7 +616,7 @@ int main(void)
                     vg.initializationSegment=false;
                 else
                     vg.initializationSegment=true;
-                
+
             }
 
             if(numSegments == 0)
@@ -633,7 +646,7 @@ int main(void)
         vg.dsms[0] = false;
         vg.dashSegment = false;
     }
-    
+
     vg.psshInInit = false;
     vg.tencInInit = false;
     vg.processedStypes = 0;
@@ -649,16 +662,16 @@ int main(void)
             vg.checkSegAlignment = vg.checkSubSegAlignment = false;
         }
     }
-		
+
 	if (vg.filetype == filetype_mp4v) {
 		err = ValidateElementaryVideoStream( &aoe, nil );
 	} else {
 		err = ValidateFileAtoms( &aoe, nil );
 		fprintf(stdout,"<!#- Finished testing file '%s' -->\n", gInputFileFullPath);
 	}
-    
+
 	goto bail;
-	
+
 	//=====================
 
 usageError:
@@ -734,7 +747,10 @@ bail:
 		fclose(stderr);
 	}
 	if(vg.atomxml){
-		fclose(f);
+		if (f)
+		{
+			fclose(f);
+		}
 	}
 
 	return err;
@@ -750,11 +766,11 @@ void loadLeafInfo(char *leafInfoFileName)
         vg.bss = false;
         return;
     }
-    
+
     fscanf(leafInfoFile,"%lu\n",&vg.accessUnitDurationNonIndexedTrack);
-    
+
     fscanf(leafInfoFile,"%u\n",&vg.numControlTracks);
-    
+
     vg.controlLeafInfo = (LeafInfo **)malloc(vg.numControlTracks*sizeof(LeafInfo *));
     vg.numControlLeafs = (unsigned int *)malloc(vg.numControlTracks*sizeof(unsigned int));
     vg.trackTypeInfo = (TrackTypeInfo *)malloc(vg.numControlTracks*sizeof(TrackTypeInfo));
@@ -763,16 +779,16 @@ void loadLeafInfo(char *leafInfoFileName)
     {
         fscanf(leafInfoFile,"%lu %lu\n",&vg.trackTypeInfo[i].track_ID,&vg.trackTypeInfo[i].componentSubType);
     }
-    
+
     for(unsigned int i = 0 ; i < vg.numControlTracks ; i++)
     {
         fscanf(leafInfoFile,"%u\n",&(vg.numControlLeafs[i]));
 
         vg.controlLeafInfo[i] = (LeafInfo *)malloc(vg.numControlLeafs[i]*sizeof(LeafInfo));
-        
+
         for(UInt32 j = 0 ; j < vg.numControlLeafs[i] ; j++)
             fscanf(leafInfoFile,"%d %Lf %Lf\n",(int *)&vg.controlLeafInfo[i][j].firstInSegment,&vg.controlLeafInfo[i][j].earliestPresentationTime,&vg.controlLeafInfo[i][j].lastPresentationTime);
-            
+
     }
 
     fclose(leafInfoFile);
@@ -802,7 +818,7 @@ void loadOffsetInfo(char *offsetsFileName)
             break;
         numEntries ++;
 	}
-    
+
     if(numEntries == 0)
     {
         printf("No valid entries found in offset info file, exiting!\n");
@@ -824,7 +840,7 @@ void loadOffsetInfo(char *offsetsFileName)
         fscanf(offsetsFile,"%llu %llu\n",&vg.offsetEntries[index].offset,&vg.offsetEntries[index].sizeRemoved);
 		index = index;
     }
-    
+
     fclose(offsetsFile);
 }
 
@@ -885,33 +901,51 @@ void atomprintnotab(const char *formatStr, ...)
 {
 	va_list 		ap;
 	va_start(ap, formatStr);
-	
+
 	if (vg.printatom) {
 		vfprintf( _stdout, formatStr, ap );
 	}
-	
+
 	if(vg.atomxml){
 		va_start(ap, formatStr);
 		atomprinttofile(formatStr, ap);
 		va_end(ap);
 	}
-	
+
 	va_end(ap);
 }
+
+void atomtable_begin ( const char *name )
+{
+    if (vg.tabcnt != 0)
+    {
+        atomprint("<\n");
+    }
+    atomprint("<%s>\n", name);
+    vg.tabcnt++;
+}
+
+void atomtable_end ( const char *name )
+{
+    vg.tabcnt++;
+    atomprint("<\%s>\n", name);
+}
+
 
 void atomprint(const char *formatStr, ...)
 {
 	va_list 		ap;
 	va_start(ap, formatStr);
-	
+
 	if (vg.printatom) {
-		long tabcnt = vg.tabcnt;
+	    printf ("vg.printatom\n");
+    	long tabcnt = vg.tabcnt;
 		while (tabcnt--) {
 			fprintf(_stdout,myTAB);
 		}
 		vfprintf( _stdout, formatStr, ap );
 	}
-	
+
 	if(vg.atomxml){
 		long tabcnt = vg.tabcnt;
  		while (tabcnt--) {
@@ -921,7 +955,7 @@ void atomprint(const char *formatStr, ...)
 		atomprinttofile(formatStr, ap);
 		va_end(ap);
 	}
-	
+
 	va_end(ap);
 }
 
@@ -931,14 +965,14 @@ void atomprinthexdata(char *dataP, UInt32 size)
 	int widthCnt = 0;
 	char c;
 	static char hc[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
-	
+
 	while (size) {
 		c = *dataP++;
 		hexstr[0] = hc[(c>>4)&0x0F];
 		hexstr[1] = hc[(c   )&0x0F];
 		if (widthCnt == 0) {
 			atomprint(hexstr);
-		} else { 
+		} else {
 			atomprintnotab(hexstr);
 		}
 		if (++widthCnt >= 16) {
@@ -957,7 +991,7 @@ void atomprintdetailed(const char *formatStr, ...)
 {
 	va_list 		ap;
 	va_start(ap, formatStr);
-	
+
 	if (vg.printatom && vg.print_fulltable) {
 		long tabcnt = vg.tabcnt;
 		while (tabcnt--) {
@@ -965,7 +999,7 @@ void atomprintdetailed(const char *formatStr, ...)
 		}
 		vfprintf( _stdout, formatStr, ap );
 	}
-	
+
 	va_end(ap);
 }
 
@@ -973,7 +1007,7 @@ void sampleprint(const char *formatStr, ...)
 {
 	va_list 		ap;
 	va_start(ap, formatStr);
-	
+
 	if (vg.printsample) {
 		long tabcnt = vg.tabcnt;
 		while (tabcnt--) {
@@ -981,7 +1015,7 @@ void sampleprint(const char *formatStr, ...)
 		}
 		vfprintf( _stdout, formatStr, ap );
 	}
-	
+
 	va_end(ap);
 }
 
@@ -989,11 +1023,11 @@ void sampleprintnotab(const char *formatStr, ...)
 {
 	va_list 		ap;
 	va_start(ap, formatStr);
-	
+
 	if (vg.printsample) {
 		vfprintf( _stdout, formatStr, ap );
 	}
-	
+
 	va_end(ap);
 }
 
@@ -1003,14 +1037,14 @@ void sampleprinthexdata(char *dataP, UInt32 size)
 	int widthCnt = 0;
 	char c;
 	static char hc[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
-	
+
 	while (size) {
 		c = *dataP++;
 		hexstr[0] = hc[(c>>4)&0x0F];
 		hexstr[1] = hc[(c   )&0x0F];
 		if (widthCnt == 0) {
 			sampleprint(hexstr);
-		} else { 
+		} else {
 			sampleprintnotab(hexstr);
 		}
 		if (++widthCnt >= 16) {
@@ -1026,24 +1060,24 @@ void sampleprinthexdata(char *dataP, UInt32 size)
 
 void sampleprinthexandasciidata(char *dataP, UInt32 size)
 {
-	char hexstr[4] = "12 ";  
+	char hexstr[4] = "12 ";
 	char asciiStr[17];
 	int widthCnt = 0;
 	char threeSpaces[4] = "   ";
 	char c;
 	static char hc[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
-		
-	
+
+
 	// similar to sampleprinthexdata() but also prints ascii characters to the right of hex dump
 	//   (ala Mac OS X's HexDump or 9's MacsBug; if the character is not ascii, it will print a '.' )
 	// sampleprintnotab("\n");
-	
+
 	asciiStr[16] = 0;
 	while (size) {
 		c = *dataP++;
 		hexstr[0] = hc[(c>>4)&0x0F];
 		hexstr[1] = hc[(c   )&0x0F];
-		
+
 		if( isprint( c ) && c != 0 )
                 {
 			asciiStr[ widthCnt ] = c ;
@@ -1053,11 +1087,11 @@ void sampleprinthexandasciidata(char *dataP, UInt32 size)
                             asciiStr[ widthCnt ] = 'p' ;
                 }
 		else
-			asciiStr[ widthCnt ] = '.';	
-			
+			asciiStr[ widthCnt ] = '.';
+
 		if (widthCnt == 0) {
 			sampleprint(hexstr);
-		} else { 
+		} else {
 			sampleprintnotab(hexstr);
 		}
 		if (++widthCnt >= 16) {
@@ -1067,46 +1101,46 @@ void sampleprinthexandasciidata(char *dataP, UInt32 size)
 			widthCnt = 0;
 			sampleprintnotab("\n");
 		}
-		
+
 		size--;
 	}
 	if (widthCnt != 0){
-		
+
 			// for the last line, fill out the rest of the hex row with blanks
 			//   and fill the unused right end of asciiStr with blanks
 		while( widthCnt < 16 ){
 			sampleprintnotab( threeSpaces );
-			asciiStr[ widthCnt++ ] = ' ';		
+			asciiStr[ widthCnt++ ] = ' ';
 		}
-		
-		
+
+
 		sampleprintnotab( threeSpaces );
 		sampleprintnotab( asciiStr );
 		sampleprintnotab("\n");
 	}
-	
+
 	// sampleprintnotab("\n");
 
 }
 
 
-void warnprint(const char *formatStr, ...)
+void _warnprint(const char *formatStr, ...)
 {
 	va_list 		ap;
 	va_start(ap, formatStr);
-	
+
 	if (vg.warnings)
 		vfprintf( _stderr, formatStr, ap );
-	
+
 	va_end(ap);
 }
 
 
-void errprint(const char *formatStr, ...)
+void _errprint(const char *formatStr, ...)
 {
 	va_list 		ap;
 	va_start(ap, formatStr);
-	
+
         if(vg.suppressAtomLevel){
             fprintf( _stderr, "### error:\n###");
         }
@@ -1114,7 +1148,7 @@ void errprint(const char *formatStr, ...)
             fprintf( _stderr, "### error: %s \n###        ",vg.curatompath);
         }
 	vfprintf( _stderr, formatStr, ap );
-	
+
 	va_end(ap);
 }
 
@@ -1155,7 +1189,7 @@ int my_stricmp(const char* p, const char* q)
 		p++;
 		q++;
 	}
-	
+
 	return tolower(*p) - tolower(*q);
 }
 
@@ -1183,7 +1217,7 @@ int mapStringToUInt32(char *src, UInt32 *target)
 char *ostypetostr(UInt32 num)
 {
 	static char str[sizeof(num)+1] = {0};
-	
+
 	str[0] = (num >> 24) & 0xff;
 	str[1] = (num >> 16) & 0xff;
 	str[2] = (num >>  8) & 0xff;
@@ -1209,7 +1243,7 @@ char *int64toxstr(UInt64 num)
 {
 	static char str[20];
 	UInt32 hi,lo;
-	
+
 	hi = num>>32;
 	lo = num&(0xffffffff);
 	if (hi) {
@@ -1223,7 +1257,7 @@ char *int64toxstr(UInt64 num)
 char *int64toxstr_r(UInt64 num, char * str)
 {
 	UInt32 hi,lo;
-	
+
 	hi = num>>32;
 	lo = num&(0xffffffff);
 	if (hi) {
@@ -1240,11 +1274,11 @@ char *int64todstr(UInt64 num)
 {
 	static char str[40];
 	UInt32 hi,lo;
-	
+
 	hi = num>>32;
 	lo = num&(0xffffffff);
-	
-	if (hi) 
+
+	if (hi)
 		sprintf(str,"%ld%8.8ld",hi,lo);
 	else
 		sprintf(str,"%ld",lo);
@@ -1255,11 +1289,11 @@ char *int64todstr(UInt64 num)
 char *int64todstr_r(UInt64 num, char * str)
 {
 	UInt32 hi,lo;
-	
+
 	hi = num>>32;
 	lo = num&(0xffffffff);
-	
-	if (hi) 
+
+	if (hi)
 		sprintf(str,"%ld%8.8ld",hi,lo);
 	else
 		sprintf(str,"%ld",lo);
@@ -1272,7 +1306,7 @@ char *langtodstr(UInt16 num)
 	static char str[5];
 
 	str[4] = 0;
-	
+
 	if (num==0) {
 		str[0] = str[1] = str[2] = ' ';
 	}
@@ -1281,7 +1315,7 @@ char *langtodstr(UInt16 num)
 		str[1] = ((num >> 5 ) & 0x1F) + 0x60;
 		str[2] = ( num        & 0x1F) + 0x60;
 	}
-			
+
 	return str;
 }
 
@@ -1292,10 +1326,10 @@ char *fixed16str(SInt16 num)
 {
 	static char str[40];
 	float f;
-	
+
 	f = num;
 	f /= 0x100;
-	
+
 	sprintf(str,"%f",f);
 
 	return str;
@@ -1304,10 +1338,10 @@ char *fixed16str(SInt16 num)
 char *fixed16str_r(SInt16 num, char * str)
 {
 	float f;
-	
+
 	f = num;
 	f /= 0x100;
-	
+
 	sprintf(str,"%f",f);
 
 	return str;
@@ -1320,10 +1354,10 @@ char *fixed32str(SInt32 num)
 {
 	static char str[40];
 	double f;
-	
+
 	f = num;
 	f /= 0x10000;
-	
+
 	sprintf(str,"%lf",f);
 
 	return str;
@@ -1332,10 +1366,10 @@ char *fixed32str(SInt32 num)
 char *fixed32str_r(SInt32 num, char * str)
 {
 	double f;
-	
+
 	f = num;
 	f /= 0x10000;
-	
+
 	sprintf(str,"%lf",f);
 
 	return str;
@@ -1349,10 +1383,10 @@ char *fixedU32str(UInt32 num)
 {
 	static char str[40];
 	double f;
-	
+
 	f = num;
 	f /= 0x10000;
-	
+
 	sprintf(str,"%lf",f);
 
 	return str;
@@ -1361,10 +1395,10 @@ char *fixedU32str(UInt32 num)
 char *fixedU32str_r(UInt32 num, char * str)
 {
 	double f;
-	
+
 	f = num;
 	f /= 0x10000;
-	
+
 	sprintf(str,"%lf",f);
 
 	return str;
@@ -1373,10 +1407,10 @@ char *fixedU32str_r(UInt32 num, char * str)
     //  copy non-terminated C string (chars) to terminated C string (str)
 void copyCharsToStr( char *chars, char *str, UInt16 count ){
     SInt16 i;
-    
+
     for( i = 0; i < count; ++i )
         str[i] = chars[i];
-        
+
     str[ count ] = 0;
 
 }
@@ -1464,26 +1498,26 @@ void addEscapedChar( char *str, char c );
 void addEscapedChar( char *str, char c )
 {
 	char addc[4] = {0};
-	
+
 	if ((('a' <= c) && (c <= 'z'))
 		|| (('A' <= c) && (c <= 'Z'))
 		|| (('0' <= c) && (c <= '9'))
 	//	add extra chars here
-	//  we want to escape - & . for now 
+	//  we want to escape - & . for now
 		) {
 		addc[0] = c;
 	} else {
 		char n;
-		
+
 		addc[0] = '%';
-		
+
 		n = ((c >> 4) & 0x0F);
 		if (n < 10)
 			n = n + '0';
 		else
 			n = (n - 10) + 'a';
 		addc[1] = n;
-		
+
 		n = ((c) & 0x0F);
 		if (n < 10)
 			n = n + '0';
@@ -1491,7 +1525,7 @@ void addEscapedChar( char *str, char c )
 			n = (n - 10) + 'a';
 		addc[2] = n;
 	}
-		
+
 	strcat(str, addc);
 }
 
@@ -1531,35 +1565,35 @@ OSErr ValidateElementaryVideoStream( atomOffsetEntry *aoe, void *refcon )
 	Ptr dataP;
 	UInt32 dataSize;
 	UInt32 refcons[2];
-	
+
 	if (vg.checklevel < checklevel_samples)
 		vg.checklevel = checklevel_samples;
 
 	tir.sampleDescriptionCnt = 1;
 	tir.validatedSampleDescriptionRefCons = &refcons[0];
-	
+
 	err = GetFileStartCode( aoe, &prevStartCode, offset1, &offset2 );
 	if (err) {
 		fprintf(stderr,"### did NOT find ANY start codes\n");
 		goto bail;
 	}
-	
+
 	do {
 		err = GetFileStartCode( aoe, &startCode, offset2, &offset3 );
-		
+
 		if (err) {
 			offset3 = aoe->maxOffset;
 		}
-		
+
 		if (err || (startCode == 0x000001B6) || (startCode == 0x000001B3)) {
 			if (!err && prevStartCode == 0x000001B3) {
 				goto nextone;
 			}
-			
+
 			dataSize = (UInt32)(offset3 - offset1);
 			BAILIFNIL( dataP = (Ptr)malloc(dataSize), allocFailedErr );
 			err = GetFileData( vg.fileaoe, dataP, offset1, dataSize, nil );
-			
+
 			err = BitBuffer_Init(&bb, (UInt8 *)dataP, dataSize);
 
 			if (sampleNum == 0) {
@@ -1573,7 +1607,7 @@ OSErr ValidateElementaryVideoStream( atomOffsetEntry *aoe, void *refcon )
 					Validate_vide_sample_Bitstream( &bb, &tir );
 				--vg.tabcnt; atomprint("</Video_Sample_Description>\n");
 			}
-			
+
 			sampleNum++;
 			offset1 = offset2 = offset3;
 		}
@@ -1581,9 +1615,9 @@ nextone:
 		prevStartCode = startCode;
 		offset2 = offset3 + 4;
 	} while (!err);
-	
-	
-	
+
+
+
 bail:
 	return err;
 }
