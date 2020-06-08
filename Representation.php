@@ -14,21 +14,22 @@
  */
 
 function construct_flags($period, $adaptation_set, $representation){
+
     global $session_dir, $mpd_features, $dashif_conformance, $current_period, $current_adaptation_set, $current_representation, $profiles;
     
     ## @minimumBufferTime 
     $timeSeconds = (string) time_parsing($mpd_features['minBufferTime']);
     $processArguments = ' -minbuffertime ' . $timeSeconds;
-    
+
     ## @bandwidth
     $bandwidth = $representation['bandwidth'];
     $processArguments .= ' -bandwidth ' . $bandwidth;
-    
+
     ## @width
     $width = ($adaptation_set['width'] == NULL) ? $representation['width'] : $adaptation_set['width'];
     $width = (!$width) ? 0 : $width;
     $processArguments .= ' -width ' . $width;
-    
+
     ## @height
     $height = ($adaptation_set['height'] == NULL) ? $representation['height'] : $adaptation_set['height'];
     $height = (!$height) ? 0 : $height;
@@ -40,21 +41,22 @@ function construct_flags($period, $adaptation_set, $representation){
         $sar_x_y = explode(':', $sar);
         $processArguments .= ' -sarx ' . $sar_x_y[0] . ' -sary ' . $sar_x_y[1];
     }
-    
+
     ## dynamic @type
     $dynamic = ($mpd_features['type'] == 'dynamic') ? ' -dynamic' : '';
     $processArguments .= $dynamic;
-    
+
     ## @startWithSAP
     $startWithSAP = ($adaptation_set['startWithSAP'] == NULL) ? $representation['startWithSAP'] : $adaptation_set['startWithSAP'];
     if($startWithSAP != NULL)
         $processArguments .= ' -startwithsap ' . $startWithSAP;
-    
+
     ## @profiles
     $ondemand = array('urn:mpeg:dash:profile:isoff-on-demand:2011', 'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014');
     $live = array('urn:mpeg:dash:profile:isoff-live:2011', 'urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014');
     $main = array('urn:mpeg:dash:profile:isoff-main:2011');
     $dash264 = array('http://dashif.org/guidelines/dash264');
+
     $dashif_ondemand = array('http://dashif.org/guidelines/dash-if-ondemand');
     $dashif_mixed_ondemand = array('http://dashif.org/guidelines/dash-if-mixed');
     
@@ -76,57 +78,64 @@ function construct_flags($period, $adaptation_set, $representation){
         if(strpos($rep_profile, $dashif_mixed_ondemand) !== FALSE)
             $processArguments .= ' -dashifmixed';
     }
-    
+
     ## ContentProtection
     $content_protection_len = (!$adaptation_set['ContentProtection']) ? sizeof($representation['ContentProtection']) : sizeof($adaptation_set['ContentProtection']);
     if($content_protection_len > 0 && strpos($processArguments, 'dash264base') !== FALSE)
         $processArguments .= ' -dash264enc';
-    
+
     ## @codecs
     $codecs = ($adaptation_set['codecs'] == NULL) ? $representation['codecs'] : $adaptation_set['codecs'];
     if($codecs == NULL)
         $codecs = 0;
     $processArguments .= ' -codecs ' . $codecs;
-    
+
+    if ((substr($codecs, 0, 4) == "ac-3") or
+        (substr($codecs, 0, 4) == "ec-3") or
+        (substr($codecs, 0, 4) == "ac-4"))
+    {
+        $processArguments .= ' -dolby';
+    }
+
     ## @indexRange
     $indexRange = find_attribute(array($period, $adaptation_set, $representation), 'indexRange');
     if($indexRange != NULL)
         $processArguments .= ' -indexrange ' . $indexRange;
-    
+
     ## AudoChannelConfiguration
     $audioChannelConfiguration = (empty($adaptation_set['AudioChannelConfiguration'])) ? $representation['AudioChannelConfiguration'][0]['value'] : $adaptation_set['AudioChannelConfiguration'][0]['value'];
     $audioChannelConfiguration = ($audioChannelConfiguration == NULL) ? 0 : $audioChannelConfiguration;
     $processArguments .= ' -audiochvalue ' . $audioChannelConfiguration;
-    
+
     ## RepresentationIndex
     $representationIndex = find_attribute(array($period, $adaptation_set, $representation), 'RepresentationIndex');
     if($representationIndex != NULL)
         $processArguments = $processArguments . " -repIndex";
-    
+
     ## ContentProtection
     $content_protections = $adaptation_set['ContentProtection'];
     if(!empty($content_protections)){
         foreach($content_protections as $content_protection){
             if($content_protection['cenc:default_KID'])
                 $default_KID = $content_protection['cenc:default_KID'];
-            
+
             $cencNS="urn:mpeg:cenc:2013:pssh";
             $cenc_pssh=$content_protection[$cencNS];
             if(!empty($cenc_pssh))
                 $psshBox[]=$cenc_pssh;
-            
+
             $ContentProtect_arr = array('default_KID' => $default_KID, 'psshBox' => $psshBox);
         }
-        
+
         if($default_KID !== null){
             $processArguments = $processArguments . " -default_kid ";
             $processArguments = $processArguments . $default_KID;
         }
-        
+
         $psshCount=sizeof($psshBox);
         if($psshCount>0){
             $processArguments = $processArguments . " -pssh_count ";
-            $processArguments = $processArguments . $psshCount;                   
+            $processArguments = $processArguments . $psshCount;
             for($i=0; $i< $psshCount ; $i++){
                 $psshBox= $psshBox[$i];
                 $processArguments = $processArguments . " -psshbox ";
@@ -138,7 +147,7 @@ function construct_flags($period, $adaptation_set, $representation){
             }
         }
     }
-    
+
     return $processArguments;
 }
 
@@ -159,10 +168,10 @@ function find_attribute($elements, $attribute){
             if($segment_base != NULL)
                 $temp_attribute = $segment_template['SegmentBase'][0][$attribute];
         }
-        
+
         if($temp_attribute != NULL)
-            $return_val = $temp_attribute; 
+            $return_val = $temp_attribute;
     }
-    
+
     return $return_val;
 }
