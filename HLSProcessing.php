@@ -368,9 +368,8 @@ function groupPlaylists($file_location){
                 
                 rename_file($track_path . '.xml', $period_dir . '/' . $new_sw_path . '/' . $new_track_path . '.xml');
                 rename_file($session_dir . '/' . $track .'log.txt' , $period_dir . '/' . $new_track_path . 'log.txt');
-                $temp_string = str_replace('$Template$', '/Period0/'.$new_track_path.'log', $string_info);
-                file_put_contents($period_dir . '/' . $new_track_path . 'log.html', $temp_string);
                 rename_file($track_path, $period_dir . '/' . $new_track_path);
+                tabulateResults($period_dir . '/' . $new_track_path . 'log.txt', 'Segment');
                 
                 $j++;
             }
