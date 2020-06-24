@@ -118,6 +118,15 @@
                                                     <md-tooltip id="profileTip" md-direction='right'>Enables validation checks against CMAF specification for segmented media according to ISO/IEC 23000-19.</md-tooltip>
                                                 </span>
                                             </md-checkbox>
+                                            <md-checkbox class='checkprofile' aria-label="cmafprofile" id="cmafprofile" ng-model="vm.stepData[0].data.cmaf7">
+                                                CMAF (Clause 7)
+                                                <span id='info-icon'>
+                                                    <md-icon id="helpIcon" aria-label="cmafprofile" class="md-default-theme" class="material-icons" md-svg-src="dash_img/help.svg">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" />
+                                                    </md-icon>
+                                                    <md-tooltip id="profileTip" md-direction='right'>Enables validation checks against CMAF specification Clause 7 for segmented media according to ISO/IEC 23000-19.</md-tooltip>
+                                                </span>
+                                            </md-checkbox>
                                             <md-checkbox class='checkprofile' aria-label="ctawaveprofile" id="ctawaveprofile" ng-model="vm.stepData[0].data.ctawave">
                                                 CTA-WAVE
                                                 <span id='info-icon'>
@@ -169,7 +178,7 @@
                                                     </h1>
                                                     <md-divider style='background-color: #007bff;'></md-divider>
                                                     <h1 class='md-subhead' style='padding-left : 5%'>
-                                                        {{!(vm.stepData[0].data.segmentvalidation || vm.stepData[0].data.dashIf || vm.stepData[0].data.dvb2019 || vm.stepData[0].data.dvb2018 || vm.stepData[0].data.hbbTv || vm.stepData[0].data.cmaf || vm.stepData[0].data.ctawave) ? "None selected" : "" }}
+                                                        {{!(vm.stepData[0].data.segmentvalidation || vm.stepData[0].data.dashIf || vm.stepData[0].data.dvb2019 || vm.stepData[0].data.dvb2018 || vm.stepData[0].data.hbbTv || vm.stepData[0].data.cmaf || vm.stepData[0].data.cmaf7 || vm.stepData[0].data.ctawave) ? "None selected" : "" }}
                                                         {{vm.stepData[0].data.segmentvalidation ? "Segment Validation": ""}}
                                                         <br ng-if="vm.stepData[0].data.segmentvalidation">
                                                         {{vm.stepData[0].data.dashIf ? "DASH-IF": ""}}
@@ -184,6 +193,8 @@
                                                         <br ng-if="vm.stepData[0].data.hbbTv">
                                                         {{vm.stepData[0].data.cmaf?"CMAF":""}}
                                                         <br ng-if="vm.stepData[0].data.cmaf">
+                                                        {{vm.stepData[0].data.cmaf7?"CMAF (Clause 7)":""}}
+                                                        <br ng-if="vm.stepData[0].data.cmaf7">
                                                         {{vm.stepData[0].data.ctawave?"CTA WAVE":""}}
                                                     </h1>
                                                 </md-collapsible-body>
