@@ -17,7 +17,7 @@ function CMAF_Handle($request){
     $return_val = NULL;
     switch($request){
         case 'BeforeRepresentation':
-            $return_val = CMAFFalgs();
+            $return_val = CMAFFlags();
             break;
         case 'Representation':
             $return_val = checkCMAFTracks();

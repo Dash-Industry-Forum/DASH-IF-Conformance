@@ -43,7 +43,7 @@ $CMAFMediaProfileAttributesSubtitle = array(
 function checkCMAFTracks(){
     global $session_dir, $mpd_features, $current_period, $current_adaptation_set, $current_representation, 
             $adaptation_set_template, $reprsentation_template, $reprsentation_error_log_template, $reprsentation_mdat_template, $profiles, $cmaf_mediaTypes,
-            $progress_report, $progress_xml, $cmaf_mediaProfiles;
+            $progress_report, $progress_xml, $cmaf_mediaProfiles, $cmaf_conformance_clause_7;
     
     $adapt_dir = str_replace('$AS$', $current_adaptation_set, $adaptation_set_template);
     $rep_xml_dir = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_template);
@@ -97,13 +97,13 @@ function checkCMAFTracks(){
                 for($j=0;$j<$xml_num_moofs;$j++){
                     $trun_version = $xml_trun->item($j)->getAttribute('version');
                     if($trun_version != "1") 
-                        $messages_cmf2 .= "**'CMAF check violated: Section 7.7.3- For video CMAF tracks not contained in Track Files, Version 1 SHALL be used', but " . $trun_version . " found for Rep ".$id." Track ".($j+1)."\n";
+                        $messages_cmf2 .= "**'CMAF check 'cmf2' violated: Section 7.7.3- For video CMAF tracks not contained in Track Files, Version 1 SHALL be used', but " . $trun_version . " found for Rep ".$id." Track ".($j+1)."\n";
                 }
             }
-            
+
             $xml_elst = $xml->getElementsByTagName('elst');
             if($xml_elst->length != 0) {
-                $messages_cmf2 .= "**'CMAF check violated: Section 7.7.2- For video CMAF tracks, the EditListBox SHALL NOT be present', elst box found for Rep $id.\n";
+                $messages_cmf2 .= "**'CMAF check 'cmf2' violated: Section 7.7.2- For video CMAF tracks, the EditListBox SHALL NOT be present', elst box found for Rep $id.\n";
             }
         }
         
@@ -161,7 +161,7 @@ function checkCMAFTracks(){
         fclose($mdat_file);
         
         if($errorInTrack)
-            fprintf($opfile, "**'CMAF check violated: Section 7.3.2.2- The concatenation of a CMAF Header and all CMAF Fragments in the CMAF Track in consecutive decode order SHALL be a valid fragmented ISOBMFF file', but not found for Rep ".$id."\n");
+            $messages .= "**'CMAF check violated: Section 7.3.2.2- The concatenation of a CMAF Header and all CMAF Fragments in the CMAF Track in consecutive decode order SHALL be a valid fragmented ISOBMFF file', but not found for Rep ".$id."\n";
         
         $xml_hdlr=$xml->getElementsByTagName('hdlr')->item(0);
         $xml_handlerType=$xml_hdlr->getAttribute('handler_type');
@@ -215,8 +215,10 @@ function checkCMAFTracks(){
             $sdType=$xml_videSample->item(0)->getAttribute('sdType');
             if($sdType == "hvc1" || $sdType =="hev1"){
                 $xml_hvcc=$xml_videSample->item(0)->getElementsByTagName('hvcC');
-                if($xml_hvcc->length!=1)
-                    $messages .= "**'CMAF check violated: Section B.2.3. - The HEVCSampleEntry SHALL contain an HEVCConfigurationBox (hvcC) containing an HEVCDecoderConfigurationRecord, but found ".$xml_hvcc->length." box in the Rep/Track ".$id."\n";
+                if($xml_hvcc->length!=1) {
+                    if(!$cmaf_conformance_clause_7)
+                        $messages .= "**'CMAF check violated: Section B.2.3. - The HEVCSampleEntry SHALL contain an HEVCConfigurationBox (hvcC) containing an HEVCDecoderConfigurationRecord, but found ".$xml_hvcc->length." box in the Rep/Track ".$id."\n";
+                }
             }
             if( $sdType =="hev1"){
                 $vui_flag=0;
@@ -229,17 +231,24 @@ function checkCMAFTracks(){
                 if($vui_flag==0){
                     $colr=$xml_videSample->item(0)->getElementsByTagName('colr');
                     $pasp=$xml_videSample->item(0)->getElementsByTagName('pasp');
-                    if($pasp->length==0)
-                        $messages .= "**'CMAF check violated: Section B.2.3. - The HEVCSampleEntry SHALL contain PixelAspectRatioBox (pasp), but not found in the Rep/Track ".$id."\n";
-                    if($colr->length==0)
-                        $messages .= "**'CMAF check violated: Section B.2.3. - The HEVCSampleEntry SHALL contain ColorInformationBox (colr), but not found in the Rep/Track ".$id."\n";
+                    if($pasp->length==0) {
+                        if(!$cmaf_conformance_clause_7)
+                            $messages .= "**'CMAF check violated: Section B.2.3. - The HEVCSampleEntry SHALL contain PixelAspectRatioBox (pasp), but not found in the Rep/Track ".$id."\n";
+                    }
+                    if($colr->length==0) {
+                        if(!$cmaf_conformance_clause_7)
+                            $messages .= "**'CMAF check violated: Section B.2.3. - The HEVCSampleEntry SHALL contain ColorInformationBox (colr), but not found in the Rep/Track ".$id."\n";
+                    }
                     else{
-                        if($colr->item(0)->getAttribute('colrtype') !='nclx')
-                            $messages .= "**'CMAF check violated: Section B.2.3. - The HEVCSampleEntry SHALL contain ColorInformationBox (colr) with colour_type 'nclx', but this colour_type ".$colr->item(0)->getAttribute('colrtype')." found in the Rep/Track ".$id."\n";
+                        if($colr->item(0)->getAttribute('colrtype') !='nclx'){
+                            if(!$cmaf_conformance_clause_7)
+                                $messages .= "**'CMAF check violated: Section B.2.3. - The HEVCSampleEntry SHALL contain ColorInformationBox (colr) with colour_type 'nclx', but this colour_type ".$colr->item(0)->getAttribute('colrtype')." found in the Rep/Track ".$id."\n";
+                        }
                     }
                 }
             }
         }
+        
         //Check for metadata required to decode, decrypt, display in CMAF Header.
         // $xml_hdlr=$xml->getElementsByTagName('hdlr')[0];
         // $xml_handlerType=$xml_hdlr->getAttribute('handler_type');
@@ -347,6 +356,7 @@ function checkCMAFTracks(){
         
         if($messages != '' || !$cmaf_cmfc) {
             $cmaf_cmfc = FALSE;
+            $cmaf_cmf2 = FALSE;
             $messages .= $messages_cmf2;
             $messages .= "**'CMAF check violated: Section 7.3.2.2. - A CMAF Track SHALL conform to at least one structural brand', conformance to a structural brand is not found for Rep/Track ".$id."\n";
             fprintf($opfile, $messages);
@@ -358,11 +368,12 @@ function checkCMAFTracks(){
                 $logs_array = explode("\n", file_get_contents($session_dir . '/Period' . $current_period . '/' . $error_file . '.txt'));
                 $size = sizeof($logs_array);
                 for($log_index=0; $log_index<$size; $log_index++) {
-                    if(strpos($logs_array[$log_index], 'CMAF check violated Section 7.7.3') !== FALSE) {
+                    if(strpos($logs_array[$log_index], "CMAF check 'cmf2' violated: Section 7.7") !== FALSE) {
                         unset($logs_array[$log_index]);
                     }
                 }
-                file_put_contents($session_dir . '/Period' . $current_period . '/' . $error_file . '.txt', $logs_array);
+                $logs = implode("\n", $logs_array);
+                file_put_contents($session_dir . '/Period' . $current_period . '/' . $error_file . '.txt', $logs);
             }
             elseif($messages_cmf2 != '') {
                 $cmaf_cmf2 = FALSE;
@@ -398,12 +409,17 @@ function checkCMAFMessages($log_file) {
     $cmaf_cmf2 = TRUE;
     
     $logs = file_get_contents($session_dir . '/Period' . $current_period . '/' . $log_file . '.txt');
-    if(strpos($logs, "CMAF check violated Section 7.7.3") !== FALSE) {
-        $cmaf_cmf2 = FALSE;
-    }
-    if(strpos($logs, "CMAF check violated") !== FALSE) {
-        $cmaf_cmfc = FALSE;
-        $cmaf_cmf2 = FALSE;
+    $logs_array = explode("\n", $logs);
+    $size = sizeof($logs_array);
+    for($log_index=0; $log_index<$size; $log_index++) {
+        $log = $logs_array[$log_index];
+        if(strpos($log, "CMAF check 'cmf2' violated: Section 7.7") !== FALSE) {
+            $cmaf_cmf2 = FALSE;
+        }
+        elseif(strpos($log, 'CMAF check violated') !== FALSE) { 
+            $cmaf_cmfc = FALSE;
+            $cmaf_cmf2 = FALSE;
+        }
     }
     
     return [$cmaf_cmfc, $cmaf_cmf2];
@@ -608,6 +624,8 @@ function determineCMAFMediaProfiles($xml){
 }
 
 function getVideoTrackMediaProfile($xml_MPParameters){
+    global $cmaf_conformance_clause_7;
+    
     $videoMediaProfile="unknown"; $errorMsg="";
     if($xml_MPParameters['codec']=="AVC"){
         if($xml_MPParameters['profile'] <= 100){
@@ -618,15 +636,18 @@ function getVideoTrackMediaProfile($xml_MPParameters){
                     if($xml_MPParameters['height']<=576 && $xml_MPParameters['width']<=864 && $xml_MPParameters['framerate']<=60){
                         $videoMediaProfile = "AVC SD";
                         if($xml_MPParameters['brand'] != 'cfsd'){
-                            //$errorMsg .= "'Warning for CMAF check: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHOULD include the CMAF File Brandin the file its CMAF header', but not included.\n";
+                            //if(!$cmaf_conformance_clause_7)
+                            //    $errorMsg .= "'Warning for CMAF check: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHOULD include the CMAF File Brandin the file its CMAF header', but not included.\n";
                         }
                     }
                     else{
-                        $errorMsg .= "**'CMAF check violated: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the AVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'.\n";
+                        if(!$cmaf_conformance_clause_7)
+                            $errorMsg .= "**'CMAF check violated: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the AVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'.\n";
                     }
                 }
                 else{
-                    $errorMsg .= "**'CMAF check violated: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHALL conform to the colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed in the table', but found colour_primaries='".$xml_MPParameters['color_primaries']."', transfer_characteristics='".$xml_MPParameters['transfer_char']."' and matrix_coefficients='".$xml_MPParameters['matrix_coeff']."'.\n";
+                    if(!$cmaf_conformance_clause_7)
+                        $errorMsg .= "**'CMAF check violated: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHALL conform to the colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed in the table', but found colour_primaries='".$xml_MPParameters['color_primaries']."', transfer_characteristics='".$xml_MPParameters['transfer_char']."' and matrix_coefficients='".$xml_MPParameters['matrix_coeff']."'.\n";
                 }
             }
             elseif($xml_MPParameters['level'] <= 4.0){
@@ -634,15 +655,18 @@ function getVideoTrackMediaProfile($xml_MPParameters){
                     if($xml_MPParameters['height']<=1080 && $xml_MPParameters['width']<=1920 && $xml_MPParameters['framerate']<=60){
                         $videoMediaProfile = "AVC HD";
                         if($xml_MPParameters['brand'] != 'cfhd'){
-                            //$errorMsg .= "'Warning for CMAF check: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHOULD include the CMAF File Brandin the file its CMAF header', but not included.\n";
+                            //if(!$cmaf_conformance_clause_7)
+                            //    $errorMsg .= "'Warning for CMAF check: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHOULD include the CMAF File Brandin the file its CMAF header', but not included.\n";
                         }
                     }
                     else{
-                        $errorMsg .= "**'CMAF check violated: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the AVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'\n";
+                        if(!$cmaf_conformance_clause_7)
+                            $errorMsg .= "**'CMAF check violated: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the AVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'\n";
                     }
                 }
                 else{
-                    $errorMsg .= "**'CMAF check violated: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHALL conform to the colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed in the table', but found colour_primaries='".$xml_MPParameters['color_primaries']."', transfer_characteristics='".$xml_MPParameters['transfer_char']."' and matrix_coefficients='".$xml_MPParameters['matrix_coeff']."'.\n";
+                    if(!$cmaf_conformance_clause_7)
+                        $errorMsg .= "**'CMAF check violated: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHALL conform to the colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed in the table', but found colour_primaries='".$xml_MPParameters['color_primaries']."', transfer_characteristics='".$xml_MPParameters['transfer_char']."' and matrix_coefficients='".$xml_MPParameters['matrix_coeff']."'.\n";
                 }
             }
             elseif($xml_MPParameters['level'] <= 4.2){
@@ -650,23 +674,28 @@ function getVideoTrackMediaProfile($xml_MPParameters){
                     if($xml_MPParameters['height']<=1080 && $xml_MPParameters['width']<=1920 && $xml_MPParameters['framerate']<=60){
                         $videoMediaProfile = "AVC HDHF";
                         if($xml_MPParameters['brand'] != 'chdf'){
-                            //$errorMsg .= "'Warning for CMAF check: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHOULD include the CMAF File Brandin the file its CMAF header', but not included.\n";
+                            //if(!$cmaf_conformance_clause_7)
+                            //    $errorMsg .= "'Warning for CMAF check: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHOULD include the CMAF File Brandin the file its CMAF header', but not included.\n";
                         }
                     }
                     else{
-                        $errorMsg .= "**'CMAF check violated: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the AVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'.\n";
+                        if(!$cmaf_conformance_clause_7)
+                            $errorMsg .= "**'CMAF check violated: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the AVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'.\n";
                     }
                 }
                 else{
-                    $errorMsg .= "**'CMAF check violated: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHALL conform to the colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed in the table', but found colour_primaries='".$xml_MPParameters['color_primaries']."', transfer_characteristics='".$xml_MPParameters['transfer_char']."' and matrix_coefficients='".$xml_MPParameters['matrix_coeff']."'.\n";
+                    if(!$cmaf_conformance_clause_7)
+                        $errorMsg .= "**'CMAF check violated: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHALL conform to the colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed in the table', but found colour_primaries='".$xml_MPParameters['color_primaries']."', transfer_characteristics='".$xml_MPParameters['transfer_char']."' and matrix_coefficients='".$xml_MPParameters['matrix_coeff']."'.\n";
                 }
             }
             else{
-                $errorMsg .= "**'CMAF check violated: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHALL not exceed the profile or level listed in the table', but level is exceeded with the value of ".$xml_MPParameters['level']."\n";
+                if(!$cmaf_conformance_clause_7)
+                    $errorMsg .= "**'CMAF check violated: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHALL not exceed the profile or level listed in the table', but level is exceeded with the value of ".$xml_MPParameters['level']."\n";
             }
         }
         else{
-            $errorMsg .= "**'CMAF check violated: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHALL not exceed the profile or level listed in the table', but profile is exceeded with the value of ".$xml_MPParameters['profile']."\n";
+            if(!$cmaf_conformance_clause_7)
+                $errorMsg .= "**'CMAF check violated: Section A.2- For a CMAF Track to comply with one of the media profiles in Table A.1, it SHALL not exceed the profile or level listed in the table', but profile is exceeded with the value of ".$xml_MPParameters['profile']."\n";
         }
     }
     elseif($xml_MPParameters['codec']=="HEVC"){
@@ -681,11 +710,13 @@ function getVideoTrackMediaProfile($xml_MPParameters){
                             }
                         }
                         else{
-                            $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the HEVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'.\n";
+                            if(!$cmaf_conformance_clause_7)
+                                $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the HEVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'.\n";
                         }
                     }
                     else{
-                        $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL conform to the colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed in the table', but found colour_primaries='".$xml_MPParameters['color_primaries']."', transfer_characteristics='".$xml_MPParameters['transfer_char']."' and matrix_coefficients='".$xml_MPParameters['matrix_coeff']."'.\n";
+                        if(!$cmaf_conformance_clause_7)
+                            $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL conform to the colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed in the table', but found colour_primaries='".$xml_MPParameters['color_primaries']."', transfer_characteristics='".$xml_MPParameters['transfer_char']."' and matrix_coefficients='".$xml_MPParameters['matrix_coeff']."'.\n";
                     }
                 }
                 elseif($xml_MPParameters['level'] <= 5.0){
@@ -697,15 +728,18 @@ function getVideoTrackMediaProfile($xml_MPParameters){
                             }
                         }
                         else{
-                            $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the HEVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'.\n";
+                            if(!$cmaf_conformance_clause_7)
+                                $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the HEVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'.\n";
                         }
                     }
                     else{
-                        $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL conform to the colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed in the table', but found colour_primaries='".$xml_MPParameters['color_primaries']."', transfer_characteristics='".$xml_MPParameters['transfer_char']."' and matrix_coefficients='".$xml_MPParameters['matrix_coeff']."'.\n";
+                        if(!$cmaf_conformance_clause_7)
+                            $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL conform to the colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed in the table', but found colour_primaries='".$xml_MPParameters['color_primaries']."', transfer_characteristics='".$xml_MPParameters['transfer_char']."' and matrix_coefficients='".$xml_MPParameters['matrix_coeff']."'.\n";
                     }
                 }
                 else{
-                    $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL conform to the colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed in the table', but found colour_primaries='".$xml_MPParameters['color_primaries']."', transfer_characteristics='".$xml_MPParameters['transfer_char']."' and matrix_coefficients='".$xml_MPParameters['matrix_coeff']."'.\n";
+                    if(!$cmaf_conformance_clause_7)
+                        $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL conform to the colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed in the table', but found colour_primaries='".$xml_MPParameters['color_primaries']."', transfer_characteristics='".$xml_MPParameters['transfer_char']."' and matrix_coefficients='".$xml_MPParameters['matrix_coeff']."'.\n";
                 }
             }
             elseif($xml_MPParameters['profile'] == 'Main10'){
@@ -714,15 +748,18 @@ function getVideoTrackMediaProfile($xml_MPParameters){
                         if($xml_MPParameters['height'] <= 1080 && $xml_MPParameters['width'] <= 1920 && $xml_MPParameters['framerate'] <= 60){
                             $videoMediaProfile="HEVC HHD10";
                             if($xml_MPParameters['brand'] != 'chh1'){
-                                //$errorMsg .= "'Warning for CMAF check: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHOULD include the CMAF File Brand listed in its CMAF header', but not included.\n";
+                                //if(!$cmaf_conformance_clause_7)
+                                //    $errorMsg .= "'Warning for CMAF check: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHOULD include the CMAF File Brand listed in its CMAF header', but not included.\n";
                             }
                         }
                         else{
-                            $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the HEVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'.\n";
+                            if(!$cmaf_conformance_clause_7)
+                                $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the HEVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'.\n";
                         }
                     }
                     else{
-                        $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL conform to the colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed in the table', but found colour_primaries='".$xml_MPParameters['color_primaries']."', transfer_characteristics='".$xml_MPParameters['transfer_char']."' and matrix_coefficients='".$xml_MPParameters['matrix_coeff']."'.\n";
+                        if(!$cmaf_conformance_clause_7)
+                            $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL conform to the colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed in the table', but found colour_primaries='".$xml_MPParameters['color_primaries']."', transfer_characteristics='".$xml_MPParameters['transfer_char']."' and matrix_coefficients='".$xml_MPParameters['matrix_coeff']."'.\n";
                     }
                 }
                 elseif($xml_MPParameters['level'] <= 5.1){
@@ -738,11 +775,13 @@ function getVideoTrackMediaProfile($xml_MPParameters){
                             }
                             else{
                                 $videoMediaProfile="HEVC UHD10, HEVC HLG10";
-                                //$errorMsg .= "'Warning for CMAF check: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHOULD include the CMAF File Brand listed in its CMAF header', but not included.\n";
+                                //if(!$cmaf_conformance_clause_7)
+                                //    $errorMsg .= "'Warning for CMAF check: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHOULD include the CMAF File Brand listed in its CMAF header', but not included.\n";
                             }
                         }
                         else{
-                            $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the HEVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'.\n";
+                            if(!$cmaf_conformance_clause_7)
+                                $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the HEVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'.\n";
                         }
                     }
                     elseif($xml_MPParameters['color_primaries']=== "0x9" && $xml_MPParameters['transfer_char'] ==="0x16" && 
@@ -750,11 +789,13 @@ function getVideoTrackMediaProfile($xml_MPParameters){
                         if($xml_MPParameters['height'] <= 2160 && $xml_MPParameters['width'] <= 3840 && $xml_MPParameters['framerate'] <= 60){
                             $videoMediaProfile="HEVC HDR10";
                             if($xml_MPParameters['brand'] != 'chd1'){
-                                //$errorMsg .= "'Warning for CMAF check: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHOULD include the CMAF File Brand listed in its CMAF header', but not included.\n";
+                                //if(!$cmaf_conformance_clause_7)
+                                //    $errorMsg .= "'Warning for CMAF check: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHOULD include the CMAF File Brand listed in its CMAF header', but not included.\n";
                             }
                         }
                         else{
-                            $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the HEVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'.\n";
+                            if(!$cmaf_conformance_clause_7)
+                                $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the HEVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'.\n";
                         }
                     }
                     elseif($xml_MPParameters['color_primaries']=== "0x9" && 
@@ -763,27 +804,33 @@ function getVideoTrackMediaProfile($xml_MPParameters){
                         if($xml_MPParameters['height'] <= 2160 && $xml_MPParameters['width'] <= 3840 && $xml_MPParameters['framerate'] <= 60){
                             $videoMediaProfile="HEVC HLG10";
                             if($xml_MPParameters['brand'] != 'clg1'){
-                                //$errorMsg .= "'Warning for CMAF check: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHOULD include the CMAF File Brand listed in its CMAF header', but not included.\n";
+                                //if(!$cmaf_conformance_clause_7)
+                                //    $errorMsg .= "'Warning for CMAF check: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHOULD include the CMAF File Brand listed in its CMAF header', but not included.\n";
                             }
                         }
                         else{
-                            $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the HEVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'.\n";
+                            if(!$cmaf_conformance_clause_7)
+                                $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the width, height or frame rate listed in the table, even if the HEVC Level would permit higher values', but found width='".$xml_MPParameters['width']."', height='".$xml_MPParameters['height']."' and frame rate='".$xml_MPParameters['framerate']."'.\n";
                         }
                     }
                     else{
-                        $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL conform to the colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed in the table', but found colour_primaries='".$xml_MPParameters['color_primaries']."', transfer_characteristics='".$xml_MPParameters['transfer_char']."' and matrix_coefficients='".$xml_MPParameters['matrix_coeff']."'.\n";
+                        if(!$cmaf_conformance_clause_7)
+                            $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL conform to the colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed in the table', but found colour_primaries='".$xml_MPParameters['color_primaries']."', transfer_characteristics='".$xml_MPParameters['transfer_char']."' and matrix_coefficients='".$xml_MPParameters['matrix_coeff']."'.\n";
                     }
                 }
                 else{
-                    $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the tier, profile or level listed in the table', but level is exceeded with the value of '".$xml_MPParameters['level']."'.\n";
+                    if(!$cmaf_conformance_clause_7)
+                        $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the tier, profile or level listed in the table', but level is exceeded with the value of '".$xml_MPParameters['level']."'.\n";
                 }
             }
             else{
-                $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the tier, profile or level listed in the table', but profile is exceeded with an unknown value.\n";
+                if(!$cmaf_conformance_clause_7)
+                    $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the tier, profile or level listed in the table', but profile is exceeded with an unknown value.\n";
             }
         }
         else{
-            $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the tier, profile or level listed in the table', but tier is exceeded with the value of '".$xml_MPParameters['tier']."'.\n";
+            if(!$cmaf_conformance_clause_7)
+                $errorMsg .= "**'CMAF check violated: Section B.5- For a CMAF Track to comply with one of the media profiles in Table B.1, it SHALL not exceed the tier, profile or level listed in the table', but tier is exceeded with the value of '".$xml_MPParameters['tier']."'.\n";
         }
     }
     
@@ -791,11 +838,14 @@ function getVideoTrackMediaProfile($xml_MPParameters){
 }
 
 function getAudioTrackMediaProfile($xml_MPParameters){
+    global $cmaf_conformance_clause_7;
+    
     $audioMediaProfile="unknown"; $errorMsg="";
     if($xml_MPParameters['codec']=="AAC"){
         if(in_array($xml_MPParameters['profile'],array("0x02", "0x05", "0x1d"))){
             if($xml_MPParameters['level']!=="" && strpos($xml_MPParameters['level'], "AAC@L2")===FALSE){
-                $errorMsg .= "**'CMAF check violated: Section 10.4- AAC CMAF media profile SHALL conform to the AAC CMAF track format with the following constraints: Each AAC elementary stream SHALL be encoded using MPEG-4 AAC LC, HE-AAC Level 2, or HE-AACv2 Level 2', but level information is not found or non-conforming.\n";
+                if(!$cmaf_conformance_clause_7)
+                    $errorMsg .= "**'CMAF check violated: Section 10.4- AAC CMAF media profile SHALL conform to the AAC CMAF track format with the following constraints: Each AAC elementary stream SHALL be encoded using MPEG-4 AAC LC, HE-AAC Level 2, or HE-AACv2 Level 2', but level information is not found or non-conforming.\n";
             }
             else{
                 if($xml_MPParameters['channels']=="0x1" || $xml_MPParameters['channels']=="0x2"){
@@ -808,23 +858,28 @@ function getAudioTrackMediaProfile($xml_MPParameters){
                         }
                         elseif($xml_MPParameters['brand'] == ''){
                             $audioMediaProfile = "AAC Core";
-                            //$errorMsg .= "'Warning for CMAF check: Section 10.4- AAC CMAF media profile SHALL conform to the AAC CMAF track format with the following constraints: AAC Core/Adaptive Audio FileTypeBox compatibility brand SHOULD be used to indicare CMAF tracks that conform to this (AAC Core/AAC Adaptive) media profile', but compatibility brand is not found.\n";
+                            //if(!$cmaf_conformance_clause_7)
+                            //    $errorMsg .= "'Warning for CMAF check: Section 10.4- AAC CMAF media profile SHALL conform to the AAC CMAF track format with the following constraints: AAC Core/Adaptive Audio FileTypeBox compatibility brand SHOULD be used to indicare CMAF tracks that conform to this (AAC Core/AAC Adaptive) media profile', but compatibility brand is not found.\n";
                         }
                         else{
-                            $errorMsg .= "**'CMAF check violated: Section 10.4- AAC CMAF media profile SHALL conform to the AAC CMAF track format with the following constraints: AAC Core/Adaptive Audio FileTypeBox compatibility brand SHALL be 'caac'/'caaa', respectively', but compatibility brand is found to be '".$xml_MPParameters['brand']."'.\n";
+                            if(!$cmaf_conformance_clause_7)
+                                $errorMsg .= "**'CMAF check violated: Section 10.4- AAC CMAF media profile SHALL conform to the AAC CMAF track format with the following constraints: AAC Core/Adaptive Audio FileTypeBox compatibility brand SHALL be 'caac'/'caaa', respectively', but compatibility brand is found to be '".$xml_MPParameters['brand']."'.\n";
                         }
                     }
                     else{
-                        $errorMsg .= "**'CMAF check violated: Section 10.4/10.5- AAC CMAF media profile SHALL conform to the AAC CMAF track format with the following constraints: AAC Core elementary streams SHALL not exceed 48kHz sampling rate', but sampling rate is exceeded with the value of '".$xml_MPParameters['sampleRate']."'.\n";
+                        if(!$cmaf_conformance_clause_7)
+                            $errorMsg .= "**'CMAF check violated: Section 10.4/10.5- AAC CMAF media profile SHALL conform to the AAC CMAF track format with the following constraints: AAC Core elementary streams SHALL not exceed 48kHz sampling rate', but sampling rate is exceeded with the value of '".$xml_MPParameters['sampleRate']."'.\n";
                     }
                 }
                 else{
-                    $errorMsg .= "**'CMAF check violated: Section 10.4- AAC CMAF media profile SHALL conform to the AAC CMAF track format with the following constraints: AAC Core CMAF tracks SHALL not exceed two audio channels', but number of channels is exceeded with the value of '".$xml_MPParameters['channels']."'.\n";
+                    if(!$cmaf_conformance_clause_7)
+                        $errorMsg .= "**'CMAF check violated: Section 10.4- AAC CMAF media profile SHALL conform to the AAC CMAF track format with the following constraints: AAC Core CMAF tracks SHALL not exceed two audio channels', but number of channels is exceeded with the value of '".$xml_MPParameters['channels']."'.\n";
                 }
             }
         }
         else{
-            $errorMsg .= "**'CMAF check violated: Section 10.4- AAC CMAF media profile SHALL conform to the AAC CMAF track format with the following constraints: Each AAC elementary stream SHALL be encoded using MPEG-4 AAC LC, HE-AAC Level 2, or HE-AACv2 Level 2', but non-conforming profile is found.\n";
+            if(!$cmaf_conformance_clause_7)
+                $errorMsg .= "**'CMAF check violated: Section 10.4- AAC CMAF media profile SHALL conform to the AAC CMAF track format with the following constraints: Each AAC elementary stream SHALL be encoded using MPEG-4 AAC LC, HE-AAC Level 2, or HE-AACv2 Level 2', but non-conforming profile is found.\n";
         }
     }
     
@@ -849,7 +904,8 @@ function getSubtitleTrackMediaProfile($xml_MPParameters){
     return [$subtitleMediaProfile,$errorMsg];
 }
 
-function CMAFFalgs(){
-    global $additional_flags;
-    $additional_flags .= ' -cmaf';
+function CMAFFlags(){
+    global $additional_flags, $cmaf_conformance_clause_7;
+    $additional_flags .= ' -cmaf'; 
+    if($cmaf_conformance_clause_7) { $additional_flags .= ' -cmaf7'; }
 }
