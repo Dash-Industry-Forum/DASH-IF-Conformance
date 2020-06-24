@@ -154,7 +154,7 @@ void checkDASHBoxOrder(long cnt, atomOffsetEntry *list, long segmentInfoSize, bo
 		if(vg.tencInInit && !vg.dash264enc)
 		    errprint("For an encrypted content, ContentProtection Descriptor shall always be present and DASH264 profile shall also be present");
                 
-                if(vg.cmaf && vg.dash264enc && !vg.tencInInit)
+                if(vg.cmaf && !vg.cmaf7 && vg.dash264enc && !vg.tencInInit)
                     errprint("CMAF check violated: Section 8.2.2.2 \"A TrackEncryptionBox SHALL be present in a CMAF header if any media samples in the track are encrypted\", but no tenc found in initialization segment.\n");
             }
 

@@ -2618,7 +2618,7 @@ OSErr Validate_tfhd_Atom( atomOffsetEntry *aoe, void *refcon )
         BAILIFERR( GetFileDataN32( aoe, &trafInfo->sample_description_index, offset, &offset ) );
     else{
         if(vg.cmaf)
-            errprint("CMAF check violated: Section 7.7.3. \"Default values or per sample values SHALL be stored in each CMAF chunk's TrackFragmentBoxHeader and/or TrackRunBox\", 'sample_description_index' not found.\n");
+            errprint("CMAF check 'cmf2' violated: Section 7.7.3. \"Default values or per sample values SHALL be stored in each CMAF chunk's TrackFragmentBoxHeader and/or TrackRunBox\", 'sample_description_index' not found.\n");
     }
 
     if(trafInfo->default_sample_duration_present)
@@ -2754,7 +2754,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
             trunInfo->sample_duration[i] = trafInfo->default_sample_duration;
             currentSampleDecodeDelta = trafInfo->default_sample_duration;
             if(vg.cmaf && !trafInfo->default_sample_duration_present)
-                errprint("CMAF check violated: Section 7.7.3. \"Default values or per sample values SHALL be stored in each CMAF chunk's TrackFragmentBoxHeader and/or TrackRunBox\", 'duration' not found in any of them. \n");
+                errprint("CMAF check 'cmf2' violated: Section 7.7.3. \"Default values or per sample values SHALL be stored in each CMAF chunk's TrackFragmentBoxHeader and/or TrackRunBox\", 'duration' not found in any of them. \n");
         }
 
         trunInfo->cummulatedSampleDuration += currentSampleDecodeDelta;
@@ -2764,7 +2764,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
 		else{
 			trunInfo->sample_size[i] = trafInfo->default_sample_size;
                         if(vg.cmaf && !trafInfo->default_sample_size_present)
-                            errprint("CMAF check violated: Section 7.7.3. \"Default values or per sample values SHALL be stored in each CMAF chunk's TrackFragmentBoxHeader and/or TrackRunBox\", 'size' not found in any of them. \n");
+                            errprint("CMAF check 'cmf2' violated: Section 7.7.3. \"Default values or per sample values SHALL be stored in each CMAF chunk's TrackFragmentBoxHeader and/or TrackRunBox\", 'size' not found in any of them. \n");
                 }
 
         if(trunInfo->sample_flags_present)
@@ -2776,7 +2776,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
                 else{
 			    trunInfo->sample_flags[i] = trafInfo->default_sample_flags;
                             if(vg.cmaf && !trafInfo->default_sample_flags_present)
-                                errprint("CMAF check violated: Section 7.7.3. \"default_sample_flags, sample_flags and first_sample_flags SHALL be set in the TrackFragmentBoxHeader and/or TrackRunBox to provide sample dependency information within each CMAF chunk and CMAF fragment\", not found in any of them.\n");
+                                errprint("CMAF check 'cmf2' violated: Section 7.7.3. \"default_sample_flags, sample_flags and first_sample_flags SHALL be set in the TrackFragmentBoxHeader and/or TrackRunBox to provide sample dependency information within each CMAF chunk and CMAF fragment\", not found in any of them.\n");
                     }
                 }
 
@@ -4668,7 +4668,7 @@ OSErr Validate_tenc_Atom( atomOffsetEntry *aoe, void *refcon )
 
     vg.tencInInit=true;// As the 'tenc' box is present in moov box (initialization segment).
 
-    if((vg.ctawave || vg.cmaf) && default_IsEncrypted!=1){
+    if((vg.ctawave || (vg.cmaf && !vg.cmaf7)) && default_IsEncrypted!=1){
         errprint("CMAF Check violated : Section 8.2.3.2. \"In an encrypted Track, the isProtected flag in the TrackEncryptionBox SHALL be set to 1.\",found %ld \n",default_IsEncrypted);
     }
 
@@ -5105,7 +5105,7 @@ OSErr Validate_saio_Atom( atomOffsetEntry *aoe, void *refcon )
             BAILIFERR( GetFileData( aoe, &aux_info_typ,  offset, sizeof( UInt32 ), &offset ) );
 	    aux_info_typ= EndianU32_BtoN(aux_info_typ);
             BAILIFERR( GetFileData( aoe, &aux_info_type_parameter,  offset, sizeof( UInt32 ), &offset ) );
-            if(vg.cmaf && aux_info_typ!='cenc')
+            if(vg.cmaf && !vg.cmaf7 && aux_info_typ!='cenc')
                 errprint("CMAF check violated: Section 8.2.2.1: \"For encrypted Fragments that contain Sample Auxiliary Informantion, 'saio' SHALL be present with aux_info_type value of 'cenc'\", but found %s\n",ostypetostr(aux_info_typ));
         }
 
@@ -5140,7 +5140,7 @@ OSErr Validate_saio_Atom( atomOffsetEntry *aoe, void *refcon )
 
         atomprint(">\n");
 
-        if(vg.cmaf && entry_count!=1)
+        if(vg.cmaf && !vg.cmaf7 && entry_count!=1)
             errprint("CMAF check violated: Section 8.2.2.1: \"The entry_count field of the SampleAuxiliaryInformationOffsetsBox SHALL equal 1\", but found %ld\n",entry_count);
 
     	// All done

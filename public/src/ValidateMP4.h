@@ -626,6 +626,7 @@ typedef struct {
     bool    RepresentationIndex;
     bool    atomxml;
     bool    cmaf;
+    bool    cmaf7;
     bool    dvb;
     bool    hbbtv;
     bool    ctawave;
@@ -1001,14 +1002,14 @@ do \
 { \
   GetBits(bb, n_bits, &err); \
   if (err) { \
-    fprintf (stderr, "BAILIFERR: <%s> (%06d)\n", __FILE__, __LINE__); \
+    fprintf (stderr, "BAILIFERR: <%s> (%06d)\r", __FILE__, __LINE__); \
     goto bail; \
   } \
 } while (false)
 
 #define GOTOBAIL \
 { \
-    fprintf (stderr, "GOTOBAIL from:  %s:%d\n", __FILE__,__LINE__); \
+    fprintf (stderr, "GOTOBAIL from:  %s:%d\r", __FILE__,__LINE__); \
     goto bail; \
 }
 
@@ -1018,7 +1019,7 @@ do \
 { \
   err = statement; \
   if (err) { \
-    fprintf (stderr, "BAILIFERR: <%s> (%06d)\n", __FILE__, __LINE__); \
+    fprintf (stderr, "BAILIFERR: <%s> (%06d)\r", __FILE__, __LINE__); \
     goto bail; \
   } \
 } while (false)

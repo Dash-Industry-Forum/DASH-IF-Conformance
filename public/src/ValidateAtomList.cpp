@@ -1160,7 +1160,7 @@ OSErr ValidateAtomOfType( OSType theType, long flags, ValidateAtomTypeProcPtr va
                         errprint("CMAF check violated: Section 7.3.1. \"The Media Information Box SHALL contain a Sound Media Header for media type audio\", found %d\n", typeCnt);
                     if(theType =='sthd')
                         errprint("CMAF check violated: Section 7.3.1. \"The Media Information Box SHALL contain a Subtitle Media Header for media type subtitle\", found %d\n", typeCnt);
-                    if(theType =='saio')
+                    if(!vg.cmaf7 && theType =='saio')
                         errprint("CMAF check violated: Section 8.2.2.1. \"For encrypted CMAF Fragments that contain Sample Auxiliary Information, each TrackFragmentBox SHALL contain a 'saio'\", found %d\n", typeCnt);
                     
 		}
