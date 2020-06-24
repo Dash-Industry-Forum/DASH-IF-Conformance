@@ -62,6 +62,7 @@ $availability_times = array();
 
 # CMAF variables
 $cmaf_conformance = false;
+$cmaf_conformance_clause_7 = false;
 $cmaf_mediaTypes;
 $cmaf_mediaProfiles;
 $infofile_template = '';
@@ -97,14 +98,16 @@ if (isset($_POST['urlcode'])){
     
     $mpd_validation_only = $url_array[1];
     $cmaf_conformance = $url_array[2];
-    $dvb_conformance_2019 = $url_array[3];
-    $dvb_conformance_2018 = $url_array[4];
+    $cmaf_conformance_clause_7 = $url_array[3];
+    if (!$cmaf_conformance && $cmaf_conformance_clause_7) { $cmaf_conformance = 1; }
+    $dvb_conformance_2019 = $url_array[4];
+    $dvb_conformance_2018 = $url_array[5];
     $dvb_conformance = ($dvb_conformance_2018 || $dvb_conformance_2019) ? 1 : 0;
-    $hbbtv_conformance = $url_array[5];
-    $dashif_conformance=$url_array[6];
-    $ctawave_conformance=$url_array[7];
-    $low_latency_dashif_conformance = $url_array[8];
-    $schema_url = $url_array[9];
+    $hbbtv_conformance = $url_array[6];
+    $dashif_conformance=$url_array[7];
+    $ctawave_conformance=$url_array[8];
+    $low_latency_dashif_conformance = $url_array[9];
+    $schema_url = $url_array[10];
 }
 if (isset($_POST['urlcodehls'])){
     $url_array = json_decode($_POST['urlcodehls']);
@@ -112,7 +115,9 @@ if (isset($_POST['urlcodehls'])){
     $_SESSION['url'] = $mpd_url;
     
     $cmaf_conformance = $url_array[1];
-    $ctawave_conformance=$url_array[2];
+    $cmaf_conformance_clause_7 = $url_array[2];
+    if (!$cmaf_conformance && $cmaf_conformance_clause_7) { $cmaf_conformance = 1; }
+    $ctawave_conformance=$url_array[3];
     
     $hls_manifest = 1;
     $main_dir = dirname(__DIR__) . '/Conformance-Frontend-HLS/';
