@@ -29,7 +29,6 @@
         //getting cookies
         vm.stepData[0].data.file = "";
         vm.stepData[0].data.cmaf = $cookies.get('cmaf')=== "true"? true : false;
-        vm.stepData[0].data.cmaf7 = $cookies.get('cmaf7')=== "true"? true : false;
         vm.stepData[0].data.dvb2019 =  $cookies.get('dvb2019')=== "true"? true : false;
         vm.stepData[0].data.dvb2018 =  $cookies.get('dvb2018')=== "true"? true : false;
         vm.stepData[0].data.hbbTv = $cookies.get('hbbtv')=== "true"? true : false;
@@ -329,17 +328,16 @@
             //getting additional options 
             if (vm.stepData[0].data.segmentvalidation) {vm.stringurl[1] = 0;} else {vm.stringurl[1] = 1;}
             if (vm.stepData[0].data.cmaf) {vm.stringurl[2] = 1;} else {vm.stringurl[2] = 0;}
-            if (vm.stepData[0].data.cmaf7) {vm.stringurl[3] = 1;} else {vm.stringurl[3] = 0;}
-            if (vm.stepData[0].data.dvb2019) {vm.stringurl[4] = 1;} else {vm.stringurl[4] = 0;}
-            if (vm.stepData[0].data.dvb2018) {vm.stringurl[5] = 1;} else {vm.stringurl[5] = 0;}
-            if (vm.stepData[0].data.hbbTv) {vm.stringurl[6] = 1;} else {vm.stringurl[6] = 0;}
-            if (vm.stepData[0].data.dashIf) {vm.stringurl[7] = 1;} else {vm.stringurl[7] = 0;}
-            if (vm.stepData[0].data.ctawave) {vm.stringurl[8] = 1;} else {vm.stringurl[8] = 0;}
-            if (vm.stepData[0].data.dashIfll) {vm.stringurl[9] = 1;} else {vm.stringurl[9] = 0;}
+            if (vm.stepData[0].data.dvb2019) {vm.stringurl[3] = 1;} else {vm.stringurl[3] = 0;}
+            if (vm.stepData[0].data.dvb2018) {vm.stringurl[4] = 1;} else {vm.stringurl[4] = 0;}
+            if (vm.stepData[0].data.hbbTv) {vm.stringurl[5] = 1;} else {vm.stringurl[5] = 0;}
+            if (vm.stepData[0].data.dashIf) {vm.stringurl[6] = 1;} else {vm.stringurl[6] = 0;}
+            if (vm.stepData[0].data.ctawave) {vm.stringurl[7] = 1;} else {vm.stringurl[7] = 0;}
+            if (vm.stepData[0].data.dashIfll) {vm.stringurl[8] = 1;} else {vm.stringurl[8] = 0;}
             vm.stepData[0].data.dvb = vm.stepData[0].data.dvb2018 || vm.stepData[0].data.dvb2019;
             
             // getting additional schema option
-            vm.stringurl[10] = vm.stepData[0].data.schema;
+            vm.stringurl[9] = vm.stepData[0].data.schema;
             if(vm.stepData[0].data.schema){
                 var filename = vm.stepData[0].data.schema;
                 if (filename.split('.').pop() != 'xsd'){
@@ -358,7 +356,6 @@
             //setting cookies
             $cookies.put('segmentvalidation',vm.stepData[0].data.segmentvalidation,{expires: vm.exp});
             $cookies.put('cmaf',vm.stepData[0].data.cmaf,{expires: vm.exp});
-            $cookies.put('cmaf7',vm.stepData[0].data.cmaf7,{expires: vm.exp});
             $cookies.put('dvb2019',vm.stepData[0].data.dvb2019,{expires: vm.exp});
             $cookies.put('dvb2018',vm.stepData[0].data.dvb2018,{expires: vm.exp});
             $cookies.put('hbbtv',vm.stepData[0].data.hbbTv,{expires: vm.exp});
@@ -1040,10 +1037,10 @@
             
             if (vm.representationid > vm.totarr[vm.hinindex]) {
                 var ComparedRepresentations = vm.xmlDoc_progress.getElementsByTagName("Period")[vm.periodid - 1].getElementsByTagName("ComparedRepresentations");
-                if ((vm.stepData[0].data.cmaf == 1 || vm.stepData[0].data.cmaf7 == 1) && ComparedRepresentations.length == vm.counter) {
+                if (vm.stepData[0].data.cmaf == 1 && ComparedRepresentations.length == vm.counter) {
                     return;
                 }
-                if ((vm.stepData[0].data.cmaf || vm.stepData[0].data.cmaf7) && ComparedRepresentations.length != 0) {
+                if (vm.stepData[0].data.cmaf && ComparedRepresentations.length != 0) {
                     if (ComparedRepresentations[vm.holder - 1].textContent == "noerror") {
                         vm.tree.setItemImage2(vm.adaptid[vm.periodid - 1][vm.holder - 1], 'right.jpg', 'right.jpg', 'right.jpg');
                         vm.automate(vm.adaptid[vm.periodid - 1][vm.holder - 1], vm.lastloc, "CMAF Compared representations validation success");
@@ -1142,7 +1139,7 @@
                     }
                 }
                 
-                if (vm.stepData[0].data.cmaf == 1 || vm.stepData[0].data.cmaf7 == 1) {
+                if (vm.stepData[0].data.cmaf == 1) {
                     if (SelectionSet.length == 0 || CmafProfile.length == 0) {
                         return;
                     }
