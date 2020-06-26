@@ -25,7 +25,7 @@ git clone --recurse-submodules https://github.com/Dash-Industry-Forum/DASH-IF-Co
 
 ### Usage Guide
 
-Information on how to use the conformance software, please refer to our [Usage Guide]( https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/blob/master/Doc/Usage_Guide_for_Conformance_Software.pdf) document.
+Information on how to use the conformance software, please refer to our [Usage Guide](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/blob/master/Doc/Conformance%20Software%20Usage%20Guide.pdf) document.
 
 ### Detailed Information
 
