@@ -415,10 +415,6 @@
                     <input type="checkbox" name="cmafprofile" id="cmafprofile" >
                     <span class="checkmark"></span>
                 </label>
-                <label class="chkbox" for="cmafprofile7">CMAF (Clause 7)
-                    <input type="checkbox" name="cmafprofile7" id="cmafprofile7" >
-                    <span class="checkmark"></span>
-                </label>
                 <label class="chkbox" for="ctawaveprofile">CTA WAVE
                     <input type="checkbox" name="ctawaveprofile" id="ctawaveprofile" >
                     <span class="checkmark"></span>
@@ -501,7 +497,6 @@ var xmlDoc_progress;
 var progressSegmentsTimer;
 var pollingTimer;
 var cmaf = 0;
-var cmaf7 = 0;
 var ctawave=0;
 var TotalAdaptRep_count = 0;
 var crossValidation = 0;
@@ -678,14 +673,11 @@ function submit()
     stringurl[0] = url;
     if($("#cmafprofile").is(':checked'))
         cmaf = 1;
-    if($("#cmafprofile7").is(':checked'))
-        cmaf7 = 1;
     if($("#ctawaveprofile").is(':checked'))
         ctawave = 1;
     
     stringurl[1]=cmaf;
-    stringurl[2]=cmaf7;
-    stringurl[3]=ctawave;
+    stringurl[2]=ctawave;
     
     initVariables();
     setUpTreeView();
@@ -826,7 +818,7 @@ function progress()  //Progress of Segments' Conformance
     if(xmlDoc_progress == null)
         return;
     
-    if(cmaf == 1 || cmaf7 == 1 || ctawave == 1){
+    if(cmaf == 1 || ctawave == 1){
         //tree.setItemImage2( repid[counting],'progress3.gif','progress3.gif','progress3.gif');
         var ComparedRepresentations = xmlDoc_progress.getElementsByTagName("ComparedRepresentations");
         var SelectionSet=xmlDoc_progress.getElementsByTagName("SelectionSet");
