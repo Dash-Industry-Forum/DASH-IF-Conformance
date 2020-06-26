@@ -211,8 +211,7 @@ function checkCMAFPresentation(){
                         }
 
                         if($xml->getElementsByTagName('tenc')->length >0)
-                            if(!$cmaf_conformance_clause_7)
-                                fprintf($opfile, "**'CMAF check violated: Section A.1.2 - 'All CMAF Tracks SHALL NOT contain encrypted Samples or a TrackEncryptionBox', but found in Switching Set ".$adapt_count." Rep ".$id." \n");
+                            fprintf($opfile, "**'CMAF check violated: Section A.1.2 - 'All CMAF Tracks SHALL NOT contain encrypted Samples or a TrackEncryptionBox', but found in Switching Set ".$adapt_count." Rep ".$id." \n");
                     }
                     if($profile_cmfhdc){
                         if($xml_handlerType=='vide'){
@@ -241,8 +240,7 @@ function checkCMAFPresentation(){
                             $schm=$xml->getElementsByTagName('schm');
                             if($schm->length>0) {
                                 if($schm->item(0)->getAttribute('scheme')!='cenc')
-                                    if(!$cmaf_conformance_clause_7)
-                                        fprintf($opfile, "**'CMAF check violated: Section A.1.3 - 'Any CMAF Switching Set that is encrypted SHALL be available in 'cenc' Common Encryption scheme', but found scheme ".$schm->item(0)->getAttribute('scheme')." \n");
+                                    fprintf($opfile, "**'CMAF check violated: Section A.1.3 - 'Any CMAF Switching Set that is encrypted SHALL be available in 'cenc' Common Encryption scheme', but found scheme ".$schm->item(0)->getAttribute('scheme')." \n");
                                 }
                             if($encryptedSwSetFound=0 && $enc_counter == $filecount)
                                 $encryptedSwSetFound=1;
@@ -276,8 +274,7 @@ function checkCMAFPresentation(){
                             $schm=$xml->getElementsByTagName('schm');
                             if($schm->length>0) {
                                 if($schm->item(0)->getAttribute('scheme')!='cbcs') {
-                                    if(!$cmaf_conformance_clause_7)
-                                        fprintf($opfile, "**'CMAF check violated: Section A.1.4 - 'Any CMAF Switching Set that is encrypted SHALL be available in 'cbcs' Common Encryption scheme', but found scheme ".$schm->item(0)->getAttribute('scheme')." \n");
+                                    fprintf($opfile, "**'CMAF check violated: Section A.1.4 - 'Any CMAF Switching Set that is encrypted SHALL be available in 'cbcs' Common Encryption scheme', but found scheme ".$schm->item(0)->getAttribute('scheme')." \n");
                                 } 
                             }
                             if($encryptedSwSetFound=0 && $enc_counter == $filecount)
@@ -325,18 +322,18 @@ function checkCMAFPresentation(){
         }
     }
     
-    if(($profile_cmfhd || $profile_cmfhdc ||$profile_cmfhds) && $videoFound && $cfhd_SwSetFound!=1 && !$cmaf_conformance_clause_7)
+    if(($profile_cmfhd || $profile_cmfhdc ||$profile_cmfhds) && $videoFound && $cfhd_SwSetFound!=1)
         fprintf($opfile, "**'CMAF check violated: Section A.1.2/A.1.3/A.1.4 - 'If containing video, SHALL include at least one Switching Set constrained to the 'cfhd' Media Profile', but found none \n");
-    if(($profile_cmfhd || $profile_cmfhdc ||$profile_cmfhds) && $audioFound && $caac_SwSetFound!=1 && !$cmaf_conformance_clause_7)
+    if(($profile_cmfhd || $profile_cmfhdc ||$profile_cmfhds) && $audioFound && $caac_SwSetFound!=1)
         fprintf($opfile, "**'CMAF check violated: Section A.1.2/A.1.3/A.1.4 - 'If containing audio, SHALL include at least one Switching Set constrained to the 'caac' Media Profile', but found none \n");
-    if($profile_cmfhdc && $encryptedSwSetFound!=1 && !$cmaf_conformance_clause_7)
+    if($profile_cmfhdc && $encryptedSwSetFound!=1)
         fprintf($opfile, "**'CMAF check violated: Section A.1.3 - 'At least one CMAF Switching Set SHALL be encrypted', but found none. \n");
-    if($profile_cmfhds && $encryptedSwSetFound!=1 && !$cmaf_conformance_clause_7)
+    if($profile_cmfhds && $encryptedSwSetFound!=1)
         fprintf($opfile, "**'CMAF check violated: Section A.1.4 - 'At least one CMAF Switching Set SHALL be encrypted', but found none. \n");
     if(($profile_cmfhd || $profile_cmfhdc ||$profile_cmfhds) && $subtitleFound){
         $count_subtitleLang=count(subtitle_array);
         for($z=0;$z<$count;$z++){
-            if($subtitle_array[$z]!=1 && !$cmaf_conformance_clause_7)
+            if($subtitle_array[$z]!=1)
                 fprintf($opfile, "**'CMAF check violated: Section A.1.2/A.1.3/A.1.4 - 'If containing subtitles, SHALL include at least one Switching Set for each language and role in the 'im1t' Media Profile', but found none \n");
         }
     }

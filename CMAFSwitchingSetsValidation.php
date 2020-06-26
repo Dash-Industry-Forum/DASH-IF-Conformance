@@ -248,8 +248,6 @@ function checkHeaders($opfile, $xml, $xml_comp, $id, $id_comp, $curr_adapt_dir, 
 }
 
 function compareHevc($opfile, $xml, $xml_comp, $id, $id_comp){
-    global $cmaf_conformance_clause_7;
-    
     $att_names_sps = array('vui_parameters_present_flag', 'video_signal_type_present_flag', 'colour_description_present_flag',
         'colour_primaries', 'transfer_characteristics', 'matrix_coeffs', 'chroma_loc_info_present_flag',
         'chroma_sample_loc_type_top_field', 'chroma_sample_loc_type_bottom_field', 'neutral_chroma_indication_flag', 
@@ -270,13 +268,11 @@ function compareHevc($opfile, $xml, $xml_comp, $id, $id_comp){
             $comp_nal_unit_att = $sps_unit_comp->getAttribute($att_name);
             
             if($nal_unit_att != $comp_nal_unit_att)
-                if(!$cmaf_conformance_clause_7)
-                    fprintf($opfile, "**'CMAF check violated: Section B.2.4- CMAF Switching Sets SHALL be constrained to include identical SPS VUI color mastering and dynamic range information in the first sample entry of every CMAF header in the CMAF switching set to provide consistent initialization and calibration', but $att_name is $nal_unit_att for Rep. $id and $comp_nal_unit_att for Rep. $id_comp.\n");
+                fprintf($opfile, "**'CMAF check violated: Section B.2.4- CMAF Switching Sets SHALL be constrained to include identical SPS VUI color mastering and dynamic range information in the first sample entry of every CMAF header in the CMAF switching set to provide consistent initialization and calibration', but $att_name is $nal_unit_att for Rep. $id and $comp_nal_unit_att for Rep. $id_comp.\n");
         }
     }
     elseif(($xml_SPS != NULL && $xml_comp_SPS == NULL) || ($xml_SPS == NULL && $xml_comp_SPS != NULL)){
-        if(!$cmaf_conformance_clause_7)
-            fprintf($opfile, "**'CMAF check violated: Section B.2.4- CMAF Switching Sets SHALL be constrained to include identical SPS VUI color mastering and dynamic range information in the first sample entry of every CMAF header in the CMAF switching set to provide consistent initialization and calibration', but Rep. $id and Rep. $id_comp are not symmetric in SPS NAL presence.\n");
+        fprintf($opfile, "**'CMAF check violated: Section B.2.4- CMAF Switching Sets SHALL be constrained to include identical SPS VUI color mastering and dynamic range information in the first sample entry of every CMAF header in the CMAF switching set to provide consistent initialization and calibration', but Rep. $id and Rep. $id_comp are not symmetric in SPS NAL presence.\n");
     }
     
     $xml_PRESEI = getNALArray($xml_hvcC, '39');
@@ -290,13 +286,11 @@ function compareHevc($opfile, $xml, $xml_comp, $id, $id_comp){
             $comp_nal_unit_att = $presei_unit_comp->getAttribute($att_name);
             
             if($nal_unit_att != $comp_nal_unit_att)
-                if(!$cmaf_conformance_clause_7)
-                    fprintf($opfile, "**'CMAF check violated: Section B.2.4- CMAF Switching Sets SHALL be constrained to include identical SEI NALS in the first sample entry of every CMAF header in the CMAF switching set to provide consistent initialization and calibration', but $att_name is $nal_unit_att for Rep. $id and $comp_nal_unit_att for Rep. $id_comp. \n");
+                fprintf($opfile, "**'CMAF check violated: Section B.2.4- CMAF Switching Sets SHALL be constrained to include identical SEI NALS in the first sample entry of every CMAF header in the CMAF switching set to provide consistent initialization and calibration', but $att_name is $nal_unit_att for Rep. $id and $comp_nal_unit_att for Rep. $id_comp. \n");
             }
     }
     elseif(($xml_PRESEI != NULL && $xml_comp_PRESEI == NULL) || ($xml_PRESEI == NULL && $xml_comp_PRESEI != NULL)){
-        if(!$cmaf_conformance_clause_7)
-            fprintf($opfile, "**'CMAF check violated: Section B.2.4- CMAF Switching Sets SHALL be constrained to include identical SPS VUI color mastering and dynamic range information in the first sample entry of every CMAF header in the CMAF switching set to provide consistent initialization and calibration', but Rep. $id and Rep. $id_comp are not symmetric in SEI NAL presence.\n");
+        fprintf($opfile, "**'CMAF check violated: Section B.2.4- CMAF Switching Sets SHALL be constrained to include identical SPS VUI color mastering and dynamic range information in the first sample entry of every CMAF header in the CMAF switching set to provide consistent initialization and calibration', but Rep. $id and Rep. $id_comp are not symmetric in SEI NAL presence.\n");
     }
     
     $xml_SUFSEI = getNALArray($xml_hvcC, '40');
@@ -310,13 +304,11 @@ function compareHevc($opfile, $xml, $xml_comp, $id, $id_comp){
             $comp_nal_unit_att = $sufsei_unit_comp->getAttribute($att_name);
             
             if($nal_unit_att != $comp_nal_unit_att)
-                if(!$cmaf_conformance_clause_7)
-                    fprintf($opfile, "**'CMAF check violated: Section B.2.4- CMAF Switching Sets SHALL be constrained to include identical SEI NALS in the first sample entry of every CMAF header in the CMAF switching set to provide consistent initialization and calibration', but $att_name is $nal_unit_att for Rep. $id and $comp_nal_unit_att for Rep. $id_comp. \n");
-            }
+                fprintf($opfile, "**'CMAF check violated: Section B.2.4- CMAF Switching Sets SHALL be constrained to include identical SEI NALS in the first sample entry of every CMAF header in the CMAF switching set to provide consistent initialization and calibration', but $att_name is $nal_unit_att for Rep. $id and $comp_nal_unit_att for Rep. $id_comp. \n");
+        }
     }
     elseif(($xml_SUFSEI != NULL && $xml_comp_SUFSEI == NULL) || ($xml_SUFSEI == NULL && $xml_comp_SUFSEI != NULL)){
-        if(!$cmaf_conformance_clause_7)
-            fprintf($opfile, "**'CMAF check violated: Section B.2.4- CMAF Switching Sets SHALL be constrained to include identical SPS VUI color mastering and dynamic range information in the first sample entry of every CMAF header in the CMAF switching set to provide consistent initialization and calibration', but Rep. $id and Rep. $id_comp are not symmetric in SEI NAL presence.\n");
+        fprintf($opfile, "**'CMAF check violated: Section B.2.4- CMAF Switching Sets SHALL be constrained to include identical SPS VUI color mastering and dynamic range information in the first sample entry of every CMAF header in the CMAF switching set to provide consistent initialization and calibration', but Rep. $id and Rep. $id_comp are not symmetric in SEI NAL presence.\n");
     }
 }
 
