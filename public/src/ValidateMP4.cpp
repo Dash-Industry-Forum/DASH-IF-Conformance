@@ -242,7 +242,6 @@ int main(void)
     vg.higherindexRange=-1;
     vg.atomxml=false;
     vg.cmaf=false;
-    vg.cmaf7 = false;
     vg.dvb=false;
     vg.hbbtv=false;
     vg.ctawave=false;
@@ -418,8 +417,6 @@ int main(void)
 			 vg.atomxml = true;
 		} else if ( keymatch( arg, "cmaf", 1)) {
 			 vg.cmaf = true;
-		} else if ( keymatch( arg, "cmaf7", 1)) {
-			 vg.cmaf7 = true;
 		} else if ( keymatch( arg, "dvb", 1)) {
                          vg.dvb = true;
                 } else if ( keymatch( arg, "hbbtv", 1)) {

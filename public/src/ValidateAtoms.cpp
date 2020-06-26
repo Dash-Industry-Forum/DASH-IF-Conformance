@@ -4668,7 +4668,7 @@ OSErr Validate_tenc_Atom( atomOffsetEntry *aoe, void *refcon )
 
     vg.tencInInit=true;// As the 'tenc' box is present in moov box (initialization segment).
 
-    if((vg.ctawave || (vg.cmaf && !vg.cmaf7)) && default_IsEncrypted!=1){
+    if((vg.ctawave || vg.cmaf) && default_IsEncrypted!=1){
         errprint("CMAF Check violated : Section 8.2.3.2. \"In an encrypted Track, the isProtected flag in the TrackEncryptionBox SHALL be set to 1.\",found %ld \n",default_IsEncrypted);
     }
 
@@ -5105,7 +5105,7 @@ OSErr Validate_saio_Atom( atomOffsetEntry *aoe, void *refcon )
             BAILIFERR( GetFileData( aoe, &aux_info_typ,  offset, sizeof( UInt32 ), &offset ) );
 	    aux_info_typ= EndianU32_BtoN(aux_info_typ);
             BAILIFERR( GetFileData( aoe, &aux_info_type_parameter,  offset, sizeof( UInt32 ), &offset ) );
-            if(vg.cmaf && !vg.cmaf7 && aux_info_typ!='cenc')
+            if(vg.cmaf && aux_info_typ!='cenc')
                 errprint("CMAF check violated: Section 8.2.2.1: \"For encrypted Fragments that contain Sample Auxiliary Informantion, 'saio' SHALL be present with aux_info_type value of 'cenc'\", but found %s\n",ostypetostr(aux_info_typ));
         }
 
@@ -5140,7 +5140,7 @@ OSErr Validate_saio_Atom( atomOffsetEntry *aoe, void *refcon )
 
         atomprint(">\n");
 
-        if(vg.cmaf && !vg.cmaf7 && entry_count!=1)
+        if(vg.cmaf && entry_count!=1)
             errprint("CMAF check violated: Section 8.2.2.1: \"The entry_count field of the SampleAuxiliaryInformationOffsetsBox SHALL equal 1\", but found %ld\n",entry_count);
 
     	// All done

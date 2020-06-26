@@ -626,7 +626,6 @@ typedef struct {
     bool    RepresentationIndex;
     bool    atomxml;
     bool    cmaf;
-    bool    cmaf7;
     bool    dvb;
     bool    hbbtv;
     bool    ctawave;
