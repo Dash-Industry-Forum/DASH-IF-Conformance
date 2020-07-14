@@ -2241,7 +2241,7 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 
 	if(vg.width != 0 && vg.height != 0){
             float mpd_ratio = ((float)(vg.width * vg.sarx))/((float)(vg.height * vg.sary));
-            float tkhd_ratio = ((float)(tir->trackWidth>>16))/((float)(tir->trackHeight>>16));
+            float tkhd_ratio = ((float)(tir->trackWidth))/((float)(tir->trackHeight));
             if(mpd_ratio != tkhd_ratio){
                 errprint("Track header box width:height %f:%f is not matching the MPD width:height %d:%d on a grid determined by the @sar attribute %d:%d.\n",((float)(tir->trackWidth>>16)), ((float)(tir->trackHeight>>16)), vg.width, vg.height, vg.sarx, vg.sary);
             }
