@@ -3483,7 +3483,7 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	FieldMustBe( ssdi.version, 0, "SoundDescription version must be %d not %d" );
 	FieldMustBe( ssdi.revisionLevel, 0, "SoundDescription revisionLevel must be %d not %d" );
 	FieldMustBe( ssdi.vendor, 0, "SoundDescription vendor must be %d not 0x%lx" );
-	FieldMustBe( ssdi.numChannels, 2, "SoundDescription numChannels must be %d not %d" );
+	FieldCheck( ssdi.numChannels > 0, "SoundDescription numChannels must be superior to 0" );
 	FieldMustBe( ssdi.sampleSize, 16, "SoundDescription sampleSize must be %d not %d" );
 	FieldMustBe( ssdi.compressionID, 0, "SoundDescription compressionID must be %d not %d" );
 	FieldMustBe( ssdi.packetSize, 0, "SoundDescription packetSize must be %d not %d" );

@@ -219,6 +219,9 @@ OSErr Validate_lac4_Atom( atomOffsetEntry *aoe, void *refcon)
     unsigned int type;
     UInt64 offset;
     UInt32 bits_counter = 0;
+    UInt32  flags;
+    UInt32 reserved_shall_be_zero;
+    UInt32 num_presentation_labels;
 
     atomprint("<lac4\n");
     vg.tabcnt++;
@@ -239,15 +242,15 @@ OSErr Validate_lac4_Atom( atomOffsetEntry *aoe, void *refcon)
 
     BitBuffer_Init(&bb, (UInt8 *)bsDataP, size - 8);
 
-    UInt32  flags = GetBits(&bb, 24, &err); if (err) GOTOBAIL;
+    flags = GetBits(&bb, 24, &err); if (err) GOTOBAIL;
     atomprint("flags=\"%d\"\n", flags);
     bits_counter += 24;
 
-    UInt32 reserved_shall_be_zero = GetBits(&bb, 7, &err); if (err) GOTOBAIL;
+    reserved_shall_be_zero = GetBits(&bb, 7, &err); if (err) GOTOBAIL;
     atomprint("reserved_shall_be_zero=\"%d\"\n", reserved_shall_be_zero);
     bits_counter += 7;
 
-    UInt32 num_presentation_labels = GetBits(&bb, 9, &err); if (err) GOTOBAIL;
+    num_presentation_labels = GetBits(&bb, 9, &err); if (err) GOTOBAIL;
     atomprint("num_presentation_labels=\"%d\"\n", num_presentation_labels);
     bits_counter += 9;
 

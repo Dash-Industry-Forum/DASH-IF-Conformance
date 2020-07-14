@@ -289,6 +289,7 @@ presentation_version()
 OSErr Validate_AC4_emdf_protection(BitBuffer *bb, void *refcon)
 {
     OSErr err = noErr;
+     UInt32 primary_length;
     printf ("<%s> : ent \n", __FUNCTION__);
 
     atomprint("<ac4_emdf_protection\n");
@@ -299,7 +300,7 @@ OSErr Validate_AC4_emdf_protection(BitBuffer *bb, void *refcon)
     VALIDATE_FIELD("%d", table, protection_length_primary, 2);
     VALIDATE_FIELD("%d", table, protection_length_secondary, 2);
 
-    UInt32 primary_length = 0;
+    primary_length = 0;
     switch (table->protection_length_primary)
     {
         case 1:
