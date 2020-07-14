@@ -2206,8 +2206,12 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	UInt64 offset;
 	SampleDescriptionHead sdh;
 	VideoSampleDescriptionInfo vsdi;
+	char stringSize;
 	OSErr atomerr = noErr;
 	offset = aoe->offset;
+	// vsdi_name is 1 byte for the size, and 1 to 31 bytes string, so at most 32.
+	char vsdi_name[32];
+	memset(vsdi_name, 0, sizeof(vsdi_name));
 
 	// Get data
 	BAILIFERR( GetFileData( aoe, &sdh, offset, sizeof(sdh), &offset ) );
@@ -2222,9 +2226,8 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	vsdi.spatialQuality = EndianU32_BtoN(vsdi.spatialQuality);
 	vsdi.width = EndianS16_BtoN(vsdi.width);
 	vsdi.height = EndianS16_BtoN(vsdi.height);
-
-	char vsdi_name[strlen(vsdi.name)];
-
+	
+	
 	tir->sampleDescWidth = vsdi.width; tir->sampleDescHeight = vsdi.height;
 	/*if ((tir->trackWidth>>16) != vsdi.width) {
 		warnprint("WARNING: Sample description width %d not the same as track width %s\n",vsdi.width,fixedU32str(tir->trackWidth));
@@ -2294,8 +2297,13 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	FieldMustBe( vsdi.vRes, 72L<<16, "ImageDescription vRes must be 72.0 (0x%lx) not 0x%lx" );
 	FieldMustBe( vsdi.dataSize, 0, "ImageDescription dataSize must be %d not %d" );
 	FieldMustBe( vsdi.frameCount, 1, "ImageDescription frameCount must be %d not %d" );
+
+	stringSize = vsdi.name[0]; 
 	// should check the whole string
-	FieldMustBe( vsdi.name[0], 0, "ImageDescription name must be '%d' not '%d'" );
+	FieldCheck(stringSize >= 0, "Compressorname size must be >= 0");
+	FieldCheck(stringSize <= 31, "Compressorname size must be <= 31");
+	FieldMustBe(strlen(&vsdi.name[1]), stringSize, "Compressorname size must be %d not %d" );
+	//FieldMustBe( vsdi.name[0], 0, "ImageDescription name must be '%d' not '%d'" );
 	FieldMustBe( vsdi.depth, 24, "ImageDescription depth must be %d not %d" );
 	FieldMustBe( vsdi.clutID, -1, "ImageDescription clutID must be %d not %d" );
 
