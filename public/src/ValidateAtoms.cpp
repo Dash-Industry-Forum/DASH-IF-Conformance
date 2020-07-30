@@ -2288,10 +2288,6 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	FieldMustBe( vsdi.vendor, 0, "ImageDescription vendor must be %d not 0x%lx" );
 	FieldMustBe( vsdi.temporalQuality, 0, "ImageDescription temporalQuality must be %d not %d" );
 	FieldMustBe( vsdi.spatialQuality, 0, "ImageDescription spatialQuality must be %d not %d" );
-	if( vg.majorBrand == brandtype_mp41 ){
-		if (vsdi.width  != 320) warnprint("Warning: You signal brand MP4v1 and there ImageDescription width must be 320 not %d\n", vsdi.width );
-		if (vsdi.height != 240) warnprint("Warning: You signal brand MP4v1 and there ImageDescription height must be 240 not %d\n", vsdi.height );
-	}
 
 	FieldMustBe( vsdi.hRes, 72L<<16, "ImageDescription hRes must be 72.0 (0x%lx) not 0x%lx" );
 	FieldMustBe( vsdi.vRes, 72L<<16, "ImageDescription vRes must be 72.0 (0x%lx) not 0x%lx" );
