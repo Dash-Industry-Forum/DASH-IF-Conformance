@@ -431,7 +431,6 @@ void processSAP34(MovieInfoRec *mir) {
                             if (moof->trafInfo[k].sbgpInfo[l].grouping_type == 'roll' && (tir->hdlrInfo->componentSubType == 'vide' || tir->hdlrInfo->componentSubType == 'soun')) {
                                 UInt32 sgpdIndex = getSgpdIndex(moof->trafInfo[k].sgpdInfo, moof->trafInfo[k].numSgpd, moof->trafInfo[k].sbgpInfo[l].grouping_type);
                                 if (sgpdIndex == moof->trafInfo[k].numSgpd) {
-                                    errprint("grouping_type %s in sbgp is not found for any sgpd in moof number %d\n", ostypetostr(moof->trafInfo[k].sbgpInfo[l].grouping_type), j + 1);
                                     continue;
                                 }
 
