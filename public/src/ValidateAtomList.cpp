@@ -891,6 +891,11 @@ OSErr Validate_stbl_Atom( atomOffsetEntry *aoe, void *refcon )
 	atomerr = ValidateAtomOfType( 'padb', kTypeAtomFlagCanHaveAtMostOne, 
 		Validate_padb_Atom, cnt, list, tir );
 	if (!err) err = atomerr;
+	
+	// Process 'sgpd' atoms
+	atomerr = ValidateAtomOfType( 'sgpd', kTypeAtomFlagCanHaveAtMostOne, 
+		Validate_sgpd_Atom, cnt, list, tir );
+	if (!err) err = atomerr;
         
         // Process 'subs' atoms
         if(vg.cmaf){
