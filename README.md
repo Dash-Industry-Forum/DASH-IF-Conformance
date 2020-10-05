@@ -29,7 +29,7 @@ Information on how to use the conformance software, please refer to our [Usage G
 
 ### Detailed Information
 
-For the framework of the conformance software and how the general conformance testing process works, please refer to the [DASH-IF-Conformance document](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/blob/master/Doc/IntegratedConformance_doc.pdf).
+For the framework of the conformance software and how the general conformance testing process works, please refer to the [DASH-IF-Conformance document](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/blob/master/Doc/Conformance%20Software.pdf).
 
 ### Issue Reporting
 
