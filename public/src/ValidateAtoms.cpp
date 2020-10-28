@@ -2999,60 +2999,61 @@ bail:
 
 OSErr Validate_subs_Atom( atomOffsetEntry *aoe, void *refcon )
 {
-        OSErr err = noErr;
-        UInt32 version;
-        UInt32 flags;
-        UInt64 offset;
-        UInt32 entry_count;
-        UInt32 i, j;
+	OSErr err = noErr;
+	UInt32 version;
+	UInt32 flags;
+	UInt64 offset;
+	UInt32 entry_count;
+	UInt32 i, j;
 
-        // Get version/flags
-        BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
+	// Get version/flags
+	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
 
-        BAILIFERR( GetFileDataN32( aoe, &entry_count, offset, &offset ));
+	BAILIFERR( GetFileDataN32( aoe, &entry_count, offset, &offset ));
 
-        atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-        atomprint("entryCount=\"%ld\"\n", entry_count);
-        for(i = 0; i < entry_count; i++){
-                UInt32 sample_delta;
-                UInt16 subsample_count;
-                BAILIFERR( GetFileDataN32( aoe, &sample_delta, offset, &offset ));
-                BAILIFERR( GetFileDataN16( aoe, &subsample_count, offset, &offset ));
+	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
+	atomprint("entryCount=\"%ld\"\n", entry_count);
+	for(i = 0; i < entry_count; i++){
+		UInt32 sample_delta;
+		UInt16 subsample_count;
+		BAILIFERR( GetFileDataN32( aoe, &sample_delta, offset, &offset ));
+		BAILIFERR( GetFileDataN16( aoe, &subsample_count, offset, &offset ));
 
-                atomprint("sample_delta_n=\"%d%ld\"\n", i, sample_delta);
-                atomprint("subsample_count_n=\"%d%ld\"\n", i, subsample_count);
+		atomprint("sample_delta_n=\"%d%ld\"\n", i, sample_delta);
+		atomprint("subsample_count_n=\"%d%ld\"\n", i, subsample_count);
 
-                if (!strcmp(vg.codecs, "ec-3") && (sample_delta != 1536))
-                {
-                    errprint("ETSI TS 102 366 v1.4.1 Annex F Line 12806 : sample delta should be 1536 not %d", sample_delta);
-                }
+		bool eac3 = ((strstr(vg.codecs, "ac-3")) || (strstr(vg.codecs, "ec-3")));
+		if (eac3 && (sample_delta != 1536))
+		{
+			errprint("ETSI TS 102 366 v1.4.1 Annex F Line 12806 : sample delta should be 1536 not %d", sample_delta);
+		}
 
-                for(j=0; j < subsample_count; j++){
-                        if(version == 1){
-                                UInt32 subsample_size;
-                                BAILIFERR( GetFileDataN32( aoe, &subsample_size, offset, &offset ));
-                        }
-                        else if(version == 0){
-                                UInt16 subsample_size;
-                                BAILIFERR( GetFileDataN16( aoe, &subsample_size, offset, &offset ));
-                        }
+		for(j=0; j < subsample_count; j++){
+			if(version == 1){
+				UInt32 subsample_size;
+				BAILIFERR( GetFileDataN32( aoe, &subsample_size, offset, &offset ));
+			}
+			else if(version == 0){
+				UInt16 subsample_size;
+				BAILIFERR( GetFileDataN16( aoe, &subsample_size, offset, &offset ));
+			}
 
-                        UInt16 subsample_priority_and_discardable;
-                        UInt32 codec_specific_parameters;
-                        BAILIFERR( GetFileDataN16( aoe, &subsample_priority_and_discardable, offset, &offset ));
-                        BAILIFERR( GetFileDataN32( aoe, &codec_specific_parameters, offset, &offset ));
-                }
-        }
+			UInt16 subsample_priority_and_discardable;
+			UInt32 codec_specific_parameters;
+			BAILIFERR( GetFileDataN16( aoe, &subsample_priority_and_discardable, offset, &offset ));
+			BAILIFERR( GetFileDataN32( aoe, &codec_specific_parameters, offset, &offset ));
+		}
+	}
 
-        //CMAF check
-        if(vg.cmaf && entry_count != 1){
-                errprint("CMAF check violated: Section 7.5.20. \"The field entry_count in 'subs' box SHALL equal 1.\", instead found %d", entry_count);
-        }
+	//CMAF check
+	if(vg.cmaf && entry_count != 1){
+		errprint("CMAF check violated: Section 7.5.20. \"The field entry_count in 'subs' box SHALL equal 1.\", instead found %d", entry_count);
+	}
 
-        // All done
-        aoe->aoeflags |= kAtomValidated;
+	// All done
+	aoe->aoeflags |= kAtomValidated;
 bail:
-        return err;
+	return err;
 }
 
 //==========================================================================================
@@ -3438,7 +3439,7 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	atomprint("sampleSize=\"%d\"\n", ssdi.sampleSize);
 	atomprint("sampleRate=\"%s\"\n", fixedU32str(ssdi.sampleRate));
 
-    if (strstr(vg.codecs, "ac-4") && (ssdi.sampleSize != 16))
+    if ((strstr(vg.codecs, "ac-4")) && (ssdi.sampleSize != 16))
     {
         errprint("ETSI TS 103 190-2 v1.2.1 Annex E Line  00013976: sampleSize shall be set to 16 but is %d\n", ssdi.sampleSize );
     }
@@ -3446,10 +3447,12 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	sampleratelo = (ssdi.sampleRate) & 0xFFFF;
 	sampleratehi = (ssdi.sampleRate >> 16) & 0xFFFF;
 
-	if (!strcmp(vg.codecs, "ec-3") && (sampleratehi != tir->mediaTimeScale)) {
+	bool eac3 = ((strstr(vg.codecs, "ac-3")) || (strstr(vg.codecs, "ec-3")));
+	if (eac3 && (sampleratehi != tir->mediaTimeScale))
+	{
         errprint("ETSI_TS_102_366_V1.4.1 Annex F Line  12729: Track timescale %d not equal to the (integer part of) the Sample entry sample rate %d.%d\n",
 				tir->mediaTimeScale, sampleratehi, sampleratelo);
-		}
+	}
 	atomprint(">\n"); //vg.tabcnt++;
 
 	// Check required field values
