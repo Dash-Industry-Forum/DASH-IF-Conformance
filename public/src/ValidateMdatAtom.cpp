@@ -1102,7 +1102,7 @@ OSErr Validate_mdat_Atom( atomOffsetEntry *aoe, void *refcon)
     BAILIFERR(GetFileData( aoe, &type, offset, 4, &offset ));
     type=EndianU32_BtoN(type);
 
-    if (vg.dolby)
+    if (strstr(vg.codecs, "ac-4"))
     {
     BAILIFNIL( bsDataP = calloc(size - 8 + bitParsingSlop, 1), allocFailedErr );
 
