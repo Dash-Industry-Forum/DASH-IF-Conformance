@@ -245,7 +245,6 @@ int main(void)
     vg.dvb=false;
     vg.hbbtv=false;
     vg.ctawave=false;
-    vg.dolby=false;
     //vg.indexRange='\0';
     vg.pssh_count = 0;
     vg.sencFound=false;
@@ -386,8 +385,6 @@ int main(void)
                           }
                 } else if ( keymatch( arg, "codecs", 6 ) ) {
                     getNextArgStr( &vg.codecs, "codecs" );
-                } else if ( keymatch( arg, "dolby", 5 ) ) {
-                    vg.dolby=true;
     	        } else if ( keymatch( arg, "codecprofile", 12 ) ) {
                           getNextArgStr( &temp, "codecprofile" ); vg.codecprofile = atoi(temp);
                 } else if ( keymatch( arg, "codeclevel", 10 ) ) {
