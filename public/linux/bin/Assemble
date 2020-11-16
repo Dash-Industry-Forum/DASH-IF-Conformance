@@ -1,0 +1,42 @@
+#!/bin/bash
+mergedFileName="tempMerged.mp4"
+tempMergedFile="tempMerged2.mp4"
+segmentSizeInfoFile="segmentSizeInfoFile.txt"
+
+if [ $# -lt 2 ]
+then
+	echo "Usage: Assemble [1/0] (initialization segment), segment 1, segment 2,..."
+	echo "1: first file is an initialization segment, 0 otherwise."
+	exit
+fi
+
+if [ $1 -eq 1 ]
+then
+	index=0
+else
+	index=1
+fi
+
+shift
+
+rm -f $mergedFileName
+rm -f $segmentSizeInfoFile
+
+touch $mergedFileName
+
+while [ $# -ne 0 ]
+  do
+	
+    cat $mergedFileName $1 > $tempMergedFile
+
+    rm $mergedFileName
+
+    mv $tempMergedFile $mergedFileName
+    
+	fileSize=`stat -c %s $1`
+	echo $index  $fileSize >> $segmentSizeInfoFile
+	index=`expr $index + 1`
+	shift
+    
+done
+
