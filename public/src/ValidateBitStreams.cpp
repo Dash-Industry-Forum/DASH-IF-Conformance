@@ -2472,9 +2472,8 @@ bail:
 OSErr Validate_NAL_Unit_HEVC(  BitBuffer *inbb, UInt8 expect_type, UInt32 nal_length )
 {
 	OSErr err;
-	UInt8 zero_bit, nal_unit_type, nuh_layer_id, nuh_temporal_id_plus1, one_bit;
+	UInt8 zero_bit, nal_unit_type, nuh_layer_id, nuh_temporal_id_plus1;
 	UInt32 trailing,i,j,k;
-        char tempStr[100];
 	BitBuffer mybb;
 	BitBuffer *bb;
 		static char* naltypes[] = {
@@ -2937,9 +2936,11 @@ OSErr Validate_NAL_Unit_HEVC(  BitBuffer *inbb, UInt8 expect_type, UInt32 nal_le
                                     if(sps_palette_predictor_initializer_present_flag){
                                         VALIDATE_UEV  ("%d", sps_num_palette_predictor_initializer_minus1);
                                         numComps=(chroma_format_idc ==0)?1:3;
-                                        for(int comp=0;comp<numComps;comp++)
-                                            for(int z=0;z<=sps_num_palette_predictor_initializer_minus1;z++)
-                                                sps_palette_predictor_initializers[comp][z]=GetBits(bb, field_size(sps_num_palette_predictor_initializer_minus1), &err); if (err) goto bail;
+                                        for(size_t comp=0;comp<numComps;comp++)
+											for (int z = 0; z <= sps_num_palette_predictor_initializer_minus1; z++) {
+												sps_palette_predictor_initializers[comp][z] = GetBits(bb, field_size(sps_num_palette_predictor_initializer_minus1), &err);
+												if (err) goto bail;
+											}
                                     }
                                 }
                                 VALIDATE_FIELD  ("%d", motion_vector_resolution_control_idc, 2);

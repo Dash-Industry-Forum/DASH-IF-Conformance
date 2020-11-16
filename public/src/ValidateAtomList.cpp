@@ -285,11 +285,11 @@ OSErr Validate_dinf_Atom( atomOffsetEntry *aoe, void *refcon )
 
 		if (entry->aoeflags & kAtomValidated) continue;
 
-		switch (entry->type) {
-			default:
+		//switch (entry->type) {
+		//	default:
 				warnprint("WARNING: In %s - unknown data information atom '%s'\n",vg.curatompath, ostypetostr(entry->type));
-				break;
-		}
+		//		break;
+		//}
 		
 		if (!err) err = atomerr;
 	}
@@ -335,11 +335,11 @@ OSErr Validate_edts_Atom( atomOffsetEntry *aoe, void *refcon )
 
 		if (entry->aoeflags & kAtomValidated) continue;
 
-		switch (entry->type) {
-			default:
+		//switch (entry->type) {
+		//	default:
 				warnprint("WARNING: In %s - unknown edit list atom '%s'\n",vg.curatompath, ostypetostr(entry->type));
-				break;
-		}
+		//		break;
+		//}
 		
 		if (!err) err = atomerr;
 	}
@@ -521,11 +521,11 @@ OSErr Validate_mdia_Atom( atomOffsetEntry *aoe, void *refcon )
 
 		if (entry->aoeflags & kAtomValidated) continue;
 
-		switch (entry->type) {
-			default:
+		//switch (entry->type) {
+		//	default:
 				warnprint("WARNING: In unknown media atom '%s'\n",vg.curatompath, ostypetostr(entry->type));
-				break;
-		}
+		//		break;
+		//}
 		
 		if (!err) err = atomerr;
 	}
@@ -641,11 +641,11 @@ OSErr Validate_trak_Atom( atomOffsetEntry *aoe, void *refcon )
 
 		if (entry->aoeflags & kAtomValidated) continue;
 
-		switch (entry->type) {
-			default:
+		//switch (entry->type) {
+		//	default:
 				warnprint("WARNING: In %s - unknown trak atom '%s'\n",vg.curatompath, ostypetostr(entry->type));
-				break;
-		}
+		//		break;
+		//}
 		
 		if (!err) err = atomerr;
 	}
@@ -909,11 +909,11 @@ OSErr Validate_stbl_Atom( atomOffsetEntry *aoe, void *refcon )
 
 		if (entry->aoeflags & kAtomValidated) continue;
 
-		switch (entry->type) {
-			default:
+		//switch (entry->type) {
+		//	default:
 				warnprint("WARNING: In %s - unknown sample table atom '%s'\n",vg.curatompath, ostypetostr(entry->type));
-				break;
-		}
+		//		break;
+		//}
 		
 		if (!err) err = atomerr;
 	}
@@ -1042,11 +1042,11 @@ OSErr Validate_mvex_Atom( atomOffsetEntry *aoe, void *refcon )
 
 		if (entry->aoeflags & kAtomValidated) continue;
 
-		switch (entry->type) {
-			default:
+		//switch (entry->type) {
+		//	default:
 				warnprint("WARNING: In %s - unknown mvex atom '%s'\n",vg.curatompath, ostypetostr(entry->type));
-				break;
-		}
+		//		break;
+		//}
 		
 		if (!err) err = atomerr;
 	}
@@ -1231,7 +1231,7 @@ OSErr Validate_ftyp_Atom( atomOffsetEntry *aoe, void *refcon )
                 errprint("CMAF Check violated : Section 7.2. \"If any of the structural CMAF brands is the major_brand, the minor_version SHALL be 0.\", found %ld\n",version);
         }
 	
-	compatBrandListSize = (aoe->size - 8 - aoe->atomStartSize);
+	compatBrandListSize = (UInt32)(aoe->size - 8 - aoe->atomStartSize);
 	numCompatibleBrands = compatBrandListSize / sizeof(OSType);
 	
 	if (0 != (compatBrandListSize % sizeof(OSType))) {
@@ -1322,7 +1322,7 @@ OSErr Validate_styp_Atom( atomOffsetEntry *aoe, void *refcon )
 		errprint("The brand 'isom' can only be a compatible, not major, brand\n");
 	}
 	
-	compatBrandListSize = (aoe->size - 8 - aoe->atomStartSize);
+	compatBrandListSize = (UInt32)(aoe->size - 8 - aoe->atomStartSize);
 	numCompatibleBrands = compatBrandListSize / sizeof(OSType);
 	
 	if (0 != (compatBrandListSize % sizeof(OSType))) {
@@ -1912,12 +1912,11 @@ OSErr Validate_moof_Atom( atomOffsetEntry *aoe, void *refcon )
 
 		if (entry->aoeflags & kAtomValidated) continue;
 
-		switch (entry->type) {
-                
-			default:
+		//switch (entry->type) {        
+		//	default:
 				warnprint("WARNING: In %s - unknown moof atom '%s'\n",vg.curatompath, ostypetostr(entry->type));
-				break;
-		}
+		//		break;
+		//}
 		
 		if (!err) err = atomerr;
 	}
@@ -2051,11 +2050,11 @@ OSErr Validate_traf_Atom( atomOffsetEntry *aoe, void *refcon )
 
 		if (entry->aoeflags & kAtomValidated) continue;
 
-		switch (entry->type) {            
-			default:
+		//switch (entry->type) {            
+		//	default:
 				warnprint("WARNING: In %s - unknown traf atom '%s'\n",vg.curatompath, ostypetostr(entry->type));
-				break;
-		}
+		//		break;
+		//}
 		
 		if (!err) err = atomerr;
 	}
@@ -2075,9 +2074,10 @@ OSErr Validate_traf_Atom( atomOffsetEntry *aoe, void *refcon )
         {
             trafInfo->compositionInfoMissing = false;
             for(UInt32 j = 0 ;  j < trafInfo->trunInfo[i].sample_count ; j++)
-                if(trafInfo->trunInfo[i].sample_composition_time_offset[j] != 0)
+                if(trafInfo->trunInfo[i].sample_composition_time_offset[j] != 0) {
                     ;// Incorrect interpertation: CTTS shall be absent when all CT = DT does not imply CTTS shall be absent iff all CT = DT
                     //errprint("CTTS is missing, indicating composition time = decode times, as per Section 8.6.1.1 of ISO/IEC 14496-12 4th edition, while non-zero composition offsets found in track run.\n");
+				}
         }
 	}
 
@@ -2264,11 +2264,11 @@ OSErr Validate_tref_Atom( atomOffsetEntry *aoe, void *refcon )
 
 		if (entry->aoeflags & kAtomValidated) continue;
 
-		switch (entry->type) {
-			default:
+		//switch (entry->type) {
+		//	default:
 				warnprint("WARNING: In %s - unknown track reference atom '%s'\n",vg.curatompath, ostypetostr(entry->type));
-				break;
-		}
+		//		break;
+		//}
 		
 		if (!err) err = atomerr;
 	}
@@ -2326,11 +2326,11 @@ OSErr Validate_udta_Atom( atomOffsetEntry *aoe, void *refcon )
 
 		if (entry->aoeflags & kAtomValidated) continue;
 
-		switch (entry->type) {
-			default:
+		//switch (entry->type) {
+		//	default:
 				warnprint("WARNING: In %s - unknown/unexpected atom '%s'\n",vg.curatompath, ostypetostr(entry->type));
-				break;
-		}
+		//		break;
+		//}
 		
 		if (!err) err = atomerr;
 	}
@@ -2360,7 +2360,7 @@ static OSErr Validate_rtp_Atom( atomOffsetEntry *aoe, void *refcon )
 
 	BAILIFNIL( rtpDataP = (Ptr)malloc((UInt32)aoe->size), allocFailedErr );
 
-    dataSize = aoe->size - aoe->atomStartSize;
+    dataSize = (UInt32)(aoe->size - aoe->atomStartSize);
 	BAILIFERR( GetFileData(aoe, rtpDataP, aoe->offset + aoe->atomStartSize, dataSize, &temp64) );
 	
 	current = rtpDataP;
@@ -2413,11 +2413,11 @@ OSErr Validate_moovhnti_Atom( atomOffsetEntry *aoe, void *refcon )
 
 		if (entry->aoeflags & kAtomValidated) continue;
 
-		switch (entry->type) {
-			default:
+		//switch (entry->type) {
+		//	default:
 			// �� should warn
-				break;
-		}
+		//		break;
+		//}
 		
 		if (!err) err = atomerr;
 	}
@@ -2467,11 +2467,11 @@ OSErr Validate_sinf_Atom( atomOffsetEntry *aoe, void *refcon, UInt32 flags )
 
 		if (entry->aoeflags & kAtomValidated) continue;
 
-		switch (entry->type) {				
-			default:
+		//switch (entry->type) {				
+		//	default:
 				warnprint("WARNING: In %s - unknown security information atom '%s'\n",vg.curatompath, ostypetostr(entry->type));
-				break;
-		}
+		//		break;
+		//}
 		
 		if (!err) err = atomerr;
 	}
@@ -2558,11 +2558,11 @@ OSErr Validate_meta_Atom( atomOffsetEntry *aoe, void *refcon )
 
 		if (entry->aoeflags & kAtomValidated) continue;
 
-		switch (entry->type) {				
-			default:
+		//switch (entry->type) {				
+		//	default:
 				warnprint("WARNING: In %s - unknown meta atom '%s'\n",vg.curatompath, ostypetostr(entry->type));
-				break;
-		}
+		//		break;
+		//}
 		
 		if (!err) err = atomerr;
 	}

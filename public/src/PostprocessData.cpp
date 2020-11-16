@@ -323,7 +323,7 @@ void estimatePresentationTimes(MovieInfoRec *mir) {
 
                                 if (tir->elstInfo[e].mediaTime >= 0) {
                                     if (sampleCompositionTime >= tir->elstInfo[e].mediaTime && (tir->elstInfo[e].duration == 0 || sampleCompositionTime < (tir->elstInfo[e].mediaTime + segmentDurationInMediaTimescale))) {
-                                        moof->trafInfo[k].trunInfo[l].samplePresentationTime[m] = 0 - (tir->elstInfo[e].mediaTime - presentationTime); //Save the delta in: presentationTime = CompositionTime - (editMediaTime_i - presntationDuration)
+                                        moof->trafInfo[k].trunInfo[l].samplePresentationTime[m] = (long double)(0 - (tir->elstInfo[e].mediaTime - presentationTime)); //Save the delta in: presentationTime = CompositionTime - (editMediaTime_i - presntationDuration)
                                         moof->trafInfo[k].trunInfo[l].sampleToBePresented[m] = true;
                                         moof->samplesToBePresented = true;
                                     } else if (sampleCompositionTime >= tir->elstInfo[e].mediaTime) // A later edit should update this. Else sample not to be presented
@@ -575,7 +575,7 @@ void checkNonIndexedSamples(MovieInfoRec *mir) {
 
                         UInt32 samplesWithLessPresentationTime = 0;
 
-                        for (UInt32 l = leaf->firstMoofIndex; l <= leaf->lastMoofIndex; l++)//Process all moofs in leaf till find a sample of non indexed stream with EPT
+                        for (UInt64 l = leaf->firstMoofIndex; l <= leaf->lastMoofIndex; l++)//Process all moofs in leaf till find a sample of non indexed stream with EPT
                         {
                             MoofInfoRec *moof = &mir->moofInfo[l];
 
@@ -628,9 +628,9 @@ void verifyAlignment(MovieInfoRec *mir) {
         }
 
         for (UInt32 j = 0; j < (tir->numLeafs - 1); j++) {
-            if (vg.checkSubSegAlignment || (vg.checkSegAlignment && vg.controlLeafInfo[i][j + 1].firstInSegment > 0))
+            if (vg.checkSubSegAlignment || (vg.checkSegAlignment && vg.controlLeafInfo[i][j + 1].firstInSegment))
                 if (vg.controlLeafInfo[i][j + 1].earliestPresentationTime <= tir->leafInfo[j].lastPresentationTime) {
-                    if (vg.controlLeafInfo[i][j + 1].firstInSegment > 0)
+                    if (vg.controlLeafInfo[i][j + 1].firstInSegment)
                         errprint("Overlapping segment: EPT of control leaf %Lf for leaf number %d is <= the latest presentation time %Lf corresponding leaf\n", vg.controlLeafInfo[i][j + 1].earliestPresentationTime, j + 1, tir->leafInfo[j].lastPresentationTime);
                     else
                         errprint("Overlapping subsegment: EPT of control leaf %Lf for leaf number %d is <= the latest presentation time %Lf corresponding leaf\n", vg.controlLeafInfo[i][j + 1].earliestPresentationTime, j + 1, tir->leafInfo[j].lastPresentationTime);
@@ -925,7 +925,7 @@ OSErr processIndexingInfo(MovieInfoRec *mir) {
 
                 }
 
-                lastLeafEPT = leafEPT;
+                lastLeafEPT = (UInt64)leafEPT;
 
                 leafsProcessed++;
 
@@ -954,7 +954,6 @@ void processBuffering(long cnt, atomOffsetEntry *list, MovieInfoRec *mir) {
 
     SInt64 initSize = 0;
     SInt64 offset;
-    int rename_result;
     ofstream sample_data;
     sample_data.open("sample_data.txt");
     if (sample_data.is_open()) 
@@ -1134,7 +1133,7 @@ void processBuffering(long cnt, atomOffsetEntry *list, MovieInfoRec *mir) {
         } while (!done);
         
         if(currentBandwidth > vg.bandwidth && mpd_val_conf)
-            currentBandwidth = vg.bandwidth;
+            currentBandwidth = (long double)vg.bandwidth;
         if(mpd_val_conf)
             fprintf(stderr, "According to DASH-IF IOP Section 3.2.8 @bandwidth of the Representation (%ld bps) is set too high given the @minimumBufferTime (%ld s), the minimum @bandwidth value required to conform is %ld bps.\n", (UInt32) vg.bandwidth, (UInt32) vg.minBufferTime, (UInt32) currentBandwidth);
         else

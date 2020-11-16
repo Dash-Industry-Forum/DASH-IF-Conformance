@@ -66,7 +66,7 @@ int PeekFileData( atomOffsetEntry *aoe, void *dataP, UInt64 offset64, UInt64 siz
 #pragma unused(aoe)
 	int err = 0;
 	long amtRead = 0;
-	long size = size64;
+	UInt64 size = size64;
     fpos_t f_pos;
     	
 	if (offset64 > 0x7FFFFFFFL) {
@@ -96,7 +96,7 @@ int GetFileData( atomOffsetEntry *aoe, void *dataP, UInt64 offset64, UInt64 size
 #pragma unused(aoe)
 	int err = 0;
 	long amtRead = 0;
-	long size = size64;
+	UInt64 size = size64;
 	
 	if (offset64 > 0x7FFFFFFFL) {
 		fprintf(stderr,"sorry - can't handle file offsets > 31-bits\n");
@@ -104,10 +104,10 @@ int GetFileData( atomOffsetEntry *aoe, void *dataP, UInt64 offset64, UInt64 size
 		goto bail;
 	}
     
-	err = fseek(vg.inFile, getAdjustedFileOffset(offset64), SEEK_SET);
+	err = fseek(vg.inFile, (long)getAdjustedFileOffset(offset64), SEEK_SET);
 	if (err) goto bail;
 	
-	amtRead = fread( dataP, 1, size, vg.inFile );
+	amtRead = fread( dataP, 1, (size_t)size, vg.inFile );
 	if (amtRead != size) {
 		err = outOfDataErr;
 		goto bail;
@@ -251,7 +251,7 @@ int GetFileUTFString( atomOffsetEntry *aoe, char **strP, UInt64 offset64, UInt64
 		char * utf8noticeP = nil;
 		char * pASCII = nil;
 		UInt16 * pUTF16 = nil;
-		int numChars = (maxSize64 - 2)/2;
+		UInt64 numChars = (maxSize64 - 2)/2;
 		
 		if (numChars == 0) { // no actual text
 			errprint("UTF-16 text has BOM but no terminator\n");
@@ -289,7 +289,7 @@ int GetFileBitStreamDataToEndOfAtom( atomOffsetEntry *aoe, Ptr *bsDataPout, UInt
 	UInt32 bsSize = 0;
 	Ptr bsDataP = nil;
 
-	bsSize = aoe->size - (offset64 - aoe->offset);
+	bsSize = (UInt32)(aoe->size - (offset64 - aoe->offset));
 	BAILIFNIL( bsDataP = (Ptr)calloc(bsSize + bitParsingSlop, 1), allocFailedErr );
 	BAILIFERR( GetFileData( aoe, bsDataP, offset64, bsSize, newoffset64 ) );
 
@@ -418,7 +418,7 @@ int GetFileStartCode( atomOffsetEntry *aoe, UInt32 *startCode, UInt64 offset64, 
 		goto bail;
 	}
 	
-	err = fseek(vg.inFile, getAdjustedFileOffset(offset64), SEEK_SET);
+	err = fseek(vg.inFile, (long)getAdjustedFileOffset(offset64), SEEK_SET);
 	if (err) goto bail;
 	
 	bits = fgetc( vg.inFile ); curoffset++;

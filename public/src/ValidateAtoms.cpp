@@ -1967,11 +1967,12 @@ OSErr Validate_elst_Atom( atomOffsetEntry *aoe, void *refcon )
 			}
 		}
 
-		switch (vg.filetype) {
-			default:		// ISO family
+		//switch (vg.filetype) {
+		//	default:		// ISO family
 				if ((listP[i].mediaRate != mediaRate_1_0) && (listP[i].mediaRate != 0))
 					errprint("Edit list: media rate can only be 0 or 1, not 0x%0X\n", listP[i].mediaRate);
-		}
+				//break;
+		//}
 
 //		if (listP[i].mediaRate & 0x0000ffff) {
 //			errprint("mpeg4 in their infinite wisdom has declared -1(Fixed) is 0xffff0000 NOT 0xffffffff\n");
@@ -2139,7 +2140,7 @@ OSErr Validate_stsd_Atom( atomOffsetEntry *aoe, void *refcon )
 
 			{  // stash the sample description
 				SampleDescriptionPtr sdp;
-				sdp = (SampleDescriptionPtr)malloc( entry->size );
+				sdp = (SampleDescriptionPtr)malloc( (size_t)entry->size );
 				err = GetFileData( entry, (void*)sdp, entry->offset, entry->size, nil );
 				sampleDescriptionPtrArray[i+1] = sdp;
 			}
@@ -2821,7 +2822,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
     sampleprint("trunInfo->data_offset_present %d\n",  trunInfo->data_offset_present );
     sampleprint("trunInfo->data_offset %08X\n",  trunInfo->data_offset );
     sampleprint("moofInfo->offset %ld  %08X\n",   moofInfo->offset, moofInfo->offset );
-    fprintf(stdout, "moofInfo->offset %ld  %08X\n",   moofInfo->offset, moofInfo->offset );
+    fprintf(stdout, "moofInfo->offset %lld  %08llX\n",   moofInfo->offset, moofInfo->offset );
 
     if (trafInfo->default_base_is_moof && trunInfo->data_offset_present)
     {
@@ -2846,7 +2847,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
     }
 
 
-    for(int i=0; i<trunInfo->sample_count; i++){
+    for(size_t i=0; i<trunInfo->sample_count; i++){
         if(vg.cmaf){
             sampleSizesTotal += trunInfo->sample_size[i];
         }
@@ -3097,7 +3098,7 @@ OSErr Validate_emsg_Atom( atomOffsetEntry *aoe, void *refcon )
 
 	BAILIFERR( GetFileDataN32( aoe, &id, offset, &offset ) );
 
-	message_data = new UInt8[aoe->maxOffset - offset];
+	message_data = new UInt8[(size_t)(aoe->maxOffset - offset)];
 	BAILIFERR( GetFileData( aoe,message_data, offset, aoe->maxOffset - offset , &offset ) );
 
      atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
@@ -3269,8 +3270,8 @@ OSErr Validate_sidx_Atom( atomOffsetEntry *aoe, void *refcon )
   sidxInfo->offset > starting of index range &&
   sidxInfo->offset + sidxInfo->size - 1 < ending of index range */
 
-    int offs=sidxInfo->offset;       //convert to int value and store it in a variable
-    int siz=sidxInfo->size;
+    int offs = (int)sidxInfo->offset;       //convert to int value and store it in a variable
+    int siz = (int)sidxInfo->size;
 
     if (vg.isoondemand) //only check for ondemand profile
     {
@@ -3919,7 +3920,7 @@ OSErr Validate_uuid_Atom( atomOffsetEntry *aoe, void *refcon )
 	//char	tempStr[100];
 
 	// atomprint("<uuid "); vg.tabcnt++;
-	residual = aoe->size - sizeof( AtomSizeType ) - sizeof( uuidType );
+	residual = (UInt32)(aoe->size - sizeof( AtomSizeType ) - sizeof( uuidType ));
 
 	atomprintnotab("\tuuid=\"%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x\" more_data_length=\"%d\" %s\n",
 		aoe->uuid[0],  aoe->uuid[1],  aoe->uuid[2],  aoe->uuid[3],
@@ -3943,7 +3944,7 @@ OSErr Validate_uuid_Atom( atomOffsetEntry *aoe, void *refcon )
 		residual -= to_read;
 	}
 	--vg.tabcnt; vg.printsample = false;
-	residual = aoe->size - sizeof( AtomSizeType ) - sizeof( uuidType );
+	residual = (UInt32)(aoe->size - sizeof( AtomSizeType ) - sizeof( uuidType ));
 	// if (residual > 0) atomprint("</uuid>\n");  --vg.tabcnt;
 
 	// All done
@@ -4122,7 +4123,6 @@ OSErr Validate_stpp_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
 {
     OSErr err = noErr;
     UInt64 offset;
-    unsigned long esSize;
     char *name_space;
     char *schema_location;
     char *auxiliary_mime_types;
@@ -4320,7 +4320,7 @@ OSErr Validate_cprt_Atom( atomOffsetEntry *aoe, void *refcon )
 #if 1
 	// This may be a UTF-16 string so we can't just grab a C string
 
-	stringSize = aoe->maxOffset - offset;
+	stringSize = (UInt16)(aoe->maxOffset - offset);
 	noticeP = (char*) calloc(stringSize, 1);
 
 	BAILIFERR( GetFileData( aoe, noticeP, offset, stringSize, &offset ) );
@@ -4447,7 +4447,7 @@ OSErr Validate_loci_Atom( atomOffsetEntry *aoe, void *refcon )
 	atomprint("language=\"%s\"\n", langtodstr(language));
 	if (language==0) warnprint("WARNING: Location language code of 0 not strictly legit -- 'und' preferred\n");
 
-	stringSize = aoe->maxOffset - offset;
+	stringSize = (UInt16)(aoe->maxOffset - offset);
 	noticeP = (char*) calloc(stringSize, 1);
 
 	BAILIFERR( GetFileUTFString( aoe, &noticeP, offset, aoe->maxOffset - offset, &offset ) );
@@ -4688,7 +4688,7 @@ OSErr Validate_tenc_Atom( atomOffsetEntry *aoe, void *refcon )
      st= vg.default_KID;
      if(st[0]!= '\0'){
 	remove_all_chars(st, '-'); //
-	int length,i,j;
+	int length, i;
 	length= strlen(st);
 
 	//j=0;
@@ -5076,10 +5076,10 @@ OSErr Validate_senc_Atom( atomOffsetEntry *aoe, void *refcon )
         BAILIFERR( GetFileData( aoe,&sample_count, offset, 4 , &offset ) );
         sample_count=EndianU32_BtoN(sample_count);
 
-        UInt8   initializationVector;
-        UInt16 subsample_count;
-        UInt16 BytesOfClearData;
-        UInt32 BytesOfProtectedData;
+        //UInt8   initializationVector;
+        //UInt16 subsample_count;
+        //UInt16 BytesOfClearData;
+        //UInt32 BytesOfProtectedData;
         //TODO Allocate resources to above members according to sample and subsample counts.
 
         atomprint("sample_count=\"%ld\"\n", sample_count);
@@ -5124,24 +5124,25 @@ OSErr Validate_saio_Atom( atomOffsetEntry *aoe, void *refcon )
         //TODO Allocate saio_offset based on entry_count.
         if(version ==0)
         {
-            UInt32 saio_offset[entry_count];
-            for(int i=0;i<entry_count;i++)
+			UInt32 *saio_offset = new UInt32[entry_count];
+            for(UInt32 i=0;i<entry_count;i++)
             {
                 BAILIFERR( GetFileData( aoe, &temp,  offset, sizeof( UInt32 ), &offset ) );
                 saio_offset[i] = EndianU32_BtoN(temp);
                 atomprint("saio_offset_%d=\"%ld\"\n", i, saio_offset[i]);
             }
-
+			delete[] saio_offset;
         }
         else
         {
-            UInt64 saio_offset[entry_count];
-            for(int i=0;i<entry_count;i++)
+			UInt64* saio_offset = new UInt64[entry_count];
+            for(UInt32 i=0;i<entry_count;i++)
             {
                 BAILIFERR( GetFileData( aoe, &temp1,  offset, sizeof( UInt64 ), &offset ) );
                 saio_offset[i] = EndianU64_BtoN(temp1);
                 atomprint("saio_offset_%d=\"%ld\"\n", i, saio_offset[i]);
             }
+			delete[] saio_offset;
         }
 
 

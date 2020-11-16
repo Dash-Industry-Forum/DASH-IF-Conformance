@@ -37,7 +37,7 @@ int FindAtomOffsets( atomOffsetEntry *aoe, UInt64 minOffset, UInt64 maxOffset,
 	UInt64 curOffset = minOffset;
 	long minAtomSize;
 	
-    printf ("<%s> : min %08X max %08X\n", __FUNCTION__, minOffset, maxOffset);
+    printf ("<%s> : min %08llX max %08llX\n", __FUNCTION__, minOffset, maxOffset);
 
 	BAILIFNULL( atomOffsets = (atomOffsetEntry *)calloc( max, sizeof(atomOffsetEntry)), allocFailedErr );
 	
@@ -61,7 +61,7 @@ int FindAtomOffsets( atomOffsetEntry *aoe, UInt64 minOffset, UInt64 maxOffset,
         atom_name[1] = ((char*)(&startAtom.type))[2];
         atom_name[2] = ((char*)(&startAtom.type))[1];
         atom_name[3] = ((char*)(&startAtom.type))[0];
-        printf ("atom_name <%s> offset %08X\n",atom_name, curOffset - sizeof(startAtom.type));
+        printf ("atom_name <%s> offset %08llX\n",atom_name, curOffset - sizeof(startAtom.type));
 		
         if (startAtom.type == 'uuid') {
 			BAILIFERR( GetFileData( aoe, &uuid, curOffset, sizeof(uuid), &curOffset ) );
@@ -316,20 +316,20 @@ UInt64 GetVariableLengthData(BitBuffer *bb, UInt32 wordLength, OSErr *errout)
 {
     OSErr err = noErr;
     UInt64 data64 = 0;
-    UInt64 dataTemp =0;
-    UInt64 testMask = ( 1 << wordLength );
+    UInt64 dataTemp = 0;
+    UInt64 testMask = 1ULL << wordLength;
 
     do
     {
         data64 <<= wordLength;
         dataTemp = GetBits(bb, wordLength + 1, &err); if (err) GOTOBAIL; 
         data64 |= (dataTemp & ~testMask);
-        printf ("dataTemp %ld data64 %ld testMask %ld\n", dataTemp, data64, testMask);
+        printf ("dataTemp %llu data64 %llu testMask %llu\n", dataTemp, data64, testMask);
     }    
     while ((dataTemp & testMask) != 0);
 
     bail:
-    printf ("return %ld\n", data64);
+    printf ("return %llu\n", data64);
     *errout = err;
     return data64;
 }
