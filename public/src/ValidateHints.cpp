@@ -927,7 +927,7 @@ static OSErr Validate_H264_Payload( char *inPayload, UInt32 inLength, void *inRe
 	headerCurrent = (UInt8*) inPayload;
 	headerLimit = headerCurrent + inLength;
 	headerCurrent++;
-	nalSize = inLength;
+	nalSize = (UInt16)inLength;
 	
 	switch (nalByte) {
 		case kNAL_STAP_A:
@@ -990,7 +990,7 @@ static OSErr Validate_H264_Payload( char *inPayload, UInt32 inLength, void *inRe
 
 			H_ATOM_PRINT(("<FU Header S=%d,E=%d,R=%d, NALtype=\"%s(%d)\" />\n",
 				(fuHdr>>7)&1,(fuHdr>>6)&1,(fuHdr>>5)&1,nalName,fuHdr & 0x1F));
-			nalSize = inLength - 2;
+			nalSize = (UInt16)(inLength - 2);
 			
 			if (nalByte == kNAL_FU_B) {
 				don = EndianU16_BtoN(*((UInt16*)headerCurrent));
@@ -1456,21 +1456,21 @@ static OSErr Validate_fmtp_attribute( HintInfoRec *hir, char *inValue)
 		} else if (compare_nocase(kMPEG4GenericParam_ConstantSize, param)) {
 			temp32 = Chars_To_Num(paramValue, paramValue + strlen(paramValue), &foundNum);
 			if (foundNum) {
-				hir->constantSize = temp32;
+				hir->constantSize = (UInt16)temp32;
 			} else {
 				errprint("fmtp constantsize param not a number '%s'", paramValue);
 			}
 		} else if (compare_nocase(kMPEG4GenericParam_SizeLength, param)) {
 			temp32 = Chars_To_Num(paramValue, paramValue + strlen(paramValue), &foundNum);
 			if (foundNum) {
-				hir->numLengthBits = temp32;
+				hir->numLengthBits = (UInt16)temp32;
 			} else {
 				errprint("fmtp sizelength param not a number '%s'", paramValue);
 			}
 		} else if (compare_nocase(kMPEG4GenericParam_IndexLength, param)) {
 			temp32 = Chars_To_Num(paramValue, paramValue + strlen(paramValue), &foundNum);
 			if (foundNum) {
-				hir->numIndexBits = temp32;
+				hir->numIndexBits = (UInt16)temp32;
 			} else {
 				errprint("fmtp indexlength param not a number '%s'", paramValue);
 			}
@@ -1478,7 +1478,7 @@ static OSErr Validate_fmtp_attribute( HintInfoRec *hir, char *inValue)
 		} else if (compare_nocase(kMPEG4GenericParam_IndexDeltaLength, param)) {
 			temp32 = Chars_To_Num(paramValue, paramValue + strlen(paramValue), &foundNum);
 			if (foundNum) {
-				hir->numIndexDeltaBits = temp32;
+				hir->numIndexDeltaBits = (UInt16)temp32;
 			} else {
 				errprint("fmtp indexdeltalength param not a number '%s'", paramValue);
 			}	
