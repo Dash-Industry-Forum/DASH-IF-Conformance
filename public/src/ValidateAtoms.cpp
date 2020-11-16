@@ -3416,6 +3416,7 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	SampleDescriptionHead sdh;
 	SoundSampleDescriptionInfo ssdi;
 	UInt16 sampleratelo, sampleratehi;
+	bool eac3;
 
 	offset = aoe->offset;
 
@@ -3447,7 +3448,7 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	sampleratelo = (ssdi.sampleRate) & 0xFFFF;
 	sampleratehi = (ssdi.sampleRate >> 16) & 0xFFFF;
 
-	bool eac3 = ((strstr(vg.codecs, "ac-3")) || (strstr(vg.codecs, "ec-3")));
+	 eac3 = ((strstr(vg.codecs, "ac-3")) || (strstr(vg.codecs, "ec-3")));
 	if (eac3 && (sampleratehi != tir->mediaTimeScale))
 	{
         errprint("ETSI_TS_102_366_V1.4.1 Annex F Line  12729: Track timescale %d not equal to the (integer part of) the Sample entry sample rate %d.%d\n",
