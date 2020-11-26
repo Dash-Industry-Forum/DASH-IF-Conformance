@@ -2847,11 +2847,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
     }
 
 
-<<<<<<< HEAD
-    for(size_t i=0; i<trunInfo->sample_count; i++){
-=======
     for(UInt32 i=0; i<trunInfo->sample_count; i++){
->>>>>>> 1st batch of warning removal
         if(vg.cmaf){
             sampleSizesTotal += trunInfo->sample_size[i];
         }
@@ -4689,11 +4685,7 @@ OSErr Validate_tenc_Atom( atomOffsetEntry *aoe, void *refcon )
      st= vg.default_KID;
      if(st[0]!= '\0'){
 	remove_all_chars(st, '-'); //
-<<<<<<< HEAD
-	int length, i;
-=======
 	int length,i;
->>>>>>> 1st batch of warning removal
 	length= strlen(st);
 
 	//j=0;
@@ -5081,13 +5073,6 @@ OSErr Validate_senc_Atom( atomOffsetEntry *aoe, void *refcon )
         BAILIFERR( GetFileData( aoe,&sample_count, offset, 4 , &offset ) );
         sample_count=EndianU32_BtoN(sample_count);
 
-<<<<<<< HEAD
-        //UInt8   initializationVector;
-        //UInt16 subsample_count;
-        //UInt16 BytesOfClearData;
-        //UInt32 BytesOfProtectedData;
-=======
->>>>>>> 1st batch of warning removal
         //TODO Allocate resources to above members according to sample and subsample counts.
 
         atomprint("sample_count=\"%ld\"\n", sample_count);
@@ -5132,11 +5117,7 @@ OSErr Validate_saio_Atom( atomOffsetEntry *aoe, void *refcon )
         //TODO Allocate saio_offset based on entry_count.
         if(version ==0)
         {
-<<<<<<< HEAD
-			UInt32 *saio_offset = new UInt32[entry_count];
-=======
             UInt32 saio_offset[entry_count];
->>>>>>> 1st batch of warning removal
             for(UInt32 i=0;i<entry_count;i++)
             {
                 BAILIFERR( GetFileData( aoe, &temp,  offset, sizeof( UInt32 ), &offset ) );
@@ -5147,11 +5128,7 @@ OSErr Validate_saio_Atom( atomOffsetEntry *aoe, void *refcon )
         }
         else
         {
-<<<<<<< HEAD
-			UInt64* saio_offset = new UInt64[entry_count];
-=======
             UInt64 saio_offset[entry_count];
->>>>>>> 1st batch of warning removal
             for(UInt32 i=0;i<entry_count;i++)
             {
                 BAILIFERR( GetFileData( aoe, &temp1,  offset, sizeof( UInt64 ), &offset ) );
