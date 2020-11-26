@@ -2820,9 +2820,9 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
 
     sampleprint("trafInfo->default_base_is_moof %d\n",  trafInfo->default_base_is_moof );
     sampleprint("trunInfo->data_offset_present %d\n",  trunInfo->data_offset_present );
-    sampleprint("trunInfo->data_offset %08X\n",  trunInfo->data_offset );
-    sampleprint("moofInfo->offset %ld  %08X\n",   moofInfo->offset, moofInfo->offset );
-    fprintf(stdout, "moofInfo->offset %lld  %08llX\n",   moofInfo->offset, moofInfo->offset );
+    sampleprint("trunInfo->data_offset %08lluX\n",  trunInfo->data_offset );
+    sampleprint("moofInfo->offset %lld  %08lluX\n",   moofInfo->offset, moofInfo->offset );
+    fprintf(stdout, "moofInfo->offset %lld  %08lluX\n",   moofInfo->offset, moofInfo->offset );
 
     if (trafInfo->default_base_is_moof && trunInfo->data_offset_present)
     {
@@ -2847,7 +2847,11 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
     }
 
 
+<<<<<<< HEAD
     for(size_t i=0; i<trunInfo->sample_count; i++){
+=======
+    for(UInt32 i=0; i<trunInfo->sample_count; i++){
+>>>>>>> 1st batch of warning removal
         if(vg.cmaf){
             sampleSizesTotal += trunInfo->sample_size[i];
         }
@@ -3163,6 +3167,7 @@ OSErr Validate_pssh_Atom( atomOffsetEntry *aoe, void *refcon )
     UInt32 version;
     UInt32 flags;
     UInt64 offset;
+    char* pssh_contents = nullptr;
 
     // Get version/flags
     BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
@@ -3195,8 +3200,7 @@ OSErr Validate_pssh_Atom( atomOffsetEntry *aoe, void *refcon )
     atomprint("dataSize=\"%ld\"\n", EndianU32_BtoN(DataSize));
     atomprint(">\n");
     //Compare pssh box contents with the cenc:pssh element of MPD
-
-    char *pssh_contents;
+	pssh_contents = new char[DataSize*2];
     if(vg.pssh_count > 0)
     {
       sprintf(pssh_contents, "%lu %lu %s %lu %s",version, flags, SystemID, DataSize, Data);
@@ -3210,7 +3214,7 @@ OSErr Validate_pssh_Atom( atomOffsetEntry *aoe, void *refcon )
 	char pssh_file_name[300];
 	strcpy(pssh_file_name,vg.psshfile[i]);
 
-	if(pssh_file_name != '\0'){
+	if( strlen( pssh_file_name ) > 0){
 	FILE *pssh_file = fopen(vg.psshfile[i], "rb");
 
 	  fseek(pssh_file, 0, SEEK_END);
@@ -3221,11 +3225,8 @@ OSErr Validate_pssh_Atom( atomOffsetEntry *aoe, void *refcon )
 
 	  fclose(pssh_file);
 
-	  int rc = 0;
 	  int bufferlen = 128;
 	  char encodedoutput[] = "";
-	  //Convert box contents to base64
-	  rc = Base64Encode(pssh_contents, encodedoutput, bufferlen);
 
 	  if(strcmp(encodedoutput, pssh_file_contents)!=0)
 	  {
@@ -3238,7 +3239,7 @@ OSErr Validate_pssh_Atom( atomOffsetEntry *aoe, void *refcon )
 
       }
     }
-
+	delete pssh_contents;
     free(Data);
 
     // All done
@@ -3812,7 +3813,6 @@ typedef struct MHADecoderConfigurationRecord {
 
 OSErr Validate_mhaC_Atom( atomOffsetEntry *aoe, void *refcon)
 {
-        TrackInfoRec *tir = (TrackInfoRec *)refcon;
 	OSErr err = noErr;
 	UInt64 offset;
 
@@ -4689,7 +4689,11 @@ OSErr Validate_tenc_Atom( atomOffsetEntry *aoe, void *refcon )
      st= vg.default_KID;
      if(st[0]!= '\0'){
 	remove_all_chars(st, '-'); //
+<<<<<<< HEAD
 	int length, i;
+=======
+	int length,i;
+>>>>>>> 1st batch of warning removal
 	length= strlen(st);
 
 	//j=0;
@@ -5077,10 +5081,13 @@ OSErr Validate_senc_Atom( atomOffsetEntry *aoe, void *refcon )
         BAILIFERR( GetFileData( aoe,&sample_count, offset, 4 , &offset ) );
         sample_count=EndianU32_BtoN(sample_count);
 
+<<<<<<< HEAD
         //UInt8   initializationVector;
         //UInt16 subsample_count;
         //UInt16 BytesOfClearData;
         //UInt32 BytesOfProtectedData;
+=======
+>>>>>>> 1st batch of warning removal
         //TODO Allocate resources to above members according to sample and subsample counts.
 
         atomprint("sample_count=\"%ld\"\n", sample_count);
@@ -5125,7 +5132,11 @@ OSErr Validate_saio_Atom( atomOffsetEntry *aoe, void *refcon )
         //TODO Allocate saio_offset based on entry_count.
         if(version ==0)
         {
+<<<<<<< HEAD
 			UInt32 *saio_offset = new UInt32[entry_count];
+=======
+            UInt32 saio_offset[entry_count];
+>>>>>>> 1st batch of warning removal
             for(UInt32 i=0;i<entry_count;i++)
             {
                 BAILIFERR( GetFileData( aoe, &temp,  offset, sizeof( UInt32 ), &offset ) );
@@ -5136,7 +5147,11 @@ OSErr Validate_saio_Atom( atomOffsetEntry *aoe, void *refcon )
         }
         else
         {
+<<<<<<< HEAD
 			UInt64* saio_offset = new UInt64[entry_count];
+=======
+            UInt64 saio_offset[entry_count];
+>>>>>>> 1st batch of warning removal
             for(UInt32 i=0;i<entry_count;i++)
             {
                 BAILIFERR( GetFileData( aoe, &temp1,  offset, sizeof( UInt64 ), &offset ) );

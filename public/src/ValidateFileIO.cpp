@@ -65,8 +65,6 @@ int PeekFileData( atomOffsetEntry *aoe, void *dataP, UInt64 offset64, UInt64 siz
 {
 #pragma unused(aoe)
 	int err = 0;
-	long amtRead = 0;
-	UInt64 size = size64;
     fpos_t f_pos;
     	
 	if (offset64 > 0x7FFFFFFFL) {
@@ -200,7 +198,7 @@ int GetFileCString( atomOffsetEntry *aoe, char **strP, UInt64 offset64, UInt64 m
 	int err = 0;
 	char str[8192];
 	char *sp;
-	int scnt = 0;
+	UInt64 scnt = 0;
 	
 	*strP = nil;
 	sp = &str[0]; *sp = '\0';
@@ -248,7 +246,6 @@ int GetFileUTFString( atomOffsetEntry *aoe, char **strP, UInt64 offset64, UInt64
 	
 	// if text is UTF-16, we will generate ASCII text for output
 	if (textIsUTF16) {
-		char * utf8noticeP = nil;
 		char * pASCII = nil;
 		UInt16 * pUTF16 = nil;
 		UInt64 numChars = (maxSize64 - 2)/2;
@@ -305,8 +302,8 @@ bail:
 int GetSampleOffsetSize( TrackInfoRec *tir, UInt32 sampleNum, UInt64 *offsetOut, UInt32 *sizeOut, UInt32 *sampleDescriptionIndexOut )
 {
 	int err = noErr;
-	int stsCnt;
-	int i;
+	UInt32 stsCnt;
+	UInt32 i;
 	UInt32 sampleCnt = 1;
 	UInt32 samplesPerChunk;
 	UInt32 size = 0;
@@ -361,8 +358,8 @@ bail:
 int GetChunkOffsetSize( TrackInfoRec *tir, UInt32 chunkNum, UInt64 *offsetOut, UInt32 *sizeOut, UInt32 *sampleDescriptionIndexOut )
 {
 	int err = noErr;
-	int stsCnt;
-	int i;
+	UInt32 stsCnt;
+	UInt32 i;
 	UInt32 sampleCnt = 1;
 	UInt32 samplesPerChunk;
 	UInt32 size = 0;
@@ -408,7 +405,6 @@ int GetFileStartCode( atomOffsetEntry *aoe, UInt32 *startCode, UInt64 offset64, 
 {
 #pragma unused(aoe)
 	int err = 0;
-	long amtRead = 0;
 	UInt64 curoffset = offset64;
 	UInt32 bits = 0;
 	
