@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:dash="urn:mpeg:dash:schema:mpd:2011" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cenc="urn:mpeg:cenc:2013" queryBinding='xslt2' schemaVersion='ISO19757-3'>
+<schema xmlns="http://purl.oclc.org/dsdl/schematron" xmlns:dash="urn:mpeg:dash:schema:mpd:2011" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cenc="urn:mpeg:cenc:2013" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" queryBinding='xslt2' schemaVersion='ISO19757-3'>
 	<ns prefix="dash" uri="urn:mpeg:dash:schema:mpd:2011"/>
 	<ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>
 	<ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
 	<ns prefix="xs" uri="http://www.w3.org/2001/XMLSchema"/>
+	<ns prefix="xsl" uri="http://www.w3.org/1999/XSL/Transform"/>
 	<ns prefix="cenc" uri="urn:mpeg:cenc:2013"/>
 
 	<!-- include some helper functions for codec specific assertions, needed for DVB DASH assertions -->
@@ -25,7 +26,54 @@
 			<!-- R1.5 -->
 			<assert test="if (not(@mediaPresentationDuration) and not(@minimumUpdatePeriod)) then false() else true()">If mediaPresentationDuration is not defined for the MPD minimumUpdatePeriod shall be defined or vice versa.</assert>
 			<!-- R1.7 -->
-			<assert test="if (not(@profiles) or (contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-ext-on-demand:2014') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-live:2011') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-ext-live:2014') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-main:2011') or contains(@profiles, 'urn:mpeg:dash:profile:full:2011') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-common:2014') or contains(@profiles, 'urn:mpeg:dash:profile:isoff-broadcast:2015') or contains(@profiles, 'urn:mpeg:dash:profile:mp2t-main:2011') or contains(@profiles, 'urn:mpeg:dash:profile:mp2t-simple:2011') or contains(@profiles, 'http://dashif.org/guidelines/dash264') or contains(@profiles, 'http://dashif.org/guidelines/dash264#sd') or contains(@profiles, 'http://dashif.org/guidelines/dash264#hd') or contains(@profiles, 'http://dashif.org/guidelines/dash264main') or contains(@profiles, 'http://dashif.org/guidelines/dash264high') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-simple') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-main') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-ondemand') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-mixed') or contains(@profiles, 'http://dashif.org/guidelines/dashif#ec-3') or contains(@profiles, 'http://dashif.org/guidelines/dashif#mlpa') or contains (@profiles, 'http://dashif.org/guidelines/dashif#ac-4') or contains(@profiles, 'http://dashif.org/guidelines/dashif#dtsc') or contains (@profiles, 'http://dashif.org/guidelines/dashif#dtsh') or contains (@profiles, 'http://dashif.org/guidelines/dashif#dtse') or contains (@profiles, 'http://dashif.org/guidelines/dashif#dtsl') or contains (@profiles, 'http://dashif.org/guidelines/dashif#mps') or contains (@profiles, 'http://dashif.org/guidelines/dashif#heaac-mc51') or contains (@profiles, 'http://dashif.org/guidelines/dashif#heaac-mc71') or contains (@profiles, 'http://dashif.org/guidelines/dashif#mpeg-h-3da') or contains(@profiles, 'http://dashif.org/guidelines/dashif#cxha') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#4k') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#hdr-pq10') or contains(@profiles, 'http://dashif.org/guidelines/dashif#vp9') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#vp9') or contains(@profiles, 'http://dashif.org/guidelines/dashif#vp9-hdr') or contains(@profiles, 'http://dashif.org/guidelines/dash-if-uhd#vp9-hdr') or contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or contains(@profiles, 'urn:dvb:dash:profile:dvb-dash:2014'))) then true() else false()">An unknown profile string (other than the On-Demand profile -"urn:mpeg:dash:profile:isoff-on-demand:2011", the extended On-Demand profile -"urn:mpeg:dash:profile:isoff-ext-on-demand:2014", the live profile -"urn:mpeg:dash:profile:isoff-live:2011", the extended live profile -"urn:mpeg:dash:profile:isoff-ext-live:2014", the main profile- "urn:mpeg:dash:profile:isoff-main:2011", the full profile "urn:mpeg:dash:profile:full:2011", the common profile -"urn:mpeg:dash:profile:isoff-common:2014", the broadcast TV profile -"urn:mpeg:dash:profile:isoff-broadcast:2015", the mp2t-main profile -"urn:mpeg:dash:profile:mp2t-main:2011", the mp2t-simple profile -"urn:mpeg:dash:profile:mp2t-simple:2011", the DASH-IF profile - 'http://dashif.org/guidelines/dash264', the DASH-IF SD profile - 'http://dashif.org/guidelines/dash264#sd', the DASH-IF HD profile - 'http://dashif.org/guidelines/dash264#hd', the DASH-IF main profile - 'http://dashif.org/guidelines/dash264#main', the DASH-IF high profile - 'http://dashif.org/guidelines/dash264#high', the DASH-IF IOP simple profile - 'http://dashif.org/guidelines/dash-if-simple', the DASH-IF IOP main profile - 'http://dashif.org/guidelines/dash-if-main', the DASH-IF IOP on demand profile - 'http://dashif.org/guidelines/dash-if-ondemand', the DASH-IF IOP mixed on demand profile - 'http://dashif.org/guidelines/dash-if-mixed', the DASH-IF multichannel audio extension with Enhanced AC-3 -"http://dashif.org/guidelines/dashif#ec-3, the DASH-IF multichannel extension with Dolby TrueHD -"http://dashif.org/guidelines/dashif#mlpa", the Dolby AC-4 profile -"http://dashif.org/guidelines/dashif#ac-4", the DASH-IF multichannel extension with DTS Digital Surround -"http://dashif.org/guidelines/dashif#dtsc", the DASH-IF multichannel audio extension with DTS-HD High Resolution and DTS-HD Master Audio -"http://dashif.org/guidelines/dashif#dtsh", the DASH-IF multichannel audio extension with DTS Express -"http://dashif.org/guidelines/dashif#dtse", the DASH-IF multichannel audio extension with DTS-HD Lossless profile -"http://dashif.org/guidelines/dashif#dtsl", the DASH-IF multichannel audio extension with MPEG Surround profile -"http://dashif.org/guidelines/dashif#mps", the DASH-IF multichannel audio extension with HEAACv2 Level 4 profile -"http://dashif.org/guidelines/dashif#heaac-mc51", the DASH-IF multichannel audio extension with HEAACv2 Level 6 profile -"http://dashif.org/guidelines/dashif#heaac-mc71", the DASH-IF multichannel audio extension with MPEG-H 3D Audio profile -"http://dashif.org/guidelines/dashif#mpeg-h-3da", the DASH-IF audio extension with USAC profile -"http://dashif.org/guidelines/dashif#cxha", the DASH-IF UHD HEVC 4K profile -"http://dashif.org/guidelines/dash-if-uhd#4k", the DASH-IF HEVC HDR PQ10 profile - "http://dashif.org/guidelines/dash-if-uhd#hdr-pq10", the DASH-IF VP9-HD profile -"http://dashif.org/guidelines/dashif#vp9", the DASH-IF VP9-UHD profile -"http://dashif.org/guidelines/dash-if-uhd#vp9", the DASH-IF VP9-HDR profile -"http://dashif.org/guidelines/dashif#vp9-hdr" or "http://dashif.org/guidelines/dash-if-uhd#vp9-hdr", the DVB-DASH profile -"urn:dvb:dash:profile:dvb-dash:2014", the HbbTV 1.5 profile -"urn:hbbtv:dash:profile:isoff-live:2012"")found.</assert>
+
+			<xsl:variable name="supported-profiles">
+				<x uri='urn:mpeg:dash:profile:isoff-on-demand:2011'>On-Demand profile</x>
+				<x uri='urn:mpeg:dash:profile:isoff-ext-on-demand:2014'>extended On-Demand profile</x>
+				<x uri='urn:mpeg:dash:profile:isoff-live:2011'>live profile</x>
+				<x uri='urn:mpeg:dash:profile:isoff-ext-live:2014'>extended live profile</x>
+				<x uri='urn:mpeg:dash:profile:isoff-main:2011'>main profile</x>
+				<x uri='urn:mpeg:dash:profile:full:2011'>full profile</x>
+				<x uri='urn:mpeg:dash:profile:isoff-common:2014'>common profile</x>
+				<x uri='urn:mpeg:dash:profile:isoff-broadcast:2015'>broadcast profile</x>
+				<x uri='urn:mpeg:dash:profile:mp2t-main:2011'>mp2t-main profile</x>
+				<x uri='urn:mpeg:dash:profile:mp2t-simple:2011'>mp2t-simple profile</x>
+				<x uri='http://dashif.org/guidelines/dash264'>DASH-IF profile</x>
+				<x uri='http://dashif.org/guidelines/dash264#sd'>DASH-IF SD profile</x>
+				<x uri='http://dashif.org/guidelines/dash264#hd'>DASH-IF HD profile</x>
+				<x uri='http://dashif.org/guidelines/dash264main'>DASH-IF main profile</x>
+				<x uri='http://dashif.org/guidelines/dash264high'>DASH-IF high profile</x>
+				<x uri='http://dashif.org/guidelines/dash-if-simple'>DASH-IF IOP simple profile</x>
+				<x uri='http://dashif.org/guidelines/dash-if-main'>DASH-IF IOP main profile</x>
+				<x uri='http://dashif.org/guidelines/dash-if-ondemand'>DASH-IF IOP on demand profile</x>
+				<x uri='http://dashif.org/guidelines/dash-if-mixed'>DASH-IF IOP mixed on demand profile</x>
+				<x uri='http://dashif.org/guidelines/dashif#ec-3'>DASH-IF multichannel audio extension with Enhanced AC-3</x>
+				<x uri='http://dashif.org/guidelines/dashif#mlpa'>DASH-IF multichannel extension with Dolby TrueHD</x>
+				<x uri='http://dashif.org/guidelines/dashif#ac-4'>Dolby AC-4 profile</x>
+				<x uri='http://dashif.org/guidelines/dashif#dtsc'>DASH-IF multichannel extension with DTS Digital Surround</x>
+				<x uri='http://dashif.org/guidelines/dashif#dtsh'>DASH-IF multichannel audio extension with DTS-HD High Resolution and DTS-HD Master Audio</x>
+				<x uri='http://dashif.org/guidelines/dashif#dtse'>DASH-IF multichannel audio extension with DTS Express</x>
+				<x uri='http://dashif.org/guidelines/dashif#dtsl'>DASH-IF multichannel audio extension with DTS-HD Lossless profile</x>
+				<x uri='http://dashif.org/guidelines/dashif#mps'>DASH-IF multichannel audio extension with MPEG Surround profile</x>
+				<x uri='http://dashif.org/guidelines/dashif#heaac-mc51'>DASH-IF multichannel audio extension with HEAACv2 Level 4 profile</x>
+				<x uri='http://dashif.org/guidelines/dashif#heaac-mc71'>DASH-IF multichannel audio extension with HEAACv2 Level 6 profile</x>
+				<x uri='http://dashif.org/guidelines/dashif#mpeg-h-3da'>multichannel audio extension with MPEG-H 3D Audio profile</x>
+				<x uri='http://dashif.org/guidelines/dashif#cxha'>DASH-IF audio extension with USAC profile</x>
+				<x uri='http://dashif.org/guidelines/dash-if-uhd#4k'>DASH-IF UHD HEVC 4K profile</x>
+				<x uri='http://dashif.org/guidelines/dash-if-uhd#hdr-pq10'>DASH-IF HEVC HDR PQ10 profile</x>
+				<x uri='http://dashif.org/guidelines/dashif#vp9'>VP9-HD profile</x>
+				<x uri='http://dashif.org/guidelines/dash-if-uhd#vp9'>VP9-UHD profile</x>
+				<x uri='http://dashif.org/guidelines/dashif#vp9-hdr'>VP9-HDR profile</x>
+				<x uri='http://dashif.org/guidelines/dash-if-uhd#vp9-hdr'>VP9-HDR profile</x>
+				<x uri='urn:dvb:dash:profile:dvb-dash:2014'>DVB-DASH 2014 profile</x>
+				<x uri='urn:hbbtv:dash:profile:isoff-live:2012'>HbbTV 1.5 profile</x>
+			</xsl:variable>
+			<xsl:variable name="DQUOTE">"</xsl:variable>
+			<!-- build a human-readable list of supported profiles -->
+			<let name="supported-profiles-helper" value="for $x in $supported-profiles/x return concat('the ',$x,' -',$DQUOTE,$x/@uri,$DQUOTE)"/>
+			<let name="supported-profiles-docstring" value="string-join($supported-profiles-helper,', ')"/>
+			<!-- assert that all profiles are in the list of supported profiles -->
+			<assert test="if (not(@profiles) or (every $t in tokenize(@profiles,',') satisfies $t = $supported-profiles/x/@uri)) then true() else false()">An unknown profile string "<value-of select="@profiles"/>"(other than <value-of select="$supported-profiles-docstring"/>) found.</assert>
 			<!-- R1.8 -->
 			<assert test="if (not(contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or not(@type) or @type='static') then true() else false()">For On-Demand profile, the MPD @type shall be "static".</assert>
 			<!-- R1.9 -->
