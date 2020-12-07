@@ -40,7 +40,6 @@ MAKEFLAGS=-j$MAKE_PARALLEL_JOBS
 
 cd DASH-IF-Conformance/ISOSegmentValidator/public/linux/
 make $MAKEFLAGS
-make install
 
 chmod -R 0777 /var/www/
 
