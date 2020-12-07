@@ -30,7 +30,7 @@ You can also use the included Vagrant box to run locally.
   vagrant up
 ```
 
-Once it completed, visit [http://localhost:8090/](http://localhost:8090/)
+Once `vagrant up` completes, visit [visit http://localhost:8090/DASH-IF-Conformance/Conformance-Frontend/index.html](visit http://localhost:8090/DASH-IF-Conformance/Conformance-Frontend/index.html)
 
 ** Refer to https://www.vagrantup.com/ for Vagrant installation and usage documentation.  
 
