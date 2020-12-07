@@ -11,7 +11,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y php php-dev php-xml php-curl php-xdebug libapache2-mod-php \
                    default-jdk apache2 apache2-doc python2.7 python-pip \
-                   python-matplotlib ant git
+                   python-matplotlib ant git libstdc++6:i386
 
 
 java -version
@@ -33,6 +33,13 @@ usermod -a -G www-data vagrant
 cd /var/www
 
 git clone --recurse-submodules https://github.com/Dash-Industry-Forum/DASH-IF-Conformance
+
+MAKE_PARALLEL_JOBS=10
+MAKEFLAGS=-j$MAKE_PARALLEL_JOBS
+
+cd DASH-IF-Conformance/ISOSegmentValidator/public/linux/
+make $MAKEFLAGS
+make install
 
 chmod -R 0777 /var/www/
 
