@@ -11,7 +11,8 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y php php-dev php-xml php-curl php-xdebug libapache2-mod-php \
                    default-jdk apache2 apache2-doc python2.7 python-pip \
-                   python-matplotlib ant git libstdc++6:i386
+                   python-matplotlib ant git libstdc++6:i386 gcc-multilib \
+                   g++-multilib
 
 
 java -version
