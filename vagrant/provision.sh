@@ -41,7 +41,7 @@ echo '' >  /etc/apache2/sites-available/000-dash.conf
 echo 'Listen 8090' >>  /etc/apache2/sites-available/000-dash.conf
 echo '<VirtualHost *:8090>' >>  /etc/apache2/sites-available/000-dash.conf
 echo '        ServerAdmin webmaster@localhost' >>  /etc/apache2/sites-available/000-dash.conf
-echo '        DocumentRoot /var/www/DASH-IF-Conformance/Conformance-Frontend' >>  /etc/apache2/sites-available/000-dash.conf
+echo '        DocumentRoot /var/www' >>  /etc/apache2/sites-available/000-dash.conf
 echo '        ErrorLog ${APACHE_LOG_DIR}/error.log' >>  /etc/apache2/sites-available/000-dash.conf
 echo '        CustomLog ${APACHE_LOG_DIR}/access.log combined' >>  /etc/apache2/sites-available/000-dash.conf
 echo '</VirtualHost>' >>  /etc/apache2/sites-available/000-dash.conf
