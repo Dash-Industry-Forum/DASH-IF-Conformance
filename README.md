@@ -23,6 +23,17 @@ To clone the IntegratedConformance with all the submodules, use the command,
 
 git clone --recurse-submodules https://github.com/Dash-Industry-Forum/DASH-IF-Conformance
 
+You can also use the included Vagrant box to run locally.
+
+```
+  cd DASH-IF-Conformance/vagrant/
+  vagrant up
+```
+
+Once it completed, visit [http://localhost:8090/](http://localhost:8090/)
+
+** Refer to https://www.vagrantup.com/ for Vagrant installation and usage documentation.  
+
 ### Usage Guide
 
 Information on how to use the conformance software, please refer to our [Usage Guide](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/blob/master/Doc/Conformance%20Software%20Usage%20Guide.pdf) document.
