@@ -50,4 +50,4 @@ echo '' >>  /etc/apache2/sites-available/000-dash.conf
 a2ensite 000-dash
 service apache2 reload
 
-echo "Success! Use your browser to visit http://localhost:8090/"
+echo "Success! Use your browser to visit http://localhost:8090/DASH-IF-Conformance/Conformance-Frontend/index.html"
