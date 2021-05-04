@@ -223,7 +223,7 @@ OSErr postprocessFragmentInfo(MovieInfoRec *mir) {
                 if (mir->moofInfo[i].trafInfo[j].tfdtFound) {
                     long double cumulatedTackFragmentDecodeTime = (long double) mir->tirList[index].cumulatedTackFragmentDecodeTime / (long double) mir->tirList[index].mediaTimeScale;
                     long double baseMediaDecodeTime = (long double) mir->moofInfo[i].trafInfo[j].baseMediaDecodeTime / (long double) mir->tirList[index].mediaTimeScale;
-                    if(abs(cumulatedTackFragmentDecodeTime - baseMediaDecodeTime) > 0.001) {
+                    if(fabsl(cumulatedTackFragmentDecodeTime - baseMediaDecodeTime) > 0.001) {
                     //if (mir->moofInfo[i].trafInfo[j].baseMediaDecodeTime != mir->tirList[index].cumulatedTackFragmentDecodeTime) {
                         if (i == 0 && vg.dashSegment) {
                             warnprint("Warning: tfdt base media decode time %Lf not equal to accumulated decode time %Lf for track %d for the first fragment of the movie. \n", (long double) mir->moofInfo[i].trafInfo[j].baseMediaDecodeTime / (long double) mir->tirList[index].mediaTimeScale, (long double) mir->tirList[index].cumulatedTackFragmentDecodeTime / (long double) mir->tirList[index].mediaTimeScale, mir->moofInfo[i].trafInfo[j].track_ID);
