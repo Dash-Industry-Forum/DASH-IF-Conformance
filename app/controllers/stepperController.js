@@ -957,10 +957,10 @@
                 var Period_count = Periodxml.length;
                 var AdaptRepPeriod_count = Period_count;
                 for (var p = 0; p < Period_count; p++) {
-                    var Adapt_count = Periodxml[p].childNodes.length;
+                    var Adaptxml = Periodxml[p].getElementsByTagName("Adaptation");
+                    var Adapt_count = Adaptxml.length;
                     vm.adaptholder.push(Adapt_count);
                     AdaptRepPeriod_count += ' ' + Adapt_count;
-                    var Adaptxml = Periodxml[p].getElementsByTagName("Adaptation");
                     for (var v = 0; v < Adapt_count; v++) {
                         AdaptRepPeriod_count += " " + Adaptxml[v].getElementsByTagName("Representation").length;
                     }
