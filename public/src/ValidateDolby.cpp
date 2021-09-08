@@ -178,7 +178,6 @@ OSErr Validate_dac4_Atom( atomOffsetEntry *aoe, void *refcon)
     unsigned int type;
     UInt64 offset;
 
-    atomprint(">\n");
     atomprint("<dac4\n");
     vg.tabcnt++;
 
@@ -201,7 +200,6 @@ OSErr Validate_dac4_Atom( atomOffsetEntry *aoe, void *refcon)
     BAILIFERR( Validate_ac4_dsi_v1( &bb, refcon));
 
 bail:
-    atomprint (">\n");
     vg.tabcnt--;
     atomprint("</dac4>\n");
     if(err){
@@ -360,7 +358,7 @@ OSErr Validate_ac4_dsi_v1( BitBuffer *bb, void *refcon)
         }
     }
     bail:
-        atomprint (">\n");
+        atomprint(">\n");
         vg.tabcnt--;
         atomprint("</ac4_dsi_v1>\n");
         return err;
@@ -371,8 +369,6 @@ OSErr Validate_ac4_bitrate_dsi( BitBuffer *bb, void *refcon, UInt32* bits_counte
 {
     OSErr err = noErr;
 
-    atomprint(">\n");
-    atomprint("<ac4_bitrate_dsi\n");
     vg.tabcnt++;
 
     UInt8  bit_rate_mode; bit_rate_mode = GetBits(bb, 2,  &err); if (err) GOTOBAIL;
@@ -387,9 +383,7 @@ OSErr Validate_ac4_bitrate_dsi( BitBuffer *bb, void *refcon, UInt32* bits_counte
     *bits_counter=*bits_counter+66;
 
 bail:
-    atomprint (">\n");
     vg.tabcnt--;
-    atomprint("</ac4_bitrate_dsi>\n");
     return err;
 }
 
@@ -597,7 +591,6 @@ OSErr Validate_ac4_presentation_v1_dsi( BitBuffer *bb, void *refcon, UInt8 pres_
         b_extended_presentation_id, presentation_id, b_multi_pid, b_pre_virtualized;
     UInt16  b_alternative, presentation_key_id;
 
-    atomprint("<ac4_presentation_v1_dsi\n");
     vg.tabcnt++;
 
 
@@ -684,7 +677,6 @@ OSErr Validate_ac4_presentation_v1_dsi( BitBuffer *bb, void *refcon, UInt8 pres_
             }
         }
         if(presentation_config == 0x1f){
-            atomprint (">\n");
             BAILIFERR( Validate_ac4_substream_group_dsi( bb, refcon, &bits_counter));
         }
         else {
@@ -693,13 +685,11 @@ OSErr Validate_ac4_presentation_v1_dsi( BitBuffer *bb, void *refcon, UInt8 pres_
             bits_counter+=1;
             if(presentation_config ==0 || presentation_config==1 || presentation_config==2)
             {
-                atomprint (">\n");
                 BAILIFERR( Validate_ac4_substream_group_dsi( bb, refcon, &bits_counter));
                 BAILIFERR( Validate_ac4_substream_group_dsi( bb, refcon, &bits_counter));
             }
             if(presentation_config ==3 || presentation_config ==4)
             {
-                atomprint (">\n");
                 BAILIFERR( Validate_ac4_substream_group_dsi( bb, refcon, &bits_counter));
                 BAILIFERR( Validate_ac4_substream_group_dsi( bb, refcon, &bits_counter));
                 BAILIFERR( Validate_ac4_substream_group_dsi( bb, refcon, &bits_counter));
@@ -709,7 +699,6 @@ OSErr Validate_ac4_presentation_v1_dsi( BitBuffer *bb, void *refcon, UInt8 pres_
                  bits_counter+=3;
                  n_substream_groups = n_substream_groups_minus2 + 2;
                  for(sg=0;sg<n_substream_groups;sg++){
-                     atomprint (">\n");
                      BAILIFERR( Validate_ac4_substream_group_dsi( bb, refcon, &bits_counter));
                 }
             }
@@ -787,9 +776,7 @@ OSErr Validate_ac4_presentation_v1_dsi( BitBuffer *bb, void *refcon, UInt8 pres_
         *presentation_bytes=(UInt8)(bits_counter)/8;
     }
 bail:
-    atomprint (">\n");
     vg.tabcnt--;
-    atomprint("</ac4_presentation_v1_dsi>\n");
     return err;
 }
 
@@ -803,7 +790,6 @@ OSErr Validate_ac4_substream_group_dsi( BitBuffer *bb, void *refcon , UInt32 * b
     b_ajoc, b_static_dmx, b_hsf_ext, b_substreams_present, dsi_sf_multiplier,
     substream_bitrate_indicator, b_content_type, b_language_indicator, n_language_tag_bytes;
 
-    atomprint("<ac4_substream_group_dsi\n");
     vg.tabcnt++;
 
     b_substreams_present = GetBits(bb, 1, &err); if (err) GOTOBAIL;
@@ -871,9 +857,7 @@ OSErr Validate_ac4_substream_group_dsi( BitBuffer *bb, void *refcon , UInt32 * b
     }
 
 bail:
-    atomprint (">\n");
     vg.tabcnt--;
-    atomprint("</ac4_substream_group_dsi>\n");
     return err;
 }
 //==========================================================================================
