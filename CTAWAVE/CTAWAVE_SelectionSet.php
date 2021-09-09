@@ -392,7 +392,7 @@ function getMediaProfile($xml,$handler_type,$repCount, $adaptCount,$opfile)
             if($brand_pos!==False)
                 $xml_MPParameters['brand']=substr($compatible_brands,$brand_pos,$brand_pos+3);
             
-            $dac4=$sounSampleDes->getElementsByTagName("dac4");
+            $dac4=$sounSampleDes->getElementsByTagName("ac4_dsi_v1");
             if($dac4->length>0){
                 if($dac4->item(0)->hasAttribute("mdcompat_0"))//if(isset($attr["mdcompat_0"]))
                      $xml_MPParameters['level']=$dac4->item(0)->getAttribute("mdcompat_0");
