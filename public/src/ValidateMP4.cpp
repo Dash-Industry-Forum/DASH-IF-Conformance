@@ -443,7 +443,7 @@ int main(void)
 	free(arrayArgc);
 
 
-	if (vg.indexRange!='\0')
+	if (vg.indexRange != nullptr)
 	  sscanf (vg.indexRange,"%d-%d",&vg.lowerindexRange,&vg.higherindexRange);
 
 
@@ -942,7 +942,7 @@ void atomprint(const char *formatStr, ...)
 	if (vg.printatom) {
 	    printf ("vg.printatom\n");
     	long tabcnt = vg.tabcnt;
-		while (tabcnt--) {
+		while (tabcnt-- > 0) {
 			fprintf(_stdout,myTAB);
 		}
 		vfprintf( _stdout, formatStr, ap );
@@ -950,7 +950,7 @@ void atomprint(const char *formatStr, ...)
 
 	if(vg.atomxml){
 		long tabcnt = vg.tabcnt;
- 		while (tabcnt--) {
+ 		while (tabcnt-- > 0) {
  			fprintf(f,myTAB);
  		}
 		va_start(ap, formatStr);
@@ -996,7 +996,7 @@ void atomprintdetailed(const char *formatStr, ...)
 
 	if (vg.printatom && vg.print_fulltable) {
 		long tabcnt = vg.tabcnt;
-		while (tabcnt--) {
+		while (tabcnt-- > 0) {
 			fprintf(_stdout,myTAB);
 		}
 		vfprintf( _stdout, formatStr, ap );
@@ -1012,7 +1012,7 @@ void sampleprint(const char *formatStr, ...)
 
 	if (vg.printsample) {
 		long tabcnt = vg.tabcnt;
-		while (tabcnt--) {
+		while (tabcnt-- > 0) {
 			fprintf(_stdout,myTAB);
 		}
 		vfprintf( _stdout, formatStr, ap );
