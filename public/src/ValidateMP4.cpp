@@ -40,7 +40,7 @@ void myexit(int num)
 #define myTAB "\t"
 #endif
 
-ValidateGlobals vg = {0};
+ValidateGlobals vg = {};
 FILE *f;		//to print atom content to xml file (later use for xml creation)
 
 static int keymatch (const char * arg, const char * keyword, int minchars);
@@ -196,7 +196,7 @@ int main(void)
 	int usedefaultfiletype = true;
 
 	FILE *infile = nil;
-	atomOffsetEntry aoe = {0};
+	atomOffsetEntry aoe = {};
 
 	vg.warnings = true;
 //	vg.qtwarnings = true;
@@ -1218,7 +1218,7 @@ int mapStringToUInt32(char *src, UInt32 *target)
 
 char *ostypetostr(UInt32 num)
 {
-	static char str[sizeof(num)+1] = {0};
+	static char str[sizeof(num)+1] = {};
 
 	str[0] = (num >> 24) & 0xff;
 	str[1] = (num >> 16) & 0xff;
@@ -1499,7 +1499,7 @@ int Base64Encode(char *input, char *output, int oplen){
 void addEscapedChar( char *str, char c );
 void addEscapedChar( char *str, char c )
 {
-	char addc[4] = {0};
+	char addc[4] = {};
 
 	if ((('a' <= c) && (c <= 'z'))
 		|| (('A' <= c) && (c <= 'Z'))
@@ -1556,7 +1556,7 @@ void restoreAtomPath( atompathType workingpath, atompathType curpath )
 OSErr ValidateElementaryVideoStream( atomOffsetEntry *aoe, void *refcon )
 {
 #pragma unused(refcon)
-	TrackInfoRec tir = {0};
+	TrackInfoRec tir = {};
 	OSErr err = noErr;
 	UInt32 startCode;
 	UInt32 prevStartCode;

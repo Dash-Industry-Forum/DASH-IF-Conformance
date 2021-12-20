@@ -3607,7 +3607,7 @@ OSErr Validate_hint_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 	atomprint(">\n"); //vg.tabcnt++;
 
 	if(vg.cmaf && ((sdh.sdType == 'drmi' ) || (( (sdh.sdType & 0xFFFFFF00) | ' ') == 'enc ' )) && aoe->type != 'sinf'){
-		char entry_type_name[5] = {0};
+		char entry_type_name[5] = {};
 		entry_type_name[0] = (aoe->type >> 24) & 0xff;
 		entry_type_name[1] = (aoe->type >> 16) & 0xff;
 		entry_type_name[2] = (aoe->type >>  8) & 0xff;
@@ -3776,7 +3776,7 @@ OSErr Validate_mp4_SD_Entry( atomOffsetEntry *aoe, void *refcon, ValidateBitstre
 			entry = &list[i];
 
 			if(vg.cmaf && ((sdh.sdType == 'drmi' ) || (( (sdh.sdType & 0xFFFFFF00) | ' ') == 'enc ' )) && entry->type != 'sinf'){
-				char entry_type_name[5] = {0};
+				char entry_type_name[5] = {};
 				entry_type_name[0] = (entry->type >> 24) & 0xff;
 				entry_type_name[1] = (entry->type >> 16) & 0xff;
 				entry_type_name[2] = (entry->type >>  8) & 0xff;

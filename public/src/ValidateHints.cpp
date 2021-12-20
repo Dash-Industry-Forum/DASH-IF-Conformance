@@ -268,7 +268,7 @@ OSErr Validate_Hint_Track( atomOffsetEntry *aoe, TrackInfoRec *tir )
 	UInt32		startSampleNum;
 	UInt32		endSampleNum;
 	Boolean		doPrinting = false;
-	HintInfoRec	hir = {0};
+	HintInfoRec	hir = {};
 	
 	UInt64 minOffset, maxOffset;
 	long cnt;

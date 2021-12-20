@@ -119,7 +119,7 @@ OSErr Validate_iods_OD_Bits( Ptr odDataP, unsigned long odSize, Boolean fileForm
 
 	if (urlFlag) {
 		UInt32 urlLength;
-		char urlString[257] = {0};
+		char urlString[257] = {};
 		
 		BAILIFERRSET( urlLength = GetBits(bb, 8, &err) );
 		BAILIFERR( GetBytes(bb, urlLength, (unsigned char*)urlString) );
@@ -492,7 +492,7 @@ OSErr Validate_ES_Descriptor(BitBuffer *inbb, UInt8 Expect_ObjectType, UInt8 Exp
 	}
 	if (urlflag) {
 		UInt32 urlLength;
-		char urlString[257] = {0};
+		char urlString[257] = {};
         static const char* urlStartODAU = "data:application/mpeg4-od-au;base64,";
         static const char* urlStartBIFSAU = "data:application/mpeg4-bifs-au;base64,";
         char* base64P = NULL;
@@ -605,7 +605,7 @@ OSErr Validate_Object_Descriptor(BitBuffer *inbb)
 
 	if (urlflag) {
 		UInt32 urlLength;
-		char urlString[257] = {0};
+		char urlString[257] = {};
 		
 		urlLength = GetBits(bb, 8, &err); if (err) goto bail;
 		GetBytes(bb, urlLength, (unsigned char*)urlString);
@@ -917,7 +917,7 @@ OSErr Validate_SoundSpecificInfo(  BitBuffer *bb )
 					UInt8 is_cpe, tag_select, cc_element_is_ind_sw;
 					UInt8 element_number, matrix_mixdown_idx, pseudo_surround_enable;
 					UInt8 comment_field_bytes, i;
-					char commentString[257] = {0};
+					char commentString[257] = {};
 					
 					static char* aactypes[] = { "AAC Main", "AAC LC", "AAC SSR", "AAC LTP" };
 					
