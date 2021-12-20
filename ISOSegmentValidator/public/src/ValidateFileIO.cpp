@@ -52,7 +52,7 @@ UInt64 inflateOffset(UInt64 offset64)
 
 		for (index = 0; adjustedOffset >= vg.offsetEntries[index].offset; index++)
 		{
-                    if(index == vg.numOffsetEntries)
+                    if(index == vg.numOffsetEntries - 1)
                         break; 
                     adjustedOffset += vg.offsetEntries[index].sizeRemoved;
 		}
