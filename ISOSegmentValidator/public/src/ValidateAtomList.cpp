@@ -1068,7 +1068,7 @@ OSErr ValidateAtomOfType( OSType theType, long flags, ValidateAtomTypeProcPtr va
 {
 	long i;
 	OSErr err = noErr;
-	char cstr[5] = {0};
+	char cstr[5] = {};
 	long typeCnt = 0;
 	atomOffsetEntry *entry;
 	OSErr atomerr;
