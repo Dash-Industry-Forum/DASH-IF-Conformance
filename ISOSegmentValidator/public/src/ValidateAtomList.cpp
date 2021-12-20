@@ -68,22 +68,26 @@ OSErr ValidateFileAtoms( atomOffsetEntry *aoe, void *refcon )
 	if (!err) err = atomerr;
 	
 	// Process 'moov' atoms ; check for more than 1 moov atoms done later
-	vg.mir = NULL; 
-        if(vg.cmaf){
-            atomerr = ValidateAtomOfType( 'moov', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
-		Validate_moov_Atom, cnt, list, nil );
-            if (!err) err = atomerr;
-        }
-        else{
-            atomerr = ValidateAtomOfType( 'moov', kTypeAtomFlagMustHaveOne, 
-                    Validate_moov_Atom, cnt, list, nil );
-            if (!err) err = atomerr;
-        }
-	
+	vg.mir = NULL;
+	if (vg.cmaf) {
+		atomerr = ValidateAtomOfType('moov', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne,
+									 Validate_moov_Atom, cnt, list, nil);
+		if (!err)
+			err = atomerr;
+	} else {
+		atomerr = ValidateAtomOfType('moov', kTypeAtomFlagMustHaveOne,
+									 Validate_moov_Atom, cnt, list, nil);
+		if (!err)
+			err = atomerr;
+	}
+
 	// Process 'meta' atoms
 	atomerr = ValidateAtomOfType( 'meta', kTypeAtomFlagCanHaveAtMostOne, 
 		Validate_meta_Atom, cnt, list, nil );
 	if (!err) err = atomerr;
+
+	if (!vg.mir)
+		goto bail;
     
 	// Count the total fragments and sidx's (if present), and allocate the required memory for that
 	vg.mir->numFragments = 0;
