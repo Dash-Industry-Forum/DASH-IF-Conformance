@@ -258,7 +258,10 @@ function processAdaptationSetOfCurrentPeriod($period,$curr_period_dir,$ResultXML
                 $return_cta = $ctawave_function_name($ctawave_when_to_call[0]);
 
             $return_seg_val = validate_segment($curr_adapt_dir, $curr_rep_dir, $period, $adaptation_set, $representation, $segment_url, $rep_dir_name, $is_subtitle_rep);
-            ValidateDolby($adaptation_set, $representation);
+            $codecs = ($adaptation_set['codecs'] == NULL) ? $representation['codecs'] : $adaptation_set['codecs'];
+            $is_dolby = (($codecs != NULL) and ((substr($codecs, 0, 4) == "ac-3") or (substr($codecs, 0, 4) == "ec-3") or (substr($codecs, 0, 4) == "ac-4")));
+            if($is_dolby)
+                ValidateDolby($adaptation_set, $representation);
             if($dashif_conformance)
                 $return_seg_val[] = $iop_function_name($iop_when_to_call[1]);
             if($cmaf_conformance)
