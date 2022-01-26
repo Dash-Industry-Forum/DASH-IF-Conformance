@@ -17,7 +17,7 @@ Each submodule is a repository on its own with its respective functionalities an
 
 ### Installation
 
-For the complete installation including dependencies etc, please refer [Installation guide]( https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/blob/master/Doc/Conformance%20Software%20Installation%20Guide.pdf).
+For the complete installation including dependencies etc, please refer [Installation guide](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Installation--guide). A pdf version of the installation guide can be found [here](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/blob/master/Doc/Conformance%20Software%20Installation%20Guide.pdf).
 
 To clone the IntegratedConformance with all the submodules, use the command, 
 
