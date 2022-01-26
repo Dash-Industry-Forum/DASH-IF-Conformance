@@ -21,7 +21,7 @@ For the complete installation including dependencies etc, please refer [Installa
 
 To clone the IntegratedConformance with all the submodules, use the command, 
 
-git clone --recurse-submodules https://github.com/Dash-Industry-Forum/DASH-IF-Conformance
+`git clone --recurse-submodules https://github.com/Dash-Industry-Forum/DASH-IF-Conformance`
 
 ### Usage Guide
 
