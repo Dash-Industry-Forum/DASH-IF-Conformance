@@ -17,15 +17,19 @@
 ini_set('memory_limit', '-1');
 error_reporting(E_ERROR | E_PARSE);
 
-include 'Session.php';
-include 'Load.php';
-include 'FileOperations.php';
-include 'VisitorCounter.php';
-include 'GlobalVariables.php';
-include 'PrettyPrint.php';
-include 'SegmentDownload.php';
-include 'SegmentValidation.php';
-include 'DolbySegmentValidation.php';
+require './moduleInterface.php';
+
+include 'Session.php';         //#Session Functions, No Direct Executable Code
+include 'Load.php';            //#Document loading functions, mostly xml. Some assertion options and error initialization
+include 'FileOperations.php';  //#Filesystem and XML checking functions. No Direct Executable Code.
+include 'VisitorCounter.php';  //#Various Session-based functions. No Direct Executable Code.
+include 'GlobalVariables.php'; //#Global variables. Direct evaluation of post/session vars to define conditionals, conditional extra includes for module initialization
+include 'PrettyPrint.php';     //#Pretty printing functions for terminal output. No Direct Executable Code.
+include 'SegmentDownload.php'; //#Very large function for downloading data. No Direct Executable Code.
+include 'SegmentValidation.php'; //#Segment validation functions. No Direct Executable Code.
+include 'DolbySegmentValidation.php'; //#Dolby validation functions. Attempt at use of objects. No Direct Executable Code.
+
+//#Cross repo includes. These should be made optional at the very least.
 include '../DASH/MPDProcessing.php';
 include '../DASH/MPDFeatures.php';
 include '../DASH/MPDValidation.php';
@@ -38,6 +42,14 @@ include '../HLS/HLSProcessing.php';
 include '../Conformance-Frontend/Featurelist.php';
 include '../Conformance-Frontend/TabulateResults.php';
 
+include '../CMAF/module.php';
+include '../CMAF/CTAWAVE/module.php';
+include '../HbbTV_DVB/module.php';
+include '../DASH/LowLatency/module.php';
+include '../DASH/IOP/module.php';
+
+file_put_contents("moduleLog.txt", var_export($modules, TRUE));
+
 set_time_limit(0);
 ini_set("log_errors", 1);
 ini_set("error_log", "myphp-error.log");
@@ -46,6 +58,7 @@ $session_id = json_decode($_POST['sessionid']);
 session_name($session_id);
 session_start();
 #error_log("session_start:" . session_name());
+
 
 session_create();
 if(!$hls_manifest)
