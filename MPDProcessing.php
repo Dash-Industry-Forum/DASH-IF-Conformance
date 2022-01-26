@@ -23,6 +23,8 @@ function process_MPD(){
             $hbbtv_conformance, $dvb_conformance, $hbbtv_dvb_function_name, $hbbtv_dvb_when_to_call,         // HbbTV-DVB data
             $ctawave_conformance, $ctawave_function_name, $ctawave_when_to_call,                             // CTA WAVE data
             $low_latency_dashif_conformance, $low_latency_function_name, $low_latency_when_to_call;          // Low Latency DASH-IF data
+    //
+    global $modules;
 
     ## Open related files
     $progress_xml = simplexml_load_string('<root><Profile></Profile><PeriodCount></PeriodCount><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><CurrentPeriod>1</CurrentPeriod><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
@@ -81,8 +83,12 @@ function process_MPD(){
         }
     }
     json_encode("DVB/HbbTV: $dvb_conformance $hbbtv_conformance");
-    if($hbbtv_conformance || $dvb_conformance)
-        $return_val = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[0]);
+
+    foreach ($modules as $module){
+      if ($module->is_enabled()){
+        $module->hookBeforeMPD();
+      }
+    } 
 
     ## Get MPD features into an array
     $mpd_features = MPD_features($mpd_dom);
@@ -100,21 +106,16 @@ function process_MPD(){
     $valid_mpd = validate_MPD();
     $result_for_json[] = $valid_mpd[1];
 
-    ## If DASH-IF IOP conformance, call DASH-IF IOP MPD validation
-    $return_dashif = '';
-    if($dashif_conformance)
-        $return_dashif = $iop_function_name($iop_when_to_call[0]);
-    ## If Low Latency DASH-IF cnformance, call MPD validation for low latency
-    $returnValue = '';
-    if($low_latency_dashif_conformance){
-        $returnValue = $low_latency_function_name($low_latency_when_to_call[0]);
-    }
-    ## If HbbTV_DVB_Handle, call HbbTV_DVB_Handle for MPD validation
-    $return_val = '';
-    if($hbbtv_conformance || $dvb_conformance)
-        $return_val = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[1]);
 
-    MPD_report($valid_mpd[1] . $return_dashif . $returnValue . $return_val);
+    $moduleResults = '';
+    foreach ($modules as $module){
+      if ($module->is_enabled()){
+        $moduleResults .= $module->hookMPD();
+      }
+    } 
+file_put_contents("moduleLog.txt", var_export($modules, TRUE));
+
+    MPD_report($valid_mpd[1] . $moduleResults);
     writeMPDEndTime();
     print_console($session_dir.'/'.$mpd_log.'.txt', "MPD Validation Results");
     tabulateResults($session_dir . '/' . $mpd_log . '.txt', 'MPD');
