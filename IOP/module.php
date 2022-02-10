@@ -1,4 +1,6 @@
 <?php
+  include_once 'IOP_Initialization.php';
+
   class moduleDASHIF_IOP extends moduleInterface {
     function __construct() {
       parent::__construct();
@@ -11,7 +13,20 @@
       }
     }
 
+    /**
+     *  \brief Checks whether 'DASH_IOP' is found in the arguments, and enables this module accordingly
+     */
+    public function conditionalEnable($args){
+      $this->enabled = false;
+      foreach ($args as $arg){
+        if ($arg == "DASH_IOP"){
+          $this->enabled = true;
+        }
+      }
+    }
+
     public function hookMPD(){
+      parent::hookMPD();
       return IOP_ValidateMPD();
     }
 

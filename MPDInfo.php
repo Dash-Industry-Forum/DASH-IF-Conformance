@@ -221,13 +221,13 @@ function derive_profiles(){
             foreach($reps as $rep){
                 $profiles = $mpd_features['profiles'];
 
-                if($period['profiles'])
+                if(array_key_exists('profiles', $period) && $period['profiles'])
                     $profiles = $period['profiles'];
 
-                if($adapt['profile'])
+                if(array_key_exists('profile', $adapt) && $adapt['profile'])
                     $profiles = $adapt['profiles'];
 
-                if($rep['profile'])
+                if(array_key_exists('profile', $rep) && $rep['profile'])
                     $profiles = $rep['profiles'];
 
                 $rep_profiles[] = $profiles;

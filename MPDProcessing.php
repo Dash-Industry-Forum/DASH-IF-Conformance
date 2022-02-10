@@ -113,7 +113,6 @@ function process_MPD(){
         $moduleResults .= $module->hookMPD();
       }
     } 
-file_put_contents("moduleLog.txt", var_export($modules, TRUE));
 
     MPD_report($valid_mpd[1] . $moduleResults);
     writeMPDEndTime();
@@ -144,7 +143,7 @@ file_put_contents("moduleLog.txt", var_export($modules, TRUE));
         $progress_xml->asXml(trim($session_dir . '/progress.xml'));
         writeEndTime((int)$progress_xml->completed->attributes());
         session_close();
-        exit;
+        return;
     }
     //------------------------------------------------------------------------//
 
