@@ -13,10 +13,9 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-include 'LowLatency_Handle.php';
-include 'LowLatency_MPDValidation.php';
-include 'LowLatency_RepresentationValidation.php';
-include 'LowLatency_CrossValidation.php';
+include_once 'LowLatency_Handle.php';
+include_once 'LowLatency_MPDValidation.php';
+include_once 'LowLatency_CrossValidation.php';
 
 global $mpd_xml_string;
 
