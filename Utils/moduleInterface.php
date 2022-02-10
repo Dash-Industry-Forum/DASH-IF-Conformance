@@ -21,6 +21,11 @@
       return $this->enabled;
     }
 
+    /**
+     * \brief Conditionally enables the module based on the given arguments
+     */
+    public function conditionalEnable($args){}
+
     protected function message($message){
       $this->messages[] = $message;
 
@@ -45,7 +50,11 @@ file_put_contents("moduleLog.txt", var_export($modules, TRUE));
      *   - Writes errors to $mpd_log.txt
      *   - No return value.
      */
-    public function hookBeforeMPD(){}
+    public function hookBeforeMPD(){
+      global $logger;
+      $logger->setModule($this->name);
+      $logger->setHook("BeforeMPD");
+    }
     /**
      * A hook that is run between validating the MPD DOM, and reporting on it. Validity check of MPD DOM is ignored when running these hooks. Result Values are used in reporting on the MPD.
      *
@@ -78,7 +87,11 @@ file_put_contents("moduleLog.txt", var_export($modules, TRUE));
      *     - Else return "true"
      *   - Reads xml from mpd_xml_report, saves the return value, then writes it back in whole.
      */
-    public function hookMPD(){}
+    public function hookMPD(){
+      global $logger;
+      $logger->setModule($this->name);
+      $logger->setHook("MPD");
+    }
 
     /**
      * A hook that is run before downloading and validating the first segment of each period-adaptationset combination. Return value is ignored
