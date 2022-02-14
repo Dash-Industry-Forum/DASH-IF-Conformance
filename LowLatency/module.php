@@ -28,7 +28,6 @@
     public function hookMPD(){
       parent::hookMPD();
 
-      global $session_dir, $mpd_xml_report;
       
       $this->validateProfiles();
       $this->validateServiceDescription();
@@ -36,6 +35,7 @@
       $this->validateLeapSecondInformation();
 
       
+      global $session_dir, $mpd_xml_report;
       $mpd_xml = simplexml_load_file($session_dir . '/' . $mpd_xml_report);
       $mpd_xml->dashif_ll = 'true';//NOTE this will be deprecated anyway
       $mpd_xml->asXml($session_dir . '/' . $mpd_xml_report);
