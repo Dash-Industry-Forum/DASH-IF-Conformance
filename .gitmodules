@@ -1,6 +1,3 @@
 [submodule "ISOSegmentValidator"]
 	path = ISOSegmentValidator
 	url = https://github.com/Dash-Industry-Forum/ISOSegmentValidator
-[submodule "Conformance-Frontend-HLS"]
-	path = Conformance-Frontend-HLS
-	url = https://github.com/Dash-Industry-Forum/Conformance-Frontend-HLS
