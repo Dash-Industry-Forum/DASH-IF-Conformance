@@ -1,0 +1,814 @@
+<!-- This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<html>
+    <body>
+        <style>
+            table{background:#CCC;border:1px solid #000;transform:rotate(270deg);}
+            table td{padding:15px;border:1px solid #DDD;}
+        </style>
+        <div id="dynamictable"></div>
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+        <script>
+        ////////////////////
+            var dirid;
+            $(document).ready(function () {
+                var pathArray = window.location.pathname.split('/');
+
+                dirid = pathArray[pathArray - 2];
+
+                setTimeout(featuretable, 1);
+            });
+
+            function StringToXML(oString) {
+                //code for IE
+                if (window.ActiveXObject) {
+                    var oXML = new ActiveXObject("Microsoft.XMLDOM");
+                    oXML.loadXML(oString);
+                    return oXML;
+                }
+                // code for Chrome, Safari, Firefox, Opera, etc. 
+                else {
+                    return (new DOMParser()).parseFromString(oString, "text/xml");
+                }
+            }
+
+            function featuretable()
+            {
+                var tablelist = createXMLHttpRequestObject();
+                if (tablelist)     // continue only if xmlHttp isn't void
+                {
+                    try          // try to connect to the server
+                    {
+                        var featureDocURL = 'featuresList.xml';
+                        tablelist.open("GET", featureDocURL += (featureDocURL.match(/\?/) == null ? "?" : "&") + Math.random(), true);
+                        tablelist.send();
+                        tablelist.onreadystatechange = function ()
+                        {
+                            if (tablelist.readyState == 4 && tablelist.status == 200)
+                            {
+                                //   console.log(tablelist.responseText);
+                                var x = StringToXML(tablelist.responseText);
+                                getchild($(x).children("MPD")[0]);
+                            }
+                        }
+                    } catch (e)      // display an error in case of failure
+                    {
+                        ;//alert("Failed loading progress\n" + e.toString());
+                    }
+                }
+            }
+
+            function getchild(node)
+            {
+                var listElement = document.createElement("ul");
+
+                document.getElementById("dynamictable").appendChild(listElement);
+                var mpdli = document.createElement('li1');
+                mpdli.innerHTML = "<b>MPD</b>";
+                mpdli.id = "myMPD";
+
+                listElement.appendChild(mpdli);
+                attributes(node, mpdli);
+                
+                checkmetrics(node, mpdli);
+                chkbaseurl(node, mpdli);
+                checkproginfo(node, mpdli);
+                checksupplementalproperty(node, mpdli);
+                checkessentialproperty(node, mpdli);
+                checklocation(node, mpdli);
+                checkutctiming(node, mpdli);
+
+                for (var peri = 0; peri < $(node).children("Period").length; peri++) {
+                    var period = $(node).children("Period")[peri];
+                    var perul = document.createElement("ul");
+                    var peli = document.createElement("li");
+                    peli.innerHTML = "<b>Period</b>";
+                    perul.appendChild(peli);
+                    mpdli.appendChild(perul);
+                    attributes(period, perul);
+                    
+                    chkbaseurl(period, perul);
+                    checksegmentbase(period, perul);
+                    checkseglist(period, perul);
+                    checksegtemp(period, perul);
+                    checksupplementalproperty(period, perul);
+                    checkeventStream(period, perul);
+                    checkemptyadaptationset(period, perul);
+                    checkassetidentifier(period, perul);
+                    checksubset(period, perul);
+                    checkgrouplabel(period, perul);
+                    checkpreselection(period, perul);
+                    
+                    var adaptation = $(period).children("Adaptationset");
+                    for (var adapi = 0; adapi < adaptation.length; adapi++)
+                    {
+                        var adaptat = adaptation[adapi];
+                        var adapul = document.createElement("ul");
+                        var adapli = document.createElement("li");
+                        adapli.innerHTML = "<b>Adaptationset</b>";
+                        adapul.appendChild(adapli);
+                        perul.appendChild(adapul);
+                        attributes(adaptat, adapul);
+
+                        chkbaseurl(adaptat, adapul);
+                        checksegmentbase(adaptat, adapul);
+                        checkseglist(adaptat, adapul);
+                        checksegtemp(adaptat, adapul);
+                        checksupplementalproperty(adaptat, adapul);
+                        checkessentialproperty(adaptat, adapul);
+                        checkaccesibility(adaptat, adapul);
+                        checkrating(adaptat, adapul);
+                        checkviewpoint(adaptat, adapul);
+                        checkrole(adaptat, adapul);
+                        checkframepacking(adaptat, adapul);
+                        checkaudioChannelConfiguration(adaptat, adapul);
+                        checkcontentprotection(adaptat, adapul);
+                        checkinbandeventstream(adaptat, adapul);
+                        checkswitching(adaptat, adapul);
+                        checkrandomaccess(adaptat, adapul);
+                        checkgrouplabel(adaptat, adapul);
+                        checklabel(adaptat, adapul);
+                        
+                        for (var contl = 0; contl < $(adaptat).children("ContentComponent").length; contl++)
+                        {
+                            var contobj = $(adaptat).children("ContentComponent")[contl];
+
+                            var contul = document.createElement("ul");
+                            var contli = document.createElement("li");
+                            contli.innerHTML = "<b>ContentComponent</b>";
+                            contul.appendChild(contli);
+                            adapul.appendChild(contul);
+                            attributes(contobj, contul);
+                            
+                            
+                            checkaccesibility(contobj, contul);
+                            checkrating(contobj, contul);
+                            checkviewpoint(contobj, contul);
+                            checkrole(contobj, contul);
+                        }
+
+                        for (var repi = 0; repi < $(adaptat).children("Representation").length; repi++)
+                        {
+                            var repobj = $(adaptat).children("Representation")[repi];
+
+                            var repul = document.createElement("ul");
+                            var repli = document.createElement("li");
+                            repli.innerHTML = "<b>Representation</b>";
+                            repul.appendChild(repli);
+                            adapul.appendChild(repul);
+                            attributes(repobj, repul);
+                            
+                            chkbaseurl(repobj, repul);
+                            checksegmentbase(repobj, repul);
+                            checkseglist(repobj, repul);
+                            checksegtemp(repobj, repul);
+                            checksupplementalproperty(repobj, repul);
+                            checkessentialproperty(repobj, repul);
+                            checkframepacking(repobj, repul);
+                            checkaudioChannelConfiguration(repobj, repul);
+                            checkcontentprotection(repobj, repul);
+                            checkinbandeventstream(repobj, repul);
+                            checkswitching(repobj, repul);
+                            checkrandomaccess(repobj, repul);
+                            checkgrouplabel(repobj, repul);
+                            checklabel(repobj, repul);
+                            
+                            for (var subl = 0; subl < $(repobj).children("SubRepresentation").length; subl++)
+                            {
+                                var subobj = $(repobj).children("SubRepresentation")[subl];
+
+                                var subul = document.createElement("ul");
+                                var subli = document.createElement("li");
+                                subli.innerHTML = "<b>SubRepresentation</b>";
+                                subul.appendChild(subli);
+                                repul.appendChild(subul);
+                                attributes(subobj, subul);
+                                
+                                checksupplementalproperty(subobj, subul);
+                                checkessentialproperty(subobj, subul);
+                                checkframepacking(subobj, subul);
+                                checkaudioChannelConfiguration(subobj, subul);
+                                checkcontentprotection(subobj, subul);
+                                checkinbandeventstream(subobj, subul);
+                                checkswitching(subobj, subul);
+                                checkrandomaccess(subobj, subul);
+                                checkgrouplabel(subobj, subul);
+                                checklabel(subobj, subul);
+                            }
+                        }
+                    }
+                }
+            }
+
+            function attributes(ele, li)
+            {
+                var ulatt = document.createElement("ul");
+
+                li.appendChild(ulatt);
+                $.each(ele.attributes, function (i, attrib)
+                {
+                    var attli = document.createElement("li");
+
+                    var textWithFont = document.createElement("font");
+
+                    if (attrib.name.indexOf("xmlns") != -1 || attrib.name.indexOf("xsi") != -1)
+                    {
+                        return;
+                    } else if (attrib.name == "elementIssue")
+                    {
+
+                        textWithFont.color = "red";
+                        textWithFont.innerHTML = "Issues of Missing Attributes: " + attrib.value + "\r\n";
+                    } else if (attrib.value == "false") //No Schema Error
+                    {
+                        textWithFont.color = "green";
+                        textWithFont.innerHTML = attrib.name + "\r\n";
+
+                    } else //If other than "false", means that a schema error is found in that attribute
+                    {
+                        textWithFont.color = "red";
+                        textWithFont.innerHTML = attrib.name + ": " + attrib.value + "\r\n";
+                    }
+
+                    attli.appendChild(textWithFont);
+                    ulatt.appendChild(attli);
+
+                });
+        // console.log(ele.nodeName);
+                // console.log(nametab);
+
+            }
+            
+            function createXMLHttpRequestObject() {
+                var xmlHttp; // xmlHttp will store the reference to the XMLHttpRequest object
+                try {         // try to instantiate the native XMLHttpRequest object
+                    xmlHttp = new XMLHttpRequest(); // create an XMLHttpRequest object
+                } catch (e) {
+                    try     // assume IE6 or older
+                    {
+                        xmlHttp = new ActiveXObject("Microsoft.XMLHttp");
+                    } catch (e) {
+                    }
+                }
+                if (!xmlHttp)       // return the created object or display an error message
+                    alert("Error creating the XMLHttpRequest object.");
+                else
+                    return xmlHttp;
+            }
+
+            function chkbaseurl(node, mpdli)
+            {
+                for (var i = 0; i < $(node).children("BaseURL").length; i++)
+                {
+                    var Baseurl = $(node).children("BaseURL")[i];
+
+                    var metul = document.createElement("ul");
+                    var metli = document.createElement("li");
+                    metli.innerHTML = "<b>BaseURL</b>";
+                    metul.appendChild(metli);
+                    mpdli.appendChild(metul);
+                    attributes(Baseurl, metul);
+                }
+
+            }
+            
+            function checkmetrics(node, mpdli)
+            {
+                for (var i = 0; i < $(node).children("Metrics").length; i++)
+                {
+                    var metrics = $(node).children("Metrics")[i];
+                    var metul = document.createElement("ul");
+                    var metli = document.createElement("li");
+                    metli.innerHTML = "<b>Metrics</b>";
+                    metul.appendChild(metli);
+                    mpdli.appendChild(metul);
+                    attributes(metrics, metul);
+                    
+                    checkrange(metrics, metul);
+                    checkreporting(metrics, metul);
+                }
+            }
+
+            function checkproginfo(node, mpdli)
+            {
+                for (var i = 0; i < $(node).children("ProgramInformation").length; i++)
+                {
+                    var ProgramInformation = $(node).children("ProgramInformation")[i];
+
+                    var metul = document.createElement("ul");
+                    var metli = document.createElement("li");
+                    metli.innerHTML = "<b>ProgramInformation</b>";
+                    metul.appendChild(metli);
+                    mpdli.appendChild(metul);
+                    attributes(ProgramInformation, metul);
+                    
+                    checktitle(ProgramInformation, metul);
+                    checksource(ProgramInformation, metul);
+                    checkcopyright(ProgramInformation, metul);
+                }
+            }
+            
+            function checklocation(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('Location').length; i++)
+                {
+                    var location = $(node).children('Location')[i];
+                    
+                    var locationul = document.createElement("ul");
+                    var locationli = document.createElement("li");
+                    locationli.innerHTML = "<b>Location</b>";
+                    locationul.appendChild(locationli);
+                    parentli.appendChild(locationul);
+                    attributes(location, locationul);
+                }
+            }
+            
+            function checkutctiming(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('UTCTiming').length; i++)
+                {
+                    var utctiming = $(node).children('UTCTiming')[i];
+                    
+                    var utctimingul = document.createElement("ul");
+                    var utctimingli = document.createElement("li");
+                    utctimingli.innerHTML = "<b>UTCTiming</b>";
+                    utctimingul.appendChild(utctimingli);
+                    parentli.appendChild(utctimingul);
+                    attributes(utctiming, utctimingul);
+                }
+            }
+            
+            function checkrange(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('Range').length; i++)
+                {
+                    var range = $(node).children('Range')[i];
+                    
+                    var rangeul = document.createElement("ul");
+                    var rangeli = document.createElement("li");
+                    rangeli.innerHTML = "<b>Range</b>";
+                    rangeul.appendChild(rangeli);
+                    parentli.appendChild(rangeul);
+                    attributes(range, rangeul);
+                }
+            }
+            
+            function checkreporting(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('Reporting').length; i++)
+                {
+                    var reporting = $(node).children('Reporting')[i];
+                    
+                    var reportingul = document.createElement("ul");
+                    var reportingli = document.createElement("li");
+                    reportingli.innerHTML = "<b>Reporting</b>";
+                    reportingul.appendChild(reportingli);
+                    parentli.appendChild(reportingul);
+                    attributes(reporting, reportingul);
+                }
+            }
+            
+            function checktitle(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('Title').length; i++)
+                {
+                    var title = $(node).children('Title')[i];
+                    
+                    var titleul = document.createElement("ul");
+                    var titleli = document.createElement("li");
+                    titleli.innerHTML = "<b>Title</b>";
+                    titleul.appendChild(titleli);
+                    parentli.appendChild(titleul);
+                    attributes(title, titleul);
+                }
+            }
+            
+            function checksource(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('Source').length; i++)
+                {
+                    var source = $(node).children('Source')[i];
+                    
+                    var sourceul = document.createElement("ul");
+                    var sourceli = document.createElement("li");
+                    sourceli.innerHTML = "<b>Source</b>";
+                    sourceul.appendChild(sourceli);
+                    parentli.appendChild(sourceul);
+                    attributes(source, sourceul);
+                }
+            }
+            
+            function checkcopyright(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('Copyright').length; i++)
+                {
+                    var copyright = $(node).children('Copyright')[i];
+                    
+                    var copyrightul = document.createElement("ul");
+                    var copyrightli = document.createElement("li");
+                    copyrightli.innerHTML = "<b>Copyright</b>";
+                    copyrightul.appendChild(copyrightli);
+                    parentli.appendChild(copyrightul);
+                    attributes(copyright, copyrightul);
+                }
+            }
+
+            function checksegmentbase(node, parentli)
+            {
+                for (var i = 0; i < $(node).children("SegmentBase").length; i++)
+                {
+                    var SegmentBase = $(node).children("SegmentBase")[i];
+
+                    var metul = document.createElement("ul");
+                    var metli = document.createElement("li");
+                    metli.innerHTML = "<b>SegmentBase</b>";
+                    metul.appendChild(metli);
+                    parentli.appendChild(metul);
+                    attributes(SegmentBase, metul);
+                }
+
+            }
+            
+            function checkseglist(node, parentli)
+            {
+                for (var i = 0; i < $(node).children("SegmentList").length; i++)
+                {
+                    var SegmentList = $(node).children("SegmentList")[i];
+
+                    var metul = document.createElement("ul");
+                    var metli = document.createElement("li");
+                    metli.innerHTML = "<b>SegmentList</b>";
+                    metul.appendChild(metli);
+                    parentli.appendChild(metul);
+                    attributes(SegmentList, metul);
+                }
+
+            }
+
+            function checksegtemp(node, parentli)
+            {
+                for (var i = 0; i < $(node).children("SegmentTemplate").length; i++)
+                {
+                    var SegmentTemplate = $(node).children("SegmentTemplate")[i];
+
+                    var metul = document.createElement("ul");
+                    var metli = document.createElement("li");
+                    metli.innerHTML = "<b>SegmentTemplate</b>";
+                    metul.appendChild(metli);
+                    parentli.appendChild(metul);
+                    attributes(SegmentTemplate, metul);
+                    for (var j = 0; j < $(SegmentTemplate).children('SegmentTimeline').length; j++)
+                    {
+                        var SegmentTimeline = $(SegmentTemplate).children('SegmentTimeline')[j];
+                        var tiul = document.createElement("ul");
+                        var tili = document.createElement("li");
+                        tili.innerHTML = "<b>SegmentTimeline</b>";
+                        tiul.appendChild(tili);
+                        metli.appendChild(tiul);
+                        attributes(SegmentTimeline, tiul);
+                        for (var k = 0; k < $(SegmentTimeline).children('S').length; k++)
+                        {
+                            var S = $(SegmentTimeline).children('S')[k];
+                            var Sul = document.createElement("ul");
+                            var Sli = document.createElement("li");
+                            Sli.innerHTML = "<b>S</b>";
+                            Sul.appendChild(Sli);
+                            tili.appendChild(Sul);
+                            attributes(S, Sul);
+                        }
+                    }
+                }
+            }
+            
+            function checksupplementalproperty(node, parentul)
+            {
+                for (var i = 0; i < $(node).children('SupplementalProperty').length; i++)
+                {
+                    var supp = $(node).children('SupplementalProperty')[i];
+                
+                    var suppul = document.createElement("ul");
+                    var suppli = document.createElement("li");
+                    suppli.innerHTML = "<b>SupplementalProperty</b>";
+                    suppul.appendChild(suppli);
+                    parentul.appendChild(suppul);
+                    attributes(supp, suppul);
+                }
+            }
+            
+            function checkessentialproperty(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('EssentialProperty').length; i++)
+                {
+                    var ess = $(node).children('EssentialProperty')[i];
+                    
+                    var essul = document.createElement("ul");
+                    var essli = document.createElement("li");
+                    essli.innerHTML = "<b>EssentialProperty</b>";
+                    essul.appendChild(essli);
+                    parentli.appendChild(essul);
+                    attributes(ess, essul);
+                }
+            }
+
+            function checkeventStream(node, parentli)
+            {
+                for (var i = 0; i < $(node).children("EventStream").length; i++)
+                {
+                    var EventStream = $(node).children("EventStream")[i];
+
+                    var metul = document.createElement("ul");
+                    var metli = document.createElement("li");
+                    metli.innerHTML = "<b>EventStream</b>";
+                    metul.appendChild(metli);
+                    parentli.appendChild(metul);
+                    attributes(EventStream, metul);
+                    
+                    checkevent(EventStream, metul);
+                }
+            }
+            
+            function checkevent(node, parentli)
+            {
+                for (var i = 0; i < $(node).children("Event").length; i++)
+                {
+                    var event = $(node).children("Event")[i];
+
+                    var eventul = document.createElement("ul");
+                    var eventli = document.createElement("li");
+                    eventli.innerHTML = "<b>Event</b>";
+                    eventul.appendChild(eventli);
+                    parentli.appendChild(eventul);
+                    attributes(event, eventul);
+                }
+            }
+            
+            function checkemptyadaptationset(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('EmptyAdaptationSet').length; i++)
+                {
+                    var emptyAdaptationSet = $(node).children('EmptyAdaptationSet')[i];
+                    
+                    var easul = document.createElement("ul");
+                    var easli = document.createElement("li");
+                    easli.innerHTML = "<b>EmptyAdaptationSet</b>";
+                    easul.appendChild(easli);
+                    parentli.appendChild(easul);
+                    attributes(emptyAdaptationSet, easul);
+                }
+            }
+            
+            function checkassetidentifier(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('AssetIdentifier').length; i++)
+                {
+                    var asset = $(node).children('AssetIdentifier')[i];
+                    
+                    var asiul = document.createElement("ul");
+                    var asili = document.createElement("li");
+                    asili.innerHTML = "<b>AssetIdentifier</b>";
+                    asiul.appendChild(asili);
+                    parentli.appendChild(asiul);
+                    attributes(asset, asiul);
+                }
+            }
+            
+            function checksubset(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('Subset').length; i++)
+                {
+                    var subset = $(node).children('Subset')[i];
+                    
+                    var subsetul = document.createElement("ul");
+                    var subsetli = document.createElement("li");
+                    subsetli.innerHTML = "<b>Subset</b>";
+                    subsetul.appendChild(subsetli);
+                    parentli.appendChild(subsetul);
+                    attributes(subset, subsetul);
+                }
+            }
+            
+            function checkgrouplabel(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('GroupLabel').length; i++)
+                {
+                    var grouplabel = $(node).children('GroupLabel')[i];
+                    
+                    var grpul = document.createElement("ul");
+                    var grpli = document.createElement("li");
+                    grpli.innerHTML = "<b>GroupLabel</b>";
+                    grpul.appendChild(grpli);
+                    parentli.appendChild(grpul);
+                    attributes(grouplabel, grpul);
+                }
+            }
+            
+            function checkpreselection(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('Preselection').length; i++)
+                {
+                    var preselection = $(node).children('Preselection')[i];
+                    
+                    var presul = document.createElement("ul");
+                    var presli = document.createElement("li");
+                    presli.innerHTML = "<b>Preselection</b>";
+                    presul.appendChild(presli);
+                    parentli.appendChild(presul);
+                    attributes(preselection, presul);
+                    
+                    checkaccesibility(preselection, presul);
+                    checkrating(preselection, presul);
+                    checkviewpoint(preselection, presul);
+                    checkrole(preselection, presul);
+                    checkframepacking(preselection, presul);
+                    checkaudioChannelConfiguration(preselection, presul);
+                    checkcontentprotection(preselection, presul);
+                    checkinbandeventstream(preselection, presul);
+                    checkswitching(preselection, presul);
+                    checkrandomaccess(preselection, presul);
+                    checkgrouplabel(preselection, presul);
+                    checklabel(preselection, presul);
+                }
+            }
+            
+            function checkaccesibility(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('Accessibility').length; i++)
+                {
+                    var accessibility = $(node).children('Accessibility')[i];
+                    
+                    var accul = document.createElement("ul");
+                    var accli = document.createElement("li");
+                    accli.innerHTML = "<b>Accessibility</b>";
+                    accul.appendChild(accli);
+                    parentli.appendChild(accul);
+                    attributes(accessibility, accul);
+                }
+            }
+            
+            function checkrating(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('Rating').length; i++)
+                {
+                    var rating = $(node).children('Rating')[i];
+                    
+                    var rateul = document.createElement("ul");
+                    var rateli = document.createElement("li");
+                    rateli.innerHTML = "<b>Rating</b>";
+                    rateul.appendChild(rateli);
+                    parentli.appendChild(rateul);
+                    attributes(rating, rateul);
+                }
+            }
+            
+            function checkviewpoint(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('Viewpoint').length; i++)
+                {
+                    var viewpoint = $(node).children('Viewpoint')[i];
+                    
+                    var viewpul = document.createElement("ul");
+                    var viewpli = document.createElement("li");
+                    viewpli.innerHTML = "<b>Viewpoint</b>";
+                    viewpul.appendChild(viewpli);
+                    parentli.appendChild(viewpul);
+                    attributes(viewpoint, viewpul);
+                }
+            }
+            
+            function checkrole(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('Role').length; i++)
+                {
+                    var role = $(node).children('Role')[i];
+                    
+                    var roleul = document.createElement("ul");
+                    var roleli = document.createElement("li");
+                    roleli.innerHTML = "<b>Role</b>";
+                    roleul.appendChild(roleli);
+                    parentli.appendChild(roleul);
+                    attributes(role, roleul);
+                }
+            }
+            
+            function checkframepacking(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('FramePacking').length; i++)
+                {
+                    var framepacking = $(node).children('FramePacking')[i];
+                    
+                    var frpul = document.createElement("ul");
+                    var frpli = document.createElement("li");
+                    frpli.innerHTML = "<b>FramePacking</b>";
+                    frpul.appendChild(frpli);
+                    parentli.appendChild(frpul);
+                    attributes(framepacking, frpul);
+                }
+            }
+            
+            function checkaudioChannelConfiguration(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('AudioChannelConfiguration').length; i++)
+                {
+                    var audiochannelconfiguration = $(node).children('AudioChannelConfiguration')[i];
+                    
+                    var audioul = document.createElement("ul");
+                    var audioli = document.createElement("li");
+                    audioli.innerHTML = "<b>AudioChannelConfiguration</b>";
+                    audioul.appendChild(audioli);
+                    parentli.appendChild(audioul);
+                    attributes(audiochannelconfiguration, audioul);
+                }
+            }
+            
+            function checkcontentprotection(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('ContentProtection').length; i++)
+                {
+                    var contentprotection = $(node).children('ContentProtection')[i];
+                    
+                    var cpul = document.createElement("ul");
+                    var cpli = document.createElement("li");
+                    cpli.innerHTML = "<b>ContentProtection</b>";
+                    cpul.appendChild(cpli);
+                    parentli.appendChild(cpul);
+                    attributes(contentprotection, cpul);
+                }
+            }
+            
+            function checkinbandeventstream(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('InbandEventStream').length; i++)
+                {
+                    var inbandeventstream = $(node).children('InbandEventStream')[i];
+                    
+                    var iesul = document.createElement("ul");
+                    var iesli = document.createElement("li");
+                    iesli.innerHTML = "<b>InbandEventStream</b>";
+                    iesul.appendChild(iesli);
+                    parentli.appendChild(iesul);
+                    attributes(inbandeventstream, iesul);
+                }
+            }
+            
+            function checkswitching(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('Switching').length; i++)
+                {
+                    var switching = $(node).children('Switching')[i];
+                    
+                    var swul = document.createElement("ul");
+                    var swli = document.createElement("li");
+                    swli.innerHTML = "<b>Switching</b>";
+                    swul.appendChild(swli);
+                    parentli.appendChild(swul);
+                    attributes(inbandeventstream, swul);
+                }
+            }
+            
+            function checkrandomaccess(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('RandomAccess').length; i++)
+                {
+                    var randomaccess = $(node).children('RandomAccess')[i];
+                    
+                    var randul = document.createElement("ul");
+                    var randli = document.createElement("li");
+                    randli.innerHTML = "<b>RandomAccess</b>";
+                    randul.appendChild(randli);
+                    parentli.appendChild(randul);
+                    attributes(randomaccess, randul);
+                }
+            }
+            
+            function checklabel(node, parentli)
+            {
+                for (var i = 0; i < $(node).children('Label').length; i++)
+                {
+                    var label = $(node).children('Label')[i];
+                    
+                    var labelul = document.createElement("ul");
+                    var labelli = document.createElement("li");
+                    labelli.innerHTML = "<b>Label</b>";
+                    labelul.appendChild(labelli);
+                    parentli.appendChild(labelul);
+                    attributes(label, labelul);
+                }
+            }
+        /////////////////////////////////////////////////////////////////////////////////////
+        </script>
+
+    </body>
+</html>
