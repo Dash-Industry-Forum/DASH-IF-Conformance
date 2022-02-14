@@ -1,9 +1,6 @@
 [submodule "ISOSegmentValidator"]
 	path = ISOSegmentValidator
 	url = https://github.com/Dash-Industry-Forum/ISOSegmentValidator
-[submodule "HbbTV_DVB"]
-	path = HbbTV_DVB
-	url = https://github.com/Dash-Industry-Forum/HbbTV_DVB
 [submodule "Conformance-Frontend"]
 	path = Conformance-Frontend
 	url = https://github.com/Dash-Industry-Forum/Conformance-Frontend
