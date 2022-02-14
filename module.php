@@ -12,11 +12,13 @@
     }
 
     public function hookBeforeMPD(){
+      parent::hookBeforeMPD();
       move_scripts();
       return HbbTV_DVB_beforeMPD();
     }
 
     public function hookMPD(){
+      parent::hookMPD();
       return HbbTV_DVB_mpdvalidator();
     }
 
