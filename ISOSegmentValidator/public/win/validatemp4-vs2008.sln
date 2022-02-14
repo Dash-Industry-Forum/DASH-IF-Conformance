@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "validatemp4", "validatemp4-vs2008.vcproj", "{66B33E8F-7053-4BD0-A886-8569D46E97ED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{66B33E8F-7053-4BD0-A886-8569D46E97ED}.Debug|Win32.ActiveCfg = Debug|Win32
+		{66B33E8F-7053-4BD0-A886-8569D46E97ED}.Debug|Win32.Build.0 = Debug|Win32
+		{66B33E8F-7053-4BD0-A886-8569D46E97ED}.Release|Win32.ActiveCfg = Release|Win32
+		{66B33E8F-7053-4BD0-A886-8569D46E97ED}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

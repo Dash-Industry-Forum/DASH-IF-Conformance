@@ -3,7 +3,6 @@
 This repository provides the source code for MPEG-DASH/DASH-IF Conformance Software/Validator. It has been extended according to further standards, such as CMAF, DVB-DASH, HbbTV, and CTA WAVE.
 
 This repository contains the common directory (Utils) and submodules:
-* [ISOSegmentValidator](https://github.com/Dash-Industry-Forum/ISOSegmentValidator)
 
 Each submodule is a repository on its own with its respective functionalities and all the submodules need the common directory.
 
@@ -26,5 +25,3 @@ For the framework of the conformance software and how the general conformance te
 ### Issue Reporting
 
 If the issue is known to correspond to a specific submodule functionality, please open the issues in the respective submodule's Github issue page. Otherwise, the issues can be reported on this repository. Please beware that in the latter case, the issue can be moved to the corresponding submodule by the repository admin. Access to submodules' Github issue pages are provided below:
-
-* [ISOSegmentValidator issues](https://github.com/Dash-Industry-Forum/ISOSegmentValidator/issues)
