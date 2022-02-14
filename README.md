@@ -5,7 +5,6 @@ This repository provides the source code for MPEG-DASH/DASH-IF Conformance Softw
 This repository contains the common directory (Utils) and submodules:
 * [ISOSegmentValidator](https://github.com/Dash-Industry-Forum/ISOSegmentValidator)
 * [Conformance-Frontend-HLS](https://github.com/Dash-Industry-Forum/Conformance-Frontend-HLS)
-* [DynamicServiceValidator](https://github.com/Dash-Industry-Forum/DynamicServiceValidator)
 
 Each submodule is a repository on its own with its respective functionalities and all the submodules need the common directory.
 
@@ -31,4 +30,3 @@ If the issue is known to correspond to a specific submodule functionality, pleas
 
 * [ISOSegmentValidator issues](https://github.com/Dash-Industry-Forum/ISOSegmentValidator/issues)
 * [Conformance-Frontend-HLS issues](https://github.com/Dash-Industry-Forum/Conformance-Frontend-HLS/issues)
-* [DynamicServiceValidator issues](https://github.com/Dash-Industry-Forum/DynamicServiceValidator/issues)

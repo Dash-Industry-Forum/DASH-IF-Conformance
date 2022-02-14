@@ -4,6 +4,3 @@
 [submodule "Conformance-Frontend-HLS"]
 	path = Conformance-Frontend-HLS
 	url = https://github.com/Dash-Industry-Forum/Conformance-Frontend-HLS
-[submodule "DynamicServiceValidator"]
-	path = DynamicServiceValidator
-	url = https://github.com/Dash-Industry-Forum/DynamicServiceValidator
