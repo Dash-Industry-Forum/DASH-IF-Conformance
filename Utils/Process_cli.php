@@ -44,6 +44,7 @@ $logger->setSource($mpd_url);
 
 $mpd_validation_only = true;
 
+include '../DASH/module.php';
 include '../CMAF/module.php';
 include '../CMAF/CTAWAVE/module.php';
 include '../HbbTV_DVB/module.php';
