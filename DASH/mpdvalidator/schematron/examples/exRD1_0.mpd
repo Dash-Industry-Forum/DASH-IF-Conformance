@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- RD1_0 -->
+<MPD 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="urn:mpeg:dash:schema:mpd:2011"
+  xsi:schemaLocation="urn:mpeg:dash:schema:mpd:2011 DASH-MPD.xsd"
+  type="static"
+  mediaPresentationDuration="PT3256S"
+  minBufferTime="PT1.2S"
+  profiles="urn:com:dashif:dash264">
+
+  <Period>
+    <AdaptationSet mimeType="video/mp4" codecs="mp4a.0x40" lang="en" subsegmentAlignment="true" subsegmentStartsWithSAP="1">
+      <Representation id="1" bandwidth="64000">
+        <SegmentList duration="10">
+			<Initialization sourceURL="seg-s-init.mp4"/>
+			<SegmentURL media="seg-s1-128k-1.mp4"/>
+			<SegmentURL media="seg-s1-128k-2.mp4"/>
+			<SegmentURL media="seg-s1-128k-3.mp4"/>
+		</SegmentList>
+      </Representation>
+      <Representation id="2" bandwidth="32000">
+        <SegmentList duration="10">
+			<Initialization sourceURL="seg-s-init.mp4"/>
+			<SegmentURL media="seg-s1-128k-1.mp4"/>
+			<SegmentURL media="seg-s1-128k-2.mp4"/>
+			<SegmentURL media="seg-s1-128k-3.mp4"/>
+		</SegmentList>
+      </Representation>
+    </AdaptationSet>
+  </Period>
+</MPD>
+

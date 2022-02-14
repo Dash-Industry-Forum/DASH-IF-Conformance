@@ -1,0 +1,15 @@
+<Period start="PT07H" id="10" segmentAlignmentFlag="true" xmlns="urn:mpeg:dash:schema:mpd:2011">
+		<AdaptationSet group="1">
+			<Representation  id="QVGA-LQ" mimeType="video/mp4" codecs="avc1.42E00C, mp4a.40.2" bandwidth="192000" width="320" height="240">
+				<SegmentBase>
+					<Initialization sourceURL="http://www.example.com/rep-QVGA-LQ/seg-init.mp4"/>
+				</SegmentBase>
+			</Representation>
+			<Representation id="QVGA-HQ" mimeType="video/mp4" codecs="avc1.42E00C, mp4a.40.2" bandwidth="384000" width="320" height="240">
+				<SegmentBase>
+					<Initialization sourceURL="http://www.example.com/rep-QVGA-HQ/seg-init.mp4"/>
+				</SegmentBase>
+			</Representation>
+			<Representation xlink:href="http://ftp-itec.uni-klu.ac.at/dash/conformance/xlink_files/ex02_circular.mpd" xlink:actuate="onRequest" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+		</AdaptationSet>
+</Period>

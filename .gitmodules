@@ -1,6 +1,3 @@
-[submodule "DASH"]
-	path = DASH
-	url = https://github.com/Dash-Industry-Forum/DASH
 [submodule "ISOSegmentValidator"]
 	path = ISOSegmentValidator
 	url = https://github.com/Dash-Industry-Forum/ISOSegmentValidator

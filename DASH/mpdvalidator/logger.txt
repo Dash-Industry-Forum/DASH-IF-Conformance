@@ -1,0 +1,1 @@
+{"MPEG-DASH Common":{"MPD":{"info":["Schematron output: 0XLink resolving successful\n\n\nMPD validation successful - DASH is valid!\n\n\nSchematron validation successful - DASH is valid!\n\n\n"]}},"Stats":{"LastWritten":"2022-02-10 10:03:44"}}

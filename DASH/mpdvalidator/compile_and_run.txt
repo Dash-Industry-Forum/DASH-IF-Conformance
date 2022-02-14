@@ -1,0 +1,52 @@
+REQUIREMENTS
+------------
+JAVA >= 1.6.0 Update 17
+Apache Ant
+
+For compiling you need the JDK >= 1.6.0 Update 17
+
+
+COMPILATION
+-----------
+For compiling the conformance software, you need to install or have Apache Ant.
+
+After installing Apache Ant, you should run:
+
+> ant
+
+in the directory containing the build.xml.
+
+Now ant will compile all necessary files. After the compilation is finished skip
+to the Section EXECUTION.
+
+If you get an error that JAVA_HOME is not set, you need to set it manually.
+
+In Windows type:
+
+> set JAVA_HOME=<pathtojdk>
+
+For example, if you JDK ist installed in C:\Program Files\Java\jdk1.6.0, type:
+
+> set JAVA_HOME=C:\Program Files\Java\jdk1.6.0
+
+In Linux use export, i.e.:
+
+> export JAVA_HOME=<pathtojdk>
+
+
+EXECUTION
+---------
+For executing the conformance software you need Apache ant. Switch to the directory
+containing the build.xml. Now you are ready to run the conformance software.
+
+For this use the following command:
+
+> ant run -Dinput=<filetotest>
+
+For example, if you have a file C:\DASH\test.mpd, you need to start the check using
+the following command:
+
+> ant run -Dinput=C:\DASH\test.mpd
+
+Now ant will give you the outputs of the software. That is, if everything is valid
+or if there are any error and which ones.
