@@ -1,0 +1,222 @@
+<atomlist>
+  <ftyp	majorbrand="iso5" version="0x1" compatible_brands='[
+     "avc1" 
+     "iso5" 
+     "dsms" 
+     "msix" 
+     "dash"
+    ]'>
+  </ftyp>
+  <moov>
+    <mvhd	version="0" flags="0"
+      creationTime="0x0"
+      modificationTime="0x0"
+      timeScale="1000"
+      duration="0"
+      nextTrackID="2"
+      >
+    </mvhd>
+    <trak>
+      <tkhd	version="0" flags="3"
+        creationTime="0x0"
+        modificationTime="0xce8e890a"
+        trackID="1"
+        duration="0"
+        volume="0.000000"
+        width="1280.000000"
+        height="720.000000"
+        >
+      </tkhd>
+      <edts>
+        <elst	version="0" flags="0"
+          entryCount="1"
+          >
+            <elstEntry duration="0" mediaTime="1024" mediaRate="1.000000" />
+        </elst>
+      </edts>
+      <mdia>
+        <mdhd	version="0" flags="0"
+          creationTime="0x0"
+          modificationTime="0x0"
+          timescale="12288"
+          duration="0"
+          language="und"
+          >
+        </mdhd>
+        <hdlr	version="0" flags="0"
+          handler_type="vide"
+          >
+        </hdlr>
+        <minf>
+          <vmhd	version="0" flags="1"
+            >
+          </vmhd>
+          <dinf>
+            <dref	version="0" flags="0"
+              entryCount="1"
+              >
+              <url 	version="0" flags="1"
+                />
+            </dref>
+          </dinf>
+          <stbl>
+            <stsd	version="0" flags="0"
+              entryCount="1"
+              >
+              <vide_sampledescription
+                sdType="avc1"
+                dataRefIndex="1"
+                version="0"
+                revisionLevel="0"
+                vendor=""
+                temporalQuality="0"
+                spatialQuality="0"
+                width="1280"
+                height="720"
+                hRes="72.000000"
+                vRes="72.000000"
+                dataSize="0"
+                frameCount="1"
+                depth="24"
+                clutID="-1"
+                >
+                <avcC                  config="1"
+                  profile="77"
+                  >
+                  <Comment profile="main"
+                  constraint_set0_flag="0"
+                  constraint_set1_flag="1"
+                  constraint_set2_flag="0"
+                  constraint_set3_flag="0"
+                  reserved="0x00"
+                  level="31"
+                  Comment0="level 3.1"
+                  lengthsizeminusone="3"
+                  COMMENT="length fields are 4 bytes"
+                  >
+                  <NALUnit length="25 (0x19)"
+                    zero_bit="0x0"
+                    nal_ref_idc="0x03"
+                    nal_type="0x07"
+                    comment0="Sequence parameter set"
+                    profile_idc="77"
+                    >
+                    <comment profile="main"
+                    constraint_set0_flag="0"
+                    constraint_set1_flag="1"
+                    constraint_set2_flag="0"
+                    constraint_set3_flag="0"
+                    reserved="0x00"
+                    level_idc="31"
+                    Comment0="level 3.1"
+                    seq_parameter_set_id="0x0000"
+                    log2_max_frame_num_minus4="0"
+                    pic_order_cnt_type="0"
+                    log2_max_pic_order_cnt_lsb_minus4="0x0002"
+                    num_ref_frames="4"
+                    gaps_in_frame_num_value_allowed_flag="0x0"
+                    pic_width_in_mbs_minus1="79"
+                    Comment1="width (PW + 1)*16 = 1280"
+                    pic_height_in_map_units_minus1="44"
+                    Comment2="height (PH + 1)*16 = 720"
+                    frame_mbs_only_flag="1"
+                    direct_8x8_inference_flag="0x1"
+                    frame_cropping_flag="0x0"
+                    vui_parameters_present_flag="0x1"
+                    aspect_ratio_info_present_flag="0x1"
+                    aspect_ratio_idc="0x1"
+                    Comment3="aspect ratio is 1:1-square"
+                    overscan_info_present_flag="0x0"
+                    video_signal_type_present_flag="0x1"
+                    video_format="0"
+                    video_full_range_flag="0"
+                    colour_description_present_flag="0x1"
+                    colour_primaries="0x1"
+                    transfer_characteristics="0x1"
+                    matrix_coefficients="0x1"
+                    chroma_loc_info_present_flag="0x0"
+                    timing_info_present_flag="0x1"
+                    num_units_in_tick="1"
+                    time_scale="48"
+                    fixed_frame_rate_flag="0x0"
+                    nal_hrd_parameters_present_flag="0x0"
+                    vcl_hrd_parameters_present_flag="0x0"
+                    pic_struct_present_flag="0x0"
+                    bitstream_restriction_flag="0x1"
+                    motion_vectors_over_pic_boundaries_flag="0x1"
+                    max_bytes_per_pic_denom="0"
+                    max_bits_per_mb_denom="0"
+                    log2_max_mv_length_horizontal="11"
+                    log2_max_mv_length_vertical="11"
+                    num_reorder_frames="2"
+                    max_dec_frame_buffering="4"
+                    one_bit="0x1"
+                    />
+                  </NALUnit>
+                  <NALUnit length="4 (0x4)"
+                    zero_bit="0x0"
+                    nal_ref_idc="0x03"
+                    nal_type="0x08"
+                    comment0="Picture parameter set"
+                    pic_parameter_set_id="0x0000"
+                    seq_parameter_set_id="0x0000"
+                    entropy_coding_mode_flag="0x1"
+                    pic_order_present_flag="0x0"
+                    num_slice_groups_minus1="0x0000"
+                    num_ref_idx_l0_active_minus1="2"
+                    num_ref_idx_l1_active_minus1="0"
+                    weighted_pred_flag="0x1"
+                    weighted_bipred_idc="0x2"
+                    pic_init_qp_minus26="0"
+                    pic_init_qs_minus26="0"
+                    chroma_qp_index_offset="-2"
+                    deblocking_filter_control_present_flag="0x1"
+                    constrained_intra_pred_flag="0x0"
+                    redundant_pic_cnt_present_flag="0x0"
+                    one_bit="0x1"
+                    >
+                  </NALUnit>
+                  </Comment>
+                </avcC>
+              </vide_sampledescription>
+            </stsd>
+            <stts	version="0" flags="0"
+              entryCount="0"
+              >
+            </stts>
+            <stsc	version="0" flags="0"
+              entryCount="0"
+              >
+            </stsc>
+            <stsz	version="0" flags="0"
+              sampleSize="0"
+              entryCount="0"
+              >
+            </stsz>
+            <stco	version="0" flags="0"
+              entryCount="0"
+              >
+            </stco>
+          </stbl>
+        </minf>
+      </mdia>
+    </trak>
+    <mvex>
+      <mehd	version="0" flags="0"
+        fragmentDuration="594000"
+        >
+      </mehd>
+      <trex	version="0" flags="0"
+        trackID="1"
+        sampleDescriptionIndex="1"
+        sampleDuration="512"
+        sampleSize="0"
+        sampleFlags="256"
+        >
+      </trex>
+    </mvex>
+    <udta>
+    </udta>
+  </moov>
+
+</atomlist>

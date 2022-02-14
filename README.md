@@ -5,7 +5,6 @@ This repository provides the source code for MPEG-DASH/DASH-IF Conformance Softw
 This repository contains the common directory (Utils) and submodules:
 * [DASH](https://github.com/Dash-Industry-Forum/DASH)
 * [HLS](https://github.com/Dash-Industry-Forum/HLS)
-* [CMAF](https://github.com/Dash-Industry-Forum/CMAF)
 * [HbbTV_DVB](https://github.com/Dash-Industry-Forum/HbbTV_DVB)
 * [ISOSegmentValidator](https://github.com/Dash-Industry-Forum/ISOSegmentValidator)
 * [Conformance-Frontend](https://github.com/Dash-Industry-Forum/Conformance-Frontend)
@@ -36,7 +35,6 @@ If the issue is known to correspond to a specific submodule functionality, pleas
 
 * [DASH issues](https://github.com/Dash-Industry-Forum/DASH/issues)
 * [HLS issues](https://github.com/Dash-Industry-Forum/HLS/issues)
-* [CMAF issues](https://github.com/Dash-Industry-Forum/CMAF/issues)
 * [HbbTV_DVB issues](https://github.com/Dash-Industry-Forum/HbbTV_DVB/issues)
 * [ISOSegmentValidator issues](https://github.com/Dash-Industry-Forum/ISOSegmentValidator/issues)
 * [Conformance-Frontend issues](https://github.com/Dash-Industry-Forum/Conformance-Frontend/issues)
