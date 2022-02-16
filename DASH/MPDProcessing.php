@@ -29,7 +29,7 @@ function process_MPD(){
     ## Open related files
     $progress_xml = simplexml_load_string('<root><Profile></Profile><PeriodCount></PeriodCount><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><CurrentPeriod>1</CurrentPeriod><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed></root>');
     $progress_xml->asXml($session_dir . '/' . $progress_report);
-    color_code_information();
+   // color_code_information();
 
     ## Load MPD to DOM XML
     if($uploaded){ // If MPD is uploaded, set the mpd_url to local path
@@ -116,7 +116,7 @@ function process_MPD(){
 
     MPD_report($valid_mpd[1] . $moduleResults);
     writeMPDEndTime();
-    print_console($session_dir.'/'.$mpd_log.'.txt', "MPD Validation Results");
+  //  print_console($session_dir.'/'.$mpd_log.'.txt', "MPD Validation Results");
     tabulateResults($session_dir . '/' . $mpd_log . '.txt', 'MPD');
 
     if($uploaded){ // Check if absolute URL is provided in the uploaded MPD for segment fetching.
