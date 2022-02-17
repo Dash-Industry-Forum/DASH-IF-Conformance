@@ -25,18 +25,22 @@ require './moduleInterface.php';
 include './moduleLogger.php';
 
 include 'Session.php';         //#Session Functions, No Direct Executable Code
-include 'Load.php';            //#Document loading functions, mostly xml. Some assertion options and error initialization
+//#Document loading functions, mostly xml. Some assertion options and error initialization
+include 'Load.php';
 include 'FileOperations.php';  //#Filesystem and XML checking functions. No Direct Executable Code.
 include 'VisitorCounter.php';  //#Various Session-based functions. No Direct Executable Code.
-include 'GlobalVariables.php'; //#Global variables. Direct evaluation of post/session vars to define conditionals, conditional extra includes for module initialization
+//#Global variables. Direct evaluation of post/session vars to define conditionals,
+//#conditional extra includes for module initialization
+include 'GlobalVariables.php';
 include 'PrettyPrint.php';     //#Pretty printing functions for terminal output. No Direct Executable Code.
 include 'SegmentDownload.php'; //#Very large function for downloading data. No Direct Executable Code.
 include 'SegmentValidation.php'; //#Segment validation functions. No Direct Executable Code.
-include 'DolbySegmentValidation.php'; //#Dolby validation functions. Attempt at use of objects. No Direct Executable Code.
+//#Dolby validation functions. Attempt at use of objects. No Direct Executable Code.
+include 'DolbySegmentValidation.php';
 
 if ($argc < 2) {
-  echo($logger->asJSON());
-  return;
+    echo($logger->asJSON());
+    return;
 }
 
 $mpd_url = $argv[1];
@@ -51,8 +55,8 @@ include '../HbbTV_DVB/module.php';
 include '../DASH/LowLatency/module.php';
 include '../DASH/IOP/module.php';
 
-foreach ($modules as $module){
-  $module->conditionalEnable($argv);
+foreach ($modules as $module) {
+    $module->conditionalEnable($argv);
 }
 
 #$cmaf_conformance = true;
@@ -86,10 +90,11 @@ $session_id = (array_key_exists('sessionid', $_POST) ? json_decode($_POST['sessi
 update_visitor_counter();
 
 
-if(!$hls_manifest)
+if (!$hls_manifest) {
     process_MPD();
-else
+} else {
     processHLS();
+}
 
   echo($logger->asJSON());
   echo("\n");

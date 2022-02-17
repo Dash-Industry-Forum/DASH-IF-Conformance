@@ -84,11 +84,11 @@ function process_MPD(){
     }
     json_encode("DVB/HbbTV: $dvb_conformance $hbbtv_conformance");
 
-    foreach ($modules as $module){
-      if ($module->is_enabled()){
-        $module->hookBeforeMPD();
-      }
-    } 
+    foreach ($modules as $module) {
+        if ($module->isEnabled()) {
+            $module->hookBeforeMPD();
+        }
+    }
 
     ## Get MPD features into an array
     $mpd_features = MPD_features($mpd_dom);
@@ -108,11 +108,11 @@ function process_MPD(){
 
 
     $moduleResults = '';
-    foreach ($modules as $module){
-      if ($module->is_enabled()){
-        $moduleResults .= $module->hookMPD();
-      }
-    } 
+    foreach ($modules as $module) {
+        if ($module->isEnabled()) {
+            $moduleResults .= $module->hookMPD();
+        }
+    }
 
     MPD_report($valid_mpd[1] . $moduleResults);
     writeMPDEndTime();

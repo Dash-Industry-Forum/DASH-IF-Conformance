@@ -1,32 +1,40 @@
 <?php
-  class moduleCMAF extends moduleInterface {
-    function __construct() {
-      parent::__construct();
-      $this->name = "CMAF";
+
+namespace DASHIF;
+
+class ModuleCMAF extends ModuleInterface
+{
+    public function __construct()
+    {
+        parent::__construct();
+        $this->name = "CMAF";
 
       ///\warn Remove global here
-      global $cmaf_conformance;
-      if ($cmaf_conformance){
-        $this->enabled = true;
-      }
+        global $cmaf_conformance;
+        if ($cmaf_conformance) {
+            $this->enabled = true;
+        }
     }
 
-    function hookBeforeRepresentation(){
-      return CMAFFlags();
+    public function hookBeforeRepresentation()
+    {
+        return CMAFFlags();
     }
 
-    function hookRepresentation(){
-      return checkCMAFTracks();
+    public function hookRepresentation()
+    {
+        return checkCMAFTracks();
     }
 
-    function hookBeforeAdaptationSet(){
-      return checkSwitchingSets();
+    public function hookBeforeAdaptationSet()
+    {
+        return checkSwitchingSets();
     }
 
-    function hookAdaptationSet(){
-      return checkPresentation();
+    public function hookAdaptationSet()
+    {
+        return checkPresentation();
     }
-  } 
+}
 
-  $modules[] = new moduleCMAF();
-?>
+$modules[] = new ModuleCMAF();

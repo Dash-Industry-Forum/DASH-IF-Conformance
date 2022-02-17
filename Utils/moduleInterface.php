@@ -1,36 +1,45 @@
 <?php
+
+namespace DASHIF;
+
   /**
    * Initial description of the interface for the various modules
    */
-  class moduleInterface {
-    function __construct(){
-      $this->name = "INTERFACE_UNINITIALIZED";
-      $this->enabled = false;
-      $this->messages = array();
-      $this->warnings = array();
-      $this->errors = array();
+class ModuleInterface
+{
+    public function __construct()
+    {
+        $this->name = "INTERFACE_UNINITIALIZED";
+        $this->enabled = false;
+        $this->messages = array();
+        $this->warnings = array();
+        $this->errors = array();
     }
-    
+
     public $name;
     protected $enabled;
     protected $messages;
     protected $warnings;
     protected $errors;
 
-    public function is_enabled(){
-      return $this->enabled;
+    public function isEnabled()
+    {
+        return $this->enabled;
     }
 
     /**
      * \brief Conditionally enables the module based on the given arguments
      */
-    public function conditionalEnable($args){}
+    public function conditionalEnable($args)
+    {
+    }
 
-    protected function message($message){
-      $this->messages[] = $message;
+    protected function message($message)
+    {
+        $this->messages[] = $message;
 
-      global $modules;
-file_put_contents("moduleLog.txt", var_export($modules, TRUE));
+        global $modules;
+        file_put_contents("moduleLog.txt", var_export($modules, true));
     }
 
 
@@ -42,7 +51,7 @@ file_put_contents("moduleLog.txt", var_export($modules, TRUE));
      * \return TRUE if all checks succeeded or no checks are done, FALSE otherwise.
      *
      * \par Module Usage
-     * - HBBTV_DVB 
+     * - HBBTV_DVB
      *   - Copies some scripts to the session folder (these are not used at this point)
      *   - <b>!!Re-downloads mpd!!</b>
      *   - Checks maximum allowed size of mpd (before xlink resolution)
@@ -50,13 +59,16 @@ file_put_contents("moduleLog.txt", var_export($modules, TRUE));
      *   - Writes errors to $mpd_log.txt
      *   - No return value.
      */
-    public function hookBeforeMPD(){
-      global $logger;
-      $logger->setModule($this->name);
-      $logger->setHook("BeforeMPD");
+    public function hookBeforeMPD()
+    {
+        global $logger;
+        $logger->setModule($this->name);
+        $logger->setHook("BeforeMPD");
     }
     /**
-     * A hook that is run between validating the MPD DOM, and reporting on it. Validity check of MPD DOM is ignored when running these hooks. Result Values are used in reporting on the MPD.
+     * A hook that is run between validating the MPD DOM, and reporting on it.
+     * Validity check of MPD DOM is ignored when running these hooks.
+     * Result Values are used in reporting on the MPD.
      *
      * \par Module Usage
      * - HBBTV_DVB
@@ -87,14 +99,17 @@ file_put_contents("moduleLog.txt", var_export($modules, TRUE));
      *     - Else return "true"
      *   - Reads xml from mpd_xml_report, saves the return value, then writes it back in whole.
      */
-    public function hookMPD(){
-      global $logger;
-      $logger->setModule($this->name);
-      $logger->setHook("MPD");
+    public function hookMPD()
+    {
+        global $logger;
+        $logger->setModule($this->name);
+        $logger->setHook("MPD");
     }
 
     /**
-     * A hook that is run before downloading and validating the first segment of each period-adaptationset combination. Return value is ignored
+     * A hook that is run before downloading and validating the first segment
+     * of each period-adaptationset combination.
+     * Return value is ignored
      *
      * \par Module Usage
      * - CMAF
@@ -108,34 +123,44 @@ file_put_contents("moduleLog.txt", var_export($modules, TRUE));
      *   - Returns whether the current representation is a subtitle.
      *     - Creates a folder for the subtitles if any subtitle representation is found.
      */
-    public function hookBeforeRepresentation(){}
+    public function hookBeforeRepresentation()
+    {
+    }
     /**
-     * A hook that is run after downloading and validating the first segment of each period-adaptationset combination. Return value is added to an unnamed aray and used for reporting.
+     * A hook that is run after downloading and validating the first segment
+     * of each period-adaptationset combination.
+     * Return value is added to an unnamed aray and used for reporting.
      *
      * \par Module Usage
      * - CMAF
      *   - Only if representation xml exists:
      *     - Creates a file for writing errors/logs for the current representation.
      *     - Runs various checks, and writes their output to the error/log file.
-     *   - Returns an array with 1 element, either 'noerror' 'warning' or 'error' depending on the contents of the error/log file. 
+     *   - Returns an array with 1 element, either 'noerror' 'warning' or 'error'
+     *   depending on the contents of the error/log file.
      * - HBBTV_DVB
      *   - Creates a file for writing errors/logs for the current representation.
      *   - Runs various checks, and writes their output to the error/log file.
      *   - Adds images to the global $string_info variable
      *     - Duplicated html ids when called on a stream with multiple representations
      *     - Remove option of add_remove_images is completely broken.
-     *   - Returns an array with 1 element, either 'noerror' 'warning' or 'error' depending on the contents of the error/log file. 
+     *   - Returns an array with 1 element, either 'noerror' 'warning' or 'error'
+     *   depending on the contents of the error/log file.
      * - IOP
      *   - Runs only if representation xml file exists
      *   - Runs checks, saves in internal buffer
      *   - Writes internal buffer to error/log file
      *   - Reads error/log file for returncode parsing
-     *   - Returns an array with 1 element, either 'noerror' 'warning' or 'error' depending on the contents of the error/log file. 
+     *   - Returns an array with 1 element, either 'noerror' 'warning' or 'error'
+     *   depending on the contents of the error/log file.
      */
-    public function hookRepresentation(){}
+    public function hookRepresentation()
+    {
+    }
 
     /**
-     * A hook that is run after running a crossRepresentationProcess. Return value is added to the same array as \ref hookBeforeRepresentation.
+     * A hook that is run after running a crossRepresentationProcess.
+     * Return value is added to the same array as \ref hookBeforeRepresentation.
      *
      * \par Module Usage
      * - HBBTV_DVB
@@ -144,9 +169,13 @@ file_put_contents("moduleLog.txt", var_export($modules, TRUE));
      *   - Compares switching sets against eachother, writes report report to txt file
      *   - Returns an array of errors.
      */
-    public function hookBeforeAdaptationSet(){}
+    public function hookBeforeAdaptationSet()
+    {
+    }
     /**
-     * A hook that is run after running a crossRepresentationProcess. Return value is added to the same array as \ref hookBeforeRepresentation. Return values are ignored.
+     * A hook that is run after running a crossRepresentationProcess.
+     * Return value is added to the same array as \ref hookBeforeRepresentation.
+     * Return values are ignored.
      *
      * \par Module Usage
      * - CMAF (!!hookAll!!)
@@ -169,9 +198,11 @@ file_put_contents("moduleLog.txt", var_export($modules, TRUE));
      *   - Runs crossvalidation over the adaptation sets.
      *   - No return value
      */
-    public function hookAdaptationSet(){}
+    public function hookAdaptationSet()
+    {
+    }
 
-    /** 
+    /**
      * Is called after all the periods have been parsed. Return value is ignored.
      *
      * \par Module Usage
@@ -180,6 +211,7 @@ file_put_contents("moduleLog.txt", var_export($modules, TRUE));
      *   - Runs wave program checks
      *   - No return value
      */
-    public function hookPeriod(){}
-  }
-?>
+    public function hookPeriod()
+    {
+    }
+}
