@@ -45,15 +45,7 @@ include 'DolbySegmentValidation.php';
 
 
 
-if ($argc < 2) {
-    echo($logger->asJSON());
-    return;
-}
 
-$mpd_url = $argv[1];
-$logger->setSource($mpd_url);
-
-$mpd_validation_only = true;
 
 include '../DASH/module.php';
 include '../CMAF/module.php';
@@ -65,15 +57,13 @@ include '../DASH/IOP/module.php';
 
 $argumentParser->parseAll();
 
+$mpd_url = $argumentParser->getPositionalArgument("url");
+$logger->setSource($mpd_url);
 
-echo "We got here";
-return;
 
-foreach ($modules as $module) {
-    $module->conditionalEnable($argv);
-}
+$mpd_validation_only = true;
 
-#$cmaf_conformance = true;
+
 
 
 //#Cross repo includes. These should be made optional at the very least.

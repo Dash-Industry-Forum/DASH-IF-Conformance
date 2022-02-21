@@ -7,6 +7,12 @@ namespace DASHIF;
    */
 class ModuleInterface
 {
+    public $name;
+    protected $enabled;
+    protected $messages;
+    protected $warnings;
+    protected $errors;
+
     public function __construct()
     {
         $this->name = "INTERFACE_UNINITIALIZED";
@@ -21,23 +27,16 @@ class ModuleInterface
     {
     }
 
-    public $name;
-    protected $enabled;
-    protected $messages;
-    protected $warnings;
-    protected $errors;
+    public function handleArguments()
+    {
+    }
+
 
     public function isEnabled()
     {
         return $this->enabled;
     }
 
-    /**
-     * \brief Conditionally enables the module based on the given arguments
-     */
-    public function conditionalEnable($args)
-    {
-    }
 
     protected function message($message)
     {
@@ -47,9 +46,6 @@ class ModuleInterface
         file_put_contents("moduleLog.txt", var_export($modules, true));
     }
 
-    public function handleArguments()
-    {
-    }
 
 
     /**

@@ -27,18 +27,6 @@ class ModuleDASHLowLatency extends ModuleInterface
         }
     }
 
-    /**
-     *  \brief Checks whether 'DASH_LL_IOP' is found in the arguments, and enables this module accordingly
-     */
-    public function conditionalEnable($args)
-    {
-        $this->enabled = false;
-        foreach ($args as $arg) {
-            if ($arg == "DASH_LL_IOP") {
-                $this->enabled = true;
-            }
-        }
-    }
 
     public function hookMPD()
     {

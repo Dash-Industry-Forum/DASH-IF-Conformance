@@ -6,6 +6,7 @@ class ArgumentsParser
 {
     protected $parsedOptions;
     protected $allOptions;
+    protected $extraArguments;
 
     public function __construct()
     {
@@ -17,8 +18,11 @@ class ArgumentsParser
         $restidx = null;
         $this->parsedOptions = getopt($this->getShortOpts(), $this->getLongOpts(), $restidx);
 
+        global $argv;
+        $this->extraArguments = array_slice($argv, $restidx);
 
-        if ($this->getOption("help")) {
+
+        if ($this->getOption("help") || !$this->getPositionalArgument("url")) {
             exit($this->help());
         }
 
@@ -66,10 +70,19 @@ class ArgumentsParser
         $this->allOptions[] = new Argument($label, $short, $long, $desc);
     }
 
+    public function getPositionalArgument($argname)
+    {
+        switch ($argname) {
+            case 'url':
+                return $this->extraArguments[0];
+        }
+        return null;
+    }
+
     public function help()
     {
         global $argv;
-        $helptext = $argv[0] . " [options] URL\n";
+        $helptext = "Usage: " . $argv[0] . " [options] URL\n";
         foreach ($this->allOptions as $option) {
             $helptext .= "  ";
             $helptext .= "-" . $option->short[0] . ", ";
