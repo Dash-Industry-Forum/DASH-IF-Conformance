@@ -78,14 +78,14 @@ class ModuleLogger
             }
             $entry['messages'][] = $result;
             if ($severity == "FAIL") {
-                $entry['state'] = $severity;
-                return;
+                $entry['state'] = "FAIL";
             }
             if ($severity == "WARN") {
                 if ($entry['state'] != "FAIL") {
-                    $entry['state'] = $severity;
+                    $entry['state'] = "WARN";
                 }
             }
+            $this->propagateSeverity($severity);
             return;
         }
         $this->addEntry(
@@ -98,6 +98,27 @@ class ModuleLogger
             'state' => $severity
             )
         );
+        $this->propagateSeverity($severity);
+    }
+
+    private function propagateSeverity($severity)
+    {
+        if ($severity == "FAIL") {
+            $this->entries[$this->currentModule][$this->currentHook]['verdict'] = "FAIL";
+            $this->entries[$this->currentModule]['verdict'] = "FAIL";
+            $this->entries['verdict'] = "FAIL";
+        }
+        if ($severity == "WARN") {
+            if ($this->entries[$this->currentModule][$this->currentHook]['verdict'] != "FAIL") {
+                $this->entries[$this->currentModule][$this->currentHook]['verdict'] = "WARN";
+            }
+            if ($this->entries[$this->currentModule]['verdict'] != "FAIL") {
+                $this->entries[$this->currentModule]['verdict'] = "WARN";
+            }
+            if ($this->entries['verdict'] != "FAIL") {
+                $this->entries['verdict'] = "WARN";
+            }
+        }
     }
 
     private function &findTest($spec, $section, $test)
@@ -142,10 +163,10 @@ class ModuleLogger
     {
 
         if (!array_key_exists($this->currentModule, $this->entries)) {
-            $this->entries[$this->currentModule] = array();
+            $this->entries[$this->currentModule] = array('verdict' => 'PASS');
         }
         if (!array_key_exists($this->currentHook, $this->entries[$this->currentModule])) {
-            $this->entries[$this->currentModule][$this->currentHook] = array();
+            $this->entries[$this->currentModule][$this->currentHook] = array('verdict' => 'PASS');
         }
         $this->entries[$this->currentModule][$this->currentHook][$type][] = $entry;
 
@@ -190,7 +211,18 @@ class ModuleLogger
         $result = array();
         $result['source'] = $this->streamSource;
         $result['entries'] = $this->entries;
-        $result['verdict'] = "PASS";
+        $result['verdict'] = $this->entries['verdict'];
+
+        $result['enabled_modules'] = array();
+
+        global $modules;
+
+        foreach ($modules as $module) {
+            if ($module->isEnabled()) {
+                $result['enabled_modules'][] = $module;
+            }
+        }
+
         return json_encode($result);
     }
 }
