@@ -2,6 +2,8 @@
 
 namespace DASHIF;
 
+include_once './HbbTV_DVB_Initialization.php';
+
 class ModuleHbbTVDVB extends ModuleInterface
 {
     public function __construct()
@@ -27,14 +29,15 @@ class ModuleHbbTVDVB extends ModuleInterface
     public function hookBeforeMPD()
     {
         parent::hookBeforeMPD();
-        move_scripts();
-        return HbbTV_DVB_beforeMPD();
+        $this->moveScripts();
+        include_once 'impl/beforeMPD.php';
     }
 
     public function hookMPD()
     {
         parent::hookMPD();
-        return HbbTV_DVB_mpdvalidator();
+        include_once 'impl/profileSpecificMediaTypesReport.php';
+        //return HbbTV_DVB_mpdvalidator();
     }
 
     public function hookBeforeRepresentation()
@@ -56,6 +59,16 @@ class ModuleHbbTVDVB extends ModuleInterface
     public function hookAdaptationSet()
     {
         return CrossValidation_HbbTV_DVB();
+    }
+
+    private function moveScripts()
+    {
+        global $session_dir, $bitrate_script, $segment_duration_script;
+
+        copy(dirname(__FILE__) . "/$bitrate_script", "$session_dir/$bitrate_script");
+        chmod("$session_dir/$bitrate_script", 0777);
+        copy(dirname(__FILE__) . "/$segment_duration_script", "$session_dir/$segment_duration_script");
+        chmod("$session_dir/$segment_duration_script", 0777);
     }
 }
 
