@@ -11,10 +11,18 @@ class ModuleDASHLowLatency extends ModuleInterface
     {
         parent::__construct();
         $this->name = "DASH-IF Low Latency";
+    }
 
-      ///\warn Remove global here
-        global $low_latency_dashif_conformance;
-        if ($low_latency_dashif_conformance) {
+    protected function addCLIArguments()
+    {
+        global $argumentParser;
+        $argumentParser->addOption("lowlatency", "l", "lowlatency", "Enable DASH-IF IOP Low Latency checking");
+    }
+
+    public function handleArguments()
+    {
+        global $argumentParser;
+        if ($argumentParser->getOption("lowlatency")) {
             $this->enabled = true;
         }
     }

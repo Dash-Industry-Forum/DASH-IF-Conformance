@@ -8,13 +8,23 @@ class ModuleCMAF extends ModuleInterface
     {
         parent::__construct();
         $this->name = "CMAF";
+    }
 
-      ///\warn Remove global here
-        global $cmaf_conformance;
-        if ($cmaf_conformance) {
+    protected function addCLIArguments()
+    {
+        global $argumentParser;
+        $argumentParser->addOption("cmaf", "c", "cmaf", "Enable CMAF checking");
+    }
+
+    public function handleArguments()
+    {
+        global $argumentParser;
+        if ($argumentParser->getOption("cmaf")) {
             $this->enabled = true;
         }
     }
+
+
 
     public function hookBeforeRepresentation()
     {

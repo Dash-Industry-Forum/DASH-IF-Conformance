@@ -8,10 +8,18 @@ class ModuleCTAWAVE extends ModuleInterface
     {
         parent::__construct();
         $this->name = "CTA-WAVE";
+    }
 
-      ///\warn Remove global here
-        global $ctawave_conformance;
-        if ($ctawave_conformance) {
+    protected function addCLIArguments()
+    {
+        global $argumentParser;
+        $argumentParser->addOption("ctawave", "w", "ctawave", "Enable CTAWAVE checking");
+    }
+
+    public function handleArguments()
+    {
+        global $argumentParser;
+        if ($argumentParser->getOption("ctawave")) {
             $this->enabled = true;
         }
     }

@@ -8,10 +8,18 @@ class ModuleHbbTVDVB extends ModuleInterface
     {
         parent::__construct();
         $this->name = "HbbTV_DVB";
+    }
 
-      ///\warn Remove global here
-        global $hbbtv_conformance;
-        if ($hbbtv_conformance) {
+    protected function addCLIArguments()
+    {
+        global $argumentParser;
+        $argumentParser->addOption("hbbtv", "H", "hbbtv", "Enable HBBTV checking");
+    }
+
+    public function handleArguments()
+    {
+        global $argumentParser;
+        if ($argumentParser->getOption("hbbtv")) {
             $this->enabled = true;
         }
     }

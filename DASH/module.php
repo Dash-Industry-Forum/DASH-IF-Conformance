@@ -10,6 +10,20 @@ class ModuleDASH extends ModuleInterface
         $this->name = "MPEG-DASH Common";
     }
 
+    protected function addCLIArguments()
+    {
+        global $argumentParser;
+        $argumentParser->addOption("dash", "d", "dash", "Enable DASH-IF checking");
+    }
+
+    public function handleArguments()
+    {
+        global $argumentParser;
+        if ($argumentParser->getOption("dash")) {
+            $this->enabled = true;
+        }
+    }
+
   /**
    *  \brief Checks whether 'DASH_LL_IOP' is found in the arguments, and enables this module accordingly
    */

@@ -14,6 +14,11 @@ class ModuleInterface
         $this->messages = array();
         $this->warnings = array();
         $this->errors = array();
+
+        $this->addCLIArguments();
+    }
+    protected function addCLIArguments()
+    {
     }
 
     public $name;
@@ -40,6 +45,10 @@ class ModuleInterface
 
         global $modules;
         file_put_contents("moduleLog.txt", var_export($modules, true));
+    }
+
+    public function handleArguments()
+    {
     }
 
 

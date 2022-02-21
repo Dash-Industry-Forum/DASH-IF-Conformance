@@ -10,10 +10,18 @@ class ModuleDASHInteroperability extends ModuleInterface
     {
         parent::__construct();
         $this->name = "DASH-IF IOP Conformance";
+    }
 
-      ///\warn Remove global here
-        global $dashif_conformance;
-        if ($dashif_conformance) {
+    protected function addCLIArguments()
+    {
+        global $argumentParser;
+        $argumentParser->addOption("iop", "i", "iop", "Enable DASH-IF interoperability checking");
+    }
+
+    public function handleArguments()
+    {
+        global $argumentParser;
+        if ($argumentParser->getOption("iop")) {
             $this->enabled = true;
         }
     }

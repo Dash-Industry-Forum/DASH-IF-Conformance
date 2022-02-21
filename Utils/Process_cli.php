@@ -15,11 +15,16 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-unlink("../Conformance-Frontend/temp/mpdreport.txt");
+//unlink("../Conformance-Frontend/temp/mpdreport.txt");
 
 ini_set('memory_limit', '-1');
 ini_set('display_errors', 'stderr');
 error_reporting(E_ERROR | E_PARSE);
+
+require_once 'Argument.php';
+require_once 'ArgumentsParser.php';
+
+$argumentParser = new DASHIF\ArgumentsParser();
 
 require './moduleInterface.php';
 include './moduleLogger.php';
@@ -38,6 +43,8 @@ include 'SegmentValidation.php'; //#Segment validation functions. No Direct Exec
 //#Dolby validation functions. Attempt at use of objects. No Direct Executable Code.
 include 'DolbySegmentValidation.php';
 
+
+
 if ($argc < 2) {
     echo($logger->asJSON());
     return;
@@ -54,6 +61,13 @@ include '../CMAF/CTAWAVE/module.php';
 include '../HbbTV_DVB/module.php';
 include '../DASH/LowLatency/module.php';
 include '../DASH/IOP/module.php';
+
+
+$argumentParser->parseAll();
+
+
+echo "We got here";
+return;
 
 foreach ($modules as $module) {
     $module->conditionalEnable($argv);
