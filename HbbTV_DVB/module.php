@@ -2,20 +2,22 @@
 
 namespace DASHIF;
 
-include_once './HbbTV_DVB_Initialization.php';
-
 class ModuleHbbTVDVB extends ModuleInterface
 {
     public function __construct()
     {
         parent::__construct();
         $this->name = "HbbTV_DVB";
+
+        $this->HbbTvEnabled = false;
+        $this->DVBEnabled = false;
     }
 
     protected function addCLIArguments()
     {
         global $argumentParser;
         $argumentParser->addOption("hbbtv", "H", "hbbtv", "Enable HBBTV checking");
+        $argumentParser->addOption("dvb", "D", "dvb", "Enable DVB checking");
     }
 
     public function handleArguments()
@@ -23,6 +25,11 @@ class ModuleHbbTVDVB extends ModuleInterface
         global $argumentParser;
         if ($argumentParser->getOption("hbbtv")) {
             $this->enabled = true;
+            $this->HbbTvEnabled = true;
+        }
+        if ($argumentParser->getOption("dvb")) {
+            $this->enabled = true;
+            $this->DVBEnabled = true;
         }
     }
 
@@ -36,8 +43,47 @@ class ModuleHbbTVDVB extends ModuleInterface
     public function hookMPD()
     {
         parent::hookMPD();
-        include_once 'impl/profileSpecificMediaTypesReport.php';
-        //return HbbTV_DVB_mpdvalidator();
+        $this->profileSpecificMediaTypesReport();
+        $this->crossProfileCheck();
+
+        if ($this->DVBEnabled) {
+            $this->dvbMPDValidator();
+        //DVB_mpd_anchor_check($mpdreport);
+        }
+
+        if ($this->HbbTVEnabled) {
+        //HbbTV_mpdvalidator($mpdreport);
+        }
+    }
+
+    private function profileSpecificMediaTypesReport()
+    {
+        include 'impl/profileSpecificMediaTypesReport.php';
+    }
+
+    private function crossProfileCheck()
+    {
+        include 'impl/crossProfileCheck.php';
+    }
+
+    private function dvbMPDValidator()
+    {
+        include 'impl/dvbMPDValidator.php';
+    }
+
+    private function tlsBitrateCheck()
+    {
+        include 'impl/tlsBitrateCheck.php';
+    }
+
+    private function checkDVBValidRelative()
+    {
+        include 'impl/checkDVBValidRelative.php';
+    }
+
+    private function dvbMetricReporting()
+    {
+        include 'impl/dvbMetricReporting.php';
     }
 
     public function hookBeforeRepresentation()

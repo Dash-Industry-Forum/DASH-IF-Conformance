@@ -9,7 +9,7 @@ $mpd_profiles = $mpd_dom->getAttribute('profiles');
 
 $profilesArray = explode(',', $mpd_dom->getAttribute('profiles'));
 
-if ($dvb_conformance) {
+if ($this->DVBEnabled) {
     if (
         !in_array('urn:dvb:dash:profile:dvb-dash:2014', $profilesArray) &&
         !in_array('urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014', $profilesArray) &&
@@ -55,8 +55,8 @@ foreach ($profile_specific_MPDs as $profile_specific_MPD) {
         }
     }
     $logger->test(
-        "HbbTV-DVB",
-        "DASH Validation Requirements",
+        "HbbTV-DVB DASH Validation Requirements",
+        "MPD",
         "??", ///\todo What does this actually check?
         $str == '',
         "FAIL",

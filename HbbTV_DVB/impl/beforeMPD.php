@@ -5,7 +5,7 @@ global $mpd_url, $mpd_dom, $mpd_doc, $dvb_conformance;
 global $logger;
 
 
-if ($mpd_dom) && $dvb_conformance) {
+if ($mpd_dom && $this->DVBEnabled) {
     $mpd_doc = get_doc($mpd_url);
     $mpd_string = $mpd_doc->saveXML();
     $mpd_bytes = strlen($mpd_string);

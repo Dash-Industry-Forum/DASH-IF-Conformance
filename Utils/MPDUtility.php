@@ -2,6 +2,43 @@
 
 namespace DASHIF\Utility;
 
+function mpdContainsProfile($profile)
+{
+    global $mpd_dom;
+    $mpdProfiles = explode(',', $mpd_dom->getAttribute('profiles'));
+    return in_array($profile, $mpdProfiles);
+}
+
+function mpdProfilesContainsAll($profiles)
+{
+    foreach ($profiles as $profile) {
+        if (!mpdContainsProfile($profile)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function mpdProfilesContainsNone($profiles)
+{
+    foreach ($profiles as $profile) {
+        if (mpdContainsProfile($profile)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function mpdProfilesContainsAtLeastOne($profiles)
+{
+    foreach ($profiles as $profile) {
+        if (mpdContainsProfile($profile)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function media_types()
 {
     global $mpd_dom;
