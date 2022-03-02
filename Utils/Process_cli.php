@@ -1,4 +1,4 @@
-#!/usr/bin/php7
+#!/usr/bin/php7.4
 <?php
 
 /* This program is free software: you can redistribute it and/or modify
