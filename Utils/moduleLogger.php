@@ -211,7 +211,10 @@ class ModuleLogger
         $result = array();
         $result['source'] = $this->streamSource;
         $result['entries'] = $this->entries;
-        $result['verdict'] = $this->entries['verdict'];
+        $result['verdict'] = "PASS";
+        if (array_key_exists("verdict", $this->entries)){
+          $result['verdict'] = $this->entries['verdict'];
+        }
 
         $result['enabled_modules'] = array();
 
