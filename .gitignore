@@ -1,0 +1,4 @@
+Conformance-Frontend/visitorLogs/*.txt
+Conformance-Frontend/temp
+*.log
+*log*.txt

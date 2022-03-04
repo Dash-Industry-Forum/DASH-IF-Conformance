@@ -53,7 +53,7 @@ function set_session_name(){
 function session_check(){
     global $session_dir;
     if (isset($_FILES['afile']['tmp_name']))
-        $_SESSION['fileContent'] = file_get_contents($_FILES['afile']['tmp_name']);
+      $_SESSION['fileContent'] = file_get_contents($_FILES['afile']['tmp_name']);
     
     if (isset($_POST['foldername'])){
         $foldername = $_POST['foldername'];
@@ -181,7 +181,7 @@ function old_sessions_delete(){
  * @output: NA
  */
 function session_close(){
-    session_destroy();
+    //session_destroy();
 }
 
 /*

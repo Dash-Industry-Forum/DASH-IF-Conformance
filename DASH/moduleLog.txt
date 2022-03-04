@@ -1,0 +1,72 @@
+array (
+  0 => 
+  moduleCMAF::__set_state(array(
+     'name' => 'CMAF',
+     'enabled' => false,
+     'messages' => 
+    array (
+    ),
+     'warnings' => 
+    array (
+    ),
+     'errors' => 
+    array (
+    ),
+  )),
+  1 => 
+  moduleCTAWAVE::__set_state(array(
+     'name' => 'CTA-WAVE',
+     'enabled' => false,
+     'messages' => 
+    array (
+    ),
+     'warnings' => 
+    array (
+    ),
+     'errors' => 
+    array (
+    ),
+  )),
+  2 => 
+  moduleHbbTV_DVB::__set_state(array(
+     'name' => 'HbbTV_DVB',
+     'enabled' => false,
+     'messages' => 
+    array (
+    ),
+     'warnings' => 
+    array (
+    ),
+     'errors' => 
+    array (
+    ),
+  )),
+  3 => 
+  moduleDASHIF_LL::__set_state(array(
+     'name' => 'DASH-IF Low Latency',
+     'enabled' => true,
+     'messages' => 
+    array (
+    ),
+     'warnings' => 
+    array (
+    ),
+     'errors' => 
+    array (
+    ),
+  )),
+  4 => 
+  moduleDASHIF_IOP::__set_state(array(
+     'name' => 'DASH-IF IOP Conformance',
+     'enabled' => true,
+     'messages' => 
+    array (
+    ),
+     'warnings' => 
+    array (
+    ),
+     'errors' => 
+    array (
+    ),
+  )),
+)

@@ -240,6 +240,8 @@ $string_info = '<!doctype html>
 </body>
 </html>';
 
+$modules = array();
+
 # Initialize DASH-IF IOP, Low Latency DASH, CMAF, HbbTV_DVB, CTA WAVE modules only when it is requested
 if($dashif_conformance){
     include '../DASH/IOP/IOP_Initialization.php';

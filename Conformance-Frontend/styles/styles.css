@@ -1,0 +1,362 @@
+body {
+    height: unset;
+    margin: 0;
+    /*    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";*/
+    font-family: 'Raleway', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    /*    color: #727272;*/
+    /*    color:#1A73E8;*/
+    color: #007BFF;
+    text-align: left;
+    /*    text-transform: uppercase*/
+}
+
+md-progress-linear .md-container {
+    height: 10px;
+    border-radius: 5px;
+}
+
+md-progress-linear .md-container .md-bar {
+    height: 10px;
+    border-radius: 5px;
+    background-color: #007bff;
+}
+
+#xx-view,
+#xx-stepper,
+md-content,
+md-card,
+md-stepper-card-content,
+md-steppers,
+md-step,
+md-step-body,
+#xx-form {
+    min-width: 80%;
+}
+
+md-input-container.md-default-theme:not(.md-input-invalid).md-input-focused label,
+md-input-container:not(.md-input-invalid).md-input-focused label {
+    color: #007BFF;
+}
+
+md-step-actions {
+    margin-top: 5%;
+    bottom: 0;
+}
+
+#uploadIcon {
+    transform: scale(0.6);
+}
+
+#helpIcon {
+    transform: scale(0.7);
+}
+
+.checkprofile {
+    color: #007BFF;
+}
+
+#info-icon {
+    position: absolute;
+    top: -10px;
+    right: -20px;
+}
+
+.checkprofile .md-icon {
+    background-color: white !important;
+}
+
+.checkprofile.md-checked .md-icon {
+    background-color: #007BFF !important;
+}
+
+md-checkbox:not(.md-checked) .md-icon {
+    border-color: #007BFF;
+}
+
+#profileTip {
+    background-color: #007BFF;
+    font-size: 16px;
+    width: 50%;
+}
+
+#profileTip1 {
+    background-color: #007BFF;
+    font-size: 16px;
+}
+
+md-tooltip .md-content {
+    height: auto !important;
+}
+
+md-tooltip {
+    height: auto !important;
+    overflow: visible !important;
+    white-space: normal !important;
+}
+
+md-tooltip ._md-content {
+    height: auto !important;
+}
+
+
+#treeboxbox_tree {
+    position: absolute;
+/*    margin-left: 32%;*/
+}
+
+#some-info {
+    width: min-content;
+}
+
+h1 {
+    margin: 0px;
+}
+
+.text1 {
+
+    color: rgba(0, 0, 0, .5);
+}
+
+.content1 {
+    margin: 40px auto;
+}
+
+.fileTag {
+    display: none;
+    border: 2px outset #007bff;
+    border-radius: 10px;
+}
+
+.fileIcon {
+    position: relative;
+    width: 36px;
+    height: 100%;
+    transform: scale(0.7);
+}
+
+.cancelIcon {
+    position: relative;
+    width: 36px;
+    height: 100%;
+    border-radius: 50px;
+    background-color: white;
+}
+
+#overlayButton {
+    position: fixed;
+    right: 0;
+    display: none;
+    z-index: 999;
+}
+
+#backFrame {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: absolute;
+    overflow: visible;
+    z-index: 998;
+    opacity: 0.2;
+    background-color: black;
+    filter: blur(64px)
+}
+
+#frontFrame {
+    width: 70%;
+    height: 100%;
+    position: fixed;
+    overflow: visible;
+    z-index: 999;
+    align-self: center;
+}
+
+#frontIframe {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: visible;
+    background-color: white;
+}
+
+/*
+ul li{
+color: red;
+font-weight: bold;
+width: 1em;
+margin-left: -1em;
+}
+*/
+/*
+#mpd{
+height:10%;
+position: absolute;
+}
+*/
+/*
+#progress{
+height:10%;
+position: absolute;
+}
+*/
+
+/*
+#not{
+position:center;
+}
+*/
+
+#to {
+    text-align: center;
+    border-width: medium;
+}
+
+/*
+p.sansserif {
+font-family: Arial, Helvetica, sans-serif;
+}
+*/
+
+/*intro design*/
+.introjs-overlay {
+    /*    display: none;*/
+    pointer-events: none;
+}
+
+.introjs-helperLayer {
+    border: 1px solid rgb(2, 119, 189);
+    box-shadow: 0 2px 15px rgb(2, 119, 189);
+}
+
+.introjs-tooltip {
+    border: 2px solid rgb(2, 119, 189);
+/*    max-width: 100% !important;*/
+}
+
+.introjs-tooltiptext {
+    color: rgb(2, 119, 189);
+/*    text-align: center;*/
+    padding: 10px;
+}
+
+.introjs-button {
+    border: 1px solid rgb(2, 119, 189);
+}
+
+.introjs-arrow {
+    border: 4px solid rgb(2, 119, 189);
+}
+
+.introjs-arrow.top {
+    border-bottom-color: rgb(2, 119, 189);
+}
+
+.introjs-arrow.left {
+    border-right-color: rgb(2, 119, 189);
+}
+
+.introjs-arrow.right {
+    border-left-color: rgb(2, 119, 189);
+}
+
+.introjs-arrow.right-bottom {
+    border-left-color: rgb(2, 119, 189);
+}
+
+.introjs-arrow.bottom {
+    border-top-color: rgb(2, 119, 189);
+}
+
+
+
+/*previous style*/
+
+/*
+md-checkbox,md-step{
+color: #272727;
+}
+*/
+/*
+th {
+text-align: left;
+background-color: #efefef;
+cursor: pointer;
+}
+
+tr.footer {
+background-color: #efefef;
+}
+
+*/
+/*
+main {
+margin-left: 12px;
+margin-right:25px;
+max-height: 30%;    
+}
+*/
+
+/*
+.center {
+text-align: center;   
+}
+*/
+/*
+
+.delete {
+color: red; 
+cursor: pointer;
+}
+*/
+/*
+
+#groupA{
+text-align:center;
+margin-left:-5%;
+margin-top:1%;
+}
+*/
+/*
+.box.has-advanced-upload .box__dragndrop {
+display: inline;
+}
+*/
+/*
+.mytext {
+width: 600px;
+}
+*/
+/*
+.box__file {
+width: 1px;
+height: 1px;
+opacity: 1;
+overflow: visible;
+position: absolute;
+z-index: -1;
+}
+
+*/
+/*
+.box__file + label {
+position: relative;
+margin-top:2.5%;
+margin-left:3%;
+display: inline-block;
+cursor: pointer;  //"hand" cursor 
+}
+*/
+/*
+
+.box__button {
+position: absolute;
+margin-top:0.8%;
+margin-left: 8%;
+display: none;
+}
+.box__dragndrop{
+display: none;
+}
+*/

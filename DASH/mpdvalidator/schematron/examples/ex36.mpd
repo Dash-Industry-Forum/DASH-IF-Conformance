@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- R1.6  -->
+<MPD 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="urn:mpeg:dash:schema:mpd:2011"
+  xsi:schemaLocation="urn:mpeg:dash:schema:mpd:2011 http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-DASH_schema_files/DASH-MPD.xsd"
+  type="static"
+  mediaPresentationDuration="PT3256S"
+  minBufferTime="PT1.2S"
+  profiles="urn:mpeg:dash:profile:isoff-on-demands:2011">
+
+  <Period>
+    <AdaptationSet mimeType="audio/mp4" codecs="mp4a.0x40" lang="en" subsegmentAlignment="true" subsegmentStartsWithSAP="1">
+      <ContentProtection schemeIdUri="urn:mpeg:dash:mp4protection:2011" value="ZZZZ"/>
+      <Representation id="1" bandwidth="64000">
+        <BaseURL>7657412348.mp4</BaseURL>
+		<SegmentList duration="10">
+			<Initialization sourceURL="seg-s-init.mp4"/>
+			<SegmentURL media="seg-s1-128k-1.mp4"/>
+			<SegmentURL media="seg-s1-128k-2.mp4"/>
+			<SegmentURL media="seg-s1-128k-3.mp4"/>
+		</SegmentList>
+      </Representation>
+      <Representation id="2" bandwidth="32000">
+        <BaseURL>3463646346.mp4</BaseURL>
+		<SegmentList duration="10">
+			<Initialization sourceURL="seg-s-init.mp4"/>
+			<SegmentURL media="seg-s1-128k-1.mp4"/>
+			<SegmentURL media="seg-s1-128k-2.mp4"/>
+			<SegmentURL media="seg-s1-128k-3.mp4"/>
+		</SegmentList>
+      </Representation>
+    </AdaptationSet>
+  </Period>
+</MPD>
+

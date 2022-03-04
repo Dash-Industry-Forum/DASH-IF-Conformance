@@ -50,8 +50,8 @@ function mpd_load(){
 assert_options(ASSERT_ACTIVE, 1);
 assert_options(ASSERT_BAIL, 1);
 assert_options(ASSERT_QUIET_EVAL, 1);
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+//error_reporting(E_ALL);
+//ini_set('display_errors', 1);
 
 function show_errors()
 {
