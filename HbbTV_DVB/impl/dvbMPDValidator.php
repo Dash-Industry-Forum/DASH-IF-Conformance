@@ -127,203 +127,336 @@ $mpdreport = "./placeholder.txt";
 ## Verifying the DVB Metric reporting mechanism according to Section 10.12.3
 $this->dvbMetricReporting();
 
-/*
-
-    $cenc = $mpd_dom->getAttribute('xmlns:cenc');
-
-    // Periods within MPD
-    $period_count = 0;
-    $video_service = false;
-    $type = $mpd_dom->getAttribute('type');
-    $AST = $mpd_dom->getAttribute('availabilityStartTime');
+$type = $mpd_dom->getAttribute('type');
+$AST = $mpd_dom->getAttribute('availabilityStartTime');
 
 if ($type == 'dynamic' || $AST != '') {
     $UTCTimings = $mpd_dom->getElementsByTagName('UTCTiming');
-    $acceptedTimingURIs = array('urn:mpeg:dash:utc:ntp:2014',
-                                'urn:mpeg:dash:utc:http-head:2014',
-                                'urn:mpeg:dash:utc:http-xsdate:2014',
-                                'urn:mpeg:dash:utc:http-iso:2014',
-                                'urn:mpeg:dash:utc:http-ntp:2014');
-    $utc_info = '';
+    $acceptedURIs = array('urn:mpeg:dash:utc:ntp:2014',
+                          'urn:mpeg:dash:utc:http-head:2014',
+                          'urn:mpeg:dash:utc:http-xsdate:2014',
+                          'urn:mpeg:dash:utc:http-iso:2014',
+                          'urn:mpeg:dash:utc:http-ntp:2014');
 
-    if ($UTCTimings->length == 0) {
-        fwrite($mpdreport, "Warning for DVB check: Section 4.7.2- 'If the MPD is dynamic or if the MPD@availabilityStartTime is present then the MPD SHOULD countain at least one UTCTiming element with the @schemeIdUri attribute set to one of the following: " . join(', ', $acceptedTimingURIs) . " ', UTCTiming element could not be found in the provided MPD.\n");
-    } else {
-        foreach ($UTCTimings as $UTCTiming) {
-            if (!(in_array($UTCTiming->getAttribute('schemeIdUri'), $acceptedTimingURIs))) {
-                $utc_info .= 'wrong ';
-            }
-        }
-
-        if ($utc_info != '') {
-            fwrite($mpdreport, "Warning for DVB check: Section 4.7.2- 'If the MPD is dynamic or if the MPD@availabilityStartTime is present then the MPD SHOULD countain at least one UTCTiming element with the @schemeIdUri attribute set to one of the following: " . join(', ', $acceptedTimingURIs) . " ', could not be found in the provided MPD.\n");
+    $utcTimingValid = false;
+    foreach ($UTCTimings as $UTCTiming) {
+        if (in_array($UTCTiming->getAttribute('schemeIdUri'), $acceptedURIs)) {
+            $utcTimingValid = true;
         }
     }
+
+    $logger->test(
+        "HbbTV-DVB DASH Validation Requirements",
+        "DVB: Section 4.7.2",
+        "'If the MPD is dynamic or if the MPD@availabilityStartTime is present then the MPD SHOULD countain at least " .
+        "one UTCTiming element with the @schemeIdUri attribute set to one of the following: " .
+        join(', ', $acceptedTimingURIs),
+        $utcTimingValid,
+        "WARN",
+        "At least one valid UTCTiming element found",
+        "None of thevalid UTCTiming elements found"
+    );
 }
+
+$periodCount = 0;
+
+$hasVideoService = false;
+
+$cencAttribute = $mpd_dom->getAttribute("xmlns:cenc");
 
 foreach ($mpd_dom->childNodes as $node) {
-    if ($node->nodeName == 'Period') {
-        $period_count++;
-        $adapt_video_count = 0;
-        $main_video_found = false;
-        $main_audio_found = false;
+    if ($node - nodeName != 'Period') {
+        continue;
+    }
+    $periodCount++;
 
-        foreach ($node->childNodes as $child) {
-            if ($child->nodeName == 'SegmentList') {
-                fwrite($mpdreport, "###'DVB check violated: Section 4.2.2- The Period.SegmentList SHALL not be present', but found in Period $period_count.\n");
-            }
+    $adaptationVideoCount = 0;
+    $mainVideoFound = false;
+    $mainAudioFound = false;
+    $invalidSegmentListFound = false;
+    $invalidSegmentTemplateFound = false;
 
-            if ($child->nodeName == 'EventStream') {
-                DVB_event_checks($child, $mpdreport);
-            }
-            if ($child->nodename == 'SegmentTemplate') {
-                if (strpos($profiles, 'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014') === true) {
-                    fwrite($mpdreport, "###'DVB check violated: Section 4.2.6- The Period.SegmentTemplate SHALL not be present for Period elements conforming to On Demand profile', but found in Period $period_count.\n");
-                }
-            }
+    foreach ($node->childNodes as $child) {
+        if ($child->nodeName == 'SegmentList') {
+            $invalidSegmentListFound = true;
         }
 
-        // Adaptation Sets within each Period
-        $adapts = $node->getElementsByTagName('AdaptationSet');
-        $adapts_len = $adapts->length;
-
-        if ($adapts_len > 16) {
-            fwrite($mpdreport, "###'DVB check violated: Section 4.5- The MPD has a maximum of 16 adaptation sets per period', found $adapts_len in Period $period_count.\n");
+        if ($child->nodeName == 'EventStream') {
+          ///\todo Enable function
+//            DVB_event_checks($child, $mpdreport);
         }
-
-        $audio_adapts = array();
-        for ($i = 0; $i < $adapts_len; $i++) {
-            $adapt = $adapts->item($i);
-            $video_found = false;
-            $audio_found = false;
-
-            $adapt_profile_exists = false;
-            $adapt_profiles = $adapt->getAttribute('profiles');
-            if ($profile_exists && $adapt_profiles != '') {
-                if (strpos($adapt_profiles, 'urn:dvb:dash:profile:dvb-dash:2014') === false && (strpos($adapt_profiles, 'urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014') === false || strpos($adapt_profiles, 'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014') === false)) {
-                    fwrite($mpdreport, "Warning for DVB check: Section 11.1- 'All Representations that are intended to be decoded and presented by a DVB conformant Player SHOULD be such that they will be inferred to have an @profiles attribute that includes the profile name defined in clause 4.1 as well as either the one defined in 4.2.5 or the one defined in 4.2.8', found profiles: $adapt_profiles.\n");
-                } else {
-                    $adapt_profile_exists = true;
-                }
-            }
-
-            $reps = $adapt->getElementsByTagName('Representation');
-            $reps_len = $reps->length;
-            if ($reps_len > 16) {
-                fwrite($mpdreport, "###'DVB check violated: Section 4.5- The MPD has a maximum of 16 representations per adaptation set', found $reps_len in Period $period_count Adaptation Set " . ($i + 1) . ".\n");
-            }
-
-            $contentTemp_vid_found = false;
-            $contentTemp_aud_found = false;
-            foreach ($adapt->childNodes as $ch) {
-                if ($ch->nodeName == 'ContentComponent') {
-                    if ($ch->getAttribute('contentType') == 'video') {
-                        $contentTemp_vid_found = true;
-                    }
-                    if ($ch->getAttribute('contentType') == 'audio') {
-                        $contentTemp_aud_found = true;
-                    }
-                }
-                if ($ch->nodeName == 'Representation') {
-                    if ($profile_exists && ($adapt_profiles == '' || $adapt_profile_exists)) {
-                        $rep_profile_exists = false;
-                        $rep_profiles = $ch->getAttribute('profiles');
-                        if ($rep_profiles != '') {
-                            if (strpos($rep_profiles, 'urn:dvb:dash:profile:dvb-dash:2014') === false && (strpos($rep_profiles, 'urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014') === false || strpos($rep_profiles, 'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014') === false)) {
-                                fwrite($mpdreport, "Warning for DVB check: Section 11.1- 'All Representations that are intended to be decoded and presented by a DVB conformant Player SHOULD be such that they will be inferred to have an @profiles attribute that includes the profile name defined in clause 4.1 as well as either the one defined in 4.2.5 or the one defined in 4.2.8', found profiles: $rep_profiles.\n");
-                            } else {
-                                $rep_profile_exists = true;
-                            }
-                        }
-                    }
-                    if (strpos($ch->getAttribute('mimeType'), 'video') !== false) {
-                        $video_found = true;
-                    }
-                    if (strpos($ch->getAttribute('mimeType'), 'audio') !== false) {
-                        $audio_found = true;
-                    }
-
-                    if ($profile_exists && ($adapt_profiles == '' || $adapt_profile_exists) && ($rep_profiles == '' || $rep_profile_exists)) {
-                        foreach ($ch->childNodes as $c) {
-                            if ($c->nodeName == 'SubRepresentation') {
-                                $subrep_profiles = $c->getAttribute('profiles');
-                                if ($subrep_profiles != '') {
-                                    if (strpos($subrep_profiles, 'urn:dvb:dash:profile:dvb-dash:2014') === false && (strpos($subrep_profiles, 'urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014') === false || strpos($subrep_profiles, 'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014') === false)) {
-                                        fwrite($mpdreport, "Warning for DVB check: Section 11.1- 'All Representations that are intended to be decoded and presented by a DVB conformant Player SHOULD be such that they will be inferred to have an @profiles attribute that includes the profile name defined in clause 4.1 as well as either the one defined in 4.2.5 or the one defined in 4.2.8', found profiles: $subrep_profiles.\n");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            if ($adapt->getAttribute('contentType') == 'video' || $contentTemp_vid_found || $video_found || strpos($adapt->getAttribute('mimeType'), 'video') !== false) {
-                $video_service = true;
-                DVB_video_checks($adapt, $reps, $mpdreport, $i, $contentTemp_vid_found);
-
-                if ($contentTemp_aud_found) {
-                    DVB_audio_checks($adapt, $reps, $mpdreport, $i, $contentTemp_aud_found);
-                }
-            } elseif ($adapt->getAttribute('contentType') == 'audio' || $contentTemp_aud_found || $audio_found || strpos($adapt->getAttribute('mimeType'), 'audio') !== false) {
-                DVB_audio_checks($adapt, $reps, $mpdreport, $i, $contentTemp_aud_found);
-
-                if ($contentTemp_vid_found) {
-                    DVB_video_checks($adapt, $reps, $mpdreport, $i, $contentTemp_vid_found);
-                }
-
-                $audio_adapts[] = $adapt;
-            } else {
-                DVB_subtitle_checks($adapt, $reps, $mpdreport, $i);
-            }
-
-            if ($adapt_video_count > 1 && $main_video_found == false) {
-                fwrite($mpdreport, "###'DVB check violated: Section 4.2.2- If a Period element contains multiple Adaptation Sets with @contentType=\"video\" then at least one Adaptation Set SHALL contain a Role element with @schemeIdUri=\"urn:mpeg:dash:role:2011\" and @value=\"main\"', could not be found in Period $period_count.\n");
-            }
-
-            DVB_content_protection($adapt, $reps, $mpdreport, $i, $cenc);
-        }
-
-        if ($video_service) {
-            StreamBandwidthCheck($mpdreport);
-        }
-
-        ## Section 6.6.3 - Check for Audio Fallback Operation
-        if (!empty($audio_adapts) && sizeof($audio_adapts) > 1) {
-            FallbackOperationCheck($audio_adapts, $mpdreport);
-        }
-        ##
-
-        ## Section 7.1.2 Table 11 - First Row "Hard of Hearing"
-        if ($main_audio_found) {
-            if (!empty($hoh_subtitle_lang)) {
-                $main_lang = array();
-                foreach ($main_audios as $main_audio) {
-                    if ($main_audio->getAttribute('lang') != '') {
-                        $main_lang[] = $main_audio->getAttribute('lang');
-                    }
-                }
-
-                foreach ($hoh_subtitle_lang as $hoh_lang) {
-                    if (!empty($main_lang)) {
-                        if (!in_array($hoh_lang, $main_lang)) {
-                            fwrite($mpdreport, "###'DVB check violated: Section 7.1.2- According to Table 11, when hard of hearing subtitle type is signalled the @lang attribute of the subtitle representation SHALL be the same as the main audio for the programme', @lang attributes do not match in Period $period_count.\n");
-                        }
-                    }
-                }
+        if ($child->nodename == 'SegmentTemplate') {
+            if (DASHIF\Utility\mpdContainsProfile('urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014')) {
+                $invalidSegmentTemplateFound = true;
             }
         }
-        ##
     }
 
-    if ($period_count > 64) {
-        fwrite($mpdreport, "###'DVB check violated: Section 4.5- The MPD has a maximum of 64 periods after xlink resolution', found $period_count.\n");
+    $logger->test(
+        "HbbTV-DVB DASH Validation Requirements",
+        "DVB: Section 4.2.2",
+        "'The period SegmentList SHALL not be present'",
+        !$invalidSegmentListFound,
+        "FAIL",
+        "Period SegmentList not found for period $periodCount",
+        "Period SegmentList found for period $periodCount"
+    );
+    $logger->test(
+        "HbbTV-DVB DASH Validation Requirements",
+        "DVB: Section 4.2.6",
+        "'The period SegmentTemplate SHALL not be present for Period elements conforming to On Demand profile'",
+        !$invalidSegmentTemplateFound,
+        "FAIL",
+        "Period SegmentTemplate not found or no On Demand profile in period $periodCount",
+        "Period SegmentTemplate found for On Demand profile in period $periodCount"
+    );
+
+
+    // Adaptation Sets within each Period
+    $adaptationSets = $node->getElementsByTagName('AdaptationSet');
+    $adaptationSetCount = $adaptationSets->length;
+
+    $logger->test(
+        "HbbTV-DVB DASH Validation Requirements",
+        "DVB: Section 4.5",
+        "'The MPD has a maximum of 16 adaptation sets per period'",
+        $adaptationSetCount <= 16,
+        "FAIL",
+        "$adaptationSetCount adaption sets found for period $periodCount",
+        "$adaptationSetCount adaption sets found for period $periodCount, exceeding the maximum"
+    );
+
+    $audioAdaptations = array();
+    for ($i = 0; $i < $adaptationSetCount; $i++) {
+        $adaptationSet = $adaptationSets->item($i);
+        $videoFound = false;
+        $audioFound = false;
+
+        $adaptationSetProfiles = $adaptationSet->getAttribute('profiles');
+        $adaptationContainsDVBDash = DASHIF\Utility\profileListContainsProfile(
+            $adaptationSetProfiles,
+            'urn:dvb:dash:profile:dvb-dash:2014'
+        );
+        $adaptationContainsExtension = DASHIF\Utility\profileListContainsAtLeastOne(
+            $adaptationSetProfiles,
+            array('urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014',
+            'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014')
+        );
+        $adaptationSetProfileExists = ($adaptationContainsDVBDash && $adaptationContainsExtension);
+
+        $logger->test(
+            "HbbTV-DVB DASH Validation Requirements",
+            "DVB: Section 11.1",
+            "All Representations that are intended to be decoded and presented by a DVB conformant Player SHOULD " .
+            "be such that they will be inferred to have an @profiles attribute that includes the profile name " .
+            "defined in clause 4.1 as well as either the one defined in 4.2.5 or the one defined in 4.2.8'",
+            $adaptationSetProfileExists,
+            "WARN",
+            "Check succeeded",
+            "Check failed: Contains clause 4.1: " . ($adaptationSetContainsDVBDash ? "Yes" : "No") .
+            ", contains either 4.2.5 or 4.2.8: " . ($adaptationSetContainsExtension ? "Yes" : "No"),
+        );
+
+        $representations = $adaptationSet->getElementsByTagName("Representation");
+        $representationCount = $representations->length;
+
+        $logger->test(
+            "HbbTV-DVB DASH Validation Requirements",
+            "DVB: Section 4.5",
+            "The MPD has a maximum of 16 represtentations per adaptation set",
+            $representationCount <= 16,
+            "FAIL",
+            "Found $representationCount representations in period $periodCount, set " . ($i + 1),
+            "Found $representationCount representations in period $periodCount, set " . ($i + 1) . ", exceeding bounds",
+        );
+
+        $videoComponentFound = false;
+        $audioComponentFound = false;
+
+        $contentComponents = $ch->getElementsByTagName("ContentComponent");
+        foreach ($contentComponents as $component) {
+            $contentType = $component->getAttribute("contentType");
+            if ($contentType == "video") {
+                $videoComponentFound = true;
+            }
+            if ($contentType == "audio") {
+                $audioComponentFound = true;
+            }
+        }
+
+        foreach ($representations as $representation) {
+            if ($profileExists && $adaptationSetProfileExists) {
+                $representationProfiles = $adaptationSet->getAttribute('profiles');
+                $representationContainsDVBDash = DASHIF\Utility\profileListContainsProfile(
+                    $representationProfiles,
+                    'urn:dvb:dash:profile:dvb-dash:2014'
+                );
+                $representationContainsExtension = DASHIF\Utility\profileListContainsAtLeastOne(
+                    $representationProfiles,
+                    array('urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014',
+                    'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014')
+                );
+                $representationProfileExists = ($representationContainsDVBDash && $representationContainsExtension);
+                $logger->test(
+                    "HbbTV-DVB DASH Validation Requirements",
+                    "DVB: Section 11.1",
+                    "All Representations that are intended to be decoded and presented by a DVB conformant Player " .
+                    "SHOULD be such that they will be inferred to have an @profiles attribute that includes the " .
+                    "profile name defined in clause 4.1 as well as either the one defined in 4.2.5 or the one " .
+                    "defined in 4.2.8'",
+                    $representationProfileExists,
+                    "WARN",
+                    "Check succeeded",
+                    "Check failed: Contains clause 4.1: " . ($representationContainsDVBDash ? "Yes" : "No") .
+                    ", contains either 4.2.5 or 4.2.8: " . ($representationContainsExtension ? "Yes" : "No"),
+                );
+
+                $mimeType = $representation->getAttribute("mimeType");
+                if (strpos($mimeType, "video") !== false) {
+                    $videoFound = true;
+                }
+                if (strpos($mimeType, "audio") !== false) {
+                    $audioFound = true;
+                }
+
+                if (
+                    $profileExists &&
+                    ($adaptationSetProfiles == '' ||  $adaptationSetProfileExists) &&
+                    ($representationProfiles == '' || $representationProfileExists)
+                ) {
+                    $subRepresentations = $representation->getElementsByTagName("SubRepresentation");
+                    foreach ($subRepresentations as $subRep) {
+                        $subRepProfiles = $subRep->getAttribute('profiles');
+                        $subRepContainsDVBDash = DASHIF\Utility\profileListContainsProfile(
+                            $subRepProfiles,
+                            'urn:dvb:dash:profile:dvb-dash:2014'
+                        );
+                        $subRepContainsExtension = DASHIF\Utility\profileListContainsAtLeastOne(
+                            $subRepProfiles,
+                            array('urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014',
+                            'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014')
+                        );
+                        $subRepProfileExists = ($subRepContainsDVBDash && $subRepContainsExtension);
+                        $logger->test(
+                            "HbbTV-DVB DASH Validation Requirements",
+                            "DVB: Section 11.1",
+                            "All Representations that are intended to be decoded and presented by a DVB " .
+                            "conformant Player SHOULD be such that they will be inferred to have an @profiles " .
+                            "attribute that includes the profile name defined in clause 4.1 as well as either " .
+                            "the one defined in 4.2.5 or the one defined in 4.2.8'",
+                            $subRepProfileExists,
+                            "WARN",
+                            "SubRepresentation Check succeeded",
+                            "SubRepresentation Check failed: Contains clause 4.1: " .
+                            ($subRepContainsDVBDash ? "Yes" : "No") .
+                            ", contains either 4.2.5 or 4.2.8: " . ($subRepContainsExtension ? "Yes" : "No"),
+                        );
+                    }
+                }
+            }
+        }
+
+        //Continuation of adapationset-level checks
+        $adaptationContentType = $adaptationSet->getAttribute("contentType");
+        $adaptationMimeType = $adaptationSet->getAttribute("mimeType");
+
+        if (
+            $adaptationContentType == 'video' || $videoComponentFound ||
+            $videoFound || strpos($adaptationMimeType, 'video') !== false
+        ) {
+            $hasVideoService = true;
+          ///\todo enable these checks
+            //      DVB_video_checks($adaptationSet, $repsentations, $mpdreport, $i, $videoComponentFound);
+            if ($audioComponentFound) {
+//                DVB_audio_checks($adaptatationSet, $representations, $mpdreport, $i, $audioComponentFound);
+            }
+        } elseif (
+            $adaptationContentType == 'video' || $videoComponentFound ||
+            $videoFound || strpos($adaptationMimeType, 'video') !== false
+        ) {
+          ///\todo enable these checks
+//                DVB_audio_checks($adaptatationSet, $representations, $mpdreport, $i, $audioComponentFound);
+            if ($videoComponentFound) {
+            //      DVB_video_checks($adaptationSet, $repsentations, $mpdreport, $i, $videoComponentFound);
+            }
+            $audioAdaptations[] = $adaptationSet;
+        } else {
+          ///\todo enable this check
+                //DVB_subtitle_checks($adapt, $reps, $mpdreport, $i);
+        }
+
+        $logger->test(
+            "HbbTV-DVB DASH Validation Requirements",
+            "DVB: Section 4.2.2",
+            "If a Period element contains multiple Adaptation Sets with @contentType=\"video\" then at least one " .
+            "Adaptation Set SHALL contain a Role element with @schemeIdUri=\"urn:mpeg:dash:role:2011\" and " .
+            "@value=\"main\"",
+            $adaptationVideoCount <= 1 || $mainVideoFound,
+            "FAIL",
+            "$adaptationVideoCount adaptation(s) found with main label if needed for period $periodCount",
+            "$adaptationVideoCount adaptations found but none of them are labeled as main for period  $periodCount"
+        );
+
+
+        ///\todo enable this check
+        //DVB_content_protection($adapt, $reps, $mpdreport, $i, $cenc);
     }
+
+    if ($hasVideoService) {
+      ///\todo enable this check
+      //StreamBandwithCheck();
+    }
+    if ($audioAdaptations->length > 1) {
+      ///\todo enable this check
+      //      FallbackOperationCheck($audio_adapts, $mpdreport);
+    }
+
+      ///\todo enable this check
+    /*
+    if ($mainAudioFound && !empty($hoh_subtitle_lang)) {
+        $mainLanguage = array();
+        foreach ($main_audios as $main_audio) {
+            if ($main_audio->getAttribute('lang') != '') {
+                $mainLanguage[] = $main_audio->getAttribute('lang');
+            }
+        }
+
+        foreach ($hoh_subtitle_lang as $hoh_lang) {
+            if (!empty($mainLanguages)) {
+                if (!in_array($hoh_lang, $main_lang)) {
+                  fwrite($mpdreport, "###'DVB check violated: Section 7.1.2-
+                    According to Table 11, when hard of hearing subtitle type is signalled the
+                    @lang attribute of the subtitle representation SHALL be the same as the
+                    main audio for the programme', @lang attributes do not match in Period
+                    $period_count.\n");
+                }
+            }
+        }
+    }
+     */
 }
 
-    DVB_associated_adaptation_sets_check($mpdreport);
+$logger->test(
+    "HbbTV-DVB DASH Validation Requirements",
+    "DVB: Section 4.5",
+    "The MPD has a maximum of 64 periods after xlink resolution",
+    $periodCount <= 64,
+    "FAIL",
+    "$periodCount periods found in MPD",
+    "$periodCount periods found in MPD"
+);
 
-if ($adapt_audio_count > 1 && $main_audio_found == false) {
-    fwrite($mpdreport, "###'DVB check violated: Section 6.1.2- If there is more than one audio Adaptation Set in a DASH Presentation then at least one of them SHALL be tagged with an @value set to \"main\"', could not be found in Period $period_count.\n");
-}
- */
+
+///\todo enable this check
+//DVB_associated_adaptation_sets_check($mpdreport);
+
+$logger->test(
+    "HbbTV-DVB DASH Validation Requirements",
+    "DVB: Section 6.1.2",
+    "If there is more than one audio Adaptation Set in a DASH Presentation then at least one of them SHALL be " .
+    "tagged with an @value set to \"main\"",
+    $audioAdaptations->length <= 1 || $mainAudioFound,
+    "FAIL",
+    "$audioAdaptations->length adaptation(s) found with main label if needed in Presentation",
+    "$audioAdaptations->length adaptations found but none of them are labeled as main in Presentation"
+);

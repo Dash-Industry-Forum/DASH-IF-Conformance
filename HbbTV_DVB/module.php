@@ -86,6 +86,23 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/dvbMetricReporting.php';
     }
 
+    private function checkValidProbability($val)
+    {
+        if ($val == '') {
+            return true;
+        }
+        if ((string) (int) $val !== $val) {
+            return false;
+        }
+        if ($val > 1000) {
+            return false;
+        }
+        if ($val < 1) {
+            return false;
+        }
+        return true;
+    }
+
     public function hookBeforeRepresentation()
     {
         HbbTV_DVB_flags();
