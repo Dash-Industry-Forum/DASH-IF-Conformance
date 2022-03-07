@@ -2,11 +2,16 @@
 
 namespace DASHIF\Utility;
 
+function profileListContainsProfile($list, $profile)
+{
+    $profiles = explode(',', $list);
+    return in_array($profile, $profiles);
+}
+
 function mpdContainsProfile($profile)
 {
     global $mpd_dom;
-    $mpdProfiles = explode(',', $mpd_dom->getAttribute('profiles'));
-    return in_array($profile, $mpdProfiles);
+    return profileListContainsProfile($mpd_dom->getAttribute('profiles'), $profile);
 }
 
 function mpdProfilesContainsAll($profiles)
@@ -29,14 +34,19 @@ function mpdProfilesContainsNone($profiles)
     return true;
 }
 
-function mpdProfilesContainsAtLeastOne($profiles)
+function profileListContainsAtLeastOne($list, $profiles)
 {
     foreach ($profiles as $profile) {
-        if (mpdContainsProfile($profile)) {
+        if (profileListContainsProfile($list, $profile)) {
             return true;
         }
     }
     return false;
+}
+function mpdProfilesContainsAtLeastOne($profiles)
+{
+    global $mpd_dom;
+    return profileListContainsAtLeastOne($mpd_dom->getAttribute('profiles'), $profile);
 }
 
 function media_types()
