@@ -9,6 +9,8 @@ class ModuleHbbTVDVB extends ModuleInterface
         parent::__construct();
         $this->name = "HbbTV_DVB";
 
+        $this->periodCount = 0;
+
         $this->HbbTvEnabled = false;
         $this->DVBEnabled = false;
     }
@@ -69,6 +71,11 @@ class ModuleHbbTVDVB extends ModuleInterface
     private function dvbMPDValidator()
     {
         include 'impl/dvbMPDValidator.php';
+    }
+
+    private function dvbEventChecks($eventStream)
+    {
+        include 'impl/dvbEventChecks.php';
     }
 
     private function tlsBitrateCheck()

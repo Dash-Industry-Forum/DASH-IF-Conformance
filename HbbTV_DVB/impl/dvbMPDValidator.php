@@ -158,7 +158,7 @@ if ($type == 'dynamic' || $AST != '') {
     );
 }
 
-$periodCount = 0;
+$this->periodCount = 0;
 
 $hasVideoService = false;
 
@@ -168,7 +168,7 @@ foreach ($mpd_dom->childNodes as $node) {
     if ($node - nodeName != 'Period') {
         continue;
     }
-    $periodCount++;
+    $this->periodCount++;
 
     $adaptationVideoCount = 0;
     $mainVideoFound = false;
@@ -182,8 +182,7 @@ foreach ($mpd_dom->childNodes as $node) {
         }
 
         if ($child->nodeName == 'EventStream') {
-          ///\todo Enable function
-//            DVB_event_checks($child, $mpdreport);
+            $this->dvbEventChecks($child);
         }
         if ($child->nodename == 'SegmentTemplate') {
             if (DASHIF\Utility\mpdContainsProfile('urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014')) {
@@ -198,8 +197,8 @@ foreach ($mpd_dom->childNodes as $node) {
         "'The period SegmentList SHALL not be present'",
         !$invalidSegmentListFound,
         "FAIL",
-        "Period SegmentList not found for period $periodCount",
-        "Period SegmentList found for period $periodCount"
+        "Period SegmentList not found for period $this->periodCount",
+        "Period SegmentList found for period $this->periodCount"
     );
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
@@ -207,8 +206,8 @@ foreach ($mpd_dom->childNodes as $node) {
         "'The period SegmentTemplate SHALL not be present for Period elements conforming to On Demand profile'",
         !$invalidSegmentTemplateFound,
         "FAIL",
-        "Period SegmentTemplate not found or no On Demand profile in period $periodCount",
-        "Period SegmentTemplate found for On Demand profile in period $periodCount"
+        "Period SegmentTemplate not found or no On Demand profile in period $this->periodCount",
+        "Period SegmentTemplate found for On Demand profile in period $this->periodCount"
     );
 
 
@@ -222,8 +221,8 @@ foreach ($mpd_dom->childNodes as $node) {
         "'The MPD has a maximum of 16 adaptation sets per period'",
         $adaptationSetCount <= 16,
         "FAIL",
-        "$adaptationSetCount adaption sets found for period $periodCount",
-        "$adaptationSetCount adaption sets found for period $periodCount, exceeding the maximum"
+        "$adaptationSetCount adaption sets found for period $this->periodCount",
+        "$adaptationSetCount adaption sets found for period $this->periodCount, exceeding the maximum"
     );
 
     $audioAdaptations = array();
@@ -266,8 +265,8 @@ foreach ($mpd_dom->childNodes as $node) {
             "The MPD has a maximum of 16 represtentations per adaptation set",
             $representationCount <= 16,
             "FAIL",
-            "Found $representationCount representations in period $periodCount, set " . ($i + 1),
-            "Found $representationCount representations in period $periodCount, set " . ($i + 1) . ", exceeding bounds",
+            "$representationCount representations in period $this->periodCount, set " . ($i + 1),
+            "$representationCount representations in period $this->periodCount, set " . ($i + 1) . ", exceeding bound",
         );
 
         $videoComponentFound = false;
@@ -393,8 +392,8 @@ foreach ($mpd_dom->childNodes as $node) {
             "@value=\"main\"",
             $adaptationVideoCount <= 1 || $mainVideoFound,
             "FAIL",
-            "$adaptationVideoCount adaptation(s) found with main label if needed for period $periodCount",
-            "$adaptationVideoCount adaptations found but none of them are labeled as main for period  $periodCount"
+            "$adaptationVideoCount adaptation(s) found with main label if needed for period $this->periodCount",
+            "$adaptationVideoCount adaptations found, none of them are labeled as main for period  $this->periodCount"
         );
 
 
@@ -440,10 +439,10 @@ $logger->test(
     "HbbTV-DVB DASH Validation Requirements",
     "DVB: Section 4.5",
     "The MPD has a maximum of 64 periods after xlink resolution",
-    $periodCount <= 64,
+    $this->periodCount <= 64,
     "FAIL",
-    "$periodCount periods found in MPD",
-    "$periodCount periods found in MPD"
+    "$this->periodCount periods found in MPD",
+    "$this->periodCount periods found in MPD"
 );
 
 
