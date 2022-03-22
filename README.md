@@ -10,11 +10,15 @@ To clone the IntegratedConformance, use the command,
 
 `git clone https://github.com/Dash-Industry-Forum/DASH-IF-Conformance`
 
+### Development
+
+We very much appreciate all your code contributions to the project. To be compliant with our development guidelines please checkout the [development principles](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Development-principles) and also the [relase procedure](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Release-Procedure).
+
 ### Usage Guide
 
 Information on how to use the conformance software, please refer to our [Usage Guide](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Usage-guide) document.
 
-#### CLI
+### CLI
 
 A preliminary CLI has been added to the project, which can be run from the `Utils` directory, see the `Utils/Process_cli.php` script. At this point in time it requires the `Conformance-Frontend/temp/` directory to be created manually, for storing temporary files.
 
