@@ -78,6 +78,17 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/dvbEventChecks.php';
     }
 
+    private function dvbVideoChecks($adaptation, $representations, $i, $videoComponentFound)
+    {
+        include 'impl/dvbVideoChecks.php';
+    }
+
+    private function dvbAudioChecks($adaptation, $representations, $i, $audioComponentFound)
+    {
+        include 'impl/dvbAudioChecks.php';
+    }
+
+
     private function tlsBitrateCheck()
     {
         include 'impl/tlsBitrateCheck.php';
@@ -108,6 +119,11 @@ class ModuleHbbTVDVB extends ModuleInterface
             return false;
         }
         return true;
+    }
+
+    private function avcCodecValidForDVB($codec)
+    {
+        include 'impl/avcCodecValidForDVB.php';
     }
 
     public function hookBeforeRepresentation()

@@ -170,9 +170,11 @@ foreach ($mpd_dom->childNodes as $node) {
     }
     $this->periodCount++;
 
-    $adaptationVideoCount = 0;
-    $mainVideoFound = false;
-    $mainAudioFound = false;
+    $this->adaptationVideoCount = 0;
+    $this->adaptationAudioCount = 0;
+    $this->mainVideoFound = false;
+    $this->mainAudios = array();
+
     $invalidSegmentListFound = false;
     $invalidSegmentTemplateFound = false;
 
@@ -370,8 +372,8 @@ foreach ($mpd_dom->childNodes as $node) {
 //                DVB_audio_checks($adaptatationSet, $representations, $mpdreport, $i, $audioComponentFound);
             }
         } elseif (
-            $adaptationContentType == 'video' || $videoComponentFound ||
-            $videoFound || strpos($adaptationMimeType, 'video') !== false
+            $adaptationContentType == 'audio' || $audioComponentFound ||
+            $audioFound || strpos($adaptationMimeType, 'audio') !== false
         ) {
           ///\todo enable these checks
 //                DVB_audio_checks($adaptatationSet, $representations, $mpdreport, $i, $audioComponentFound);
@@ -390,10 +392,10 @@ foreach ($mpd_dom->childNodes as $node) {
             "If a Period element contains multiple Adaptation Sets with @contentType=\"video\" then at least one " .
             "Adaptation Set SHALL contain a Role element with @schemeIdUri=\"urn:mpeg:dash:role:2011\" and " .
             "@value=\"main\"",
-            $adaptationVideoCount <= 1 || $mainVideoFound,
+            $this->adaptationVideoCount <= 1 || $this->mainVideoFound,
             "FAIL",
-            "$adaptationVideoCount adaptation(s) found with main label if needed for period $this->periodCount",
-            "$adaptationVideoCount adaptations found, none of them are labeled as main for period  $this->periodCount"
+            "$this->adaptationVideoCount adaptation(s) found with main label if needed for period $this->periodCount",
+            "$this->adaptationVideoCount adaptations found, none labeled as main for period $this->periodCount"
         );
 
 
@@ -454,7 +456,7 @@ $logger->test(
     "DVB: Section 6.1.2",
     "If there is more than one audio Adaptation Set in a DASH Presentation then at least one of them SHALL be " .
     "tagged with an @value set to \"main\"",
-    $audioAdaptations->length <= 1 || $mainAudioFound,
+    $audioAdaptations->length <= 1 || $this->mainAudioFound,
     "FAIL",
     "$audioAdaptations->length adaptation(s) found with main label if needed in Presentation",
     "$audioAdaptations->length adaptations found but none of them are labeled as main in Presentation"

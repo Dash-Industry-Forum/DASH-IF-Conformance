@@ -8,6 +8,31 @@ function profileListContainsProfile($list, $profile)
     return in_array($profile, $profiles);
 }
 
+function in_array_at_least_one($options, $array)
+{
+    foreach ($options as $option) {
+        if (in_array($option, $array)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function inString($option, $string)
+{
+    return strpos($string, $option) !== false;
+}
+
+function inStringAtLeastOne($options, $string)
+{
+    foreach ($options as $option) {
+        if (inString($option, $string){
+            return true;
+        }
+    }
+    return false;
+}
+
 function mpdContainsProfile($profile)
 {
     global $mpd_dom;
