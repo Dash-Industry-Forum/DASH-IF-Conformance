@@ -88,6 +88,10 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/dvbAudioChecks.php';
     }
 
+    private function dvbSubtitleChecks($adaptation, $representations, $i)
+    {
+        include 'impl/dvbSubtitleChecks.php';
+    }
 
     private function tlsBitrateCheck()
     {
