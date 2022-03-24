@@ -1,7 +1,5 @@
 <?php
 
-global $period_count, $audio_bw;
-
 $contentType = $adaptation->getAttribute('contentType');
 if ($contentType == 'audio') {
     $this->adaptationAudioCount ++;
@@ -237,7 +235,7 @@ foreach ($representations as $representation) {
         ///\todo Validate EC3, AC4 and DTS as above for subrepresentation
         if ($audioComponentFound) {
             if (in_array($subRepresentation->getAttribute('contentComponent'), $ids)) {
-                $audio_bw[] = (float)($representation->getAttribute('bandwidth') != '' ?
+                $$this->audioBandwidth[] = (float)($representation->getAttribute('bandwidth') != '' ?
                 $representation->getAttribute('bandwidth') :
                 $subRepresentation->getAttribute('bandwidth'));
             }
@@ -247,7 +245,7 @@ foreach ($representations as $representation) {
     ///\todo Validate EC3, AC4 and DTS as above for representation
 
     if ($audioComponentFound) {
-        $audio_bw[] = (float)($representation->getAttribute('bandwidth'));
+        $$this->audioBandwidth[] = (float)($representation->getAttribute('bandwidth'));
     }
 
     $logger->test(

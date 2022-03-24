@@ -366,24 +366,21 @@ foreach ($mpd_dom->childNodes as $node) {
             $videoFound || strpos($adaptationMimeType, 'video') !== false
         ) {
             $hasVideoService = true;
-          ///\todo enable these checks
-            //      DVB_video_checks($adaptationSet, $repsentations, $mpdreport, $i, $videoComponentFound);
+            $this->dvbVideoChecks($adaptation, $representations, $i, $videoComponentFound);
             if ($audioComponentFound) {
-//                DVB_audio_checks($adaptatationSet, $representations, $mpdreport, $i, $audioComponentFound);
+                $this->dvbAudioChecks($adaptation, $representations, $i, $audioComponentFound);
             }
         } elseif (
             $adaptationContentType == 'audio' || $audioComponentFound ||
             $audioFound || strpos($adaptationMimeType, 'audio') !== false
         ) {
-          ///\todo enable these checks
-//                DVB_audio_checks($adaptatationSet, $representations, $mpdreport, $i, $audioComponentFound);
+            $this->dvbAudioChecks($adaptation, $representations, $i, $audioComponentFound);
             if ($videoComponentFound) {
-            //      DVB_video_checks($adaptationSet, $repsentations, $mpdreport, $i, $videoComponentFound);
+                $this->dvbVideoChecks($adaptation, $representations, $i, $videoComponentFound);
             }
             $audioAdaptations[] = $adaptationSet;
         } else {
-          ///\todo enable this check
-                //DVB_subtitle_checks($adapt, $reps, $mpdreport, $i);
+            $this->dvbSubtitleChecks($adaptation, $representations, $i);
         }
 
         $logger->test(
@@ -398,9 +395,7 @@ foreach ($mpd_dom->childNodes as $node) {
             "$this->adaptationVideoCount adaptations found, none labeled as main for period $this->periodCount"
         );
 
-
-        ///\todo enable this check
-        //DVB_content_protection($adapt, $reps, $mpdreport, $i, $cenc);
+        $this->dvbContentProtection($adaptation, $representations, $i, $cenc);
     }
 
     if ($hasVideoService) {

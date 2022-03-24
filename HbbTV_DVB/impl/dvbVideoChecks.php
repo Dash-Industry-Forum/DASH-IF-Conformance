@@ -1,7 +1,5 @@
 <?php
 
-global $video_bw;
-
 $contentType = $adaptation->getAttribute("contentType");
 
 ## Information from this part is used for Section 4.2.2 check about multiple Adaptation Sets with video as contentType
@@ -155,7 +153,7 @@ foreach ($representations as $respresentation) {
 
         if ($videoComponentFound) {
             if (in_array($subRepresentation->getAttribute('contentComponent'), $ids)) {
-                $video_bw[] = (
+                $this->videoBandwidth[] = (
                   $representation->getAttribute('bandwidth') != '') ?
                   (float)($representation->getAttribute('bandwidth')) :
                   (float)($representation->getAttribute('bandwidth')
@@ -164,7 +162,7 @@ foreach ($representations as $respresentation) {
         }
     }
     if (!$videoComponentFound) {
-        $video_bw[] = (float)($representation->getAttribute('bandwidth'));
+        $this->videoBandwidth[] = (float)($representation->getAttribute('bandwidth'));
     }
 }
 

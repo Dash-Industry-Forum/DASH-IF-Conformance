@@ -11,6 +11,8 @@ class ModuleHbbTVDVB extends ModuleInterface
 
         $this->periodCount = 0;
         $this->hohSubtitleLanguages = array();
+        $this->videoBandwidth = array();
+        $this->audioBandwidth = array();
         $this->subtitleBandwidth = array();
 
         $this->HbbTvEnabled = false;
@@ -93,6 +95,11 @@ class ModuleHbbTVDVB extends ModuleInterface
     private function dvbSubtitleChecks($adaptation, $representations, $i)
     {
         include 'impl/dvbSubtitleChecks.php';
+    }
+
+    private function dvbContentProtection($adaptation, $representations, $i, $cenc)
+    {
+        include 'impl/dvbContentProtection.php';
     }
 
     private function tlsBitrateCheck()
