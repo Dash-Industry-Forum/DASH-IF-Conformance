@@ -102,6 +102,10 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/dvbContentProtection.php';
     }
 
+    private function streamBandwidthCheck(){
+      include 'impl/streamBandwidthCheck.php';
+    }
+
     private function tlsBitrateCheck()
     {
         include 'impl/tlsBitrateCheck.php';

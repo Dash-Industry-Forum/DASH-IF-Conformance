@@ -399,9 +399,9 @@ foreach ($mpd_dom->childNodes as $node) {
     }
 
     if ($hasVideoService) {
-      ///\todo enable this check
-      //StreamBandwithCheck();
+      $this->streamBandwithCheck();
     }
+
     if ($audioAdaptations->length > 1) {
       ///\todo enable this check
       //      FallbackOperationCheck($audio_adapts, $mpdreport);
