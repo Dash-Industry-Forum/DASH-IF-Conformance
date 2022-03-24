@@ -1,157 +1,232 @@
 <?php
 
-    global $period_count, $subtitle_bw, $hoh_subtitle_lang;
+$subtitle = false;
 
-    $str_codec_info = '';
-    $adapt_mimeType = $adapt->getAttribute('mimeType');
-    $adapt_codecs = $adapt->getAttribute('codecs');
-    $adapt_type = $adapt->getAttribute('contentType');
-    $contentComp = false;
-    $contentComp_type = array();
-    $subtitle = false;
-    $supp_present = false;
-    $supp_scheme = array();
-    $supp_val = array();
-    $supp_url = array();
-    $supp_fontFam = array();
-    $supp_mime = array();
-    $ess_present = false;
-    $ess_scheme = array();
-    $ess_val = array();
-    $ess_url = array();
-    $ess_fontFam = array();
-    $ess_mime = array();
+$adaptationCodecs = $adaptation->getAttribute('codecs');
+$adaptationMimeType = $adaptation->getAttribute('mimeType');
+$adaptationContentType = $adaptation->getAttribute('contentType');
+$codecInfoString = '';
 
-if (strpos($adapt_codecs, 'stpp') !== false) {
-    $str_codec_info .= 'y ';
+if (strpos($adaptationCodecs, 'stpp') !== false) {
+    $codecInfoString .= 'y ';
 }
 
-    $ids = array();
-    $hoh_acc = false;
-    $hoh_role = false;
-foreach ($adapt->childNodes as $ch) {
-    if ($ch->nodeName == 'ContentComponent') {
-        $contentComp = true;
-        $contentComp_type[] = $ch->getAttribute('contentType');
-        if ($ch->getAttribute('contentType') == 'text') {
-            $ids[] = $ch->getAttribute('contentType');
-        }
-    }
-    if ($ch->nodeName == 'SupplementalProperty') {
-        $supp_present = true;
-        $supp_scheme[] = $ch->getAttribute('schemeIdUri');
-        $supp_val[] = $ch->getAttribute('value');
-        $supp_url[] = ($ch->getAttribute('dvb:url') != '') ? $ch->getAttribute('dvb:url') : $ch->getAttribute('url');
-        $supp_fontFam[] = ($ch->getAttribute('dvb:fontFamily') != '') ? $ch->getAttribute('dvb:fontFamily') : $ch->getAttribute('fontFamily');
-        $supp_mime[] = ($ch->getAttribute('dvb:mimeType') != '') ? $ch->getAttribute('dvb:mimeType') : $ch->getAttribute('mimeType');
-    }
-    if ($ch->nodeName == 'EssentialProperty') {
-        $ess_present = true;
-        $ess_scheme[] = $ch->getAttribute('schemeIdUri');
-        $ess_val[] = $ch->getAttribute('value');
-        $ess_url[] = ($ch->getAttribute('dvb:url') != '') ? $ch->getAttribute('dvb:url') : $ch->getAttribute('url');
-        $ess_fontFam[] = ($ch->getAttribute('dvb:fontFamily') != '') ? $ch->getAttribute('dvb:fontFamily') : $ch->getAttribute('fontFamily');
-        $ess_mime[] = ($ch->getAttribute('dvb:mimeType') != '') ? $ch->getAttribute('dvb:mimeType') : $ch->getAttribute('mimeType');
-    }
-    if ($ch->nodeName == 'Accessibility') {
-        if ($ch->getAttribute('schemeIdUri') == 'urn:tva:metadata:cs:AudioPurposeCS:2007' && $ch->getAttribute('value') == '2') {
-            $hoh_acc = true;
-        }
-    }
-    if ($ch->nodeName == 'Role') {
-        if ($ch->getAttribute('schemeIdUri') == 'urn:mpeg:dash:role:2011' && $ch->getAttribute('value') == 'main') {
-            $hoh_role = true;
-        }
+$ids = array();
+$hohAccessibility = false;
+$accesiblities = $adaptation->getElementsByTagName("Accessibility"){
+foreach ($accesiblities as $accessibility) {
+    if (
+        $accessibility->getAttribute('schemeIdUri') == 'urn:tva:metadata:cs:AudioPurposeCS:2007' &&
+        $accessibility->getAttribute('value') == '2'
+    ) {
+        $hohAccessibility = true;
     }
 }
 
-if ($hoh_acc && $hoh_role) {
-    if ($adapt->getAttribute('lang') != '') {
-        $hoh_subtitle_lang[] = $adapt->getAttribute('lang');
+$hohRole = false;
+
+$roles = $adaptation->getElementsByTagName("Role"){
+foreach ($roles as $role) {
+    if ($role->getAttribute('schemeIdUri') == 'urn:mpeg:dash:role:2011' && $role->getAttribute('value') == 'main') {
+        $hohRole = true;
     }
 }
 
-    $reps_len = $reps->length;
-for ($j = 0; $j < $reps_len; $j++) {
-    $rep = $reps->item($j);
+$contentComponents = $adaptation->getElementsByTagName("ContentComponent");
+$hasContentComponent = !empty($contentComponents);
 
-    $rep_codecs = $rep->getAttribute('codecs');
-    if (strpos($rep_codecs, 'stpp') !== false) {
-        $str_codec_info .= 'y ';
+$contentComponentTypes = array();
+
+foreach ($contentComponents as $component) {
+    $type = $component->getAttribute('contentType');
+    $contentComponentTypes[] = $type;
+    if ($type == 'text') {
+        $ids[] = $type;
+    }
+}
+
+$supplementalProperties = $adaptation->getElementsByTagName("SupplementalProperty");
+$hasSupplementalProperties = !empty($supplementalProperties);
+
+$supplementalSchemes = array();
+$supplementalValues = array();
+$supplementalUrls = array();
+$supplementalFontFamilies = array();
+$supplementalMimeTypes = array();
+
+foreach ($supplementalProperties as $property) {
+    $supplementalSchemes[] = $property->getAttribute('schemeIdUri');
+    $supplementalValues[] = $property->getAttribute('value');
+    $supplementalUrls[] = ($property->getAttribute('dvb:url') != '') ?
+      $property->getAttribute('dvb:url') :
+      $property->getAttribute('url'));
+    $supplementalFontFamilies[] = ($property->getAttribute('dvb:fontFamily') != '') ?
+      $property->getAttribute('dvb:fontFamily') :
+      $property->getAttribute('fontFamily'))[;
+    $supplementalMimeTypes[] = ($property->getAttribute('dvb:mimeType') != '') ?
+      $property->getAttribute('dvb:mimeType') :
+      $property->getAttribute('mimeType'));
+}
+
+$essentialProperties = $adaptation->getElementsByTagName("EssentialProperty");
+$hasEssentialProperties = !empty($essentialProperties);
+
+$essentialSchemes = array();
+$essentialValues = array();
+$essentialUrls = array();
+$essentialFontFamilies = array();
+$essentialMimeTypes = array();
+
+foreach ($essentialProperties as $property) {
+    $essentialSchemes[] = $property->getAttribute('schemeIdUri');
+    $essentialValues[] = $property->getAttribute('value');
+    $essentialUrls[] = ($property->getAttribute('dvb:url') != '') ?
+      $property->getAttribute('dvb:url') :
+      $property->getAttribute('url'));
+    $essentialFontFamilies[] = ($property->getAttribute('dvb:fontFamily') != '') ?
+      $property->getAttribute('dvb:fontFamily') :
+      $property->getAttribute('fontFamily'))[;
+    $essentialMimeTypes[] = ($property->getAttribute('dvb:mimeType') != '') ?
+      $property->getAttribute('dvb:mimeType') :
+      $property->getAttribute('mimeType'));
+}
+
+if ($hohAccessibility && $hohRole) {
+    if ($adaptataion->getAttribute('lang') != '') {
+        $this->hohSubtitleLanguages[] = $adaptation->getAttribute('lang');
+    }
+}
+
+$representationIndex = 0;
+foreach ($representations as $representation) {
+    $representationIndex++;
+
+    if (strpos($representation->getAttribute('codecs'), 'stpp') !== false) {
+        $codecInfoString .= 'y ';
     }
 
-    $subrep_codecs = array();
-    foreach ($rep->childNodes as $ch) {
-        if ($ch->nodeName == 'SubRepresentation') {
-            $subrep_codecs[] = $ch->getAttribute('codecs');
-            if (strpos($ch->getAttribute('codecs'), 'stpp') !== false) {
-                $str_codec_info .= 'y ';
-            }
-
-            ##Information from this part is for Section 11.3.0: audio stream bandwidth percentage
-            if (in_array($ch->getAttribute('contentComponent'), $ids)) {
-                $subtitle_bw[] = ($rep->getAttribute('bandwidth') != '') ? (float)($rep->getAttribute('bandwidth')) : (float)($ch->getAttribute('bandwidth'));
-            }
-            ##
+    $subRepresentationCodecs = array();
+    $subRepresentations = $representation->getElementsByTagName("SubRepresentation");
+    foreach ($subRepresentations as $subRepresentation) {
+        $subRepresentationCodec = $subRepresentation->getAttribute('codec');
+        $subRepresentationCodecs[] = $subRepresentationCodec;
+        if (strpos($subRepresentationCodec, 'stpp') !== false) {
+            $codecInfoString .= 'y ';
+        }
+        if (in_array($subRepresentation->getAttribute('contentComponent'), $ids)) {
+            $this->subtitleBandwidth[] = (float)($representation->getAttribute('bandwidth') != '' ?
+            $representation->getAttribute('bandwidth') :
+            $subRepresentation->getAttribute('bandwidth'));
         }
     }
 
-    ## Information from this part is for Section 7.1: subtitle carriage
-    if ($adapt_mimeType == 'application/mp4' || $rep->getAttribute('mimeType') == 'application/mp4') {
-        if (strpos($adapt_codecs, 'stpp') !== false || strpos($rep_codecs, 'stpp') !== false || in_array('stpp', $subrep_codecs) !== false) {
+    if ($adaptationMimeType == 'application/mp4' || $representation->getAttribute('mimeType') == 'application/mp4') {
+        if (
+            strpos($adaptationCodecs, 'stpp') !== false ||
+            strpos($representation->getAttribute('codecs'), 'stpp') !== false ||
+            in_array('stpp', $subRepresentationCodecs) !== false
+        ) {
             $subtitle = true;
 
-            if (($adapt_type != '' && $adapt_type != 'text') && !in_array('text', $contentComp_type)) {
-                fwrite($mpdreport, "###'DVB check violated: Section 7.1.1- The @contetnType attribute indicated for subtitles SHALL be \"text\"', found as " . $adapt->getAttribute('contentType') . " in Period $period_count Adaptation Set " . ($i + 1) . " Representation " . ($j + 1) . ".\n");
-            }
 
-            if ($adapt->getAttribute('lang') == '') {
-                fwrite($mpdreport, "###'DVB check violated: Section 7.1.2- In oder to allow a Player to identify the primary purpose of a subtitle track, the language attribute SHALL be set on the Adaptation Set', not found on Adaptaion Set " . ($i + 1) . ".\n");
-            }
+            $logger->test(
+                "HbbTV-DVB DASH Validation Requirements",
+                "DVB: Section 7.1.1",
+                "The @contentType attribute indicated for subtitles SHALL be \"text\"",
+                $adaptationContentType == "text" || in_array("text", $contentComponentTypes),
+                "FAIL",
+                "Valid contentType found in $this->periodCount, Representation $representationIndex",
+                "Invalid contentType found in $this->periodCount, Representation $representationIndex"
+            );
+            $logger->test(
+                "HbbTV-DVB DASH Validation Requirements",
+                "DVB: Section 7.1.2",
+                "In oder to allow a Player to identify the primary purpose of a subtitle track, " .
+                "the language attribute SHALL be set on the Adaptation Set",
+                $adaptation->getAttribute('lang') != '',
+                "FAIL",
+                "language attribute found in $this->periodCount, Representation $representationIndex",
+                "language attribute not found in $this->periodCount, Representation $representationIndex"
+            );
         }
+        $logger->test(
+            "HbbTV-DVB DASH Validation Requirements",
+            "DVB: Section 7.1.1",
+            "The @codecs attribute indicated for subtitles SHALL be \"stpp\"",
+            $codecInfoString != '',
+            "FAIL",
+            "\"stpp\" found for $this->periodCount, Representation $representationIndex",
+            "\"stpp\" not found for $this->periodCount, Representation $representationIndex"
+        );
 
-        // Check if subtitle codec attribute is set correctly
-        if ($str_codec_info == '') {
-            fwrite($mpdreport, "###'DVB check violated: Section 7.1.1- The @codecs attribute indicated for subtitles SHALL be \"stpp\"', not used for in Period $period_count Adaptation Set " . ($i + 1) . " Representation " . ($j + 1) . ".\n");
+        if (!$hasContentComponent) {
+            $this->subtitleBandwidth[] = (float)($rep->getAttribute('bandwidth'));
         }
-
-        ##Information from this part is for Section 11.3.0: audio stream bandwidth percentage
-        if (! $contentComp) {
-            $subtitle_bw[] = (float)($rep->getAttribute('bandwidth'));
-        }
-        ##
     }
-    ##
 }
 
     ## Information from this part is for Section 7.2: downloadable fonts and descriptors needed for them
 if ($subtitle) {
-    if ($supp_present) {
+    if ($hasSupplementalProperties) {
         $x = 0;
-        foreach ($supp_scheme as $supp_scheme_i) {
-            if ($supp_scheme_i == 'urn:dvb:dash:fontdownload:2014') {
-                if ($supp_val[$x] != '1') {
-                    fwrite($mpdreport, "###'DVB check violated: Section 7.2.1.1- This descriptor (SupplementalProperty for downloadable fonts) SHALL use the values for @schemeIdUri and @value specified in clause 7.2.1.2', found as \"$supp_scheme_i\" and \"" . $supp_val[$x] . "\" in Period $period_count Adaptation Set " . ($i + 1) . ".\n");
-                }
-                if ($supp_url[$x] == '' || $supp_fontFam[$x] == '' || ($supp_mime[$x] != 'application/font-sfnt' && $supp_mime[$x] != 'application/font-woff')) {
-                    fwrite($mpdreport, "###'DVB check violated: Section 7.2.1.1- The descriptor (SupplementalProperty for downloadable fonts) SHALL carry all the mandatory additional attributes defined in clause 7.2.1.3', not complete in Period $period_count Adaptation Set " . ($i + 1) . ".\n");
-                }
+        foreach ($supplementalSchemes as $scheme) {
+            if ($scheme == 'urn:dvb:dash:fontdownload:2014') {
+                $logger->test(
+                    "HbbTV-DVB DASH Validation Requirements",
+                    "DVB: Section 7.2.1.1",
+                    "This descriptor (SupplementalProperty for downloadable fonts) SHALL use the values for " .
+                    "@schemeIdUri and @value specified in clause 7.2.1.2",
+                    $supplementalValues[$x] == '1',
+                    "FAIL",
+                    "Valid configuration found in $this->periodCount, supplemental property " . $x + 1,
+                    "Invalid configuration found in $this->periodCount, supplemental property " . $x + 1
+                );
+                $logger->test(
+                    "HbbTV-DVB DASH Validation Requirements",
+                    "DVB: Section 7.2.1.1",
+                    "The descriptor (SupplementalProperty for downloadable fonts) SHALL carry all the mandatory " .
+                    "additional attributes defined in clause 7.2.1.3",
+                    $supplementalUrls[$x] != '' && $supplementalFontFamilies[$x] != '' &&
+                    ($supplementalMimeTypes[$x] == 'application/font-sfnt' ||
+                     $supplementalMimeTypes[$x] == 'application/font-woff'),
+                    "FAIL",
+                    "Valid configuration found in $this->periodCount, supplemental property " . $x + 1,
+                    "Invalid configuration found in $this->periodCount, supplemental property " . $x + 1
+                );
             }
             $x++;
         }
-    } elseif ($ess_present) {
+        ///\Discussion Why are these exclusive?
+    } elseif ($hasEssentialProperties) {
         $x = 0;
-        foreach ($ess_scheme as $ess_scheme_i) {
-            if ($ess_scheme_i == 'urn:dvb:dash:fontdownload:2014') {
-                if ($ess_val[$x] != '1') {
-                    fwrite($mpdreport, "###'DVB check violated: Section 7.2.1.1- This descriptor (EssentialProperty for downloadable fonts) SHALL use the values for @schemeIdUri and @value specified in clause 7.2.1.2', found as \"$ess_scheme_i\" and \"" . $ess_val[$x] . "\" in Period $period_count Adaptation Set " . ($i + 1) . ".\n");
-                }
-                if ($ess_url[$x] == '' || $ess_fontFam[$x] == '' || ($ess_mime[$x] != 'application/font-sfnt' && $ess_mime[$x] != 'application/font-woff')) {
-                    fwrite($mpdreport, "###'DVB check violated: Section 7.2.1.1- The descriptor (EssentialProperty for downloadable fonts) SHALL carry all the mandatory additional attributes defined in clause 7.2.1.3', not complete in Period $period_count Adaptation Set " . ($i + 1) . ".\n");
-                }
+        foreach ($essentialSchemes as $scheme) {
+            if ($scheme == 'urn:dvb:dash:fontdownload:2014') {
+                $logger->test(
+                    "HbbTV-DVB DASH Validation Requirements",
+                    "DVB: Section 7.2.1.1",
+                    "This descriptor (EssentialProperty for downloadable fonts) SHALL use the values for " .
+                    "@schemeIdUri and @value specified in clause 7.2.1.2",
+                    $essentialValues[$x] == '1',
+                    "FAIL",
+                    "Valid configuration found in $this->periodCount, essential property " . $x + 1,
+                    "Invalid configuration found in $this->periodCount, essential property " . $x + 1
+                );
+                $logger->test(
+                    "HbbTV-DVB DASH Validation Requirements",
+                    "DVB: Section 7.2.1.1",
+                    "The descriptor (EssentialProperty for downloadable fonts) SHALL carry all the mandatory " .
+                    "additional attributes defined in clause 7.2.1.3",
+                    $essentialUrls[$x] != '' && $essentialFontFamilies[$x] != '' &&
+                    ($essentialMimeTypes[$x] == 'application/font-sfnt' ||
+                     $essentialMimeTypes[$x] == 'application/font-woff'),
+                    "FAIL",
+                    "Valid configuration found in $this->periodCount, essential property " . $x + 1,
+                    "Invalid configuration found in $this->periodCount, essential property " . $x + 1
+                );
             }
             $x++;
         }
     }
+}
 }
     ##

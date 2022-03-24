@@ -10,6 +10,8 @@ class ModuleHbbTVDVB extends ModuleInterface
         $this->name = "HbbTV_DVB";
 
         $this->periodCount = 0;
+        $this->hohSubtitleLanguages = array();
+        $this->subtitleBandwidth = array();
 
         $this->HbbTvEnabled = false;
         $this->DVBEnabled = false;

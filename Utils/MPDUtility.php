@@ -26,7 +26,7 @@ function inString($option, $string)
 function inStringAtLeastOne($options, $string)
 {
     foreach ($options as $option) {
-        if (inString($option, $string){
+        if (inString($option, $string)) {
             return true;
         }
     }
