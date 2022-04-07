@@ -329,3 +329,26 @@ function compute_timerange($timeRange)
 
     return [$t_start, $t_end];
 }
+
+function checkYearMonth($str)
+{
+    $y = str_replace("P", "", $str);
+
+    if (strpos($y, 'Y') !== false) { // Year
+        $Y = explode("Y", $y);
+
+        $y = substr($y, strpos($y, 'Y') + 1);
+    } else {
+        $Y[0] = 0;
+    }
+
+    if (strpos($y, 'M') !== false && strpos($y, 'M') < strpos($y, 'T')) { // Month
+        $Mo = explode("M", $y);
+        $y = substr($y, strpos($y, 'M') + 1);
+    }
+
+    $duration = ($Y[0] * 365 * 24 * 60 * 60) +
+                ($Mo[0] * 30 * 24 * 60 * 60);
+
+    return ($duration > 0);
+}

@@ -30,7 +30,31 @@ class ModuleDASHInteroperability extends ModuleInterface
     public function hookMPD()
     {
         parent::hookMPD();
-        return IOP_ValidateMPD();
+        $this->validateMPD();
+    }
+
+    private function validateMPD()
+    {
+        include 'impl/validateMPD.php';
+    }
+
+    private function validateMPDCommon()
+    {
+        include 'impl/validateMPDCommon.php';
+    }
+
+    private function validateMPDOnDemand()
+    {
+        include 'impl/validateMPDOnDemand.php';
+    }
+    private function validateMPDLiveOnDemand()
+    {
+        include 'impl/validateMPDLiveOnDemand.php';
+    }
+
+    private function validateMPDMixedOnDemand()
+    {
+        include 'impl/validateMPDMixedOnDemand.php';
     }
 
     public function hookRepresentation()
