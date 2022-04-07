@@ -123,7 +123,6 @@ $profileExists = ($containsDVBDash && $containsExtension);
 
 $this->checkDVBValidRelative();
 
-$mpdreport = "./placeholder.txt";
 ## Verifying the DVB Metric reporting mechanism according to Section 10.12.3
 $this->dvbMetricReporting();
 
@@ -399,12 +398,11 @@ foreach ($mpd_dom->childNodes as $node) {
     }
 
     if ($hasVideoService) {
-      $this->streamBandwithCheck();
+        $this->streamBandwithCheck();
     }
 
     if ($audioAdaptations->length > 1) {
-      ///\todo enable this check
-      //      FallbackOperationCheck($audio_adapts, $mpdreport);
+        $this->fallbackOperationChecks($audioAdaptations);
     }
 
       ///\todo enable this check
@@ -443,8 +441,7 @@ $logger->test(
 );
 
 
-///\todo enable this check
-//DVB_associated_adaptation_sets_check($mpdreport);
+$this->dvbAssociatedAdaptationSetsCheck();
 
 $logger->test(
     "HbbTV-DVB DASH Validation Requirements",

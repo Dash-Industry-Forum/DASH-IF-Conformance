@@ -13,7 +13,7 @@ if (strpos($adaptationCodecs, 'stpp') !== false) {
 
 $ids = array();
 $hohAccessibility = false;
-$accesiblities = $adaptation->getElementsByTagName("Accessibility"){
+$accesiblities = $adaptation->getElementsByTagName("Accessibility");
 foreach ($accesiblities as $accessibility) {
     if (
         $accessibility->getAttribute('schemeIdUri') == 'urn:tva:metadata:cs:AudioPurposeCS:2007' &&
@@ -25,7 +25,7 @@ foreach ($accesiblities as $accessibility) {
 
 $hohRole = false;
 
-$roles = $adaptation->getElementsByTagName("Role"){
+$roles = $adaptation->getElementsByTagName("Role");
 foreach ($roles as $role) {
     if ($role->getAttribute('schemeIdUri') == 'urn:mpeg:dash:role:2011' && $role->getAttribute('value') == 'main') {
         $hohRole = true;
@@ -57,13 +57,13 @@ $supplementalMimeTypes = array();
 foreach ($supplementalProperties as $property) {
     $supplementalSchemes[] = $property->getAttribute('schemeIdUri');
     $supplementalValues[] = $property->getAttribute('value');
-    $supplementalUrls[] = ($property->getAttribute('dvb:url') != '') ?
+    $supplementalUrls[] = (($property->getAttribute('dvb:url') != '') ?
       $property->getAttribute('dvb:url') :
       $property->getAttribute('url'));
-    $supplementalFontFamilies[] = ($property->getAttribute('dvb:fontFamily') != '') ?
+    $supplementalFontFamilies[] = (($property->getAttribute('dvb:fontFamily') != '') ?
       $property->getAttribute('dvb:fontFamily') :
-      $property->getAttribute('fontFamily'))[;
-    $supplementalMimeTypes[] = ($property->getAttribute('dvb:mimeType') != '') ?
+      $property->getAttribute('fontFamily'));
+    $supplementalMimeTypes[] = (($property->getAttribute('dvb:mimeType') != '') ?
       $property->getAttribute('dvb:mimeType') :
       $property->getAttribute('mimeType'));
 }
@@ -80,13 +80,13 @@ $essentialMimeTypes = array();
 foreach ($essentialProperties as $property) {
     $essentialSchemes[] = $property->getAttribute('schemeIdUri');
     $essentialValues[] = $property->getAttribute('value');
-    $essentialUrls[] = ($property->getAttribute('dvb:url') != '') ?
+    $essentialUrls[] = (($property->getAttribute('dvb:url') != '') ?
       $property->getAttribute('dvb:url') :
       $property->getAttribute('url'));
-    $essentialFontFamilies[] = ($property->getAttribute('dvb:fontFamily') != '') ?
+    $essentialFontFamilies[] = (($property->getAttribute('dvb:fontFamily') != '') ?
       $property->getAttribute('dvb:fontFamily') :
-      $property->getAttribute('fontFamily'))[;
-    $essentialMimeTypes[] = ($property->getAttribute('dvb:mimeType') != '') ?
+      $property->getAttribute('fontFamily'));
+    $essentialMimeTypes[] = (($property->getAttribute('dvb:mimeType') != '') ?
       $property->getAttribute('dvb:mimeType') :
       $property->getAttribute('mimeType'));
 }
@@ -228,5 +228,3 @@ if ($subtitle) {
         }
     }
 }
-}
-    ##
