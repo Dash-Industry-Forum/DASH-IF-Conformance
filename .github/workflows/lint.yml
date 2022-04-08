@@ -3,19 +3,23 @@ name: lint
 on:
   push:
     branches:
-      - development
+      - 'development'
   pull_request:
     branches:
-      - development
+      - 'development'
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      -
+        name: Checkout out repository
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0 # need full history to get list of changed files
-      - uses: github/super-linter/slim@v4
+      -
+        name: Lint code
+        uses: github/super-linter/slim@v4
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: development
