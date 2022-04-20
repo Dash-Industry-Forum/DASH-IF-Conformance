@@ -27,3 +27,4 @@ jobs:
           VALIDATE_PHP_BUILTIN: false
           VALIDATE_PHP_PHPSTAN: false
           VALIDATE_PHP_PSALM: false
+          FILTER_REGEX_EXCLUDE: .*.github/.*
