@@ -35,11 +35,11 @@ jobs:
           command: |
             docker stop $(docker ps -aq --filter "name=staging")
             docker rm $(docker ps -aq --filter "name=staging")
-            docker image rm ghcr.io/${{ github.repository }}:latest
+            docker image rm ghcr.io/${{ env.REPOSITORY_LC }}:latest
             export CR_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
             echo $CR_GITHUB_TOKEN | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-            docker pull ghcr.io/${{ github.repository }}:latest
-            docker run --name staging -d -p 8000:80 --restart unless-stopped ghcr.io/${{ github.repository }}:latest
+            docker pull ghcr.io/${{ env.REPOSITORY_LC }}:latest
+            docker run --name staging -d -p 8000:80 --restart unless-stopped ghcr.io/${{ env.REPOSITORY_LC }}:latest
           host: ${{ secrets.HOST }}
           user: ${{ secrets.USER }}
           key: ${{ secrets.PRIVATE_KEY}}
