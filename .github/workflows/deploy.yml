@@ -8,28 +8,28 @@ on:
     branches:
       - 'development'
     types:
-    - 'closed'
+      - 'closed'
 
 jobs:
   deploy_staging:
     if: github.event_name == 'push' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Login to GitHub Container Registry
+      - name: Docker Image Identifiers
+        run: |
+          echo REPOSITORY_LC=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      -
-        name: Build and push
+      - name: Build and push
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
-      -
-        name: Login to production server and deploy for staging
+          tags: ghcr.io/${{ env.REPOSITORY_LC }}:latest
+      - name: Login to production server and deploy for staging
         uses: fifsky/ssh-action@master
         with:
           command: |
