@@ -1,0 +1,27 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+    branches:
+      - 'master'
+    types:
+      - 'closed'
+
+jobs:
+  deploy_staging:
+    if: github.event_name == 'push' || github.event.pull_request.merged == true
+    uses: ./.github/workflows/deploy.yml
+    with:
+      envname: beta
+      docker_tag: main
+      docker_port: 8001
+    secrets:
+      host: ${{secrets.HOST}}
+      user: ${{secrets.USER}}
+      private_key: ${{secrets.PRIVATE_KEY}}
+
+
+
