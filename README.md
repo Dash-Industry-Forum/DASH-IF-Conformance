@@ -2,6 +2,12 @@
 
 This repository provides the source code for MPEG-DASH/DASH-IF Conformance Software/Validator. It has been extended according to further standards, such as CMAF, DVB-DASH, HbbTV, and CTA WAVE.
 
+## News
+To stay up to date about latest changes, new release candidates and new releases please join our Google Group and our Slack channel:
+
+* Google group: https://groups.google.com/g/joint-conformance-software-project-jccp
+* Slack invitation: https://join.slack.com/t/dashif/shared_invite/zt-egme869x-JH~UPUuLoKJB26fw7wj3Gg . Join the #jccp channel to stay up to date.
+
 ### Installation
 
 For the complete installation including dependencies etc, please refer to [Installation guide]( https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Installation--guide).
