@@ -6,7 +6,7 @@ This repository provides the source code for MPEG-DASH/DASH-IF Conformance Softw
 To stay up to date about latest changes, new release candidates and new releases please join our Google Group and our Slack channel:
 
 * Google group: https://groups.google.com/g/joint-conformance-software-project-jccp
-* Slack invitation: https://join.slack.com/t/dashif/shared_invite/zt-egme869x-JH~UPUuLoKJB26fw7wj3Gg . Joint the #jccp channel to stay up to date.
+* Slack invitation: https://join.slack.com/t/dashif/shared_invite/zt-egme869x-JH~UPUuLoKJB26fw7wj3Gg . Join the #jccp channel to stay up to date.
 
 ### Installation
 
