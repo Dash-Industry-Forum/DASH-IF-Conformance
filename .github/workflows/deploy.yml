@@ -36,13 +36,13 @@ jobs:
         uses: fifsky/ssh-action@master
         with:
           command: |
-            docker stop $(docker ps -aq --filter "name=${{envname}}")
-            docker rm $(docker ps -aq --filter "name=${{envname}}")
+            docker stop $(docker ps -aq --filter "name=${{inputs.envname}}")
+            docker rm $(docker ps -aq --filter "name=${{inputs.envname}}")
             docker image rm ghcr.io/${{ env.REPOSITORY_LC }}:latest
             export CR_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
             echo $CR_GITHUB_TOKEN | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
             docker pull ghcr.io/${{ env.REPOSITORY_LC }}:latest
-            docker run --name ${{envname}} -d -p 8000:80 --restart unless-stopped ghcr.io/${{ env.REPOSITORY_LC }}:latest
+            docker run --name ${{inputs.envname}} -d -p 8000:80 --restart unless-stopped ghcr.io/${{ env.REPOSITORY_LC }}:latest
           host: ${{ secrets.host }}
           user: ${{ secrets.user }}
           key: ${{ secrets.private_key }}
