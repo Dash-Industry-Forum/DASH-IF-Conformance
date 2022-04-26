@@ -6,6 +6,12 @@ on:
       envname:
         required: true
         type: string
+      docker_tag:
+        required: true
+        type: string
+      docker_port:
+        required: true
+        type: number
     secrets:
       host:
         required: true
@@ -31,18 +37,18 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ghcr.io/${{ env.REPOSITORY_LC }}:latest
+          tags: ghcr.io/${{ env.REPOSITORY_LC }}:${{inputs.docker_tag}}
       - name: Login to production server and deploy
         uses: fifsky/ssh-action@master
         with:
           command: |
             docker stop $(docker ps -aq --filter "name=${{inputs.envname}}")
             docker rm $(docker ps -aq --filter "name=${{inputs.envname}}")
-            docker image rm ghcr.io/${{ env.REPOSITORY_LC }}:latest
+            docker image rm ghcr.io/${{ env.REPOSITORY_LC }}:${{inputs.docker_tag}}
             export CR_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
             echo $CR_GITHUB_TOKEN | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
-            docker pull ghcr.io/${{ env.REPOSITORY_LC }}:latest
-            docker run --name ${{inputs.envname}} -d -p 8000:80 --restart unless-stopped ghcr.io/${{ env.REPOSITORY_LC }}:latest
+            docker pull ghcr.io/${{ env.REPOSITORY_LC }}:${{inputs.docker_tag}}
+            docker run --name ${{inputs.envname}} -d -p ${{inputs.docker_port}}:80 --restart unless-stopped ghcr.io/${{ env.REPOSITORY_LC }}:${{inputs.docker_tag}}
           host: ${{ secrets.host }}
           user: ${{ secrets.user }}
           key: ${{ secrets.private_key }}
