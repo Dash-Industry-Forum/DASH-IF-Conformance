@@ -16,12 +16,10 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       envname: staging
-      repository_owner: ${{ github.repository_owner }}
     secrets:
       host: ${{secrets.HOST}}
       user: ${{secrets.USER}}
       private_key: ${{secrets.PRIVATE_KEY}}
-      github_token: ${{ secrets.GITHUB_TOKEN }}
 
 
 
