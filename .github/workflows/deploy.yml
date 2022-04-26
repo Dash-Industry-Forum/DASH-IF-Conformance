@@ -39,7 +39,7 @@ jobs:
           push: true
           tags: ghcr.io/${{ env.REPOSITORY_LC }}:${{inputs.docker_tag}}
       - name: Login to production server and deploy
-        uses: fifsky/ssh-action@master
+        uses: fifsky/ssh-action@v0.0.6
         with:
           command: |
             docker stop $(docker ps -aq --filter "name=${{inputs.envname}}")
