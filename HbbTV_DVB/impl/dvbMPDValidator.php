@@ -82,8 +82,9 @@ $logger->test(
     $minimumUpdateWarning == false,
     "WARN",
     "Check succeeded",
-    "Check failed",
+    "Check failed"
 );
+
 
 $logger->test(
     "HbbTV-DVB DASH Validation Requirements",
@@ -95,7 +96,7 @@ $logger->test(
     ),
     "FAIL",
     "Check succeeded",
-    "Check failed",
+    "Check failed"
 );
 
 

@@ -88,7 +88,7 @@ $logger->test(
     "HbbTV-DVB DASH Validation Requirements",
     "HbbTV: Section 'MPD'",
     "The MPD must not contain an XML Document Type Definition(<!DOCTYPE>)",
-    $docType === null .
+    $docType === null,
     "FAIL",
     "No Doctype found",
     "Doctype found",

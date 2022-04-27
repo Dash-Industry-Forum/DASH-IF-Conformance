@@ -218,12 +218,12 @@ function compute_timerange($timeRange)
                     $t += ($val_vals[0] * pow(60, $p) + ($val_vals[1] / 10) * pow(60, $p));
 
                     $val0_converted = (string) (int) $val_vals[0];
-                    $val0_valid = (($val0_converted === $val_vals[0]) || ( '0' . $val0_converted) === $val_vals[0]) &&
-                      ($val_vals[0] <= PHP_INT_MAX) && ($val_vals[0] >= ~PHP_INT_MAX);
+                    $val0_valid = (($val0_converted === $val_vals[0]) || (( '0' . $val0_converted) === $val_vals[0]) &&
+                      ($val_vals[0] <= PHP_INT_MAX) && ($val_vals[0] >= ~PHP_INT_MAX));
 
                     $val1_converted = (string) (int) $val_vals[1];
-                    $val1_valid = (($val1_converted === $val_vals[1]) || (( '0' . $val1_converted === $val_vals[1])) &&
-                      ($val_vals[1] <= PHP_INT_MAX) && ($val_vals[1] >= ~PHP_INT_MAX);
+                    $val1_valid = (($val1_converted === $val_vals[1]) || (( '0' . $val1_converted) === $val_vals[1]) &&
+                      ($val_vals[1] <= PHP_INT_MAX) && ($val_vals[1] >= ~PHP_INT_MAX));
 
                     $logger->test(
                         "HbbTV-DVB DASH Validation Requirements",
@@ -280,7 +280,7 @@ function compute_timerange($timeRange)
 
             $val1_converted = (string) (int) $val_vals[1];
             $val1_valid = (($val1_converted === $val_vals[1]) || (( '0' . $val1_converted === $val_vals[1])) &&
-            ($val_vals[1] <= PHP_INT_MAX) && ($val_vals[1] >= ~PHP_INT_MAX);
+            ($val_vals[1] <= PHP_INT_MAX) && ($val_vals[1] >= ~PHP_INT_MAX));
 
             $logger->test(
                 "HbbTV-DVB DASH Validation Requirements",

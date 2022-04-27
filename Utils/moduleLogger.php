@@ -42,7 +42,7 @@ class ModuleLogger
         if (!array_key_exists('test', $this->entries[$this->currentModule][$this->currentHook])) {
             return 0;
         }
-        return sizeof($this->entries[$this->currentModule][$this->currentHook]['test'])
+        return sizeof($this->entries[$this->currentModule][$this->currentHook]['test']);
     }
 
     public function setSource($sourceName)
