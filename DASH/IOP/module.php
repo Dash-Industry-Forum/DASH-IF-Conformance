@@ -2,8 +2,6 @@
 
 namespace DASHIF;
 
-  include_once 'IOP_Initialization.php';
-
 class ModuleDASHInteroperability extends ModuleInterface
 {
     public function __construct()
@@ -25,7 +23,6 @@ class ModuleDASHInteroperability extends ModuleInterface
             $this->enabled = true;
         }
     }
-
 
     public function hookMPD()
     {
@@ -59,12 +56,37 @@ class ModuleDASHInteroperability extends ModuleInterface
 
     public function hookRepresentation()
     {
-        return IOP_ValidateSegment();
+        $this->validateSegment();
+    }
+
+    private function validateSegment()
+    {
+        include 'impl/validateSegment.php';
+    }
+
+    private function validateSegmentCommon($xml)
+    {
+        include 'impl/validateSegmentCommon.php';
+    }
+
+    private function validateSegmentOnDemand($xml)
+    {
+        include 'impl/validateSegmentOnDemand.php';
     }
 
     public function hookAdaptationSet()
     {
-        return IOP_ValidateCross();
+        $this->validateCross();
+    }
+
+    private function validateCross()
+    {
+        include 'impl/validateCross.php';
+    }
+
+    private function validateCrossAvcHevc($adaptationSet, $adaptationSetId)
+    {
+        include 'impl/validateCrossAvcHevc.php';
     }
 }
 

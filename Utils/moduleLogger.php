@@ -30,6 +30,21 @@ class ModuleLogger
         $this->currentTest = null;
     }
 
+    public function testCountCurrentHook()
+    {
+
+        if (!array_key_exists($this->currentModule, $this->entries)) {
+            return 0;
+        }
+        if (!array_key_exists($this->currentHook, $this->entries[$this->currentModule])) {
+            return 0;
+        }
+        if (!array_key_exists('test', $this->entries[$this->currentModule][$this->currentHook])) {
+            return 0;
+        }
+        return sizeof($this->entries[$this->currentModule][$this->currentHook]['test'])
+    }
+
     public function setSource($sourceName)
     {
         $this->streamSource = $sourceName;
@@ -50,8 +65,10 @@ class ModuleLogger
     {
         if ($check) {
             $this->addTestResult($spec, $section, $test, $msg_succ, "PASS");
+            return true;
         } else {
             $this->addTestResult($spec, $section, $test, $msg_fail, $fail_type);
+            return false;
         }
     }
 
@@ -212,8 +229,8 @@ class ModuleLogger
         $result['source'] = $this->streamSource;
         $result['entries'] = $this->entries;
         $result['verdict'] = "PASS";
-        if (array_key_exists("verdict", $this->entries)){
-          $result['verdict'] = $this->entries['verdict'];
+        if (array_key_exists("verdict", $this->entries)) {
+            $result['verdict'] = $this->entries['verdict'];
         }
 
         $result['enabled_modules'] = array();
