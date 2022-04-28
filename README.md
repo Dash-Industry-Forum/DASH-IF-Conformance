@@ -8,7 +8,7 @@ To stay up to date about latest changes, new release candidates and new releases
 * Google group: https://groups.google.com/g/joint-conformance-software-project-jccp
 * Slack invitation: https://join.slack.com/t/dashif/shared_invite/zt-egme869x-JH~UPUuLoKJB26fw7wj3Gg . Join the #jccp channel to stay up to date.
 
-### Installation
+## Installation
 
 For the complete installation including dependencies etc, please refer to [Installation guide]( https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Installation--guide).
 
@@ -16,22 +16,22 @@ To clone the IntegratedConformance, use the command,
 
 `git clone https://github.com/Dash-Industry-Forum/DASH-IF-Conformance`
 
-### Development
+## Development
 
 We very much appreciate all your code contributions to the project. To be compliant with our development guidelines please checkout the [development principles](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Development-principles) and also the [relase procedure](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Release-Procedure).
 
-### Usage Guide
+## Usage Guide
 
 Information on how to use the conformance software, please refer to our [Usage Guide](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Usage-guide) document.
 
-### CLI
+## CLI
 
 A preliminary CLI has been added to the project, which can be run from the `Utils` directory, see the `Utils/Process_cli.php` script. At this point in time it requires the `Conformance-Frontend/temp/` directory to be created manually, for storing temporary files.
 
-### Detailed Information
+## Detailed Information
 
 For the framework of the conformance software and how the general conformance testing process works, please refer to the [DASH-IF-Conformance document](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/blob/master/Doc/Conformance%20Software.pdf).
 
-### Issue Reporting
+## Issue Reporting
 
 Issues can be reported on this repository. 
