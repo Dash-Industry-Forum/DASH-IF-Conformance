@@ -3,7 +3,7 @@ name: Doxygen
 on:
   push:
     branches:
-      - 'feature/doxygen-generation'
+      - 'development'
 
 jobs:
 
