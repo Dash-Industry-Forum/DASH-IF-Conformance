@@ -32,7 +32,6 @@ class ModuleLogger
 
     public function testCountCurrentHook()
     {
-
         if (!array_key_exists($this->currentModule, $this->entries)) {
             return 0;
         }
@@ -225,6 +224,10 @@ class ModuleLogger
 
     public function asJSON()
     {
+      return json_encode($this->asArray());
+    }
+
+    public function asArray(){
         $result = array();
         $result['source'] = $this->streamSource;
         $result['entries'] = $this->entries;
@@ -243,7 +246,7 @@ class ModuleLogger
             }
         }
 
-        return json_encode($result);
+        return $result;
     }
 }
 
