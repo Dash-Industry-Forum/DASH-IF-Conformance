@@ -2,5 +2,11 @@ Conformance-Frontend/visitorLogs/*.txt
 Conformance-Frontend/temp
 *.log
 *log*.txt
+out.txt
+temp.txt
 vendor/*
 html-log/*
+
+# editor, os, ...
+.DS_Store
+.vscode/

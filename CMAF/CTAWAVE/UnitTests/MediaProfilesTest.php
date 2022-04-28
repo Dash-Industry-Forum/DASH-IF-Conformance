@@ -14,11 +14,11 @@
  */
 
 declare(strict_types=1);
-require_once '../CTAWAVE_SelectionSet.php';
+require_once __DIR__.'/../CTAWAVE_SelectionSet.php';
 
 use PHPUnit\Framework\TestCase;
 
-final class MediaProfileTest extends TestCase
+final class MediaProfilesTest extends TestCase
 {
 
     public function testAVCMediaProfile()
