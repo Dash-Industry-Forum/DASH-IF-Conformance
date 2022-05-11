@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Invalid URL",
+    "labels": ["Utility"],
+    "url": "this_is_invalid",
+    "expect": false
+  },
+  {
+    "labels": ["Utility"],
+    "url": "http://invalid.test/nonexistent.mpd",
+    "name": "Invalid URL 2",
+    "expect": false
+  },
+  {
+    "name": "CMAF Only",
+    "labels": ["CMAF"],
+    "expect": true,
+    "url": "some_cmaf_url"
+  },
+  {
+    "name": "Valid URL",
+    "labels": ["Utility"],
+    "expect": true,
+    "url": "some_url"
+  }
+]
