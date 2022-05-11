@@ -181,7 +181,7 @@ function old_sessions_delete(){
  * @output: NA
  */
 function session_close(){
-    //session_destroy();
+    session_destroy();
 }
 
 /*
