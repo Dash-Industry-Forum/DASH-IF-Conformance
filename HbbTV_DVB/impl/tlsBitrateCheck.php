@@ -22,10 +22,6 @@ if (strpos($base_url, 'https') !== false) {
     $usesTLS = false;
 }
 
-///\todo remove!!
-$usesTLS = true;
-
-
 //If TLS is not used, skip the remainder of this function
 if (!$usesTLS) {
     return;
@@ -63,15 +59,14 @@ foreach ($mpd_dom->getElementsByTagName('Period') as $period) {
         }
     }
 
-    ///\todo remove!
     if (count($videoBandwidths) == 0) {
-        $videoBandwidths['-'] = 0;
+        $videoBandwidths['No video'] = 0;
     }
     if (count($audioBandwidths) == 0) {
-        $audioBandwidths['-'] = 0;
+        $audioBandwidths['No audio'] = 0;
     }
     if (count($subtitleBandwidths) == 0) {
-        $subtitleBandwidths['-'] = 0;
+        $subtitleBandwidths['No Subtitles'] = 0;
     }
 
     foreach ($videoBandwidths as $vRepId => $vRepBandwidth) {

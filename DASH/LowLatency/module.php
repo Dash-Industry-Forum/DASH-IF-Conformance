@@ -11,6 +11,9 @@ class ModuleDASHLowLatency extends ModuleInterface
     {
         parent::__construct();
         $this->name = "DASH-IF Low Latency";
+        $this->maxSegmentDurations = array();
+        $this->firstOption = array();
+        $this->secondOption = array();
     }
 
     protected function addCLIArguments()
@@ -49,8 +52,131 @@ class ModuleDASHLowLatency extends ModuleInterface
 
     public function hookAdaptationSet()
     {
+        /*
+    $maxSegmentDurations = array();
+    $first_option = array();
+    $second_option = array();
+    $presentation_times = array();
+    $decode_times = array();
+         */
         parent::hookAdaptationSet();
         return low_latency_validate_cross();
+    }
+
+    private function validateCross()
+    {
+        include 'impl/validateCross.php';
+    }
+
+    private function validateAdaptationSets()
+    {
+        include 'impl/validateAdaptationSets.php';
+    }
+
+    private function validate9X42($adaptationSet, $adaptationSetId, $isLowLatency)
+    {
+        include 'impl/validate9X42.php';
+    }
+
+    private function validate9X43(
+        $period,
+        $adaptationSet,
+        $adaptationSetId,
+        $infoFileAdaptation,
+        $audioPresent,
+        $adaptationGroupName
+    ) {
+        include 'impl/validate9X43.php';
+    }
+    private function validate9X44(
+        $adaptationSet,
+        $adaptationSetId,
+        $isLowLatency,
+        $segmentAccessInfo,
+        $infoFileAdaptation
+    ) {
+        return include 'impl/validate9X44.php';
+    }
+
+    private function validate9X45(
+        $adaptationSet,
+        $adaptationSetId,
+        $isLowLatency,
+        $segmentAccessInfo,
+        $infoFileAdaptation
+    ) {
+        return include 'impl/validate9X45.php';
+    }
+
+    private function validate9X45Extended($adaptation_set, $adaptationSetId)
+    {
+        return include 'impl/validate9X45Extended.php';
+    }
+
+    private function validateDASHProfileCMAF(
+        $adaptationSet,
+        $adaptationSetId,
+        $segmentAccessInfo,
+        $infoFileAdaptation
+    ) {
+        return include 'impl/validateDASHProfileCMAF.php';
+    }
+
+    private function validateSegmentTemplate(
+        $adaptationSetId,
+        $representationId,
+        $segmentAccessRepresentation,
+        $infoFileAdaptation
+    ) {
+        include 'impl/validateSegmentTemplate.php';
+    }
+
+    private function checkSegment($adaptationSetId, $representationId, $segmentDurations)
+    {
+        return include 'impl/checkSegment.php';
+    }
+
+    private function readInfoFile($adaptationSet, $adaptationSetId)
+    {
+        return include 'impl/readInfoFile.php';
+    }
+    private function validateSelfInitializingSegment(
+        $adaptationSetId,
+        $representationId,
+        $segmentAccessRepresentation,
+        $infoFileAdaptation,
+        $xml
+    ) {
+        include 'impl/validateSelfInitializingSegment.php';
+    }
+
+    private function validateSegmentTimeline(
+        $adaptationSet,
+        $adaptationSetId,
+        $representation,
+        $representationId,
+        $segmentAccessRepresentation,
+        $infoFileAdaptation
+    ) {
+        include 'impl/validateSegmentTimeline.php';
+    }
+
+    private function validateTimingsWithinRepresentation(
+        $adaptationSet,
+        $adaptationSetId,
+        $representationId,
+        $infoFileAdaptation
+    ) {
+        include 'impl/validateTimingsWithinRepresentation.php';
+    }
+
+    private function validateEmsg(
+        $adaptationSet,
+        $adaptationSetId,
+        $representationId,
+        $infoFileAdaptation
+    ) {
+        return include 'impl/validateEmsg.php';
     }
 
 

@@ -39,7 +39,6 @@ global $start_time, $mem, $cpu_avg_load;
  * @output: NA
  */
 function start_visitor_counter(){
-  return;
     global $start_time, $mem, $cpu_avg_load;
     
     $start_time = date('m/d/Y h:i:s a', time());
@@ -64,7 +63,6 @@ function start_visitor_counter(){
  * @output: NA
  */
 function update_visitor_counter(){
-  return;
     global $counter_dir, $counter_file, $counter_write, $start_time, $mem, $cpu_avg_load;
     
     // Find a unique individual visitor log file name for the session
@@ -126,7 +124,6 @@ function getUserIPAddr(){
  * @output: NA
  */
 function writeMPDStatus($mpd){
-  return;
     global $counter_file, $counter_write;
     
     if($counter_write === FALSE)
@@ -169,7 +166,6 @@ function writeMPDStatus($mpd){
  * @output: NA
  */
 function writeProfiles(){
-  return;
     global $counter_file, $counter_write, $mpd_features, $dashif_conformance, $cmaf_conformance, $dvb_conformance, $hbbtv_conformance, $ctawave_conformance;
     
     if($counter_write === FALSE)
@@ -199,7 +195,6 @@ function writeProfiles(){
  * @output: NA
  */
 function writeMPDEndTime(){
-  return;
     global $counter_file, $counter_write;
     
     if($counter_write === FALSE)
@@ -222,7 +217,6 @@ function writeMPDEndTime(){
  * @output: NA
  */
 function writeEndTime($end_time_sec){
-  return;
     global $counter_file, $counter_write;
     
     if($counter_write === FALSE)

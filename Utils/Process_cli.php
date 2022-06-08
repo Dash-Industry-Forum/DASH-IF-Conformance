@@ -67,7 +67,7 @@ $mpd_validation_only = true;
 
 
 //#Cross repo includes. These should be made optional at the very least.
-include '../DASH/MPDProcessing.php';
+include '../DASH/processMPD.php';
 include '../DASH/MPDFeatures.php';
 include '../DASH/MPDValidation.php';
 include '../DASH/MPDInfo.php';

@@ -1,0 +1,226 @@
+{
+  "enabled_modules": [
+    {
+      "name": "MPEG-DASH Common"
+    },
+    {
+      "DVBEnabled": true,
+      "HbbTvEnabled": true,
+      "name": "HbbTV_DVB"
+    },
+    {
+      "name": "DASH-IF Low Latency"
+    },
+    {
+      "name": "DASH-IF IOP Conformance"
+    }
+  ],
+  "entries": {
+    "DASH-IF Low Latency": {
+      "MPD": {
+        "test": [
+          {
+            "messages": [
+              "Identifier not found"
+            ],
+            "section": "Section 9.X.4.1",
+            "spec": "DASH-IF IOP CR Low Latency Live",
+            "state": "WARN",
+            "test": "A Media Presentation that follows a DASH-IF Low-Latency Service Offering according to this specification SHOULD be signalled with the @profiles identifier 'http://www.dashif.org/guidelines/low-latency-live-v5'"
+          },
+          {
+            "messages": [
+              "ServiceDescription not found in MPD",
+              "ServiceDescription not found in MPD nor Period 1"
+            ],
+            "section": "Section 9.X.4.2",
+            "spec": "DASH-IF IOP CR Low Latency Live",
+            "state": "FAIL",
+            "test": "'At least one ServiceDescription element SHALL be present'"
+          },
+          {
+            "messages": [
+              "UTCTiming element not found in MPD"
+            ],
+            "section": "Section 9.X.4.2",
+            "spec": "DASH-IF IOP CR Low Latency Live",
+            "state": "FAIL",
+            "test": "'At least one UTC timing description SHALL be present and be restricted with @schemeIdUri set to one of {urn:mpeg:dash:utc:http-xsdate:2014, urn:mpeg:dash:utc:http-iso:2014, urn:mpeg:dash:utc:http-ntp:2014}'"
+          },
+          {
+            "messages": [
+              "LeapSecondInformation element not found in MPD"
+            ],
+            "section": "Section 9.X.4.2",
+            "spec": "DASH-IF IOP CR Low Latency Live",
+            "state": "WARN",
+            "test": "'Low latency content SHOULD provide a LeapSecondInformation element providing correction for leap seconds'"
+          }
+        ],
+        "verdict": "FAIL"
+      },
+      "verdict": "FAIL"
+    },
+    "HbbTV_DVB": {
+      "BeforeMPD": {
+        "test": [
+          {
+            "messages": [
+              "MPD size of 3575 bytes is within bounds"
+            ],
+            "section": "Section 4.5",
+            "spec": "DVB",
+            "state": "PASS",
+            "test": "The MPD size before xlink resolution SHALL NOT exceed 256 Kbytes"
+          },
+          {
+            "messages": [
+              "1 period(s) found"
+            ],
+            "section": "Section 4.5",
+            "spec": "DVB",
+            "state": "PASS",
+            "test": "The MPD  has a maximum of 64 periods before xlink resolutionsize before xlink resolution"
+          }
+        ]
+      },
+      "MPD": {
+        "test": [
+          {
+            "messages": [
+              "All entries found for profile urn:mpeg:dash:profile:full:2011",
+              "All entries found for profile urn:dvb:dash:profile:dvb-dash:2014"
+            ],
+            "section": "MPD",
+            "spec": "HbbTV-DVB DASH Validation Requirements",
+            "state": "PASS",
+            "test": "??"
+          },
+          {
+            "messages": [
+              "Tool doesn't validate against profile urn:mpeg:dash:profile:full:2011"
+            ],
+            "section": "MPD",
+            "spec": "HbbTV-DVB DASH Validation Requirements",
+            "state": "PASS",
+            "test": "Validated MPD element scopes"
+          },
+          {
+            "messages": [
+              "No onRequest set"
+            ],
+            "section": "DVB: Section 'xlink'",
+            "spec": "HbbTV-DVB DASH Validation Requirements",
+            "state": "PASS",
+            "test": "MPD SHALL NOT have xlink:actuate set to onRequest'"
+          },
+          {
+            "messages": [
+              "Valid 'xlink:href' found"
+            ],
+            "section": "DVB: Section 'xlink'",
+            "spec": "HbbTV-DVB DASH Validation Requirements",
+            "state": "PASS",
+            "test": "Check for valid 'xlink:href'"
+          },
+          {
+            "messages": [
+              "Period 1 (V:1, A:2, S:-) does not exceed bounds: Total: 1.51Mbit/s",
+              "Period 1 (V:3, A:2, S:-) does not exceed bounds: Total: 1.51Mbit/s"
+            ],
+            "section": "HbbTV: Section 'TLS'",
+            "spec": "HbbTV-DVB DASH Validation Requirements",
+            "state": "PASS",
+            "test": "Bitrate checks for terminal that does support UHD HFR video (max 51 Mbit/s)"
+          },
+          {
+            "messages": [
+              "Period 1 (V:1, A:2, S:-) does not exceed bounds: Total: 1.51Mbit/s",
+              "Period 1 (V:3, A:2, S:-) does not exceed bounds: Total: 1.51Mbit/s"
+            ],
+            "section": "HbbTV: Section 'TLS'",
+            "spec": "HbbTV-DVB DASH Validation Requirements",
+            "state": "PASS",
+            "test": "Bitrate checks for terminal that does support UHD video, but not HFR video (max 39 Mbit/s)"
+          },
+          {
+            "messages": [
+              "Period 1 (V:1, A:2, S:-) does not exceed bounds: Total: 1.51Mbit/s",
+              "Period 1 (V:3, A:2, S:-) does not exceed bounds: Total: 1.51Mbit/s"
+            ],
+            "section": "HbbTV: Section 'TLS'",
+            "spec": "HbbTV-DVB DASH Validation Requirements",
+            "state": "PASS",
+            "test": "Bitrate checks for terminal that does not support UHD video (max 12 Mbit/s)"
+          },
+          {
+            "messages": [
+              "MPD size of 3575 bytes is within bounds"
+            ],
+            "section": "Section 4.5",
+            "spec": "DVB",
+            "state": "PASS",
+            "test": "The MPD size after xlink resolution SHALL NOT exceed 256 Kbytes"
+          },
+          {
+            "messages": [
+              "Check succeeded"
+            ],
+            "section": "DVB: Section 'MPD'",
+            "spec": "HbbTV-DVB DASH Validation Requirements",
+            "state": "PASS",
+            "test": "MPD@minimumUpdatePeriod should have a value of 1 second or higher"
+          },
+          {
+            "messages": [
+              "Check failed"
+            ],
+            "section": "DVB: Section E.2.1",
+            "spec": "HbbTV-DVB DASH Validation Requirements",
+            "state": "FAIL",
+            "test": "The MPD SHALL indicate either or both of the following profiles: \"urn:dvb:dash:profile:dvb-dash:2014\" and \"urn:hbbtv:dash:profile:isoff-live:2012\""
+          },
+          {
+            "messages": [
+              "Check failed: Contains clause 4.1: No, contains either 4.2.5 or 4.2.8: No"
+            ],
+            "section": "DVB: Section 11.1",
+            "spec": "HbbTV-DVB DASH Validation Requirements",
+            "state": "WARN",
+            "test": "All Representations that are intended to be decoded and presented by a DVB conformant Player SHOULD be such that they will be inferred to have an @profiles attribute that includes the profile name defined in clause 4.1 as well as either the one defined in 4.2.5 or the one defined in 4.2.8'"
+          }
+        ],
+        "verdict": "FAIL"
+      },
+      "verdict": "FAIL"
+    },
+    "MPEG-DASH Common": {
+      "MPD": {
+        "info": [
+          "Schematron output: 0XLink resolving successful\n\n\nMPD validation successful - DASH is valid!\n\n\nSchematron validation successful - DASH is valid!\n\n\n"
+        ],
+        "test": [
+          {
+            "messages": [
+              "XLink resolving succesful",
+              "MPD validation succesful",
+              "Schematron validation succesful"
+            ],
+            "section": "Commmon",
+            "spec": "MPEG-DASH",
+            "state": "PASS",
+            "test": "Schematron Validation"
+          }
+        ],
+        "verdict": "PASS"
+      },
+      "verdict": "PASS"
+    },
+    "Stats": {
+      "LastWritten": "2022-03-07 11:08:18"
+    },
+    "verdict": "FAIL"
+  },
+  "source": "http://localhost:8000/03_caminandes3_mbr.mpd",
+  "verdict": "FAIL"
+}

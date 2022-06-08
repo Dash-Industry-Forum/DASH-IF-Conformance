@@ -17,8 +17,6 @@
 ini_set('memory_limit', '-1');
 error_reporting(E_ERROR | E_PARSE);
 
-require './moduleInterface.php';
-
 include 'Session.php';         //#Session Functions, No Direct Executable Code
 include 'Load.php';            //#Document loading functions, mostly xml. Some assertion options and error initialization
 include 'FileOperations.php';  //#Filesystem and XML checking functions. No Direct Executable Code.
@@ -28,7 +26,6 @@ include 'PrettyPrint.php';     //#Pretty printing functions for terminal output.
 include 'SegmentDownload.php'; //#Very large function for downloading data. No Direct Executable Code.
 include 'SegmentValidation.php'; //#Segment validation functions. No Direct Executable Code.
 include 'DolbySegmentValidation.php'; //#Dolby validation functions. Attempt at use of objects. No Direct Executable Code.
-
 
 //#Cross repo includes. These should be made optional at the very least.
 include '../DASH/MPDProcessing.php';
@@ -43,28 +40,16 @@ include '../HLS/HLSProcessing.php';
 include '../Conformance-Frontend/Featurelist.php';
 include '../Conformance-Frontend/TabulateResults.php';
 
-include '../CMAF/module.php';
-include '../CMAF/CTAWAVE/module.php';
-include '../HbbTV_DVB/module.php';
-include '../DASH/LowLatency/module.php';
-include '../DASH/IOP/module.php';
-
-
-file_put_contents("moduleLog.txt", var_export($modules, TRUE));
-
 set_time_limit(0);
 ini_set("log_errors", 1);
 ini_set("error_log", "myphp-error.log");
 
-$session_id = (array_key_exists('sessionid', $_POST) ? json_decode($_POST['sessionid']) : array(name=> "test"));
+$session_id = json_decode($_POST['sessionid']);
 session_name($session_id);
 session_start();
 #error_log("session_start:" . session_name());
 
 session_create();
-
-include './moduleLogger.php';
-
 if(!$hls_manifest)
     process_MPD();
 else
