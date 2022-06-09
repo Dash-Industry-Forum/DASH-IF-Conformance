@@ -4,15 +4,9 @@ on:
   push:
     branches:
       - 'development'
-  pull_request:
-    branches:
-      - 'development'
-    types:
-      - 'closed'
 
 jobs:
   deploy_staging:
-    if: github.event_name == 'push' || github.event.pull_request.merged == true
     uses: ./.github/workflows/deploy.yml
     with:
       envname: staging
