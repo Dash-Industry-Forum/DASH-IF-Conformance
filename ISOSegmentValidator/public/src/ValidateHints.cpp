@@ -247,12 +247,12 @@ enum  {
 //==========================================================================================
 
 #define kH264_PayloadName			"H264"
-#define kNAL_STAP_A        24
-#define kNAL_STAP_B        25
-#define kNAL_MTAP16        26
-#define kNAL_MTAP24        27
-#define kNAL_FU_A          28
-#define kNAL_FU_B          29
+#define kNAL_STAP_A		24
+#define kNAL_STAP_B		25
+#define kNAL_MTAP16		26
+#define kNAL_MTAP24		27
+#define kNAL_FU_A		  28
+#define kNAL_FU_B		  29
 
 
 //==========================================================================================
@@ -358,7 +358,7 @@ OSErr Validate_Hint_Track( atomOffsetEntry *aoe, TrackInfoRec *tir )
 	}
 
 	H_ATOM_PRINT_INCR(("<hint_SAMPLE_DATA>\n"));
-    if(!vg.dashSegment)
+	if(!vg.dashSegment)
 		for (i = startSampleNum; i <= endSampleNum; i++) {
 			if ((vg.samplenumber==0) || (vg.samplenumber==(long)i)) {
 				err = GetSampleOffsetSize( tir, i, &sampleOffset, &sampleSize, &sampleDescriptionIndex );
@@ -597,7 +597,7 @@ static OSErr Validate_Data_Entry( HintInfoRec *hir, char *inEntry )
 			}
 			if (hir->constructPacket) {
 				if (hir->packetDataCurrent-hir->packetData + (Ptr)(inEntry[1]) > (Ptr)hir->packetDataMaxLength) {
-					errprint("data entry - immed data length too big %ld", inEntry[1]);
+					errprint("data entry - immediate data length too big %ld", inEntry[1]);
 					err = paramErr;
 					goto bail;
 				}
@@ -665,16 +665,16 @@ static OSErr Validate_Data_Entry( HintInfoRec *hir, char *inEntry )
 					goto bail;
 				}
 
-                if(!vg.dashSegment)
-                {
-                    BAILIFERR( err = get_track_sample(thisTIR, sampleNum, &sampleData, &sampleDataLength, NULL) );
-    				if (offset+length >sampleDataLength) {
-    					errprint("[2] data entry - offset(%d) + length(%d) > samplelength (%d)\n", offset, length, sampleDataLength);
-    					err = paramErr;
-    					goto bail;	
-    				}
-                }
-                
+				if(!vg.dashSegment)
+				{
+					BAILIFERR( err = get_track_sample(thisTIR, sampleNum, &sampleData, &sampleDataLength, NULL) );
+					if (offset+length >sampleDataLength) {
+						errprint("[2] data entry - offset(%d) + length(%d) > samplelength (%d)\n", offset, length, sampleDataLength);
+						err = paramErr;
+						goto bail;	
+					}
+				}
+				
 				if (hir->constructPacket) {
 					if (hir->packetDataCurrent-hir->packetData + (Ptr)length > (Ptr)hir->packetDataMaxLength) {
 						errprint("data entry - packet data too big %ld\n", hir->packetDataCurrent-hir->packetData + length);
@@ -1035,7 +1035,7 @@ OSErr Validate_Movie_SDP( char *inSDP )
 	char		shortSDPLine[kMaxShortSDPLineLength+1];
 	Ptr			longSDPLineP = NULL;
 	
-    current = inSDP;
+	current = inSDP;
 	
 	do  {
 		if (current[0] == '\0') {
@@ -1063,8 +1063,8 @@ OSErr Validate_Movie_SDP( char *inSDP )
 				case 'a':
 					Validate_SDP_Attribute_Line(NULL, sdpLine);
 					break;
-                    
-                case 'b':
+					
+				case 'b':
 					break;
 					
 				case 0:
@@ -1377,10 +1377,10 @@ static OSErr Validate_SDP_Attribute_Line( HintInfoRec *hir, char *inLine )
 		err = Validate_fmtp_attribute(hir, value);
 	} else if (strcmp("rtpmap", tagString) == 0) {
 		err = Validate_rtpmap_attribute(hir, value);
-    } else if (strcmp("mpeg4-iod", tagString) == 0) {
-        err = Validate_iod_attribute(hir, value);
-    } else if (strcmp("isma-compliance", tagString) == 0) {
-        err = Validate_isma_attribute(hir, value);
+	} else if (strcmp("mpeg4-iod", tagString) == 0) {
+		err = Validate_iod_attribute(hir, value);
+	} else if (strcmp("isma-compliance", tagString) == 0) {
+		err = Validate_isma_attribute(hir, value);
 	} else {
 //@@@ warning	
 	}
@@ -1504,18 +1504,18 @@ static OSErr Validate_fmtp_attribute( HintInfoRec *hir, char *inValue)
 				} else paramnext = paramEnd + 1;
 				
 				base64Size = paramEnd - begin;
-			    nalSize = base64Size;	// more than enough, will be adjusted down
-			    BAILIFNIL( nalDataP = (char *)malloc(nalSize), allocFailedErr );
-			    err = Base64DecodeToBuffer(begin, &base64Size, nalDataP, &nalSize);
-			    if (err) {
-			        errprint("bad parameter set-bad base64 encoding");
-			        goto bail;
-			    }
+				nalSize = base64Size;	// more than enough, will be adjusted down
+				BAILIFNIL( nalDataP = (char *)malloc(nalSize), allocFailedErr );
+				err = Base64DecodeToBuffer(begin, &base64Size, nalDataP, &nalSize);
+				if (err) {
+					errprint("bad parameter set-bad base64 encoding");
+					goto bail;
+				}
 				BitBuffer_Init(&bb, (UInt8*) nalDataP, nalSize );
 				
 				/* need to fiddle the printing flags here? */
-			    Validate_NAL_Unit( &bb, 0, nalSize );
-			    free(nalDataP);
+				Validate_NAL_Unit( &bb, 0, nalSize );
+				free(nalDataP);
 			}
 		} else if ((compare_nocase(kH264_PayloadName, hir->sdpInfo.payloadName)) &&
 					compare_nocase("profile-level-id", param)) {
@@ -1525,7 +1525,7 @@ static OSErr Validate_fmtp_attribute( HintInfoRec *hir, char *inValue)
 			if (foundNum) {
 				profile = (temp32 >> 16) & 0xFF;
 				flags   = (temp32 >> 8 ) & 0xFF;
-				level   = (temp32      ) & 0xFF;
+				level   = (temp32	  ) & 0xFF;
 				if ((profile != 66) && (profile != 77) && (profile != 88))
 					errprint("AVC Profile %d in SDP profile-level-ID is not baseline(66) main(77), or extended(88)\n",profile);
 				if (flags & 0x1F)
@@ -1703,45 +1703,45 @@ static OSErr Validate_iod_attribute( HintInfoRec *hir, char *inValue)
 	OSErr		err = noErr;
 	char		*current = inValue;
 	char		*next;
-    char		*end;
-    const char*	urlStart = "data:application/mpeg4-iod;base64,";
-    UInt32		base64Size;
-    Ptr			iodDataP = NULL;
-    UInt32		iodSize;
-    
-    // a=mpeg4-iod: "data:application/mpeg4-iod;base64,..."
-    
-    end = &inValue[strlen(inValue)];
-    next = current;
-    while (*next == ' ') {
-        next++;
-    }
+	char		*end;
+	const char*	urlStart = "data:application/mpeg4-iod;base64,";
+	UInt32		base64Size;
+	Ptr			iodDataP = NULL;
+	UInt32		iodSize;
+	
+	// a=mpeg4-iod: "data:application/mpeg4-iod;base64,..."
+	
+	end = &inValue[strlen(inValue)];
+	next = current;
+	while (*next == ' ') {
+		next++;
+	}
 	if (*next == '\0') {
 		errprint("bad iod attribute-no url\n");
 		BAILIFERRSET( err = paramErr );
 	}
-    if (*next != '\"' || *(end - 1) != '\"') {
-        errprint("bad iod attribute-double quotes missing\n");
+	if (*next != '\"' || *(end - 1) != '\"') {
+		errprint("bad iod attribute-double quotes missing\n");
 		BAILIFERRSET( err = paramErr );
-    }
-    next++;
-    if (strncmp(next, urlStart, strlen(urlStart)) != 0) {
-        errprint("bad iod attribute-bad url\n");
+	}
+	next++;
+	if (strncmp(next, urlStart, strlen(urlStart)) != 0) {
+		errprint("bad iod attribute-bad url\n");
 		BAILIFERRSET( err = paramErr );
-    }
-    next = (char *)((UInt64)next + (UInt64)strlen(urlStart));
-    
-    base64Size = end - next - 1;
-    iodSize = base64Size;	// more than enough, will be adjusted down
-    BAILIFNIL( iodDataP = (Ptr)malloc(iodSize), allocFailedErr );
-    err = Base64DecodeToBuffer(next, &base64Size, iodDataP, &iodSize);
-    if (err) {
-        errprint("bad iod attribute-bad base64 encoding");
-        goto bail;
-    }
+	}
+	next = (char *)((UInt64)next + (UInt64)strlen(urlStart));
+	
+	base64Size = end - next - 1;
+	iodSize = base64Size;	// more than enough, will be adjusted down
+	BAILIFNIL( iodDataP = (Ptr)malloc(iodSize), allocFailedErr );
+	err = Base64DecodeToBuffer(next, &base64Size, iodDataP, &iodSize);
+	if (err) {
+		errprint("bad iod attribute-bad base64 encoding");
+		goto bail;
+	}
 
-    BAILIFERR( Validate_iods_OD_Bits( iodDataP, iodSize, false ) );
-    
+	BAILIFERR( Validate_iods_OD_Bits( iodDataP, iodSize, false ) );
+	
 bail:
 	return err;
 }
@@ -1760,14 +1760,14 @@ static OSErr Validate_isma_attribute( HintInfoRec *hir, char *inValue)
 		if ((lowest != 1.0) && (lowest != 2.0)) errprint("Bad ISMA compliance lowest spec value %s\n",inValue);
 		if ((authored != 1.0) && (authored != 2.0)) errprint("Bad ISMA compliance authored spec value %s\n",inValue);
 	}
-    
-    // a=isma-compliance:1,1.0,1
-	    
-    //if (strcmp(inValue, "1,1.0,1") != 0) {
-    //    errprint("bad isma compliance attribute");
+	
+	// a=isma-compliance:1,1.0,1
+		
+	//if (strcmp(inValue, "1,1.0,1") != 0) {
+	//	errprint("bad isma compliance attribute");
 	//	BAILIFERRSET( err = paramErr );
-    //}
-    
+	//}
+	
 	return err;
 }
 
@@ -1777,22 +1777,22 @@ static OSErr Validate_isma_attribute( HintInfoRec *hir, char *inValue)
 #define kBase64PadLookupChar		65
 
 static const char sBase64DecodingTable [256] = {
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 62, 64, 64, 64, 63,
-    52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 64, 64, 64, 65, 64, 64,
-    64,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 64, 64, 64, 64, 64,
-    64, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64
+	64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+	64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+	64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 62, 64, 64, 64, 63,
+	52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 64, 64, 64, 65, 64, 64,
+	64,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+	15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 64, 64, 64, 64, 64,
+	64, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+	41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 64, 64, 64, 64, 64,
+	64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+	64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+	64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+	64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+	64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+	64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+	64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+	64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64
 };
 
 #define kBase64PadChar					'='

@@ -9,7 +9,14 @@
 NAME=  ValidateMP4
 
 ### include debug information: 1=yes, 0=no
-DBG= 1
+DBG=1
+SAN=0
+COV=0
+
+FLAGS+=-Wall -Wextra -Werror
+
+## TODO: remove these
+FLAGS+=-Wno-unused-but-set-variable -Wno-unused-variable -Wno-unused-label -Wno-unused-parameter -Wno-int-to-pointer-cast -Wno-sequence-point -Wno-stringop-truncation
 
 #compatibility=-static-libstdc++
 
@@ -23,7 +30,7 @@ OBJDIR= ./obj
 
 CC=     $(shell which g++)
 
-FLAGS=-std=c++11 -ffloat-store -Wall -I$(INCDIR) -DLITTLEENDIAN -Wno-multichar -Wno-unknown-pragmas -fpermissive -Wno-write-strings -fno-stack-protector
+FLAGS+=-std=c++11 -ffloat-store -Wall -I$(INCDIR) -DLITTLEENDIAN -Wno-multichar -Wno-unknown-pragmas -fpermissive -Wno-write-strings -fno-stack-protector
 
 ifdef COV
 LIBS= -lgcov #-lcurl

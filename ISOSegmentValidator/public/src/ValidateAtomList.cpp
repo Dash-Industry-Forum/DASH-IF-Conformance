@@ -26,7 +26,7 @@ limitations under the License.
 extern ValidateGlobals vg;
 
 	// for use with ostypetostr_r() and int64todstr_r() for example;
-    // when you're using one of these routines more than once in the same print statement
+	// when you're using one of these routines more than once in the same print statement
 	char   tempStr1[32];
 	char   tempStr2[32];
 	char   tempStr3[32];
@@ -51,14 +51,14 @@ OSErr ValidateFileAtoms( atomOffsetEntry *aoe, void *refcon )
 	OSErr atomerr = noErr;
 	atomOffsetEntry *entry;
 	UInt64 minOffset, maxOffset;
-    char *test = NULL;
-    UInt32 atom_length = 0;
-    	
+	char *test = NULL;
+	UInt32 atom_length = 0;
+		
 	minOffset = aoe->offset + aoe->atomStartSize;
 	maxOffset = aoe->offset + aoe->size - aoe->atomStartSize;
 	
 	BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
-    	
+		
 	atomprint("<atomlist>\n"); vg.tabcnt++;
 	
 	// Process 'ftyp' atom
@@ -88,71 +88,71 @@ OSErr ValidateFileAtoms( atomOffsetEntry *aoe, void *refcon )
 
 	if (!vg.mir)
 		goto bail;
-    
+	
 	// Count the total fragments and sidx's (if present), and allocate the required memory for that
 	vg.mir->numFragments = 0;
 	vg.mir->numSidx = 0;
 
 	if(vg.mir->fragmented)
 	{
-        for (i = 0; i < cnt; i++)
-        {
-            if (list[i].type == 'sidx')
-                vg.mir->numSidx++;
-            
-            if (list[i].type == 'moof')
-                vg.mir->numFragments++;
-        }
-        
-        vg.mir->moofInfo = (MoofInfoRec *)malloc(vg.mir->numFragments*sizeof(MoofInfoRec));
-        vg.mir->processedFragments = 0;
+		for (i = 0; i < cnt; i++)
+		{
+			if (list[i].type == 'sidx')
+				vg.mir->numSidx++;
+			
+			if (list[i].type == 'moof')
+				vg.mir->numFragments++;
+		}
+		
+		vg.mir->moofInfo = (MoofInfoRec *)malloc(vg.mir->numFragments*sizeof(MoofInfoRec));
+		vg.mir->processedFragments = 0;
 
-    	for (i = 0; i < (long)vg.mir->numFragments ; i++)
-    	{
-            vg.mir->moofInfo[i].compositionInfoMissingPerTrack = (Boolean*)malloc(vg.mir->numTIRs*sizeof(Boolean));
-            vg.mir->moofInfo[i].moofEarliestPresentationTimePerTrack = (long double*)malloc(vg.mir->numTIRs*sizeof(long double));
-            vg.mir->moofInfo[i].moofPresentationEndTimePerTrack = (long double*)malloc(vg.mir->numTIRs*sizeof(long double));
-            vg.mir->moofInfo[i].moofLastPresentationTimePerTrack = (long double*)malloc(vg.mir->numTIRs*sizeof(long double));
-            vg.mir->moofInfo[i].tfdt = (UInt64*)malloc(vg.mir->numTIRs*sizeof(UInt64));
-    	}
+		for (i = 0; i < (long)vg.mir->numFragments ; i++)
+		{
+			vg.mir->moofInfo[i].compositionInfoMissingPerTrack = (Boolean*)malloc(vg.mir->numTIRs*sizeof(Boolean));
+			vg.mir->moofInfo[i].moofEarliestPresentationTimePerTrack = (long double*)malloc(vg.mir->numTIRs*sizeof(long double));
+			vg.mir->moofInfo[i].moofPresentationEndTimePerTrack = (long double*)malloc(vg.mir->numTIRs*sizeof(long double));
+			vg.mir->moofInfo[i].moofLastPresentationTimePerTrack = (long double*)malloc(vg.mir->numTIRs*sizeof(long double));
+			vg.mir->moofInfo[i].tfdt = (UInt64*)malloc(vg.mir->numTIRs*sizeof(UInt64));
+		}
 
-        vg.mir->sidxInfo = (SidxInfoRec *)malloc(vg.mir->numSidx*sizeof(SidxInfoRec));
-        vg.mir->processedSdixs = 0;
+		vg.mir->sidxInfo = (SidxInfoRec *)malloc(vg.mir->numSidx*sizeof(SidxInfoRec));
+		vg.mir->processedSdixs = 0;
 	}
-    else
-    {
-        vg.mir->moofInfo = NULL;
-        vg.mir->sidxInfo = NULL;
-    }
+	else
+	{
+		vg.mir->moofInfo = NULL;
+		vg.mir->sidxInfo = NULL;
+	}
 
-    int numMoovBoxes;
+	int numMoovBoxes;
 
-    numMoovBoxes = 0;
-    			
+	numMoovBoxes = 0;
+				
 	for (i = 0; i < cnt; i++) {
 		entry = &list[i];
 
 		switch (entry->type) {
 			case 'skip':
-            case 'ssix':
+			case 'ssix':
 			case 'free':
-			    break;
-            case 'mdat':
-                    toggleprintsample( 1 );
-        err = Validate_mdat_Atom(entry, NULL);
-                    //sampleprinthexandasciidata(test, atom_length);
-                    toggleprintsample( 0 );
-        if (err) {
-            fprintf(stderr, "<%s> : mdat atom read failed\n", __FUNCTION__);
-                }
-        BAILIFERR (err);
-                break;
+				break;
+			case 'mdat':
+					toggleprintsample( 1 );
+		err = Validate_mdat_Atom(entry, NULL);
+					//sampleprinthexandasciidata(test, atom_length);
+					toggleprintsample( 0 );
+		if (err) {
+			fprintf(stderr, "<%s> : mdat atom read failed\n", __FUNCTION__);
+				}
+		BAILIFERR (err);
+				break;
 
-            case 'styp':
-                atomerr = ValidateAtomOfType( 'styp', 0, 
-                    Validate_styp_Atom, cnt, list, nil );
-                if (!err) err = atomerr;
-                break;
+			case 'styp':
+				atomerr = ValidateAtomOfType( 'styp', 0, 
+					Validate_styp_Atom, cnt, list, nil );
+				if (!err) err = atomerr;
+				break;
 			
 			case 'uuid':
 					atomerr = ValidateAtomOfType( 'uuid', 0, 
@@ -160,56 +160,56 @@ OSErr ValidateFileAtoms( atomOffsetEntry *aoe, void *refcon )
 					if (!err) err = atomerr;
 					break;
 					
-            case 'emsg':
-                    atomerr = ValidateAtomOfType( 'emsg', 0, 
-                        Validate_emsg_Atom, cnt, list, nil );
-                    if (!err) err = atomerr;
-                    break;
-                    
-            case 'moof':
-                    if(!vg.mir->fragmented)
-                        errprint("'moof' boxes are not to be expected without an 'mvex' in 'moov'\n");
+			case 'emsg':
+					atomerr = ValidateAtomOfType( 'emsg', 0, 
+						Validate_emsg_Atom, cnt, list, nil );
+					if (!err) err = atomerr;
+					break;
+					
+			case 'moof':
+					if(!vg.mir->fragmented)
+						errprint("'moof' boxes are not to be expected without an 'mvex' in 'moov'\n");
 
-                    atomerr = ValidateAtomOfType( 'moof', 0, 
-                        Validate_moof_Atom, cnt, list, vg.mir);
-                    if (!err) err = atomerr;
+					atomerr = ValidateAtomOfType( 'moof', 0, 
+						Validate_moof_Atom, cnt, list, vg.mir);
+					if (!err) err = atomerr;
 
-                    break;
+					break;
 
-            case 'sidx':
-                    if(!vg.mir->fragmented)
-                        errprint("'sidx' boxes are not to be expected in a non-fragmented movie\n");
+			case 'sidx':
+					if(!vg.mir->fragmented)
+						errprint("'sidx' boxes are not to be expected in a non-fragmented movie\n");
 
-                    if(!vg.initializationSegment && !vg.dashInFtyp)
-                        errprint("'sidx' found for self-initializing media, violating ISO/IEC 23009-1:2012(E), 6.3.5.2: The Indexed Self-Initializing Media Segment ... shall carry 'dash' as a compatible brand. \n");
-                    
-                    atomerr = ValidateAtomOfType( 'sidx', 0, 
-                        Validate_sidx_Atom, cnt, list, vg.mir);
-                    if (!err) err = atomerr;
-                    
-                    break;
+					if(!vg.initializationSegment && !vg.dashInFtyp)
+						errprint("'sidx' found for self-initializing media, violating ISO/IEC 23009-1:2012(E), 6.3.5.2: The Indexed Self-Initializing Media Segment ... shall carry 'dash' as a compatible brand. \n");
+					
+					atomerr = ValidateAtomOfType( 'sidx', 0, 
+						Validate_sidx_Atom, cnt, list, vg.mir);
+					if (!err) err = atomerr;
+					
+					break;
 
-            case 'moov':
+			case 'moov':
 
-                    // Don't allow multiple moov boxes except for self-initializing DASH
-                    bool dsmsFound;
+					// Don't allow multiple moov boxes except for self-initializing DASH
+					bool dsmsFound;
 
-                    numMoovBoxes++;
+					numMoovBoxes++;
 
-                    if(numMoovBoxes > 1)
-                    {
-                        dsmsFound = false;
-        
-                        for(int index = 0 ; index < vg.segmentInfoSize ; index++)
-                            if( vg.dsms[index] == true )
-                                dsmsFound = true;
+					if(numMoovBoxes > 1)
+					{
+						dsmsFound = false;
+		
+						for(int index = 0 ; index < vg.segmentInfoSize ; index++)
+							if( vg.dsms[index] == true )
+								dsmsFound = true;
 
-                        if(!dsmsFound)
-                            errprint("Multiple 'moov' boxes are not allowed\n");
-                    }
+						if(!dsmsFound)
+							errprint("Multiple 'moov' boxes are not allowed\n");
+					}
 
-                    break;
-            
+					break;
+			
 			default:
 				if (!(entry->aoeflags & kAtomValidated)) 
 					warnprint("WARNING: In %s - unknown file atom '%s'\n",vg.curatompath, ostypetostr(entry->type));
@@ -218,35 +218,35 @@ OSErr ValidateFileAtoms( atomOffsetEntry *aoe, void *refcon )
 		
 		if (!err) err = atomerr;
 	}
-    
-    //Some Processing like: check ordering to some extend (first sidx in segment is checked later while verifying indexing since it comes with
-    //the checks for duration
-    if(vg.dashSegment)
-        checkDASHBoxOrder(cnt,list,vg.segmentInfoSize,vg.initializationSegment,vg.segmentSizes,vg.mir);
-    
-    if(vg.cmaf)
-        checkCMAFBoxOrder(cnt,list,vg.segmentInfoSize, vg.initializationSegment, vg.segmentSizes);
+	
+	//Some Processing like: check ordering to some extend (first sidx in segment is checked later while verifying indexing since it comes with
+	//the checks for duration
+	if(vg.dashSegment)
+		checkDASHBoxOrder(cnt,list,vg.segmentInfoSize,vg.initializationSegment,vg.segmentSizes,vg.mir);
+	
+	if(vg.cmaf)
+		checkCMAFBoxOrder(cnt,list,vg.segmentInfoSize, vg.initializationSegment, vg.segmentSizes);
 
   if(vg.mir->fragmented)
-    postprocessFragmentInfo(vg.mir);
+	postprocessFragmentInfo(vg.mir);
   
   estimatePresentationTimes(vg.mir);
 
    if(vg.dashSegment)
    {
-        processSAP34(vg.mir);
-        processIndexingInfo(vg.mir);
-        if(vg.minBufferTime != -1)
-            processBuffering(cnt,list,vg.mir);
-        logLeafInfo(vg.mir);
+		processSAP34(vg.mir);
+		processIndexingInfo(vg.mir);
+		if(vg.minBufferTime != -1)
+			processBuffering(cnt,list,vg.mir);
+		logLeafInfo(vg.mir);
    }
    
    
 
-    goto exit_ok;
-    	
+	goto exit_ok;
+		
 bail:
-    fprintf(stderr, "BAILED\n");
+	fprintf(stderr, "BAILED\n");
 
 exit_ok:
    --vg.tabcnt; atomprint("</atomlist>\n");
@@ -324,13 +324,13 @@ OSErr Validate_edts_Atom( atomOffsetEntry *aoe, void *refcon )
 	
 	// Process 'elst' atoms
 	if(vg.cmaf) {
-            atomerr = ValidateAtomOfType( 'elst', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
-                    Validate_elst_Atom, cnt, list, tir );
-        }
-        else {
-            atomerr = ValidateAtomOfType( 'elst', kTypeAtomFlagCanHaveAtMostOne, 
-                    Validate_elst_Atom, cnt, list, tir );
-        }
+			atomerr = ValidateAtomOfType( 'elst', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
+					Validate_elst_Atom, cnt, list, tir );
+		}
+		else {
+			atomerr = ValidateAtomOfType( 'elst', kTypeAtomFlagCanHaveAtMostOne, 
+					Validate_elst_Atom, cnt, list, tir );
+		}
 	if (!err) err = atomerr;
 
 	//
@@ -396,15 +396,15 @@ OSErr Validate_minf_Atom( atomOffsetEntry *aoe, void *refcon )
 			if (!err) err = atomerr;
 			break;
 		
-                case 'subt':
+				case 'subt':
 			// Process 'sthd' atoms
-                        if(vg.cmaf || vg.dvb || vg.hbbtv || vg.ctawave){
-                            atomerr = ValidateAtomOfType( 'sthd',kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
-                                    Validate_sthd_Atom, cnt, list, nil );
-                            if (!err) err = atomerr;
-                        }
+						if(vg.cmaf || vg.dvb || vg.hbbtv || vg.ctawave){
+							atomerr = ValidateAtomOfType( 'sthd',kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
+									Validate_sthd_Atom, cnt, list, nil );
+							if (!err) err = atomerr;
+						}
 			break;
-                
+				
 		case 'odsm':
 		case 'sdsm':
 			// Process 'nmhd' atoms
@@ -412,17 +412,17 @@ OSErr Validate_minf_Atom( atomOffsetEntry *aoe, void *refcon )
 				Validate_nmhd_Atom, cnt, list, nil );
 			if (!err) err = atomerr;
 			break;
-                case 'text':
-                        atomerr = ValidateAtomOfType( 'nmhd', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
+				case 'text':
+						atomerr = ValidateAtomOfType( 'nmhd', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
 				Validate_nmhd_Atom, cnt, list, nil );
 			if (!err) err = atomerr;
 			break;
 		default:
 			warnprint("WARNING: In %s - unknown media type '%s'\n",vg.curatompath, ostypetostr(tir->mediaType));
 	}
-                 //Explicit check for ac-4
+				 //Explicit check for ac-4
 		if(!strcmp(vg.codecs, "ac-4") && strcmp(ostypetostr(tir->mediaType),"soun"))
-		    warnprint("Warning: Media Information Header Box should contain Sound Media Header Box for 'ac-4'\n" );	
+			warnprint("Warning: Media Information Header Box should contain Sound Media Header Box for 'ac-4'\n" );	
 
 	// Process 'dinf' atoms
 	atomerr = ValidateAtomOfType( 'dinf', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
@@ -464,7 +464,7 @@ OSErr Validate_minf_Atom( atomOffsetEntry *aoe, void *refcon )
 	}
 	
 	//if(vg.cmaf)
-        //    checkCMAFBoxOrder_minf(cnt,list);
+		//	checkCMAFBoxOrder_minf(cnt,list);
 	
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -501,13 +501,13 @@ OSErr Validate_mdia_Atom( atomOffsetEntry *aoe, void *refcon )
 	atomerr = ValidateAtomOfType( 'hdlr', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
 		Validate_mdia_hdlr_Atom, cnt, list, tir );
 	if (!err) err = atomerr;
-        
-        // Process 'elng' atoms
-        if(vg.cmaf){
-            atomerr = ValidateAtomOfType( 'elng', kTypeAtomFlagCanHaveAtMostOne, 
-                    Validate_elng_Atom, cnt, list, tir );
-            if (!err) err = atomerr;
-        }
+		
+		// Process 'elng' atoms
+		if(vg.cmaf){
+			atomerr = ValidateAtomOfType( 'elng', kTypeAtomFlagCanHaveAtMostOne, 
+					Validate_elng_Atom, cnt, list, tir );
+			if (!err) err = atomerr;
+		}
 
 	// Process 'minf' atoms
 	atomerr = ValidateAtomOfType( 'minf', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
@@ -535,7 +535,7 @@ OSErr Validate_mdia_Atom( atomOffsetEntry *aoe, void *refcon )
 	}
 	
 	//if(vg.cmaf)
-        //    checkCMAFBoxOrder_mdia(cnt,list);
+		//	checkCMAFBoxOrder_mdia(cnt,list);
 	
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -797,7 +797,7 @@ OSErr Validate_trak_Atom( atomOffsetEntry *aoe, void *refcon )
 	}
 	
 	//if(vg.cmaf)
-        //    checkCMAFBoxOrder_trak(cnt,list);
+		//	checkCMAFBoxOrder_trak(cnt,list);
 	
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -823,12 +823,12 @@ OSErr Validate_stbl_Atom( atomOffsetEntry *aoe, void *refcon )
 	
 	BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
 
-    tir->identicalDecCompTimes = true;
-    
+	tir->identicalDecCompTimes = true;
+	
 	for (i = 0; i < cnt; i++) {
 		entry = &list[i];
-        if (entry->type == 'ctts')
-            tir->identicalDecCompTimes = false; //Section 8.6.1.1.
+		if (entry->type == 'ctts')
+			tir->identicalDecCompTimes = false; //Section 8.6.1.1.
 	}
 	
 	// Process 'stsd' atoms
@@ -900,13 +900,13 @@ OSErr Validate_stbl_Atom( atomOffsetEntry *aoe, void *refcon )
 	atomerr = ValidateAtomOfType( 'sgpd', kTypeAtomFlagCanHaveAtMostOne, 
 		Validate_sgpd_Atom, cnt, list, tir );
 	if (!err) err = atomerr;
-        
-        // Process 'subs' atoms
-        if(vg.cmaf){
-            atomerr = ValidateAtomOfType( 'subs', 0, 
-                    Validate_subs_Atom, cnt, list, tir );
-            if (!err) err = atomerr;
-        }
+		
+		// Process 'subs' atoms
+		if(vg.cmaf){
+			atomerr = ValidateAtomOfType( 'subs', 0, 
+					Validate_subs_Atom, cnt, list, tir );
+			if (!err) err = atomerr;
+		}
 	//
 	for (i = 0; i < cnt; i++) {
 		entry = &list[i];
@@ -957,12 +957,12 @@ OSErr Validate_stbl_Atom( atomOffsetEntry *aoe, void *refcon )
 				err = badAtomErr;
 			}
 		}
-        else if(!vg.dashSegment)
-		    warnprint("WARNING: STSC empty; with an empty STSC atom, chunk mapping is not verifiable\n");
+		else if(!vg.dashSegment)
+			warnprint("WARNING: STSC empty; with an empty STSC atom, chunk mapping is not verifiable\n");
 	}
 	
 	//if(vg.cmaf)
-        //    checkCMAFBoxOrder_stbl(cnt,list);
+		//	checkCMAFBoxOrder_stbl(cnt,list);
 
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -988,56 +988,56 @@ OSErr Validate_mvex_Atom( atomOffsetEntry *aoe, void *refcon )
 	
 	BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
 
-    vg.mir->fragmented = true;
-    vg.mir->sequence_number = 0;
+	vg.mir->fragmented = true;
+	vg.mir->sequence_number = 0;
 
-    /*Section 8.8.3.1, Quantity:   Exactly one for each track in the Movie Box
-      Doesnt say they have to be in order, so we have to manually check it.
-      Since bit(4)	reserved=0, setting default_sample_flags is set to a test exception
-      Not the cleanest approach though*/
-      
-    for(i = 0 ; i < vg.mir->numTIRs; i++)
+	/*Section 8.8.3.1, Quantity:   Exactly one for each track in the Movie Box
+	  Doesnt say they have to be in order, so we have to manually check it.
+	  Since bit(4)	reserved=0, setting default_sample_flags is set to a test exception
+	  Not the cleanest approach though*/
+	  
+	for(i = 0 ; i < vg.mir->numTIRs; i++)
 	{
-    	tir[i].default_sample_flags = 0xFFFFFFFF;
+		tir[i].default_sample_flags = 0xFFFFFFFF;
 	}
 
-    //todo: add optional 'leva' boxes
-    if(vg.subRepLevel && vg.initializationSegment)
-    {
-        bool levaFound = false;
-        
-    	for (i = 0; i < cnt; i++) {
-    		entry = &list[i];
-            if(entry->type == 'leva')
-                levaFound = true;
-    	}
+	//todo: add optional 'leva' boxes
+	if(vg.subRepLevel && vg.initializationSegment)
+	{
+		bool levaFound = false;
+		
+		for (i = 0; i < cnt; i++) {
+			entry = &list[i];
+			if(entry->type == 'leva')
+				levaFound = true;
+		}
 
-        if(!levaFound)
-            errprint("leva box not found in intialization segment, violating: ISO/IEC 23009-1:2012(E), 7.3.4: The Initialization Segment shall contain the Level Assignment ('leva') box");
-        
-    }
+		if(!levaFound)
+			errprint("leva box not found in intialization segment, violating: ISO/IEC 23009-1:2012(E), 7.3.4: The Initialization Segment shall contain the Level Assignment ('leva') box");
+		
+	}
 	// Process 'mehd' atoms
 	atomerr = ValidateAtomOfType( 'mehd', kTypeAtomFlagCanHaveAtMostOne, 
 		Validate_mehd_Atom, cnt, list, vg.mir );
 	if (!err) err = atomerr;
-    
+	
 	// Process 'trex' atoms
 	atomerr = ValidateAtomOfType( 'trex', kTypeAtomFlagMustHaveOne, 
 		Validate_trex_Atom, cnt, list, tir );
 	if (!err) err = atomerr;
-        
-        // Process 'trep' atoms
-        if(vg.dvb || vg.hbbtv){
-            atomerr = ValidateAtomOfType( 'trep', 0, 
-                    Validate_trep_Atom, cnt, list, tir );
-            if (!err) err = atomerr;
-        }
+		
+		// Process 'trep' atoms
+		if(vg.dvb || vg.hbbtv){
+			atomerr = ValidateAtomOfType( 'trep', 0, 
+					Validate_trep_Atom, cnt, list, tir );
+			if (!err) err = atomerr;
+		}
 
-    /*Now check if any track information is missing*/
-    for(i = 0 ; i < vg.mir->numTIRs ; i++)
+	/*Now check if any track information is missing*/
+	for(i = 0 ; i < vg.mir->numTIRs ; i++)
 	{
-    	if(tir[i].default_sample_flags == 0xFFFFFFFF)
-            errprint("'mxvex' found but 'trex' box missing for track %d\n",i);
+		if(tir[i].default_sample_flags == 0xFFFFFFFF)
+			errprint("'mxvex' found but 'trex' box missing for track %d\n",i);
 	}
 
 	//
@@ -1093,12 +1093,12 @@ OSErr ValidateAtomOfType( OSType theType, long flags, ValidateAtomTypeProcPtr va
 				errprint("Multiple '%s' atoms not allowed\n", cstr);
 			}
 			if ((flags & kTypeAtomFlagMustBeFirst) && (i>0)) {
-                                if(vg.cmaf){
-                                    if(theType=='ftyp')
-                                        errprint("CMAF check violated: Section 7.3.1. \"The CMAF Header SHALL start with a FileTypeBox.\", but actually found at position %d", i+1);
-                                    if(theType =='mvhd')
-                                        errprint("CMAF check violated: Section 7.3.1. \"The MovieBox SHALL start with a MovieHeaderBox.\", but actually found at position %d", i+1);
-                                }
+								if(vg.cmaf){
+									if(theType=='ftyp')
+										errprint("CMAF check violated: Section 7.3.1. \"The CMAF Header SHALL start with a FileTypeBox.\", but actually found at position %d", i+1);
+									if(theType =='mvhd')
+										errprint("CMAF check violated: Section 7.3.1. \"The MovieBox SHALL start with a MovieHeaderBox.\", but actually found at position %d", i+1);
+								}
 				if (i==1) warnprint("Warning: atom %s before ftyp atom MUST be a signature\n",ostypetostr((&list[0])->type));
 				else errprint("Atom %s must be first and is actually at position %d\n",ostypetostr(theType),i+1);
 			}			
@@ -1149,51 +1149,51 @@ OSErr ValidateAtomOfType( OSType theType, long flags, ValidateAtomTypeProcPtr va
 		}
 		
 		if( vg.cmaf){
-                    if(theType =='moov')
+					if(theType =='moov')
 			errprint("CMAF check violated: Section 7.3.1. \"CMAF Header SHALL include one MovieBox.\", found %d 'moov' box\n", typeCnt);
-                    if(theType =='trex')
+					if(theType =='trex')
 			errprint("CMAF check violated: Section 7.5.14. \"Track Extends Boxes SHALL be present in a CMAF Track\", found %d\n", typeCnt);
-                    if(theType =='trak')
+					if(theType =='trak')
 			errprint("CMAF check violated: Section 7.3.1. \"The MovieBox SHALL contain exactly one track containing media data.\", found %d\n", typeCnt);
-                    if(theType =='mfhd')
-                        errprint("CMAF check violated: Section 7.3.2.4. \"Each CMAF Fragment SHALL contain a MovieFragmentHeaderBox.\", found %d\n", typeCnt);
-                    if(theType =='mvex')
-                        errprint("CMAF check violated: Section 7.3.1. \"The MovieBox SHALL contain a MovieExtendsBox.\", found %d\n", typeCnt);
-                    if(theType =='tenc')
-                        errprint("CMAF check violated: Section 7.3.1. \"The SchemeInformationbox SHALL contain a TrackEncryptionBox.\", found %d\n", typeCnt);
-                    if(theType =='dref')
-                        errprint("CMAF check violated: Section 7.3.1. \"There SHALL be a Data Reference Box in Data Information Box.\", found %d\n", typeCnt);
-                    if(theType =='vmhd')
-                        errprint("CMAF check violated: Section 7.3.1. \"The Media Information Box SHALL contain a Video Media Header for media type video\", found %d\n", typeCnt);
-                    if(theType =='smhd')
-                        errprint("CMAF check violated: Section 7.3.1. \"The Media Information Box SHALL contain a Sound Media Header for media type audio\", found %d\n", typeCnt);
-                    if(theType =='sthd')
-                        errprint("CMAF check violated: Section 7.3.1. \"The Media Information Box SHALL contain a Subtitle Media Header for media type subtitle\", found %d\n", typeCnt);
-                    if(theType =='saio')
-                        errprint("CMAF check violated: Section 8.2.2.1. \"For encrypted CMAF Fragments that contain Sample Auxiliary Information, each TrackFragmentBox SHALL contain a 'saio'\", found %d\n", typeCnt);
-                    
+					if(theType =='mfhd')
+						errprint("CMAF check violated: Section 7.3.2.4. \"Each CMAF Fragment SHALL contain a MovieFragmentHeaderBox.\", found %d\n", typeCnt);
+					if(theType =='mvex')
+						errprint("CMAF check violated: Section 7.3.1. \"The MovieBox SHALL contain a MovieExtendsBox.\", found %d\n", typeCnt);
+					if(theType =='tenc')
+						errprint("CMAF check violated: Section 7.3.1. \"The SchemeInformationbox SHALL contain a TrackEncryptionBox.\", found %d\n", typeCnt);
+					if(theType =='dref')
+						errprint("CMAF check violated: Section 7.3.1. \"There SHALL be a Data Reference Box in Data Information Box.\", found %d\n", typeCnt);
+					if(theType =='vmhd')
+						errprint("CMAF check violated: Section 7.3.1. \"The Media Information Box SHALL contain a Video Media Header for media type video\", found %d\n", typeCnt);
+					if(theType =='smhd')
+						errprint("CMAF check violated: Section 7.3.1. \"The Media Information Box SHALL contain a Sound Media Header for media type audio\", found %d\n", typeCnt);
+					if(theType =='sthd')
+						errprint("CMAF check violated: Section 7.3.1. \"The Media Information Box SHALL contain a Subtitle Media Header for media type subtitle\", found %d\n", typeCnt);
+					if(theType =='saio')
+						errprint("CMAF check violated: Section 8.2.2.1. \"For encrypted CMAF Fragments that contain Sample Auxiliary Information, each TrackFragmentBox SHALL contain a 'saio'\", found %d\n", typeCnt);
+					
 		}
 	} else if ((flags & kTypeAtomFlagCanHaveAtMostOne) && (typeCnt > 1)) {
-                if(vg.cmaf){
-                    if(theType =='moov')
+				if(vg.cmaf){
+					if(theType =='moov')
 			errprint("CMAF check violated: Section 7.3.1. \"CMAF Header SHALL include one MovieBox.\", found %d 'moov' box\n", typeCnt);
-                    if(theType =='trak')
-                        errprint("CMAF check violated: Section 7.3.1. \"The MovieBox SHALL contain exactly one track containing media data.\", found %d\n", typeCnt);
-                    if(theType =='mfhd')
-                        errprint("CMAF check violated: Section 7.3.2.3. \"Each CMAF Chunk/Fragment SHALL contain a MovieFragmentHeaderBox.\", found %d\n", typeCnt);
-                    if(theType =='mvex')
-                        errprint("CMAF check violated: Section 7.3.1 \"The MovieBox SHALL contain a MovieExtendsBox.\", found %d\n", typeCnt);
-                    if(theType =='tenc')
-                        errprint("CMAF check violated: Section 7.3.1. \"The SchemeInformationbox SHALL contain a TrackEncryptionBox.\", found %d\n", typeCnt);
-                    if(theType =='dref')
-                        errprint("CMAF check violated: Section 7.3.1. \"There SHALL be a Data Reference Box in Data Information Box.\", found %d\n", typeCnt);
-                    if(theType =='vmhd')
-                        errprint("CMAF check violated: Section 7.3.1. \"The Media Information Box SHALL contain a Video Media Header for media type video\", found %d\n", typeCnt);
-                    if(theType =='smhd')
-                        errprint("CMAF check violated: Section 7.3.1. \"The Media Information Box SHALL contain a Sound Media Header for media type audio\", found %d\n", typeCnt);
-                    if(theType =='sthd')
-                        errprint("CMAF check violated: Section 7.3.1. \"The Media Information Box SHALL contain a Subtitle Media Header for media type subtitle\", found %d\n", typeCnt);
-                }
+					if(theType =='trak')
+						errprint("CMAF check violated: Section 7.3.1. \"The MovieBox SHALL contain exactly one track containing media data.\", found %d\n", typeCnt);
+					if(theType =='mfhd')
+						errprint("CMAF check violated: Section 7.3.2.3. \"Each CMAF Chunk/Fragment SHALL contain a MovieFragmentHeaderBox.\", found %d\n", typeCnt);
+					if(theType =='mvex')
+						errprint("CMAF check violated: Section 7.3.1 \"The MovieBox SHALL contain a MovieExtendsBox.\", found %d\n", typeCnt);
+					if(theType =='tenc')
+						errprint("CMAF check violated: Section 7.3.1. \"The SchemeInformationbox SHALL contain a TrackEncryptionBox.\", found %d\n", typeCnt);
+					if(theType =='dref')
+						errprint("CMAF check violated: Section 7.3.1. \"There SHALL be a Data Reference Box in Data Information Box.\", found %d\n", typeCnt);
+					if(theType =='vmhd')
+						errprint("CMAF check violated: Section 7.3.1. \"The Media Information Box SHALL contain a Video Media Header for media type video\", found %d\n", typeCnt);
+					if(theType =='smhd')
+						errprint("CMAF check violated: Section 7.3.1. \"The Media Information Box SHALL contain a Sound Media Header for media type audio\", found %d\n", typeCnt);
+					if(theType =='sthd')
+						errprint("CMAF check violated: Section 7.3.1. \"The Media Information Box SHALL contain a Subtitle Media Header for media type subtitle\", found %d\n", typeCnt);
+				}
 		errprint("Multiple '%s' atoms not allowed\n",cstr);
 	}
 
@@ -1231,9 +1231,9 @@ OSErr Validate_ftyp_Atom( atomOffsetEntry *aoe, void *refcon )
 	}
 	
 	if(vg.cmaf){
-            if((majorBrand=='cmfc' || majorBrand=='cmf2') && version != 0)
-                errprint("CMAF Check violated : Section 7.2. \"If any of the structural CMAF brands is the major_brand, the minor_version SHALL be 0.\", found %ld\n",version);
-        }
+			if((majorBrand=='cmfc' || majorBrand=='cmf2') && version != 0)
+				errprint("CMAF Check violated : Section 7.2. \"If any of the structural CMAF brands is the major_brand, the minor_version SHALL be 0.\", found %ld\n",version);
+		}
 	
 	compatBrandListSize = (UInt32)(aoe->size - 8 - aoe->atomStartSize);
 	numCompatibleBrands = compatBrandListSize / sizeof(OSType);
@@ -1249,31 +1249,31 @@ OSErr Validate_ftyp_Atom( atomOffsetEntry *aoe, void *refcon )
 		UInt32 ix;
 		OSType currentBrand;
 		Boolean majorBrandFoundAmongCompatibleBrands = false;
-        vg.msixInFtyp = false;
-        vg.dashInFtyp = false;
-        		
+		vg.msixInFtyp = false;
+		vg.dashInFtyp = false;
+				
 		for (ix=0; ix < numCompatibleBrands; ix++) {
 			BAILIFERR( GetFileDataN32( aoe, &currentBrand, offset, &offset ) );
 			if (ix<(numCompatibleBrands-1)) atomprint(" \"%s\" \n", ostypetostr_r(currentBrand, tempstr1));
-			      else atomprint(" \"%s\"\n",  ostypetostr_r(currentBrand, tempstr1));
+				  else atomprint(" \"%s\"\n",  ostypetostr_r(currentBrand, tempstr1));
 			
 			if (majorBrand == currentBrand) {
 				majorBrandFoundAmongCompatibleBrands = true;
 			}
 			if (currentBrand == 'dash')
-            {
-                vg.dashInFtyp = true;
+			{
+				vg.dashInFtyp = true;
 				vg.dashSegment = true;
 			}
 			else if (currentBrand == 'msdh') {  //Although expected in styp, it seems conforming to slip it in the initialization segment. We should use this information.
 				vg.dashSegment = true;
 			}
-            else if (currentBrand == 'msix')
-            {
+			else if (currentBrand == 'msix')
+			{
 				vg.msixInFtyp = true;
 				vg.dashSegment = true;
 			}
-            else if(currentBrand == 'dsms') {
+			else if(currentBrand == 'dsms') {
 				vg.dsms[0] = true;
 				vg.dashSegment = true;
 			}
@@ -1287,7 +1287,7 @@ OSErr Validate_ftyp_Atom( atomOffsetEntry *aoe, void *refcon )
 		if (!majorBrandFoundAmongCompatibleBrands) {
 				
 				warnprint("Warning: major brand ('%.4s') not also found in list of compatible brands\n", 
-						     ostypetostr_r(majorBrand,tempstr2));
+							 ostypetostr_r(majorBrand,tempstr2));
 			}
 
 			
@@ -1310,7 +1310,7 @@ OSErr Validate_styp_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt32 version;
 	UInt32 compatBrandListSize, numCompatibleBrands;
 	char tempstr1[5], tempstr2[5];
-    
+	
 	
 	offset = aoe->offset + aoe->atomStartSize;
 	
@@ -1341,82 +1341,82 @@ OSErr Validate_styp_Atom( atomOffsetEntry *aoe, void *refcon )
 		OSType currentBrand;
 		Boolean majorBrandFoundAmongCompatibleBrands = false;
 		Boolean lmsgFoundInCompatibleBrands = false;
-        bool msdhFound = false;
-        bool msixFound = false;
+		bool msdhFound = false;
+		bool msixFound = false;
 
-        //Which segment is it?
-        int segmentNum;
-        bool segmentFound = false;
-        UInt64 offset = 0;
-        for(segmentNum = 0 ; segmentNum < vg.segmentInfoSize ; segmentNum++)
-        {       
-            if(aoe->offset == offset)
-            {
-                segmentFound = true;
-                break;
-            }
-            
-            offset += vg.segmentSizes[segmentNum];
-        }
+		//Which segment is it?
+		int segmentNum;
+		bool segmentFound = false;
+		UInt64 offset = 0;
+		for(segmentNum = 0 ; segmentNum < vg.segmentInfoSize ; segmentNum++)
+		{	   
+			if(aoe->offset == offset)
+			{
+				segmentFound = true;
+				break;
+			}
+			
+			offset += vg.segmentSizes[segmentNum];
+		}
 
-        if(segmentFound)
-            vg.simsInStyp[segmentNum] = false;
+		if(segmentFound)
+			vg.simsInStyp[segmentNum] = false;
 
-        if(!segmentFound)
-            errprint("styp not at the begining of a segment (abs. file offset %lld), this is unexpected\n",aoe->offset);
-                	
+		if(!segmentFound)
+			errprint("styp not at the begining of a segment (abs. file offset %lld), this is unexpected\n",aoe->offset);
+					
 		/*skip styp size, tag, major brand and version*/
 		offset += 16;
 		for (ix=0; ix < numCompatibleBrands; ix++) {
 			BAILIFERR( GetFileDataN32( aoe, &currentBrand, offset, &offset ) );
 			if (ix<(numCompatibleBrands-1)) atomprint("\"%s\",\n", ostypetostr_r(currentBrand, tempstr1));
-			      else atomprint("\"%s\"\n",  ostypetostr_r(currentBrand, tempstr1));
+				  else atomprint("\"%s\"\n",  ostypetostr_r(currentBrand, tempstr1));
 			
 			if (majorBrand == currentBrand) {
 				majorBrandFoundAmongCompatibleBrands = true;
 			}
-                        
+						
 			if (currentBrand == 'msdh') {
 				msdhFound = true;
 				vg.dashSegment = true;
 			}
-            else if(currentBrand == 'msix') {
+			else if(currentBrand == 'msix') {
 				msixFound = true;
 				vg.dashSegment = true;
 			}
-            else if(segmentFound && currentBrand == 'sims') {
+			else if(segmentFound && currentBrand == 'sims') {
 				vg.simsInStyp[segmentNum] = true;
 				vg.dashSegment = true;
 			}
-            else if(segmentFound && currentBrand == 'dsms') {
+			else if(segmentFound && currentBrand == 'dsms') {
 				vg.dsms[segmentNum] = true;
 				vg.dashSegment = true;
 			}
-            else if(currentBrand == 'lmsg') {
+			else if(currentBrand == 'lmsg') {
 				vg.dashSegment = true;
 				lmsgFoundInCompatibleBrands = true;
 				if(segmentFound && segmentNum != (vg.segmentInfoSize-1))
-                    errprint("Brand 'lmsg' found as a compatible brand for segment number %d (not the last segment %d); violates ISO/IEC 23009-1:2012(E), 7.3.1: In all cases for which a Representation contains more than one Media Segment ... If the Media Segment is not the last Media Segment in the Representation, the 'lmsg' compatibility brand shall not be present.\n",segmentNum+1,vg.segmentInfoSize);
+					errprint("Brand 'lmsg' found as a compatible brand for segment number %d (not the last segment %d); violates ISO/IEC 23009-1:2012(E), 7.3.1: In all cases for which a Representation contains more than one Media Segment ... If the Media Segment is not the last Media Segment in the Representation, the 'lmsg' compatibility brand shall not be present.\n",segmentNum+1,vg.segmentInfoSize);
 			}
-            else if(currentBrand == 'cmfc'  || currentBrand == 'cmf2'){
-                                vg.dashSegment = true; // Equivalent to CMAF Fragment. Can be directly used in CMAF Fragment conformances.
+			else if(currentBrand == 'cmfc'  || currentBrand == 'cmf2'){
+								vg.dashSegment = true; // Equivalent to CMAF Fragment. Can be directly used in CMAF Fragment conformances.
 				//vg.cmaf = true; //Niteesh: This might not be required if -cmaf is passed as an arg.
 			}
-            else if(currentBrand == 'cmfs'){
-                            vg.cmafSegment = true; // To be used for CMAF Segment conformances.
-                        }
-            else if(currentBrand == 'cmfl'){
-                            vg.cmafChunk = true;// To be used for CMAF Chunk conformances.
-                        }
-            else if(currentBrand == 'cmff'){
-                            vg.cmafFragment = true; // To be used for CMAF Fragment conformances
-                        }
+			else if(currentBrand == 'cmfs'){
+							vg.cmafSegment = true; // To be used for CMAF Segment conformances.
+						}
+			else if(currentBrand == 'cmfl'){
+							vg.cmafChunk = true;// To be used for CMAF Chunk conformances.
+						}
+			else if(currentBrand == 'cmff'){
+							vg.cmafFragment = true; // To be used for CMAF Fragment conformances
+						}
 						
 		}
 
 		if (!majorBrandFoundAmongCompatibleBrands) {
 				errprint("major brand ('%.4s') not also found in list of compatible brands\n", 
-						     ostypetostr_r(majorBrand,tempstr2));
+							 ostypetostr_r(majorBrand,tempstr2));
 			}
 
 		if (segmentFound && (segmentNum == (vg.segmentInfoSize - 1)) && (vg.dash264base || vg.dashifbase) && (vg.dynamic || vg.isoLive) && !lmsgFoundInCompatibleBrands) {
@@ -1427,14 +1427,14 @@ OSErr Validate_styp_Atom( atomOffsetEntry *aoe, void *refcon )
 		if (!msdhFound) {
 				errprint("Brand msdh not found as a compatible brand; violates ISO/IEC 23009-1:2012(E), 6.3.4.2\n");
 			}
-        
+		
 		if (!msixFound && (vg.mir->numSidx > 0)) {
 				warnprint("Warning: msix not found in styp of a segment, while indxing info found, violating: ISO/IEC 23009-1:2012(E), 6.3.4.3: Each Media Segment shall carry 'msix' as a compatible brand \n");
 			}
 
-        if (vg.isomain && (vg.startWithSAP <= 0 || vg.startWithSAP > 3) && !msixFound)
-            errprint("msix not found in styp of a segment, with main profile and startWithSAP %d, violating: ISO/IEC 23009-1:2012(E), 8.5.3: Each Media Segment of the Representations not having @startWithSAP present or having @startWithSAP value 0 or greater than 3 shall comply with the formats defined in 6.3.4.3, i.e. the brand 'msix'\n",vg.startWithSAP);
-        
+		if (vg.isomain && (vg.startWithSAP <= 0 || vg.startWithSAP > 3) && !msixFound)
+			errprint("msix not found in styp of a segment, with main profile and startWithSAP %d, violating: ISO/IEC 23009-1:2012(E), 8.5.3: Each Media Segment of the Representations not having @startWithSAP present or having @startWithSAP value 0 or greater than 3 shall comply with the formats defined in 6.3.4.3, i.e. the brand 'msix'\n",vg.startWithSAP);
+		
 /*
 		if (vg.checklevel && segmentFound && !vg.simsInStyp[segmentNum]) {
 				errprint("sims not found in styp of a segment, while SubRepresentation@level checks invoked, violating: Section 7.3.4. of ISO/IEC 23009-1:2012(E): If a SubRepresentation element is present in a Representation in the MPD and the attribute SubRepresentation@level is present, then the Media Segments in this Representation shall conform to a Sub-Indexed Media Segment as defined in 6.3.4.4 \n");
@@ -1477,8 +1477,8 @@ OSErr Validate_moov_Atom( atomOffsetEntry *aoe, void *refcon )
 	
 	BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
 
-    if(vg.initializationSegment && ((aoe->offset + aoe->size) > vg.segmentSizes[0]))
-        errprint("Complete moov not found in initialization segment: ISO/IEC 23009-1:2012(E), 6.3.3: The Initialization Segment shall contain an \"ftyp\" box, and a \"moov\" box\n");	
+	if(vg.initializationSegment && ((aoe->offset + aoe->size) > vg.segmentSizes[0]))
+		errprint("Complete moov not found in initialization segment: ISO/IEC 23009-1:2012(E), 6.3.3: The Initialization Segment shall contain an \"ftyp\" box, and a \"moov\" box\n");	
 
 	// find out how many tracks we have so we can allocate our struct. Also check if we have encryption-related boxes
 	for (i = 0; i < cnt; i++) {
@@ -1502,19 +1502,19 @@ OSErr Validate_moov_Atom( atomOffsetEntry *aoe, void *refcon )
 
 	BAILIFNIL( vg.mir = (MovieInfoRec	*)calloc(1, sizeof(MovieInfoRec) + i), allocFailedErr );
 	mir = vg.mir;
-    mir->fragmented = false; //unless 'mvex' is found in 'moov'
-    
-        if(vg.cmaf){
-            atomerr = ValidateAtomOfType( 'mvhd', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne | kTypeAtomFlagMustBeFirst, 
+	mir->fragmented = false; //unless 'mvex' is found in 'moov'
+	
+		if(vg.cmaf){
+			atomerr = ValidateAtomOfType( 'mvhd', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne | kTypeAtomFlagMustBeFirst, 
 		Validate_mvhd_Atom, cnt, list, mir);
-            if (!err) err = atomerr;
-            
-        }
-        else{
+			if (!err) err = atomerr;
+			
+		}
+		else{
 	atomerr = ValidateAtomOfType( 'mvhd', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
 		Validate_mvhd_Atom, cnt, list, mir);
 	if (!err) err = atomerr;
-        }
+		}
 
 
 	// pre-process 'trak' atoms - get the track types
@@ -1539,7 +1539,7 @@ OSErr Validate_moov_Atom( atomOffsetEntry *aoe, void *refcon )
 			if (mir->tirList[thisTrakIndex].mediaType == 'hint') {
 				entry->aoeflags |= kAtomSkipThisAtom;
 			}
-			//    need to pass info that this is a text track to ValidateAtomOfType 'trak' below (refcon arg doesn't seem to work)
+			//	need to pass info that this is a text track to ValidateAtomOfType 'trak' below (refcon arg doesn't seem to work)
 	
 // ����
 			++thisTrakIndex;
@@ -1549,11 +1549,11 @@ OSErr Validate_moov_Atom( atomOffsetEntry *aoe, void *refcon )
 
 	// Process non-hint 'trak' atoms
 	if(vg.cmaf){
-            atomerr = ValidateAtomOfType( 'trak', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
-                    Validate_trak_Atom, cnt, list, nil );
-            if (!err) err = atomerr;
-        }
-        
+			atomerr = ValidateAtomOfType( 'trak', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
+					Validate_trak_Atom, cnt, list, nil );
+			if (!err) err = atomerr;
+		}
+		
 	atomerr = ValidateAtomOfType( 'trak', 0, Validate_trak_Atom, cnt, list, nil );
 	if (!err) err = atomerr;
 
@@ -1578,16 +1578,16 @@ OSErr Validate_moov_Atom( atomOffsetEntry *aoe, void *refcon )
 	if (!err) err = atomerr;
 	
 	// Process 'mvex' atoms
-        if(vg.cmaf){
-            atomerr = ValidateAtomOfType( 'mvex', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
-                    Validate_mvex_Atom, cnt, list, mir->tirList );
-            if (!err) err = atomerr;
-        }
-        else{
-            atomerr = ValidateAtomOfType( 'mvex', kTypeAtomFlagCanHaveAtMostOne, 
-                    Validate_mvex_Atom, cnt, list, mir->tirList );
-            if (!err) err = atomerr;
-        }
+		if(vg.cmaf){
+			atomerr = ValidateAtomOfType( 'mvex', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
+					Validate_mvex_Atom, cnt, list, mir->tirList );
+			if (!err) err = atomerr;
+		}
+		else{
+			atomerr = ValidateAtomOfType( 'mvex', kTypeAtomFlagCanHaveAtMostOne, 
+					Validate_mvex_Atom, cnt, list, mir->tirList );
+			if (!err) err = atomerr;
+		}
 
 	// Process 'iods' atoms
 	atomerr = ValidateAtomOfType( 'iods', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
@@ -1608,11 +1608,11 @@ OSErr Validate_moov_Atom( atomOffsetEntry *aoe, void *refcon )
 	atomerr = ValidateAtomOfType( 'meta', 0, 
 		Validate_meta_Atom, cnt, list, nil );
 	if (!err) err = atomerr;
-        
+		
 	// Process 'pssh' atoms
-    atomerr = ValidateAtomOfType( 'pssh', 0, 
-        Validate_pssh_Atom, cnt, list, nil );
-    if (!err) err = atomerr;
+	atomerr = ValidateAtomOfType( 'pssh', 0, 
+		Validate_pssh_Atom, cnt, list, nil );
+	if (!err) err = atomerr;
 
 	//
 	for (i = 0; i < cnt; i++){
@@ -1646,8 +1646,8 @@ OSErr Validate_moov_Atom( atomOffsetEntry *aoe, void *refcon )
 			tir = &(mir->tirList[i]);
 			all_single = 1;
 
-            tir->numLeafs = 0;
-            tir->leafInfo = NULL;
+			tir->numLeafs = 0;
+			tir->leafInfo = NULL;
 			
 			if (tir->chunkOffsetEntryCnt > 1) {
 				for (j=1; j<=tir->sampleToChunkEntryCnt; j++) {
@@ -1766,7 +1766,7 @@ OSErr Validate_moov_Atom( atomOffsetEntry *aoe, void *refcon )
 					priorslot = slot-1;
 					if ((chunkOffset >= corp[priorslot].chunkStart) && (chunkOffset <= corp[priorslot].chunkStop)) {
 						if ((tir->mediaType == corp[priorslot].mediaType) || 
-						    (tir->mediaType == 'hint') || 
+							(tir->mediaType == 'hint') || 
 							(corp[priorslot].mediaType == 'hint')) 
 						warnprint("Warning: chunk %d of track ID %d at %s overlaps chunk from track ID %d at %s\n",
 							trk[lowest].chunk_num, tir->trackID, int64todstr_r( chunkOffset, tempStr1 ), 
@@ -1783,7 +1783,7 @@ OSErr Validate_moov_Atom( atomOffsetEntry *aoe, void *refcon )
 				if (slot < topslot) {
 					if ((chunkStop >= corp[slot].chunkStart) && (chunkStop <= corp[slot].chunkStop)) {
 						if ((tir->mediaType == corp[slot].mediaType) || 
-						    (tir->mediaType == 'hint') || 
+							(tir->mediaType == 'hint') || 
 							(corp[slot].mediaType == 'hint')) 
 						warnprint("Warning: chunk %d of track ID %d at %s overlaps chunk from track ID %d at %s\n",
 							trk[lowest].chunk_num, tir->trackID, int64todstr_r( chunkOffset, tempStr1 ), 
@@ -1818,9 +1818,9 @@ OSErr Validate_moov_Atom( atomOffsetEntry *aoe, void *refcon )
 		// until we have processed all chunks of all tracks
 	}
 		
-        //if(vg.cmaf)
-        //    checkCMAFBoxOrder_moov(cnt,list);
-            
+		//if(vg.cmaf)
+		//	checkCMAFBoxOrder_moov(cnt,list);
+			
 	aoe->aoeflags |= kAtomValidated;
 bail:
 //	if (mir != NULL) {
@@ -1840,83 +1840,83 @@ OSErr Validate_moof_Atom( atomOffsetEntry *aoe, void *refcon )
 	OSErr atomerr = noErr;
 	atomOffsetEntry *entry;
 	UInt64 minOffset, maxOffset;
-    MovieInfoRec *mir = (MovieInfoRec *)refcon;
-    
-    MoofInfoRec *moofInfo = &mir->moofInfo[mir->processedFragments];
+	MovieInfoRec *mir = (MovieInfoRec *)refcon;
 	
-    atomprint("size=\"%lld\"\n", aoe->size);
-    atomprint("offset=\"%lld\"\n", aoe->offset);
+	MoofInfoRec *moofInfo = &mir->moofInfo[mir->processedFragments];
+	
+	atomprint("size=\"%lld\"\n", aoe->size);
+	atomprint("offset=\"%lld\"\n", aoe->offset);
 	atomprint(">\n"); 
 	
 	minOffset = aoe->offset + aoe->atomStartSize;
 	maxOffset = aoe->offset + aoe->size - aoe->atomStartSize;
 
-    moofInfo->offset = aoe->offset;
+	moofInfo->offset = aoe->offset;
 	
 	BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
 
-    atomerr = ValidateAtomOfType( 'mfhd', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
-        Validate_mfhd_Atom, cnt, list, moofInfo );
-    if (!err) err = atomerr;
+	atomerr = ValidateAtomOfType( 'mfhd', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
+		Validate_mfhd_Atom, cnt, list, moofInfo );
+	if (!err) err = atomerr;
 
-    //if((mir->processedFragments > 0) && (moofInfo->sequence_number <= vg.mir->sequence_number))
-      //  errprint( "sequence_number %d in violation of: the value in a given movie fragment be greater than in any preceding movie fragment\n",moofInfo->sequence_number );
+	//if((mir->processedFragments > 0) && (moofInfo->sequence_number <= vg.mir->sequence_number))
+	  //  errprint( "sequence_number %d in violation of: the value in a given movie fragment be greater than in any preceding movie fragment\n",moofInfo->sequence_number );
 
-    vg.mir->sequence_number = moofInfo->sequence_number;
+	vg.mir->sequence_number = moofInfo->sequence_number;
 
-    moofInfo->index = mir->processedFragments;
-    moofInfo->numTrackFragments = 0;
-    moofInfo->processedTrackFragments = 0;
-    moofInfo->firstFragmentInSegment = false;
-    moofInfo->announcedSAP = false;
-    moofInfo->samplesToBePresented = true;
+	moofInfo->index = mir->processedFragments;
+	moofInfo->numTrackFragments = 0;
+	moofInfo->processedTrackFragments = 0;
+	moofInfo->firstFragmentInSegment = false;
+	moofInfo->announcedSAP = false;
+	moofInfo->samplesToBePresented = true;
 
-    for(i = 0 ;  i < mir->numTIRs ; i++)
-    {
-        moofInfo->compositionInfoMissingPerTrack[i] = false;
-    }
-    
+	for(i = 0 ;  i < mir->numTIRs ; i++)
+	{
+		moofInfo->compositionInfoMissingPerTrack[i] = false;
+	}
+	
 	for (i = 0; i < cnt; i++)
 	{
 		if (list[i].type == 'traf')
-            moofInfo->numTrackFragments++;
-        
+			moofInfo->numTrackFragments++;
+		
 		if (list[i].type == 'pssh') {
 			vg.psshFoundInSegment[getSegmentNumberByOffset(moofInfo->offset)] = true;
 		}
-        
+		
 		if (list[i].type == 'tenc') {
 			vg.tencFoundInSegment[getSegmentNumberByOffset(moofInfo->offset)] = true;
 		}
 	}
 
-    if(moofInfo->numTrackFragments > 0)
-        moofInfo->trafInfo = (TrafInfoRec *)malloc(moofInfo->numTrackFragments*sizeof(TrafInfoRec));
-    else
-        moofInfo->trafInfo = NULL;
+	if(moofInfo->numTrackFragments > 0)
+		moofInfo->trafInfo = (TrafInfoRec *)malloc(moofInfo->numTrackFragments*sizeof(TrafInfoRec));
+	else
+		moofInfo->trafInfo = NULL;
 
-    if(vg.dashSegment && moofInfo->numTrackFragments == 0)
-        errprint("ISO/IEC 23009-1:2012(E), 6.3.4.2: 16: Each 'moof' box shall contain at least one track fragment.\n");
-    if(vg.hbbtv && moofInfo->numTrackFragments != 1)
-        errprint("###HbbTV check violated Section E.3.1.1: 'The movie fragment boxx (moof) shall contain only one track fragment box(traf)', but found %d\n",moofInfo->numTrackFragments);
+	if(vg.dashSegment && moofInfo->numTrackFragments == 0)
+		errprint("ISO/IEC 23009-1:2012(E), 6.3.4.2: 16: Each 'moof' box shall contain at least one track fragment.\n");
+	if(vg.hbbtv && moofInfo->numTrackFragments != 1)
+		errprint("###HbbTV check violated Section E.3.1.1: 'The movie fragment boxx (moof) shall contain only one track fragment box(traf)', but found %d\n",moofInfo->numTrackFragments);
 
-    
-    atomerr = ValidateAtomOfType( 'traf', 0, 
-        Validate_traf_Atom, cnt, list, moofInfo );
-    if (!err) err = atomerr;
+	
+	atomerr = ValidateAtomOfType( 'traf', 0, 
+		Validate_traf_Atom, cnt, list, moofInfo );
+	if (!err) err = atomerr;
 
-    atomerr = ValidateAtomOfType( 'pssh', 0, 
-        Validate_pssh_Atom, cnt, list, moofInfo );
-    if (!err) err = atomerr;
+	atomerr = ValidateAtomOfType( 'pssh', 0, 
+		Validate_pssh_Atom, cnt, list, moofInfo );
+	if (!err) err = atomerr;
 
-    
+	
 	//
 	for (i = 0; i < cnt; i++) {
 		entry = &list[i];
 
 		if (entry->aoeflags & kAtomValidated) continue;
 
-		//switch (entry->type) {        
+		//switch (entry->type) {		
 		//	default:
 				warnprint("WARNING: In %s - unknown moof atom '%s'\n",vg.curatompath, ostypetostr(entry->type));
 		//		break;
@@ -1924,11 +1924,11 @@ OSErr Validate_moof_Atom( atomOffsetEntry *aoe, void *refcon )
 		
 		if (!err) err = atomerr;
 	}
-    
-    mir->processedFragments++;
-    
-        //if(vg.cmaf)
-        //    checkCMAFBoxOrder_moof(cnt,list);
+	
+	mir->processedFragments++;
+	
+		//if(vg.cmaf)
+		//	checkCMAFBoxOrder_moof(cnt,list);
 
 	aoe->aoeflags |= kAtomValidated;
 bail:
@@ -1946,14 +1946,14 @@ OSErr Validate_traf_Atom( atomOffsetEntry *aoe, void *refcon )
 	OSErr atomerr = noErr;
 	atomOffsetEntry *entry;
 	UInt64 minOffset, maxOffset;
-    MoofInfoRec *moofInfo = (MoofInfoRec *)refcon;
-    
-    TrafInfoRec *trafInfo = &moofInfo->trafInfo[moofInfo->processedTrackFragments];
-    trafInfo->moofInfo = moofInfo;
+	MoofInfoRec *moofInfo = (MoofInfoRec *)refcon;
+	
+	TrafInfoRec *trafInfo = &moofInfo->trafInfo[moofInfo->processedTrackFragments];
+	trafInfo->moofInfo = moofInfo;
 
-    moofInfo->processedTrackFragments++;
-    trafInfo->cummulatedSampleDuration = 0;
-    trafInfo->compositionInfoMissing = false;
+	moofInfo->processedTrackFragments++;
+	trafInfo->cummulatedSampleDuration = 0;
+	trafInfo->compositionInfoMissing = false;
 	
 	atomprintnotab(">\n"); 
 	
@@ -1962,99 +1962,99 @@ OSErr Validate_traf_Atom( atomOffsetEntry *aoe, void *refcon )
 	
 	BAILIFERR( FindAtomOffsets( aoe, minOffset, maxOffset, &cnt, &list ) );
 
-    atomerr = ValidateAtomOfType( 'tfhd', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
-        Validate_tfhd_Atom, cnt, list, trafInfo );
-    if (!err) err = atomerr;
-    
-    trafInfo->numTrun = 0;
-    trafInfo->processedTrun = 0;
-    trafInfo->numSgpd = 0;
-    trafInfo->processedSgpd = 0;
-    trafInfo->numSbgp = 0;
-    trafInfo->processedSbgp = 0;
-    trafInfo->tfdtFound = false;
-    trafInfo->earliestCompositionTimeInTrackFragment = 0xFFFFFFFFFFFFFFFF;
-    trafInfo->compositionEndTimeInTrackFragment = 0;
-    trafInfo->latestCompositionTimeInTrackFragment = 0;
-    
+	atomerr = ValidateAtomOfType( 'tfhd', kTypeAtomFlagMustHaveOne | kTypeAtomFlagCanHaveAtMostOne, 
+		Validate_tfhd_Atom, cnt, list, trafInfo );
+	if (!err) err = atomerr;
+	
+	trafInfo->numTrun = 0;
+	trafInfo->processedTrun = 0;
+	trafInfo->numSgpd = 0;
+	trafInfo->processedSgpd = 0;
+	trafInfo->numSbgp = 0;
+	trafInfo->processedSbgp = 0;
+	trafInfo->tfdtFound = false;
+	trafInfo->earliestCompositionTimeInTrackFragment = 0xFFFFFFFFFFFFFFFF;
+	trafInfo->compositionEndTimeInTrackFragment = 0;
+	trafInfo->latestCompositionTimeInTrackFragment = 0;
+	
 	for (i = 0; i < cnt; i++)
 	{
 		if (list[i].type == 'trun')
-            trafInfo->numTrun++;
-        
+			trafInfo->numTrun++;
+		
 		if (list[i].type == 'sgpd')
-            trafInfo->numSgpd++;
-        
+			trafInfo->numSgpd++;
+		
 		if (list[i].type == 'sbgp')
-            trafInfo->numSbgp++;
+			trafInfo->numSbgp++;
 	}
 
-    if(trafInfo->duration_is_empty && trafInfo->numTrun > 0)
-        errprint("If the duration-is-empty flag is set in the tf_flags, there are no track runs.");
+	if(trafInfo->duration_is_empty && trafInfo->numTrun > 0)
+		errprint("If the duration-is-empty flag is set in the tf_flags, there are no track runs.");
 
-    if(trafInfo->numTrun > 0)
-        trafInfo->trunInfo = (TrunInfoRec *)malloc(trafInfo->numTrun*sizeof(TrunInfoRec));
-    else
-        trafInfo->trunInfo = NULL;
-    
-    if(trafInfo->numSgpd > 0)
-        trafInfo->sgpdInfo = (SgpdInfoRec *)malloc(trafInfo->numSgpd*sizeof(SgpdInfoRec));
-    else
-        trafInfo->sgpdInfo = NULL;
-    
-    if(trafInfo->numSbgp > 0)
-        trafInfo->sbgpInfo = (SbgpInfoRec *)malloc(trafInfo->numSbgp*sizeof(SbgpInfoRec));
-    else
-        trafInfo->sbgpInfo = NULL;
-    
-    atomerr = ValidateAtomOfType( 'trun', 0, 
-        Validate_trun_Atom, cnt, list, trafInfo );
-    if (!err) err = atomerr;
-    
-    atomerr = ValidateAtomOfType( 'sgpd', 0, 
-        Validate_sgpd_Atom, cnt, list, trafInfo );
-    if (!err) err = atomerr;
+	if(trafInfo->numTrun > 0)
+		trafInfo->trunInfo = (TrunInfoRec *)malloc(trafInfo->numTrun*sizeof(TrunInfoRec));
+	else
+		trafInfo->trunInfo = NULL;
+	
+	if(trafInfo->numSgpd > 0)
+		trafInfo->sgpdInfo = (SgpdInfoRec *)malloc(trafInfo->numSgpd*sizeof(SgpdInfoRec));
+	else
+		trafInfo->sgpdInfo = NULL;
+	
+	if(trafInfo->numSbgp > 0)
+		trafInfo->sbgpInfo = (SbgpInfoRec *)malloc(trafInfo->numSbgp*sizeof(SbgpInfoRec));
+	else
+		trafInfo->sbgpInfo = NULL;
+	
+	atomerr = ValidateAtomOfType( 'trun', 0, 
+		Validate_trun_Atom, cnt, list, trafInfo );
+	if (!err) err = atomerr;
+	
+	atomerr = ValidateAtomOfType( 'sgpd', 0, 
+		Validate_sgpd_Atom, cnt, list, trafInfo );
+	if (!err) err = atomerr;
 
-    atomerr = ValidateAtomOfType( 'sbgp', 0, 
-        Validate_sbgp_Atom, cnt, list, trafInfo );
-    if (!err) err = atomerr;
-    
-    if(vg.cmaf){
-        atomerr = ValidateAtomOfType( 'subs', 0, 
-            Validate_subs_Atom, cnt, list, trafInfo );
-        if (!err) err = atomerr;
-    }
-    
-    long flags;
+	atomerr = ValidateAtomOfType( 'sbgp', 0, 
+		Validate_sbgp_Atom, cnt, list, trafInfo );
+	if (!err) err = atomerr;
+	
+	if(vg.cmaf){
+		atomerr = ValidateAtomOfType( 'subs', 0, 
+			Validate_subs_Atom, cnt, list, trafInfo );
+		if (!err) err = atomerr;
+	}
+	
+	long flags;
 
-    flags = kTypeAtomFlagCanHaveAtMostOne;
+	flags = kTypeAtomFlagCanHaveAtMostOne;
 
-    if(vg.dashSegment) // This is also suitable for CMAF Fragment checks.
-        flags |= kTypeAtomFlagMustHaveOne;
-    
-    atomerr = ValidateAtomOfType( 'tfdt', flags, 
-        Validate_tfdt_Atom, cnt, list, trafInfo );
-    if (!err) err = atomerr;
-    
-    if(vg.cmaf || vg.ctawave){
-        atomerr = ValidateAtomOfType( 'senc', 0, 
-            Validate_senc_Atom, cnt, list, trafInfo );
-        if (!err) err = atomerr;
-        
-        if(vg.sencFound){
-            atomerr = ValidateAtomOfType( 'saio', kTypeAtomFlagMustHaveOne, 
-                Validate_saio_Atom, cnt, list, trafInfo );
-            if (!err) err = atomerr;
-        }
-    
-    }
+	if(vg.dashSegment) // This is also suitable for CMAF Fragment checks.
+		flags |= kTypeAtomFlagMustHaveOne;
+	
+	atomerr = ValidateAtomOfType( 'tfdt', flags, 
+		Validate_tfdt_Atom, cnt, list, trafInfo );
+	if (!err) err = atomerr;
+	
+	if(vg.cmaf || vg.ctawave){
+		atomerr = ValidateAtomOfType( 'senc', 0, 
+			Validate_senc_Atom, cnt, list, trafInfo );
+		if (!err) err = atomerr;
+		
+		if(vg.sencFound){
+			atomerr = ValidateAtomOfType( 'saio', kTypeAtomFlagMustHaveOne, 
+				Validate_saio_Atom, cnt, list, trafInfo );
+			if (!err) err = atomerr;
+		}
+	
+	}
 	//
 	for (i = 0; i < cnt; i++) {
 		entry = &list[i];
 
 		if (entry->aoeflags & kAtomValidated) continue;
 
-		//switch (entry->type) {            
+		//switch (entry->type) {			
 		//	default:
 				warnprint("WARNING: In %s - unknown traf atom '%s'\n",vg.curatompath, ostypetostr(entry->type));
 		//		break;
@@ -2064,39 +2064,39 @@ OSErr Validate_traf_Atom( atomOffsetEntry *aoe, void *refcon )
 	}
 
 
-    //Accumulate durations now for later checking
+	//Accumulate durations now for later checking
 	for (i = 0; i < (long)trafInfo->numTrun; i++)
 	{
-        trafInfo->cummulatedSampleDuration+=trafInfo->trunInfo[i].cummulatedSampleDuration;
+		trafInfo->cummulatedSampleDuration+=trafInfo->trunInfo[i].cummulatedSampleDuration;
 
-        //Needed for DASH-specific processing of EPT
-        TrackInfoRec *tir = check_track(trafInfo->track_ID);
+		//Needed for DASH-specific processing of EPT
+		TrackInfoRec *tir = check_track(trafInfo->track_ID);
 
-        if(!tir->identicalDecCompTimes)
-            trafInfo->compositionInfoMissing = trafInfo->compositionInfoMissing || (trafInfo->trunInfo[i].sample_count > 0 && trafInfo->trunInfo[i].sample_composition_time_offsets_present != true);
-        else
-        {
-            trafInfo->compositionInfoMissing = false;
-            for(UInt32 j = 0 ;  j < trafInfo->trunInfo[i].sample_count ; j++)
-                if(trafInfo->trunInfo[i].sample_composition_time_offset[j] != 0) {
-                    ;// Incorrect interpertation: CTTS shall be absent when all CT = DT does not imply CTTS shall be absent iff all CT = DT
-                    //errprint("CTTS is missing, indicating composition time = decode times, as per Section 8.6.1.1 of ISO/IEC 14496-12 4th edition, while non-zero composition offsets found in track run.\n");
+		if(!tir->identicalDecCompTimes)
+			trafInfo->compositionInfoMissing = trafInfo->compositionInfoMissing || (trafInfo->trunInfo[i].sample_count > 0 && trafInfo->trunInfo[i].sample_composition_time_offsets_present != true);
+		else
+		{
+			trafInfo->compositionInfoMissing = false;
+			for(UInt32 j = 0 ;  j < trafInfo->trunInfo[i].sample_count ; j++)
+				if(trafInfo->trunInfo[i].sample_composition_time_offset[j] != 0) {
+					;// Incorrect interpertation: CTTS shall be absent when all CT = DT does not imply CTTS shall be absent iff all CT = DT
+					//errprint("CTTS is missing, indicating composition time = decode times, as per Section 8.6.1.1 of ISO/IEC 14496-12 4th edition, while non-zero composition offsets found in track run.\n");
 				}
-        }
+		}
 	}
 
-    if(check_track(trafInfo->track_ID) == NULL)
-        return badAtomErr;
-    
-    UInt32 index;
+	if(check_track(trafInfo->track_ID) == NULL)
+		return badAtomErr;
+	
+	UInt32 index;
 
 	index = getTrakIndexByID(trafInfo->track_ID);
 
-    moofInfo->compositionInfoMissingPerTrack[index] = moofInfo->compositionInfoMissingPerTrack[index] || trafInfo->compositionInfoMissing;
+	moofInfo->compositionInfoMissingPerTrack[index] = moofInfo->compositionInfoMissingPerTrack[index] || trafInfo->compositionInfoMissing;
 
-        //if(vg.cmaf)
-        //    checkCMAFBoxOrder_traf(cnt,list);
-        
+		//if(vg.cmaf)
+		//	checkCMAFBoxOrder_traf(cnt,list);
+		
 	aoe->aoeflags |= kAtomValidated;
 bail:
 	return err;
@@ -2104,113 +2104,113 @@ bail:
 
 void dispose_mir( MovieInfoRec *mir )
 {
-    
-    if(mir->moofInfo)
-    {
-        UInt32 i;
+	
+	if(mir->moofInfo)
+	{
+		UInt32 i;
 
-        for(i = 0 ; i < mir->numFragments ; i++)
-        {
+		for(i = 0 ; i < mir->numFragments ; i++)
+		{
 
-            //printf("Fragment number %d / %d\n",i,mir->numFragments);
+			//printf("Fragment number %d / %d\n",i,mir->numFragments);
 
-            if(mir->moofInfo[i].trafInfo != NULL)
-            {
-                    UInt32 j;
-                    
-                    for(j = 0 ; j < mir->moofInfo[i].numTrackFragments ; j++)
-                    {
-                        //printf("Track Fragment number %d / %d, ptr %x\n",j,mir->moofInfo[i].numTrackFragments,&(mir->moofInfo[i].trafInfo[j]));
-                        
-                        if(mir->moofInfo[i].trafInfo[j].trunInfo != NULL)
-                        {
-                            UInt32 k;
+			if(mir->moofInfo[i].trafInfo != NULL)
+			{
+					UInt32 j;
+					
+					for(j = 0 ; j < mir->moofInfo[i].numTrackFragments ; j++)
+					{
+						//printf("Track Fragment number %d / %d, ptr %x\n",j,mir->moofInfo[i].numTrackFragments,&(mir->moofInfo[i].trafInfo[j]));
+						
+						if(mir->moofInfo[i].trafInfo[j].trunInfo != NULL)
+						{
+							UInt32 k;
 
-                            for(k = 0 ; k < mir->moofInfo[i].trafInfo[j].numTrun ; k++)
-                            {
-                                if(mir->moofInfo[i].trafInfo[j].trunInfo[k].sample_duration != NULL)
-                                    free(mir->moofInfo[i].trafInfo[j].trunInfo[k].sample_duration);
-                                
-                                if(mir->moofInfo[i].trafInfo[j].trunInfo[k].sample_size != NULL)
-                                    free(mir->moofInfo[i].trafInfo[j].trunInfo[k].sample_size);
-                                
-                                if(mir->moofInfo[i].trafInfo[j].trunInfo[k].sample_flags != NULL)
-                                    free(mir->moofInfo[i].trafInfo[j].trunInfo[k].sample_flags);
-                                
-                                if(mir->moofInfo[i].trafInfo[j].trunInfo[k].sample_composition_time_offset != NULL)
-                                    free(mir->moofInfo[i].trafInfo[j].trunInfo[k].sample_composition_time_offset);
+							for(k = 0 ; k < mir->moofInfo[i].trafInfo[j].numTrun ; k++)
+							{
+								if(mir->moofInfo[i].trafInfo[j].trunInfo[k].sample_duration != NULL)
+									free(mir->moofInfo[i].trafInfo[j].trunInfo[k].sample_duration);
+								
+								if(mir->moofInfo[i].trafInfo[j].trunInfo[k].sample_size != NULL)
+									free(mir->moofInfo[i].trafInfo[j].trunInfo[k].sample_size);
+								
+								if(mir->moofInfo[i].trafInfo[j].trunInfo[k].sample_flags != NULL)
+									free(mir->moofInfo[i].trafInfo[j].trunInfo[k].sample_flags);
+								
+								if(mir->moofInfo[i].trafInfo[j].trunInfo[k].sample_composition_time_offset != NULL)
+									free(mir->moofInfo[i].trafInfo[j].trunInfo[k].sample_composition_time_offset);
 
-                                if(mir->moofInfo[i].trafInfo[j].trunInfo[k].samplePresentationTime != NULL)
-                                    free(mir->moofInfo[i].trafInfo[j].trunInfo[k].samplePresentationTime);
-                                
-                                if(mir->moofInfo[i].trafInfo[j].trunInfo[k].sampleToBePresented != NULL)
-                                    free(mir->moofInfo[i].trafInfo[j].trunInfo[k].sampleToBePresented);
-                                
-                                if(mir->moofInfo[i].trafInfo[j].trunInfo[k].sap3 != NULL)
-                                    free(mir->moofInfo[i].trafInfo[j].trunInfo[k].sap3);
-                                
-                                if(mir->moofInfo[i].trafInfo[j].trunInfo[k].sap4 != NULL)
-                                    free(mir->moofInfo[i].trafInfo[j].trunInfo[k].sap4);
-                            }
+								if(mir->moofInfo[i].trafInfo[j].trunInfo[k].samplePresentationTime != NULL)
+									free(mir->moofInfo[i].trafInfo[j].trunInfo[k].samplePresentationTime);
+								
+								if(mir->moofInfo[i].trafInfo[j].trunInfo[k].sampleToBePresented != NULL)
+									free(mir->moofInfo[i].trafInfo[j].trunInfo[k].sampleToBePresented);
+								
+								if(mir->moofInfo[i].trafInfo[j].trunInfo[k].sap3 != NULL)
+									free(mir->moofInfo[i].trafInfo[j].trunInfo[k].sap3);
+								
+								if(mir->moofInfo[i].trafInfo[j].trunInfo[k].sap4 != NULL)
+									free(mir->moofInfo[i].trafInfo[j].trunInfo[k].sap4);
+							}
 
-                            if(mir->moofInfo[i].trafInfo[j].trunInfo != NULL)
-                                free(mir->moofInfo[i].trafInfo[j].trunInfo);
+							if(mir->moofInfo[i].trafInfo[j].trunInfo != NULL)
+								free(mir->moofInfo[i].trafInfo[j].trunInfo);
 
-                            if(mir->moofInfo[i].trafInfo[j].sbgpInfo != NULL)
-                            {
-                                for(k = 0 ; k < mir->moofInfo[i].trafInfo[j].numSbgp ; k++)
-                                {                                    
-                                    free(mir->moofInfo[i].trafInfo[j].sbgpInfo[k].sample_count);
-                                    free(mir->moofInfo[i].trafInfo[j].sbgpInfo[k].group_description_index);
-                                }
-                                
-                                free(mir->moofInfo[i].trafInfo[j].sbgpInfo);
-                            }
-                            
-                            if(mir->moofInfo[i].trafInfo[j].sgpdInfo != NULL)
-                            {
-                                for(k = 0 ; k < mir->moofInfo[i].trafInfo[j].numSgpd ; k++)
-                                {                                    
-                                    for(UInt32 l = 0 ; l < mir->moofInfo[i].trafInfo[j].sgpdInfo[k].entry_count ; l++)
-                                        free(mir->moofInfo[i].trafInfo[j].sgpdInfo[k].SampleGroupDescriptionEntry[l]);
+							if(mir->moofInfo[i].trafInfo[j].sbgpInfo != NULL)
+							{
+								for(k = 0 ; k < mir->moofInfo[i].trafInfo[j].numSbgp ; k++)
+								{									
+									free(mir->moofInfo[i].trafInfo[j].sbgpInfo[k].sample_count);
+									free(mir->moofInfo[i].trafInfo[j].sbgpInfo[k].group_description_index);
+								}
+								
+								free(mir->moofInfo[i].trafInfo[j].sbgpInfo);
+							}
+							
+							if(mir->moofInfo[i].trafInfo[j].sgpdInfo != NULL)
+							{
+								for(k = 0 ; k < mir->moofInfo[i].trafInfo[j].numSgpd ; k++)
+								{									
+									for(UInt32 l = 0 ; l < mir->moofInfo[i].trafInfo[j].sgpdInfo[k].entry_count ; l++)
+										free(mir->moofInfo[i].trafInfo[j].sgpdInfo[k].SampleGroupDescriptionEntry[l]);
 
-                                    free(mir->moofInfo[i].trafInfo[j].sgpdInfo[k].SampleGroupDescriptionEntry);
-                                    free(mir->moofInfo[i].trafInfo[j].sgpdInfo[k].description_length);
-                                }
-                                
-                                free(mir->moofInfo[i].trafInfo[j].sgpdInfo);
-                            }
-                        }
-                    }
-                        
-                free(mir->moofInfo[i].trafInfo);
-                free(mir->moofInfo[i].compositionInfoMissingPerTrack);
-                free(mir->moofInfo[i].moofEarliestPresentationTimePerTrack);
-                free(mir->moofInfo[i].moofPresentationEndTimePerTrack);
-                free(mir->moofInfo[i].moofLastPresentationTimePerTrack);
-                free(mir->moofInfo[i].tfdt);
-            }
-        }
-        
-        free(mir->moofInfo);
-    }
+									free(mir->moofInfo[i].trafInfo[j].sgpdInfo[k].SampleGroupDescriptionEntry);
+									free(mir->moofInfo[i].trafInfo[j].sgpdInfo[k].description_length);
+								}
+								
+								free(mir->moofInfo[i].trafInfo[j].sgpdInfo);
+							}
+						}
+					}
+						
+				free(mir->moofInfo[i].trafInfo);
+				free(mir->moofInfo[i].compositionInfoMissingPerTrack);
+				free(mir->moofInfo[i].moofEarliestPresentationTimePerTrack);
+				free(mir->moofInfo[i].moofPresentationEndTimePerTrack);
+				free(mir->moofInfo[i].moofLastPresentationTimePerTrack);
+				free(mir->moofInfo[i].tfdt);
+			}
+		}
+		
+		free(mir->moofInfo);
+	}
 
-    for(int i = 0 ; i < mir->numTIRs ; i++)
-        if(mir->tirList[i].leafInfo)
-            free(mir->tirList[i].leafInfo);
+	for(int i = 0 ; i < mir->numTIRs ; i++)
+		if(mir->tirList[i].leafInfo)
+			free(mir->tirList[i].leafInfo);
 
-    
-    if(mir->sidxInfo)
-    {
-        UInt32 i;
+	
+	if(mir->sidxInfo)
+	{
+		UInt32 i;
 
-        for(i = 0 ; i < mir->numSidx ; i++)
-        {
-            free(mir->sidxInfo[i].references);
-        }
+		for(i = 0 ; i < mir->numSidx ; i++)
+		{
+			free(mir->sidxInfo[i].references);
+		}
 
-        free(mir->sidxInfo);
-    }
+		free(mir->sidxInfo);
+	}
 
 	// for each track, get rid of the stuff in it
 	free( mir );
@@ -2311,15 +2311,15 @@ OSErr Validate_udta_Atom( atomOffsetEntry *aoe, void *refcon )
 	atomerr = ValidateAtomOfType( 'loci', 0,		// can have multiple copyright atoms 
 								 Validate_loci_Atom, cnt, list, nil );
 	if (!err) err = atomerr;
-        
-        // Process 'kind' atoms
-        if(vg.cmaf){
-                atomerr = ValidateAtomOfType( 'kind', 0,		// can have multiple track kind atoms 
-                        Validate_kind_Atom, cnt, list, nil );
-                if (!err) err = atomerr;
-        }
+		
+		// Process 'kind' atoms
+		if(vg.cmaf){
+				atomerr = ValidateAtomOfType( 'kind', 0,		// can have multiple track kind atoms 
+						Validate_kind_Atom, cnt, list, nil );
+				if (!err) err = atomerr;
+		}
 
-    // Process 'hnti' atoms
+	// Process 'hnti' atoms
 	atomerr = ValidateAtomOfType( 'hnti', kTypeAtomFlagCanHaveAtMostOne,
 		Validate_moovhnti_Atom, cnt, list, nil );
 	if (!err) err = atomerr;
@@ -2353,25 +2353,25 @@ bail:
 static OSErr Validate_rtp_Atom( atomOffsetEntry *aoe, void *refcon )
 {
 	OSErr 			err = noErr;
-    UInt32			dataSize;
-    char			*current;
+	UInt32			dataSize;
+	char			*current;
 	OSType			subType;
 	Ptr				rtpDataP = NULL;
 	Ptr				sdpDataP = NULL;
 	UInt64			temp64;
-    
-    atomprintnotab(">\n"); 
+	
+	atomprintnotab(">\n"); 
 
 	BAILIFNIL( rtpDataP = (Ptr)malloc((UInt32)aoe->size), allocFailedErr );
 
-    dataSize = (UInt32)(aoe->size - aoe->atomStartSize);
+	dataSize = (UInt32)(aoe->size - aoe->atomStartSize);
 	BAILIFERR( GetFileData(aoe, rtpDataP, aoe->offset + aoe->atomStartSize, dataSize, &temp64) );
 	
 	current = rtpDataP;
 	subType = EndianU32_BtoN(*((UInt32*)current));
 	current += sizeof(UInt32);
 
-    if (subType == 'sdp ') {
+	if (subType == 'sdp ') {
 		// we found the sdp data
 		// make a copy and null terminate it
 		dataSize -= 4; // subtract the subtype field from the length 
@@ -2385,7 +2385,7 @@ static OSErr Validate_rtp_Atom( atomOffsetEntry *aoe, void *refcon )
 		err = outOfDataErr;
 		goto bail;
 	}
-    
+	
 bail:
 	return err;
 }
@@ -2411,8 +2411,8 @@ OSErr Validate_moovhnti_Atom( atomOffsetEntry *aoe, void *refcon )
 	atomerr = ValidateAtomOfType( 'rtp ', kTypeAtomFlagCanHaveAtMostOne, 
 		Validate_rtp_Atom, cnt, list, NULL );
 	if (!err) err = atomerr;
-    
-    for (i = 0; i < cnt; i++) {
+	
+	for (i = 0; i < cnt; i++) {
 		entry = &list[i];
 
 		if (entry->aoeflags & kAtomValidated) continue;
@@ -2481,7 +2481,7 @@ OSErr Validate_sinf_Atom( atomOffsetEntry *aoe, void *refcon, UInt32 flags )
 	}
 	
 	//if(vg.cmaf)
-        //    checkCMAFBoxOrder_sinf(cnt,list);
+		//	checkCMAFBoxOrder_sinf(cnt,list);
 	
 	aoe->aoeflags |= kAtomValidated;
 bail:

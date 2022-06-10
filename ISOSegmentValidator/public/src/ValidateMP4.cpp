@@ -64,33 +64,33 @@ static int keymatch (const char * arg, const char * keyword, int minchars)
   register int nmatched = 0;
 
   while ((ca = *arg++) != '\0') {
-    if ((ck = *keyword++) == '\0')
-      return false;		/* arg longer than keyword, no good */
-    if (isupper(ca))		/* force arg to lcase (assume ck is already) */
-      ca = tolower(ca);
-    if (ca != ck)
-      return false;		/* no good */
-    nmatched++;			/* count matched characters */
+	if ((ck = *keyword++) == '\0')
+	  return false;		/* arg longer than keyword, no good */
+	if (isupper(ca))		/* force arg to lcase (assume ck is already) */
+	  ca = tolower(ca);
+	if (ca != ck)
+	  return false;		/* no good */
+	nmatched++;			/* count matched characters */
   }
   /* reached end of argument; fail if it's too short for unique abbrev */
   if (nmatched < minchars)
-    return false;
+	return false;
   return true;			/* A-OK */
 }
 
 void writeEntry(char* srcPtr, int &srcIndex, char* &dstPtr, int &dstIndex, int maxArgc)
 {
-    if(dstIndex >= maxArgc)
-    {
-        fprintf(stderr,"May number of config arguments %d overshot, exiting!\n",maxArgc);
-        exit(-1);
-    }
-    dstPtr = (char*)(malloc((strlen(srcPtr) + 1) * sizeof(char)));  //allocate memory for each row
-    strcpy(dstPtr,srcPtr);
+	if(dstIndex >= maxArgc)
+	{
+		fprintf(stderr,"May number of config arguments %d overshot, exiting!\n",maxArgc);
+		exit(-1);
+	}
+	dstPtr = (char*)(malloc((strlen(srcPtr) + 1) * sizeof(char)));  //allocate memory for each row
+	strcpy(dstPtr,srcPtr);
 
-    srcIndex++;
-    dstIndex++;
-    return;
+	srcIndex++;
+	dstIndex++;
+	return;
 }
 
 void expandArgv(int srcArgc, char** srcArgV, int &dstArgc, char** &dstArgv)
@@ -104,43 +104,43 @@ void expandArgv(int srcArgc, char** srcArgV, int &dstArgc, char** &dstArgv)
   for (int srcIndex = 0 ; ; )					//read line from text file
   {
 
-    if(strcmp(srcArgV[srcIndex],"-configfile") == 0)
-    {
-        srcIndex++;
+	if(strcmp(srcArgV[srcIndex],"-configfile") == 0)
+	{
+		srcIndex++;
 
-        FILE* f = fopen( srcArgV[srcIndex], "r" );          //location of text file to be opened specified by str
-        if(f == NULL)
-        {
-            fprintf(stderr,"-configfile %s used, file not found, exiting!\n",srcArgV[srcIndex]);
-            exit(-1);
-        }
+		FILE* f = fopen( srcArgV[srcIndex], "r" );		  //location of text file to be opened specified by str
+		if(f == NULL)
+		{
+			fprintf(stderr,"-configfile %s used, file not found, exiting!\n",srcArgV[srcIndex]);
+			exit(-1);
+		}
 
-        srcIndex++;
+		srcIndex++;
 
-        char line[ 1000 ];
+		char line[ 1000 ];
 
-        while (fgets( line, 1000, f ))                 //read line from text file
-        {
-          char * pch;
-          pch = strtok(line,"\n, ");                  //remove \n character and space
-          while (pch != NULL)
-          {
-              int dummy;
-              writeEntry(pch,dummy,dstArgv[dstIndex],dstIndex,maxArgc); //Dont change srcIndex any further
-              pch=strtok(NULL,"\n ");
-          }
-        }
+		while (fgets( line, 1000, f ))				 //read line from text file
+		{
+		  char * pch;
+		  pch = strtok(line,"\n, ");				  //remove \n character and space
+		  while (pch != NULL)
+		  {
+			  int dummy;
+			  writeEntry(pch,dummy,dstArgv[dstIndex],dstIndex,maxArgc); //Dont change srcIndex any further
+			  pch=strtok(NULL,"\n ");
+		  }
+		}
 
-        fclose(f);
-    }
-    else
-        writeEntry(srcArgV[srcIndex],srcIndex,dstArgv[dstIndex],dstIndex,maxArgc);
+		fclose(f);
+	}
+	else
+		writeEntry(srcArgV[srcIndex],srcIndex,dstArgv[dstIndex],dstIndex,maxArgc);
 
-    if(srcIndex >= srcArgc) //All src args processed
-    {
-        dstArgc = dstIndex;
-        break;
-    }
+	if(srcIndex >= srcArgc) //All src args processed
+	{
+		dstArgc = dstIndex;
+		break;
+	}
   }
 
   return;
@@ -183,16 +183,16 @@ int main(void)
 #endif
 	int argn;
 	int gotInputFile = false;
-    bool gotSegmentInfoFile = false;
-    bool gotleafInfoFile = false;
-    bool gotOffsetFile = false;
+	bool gotSegmentInfoFile = false;
+	bool gotleafInfoFile = false;
+	bool gotOffsetFile = false;
 	bool logConsole = false;
 	int err;
 	char gInputFileFullPath[1024];
 	char leafInfoFileName[1024];
 	char offsetsFileName[1024];
-    char sapType[1024];
-    char temp[1024];
+	char sapType[1024];
+	char temp[1024];
 	int usedefaultfiletype = true;
 
 	FILE *infile = nil;
@@ -207,67 +207,67 @@ int main(void)
 //	vg.print_sample = true;
 //	vg.print_sampleraw = true;
 //	vg.print_hintpayload = true;
-    //vg.visualProfileLevelIndication = 255;
-    // this is simply the wrong place for this;  it's not a program parameter, it's the mpeg-4
-    //   profile/level indication as found in the video stream.
-    // But neither movie info nor track info are available at the right points.  Ugh [dws]
+	//vg.visualProfileLevelIndication = 255;
+	// this is simply the wrong place for this;  it's not a program parameter, it's the mpeg-4
+	//   profile/level indication as found in the video stream.
+	// But neither movie info nor track info are available at the right points.  Ugh [dws]
 
-    vg.checkSegAlignment = false;
-    vg.checkSubSegAlignment = false;
-    vg.minBufferTime = -1;
-    vg.bandwidth = -1;
-    vg.width = 0;
-    vg.height = 0;
-    vg.sarx = 1;
-    vg.sary = 1;
-    vg.framerate = 0;
-    vg.codecprofile = 0;
-    vg.audioChValue = 0;
-    vg.suggestBandwidth = false;
-    vg.isoLive = false;
-    vg.isoondemand = false;
-    vg.dynamic = false;
-    vg.isomain = false;
-    vg.bss = false;
-    vg.subRepLevel = false;
-    vg.startWithSAP = -1;
-    vg.dash264base = false;
-    vg.dashifbase = false;
-    vg.dash264enc = false;
-    vg.dashifondemand = false;
-    vg.dashifmixed = false;
-    vg.RepresentationIndex = false;
-    vg.numOffsetEntries = 0;
-    vg.lowerindexRange=-1;
-    vg.higherindexRange=-1;
-    vg.atomxml=false;
-    vg.cmaf=false;
-    vg.dvb=false;
-    vg.hbbtv=false;
-    vg.ctawave=false;
-    //vg.indexRange='\0';
-    vg.pssh_count = 0;
-    vg.sencFound=false;
-    vg.suppressAtomLevel=false;
+	vg.checkSegAlignment = false;
+	vg.checkSubSegAlignment = false;
+	vg.minBufferTime = -1;
+	vg.bandwidth = -1;
+	vg.width = 0;
+	vg.height = 0;
+	vg.sarx = 1;
+	vg.sary = 1;
+	vg.framerate = 0;
+	vg.codecprofile = 0;
+	vg.audioChValue = 0;
+	vg.suggestBandwidth = false;
+	vg.isoLive = false;
+	vg.isoondemand = false;
+	vg.dynamic = false;
+	vg.isomain = false;
+	vg.bss = false;
+	vg.subRepLevel = false;
+	vg.startWithSAP = -1;
+	vg.dash264base = false;
+	vg.dashifbase = false;
+	vg.dash264enc = false;
+	vg.dashifondemand = false;
+	vg.dashifmixed = false;
+	vg.RepresentationIndex = false;
+	vg.numOffsetEntries = 0;
+	vg.lowerindexRange=-1;
+	vg.higherindexRange=-1;
+	vg.atomxml=false;
+	vg.cmaf=false;
+	vg.dvb=false;
+	vg.hbbtv=false;
+	vg.ctawave=false;
+	//vg.indexRange='\0';
+	vg.pssh_count = 0;
+	vg.sencFound=false;
+	vg.suppressAtomLevel=false;
 
-    int boxCount = 0;
-    char ** arrayArgc;
-    int uArgc;
-    expandArgv(argc,argv,uArgc,arrayArgc);
+	int boxCount = 0;
+	char ** arrayArgc;
+	int uArgc;
+	expandArgv(argc,argv,uArgc,arrayArgc);
 
 
-    fprintf (stdout, "<%s> : argc %d\n", __FUNCTION__, argc);
-    for (int i=0; i < argc; i++)
-    {
-        fprintf (stdout, "<%s> : argv[%d] <%s>\n", __FUNCTION__,  i, argv[i]);
-    }
+	fprintf (stdout, "<%s> : argc %d\n", __FUNCTION__, argc);
+	for (int i=0; i < argc; i++)
+	{
+		fprintf (stdout, "<%s> : argv[%d] <%s>\n", __FUNCTION__,  i, argv[i]);
+	}
 
-    //return (0);
+	//return (0);
 
 	// Check the parameters
 	for( argn = 1; argn < uArgc ; argn++ )
 	{
-		const char *arg = arrayArgc[argn];	     //instead of reading from argv[], now read from array
+		const char *arg = arrayArgc[argn];		 //instead of reading from argv[], now read from array
 		//const char * arg=argv[argn];
 
 		if( '-' != arg[0] )
@@ -312,101 +312,101 @@ int main(void)
 			getNextArgStr( &vg.checklevelstr, "checklevel" );
 		} else if ( keymatch( arg, "printtype", 1 ) ) {
 			getNextArgStr( &vg.printtypestr, "printtype" );
-        } else if ( keymatch( arg, "infofile", 1 ) ) {
-                getNextArgStr( &vg.segmentOffsetInfo, "infofile" ); gotSegmentInfoFile = true;
-        } else if ( keymatch( arg, "segal", 5 ) ) {
-                vg.checkSegAlignment = true;
-        } else if ( keymatch( arg, "ssegal", 6 ) ) {
-            vg.checkSubSegAlignment = true;
-        } else if ( keymatch( arg, "minbuffertime", 13 ) ) {
-            getNextArgStr( &temp, "minbuffertime" ); vg.minBufferTime = atof(temp);
-        } else if ( keymatch( arg, "bandwidth", 9 ) ) {
-            getNextArgStr( &temp, "bandwidth" ); vg.bandwidth = atoi(temp);
-        } else if ( keymatch( arg, "sbw", 3 ) ) {
-                vg.suggestBandwidth = true;
-        } else if ( keymatch( arg, "isolive", 7 ) ) {
-                vg.isoLive = true;
-        } else if ( keymatch( arg, "isoondemand", 7 ) ) {
-                vg.isoondemand = true;
-        } else if ( keymatch( arg, "isomain", 7 ) ) {
-                vg.isomain = true;
-        } else if ( keymatch( arg, "dynamic", 7 ) ) {
-                vg.dynamic = true;
-        } else if ( keymatch( arg, "indexrange", 10 ) ) {
-                getNextArgStr( &vg.indexRange, "indexrange" );
-        } else if ( keymatch( arg, "level", 5 ) ) {
-                vg.subRepLevel = true;
-        } else if ( keymatch( arg, "startwithsap", 6 ) ) {
-                getNextArgStr( &sapType, "startwithsap" );vg.startWithSAP = atoi(sapType);
-        } else if ( keymatch( arg, "bss", 3 ) ) {
-                vg.bss = true; vg.checkSegAlignment = true; //The conditions required for setting the @segmentAlignment attribute to a value other than 'false' for the Adaptation Set are fulfilled.
-        } else if ( keymatch( arg, "leafinfo", 8 ) ) {
-                getNextArgStr( &leafInfoFileName, "leafinfo" ); gotleafInfoFile = true;
+		} else if ( keymatch( arg, "infofile", 1 ) ) {
+				getNextArgStr( &vg.segmentOffsetInfo, "infofile" ); gotSegmentInfoFile = true;
+		} else if ( keymatch( arg, "segal", 5 ) ) {
+				vg.checkSegAlignment = true;
+		} else if ( keymatch( arg, "ssegal", 6 ) ) {
+			vg.checkSubSegAlignment = true;
+		} else if ( keymatch( arg, "minbuffertime", 13 ) ) {
+			getNextArgStr( &temp, "minbuffertime" ); vg.minBufferTime = atof(temp);
+		} else if ( keymatch( arg, "bandwidth", 9 ) ) {
+			getNextArgStr( &temp, "bandwidth" ); vg.bandwidth = atoi(temp);
+		} else if ( keymatch( arg, "sbw", 3 ) ) {
+				vg.suggestBandwidth = true;
+		} else if ( keymatch( arg, "isolive", 7 ) ) {
+				vg.isoLive = true;
+		} else if ( keymatch( arg, "isoondemand", 7 ) ) {
+				vg.isoondemand = true;
+		} else if ( keymatch( arg, "isomain", 7 ) ) {
+				vg.isomain = true;
+		} else if ( keymatch( arg, "dynamic", 7 ) ) {
+				vg.dynamic = true;
+		} else if ( keymatch( arg, "indexrange", 10 ) ) {
+				getNextArgStr( &vg.indexRange, "indexrange" );
+		} else if ( keymatch( arg, "level", 5 ) ) {
+				vg.subRepLevel = true;
+		} else if ( keymatch( arg, "startwithsap", 6 ) ) {
+				getNextArgStr( &sapType, "startwithsap" );vg.startWithSAP = atoi(sapType);
+		} else if ( keymatch( arg, "bss", 3 ) ) {
+				vg.bss = true; vg.checkSegAlignment = true; //The conditions required for setting the @segmentAlignment attribute to a value other than 'false' for the Adaptation Set are fulfilled.
+		} else if ( keymatch( arg, "leafinfo", 8 ) ) {
+				getNextArgStr( &leafInfoFileName, "leafinfo" ); gotleafInfoFile = true;
 		} else if ( keymatch( arg, "offsetinfo", 9 ) ) {
 				getNextArgStr( &offsetsFileName, "offsetinfo" ); gotOffsetFile = true;
 		} else if (keymatch(arg, "logconsole", 10)) {
 			logConsole = true;
-        } else if ( keymatch( arg, "dash264base", 11 ) ) {
-                vg.dash264base = true;
-        } else if ( keymatch( arg, "dashifbase", 10 ) ) {
-                vg.dashifbase = true;
-        } else if ( keymatch( arg, "dash264enc", 10 ) ) {
-                vg.dash264enc = true;
-        } else if ( keymatch( arg, "dashifondemand", 10 ) ) {
-                vg.dashifondemand = true;
-        } else if ( keymatch( arg, "dashifmixed", 10 ) ) {
-                vg.dashifmixed = true;
-        } else if ( keymatch( arg, "repindex", 8 ) ) {
-                vg.RepresentationIndex = true;
+		} else if ( keymatch( arg, "dash264base", 11 ) ) {
+				vg.dash264base = true;
+		} else if ( keymatch( arg, "dashifbase", 10 ) ) {
+				vg.dashifbase = true;
+		} else if ( keymatch( arg, "dash264enc", 10 ) ) {
+				vg.dash264enc = true;
+		} else if ( keymatch( arg, "dashifondemand", 10 ) ) {
+				vg.dashifondemand = true;
+		} else if ( keymatch( arg, "dashifmixed", 10 ) ) {
+				vg.dashifmixed = true;
+		} else if ( keymatch( arg, "repindex", 8 ) ) {
+				vg.RepresentationIndex = true;
 		} else if ( keymatch( arg, "samplenumber", 1 ) ) {
 			getNextArgStr( &vg.samplenumberstr, "samplenumber" );
 
 		} else if ( keymatch( arg, "width", 5 ) ) {
-                          getNextArgStr( &temp, "width" ); vg.width = atoi(temp);
-                } else if ( keymatch( arg, "height", 6 ) ) {
-                          getNextArgStr( &temp, "height" ); vg.height = atoi(temp);
+						  getNextArgStr( &temp, "width" ); vg.width = atoi(temp);
+				} else if ( keymatch( arg, "height", 6 ) ) {
+						  getNextArgStr( &temp, "height" ); vg.height = atoi(temp);
 		} else if( keymatch( arg, "sarx", 4 ) ) {
-                    getNextArgStr( &temp, "sarx" ); vg.sarx = atoi(temp);
-                } else if( keymatch( arg, "sary", 4 ) ) {
-                    getNextArgStr( &temp, "sary" ); vg.sary = atoi(temp);
-                } else if ( keymatch( arg, "framerate", 9 ) ) {
-                          getNextArgStr( &temp, "framerate" );
-                          if(strstr(temp, "/")){
-                              char * pch;
-                              pch = strstr(temp, "/");
-                              strncpy (pch," ",1);
-                              puts(temp);
+					getNextArgStr( &temp, "sarx" ); vg.sarx = atoi(temp);
+				} else if( keymatch( arg, "sary", 4 ) ) {
+					getNextArgStr( &temp, "sary" ); vg.sary = atoi(temp);
+				} else if ( keymatch( arg, "framerate", 9 ) ) {
+						  getNextArgStr( &temp, "framerate" );
+						  if(strstr(temp, "/")){
+							  char * pch;
+							  pch = strstr(temp, "/");
+							  strncpy (pch," ",1);
+							  puts(temp);
 
-                              char * pEnd;
-                              vg.framerate = strtof(temp, &pEnd)/strtof(pEnd, NULL);
-                          }
-                          else{
-                              vg.framerate = strtof(temp, NULL);
-                          }
-                } else if ( keymatch( arg, "codecs", 6 ) ) {
-                    getNextArgStr( &vg.codecs, "codecs" );
-    	        } else if ( keymatch( arg, "codecprofile", 12 ) ) {
-                          getNextArgStr( &temp, "codecprofile" ); vg.codecprofile = atoi(temp);
-                } else if ( keymatch( arg, "codeclevel", 10 ) ) {
-                          getNextArgStr( &temp, "codeclevel" ); vg.codeclevel = atoi(temp);
-                } else if ( keymatch( arg, "codectier", 9 ) ) {
-                          getNextArgStr( &temp, "codectier" );
-                          if(strstr(temp, "L"))
-                              vg.codectier = 0;
-                          else if(strstr(temp, "H"))
-                              vg.codectier = 1;
-                } else if ( keymatch( arg, "audiochvalue", 12 ) ) {
-                         getNextArgStr( &temp, "audiochvalue" ); vg.audioChValue = atoi(temp);
+							  char * pEnd;
+							  vg.framerate = strtof(temp, &pEnd)/strtof(pEnd, NULL);
+						  }
+						  else{
+							  vg.framerate = strtof(temp, NULL);
+						  }
+				} else if ( keymatch( arg, "codecs", 6 ) ) {
+					getNextArgStr( &vg.codecs, "codecs" );
+				} else if ( keymatch( arg, "codecprofile", 12 ) ) {
+						  getNextArgStr( &temp, "codecprofile" ); vg.codecprofile = atoi(temp);
+				} else if ( keymatch( arg, "codeclevel", 10 ) ) {
+						  getNextArgStr( &temp, "codeclevel" ); vg.codeclevel = atoi(temp);
+				} else if ( keymatch( arg, "codectier", 9 ) ) {
+						  getNextArgStr( &temp, "codectier" );
+						  if(strstr(temp, "L"))
+							  vg.codectier = 0;
+						  else if(strstr(temp, "H"))
+							  vg.codectier = 1;
+				} else if ( keymatch( arg, "audiochvalue", 12 ) ) {
+						 getNextArgStr( &temp, "audiochvalue" ); vg.audioChValue = atoi(temp);
 
 		} else if ( keymatch( arg, "default_kid", 11 ) ) { //Related to the case of encrypted content.
-                         getNextArgStr( &vg.default_KID, "default_kid" );
+						 getNextArgStr( &vg.default_KID, "default_kid" );
 
 		}else if ( keymatch( arg, "pssh_count", 10 ) ) { //Related to the case of encrypted content.
-                         getNextArgStr( &temp, "pssh_count" ); vg.pssh_count=atoi(temp);
+						 getNextArgStr( &temp, "pssh_count" ); vg.pssh_count=atoi(temp);
 
 
 		}else if ( keymatch( arg, "psshbox", 7 ) ) { //Related to the case of encrypted content.
-                         getNextArgStr( &temp, "psshbox" );
+						 getNextArgStr( &temp, "psshbox" );
 			 vg.psshfile[boxCount++]=temp;
 
 
@@ -415,18 +415,18 @@ int main(void)
 		} else if ( keymatch( arg, "cmaf", 1)) {
 			 vg.cmaf = true;
 		} else if ( keymatch( arg, "dvb", 1)) {
-                         vg.dvb = true;
-                } else if ( keymatch( arg, "hbbtv", 1)) {
-                         vg.hbbtv = true;
-                } else if ( keymatch( arg, "ctawave", 1)) {
-                        vg.ctawave = true;
-                } else if ( keymatch( arg, "dashifll", 1)) {
-                        vg.dashifll = true;
-                } else if ( keymatch( arg, "inbandeventstreamll", 1)) {
-                        vg.inbandeventstreamll = true;
-                } else if ( keymatch( arg, "suppressatomlevel", 1)) {
-                    vg.suppressAtomLevel = true;
-                } else {
+						 vg.dvb = true;
+				} else if ( keymatch( arg, "hbbtv", 1)) {
+						 vg.hbbtv = true;
+				} else if ( keymatch( arg, "ctawave", 1)) {
+						vg.ctawave = true;
+				} else if ( keymatch( arg, "dashifll", 1)) {
+						vg.dashifll = true;
+				} else if ( keymatch( arg, "inbandeventstreamll", 1)) {
+						vg.inbandeventstreamll = true;
+				} else if ( keymatch( arg, "suppressatomlevel", 1)) {
+					vg.suppressAtomLevel = true;
+				} else {
 			fprintf( stderr, "Unexpected option \"%s\"\n", arg);
 			err = -1;
 			goto usageError;
@@ -462,7 +462,7 @@ int main(void)
 	}
 
 	if ((usedefaultfiletype && (vg.filetypestr[0] == 0)) ||				// default to mp4
-		      (strcmp(vg.filetypestr, "mp4") == 0)) {
+			  (strcmp(vg.filetypestr, "mp4") == 0)) {
 		vg.filetype = filetype_mp4;
 	} else if (strcmp(vg.filetypestr, "mp4v") == 0) {
 		vg.filetype = filetype_mp4v;
@@ -491,7 +491,7 @@ int main(void)
 		strcpy(instr, vg.printtypestr);
 		tokstr = strtok(instr,"+");
 		while (tokstr) {
-			if        (keymatch(tokstr, "atompath", 5)) {
+			if		(keymatch(tokstr, "atompath", 5)) {
 				vg.print_atompath = true;
 			} else if (keymatch(tokstr, "atom", 4)) {
 				vg.print_atom = true;
@@ -511,16 +511,16 @@ int main(void)
 		}
 	}
 
-    if((vg.minBufferTime == -1) != (vg.bandwidth == -1))
-    {
-        fprintf( stderr, "minBufferTime and bandwidth must be provided together as options!\n" );
-        goto usageError;
-    }
-    if((vg.width == 0) != (vg.height == 0))
-    {
-        fprintf( stderr, "width and height must be provided together as options!\n" );
-        goto usageError;
-    }
+	if((vg.minBufferTime == -1) != (vg.bandwidth == -1))
+	{
+		fprintf( stderr, "minBufferTime and bandwidth must be provided together as options!\n" );
+		goto usageError;
+	}
+	if((vg.width == 0) != (vg.height == 0))
+	{
+		fprintf( stderr, "width and height must be provided together as options!\n" );
+		goto usageError;
+	}
 
 	if (vg.samplenumberstr[0] == 0) {
 		vg.samplenumber = 0;			// zero means print them all if you print any
@@ -537,7 +537,7 @@ int main(void)
 		goto usageError;
 	}
 
-    infile = fopen(gInputFileFullPath, "rb");
+	infile = fopen(gInputFileFullPath, "rb");
 	if (!infile) {
 		err = -1;
 		fprintf( stderr, "Could not open input file \"%s\"\n", gInputFileFullPath );
@@ -571,98 +571,98 @@ int main(void)
 
 	vg.fileaoe = &aoe;		// used when you need to read file & size from the file
 
-    if(gotSegmentInfoFile)
-    {
-        int numSegments = 0;
+	if(gotSegmentInfoFile)
+	{
+		int numSegments = 0;
 
-        for(int ii = 0 ; ii < 2 ; ii++)
-        {
-            FILE *segmentOffsetInfoFile = fopen(vg.segmentOffsetInfo, "rb");
-        	if (!segmentOffsetInfoFile) {
-        		err = -1;
-        		fprintf( stderr, "Could not open segment info file \"%s\"\n", vg.segmentOffsetInfo );
-        		goto usageError;
-        	}
+		for(int ii = 0 ; ii < 2 ; ii++)
+		{
+			FILE *segmentOffsetInfoFile = fopen(vg.segmentOffsetInfo, "rb");
+			if (!segmentOffsetInfoFile) {
+				err = -1;
+				fprintf( stderr, "Could not open segment info file \"%s\"\n", vg.segmentOffsetInfo );
+				goto usageError;
+			}
 
-            if(ii == 1)
-            {
-                vg.segmentSizes = (UInt64 *)malloc(sizeof(UInt64)*numSegments);
-                vg.segmentInfoSize = numSegments;
-                vg.simsInStyp = (bool *)malloc(sizeof(bool)*numSegments);
-                vg.psshFoundInSegment = (bool *)malloc(sizeof(bool)*numSegments);
-                vg.tencFoundInSegment = (bool *)malloc(sizeof(bool)*numSegments);
-                vg.dsms = (bool *)malloc(sizeof(bool)*numSegments);
-            }
+			if(ii == 1)
+			{
+				vg.segmentSizes = (UInt64 *)malloc(sizeof(UInt64)*numSegments);
+				vg.segmentInfoSize = numSegments;
+				vg.simsInStyp = (bool *)malloc(sizeof(bool)*numSegments);
+				vg.psshFoundInSegment = (bool *)malloc(sizeof(bool)*numSegments);
+				vg.tencFoundInSegment = (bool *)malloc(sizeof(bool)*numSegments);
+				vg.dsms = (bool *)malloc(sizeof(bool)*numSegments);
+			}
 
-            numSegments = 0;
+			numSegments = 0;
 
-            while(1)
-            {
-                int temp1;
-                UInt64 temp2;
-                int ret = fscanf(segmentOffsetInfoFile,"%d %lld\n",&temp1,&temp2);
-                if(ret < 2)
-                    break;
+			while(1)
+			{
+				int temp1;
+				UInt64 temp2;
+				int ret = fscanf(segmentOffsetInfoFile,"%d %lld\n",&temp1,&temp2);
+				if(ret < 2)
+					break;
 
-                if(ii == 1)
-                {
-                    vg.segmentSizes[numSegments] = temp2;
-                    vg.simsInStyp[numSegments] = false;
-                    vg.psshFoundInSegment[numSegments] = false;
-                    vg.tencFoundInSegment[numSegments] = false;
-                    vg.dsms[numSegments] = false;
-                }
-                numSegments++;
-                if(numSegments == 1 && temp1 > 0)
-                    vg.initializationSegment=false;
-                else
-                    vg.initializationSegment=true;
+				if(ii == 1)
+				{
+					vg.segmentSizes[numSegments] = temp2;
+					vg.simsInStyp[numSegments] = false;
+					vg.psshFoundInSegment[numSegments] = false;
+					vg.tencFoundInSegment[numSegments] = false;
+					vg.dsms[numSegments] = false;
+				}
+				numSegments++;
+				if(numSegments == 1 && temp1 > 0)
+					vg.initializationSegment=false;
+				else
+					vg.initializationSegment=true;
 
-            }
+			}
 
-            if(numSegments == 0)
-                {
-                    err = -1;
-                    fprintf( stderr, "Empty segment info file \"%s\"\n", vg.segmentOffsetInfo );
-                    goto usageError;
-                }
+			if(numSegments == 0)
+				{
+					err = -1;
+					fprintf( stderr, "Empty segment info file \"%s\"\n", vg.segmentOffsetInfo );
+					goto usageError;
+				}
 
-            fclose(segmentOffsetInfoFile);
-        }
-        vg.dashSegment = true;    //Either this, or for non-segmented file = self-intializing segment, brand DASH shall be in ftyp, or use another dash-specific brand to initialize this
-    }
-    else
-    {
-        vg.segmentSizes = (UInt64 *)malloc(sizeof(UInt64)*1);
-        vg.segmentInfoSize = 1;
-        vg.initializationSegment=false;
-        vg.segmentSizes[0] = aoe.size;
-        vg.simsInStyp = (bool *)malloc(sizeof(bool)*1);
-        vg.simsInStyp[0] = false;
-        vg.psshFoundInSegment = (bool *)malloc(sizeof(bool)*1);
-        vg.psshFoundInSegment[0] = false;
-        vg.tencFoundInSegment = (bool *)malloc(sizeof(bool)*1);
-        vg.tencFoundInSegment[0] = false;
-        vg.dsms = (bool *)malloc(sizeof(bool)*1);
-        vg.dsms[0] = false;
-        vg.dashSegment = false;
-    }
+			fclose(segmentOffsetInfoFile);
+		}
+		vg.dashSegment = true;	//Either this, or for non-segmented file = self-intializing segment, brand DASH shall be in ftyp, or use another dash-specific brand to initialize this
+	}
+	else
+	{
+		vg.segmentSizes = (UInt64 *)malloc(sizeof(UInt64)*1);
+		vg.segmentInfoSize = 1;
+		vg.initializationSegment=false;
+		vg.segmentSizes[0] = aoe.size;
+		vg.simsInStyp = (bool *)malloc(sizeof(bool)*1);
+		vg.simsInStyp[0] = false;
+		vg.psshFoundInSegment = (bool *)malloc(sizeof(bool)*1);
+		vg.psshFoundInSegment[0] = false;
+		vg.tencFoundInSegment = (bool *)malloc(sizeof(bool)*1);
+		vg.tencFoundInSegment[0] = false;
+		vg.dsms = (bool *)malloc(sizeof(bool)*1);
+		vg.dsms[0] = false;
+		vg.dashSegment = false;
+	}
 
-    vg.psshInInit = false;
-    vg.tencInInit = false;
-    vg.processedStypes = 0;
-    vg.accessUnitDurationNonIndexedTrack = 0;
+	vg.psshInInit = false;
+	vg.tencInInit = false;
+	vg.processedStypes = 0;
+	vg.accessUnitDurationNonIndexedTrack = 0;
 
-    if(vg.checkSegAlignment || vg.checkSubSegAlignment || vg.bss)
-    {
-        if(gotleafInfoFile)
-            loadLeafInfo(leafInfoFileName);
-        else
-        {
-            printf("Segment/Subsegment alignment check request, leaf info file not found!\n");
-            vg.checkSegAlignment = vg.checkSubSegAlignment = false;
-        }
-    }
+	if(vg.checkSegAlignment || vg.checkSubSegAlignment || vg.bss)
+	{
+		if(gotleafInfoFile)
+			loadLeafInfo(leafInfoFileName);
+		else
+		{
+			printf("Segment/Subsegment alignment check request, leaf info file not found!\n");
+			vg.checkSegAlignment = vg.checkSubSegAlignment = false;
+		}
+	}
 
 	if (vg.filetype == filetype_mp4v) {
 		err = ValidateElementaryVideoStream( &aoe, nil );
@@ -679,62 +679,62 @@ usageError:
 	fprintf( stderr, "Usage: %s [-filetype <type>] "
 								"[-printtype <options>] [-checklevel <level>] [-infofile <Segment Info File>] [-leafinfo <Leaf Info File>] [-segal] [-ssegal] [-startwithsap TYPE] [-level] [-bss] [-isolive] [-isoondemand] [-isomain] [-dynamic] [-dash264base] [-dashifbase] [-dash264enc] [-dashifondemand] [-dashifmixed] [-dashifll] [-repindex] [-atomxml] [-cmaf] [-dvb] [-hbbtv] [-ctawave] [-suppressatomlevel]", "ValidateMP4" );
 	fprintf( stderr, " [-samplenumber <number>] [-verbose <options>] [-offsetinfo <Offset Info File>] [-logconsole ] [-help] inputfile\n" );
-	fprintf( stderr, "    -a[tompath]      <atompath> - limit certain operations to <atompath> (e.g. moov-1:trak-2)\n" );
-	fprintf( stderr, "                     this effects -checklevel and -printtype (default is everything) \n" );
-	fprintf( stderr, "    -p[rinttype]     <options> - controls output (combine options with +) \n" );
-	fprintf( stderr, "                     atompath - output the atompath for each atom \n" );
-	fprintf( stderr, "                     atom - output the contents of each atom \n" );
-	fprintf( stderr, "                     fulltable - output those long tables (e.g. samplesize tables)  \n" );
-	fprintf( stderr, "                     sample - output the samples as well \n" );
-	fprintf( stderr, "                                 (depending on the track type, this is the same as sampleraw) \n" );
-	fprintf( stderr, "                     sampleraw - output the samples in raw form \n" );
-	fprintf( stderr, "                     hintpayload - output payload for hint tracks \n" );
-	fprintf( stderr, "    -c[hecklevel]    <level> - increase the amount of checking performed \n" );
-	fprintf( stderr, "                     1: check the moov container (default -atompath is ignored) \n" );
-	fprintf( stderr, "                     2: check the samples \n" );
-	fprintf( stderr, "                     3: check the payload of hint track samples \n" );
-	fprintf( stderr, "    -infofile        <Segment Info File> - Offset file generated by assembler \n" );
-	fprintf( stderr, "    -leafinfo         <Leaf Info File> - Information file generated by this software (named leafinfo.txt) for another representation, provided to run for cross-checks of alignment\n" );
-	fprintf( stderr, "    -segal  -         Check Segment alignment based on <Leaf Info File>\n" );
-	fprintf( stderr, "    -ssegal -         Check Subegment alignment based on <Leaf Info File>\n" );
-	fprintf( stderr, "    -bandwidth        For checking @bandwidth/@minBufferTime\n" );
-	fprintf( stderr, "    -minbuffertime    For checking @bandwidth/@minBufferTime\n" );
-	fprintf( stderr, "    -width            For checking width\n" );
-	fprintf( stderr, "    -height           For checking height\n" );
-	fprintf( stderr, "    -sbw              Suggest a good @bandwidth if the one provided is non-conforming\n" );
-	fprintf( stderr, "    -isolive          Make checks specific for media segments conforming to ISO Base media file format live profile\n" );
-	fprintf( stderr, "    -isoondemand      Make checks specific for media segments conforming to ISO Base media file format On Demand profile\n" );
-	fprintf( stderr, "    -isomain          Make checks specific for media segments conforming to ISO Base media file format main profile\n" );
-	fprintf( stderr, "    -dynamic          MPD type=dynamic\n" );
-	fprintf( stderr, "    -startwithsap     Check for a specific SAP type as announced in the MPD\n" );
-	fprintf( stderr, "    -level            SubRepresentation@level checks\n" );
-	fprintf( stderr, "    -bss              Make checks specific for bitstream switching\n" );
-	fprintf( stderr, "    -dash264base      Make checks specific for DASH264 Base IOP\n" );
-	fprintf( stderr, "    -dashifbase       Make checks specific for DASHIF Base IOP\n" );
-	fprintf( stderr, "    -dash264enc       Make checks specific for encrypted DASH264 content\n" );
-        fprintf( stderr, "    -dashifondemand   Make checks specific for encrypted DASH-IF IOP On Demand content\n" );
-	fprintf( stderr, "    -dashifmixed      Make checks specific for encrypted DASH-IF IOP Mixed On Demand content\n" );
-        fprintf( stderr, "    -dashifll         Make checks specific for Low Latency DASH-IF content\n" );
-	fprintf( stderr, "    -repindex         Make checks specific for @RepresentationIndex");
-	fprintf( stderr, "    -indexrange       Byte range where sidx is expected\n");
-	fprintf( stderr, "    -width            Expected width of the video track\n");
-	fprintf( stderr, "    -height           Expected height of the video track\n");
-        fprintf( stderr, "    -framerate        Expected framerate of the video track\n");
-        fprintf( stderr, "    -codecprofile     Expected codec profile of the video track\n");
-        fprintf( stderr, "    -codectier        Expected codec tier of the video track\n");
-        fprintf( stderr, "    -codeclevel       Expected codec level of the video track\n");
-	fprintf( stderr, "    -default_kid      Expected default_KID for the mp4 content protection\n");
-	fprintf( stderr, "    -s[amplenumber]   <number> - limit sample checking or printing operations to sample <number> \n" );
-	fprintf( stderr, "                      most effective in combination with -atompath (default is all samples) \n" );
-	fprintf( stderr, "    -offsetinfo       <Offset Info File> - Partial file optimization information file: if the file has several byte ranges removed, this file provides the information as offset-bytes removed pairs\n");
-	fprintf( stderr, "    -logconsole       Redirect stdout and stderr to stdout.txt and stderr.txt, respectively \n");
-	fprintf( stderr, "    -atomxml          Output the contents of each atom into an xml \n" );
-	fprintf( stderr, "    -cmaf             Check for CMAF conformance \n" );
-        fprintf( stderr, "    -dvb              Check for DVB conformance \n" );
-        fprintf( stderr, "    -hbbtv            Check for HbbTV conformance \n" );
-        fprintf( stderr, "    -ctawave          Check for CTA WAVE conformance \n" );
-        fprintf( stderr, "    -suppressatomlevel   For suppressing atom level information in error messages \n" );
-	fprintf( stderr, "    -h[elp] - print this usage message \n" );
+	fprintf( stderr, "	-a[tompath]	  <atompath> - limit certain operations to <atompath> (e.g. moov-1:trak-2)\n" );
+	fprintf( stderr, "					 this effects -checklevel and -printtype (default is everything) \n" );
+	fprintf( stderr, "	-p[rinttype]	 <options> - controls output (combine options with +) \n" );
+	fprintf( stderr, "					 atompath - output the atompath for each atom \n" );
+	fprintf( stderr, "					 atom - output the contents of each atom \n" );
+	fprintf( stderr, "					 fulltable - output those long tables (e.g. samplesize tables)  \n" );
+	fprintf( stderr, "					 sample - output the samples as well \n" );
+	fprintf( stderr, "								 (depending on the track type, this is the same as sampleraw) \n" );
+	fprintf( stderr, "					 sampleraw - output the samples in raw form \n" );
+	fprintf( stderr, "					 hintpayload - output payload for hint tracks \n" );
+	fprintf( stderr, "	-c[hecklevel]	<level> - increase the amount of checking performed \n" );
+	fprintf( stderr, "					 1: check the moov container (default -atompath is ignored) \n" );
+	fprintf( stderr, "					 2: check the samples \n" );
+	fprintf( stderr, "					 3: check the payload of hint track samples \n" );
+	fprintf( stderr, "	-infofile		<Segment Info File> - Offset file generated by assembler \n" );
+	fprintf( stderr, "	-leafinfo		 <Leaf Info File> - Information file generated by this software (named leafinfo.txt) for another representation, provided to run for cross-checks of alignment\n" );
+	fprintf( stderr, "	-segal  -		 Check Segment alignment based on <Leaf Info File>\n" );
+	fprintf( stderr, "	-ssegal -		 Check Subegment alignment based on <Leaf Info File>\n" );
+	fprintf( stderr, "	-bandwidth		For checking @bandwidth/@minBufferTime\n" );
+	fprintf( stderr, "	-minbuffertime	For checking @bandwidth/@minBufferTime\n" );
+	fprintf( stderr, "	-width			For checking width\n" );
+	fprintf( stderr, "	-height		   For checking height\n" );
+	fprintf( stderr, "	-sbw			  Suggest a good @bandwidth if the one provided is non-conforming\n" );
+	fprintf( stderr, "	-isolive		  Make checks specific for media segments conforming to ISO Base media file format live profile\n" );
+	fprintf( stderr, "	-isoondemand	  Make checks specific for media segments conforming to ISO Base media file format On Demand profile\n" );
+	fprintf( stderr, "	-isomain		  Make checks specific for media segments conforming to ISO Base media file format main profile\n" );
+	fprintf( stderr, "	-dynamic		  MPD type=dynamic\n" );
+	fprintf( stderr, "	-startwithsap	 Check for a specific SAP type as announced in the MPD\n" );
+	fprintf( stderr, "	-level			SubRepresentation@level checks\n" );
+	fprintf( stderr, "	-bss			  Make checks specific for bitstream switching\n" );
+	fprintf( stderr, "	-dash264base	  Make checks specific for DASH264 Base IOP\n" );
+	fprintf( stderr, "	-dashifbase	   Make checks specific for DASHIF Base IOP\n" );
+	fprintf( stderr, "	-dash264enc	   Make checks specific for encrypted DASH264 content\n" );
+		fprintf( stderr, "	-dashifondemand   Make checks specific for encrypted DASH-IF IOP On Demand content\n" );
+	fprintf( stderr, "	-dashifmixed	  Make checks specific for encrypted DASH-IF IOP Mixed On Demand content\n" );
+		fprintf( stderr, "	-dashifll		 Make checks specific for Low Latency DASH-IF content\n" );
+	fprintf( stderr, "	-repindex		 Make checks specific for @RepresentationIndex");
+	fprintf( stderr, "	-indexrange	   Byte range where sidx is expected\n");
+	fprintf( stderr, "	-width			Expected width of the video track\n");
+	fprintf( stderr, "	-height		   Expected height of the video track\n");
+		fprintf( stderr, "	-framerate		Expected framerate of the video track\n");
+		fprintf( stderr, "	-codecprofile	 Expected codec profile of the video track\n");
+		fprintf( stderr, "	-codectier		Expected codec tier of the video track\n");
+		fprintf( stderr, "	-codeclevel	   Expected codec level of the video track\n");
+	fprintf( stderr, "	-default_kid	  Expected default_KID for the mp4 content protection\n");
+	fprintf( stderr, "	-s[amplenumber]   <number> - limit sample checking or printing operations to sample <number> \n" );
+	fprintf( stderr, "					  most effective in combination with -atompath (default is all samples) \n" );
+	fprintf( stderr, "	-offsetinfo	   <Offset Info File> - Partial file optimization information file: if the file has several byte ranges removed, this file provides the information as offset-bytes removed pairs\n");
+	fprintf( stderr, "	-logconsole	   Redirect stdout and stderr to stdout.txt and stderr.txt, respectively \n");
+	fprintf( stderr, "	-atomxml		  Output the contents of each atom into an xml \n" );
+	fprintf( stderr, "	-cmaf			 Check for CMAF conformance \n" );
+		fprintf( stderr, "	-dvb			  Check for DVB conformance \n" );
+		fprintf( stderr, "	-hbbtv			Check for HbbTV conformance \n" );
+		fprintf( stderr, "	-ctawave		  Check for CTA WAVE conformance \n" );
+		fprintf( stderr, "	-suppressatomlevel   For suppressing atom level information in error messages \n" );
+	fprintf( stderr, "	-h[elp] - print this usage message \n" );
 
 
 	//=====================
@@ -760,90 +760,90 @@ bail:
 
 void loadLeafInfo(char *leafInfoFileName)
 {
-    FILE *leafInfoFile = fopen(leafInfoFileName,"rt");
-    if(leafInfoFile == NULL)
-    {
-        printf("Leaf info file %s not found, alignment wont be checked!\n",leafInfoFileName);
-        vg.checkSegAlignment = vg.checkSubSegAlignment = false;
-        vg.bss = false;
-        return;
-    }
+	FILE *leafInfoFile = fopen(leafInfoFileName,"rt");
+	if(leafInfoFile == NULL)
+	{
+		printf("Leaf info file %s not found, alignment wont be checked!\n",leafInfoFileName);
+		vg.checkSegAlignment = vg.checkSubSegAlignment = false;
+		vg.bss = false;
+		return;
+	}
 
-    fscanf(leafInfoFile,"%lu\n",&vg.accessUnitDurationNonIndexedTrack);
+	fscanf(leafInfoFile,"%lu\n",&vg.accessUnitDurationNonIndexedTrack);
 
-    fscanf(leafInfoFile,"%u\n",&vg.numControlTracks);
+	fscanf(leafInfoFile,"%u\n",&vg.numControlTracks);
 
-    vg.controlLeafInfo = (LeafInfo **)malloc(vg.numControlTracks*sizeof(LeafInfo *));
-    vg.numControlLeafs = (unsigned int *)malloc(vg.numControlTracks*sizeof(unsigned int));
-    vg.trackTypeInfo = (TrackTypeInfo *)malloc(vg.numControlTracks*sizeof(TrackTypeInfo));
+	vg.controlLeafInfo = (LeafInfo **)malloc(vg.numControlTracks*sizeof(LeafInfo *));
+	vg.numControlLeafs = (unsigned int *)malloc(vg.numControlTracks*sizeof(unsigned int));
+	vg.trackTypeInfo = (TrackTypeInfo *)malloc(vg.numControlTracks*sizeof(TrackTypeInfo));
 
-    for(unsigned int i = 0 ; i < vg.numControlTracks ; i++)
-    {
-        fscanf(leafInfoFile,"%lu %lu\n",&vg.trackTypeInfo[i].track_ID,&vg.trackTypeInfo[i].componentSubType);
-    }
+	for(unsigned int i = 0 ; i < vg.numControlTracks ; i++)
+	{
+		fscanf(leafInfoFile,"%lu %lu\n",&vg.trackTypeInfo[i].track_ID,&vg.trackTypeInfo[i].componentSubType);
+	}
 
-    for(unsigned int i = 0 ; i < vg.numControlTracks ; i++)
-    {
-        fscanf(leafInfoFile,"%u\n",&(vg.numControlLeafs[i]));
+	for(unsigned int i = 0 ; i < vg.numControlTracks ; i++)
+	{
+		fscanf(leafInfoFile,"%u\n",&(vg.numControlLeafs[i]));
 
-        vg.controlLeafInfo[i] = (LeafInfo *)malloc(vg.numControlLeafs[i]*sizeof(LeafInfo));
+		vg.controlLeafInfo[i] = (LeafInfo *)malloc(vg.numControlLeafs[i]*sizeof(LeafInfo));
 
-        for(UInt32 j = 0 ; j < vg.numControlLeafs[i] ; j++)
-            fscanf(leafInfoFile,"%d %Lf %Lf\n",(int *)&vg.controlLeafInfo[i][j].firstInSegment,&vg.controlLeafInfo[i][j].earliestPresentationTime,&vg.controlLeafInfo[i][j].lastPresentationTime);
+		for(UInt32 j = 0 ; j < vg.numControlLeafs[i] ; j++)
+			fscanf(leafInfoFile,"%d %Lf %Lf\n",(int *)&vg.controlLeafInfo[i][j].firstInSegment,&vg.controlLeafInfo[i][j].earliestPresentationTime,&vg.controlLeafInfo[i][j].lastPresentationTime);
 
-    }
+	}
 
-    fclose(leafInfoFile);
+	fclose(leafInfoFile);
 }
 
 void loadOffsetInfo(char *offsetsFileName)
 {
-    FILE *offsetsFile = fopen(offsetsFileName,"rt");
-    if(offsetsFile == NULL)
-    {
-        printf("Offset info file %s not found, exiting!\n",offsetsFileName);
-        exit(-1);
-    }
+	FILE *offsetsFile = fopen(offsetsFileName,"rt");
+	if(offsetsFile == NULL)
+	{
+		printf("Offset info file %s not found, exiting!\n",offsetsFileName);
+		exit(-1);
+	}
 
 	int numEntries = 0;
-    UInt64 dummy1, dummy2;
+	UInt64 dummy1, dummy2;
 
 	while(1)
 	{
-        int ret = fscanf(offsetsFile,"%llu %llu\n",&dummy1,&dummy2);
-        if(ret > 2)
-        {
-            printf("%d entries found on entry number %d, improper offset info file, exiting!\n",ret,numEntries+1);
-            exit(-1);
-        }
-        if(ret < 2)
-            break;
-        numEntries ++;
+		int ret = fscanf(offsetsFile,"%llu %llu\n",&dummy1,&dummy2);
+		if(ret > 2)
+		{
+			printf("%d entries found on entry number %d, improper offset info file, exiting!\n",ret,numEntries+1);
+			exit(-1);
+		}
+		if(ret < 2)
+			break;
+		numEntries ++;
 	}
 
-    if(numEntries == 0)
-    {
-        printf("No valid entries found in offset info file, exiting!\n");
-        exit(-1);
-    }
-    vg.numOffsetEntries = numEntries;
+	if(numEntries == 0)
+	{
+		printf("No valid entries found in offset info file, exiting!\n");
+		exit(-1);
+	}
+	vg.numOffsetEntries = numEntries;
 
-    vg.offsetEntries = (OffsetInfo *)malloc(vg.numOffsetEntries*sizeof(OffsetInfo));
-    if(vg.offsetEntries == NULL)
-    {
-        printf("Failure to allocate %d offset entries, exiting!\n",vg.numOffsetEntries);
-        exit(-1);
-    }
+	vg.offsetEntries = (OffsetInfo *)malloc(vg.numOffsetEntries*sizeof(OffsetInfo));
+	if(vg.offsetEntries == NULL)
+	{
+		printf("Failure to allocate %d offset entries, exiting!\n",vg.numOffsetEntries);
+		exit(-1);
+	}
 
 	rewind(offsetsFile);
 
-    for(unsigned int index = 0 ; index < vg.numOffsetEntries ; index ++)
-    {
-        fscanf(offsetsFile,"%llu %llu\n",&vg.offsetEntries[index].offset,&vg.offsetEntries[index].sizeRemoved);
+	for(unsigned int index = 0 ; index < vg.numOffsetEntries ; index ++)
+	{
+		fscanf(offsetsFile,"%llu %llu\n",&vg.offsetEntries[index].offset,&vg.offsetEntries[index].sizeRemoved);
 		index = index;
-    }
+	}
 
-    fclose(offsetsFile);
+	fclose(offsetsFile);
 }
 
 //==========================================================================================
@@ -919,18 +919,18 @@ void atomprintnotab(const char *formatStr, ...)
 
 void atomtable_begin ( const char *name )
 {
-    if (vg.tabcnt != 0)
-    {
-        atomprint("<\n");
-    }
-    atomprint("<%s>\n", name);
-    vg.tabcnt++;
+	if (vg.tabcnt != 0)
+	{
+		atomprint("<\n");
+	}
+	atomprint("<%s>\n", name);
+	vg.tabcnt++;
 }
 
 void atomtable_end ( const char *name )
 {
-    vg.tabcnt++;
-    atomprint("<\%s>\n", name);
+	vg.tabcnt++;
+	atomprint("<\%s>\n", name);
 }
 
 
@@ -940,8 +940,8 @@ void atomprint(const char *formatStr, ...)
 	va_start(ap, formatStr);
 
 	if (vg.printatom) {
-	    printf ("vg.printatom\n");
-    	long tabcnt = vg.tabcnt;
+		printf ("vg.printatom\n");
+		long tabcnt = vg.tabcnt;
 		while (tabcnt-- > 0) {
 			fprintf(_stdout,myTAB);
 		}
@@ -1081,13 +1081,13 @@ void sampleprinthexandasciidata(char *dataP, UInt32 size)
 		hexstr[1] = hc[(c   )&0x0F];
 
 		if( isprint( c ) && c != 0 )
-                {
+				{
 			asciiStr[ widthCnt ] = c ;
-                        // When *dataP contains something like "...%LS...." , then some compilers throw errors because it looks like format specifier.
-                        // Hence this case is fixed here.
-                        if(c == '%')
-                            asciiStr[ widthCnt ] = 'p' ;
-                }
+						// When *dataP contains something like "...%LS...." , then some compilers throw errors because it looks like format specifier.
+						// Hence this case is fixed here.
+						if(c == '%')
+							asciiStr[ widthCnt ] = 'p' ;
+				}
 		else
 			asciiStr[ widthCnt ] = '.';
 
@@ -1143,12 +1143,12 @@ void _errprint(const char *formatStr, ...)
 	va_list 		ap;
 	va_start(ap, formatStr);
 
-        if(vg.suppressAtomLevel){
-            fprintf( _stderr, "### error:\r###");
-        }
-        else{
-            fprintf( _stderr, "### error: %s \r###        ",vg.curatompath);
-        }
+		if(vg.suppressAtomLevel){
+			fprintf( _stderr, "### error:\r###");
+		}
+		else{
+			fprintf( _stderr, "### error: %s \r###		",vg.curatompath);
+		}
 	vfprintf( _stderr, formatStr, ap );
 
 	va_end(ap);
@@ -1156,32 +1156,32 @@ void _errprint(const char *formatStr, ...)
 
 void bailprint(const char *level, OSErr errcode)
 {
-    switch(errcode){
-        case -50:
-            errprint("%s: Parameter-related error (out-of-range value, non-conformant type, etc.) for attribute validation\n", level);
-            break;
-        case -2019:
-            errprint("%s: Memory allocation error encountered in attribute validation\n", level);
-            break;
-        case -2020:
-            errprint("%s: Not enough bits left in the bitstream for further attribute validation\n", level);
-            break;
-        case -2021:
-            errprint("%s: Too many bits left in the bitstream after the complete validation\n", level);
-            break;
-        case -2022:
-            errprint("%s: Cannot handle the bad attribute length for attribute validation\n", level);
-            break;
-        case -2023:
-            errprint("%s: Bad attribute size for attribute validation\n", level);
-            break;
-        case -2024:
-            errprint("%s: Bad attribute value for attribute validation\n", level);
-            break;
-        default:
-            errprint("%s: %d\n",level, errcode);
-            break;
-    }
+	switch(errcode){
+		case -50:
+			errprint("%s: Parameter-related error (out-of-range value, non-conformant type, etc.) for attribute validation\n", level);
+			break;
+		case -2019:
+			errprint("%s: Memory allocation error encountered in attribute validation\n", level);
+			break;
+		case -2020:
+			errprint("%s: Not enough bits left in the bitstream for further attribute validation\n", level);
+			break;
+		case -2021:
+			errprint("%s: Too many bits left in the bitstream after the complete validation\n", level);
+			break;
+		case -2022:
+			errprint("%s: Cannot handle the bad attribute length for attribute validation\n", level);
+			break;
+		case -2023:
+			errprint("%s: Bad attribute size for attribute validation\n", level);
+			break;
+		case -2024:
+			errprint("%s: Bad attribute value for attribute validation\n", level);
+			break;
+		default:
+			errprint("%s: %d\n",level, errcode);
+			break;
+	}
 }
 
 int my_stricmp(const char* p, const char* q)
@@ -1197,22 +1197,22 @@ int my_stricmp(const char* p, const char* q)
 
 int mapStringToUInt32(char *src, UInt32 *target)
 {
-    if(src == NULL || target == NULL)
-    {
-        fprintf(stderr, "mapStringToUInt32: NULL pointer exception");
-        return -1;
-    }
+	if(src == NULL || target == NULL)
+	{
+		fprintf(stderr, "mapStringToUInt32: NULL pointer exception");
+		return -1;
+	}
 
-    char *tmp = (char *)target;
+	char *tmp = (char *)target;
 
-    //Write in reverse (big-endian) format)
+	//Write in reverse (big-endian) format)
 
-    tmp[0] = src[3];
-    tmp[1] = src[2];
-    tmp[2] = src[1];
-    tmp[3] = src[0];
+	tmp[0] = src[3];
+	tmp[1] = src[2];
+	tmp[2] = src[1];
+	tmp[3] = src[0];
 
-    return 0;
+	return 0;
 
 }
 
@@ -1240,7 +1240,7 @@ char *ostypetostr_r(UInt32 num, char * buffer)
 }
 
 //  careful about using more than one call to this in the same print statement, they end up all being the same
-//    for cases where you need it more than once in the same print statment, use int64toxstr_r() instead
+//	for cases where you need it more than once in the same print statment, use int64toxstr_r() instead
 char *int64toxstr(UInt64 num)
 {
 	static char str[20];
@@ -1271,7 +1271,7 @@ char *int64toxstr_r(UInt64 num, char * str)
 }
 
 //  careful about using more than one call to this in the same print statement, they end up all being the same
-//    for cases where you need it more than once in the same print statment, use int64toxstr_r() instead
+//	for cases where you need it more than once in the same print statment, use int64toxstr_r() instead
 char *int64todstr(UInt64 num)
 {
 	static char str[40];
@@ -1315,7 +1315,7 @@ char *langtodstr(UInt16 num)
 	else {
 		str[0] = ((num >> 10) & 0x1F) + 0x60;
 		str[1] = ((num >> 5 ) & 0x1F) + 0x60;
-		str[2] = ( num        & 0x1F) + 0x60;
+		str[2] = ( num		& 0x1F) + 0x60;
 	}
 
 	return str;
@@ -1323,7 +1323,7 @@ char *langtodstr(UInt16 num)
 
 
 //  careful about using more than one call to this in the same print statement, they end up all being the same
-//    for cases where you need it more than once in the same print statment, use fixed16str_r() instead
+//	for cases where you need it more than once in the same print statment, use fixed16str_r() instead
 char *fixed16str(SInt16 num)
 {
 	static char str[40];
@@ -1351,7 +1351,7 @@ char *fixed16str_r(SInt16 num, char * str)
 
 
 //  careful about using more than one call to this in the same print statement, they end up all being the same
-//    for cases where you need it more than once in the same print statment, use fixed32str_r() instead
+//	for cases where you need it more than once in the same print statment, use fixed32str_r() instead
 char *fixed32str(SInt32 num)
 {
 	static char str[40];
@@ -1380,7 +1380,7 @@ char *fixed32str_r(SInt32 num, char * str)
 
 
 //  careful about using more than one call to this in the same print statement, they end up all being the same
-//    for cases where you need it more than once in the same print statment, use fixedU32str_r() instead
+//	for cases where you need it more than once in the same print statment, use fixedU32str_r() instead
 char *fixedU32str(UInt32 num)
 {
 	static char str[40];
@@ -1406,57 +1406,57 @@ char *fixedU32str_r(UInt32 num, char * str)
 	return str;
 }
 
-    //  copy non-terminated C string (chars) to terminated C string (str)
+	//  copy non-terminated C string (chars) to terminated C string (str)
 void copyCharsToStr( char *chars, char *str, UInt16 count ){
-    SInt16 i;
+	SInt16 i;
 
-    for( i = 0; i < count; ++i )
-        str[i] = chars[i];
+	for( i = 0; i < count; ++i )
+		str[i] = chars[i];
 
-    str[ count ] = 0;
+	str[ count ] = 0;
 
 }
   //To remove all occurences of the specified character.
 void remove_all_chars(char* str, char c) {
-        char *pr = str, *pw = str;
-        while (*pr) {
-            *pw = *pr++;
-            pw += (*pw != c);
-        }
-        *pw = '\0';
+		char *pr = str, *pw = str;
+		while (*pr) {
+			*pw = *pr++;
+			pw += (*pw != c);
+		}
+		*pw = '\0';
 }
   //Convert hexadecimal to integer
 int hex_to_int(char c){
-        int first,second,result ;
+		int first,second,result ;
 	if (c >= 97)
-          c = c - 32;
+		  c = c - 32;
 	first= c / 16 - 3;
 	second= c % 16;
-        result = first*10 + second;
-        if(result > 9) result--;
-        return result;
+		result = first*10 + second;
+		if(result > 9) result--;
+		return result;
 }
   //Convert hexadecimal to ASCII
 int hex_to_ascii(char c, char d){
-        int high,low;
-        high= hex_to_int(c) * 16;
-        low = hex_to_int(d);
-        return high+low;
+		int high,low;
+		high= hex_to_int(c) * 16;
+		low = hex_to_int(d);
+		return high+low;
 }
 
   //Convert base64 string to ASCII
-#define TABLELEN        64
-//#define BUFFFERLEN      128
+#define TABLELEN		64
+//#define BUFFFERLEN	  128
 
-#define ENCODERLEN      4
-#define ENCODEROPLEN    0
+#define ENCODERLEN	  4
+#define ENCODEROPLEN	0
 #define ENCODERBLOCKLEN 3
 
-#define PADDINGCHAR     '='
+#define PADDINGCHAR	 '='
 #define BASE64CHARSET   "ABCDEFGHIJKLMNOPQRSTUVWXYZ"\
-                        "abcdefghijklmnopqrstuvwxyz"\
-                        "0123456789"\
-                        "+/";
+						"abcdefghijklmnopqrstuvwxyz"\
+						"0123456789"\
+						"+/";
 int encodeblock(char *input, char *output, int oplen){
    int rc = 0, iplen = 0;
    char encodedstr[ENCODERLEN + 1] = "";
@@ -1465,9 +1465,9 @@ int encodeblock(char *input, char *output, int oplen){
    iplen = strlen(input);
    encodedstr[0] = encodingtabe[ input[0] >> 2 ];
    encodedstr[1] = encodingtabe[ ((input[0] & 0x03) << 4) |
-                                 ((input[1] & 0xf0) >> 4) ];
+								 ((input[1] & 0xf0) >> 4) ];
    encodedstr[2] = (iplen > 1 ? encodingtabe[ ((input[1] & 0x0f) << 2) |
-                                              ((input[2] & 0xc0) >> 6) ] : PADDINGCHAR);
+											  ((input[2] & 0xc0) >> 6) ] : PADDINGCHAR);
    encodedstr[3] = (iplen > 2 ? encodingtabe[ input[2] & 0x3f ] : PADDINGCHAR);
    strncat(output, encodedstr, oplen-strlen(output));
 
@@ -1481,15 +1481,15 @@ int Base64Encode(char *input, char *output, int oplen){
 
    iplen = strlen(input);
    while(ipindex < iplen){
-      for(index = 0; index < 3; index++){
-         if(ipindex < iplen){
-            encoderinput[index] = input[ipindex];
-         }else{
-            encoderinput[index] = 0;
-         }
-         ipindex++;
-      }
-      rc = encodeblock(encoderinput, output, oplen);
+	  for(index = 0; index < 3; index++){
+		 if(ipindex < iplen){
+			encoderinput[index] = input[ipindex];
+		 }else{
+			encoderinput[index] = 0;
+		 }
+		 ipindex++;
+	  }
+	  rc = encodeblock(encoderinput, output, oplen);
    }
 
    return rc;

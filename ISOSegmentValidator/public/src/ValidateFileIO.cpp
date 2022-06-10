@@ -52,7 +52,7 @@ UInt64 inflateOffset(UInt64 offset64)
 
 		for (index = 0; index < vg.numOffsetEntries && adjustedOffset >= vg.offsetEntries[index].offset; index++)
 		{
-            adjustedOffset += vg.offsetEntries[index].sizeRemoved;
+			adjustedOffset += vg.offsetEntries[index].sizeRemoved;
 		}
 	}
 
@@ -63,21 +63,21 @@ int PeekFileData( atomOffsetEntry *aoe, void *dataP, UInt64 offset64, UInt64 siz
 {
 #pragma unused(aoe)
 	int err = 0;
-    fpos_t f_pos;
-    	
+	fpos_t f_pos;
+		
 	if (offset64 > 0x7FFFFFFFL) {
 		fprintf(stderr,"sorry - can't handle file offsets > 31-bits\n");
 		err = noCanDoErr;
 		goto bail;
 	}
 	
-    err = fgetpos(vg.inFile, &f_pos);
+	err = fgetpos(vg.inFile, &f_pos);
 	if (err) goto bail;
-    
-    err = GetFileData(aoe, dataP, offset64, size64, NULL);
+	
+	err = GetFileData(aoe, dataP, offset64, size64, NULL);
 	if (err) goto bail;
 
-    err = fsetpos(vg.inFile, &f_pos);
+	err = fsetpos(vg.inFile, &f_pos);
 	if (err) goto bail;
 
 bail:
@@ -99,53 +99,53 @@ int GetFileData( atomOffsetEntry *aoe, void *dataP, UInt64 offset64, UInt64 size
 		err = noCanDoErr;
 		goto bail;
 	}
-    
+	
 	err = fseek(vg.inFile, (long)getAdjustedFileOffset(offset64), SEEK_SET);
 	if (err) goto bail;
 	
 	amtRead = fread( dataP, 1, (size_t)size, vg.inFile );
-	if (amtRead != size) {
+	if ((UInt64)amtRead != size) {
 		err = outOfDataErr;
 		goto bail;
 	}
 
 	if (newoffset64) *newoffset64 = offset64 + size;
 
-    /*{
-        static int first = 1, count = 0;
-        static FILE* dbg;
+	/*{
+		static int first = 1, count = 0;
+		static FILE* dbg;
 
-        if(count < 2048)
-        {
-            if(first)
-            {
-                dbg = fopen("debug.bin","wb");
-                if(!dbg)
-                    fprintf(stderr,"Could not open debug.bin!\n");
-            }
-            else
-            {
-                dbg = fopen("debug.bin","a");
-                if(!dbg)
-                    fprintf(stderr,"Could not open debug.bin for appending!\n");
-            }
+		if(count < 2048)
+		{
+			if(first)
+			{
+				dbg = fopen("debug.bin","wb");
+				if(!dbg)
+					fprintf(stderr,"Could not open debug.bin!\n");
+			}
+			else
+			{
+				dbg = fopen("debug.bin","a");
+				if(!dbg)
+					fprintf(stderr,"Could not open debug.bin for appending!\n");
+			}
 
-            if(dbg)
-            {
-                for(int index = 0 ; index < size ; index ++)
-                {
-                    fwrite (&(((unsigned char *)dataP)[index]),1,1,dbg);
-                    if(count < 100);
-                        //printf("%c ",(((unsigned char *)dataP)[index]));
-                }
-                    
-                count += size;
-            }
+			if(dbg)
+			{
+				for(int index = 0 ; index < size ; index ++)
+				{
+					fwrite (&(((unsigned char *)dataP)[index]),1,1,dbg);
+					if(count < 100);
+						//printf("%c ",(((unsigned char *)dataP)[index]));
+				}
+					
+				count += size;
+			}
 
-        fclose(dbg);
-        }
-        first = 0;
-    }*/
+		fclose(dbg);
+		}
+		first = 0;
+	}*/
 
 bail:
 	return err;
@@ -252,7 +252,7 @@ int GetFileUTFString( atomOffsetEntry *aoe, char **strP, UInt64 offset64, UInt64
 			errprint("UTF-16 text has BOM but no terminator\n");
 		}
 		else {
-			int ix;
+			UInt64 ix;
 			
 			// �� clf -- The right solution is probably to generate "\uNNNN" for Unicode characters not in the range 0-0x7f. That
 			// will require the array be 5 times as large in the worst case.
