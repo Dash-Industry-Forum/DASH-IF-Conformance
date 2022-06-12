@@ -21,7 +21,6 @@ jobs:
         uses: php-actions/phpunit@v3
         with:
           bootstrap: vendor/autoload.php
-          configuration: ./phpunit.xml
+          configuration: ./phpuniet.xml
           php_version: 7.4.3
           version: 9.5.20
-          args: --coverage-text
