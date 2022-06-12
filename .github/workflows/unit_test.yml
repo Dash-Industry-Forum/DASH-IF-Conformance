@@ -1,0 +1,27 @@
+name: unit-test
+
+on:
+  push:
+    branches:
+      - 'feature/unitTest'
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout out repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # need full history to get list of changed files
+      -
+        name: Composer
+        uses: php-actions/composer@v6
+      -
+        name: PHPUnit Tests
+        uses: php-actions/phpunit@v3
+        with:
+          bootstrap: vendor/autoload.php
+          configuration: phpunit.xml
+          php_version: 7.4.3
+          version: 9.5.20
