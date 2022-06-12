@@ -3,7 +3,7 @@ name: unit-test
 on:
   push:
     branches:
-      - 'feature/unitTest'
+      - 'unitTest'
 
 jobs:
   unit-test:
