@@ -9,16 +9,15 @@ jobs:
   unit-test:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout out repository
+      - name: Checkout out repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0 # need full history to get list of changed files
-      -
-        name: Composer
+      - name: Composer
         uses: php-actions/composer@v6
-      -
-        name: PHPUnit Tests
+      - name: Xdebug Action
+        uses: MilesChou/docker-xdebug@master
+      - name: PHPUnit Tests
         uses: php-actions/phpunit@v3
         with:
           bootstrap: vendor/autoload.php
