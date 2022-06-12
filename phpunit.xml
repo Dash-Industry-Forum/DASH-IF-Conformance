@@ -26,6 +26,9 @@
     <include>
       <directory suffix=".php">.</directory>
     </include>
+    <exclude>
+      <directory suffix=".php">vendor</directory>
+    </exclude>
     <report>
       <html outputDirectory="html-coverage" lowUpperBound="50" highLowerBound="90"/>
     </report>
