@@ -66,6 +66,7 @@
 				<x uri='http://dashif.org/guidelines/dashif#vp9-hdr'>VP9-HDR profile</x>
 				<x uri='http://dashif.org/guidelines/dash-if-uhd#vp9-hdr'>VP9-HDR profile</x>
 				<x uri='urn:dvb:dash:profile:dvb-dash:2014'>DVB-DASH 2014 profile</x>
+				<x uri='urn:dvb:dash:profile:dvb-dash:2017'>DVB-DASH 2017 profile</x>
 				<x uri='urn:hbbtv:dash:profile:isoff-live:2012'>HbbTV 1.5 profile</x>
 			</xsl:variable>
 			<xsl:variable name="DQUOTE">"</xsl:variable>
