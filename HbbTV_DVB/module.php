@@ -204,12 +204,12 @@ class ModuleHbbTVDVB extends ModuleInterface
 
     public function hookRepresentation()
     {
-        return RepresentationValidation_HbbTV_DVB();
+        return representationValidation();
     }
 
     public function hookBeforeAdaptationSet()
     {
-        return add_remove_images('REMOVE');
+        return addOrRemoveImages('REMOVE');
     }
 
     public function hookAdaptationSet()
@@ -227,6 +227,61 @@ class ModuleHbbTVDVB extends ModuleInterface
         copy(dirname(__FILE__) . "/$segment_duration_script", "$session_dir/$segment_duration_script");
         chmod("$session_dir/$segment_duration_script", 0777);
        */
+    }
+
+    private function representationValidation()
+    {
+        return include 'impl/representationValidation.php';
+    }
+
+    private function addOrRemoveImages($request)
+    {
+        include 'impl/addOrRemoveImages.php';
+    }
+
+    private function flags()
+    {
+        include 'impl/flags.php';
+    }
+
+    private function isSubtitle()
+    {
+        return include 'impl/isSubtitle.php';
+    }
+
+    private function commonDVBValidation($opfile, $xmlRepresentation, $mediaTypes)
+    {
+        include 'impl/commonDVBValidation.php';
+    }
+
+    private function commonHbbTVValidation($opfile, $xmlRepresentation)
+    {
+        include 'impl/commonHbbTVValidation.php';
+    }
+
+    private function resolutionCheck($adaptation, $representation)
+    {
+        return include 'impl/resolutionCheck.php';
+    }
+
+    private function segmentTimingCommon($opfile, $xmlRepresentation)
+    {
+        include 'impl/segmentTimingCommon.php';
+    }
+
+    private function bitrateReport($xmlRepresentation)
+    {
+        return include 'impl/bitrateReport.php';
+    }
+
+    private function segmentDurationChecks()
+    {
+        return include 'impl/segmentDurationChecks.php';
+    }
+
+    private function segmentToPeriodDurationCheck($xmlRepresentation)
+    {
+        return include 'impl/segmentToPeriodDurationCheck.php';
     }
 }
 
