@@ -283,6 +283,51 @@ class ModuleHbbTVDVB extends ModuleInterface
     {
         return include 'impl/segmentToPeriodDurationCheck.php';
     }
+
+    private function crossValidation()
+    {
+        include 'impl/crossValidation.php';
+    }
+
+    private function crossValidationDVB($xmlDom1, $xmlDom2, $adaptationIndex, $xmlIndex1, $xmldIndex2)
+    {
+        include 'impl/crossvalidationDVB.php';
+    }
+
+    private function crossValidationDVBAudio($xmlDom1, $xmlDom2, $adaptationIndex, $xmlIndex1, $xmldIndex2)
+    {
+        include 'impl/crossvalidationDVBAudio.php';
+    }
+
+    private function crossValidationDVBVideo($xmlDom1, $xmlDom2, $adaptationIndex, $xmlIndex1, $xmldIndex2)
+    {
+        include 'impl/crossvalidationDVBVideo.php';
+    }
+
+    private function crossValidationHbbTV($xmlDom1, $xmlDom2, $adaptationIndex, $xmlIndex1, $xmldIndex2)
+    {
+        include 'impl/crossvalidationHbbTV.php';
+    }
+
+    private function initializationSegmentCommonCheck($files)
+    {
+        include 'impl/inititializationSegmentCommonCheck.php';
+    }
+
+    private function contentProtectionReport()
+    {
+        include 'impl/contentProtectionReport.php';
+    }
+
+    private function dvbPeriodContinousAdaptationSetsCheck()
+    {
+        include 'impl/dvbPeriodContinousAdaptationSetsCheck.php';
+    }
+
+    private function segmentTimingInfo($xmlRepresentation)
+    {
+        return include 'impl/segmentTimingInfo.php';
+    }
 }
 
 $modules[] = new ModuleHbbTVDVB();
