@@ -18,7 +18,7 @@ To clone the IntegratedConformance, use the command,
 
 ## Development
 
-We very much appreciate all your code contributions to the project. To be compliant with our development guidelines please checkout the [development principles](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Development-principles) and also the [relase procedure](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Release-Procedure).
+We very much appreciate all your code contributions to the project. To be compliant with our development guidelines please checkout the [development principles](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Development-principles) and also the [release procedure](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Release-Procedure).
 
 ### API documentation
 A hosted version of the Doxygen API documentation can be found at https://dashif.org/DASH-IF-Conformance/
