@@ -22,7 +22,7 @@ jobs:
           bootstrap: vendor/autoload.php
           configuration: ./phpunit.xml
           php_version: 7.4.3
-          memory_limit: 256M
+          memory_limit: 512M
           version: 9.5.20
           php_extensions: xdebug
           args: --coverage-html html-reports
