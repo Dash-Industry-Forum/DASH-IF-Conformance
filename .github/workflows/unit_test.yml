@@ -14,12 +14,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Setup PHP with Xdebug
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4.3'
-          coverage: xdebug2
-          tools: composer, phpunit
       - name: Composer
         uses: php-actions/composer@v6
       - name: PHPUnit Tests
@@ -29,3 +23,4 @@ jobs:
           configuration: ./phpunit.xml
           php_version: 7.4.3
           version: 9.5.20
+          php_extensions: xdebug
