@@ -1,4 +1,4 @@
-name: unit-test
+name: unit-test-coverage
 
 on:
   push:
