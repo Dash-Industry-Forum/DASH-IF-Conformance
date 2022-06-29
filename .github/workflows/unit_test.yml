@@ -24,3 +24,5 @@ jobs:
           php_version: 7.4.3
           version: 9.5.20
           php_extensions: xdebug
+          env:
+            XDEBUG_MODE: coverage
