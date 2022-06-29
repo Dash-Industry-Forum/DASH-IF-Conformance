@@ -20,9 +20,9 @@ jobs:
           php-version: '7.4.3'
           coverage: xdebug2
       - name: PHPUnit Tests
-          uses: php-actions/phpunit@v3
-          with:
-            bootstrap: vendor/autoload.php
-            configuration: ./phpunit.xml
-            php_version: 7.4.3
-            version: 9.5.20
+        uses: php-actions/phpunit@v3
+        with:
+          bootstrap: vendor/autoload.php
+          configuration: ./phpunit.xml
+          php_version: 7.4.3
+          version: 9.5.20
