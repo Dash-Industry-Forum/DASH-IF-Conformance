@@ -30,7 +30,7 @@
       <directory suffix=".php">vendor</directory>
     </exclude>
     <report>
-      <html outputDirectory="tests/results" lowUpperBound="50" highLowerBound="90"/>
+      <html outputDirectory="html-reports" lowUpperBound="50" highLowerBound="90"/>
     </report>
   </coverage>
 </phpunit>
