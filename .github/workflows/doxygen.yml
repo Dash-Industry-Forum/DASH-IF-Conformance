@@ -4,14 +4,8 @@ on:
   push:
     branches:
       - 'development'
-  pull_request:
-    branches:
-      - 'development'
-    types:
-      - 'closed'
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
