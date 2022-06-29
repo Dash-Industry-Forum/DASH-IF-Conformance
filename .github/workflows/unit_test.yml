@@ -25,6 +25,5 @@ jobs:
           memory_limit: 1024M
           version: 9.5.20
           php_extensions: xdebug
-          args: --coverage-html html-reports
         env:
           XDEBUG_MODE: coverage
