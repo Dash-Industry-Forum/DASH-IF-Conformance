@@ -19,6 +19,9 @@ jobs:
         with:
           php-version: '7.4.3'
           coverage: xdebug2
+          tools: composer, phpunit
+      - name: Composer
+        uses: php-actions/composer@v6
       - name: PHPUnit Tests
         uses: php-actions/phpunit@v3
         with:
