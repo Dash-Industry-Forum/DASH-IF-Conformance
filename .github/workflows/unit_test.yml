@@ -8,15 +8,18 @@ on:
 jobs:
   unit-test:
     runs-on: ubuntu-latest
+    name: Unit Tests
     steps:
       - name: Checkout out repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # need full history to get list of changed files
+          fetch-depth: 0
       - name: Composer
         uses: php-actions/composer@v6
       - name: Xdebug Action
         uses: MilesChou/docker-xdebug@master
+        with:
+          args: php -v && php -m
       - name: PHPUnit Tests
         uses: php-actions/phpunit@v3
         with:
