@@ -14,16 +14,15 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Composer
-        uses: php-actions/composer@v6
-      - name: Xdebug Action
-        uses: MilesChou/docker-xdebug@master
+      - name: Setup PHP with Xdebug
+        uses: shivammathur/setup-php@v2
         with:
-          args: php -v && php -m
+          php-version: '7.4.3'
+          coverage: xdebug2
       - name: PHPUnit Tests
-        uses: php-actions/phpunit@v3
-        with:
-          bootstrap: vendor/autoload.php
-          configuration: ./phpunit.xml
-          php_version: 7.4.3
-          version: 9.5.20
+          uses: php-actions/phpunit@v3
+          with:
+            bootstrap: vendor/autoload.php
+            configuration: ./phpunit.xml
+            php_version: 7.4.3
+            version: 9.5.20
