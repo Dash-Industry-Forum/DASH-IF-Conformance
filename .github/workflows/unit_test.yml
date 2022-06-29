@@ -27,3 +27,11 @@ jobs:
           php_extensions: xdebug
         env:
           XDEBUG_MODE: coverage
+      - name: Deploy Results
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: html-reports
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          target-folder: unit-tests
+          commit-message: Upload latest unit test results
