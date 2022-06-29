@@ -4,3 +4,7 @@ Conformance-Frontend/temp
 *log*.txt
 vendor/*
 html-log/*
+.idea
+html-coverage
+.phpunit.cache
+

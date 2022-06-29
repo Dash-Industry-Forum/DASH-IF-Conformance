@@ -7,8 +7,8 @@
  */
 
 declare(strict_types=1);
-require_once '../CTAWAVE_BaselineSpliceChecks.php';
-include(dirname(__FILE__)."/../../../Utils/Load.php");
+require_once __DIR__.'/../CTAWAVE_BaselineSpliceChecks.php';
+require_once __DIR__.'/../../../Utils/Load.php';
 
 use PHPUnit\Framework\TestCase;
 
