@@ -8,6 +8,10 @@ class ModuleCMAF extends ModuleInterface
     {
         parent::__construct();
         $this->name = "CMAF";
+
+        $this->cfhdSwitchingSetFound = 0;
+        $this->caadSwitchingSetFound = 0;
+        $this->encryptedSwitchingSetFound = 0;
     }
 
     protected function addCLIArguments()
@@ -23,8 +27,6 @@ class ModuleCMAF extends ModuleInterface
             $this->enabled = true;
         }
     }
-
-
 
     public function hookBeforeRepresentation()
     {
@@ -44,6 +46,41 @@ class ModuleCMAF extends ModuleInterface
     public function hookAdaptationSet()
     {
         return checkPresentation();
+    }
+
+    private function checkPresentation()
+    {
+        include 'impl/checkPresentation.php';
+    }
+
+    private function checkCMAFPresentation()
+    {
+        include 'impl/checkCMAFPresentation.php';
+    }
+
+    private function getSelectionSets()
+    {
+        return include 'impl/getSelectionSets.php';
+    }
+
+    private function caacMediaProfileConformance($xml)
+    {
+        return include 'impl/caacMediaProfileConformance.php';
+    }
+
+    private function cfhdMediaProfileConformance($xml)
+    {
+        return include 'impl/cfhdMediaProfileConformance.php';
+    }
+
+    private function checkSelectionSet()
+    {
+        include 'impl/checkSelectionSet.php';
+    }
+
+    private function checkAlignedSwitchingSets()
+    {
+        include 'impl/checkAlignedSwitchingSets.php';
     }
 }
 
