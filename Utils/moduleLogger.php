@@ -227,6 +227,10 @@ class ModuleLogger
       return json_encode($this->asArray());
     }
 
+    public function getSource() {
+        return $this->streamSource;
+    }
+
     public function asArray(){
         $result = array();
         $result['source'] = $this->streamSource;
