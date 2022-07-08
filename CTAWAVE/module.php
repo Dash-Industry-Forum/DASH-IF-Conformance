@@ -54,6 +54,81 @@ class ModuleCTAWAVE extends ModuleInterface
     {
         return include 'impl/checkSequentialSwitchingSetAv.php';
     }
+
+    private function CTABaselineSpliceChecks()
+    {
+        include 'impl/ctaBaselineSpliceChecks.php';
+    }
+
+    private function checkSequentialSwSetMediaProfile()
+    {
+        return include 'impl/checkSequentialSwitchingSetMediaProfile.php';
+    }
+
+    private function checkDiscontinuousSplicePoints()
+    {
+        return include 'impl/checkDiscontinousSplicePoints.php';
+    }
+
+    private function checkEncryptionChangeSplicePoint()
+    {
+        return include 'impl/checkEncryptionChangeSplicePoint.php';
+    }
+
+    private function getEncrytionScheme($xml)
+    {
+        return include 'impl/getEncryptionScheme.php';
+    }
+
+    private function checkSampleEntryChangeSplicePoint()
+    {
+        return include 'impl/checkSampleEntryChangeSplicePoint.php';
+    }
+
+    private function getSdType($xml)
+    {
+        return include 'impl/getSdType.php';
+    }
+
+    private function checkDefaultKIDChangeSplicePoint()
+    {
+        return include 'impl/checkDefaultKIDChangeSplicePoint.php';
+    }
+
+    private function checkTrackIDChangeSplicePoint()
+    {
+        return include 'impl/checkTrackIDChangeSplicePoint.php';
+    }
+
+    private function checkTimeScaleChangeSplicePoint()
+    {
+        return include 'impl/checkTimeScaleChangeSplicePoint.php';
+    }
+
+    private function checkFragmentOverlapSplicePoint()
+    {
+        return include 'impl/checkFragmentOverlapSplicePoint.php';
+    }
+
+    private function checkPictureAspectRatioSplicePoint()
+    {
+        return include 'impl/checkPictureAspectRatioSlicePoint.php';
+    }
+
+    private function checkFrameRateSplicePoint()
+    {
+        return include 'impl/checkFrameRateSplicePoint.php';
+    }
+
+    private function getFrameRate($xml)
+    {
+        return include 'impl/getFrameRate.php';
+    }
+
+    private function checkAudioChannelSplicePoint()
+    {
+        return include 'impl/checkAudioChannelSplicePoint.php';
+    }
 }
 
 $modules[] = new ModuleCTAWAVE();
