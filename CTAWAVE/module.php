@@ -39,6 +39,21 @@ class ModuleCTAWAVE extends ModuleInterface
     {
         return CTABaselineSpliceChecks();
     }
+
+    private function waveProgramChecks()
+    {
+        include 'impl/waveProgramChecks.php';
+    }
+
+    private function checkCMFHDBaselineConstraints()
+    {
+        return include 'impl/checkCMFHDBaselineConstraints.php';
+    }
+
+    private function checkSequentialSwitchingSetAV()
+    {
+        return include 'impl/checkSequentialSwitchingSetAv.php';
+    }
 }
 
 $modules[] = new ModuleCTAWAVE();
