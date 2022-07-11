@@ -25,10 +25,8 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
 
             if ($xmlDom1 && $xmlDom2) {
               ///Todo: Fix
-              /*
                 if ($hbbtv_conformance) {
-                    crossValidation_HbbTV_Representations(
-                        $opfile,
+                    $this->crossValidationHbbTVRepresentations(
                         $xmlDom1,
                         $xmlDom2,
                         $adaptationIndex,
@@ -37,8 +35,7 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
                     );
                 }
                 if ($dvb_conformance) {
-                    crossValidation_DVB_Representations(
-                        $opfile,
+                    $this->crossValidationDVBRepresentations(
                         $xmlDom1,
                         $xmlDom2,
                         $adaptationIndex,
@@ -46,18 +43,14 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
                         $index2
                     );
                 }
-               */
             }
         }
     }
     ///Todo: Fix
-    /*
-    init_seg_commonCheck($files, $opfile);
+    $this->initSegmentCommonChecks($files);
     if ($dvb_conformance) {
-        DVB_period_continuous_adaptation_sets_check($opfile);
+        $this->DVBPeriodContinousAdapatationSetsCheck();
     }
-     */
-    ##
 
     $this->addOrRemoveImages('REMOVE');
     tabulateResults($session_dir . '/Period' . $current_period . '/' . $log_file . '.txt', 'Cross');

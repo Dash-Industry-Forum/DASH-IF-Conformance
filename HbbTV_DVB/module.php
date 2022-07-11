@@ -249,12 +249,12 @@ class ModuleHbbTVDVB extends ModuleInterface
         return include 'impl/isSubtitle.php';
     }
 
-    private function commonDVBValidation($opfile, $xmlRepresentation, $mediaTypes)
+    private function commonDVBValidation($xmlRepresentation, $mediaTypes)
     {
         include 'impl/commonDVBValidation.php';
     }
 
-    private function commonHbbTVValidation($opfile, $xmlRepresentation)
+    private function commonHbbTVValidation($xmlRepresentation)
     {
         include 'impl/commonHbbTVValidation.php';
     }
@@ -264,7 +264,7 @@ class ModuleHbbTVDVB extends ModuleInterface
         return include 'impl/resolutionCheck.php';
     }
 
-    private function segmentTimingCommon($opfile, $xmlRepresentation)
+    private function segmentTimingCommon($xmlRepresentation)
     {
         include 'impl/segmentTimingCommon.php';
     }

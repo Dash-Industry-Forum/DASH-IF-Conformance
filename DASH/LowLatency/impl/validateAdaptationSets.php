@@ -30,7 +30,6 @@ foreach ($adaptations as $adaptationGroupName => $adaptationGroup) {
 
         $audioPresent = ($adaptations['audio'] != null);
         $isAdaptLL[] = $this->validate9X43(
-            $opfile,
             $period,
             $adaptation,
             $adaptationId,

@@ -7,21 +7,24 @@ $repDirName = str_replace(
     $reprsentation_template
 );
 
-if (!($opfile = open_file($session_dir . '/Period' . $current_period . '/' . $repDirName . '.txt', 'r'))) {
+if (
+    !($representionInformationFile =
+    open_file($session_dir . '/Period' . $current_period . '/' . $repDirName . '.txt', 'r'))
+) {
     echo "Error opening file: " . "$session_dir.'/'.$rep_info_file" . '.txt';
     return;
 }
 
 $selfInitializingSegmentFound = false;
 $numSegments = 0;
-$line = fgets($opfile);
+$line = fgets($representionInformationFile);
 while ($line !== false) {
     $lineInfo = explode(' ', $line);
 
     $numSegments++;
     $selfInitializingSegmentFound = ($numSegments == 1 && $lineInfo[1] > 0) ? true : false;
 
-    $line = fgets($opfile);
+    $line = fgets($representionInformationFile);
 }
 
 ///This seems contradicting, but adheres to previously existing logic

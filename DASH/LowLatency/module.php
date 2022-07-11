@@ -65,7 +65,7 @@ class ModuleDASHLowLatency extends ModuleInterface
 
     private function validateCross()
     {
-        include 'impl/validateCross.php';
+        $this->validateAdaptationSets();
     }
 
     private function validateAdaptationSets()

@@ -493,35 +493,19 @@ if ($sidxBoxes->length > 0) {
     }
 }
 
-///\todo fix
-/*
+///\todo fix that only one of these is required
+
 $cmafMediaProfilesResult = $this->determineCMAFMediaProfiles($xml);
 $cmaf_mediaProfiles[$current_period][$current_adaptation_set]
                    [$current_representation]['cmafMediaProfile'] = $cmafMediaProfilesResult[0];
 
-if ($messages != '' || !$cmaf_cmfc) {
-    $cmaf_cmfc = false;
-    $cmaf_cmf2 = false;
-    $messages .= $messages_cmf2;
-    $messages .= "**'CMAF check violated: Section 7.3.2.2. - A CMAF Track SHALL conform to at least one " .
-      "structural brand', conformance to a structural brand is not found for Rep/Track " . $id . "\n";
-    fprintf($opfile, $messages);
-    fclose($opfile);
-} else {
-    if (!$cmaf_cmf2) {
-        fclose($opfile);
-        $logs_array = explode("\n", file_get_contents($session_dir . '/Period' . $current_period . '/' .
-          $errorFile . '.txt'));
-        $size = sizeof($logs_array);
-        for ($log_index = 0; $log_index < $size; $log_index++) {
-            if (strpos($logs_array[$log_index], "CMAF check 'cmf2' violated: Section 7.7") !== false) {
-                unset($logs_array[$log_index]);
-            }
-        }
-        $logs = implode("\n", $logs_array);
-        file_put_contents($session_dir . '/Period' . $current_period . '/' . $errorFile . '.txt', $logs);
-    } elseif ($messages_cmf2 != '') {
-        $cmaf_cmf2 = false;
-    }
-}
- */
+
+$logger->test(
+    "CMAF",
+    "Section 7.3.2.2",
+    "A CMAF Track SHALL conform to at least one structural brand",
+    $cmaf_cmfc || $cmaf_cmf2,
+    "FAIL",
+    "Valid for representation / track $id, segment $z",
+    "Not valid for representation / track $id, segment $z",
+);

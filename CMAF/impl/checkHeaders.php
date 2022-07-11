@@ -26,7 +26,7 @@ $xml = get_DOM($path, 'compInfo');
 if ($xml) {
     //if any attribute in the xml file contains "No", then this will be considered as an error
     foreach ($xml->childNodes as $child) {
-        if ($first) { //obtain the rep ids in the xml file. (info for $opfile)
+        if ($first) {
             $ids = $this->getIds($xml);
             $first = false;
         }
