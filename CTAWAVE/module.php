@@ -32,7 +32,7 @@ class ModuleCTAWAVE extends ModuleInterface
     public function hookBeforeAdaptationSet()
     {
         CTASelectionSet();
-        return CTAPresentation();
+        $this->CTACheckPresentation();
     }
 
     public function hookPeriod()
@@ -128,6 +128,16 @@ class ModuleCTAWAVE extends ModuleInterface
     private function checkAudioChannelSplicePoint()
     {
         return include 'impl/checkAudioChannelSplicePoint.php';
+    }
+
+    private function CTACheckPresentation()
+    {
+        include 'impl/CTACheckPresentation.php';
+    }
+
+    private function getPresentationProfile($encryptedTrackFound, $cencSwSetFound, $cbcsSwSetFound)
+    {
+        return include 'impl/getPresentationProfile.php';
     }
 }
 
