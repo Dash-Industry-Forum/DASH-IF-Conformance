@@ -7,7 +7,7 @@ $error = $this->checkSequentialSwitchingSetAV();
 //Call the CMFHD Baseline constraints.
 $error = $this->checkCMFHDBaselineConstraints();
 
-///\todo Fix this
+///\RefactorTodo Fix this
 /*
 //Using the error messages, check other MAY/Need not conditions and print respective informations.
 if (strpos($error, "###CTAWAVE check violated") !== false) {

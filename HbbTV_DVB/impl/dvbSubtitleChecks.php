@@ -167,6 +167,7 @@ foreach ($representations as $representation) {
 
     ## Information from this part is for Section 7.2: downloadable fonts and descriptors needed for them
 if ($subtitle) {
+    ///\Correctness Are supplemental and esssential properties exclusive?
     if ($hasSupplementalProperties) {
         $x = 0;
         foreach ($supplementalSchemes as $scheme) {
@@ -196,7 +197,6 @@ if ($subtitle) {
             }
             $x++;
         }
-        ///\Discussion Why are these exclusive?
     } elseif ($hasEssentialProperties) {
         $x = 0;
         foreach ($essentialSchemes as $scheme) {

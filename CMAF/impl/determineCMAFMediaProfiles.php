@@ -16,6 +16,7 @@ if ($hdlrType == 'vide') {
         $mediaProfileParameters['codec'] = 'AVC';
         $nalUnits = $xml->getElementsByTagName("NALUnit");
         if ($nalUnits->length != 0) {
+            $spsUnitIndex = -1;
             for ($nalIndex = 0; $nalIndex < $nalUnits->length; $nalIndex++) {
                 if ($nalUnits->item($nalIndex)->getAttribute("nal_type") == "0x07") {
                     $spsUnitIndex = $nalIndex;
@@ -23,7 +24,8 @@ if ($hdlrType == 'vide') {
                 }
             }
 
-            ///\todo Add checks for existing spsUnit
+
+            ///\Resiliency Add checks for existing spsUnit
             $avcC = $videoSampleDescription->getElementsByTagName('avcC')->item(0);
             $comment = $nalUnits->item($spsUnitIndex)->getElementsByTagName("comment")->item(0);
             $mediaProfileParameters['profile'] = $avcC->getAttribute("profile");
@@ -95,7 +97,7 @@ if ($hdlrType == 'vide') {
                 }
             }
 
-            ///\todo Add checks for existing spsUnit
+            ///\Resiliency Add checks for existing spsUnit
             $sps = $nalUnits->item($spsUnitIndex);
             if ($sps->getAttribute("vui_parameters_present_flag") == "1") {
                 if ($sps->getAttribute("video_signal_type_present_flag") == "1") {

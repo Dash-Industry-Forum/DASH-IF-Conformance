@@ -137,10 +137,11 @@ if (!empty($MPDDurationSeconds_array)) {
     $MPDDurationSeconds = 'Not_Set'; //to avoid giving an array to the python code as an argument
 }
 
+
 $durationArrayString = implode(',', $segment_duration_array);
 $location = $session_dir . '/Period' . $current_period . '/' . $representationLocation . '_.png';
 $command = "cd $session_dir && python seg_duration.py  $durationArrayString $MPDDurationSeconds $location";
-///\Todo: Fix
+///\RefactorTodo: Eliminate Python
 //exec($command);
 
 // Check if the average segment duration is consistent with that of the duration information in the MPD

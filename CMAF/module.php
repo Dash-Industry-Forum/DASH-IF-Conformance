@@ -115,12 +115,9 @@ class ModuleCMAF extends ModuleInterface
 
     public function hookAdaptationSet()
     {
-        return checkPresentation();
-    }
-
-    private function checkPresentation()
-    {
-        include 'impl/checkPresentation.php';
+        $this->checkCMAFPresentation();
+        $this->checkSelectionSet();
+        $this->checkAlignedSwitchingSets();
     }
 
     private function checkCMAFPresentation()

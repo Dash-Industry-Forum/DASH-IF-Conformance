@@ -64,13 +64,12 @@ for ($i = 0; $i < $periodCount; $i++) {
                         $xmlRepresentation = get_DOM($session_dir . '/Period' . $i . '/' . $adaptationDirectory .
                                                      '/' . $representationDirectory . '.xml', 'atomlist');
                         if ($xmlRepresentation) {
-                            ///\todo Fix
-                            //$EPT1[] = segment_timing_info($xmlRepresentation);
+                            $EPT1[] = $this->segmentTimingInfo($xmlRepresentation);
                         }
                     }
                     for ($thisRep = 0; $thisRep < sizeof($representations1); $thisRep++) {
                         for ($nextRep = $thisRep + 1; $nextRep < sizeof($representations1); $nextRep++) {
-                            ///\TODO fix that this doesn't crash if some xml reps weren't loaded
+                            ///\Resiliency fix that this doesn't crash if some xml reps weren't loaded
                             $logger->test(
                                 "HbbTV-DVB DASH Validation Requirements",
                                 "DVB: Section 10.5.2.2",

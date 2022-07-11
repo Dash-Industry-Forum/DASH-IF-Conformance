@@ -27,7 +27,6 @@ $cumulativeSubsegmentDuration = 0;
 if (empty($subsegmentSignaling)) {
     //First case is for no sidx box.
     for ($j = 0; $j < $moofBoxCount; $j++) {
-      ///\Note Correct?
         $cummulatedSampleDuration = $xmlRepresentation->getElementsByTagName('trun')->item($j)
                                                       ->getAttribute('cummulatedSampleDuration');
         $segmentDuration = $cummulatedSampleDuration / $timescale;
@@ -46,7 +45,6 @@ if (empty($subsegmentSignaling)) {
             $ref_count = $subsegmentSignaling[$sidxIndex];
         }
 
-        ///\Note Correct?
         $cummulatedSampleDuration = $xmlRepresentation->getElementsByTagName('trun')->item($j)
                                                       ->getAttribute('cummulatedSampleDuration');
         $segmentDuration = $cummulatedSampleDuration / $timescale;
@@ -71,7 +69,7 @@ $bitrateReportName = str_replace(
 ) . '.png';
 $location = $session_dir . '/Period' . $current_period . '/' . $bitrateReportName;
 $command = "cd $session_dir && python bitratereport.py $bitrateInfo $bandwidth $location";
-///\Todo: fix
+///\RefactorTodo Eliminate Python
 //exec($command);
 //chmod($session_dir.'/'.$bitrateReportName, 777);
 

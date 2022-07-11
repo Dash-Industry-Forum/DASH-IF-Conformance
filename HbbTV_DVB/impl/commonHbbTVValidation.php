@@ -234,7 +234,6 @@ $moofBoxCount = $xmlRepresentation->getElementsByTagName('moof')->length;
 $sidxIndex = 0;
 $cumulativeSubsegmentDuration = 0;
 for ($j = 0; $j < $moofBoxCount - 1; $j++) {
-  ///\NOTE Is this correct?
     $cummulatedSampleDuration = $xmlRepresentation->getElementsByTagName('trun')
                                                   ->item($j)->getAttribute('cummulatedSampleDuration');
     $segmentDuration = $cummulatedSampleDuration / $timescale;

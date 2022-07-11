@@ -42,7 +42,8 @@ for ($i = 0; $i < $len; $i++) {
     if ($infoString == '') {
         continue;
     }
-    ///\Discuss Scoping issues and check not doing what it should do?
+
+    ///\Correctness Does this do what it should do?
     $firstRole = $adaptation->getElementsByTagName('Role')->item(0);
     $secondRole = $adaptation2->getElementsByTagName('Role')->item(0);
 

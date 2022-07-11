@@ -37,5 +37,4 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
         }
     }
 }
-///\todo Make this work through a separate logger instance
 return $errorMsg;

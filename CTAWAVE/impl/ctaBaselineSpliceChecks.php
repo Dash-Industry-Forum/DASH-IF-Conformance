@@ -3,7 +3,8 @@
 global $MediaProfDatabase, $session_dir, $string_info, $progress_xml, $progress_report, $adaptation_set_template,
 $reprsentation_template, $CTAspliceConstraitsLog;
 
-///\todo Make sure errors get parsed as an option instead of full fail
+///\RefactorTodo Create Separate Logger Instance
+///\RefactorTodo If possible, loop once instead of in each file
 $this->checkSequentialSwSetMProfile();
 $this->checkDiscontinuousSplicePoints();
 $this->checkEncryptionChangeSplicePoint();

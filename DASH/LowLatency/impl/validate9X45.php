@@ -44,7 +44,7 @@ foreach ($representations as $representationId => $representation) {
     foreach ($segmentIndexes as $segmentIndexId => $segmentIndex) {
         $moofsInSegment = $moofsInSegments[$segmentIndexId];
 
-        ///\Discuss same check twice, different statements?
+        ///\Correctness same check twice, different statements?
         $logger->test(
             "DASH-IF IOP CR Low Latency Live",
             "Section 9.X.4.5",
@@ -161,7 +161,7 @@ foreach ($representations as $representationId => $representation) {
                 ', maximum is ' . $this->maxSegmentDurations[$representationId] . ', target is ' . $target
             );
 
-            ///\Discuss this check used to be different
+            ///\Correctness this check used to be different
             $availabilityTimeOffsetOnSegmentTemplate = true;
             if ($adaptationSet['SegmentTemplate'] == null) {
                 $availabilityTimeOffsetOnSegmentTemplate = false;
@@ -212,7 +212,7 @@ foreach ($representations as $representationId => $representation) {
           ($segmentAccessInfo[$representationId][0]['availabilityTimeComplete'] == false);
     }
 
-    ///\Discussion These checks seem somewhat contradicting?
+    ///\Correctness These checks seem somewhat contradicting?
     $logger->test(
         "DASH-IF IOP CR Low Latency Live",
         "Section 9.X.4.5",

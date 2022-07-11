@@ -9,7 +9,7 @@ $totalSegmentDuration = 0;
 
 for ($j = 0; $j < $moofBoxCount; $j++) {
     $trun = $xmlRepresentation->getElementsByTagName('trun')->item($j);
-    ///\Note correct?
+    ///\Correctness On various occasions in the code cumulated is misspelled, needs investigation
     $cummulatedSampleDuration = $trun->getAttribute('cummulatedSampleDuration');
     $segmentDuration = ( $cummulatedSampleDuration * 1.00 ) / $timescale;
     $totalSegmentDuration += $segmentDuration;

@@ -177,28 +177,20 @@ for ($adaptationSetIndex = 0; $adaptationSetIndex < sizeof($adaptationSets); $ad
                 if ($cmfhdProfile || $cmfhdcProfile || $cmfhdsProfile) {
                     if ($hdlrType == 'vide') {
                         $videoFound = 1;
-                        ///\todo Fix
-                        /*
-                        if (cfhd_MediaProfileConformance($xml) == false) {
+                        if (!$this->cfhdMediaProfileConformance($xml)) {
                             break;
-                        } else {
-                            $videoCounter = $videoCounter + 1;
                         }
-                         */
+                        $videoCounter = $videoCounter + 1;
 
                         if ($this->cfhdSwitchingSetFound = 0 && $videoCounter == $filecount) {
                             $this->cfhdSwitchingSetFound = 1;
                         }
                     } elseif ($hdlrType == 'soun') {
                         $audioFound = 1;
-                        ///\todo Fix
-                        /*
-                        if (caac_mediaProfileConformance($xml) == false) {
+                        if (!$this->caacMediaProfileConformance($xml)) {
                             break;
-                        } else {
-                            $audioCounter = $audioCounter + 1;
                         }
-                         */
+                        $audioCounter = $audioCounter + 1;
 
                         if ($this->caacSwitchingSetFound = 0 && $audioCounter == $filecount) {
                             $this->caacSwitchingSetFound = 1;

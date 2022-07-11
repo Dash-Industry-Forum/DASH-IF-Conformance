@@ -115,7 +115,7 @@ foreach ($representations as $representationId => $representation) {
         }
     }
 
-    ///\Discuss Changed this check
+    ///\Correctness Changed this check
     $codecs = ($representation['codecs'] != null) ? $representation['codecs'] : $adaptationSet['codecs'];
     $validCodecs = $codecs != null
     if ($validCodecs != null) {

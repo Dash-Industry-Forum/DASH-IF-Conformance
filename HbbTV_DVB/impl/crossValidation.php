@@ -4,8 +4,7 @@ global $hbbtv_conformance, $dvb_conformance, $session_dir, $mpd_features,
        $current_period, $adaptation_set_template, $hbbtv_dvb_crossvalidation_logfile,
        $string_info, $progress_xml, $progress_report;
 
-//Todo: Fix
-//content_protection_report();
+$this->contentProtectionReport();
 $adaptations = $mpd_features['Period'][$current_period]['AdaptationSet'];
 for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationIndex++) {
     $adaptationDirectory = str_replace('$AS$', $adaptationIndex, $adaptation_set_template);
@@ -24,7 +23,6 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
             $xmlDom2 = get_DOM($files[$index2], 'atomlist');
 
             if ($xmlDom1 && $xmlDom2) {
-              ///Todo: Fix
                 if ($hbbtv_conformance) {
                     $this->crossValidationHbbTVRepresentations(
                         $xmlDom1,
@@ -46,12 +44,10 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
             }
         }
     }
-    ///Todo: Fix
     $this->initSegmentCommonChecks($files);
     if ($dvb_conformance) {
         $this->DVBPeriodContinousAdapatationSetsCheck();
     }
 
     $this->addOrRemoveImages('REMOVE');
-    tabulateResults($session_dir . '/Period' . $current_period . '/' . $log_file . '.txt', 'Cross');
 }

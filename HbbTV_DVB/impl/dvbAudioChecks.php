@@ -85,7 +85,7 @@ foreach ($essentialProperties as $property) {
         $property->getAttribute('schemeIdUri') == 'urn:dvb:dash:fontdownload:2014' &&
         $property->getAttribute('value') == '1'
     ) {
-      ///\todo shouldn't this be dvb:url?
+      ///\Correctness shouldn't this be dvb:url?
         $url = ($property->getAttribute('url') != '' || $property->getAttribute('dvburl') != '');
         $fontFamily = ($property->getAttribute('fontFamily') != '' || $property->getAttribute('dvb:fontFamily') != '');
         $mimeType = ($property->getAttribute('mimeType') != '' || $property->getAttribute('dvb:mimeType') != '');
@@ -232,7 +232,7 @@ foreach ($representations as $representation) {
             $subRepAudioConfigurationSchemes[] = $audioConfiguration->getAttribute('schemeIdUri');
             $subRepAudioConfigurationValues[] = $audioConfiguration->getAttribute('value');
         }
-        ///\todo Validate EC3, AC4 and DTS as above for subrepresentation
+        ///\Resiliency Validate EC3, AC4 and DTS as above for subrepresentation
         if ($audioComponentFound) {
             if (in_array($subRepresentation->getAttribute('contentComponent'), $ids)) {
                 $$this->audioBandwidth[] = (float)($representation->getAttribute('bandwidth') != '' ?
@@ -242,7 +242,7 @@ foreach ($representations as $representation) {
         }
     }
 
-    ///\todo Validate EC3, AC4 and DTS as above for representation
+    ///\Resiliency Validate EC3, AC4 and DTS as above for representation
 
     if ($audioComponentFound) {
         $$this->audioBandwidth[] = (float)($representation->getAttribute('bandwidth'));

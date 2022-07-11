@@ -29,8 +29,7 @@ $errorFile = str_replace(
     $reprsentation_error_log_template
 );
 
-///\todo fix
-//$return_array = checkCMAFMessages($errorFile);
+$return_array = $this->checkCMAFMessages($errorFile);
 
 $cmaf_cmfc = $return_array[0];
 $cmaf_cmf2 = $return_array[1];
@@ -492,8 +491,6 @@ if ($sidxBoxes->length > 0) {
         }
     }
 }
-
-///\todo fix that only one of these is required
 
 $cmafMediaProfilesResult = $this->determineCMAFMediaProfiles($xml);
 $cmaf_mediaProfiles[$current_period][$current_adaptation_set]

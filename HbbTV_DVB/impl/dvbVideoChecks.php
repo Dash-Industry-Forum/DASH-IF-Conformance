@@ -29,7 +29,7 @@ foreach ($supplementalProperties as $property) {
         $property->getAttribute('schemeIdUri') == 'urn:dvb:dash:fontdownload:2014' &&
         $property->getAttribute('value') == '1'
     ) {
-      ///\todo shouldn't this be dvb:url?
+      ///\Correctness shouldn't this be dvb:url?
         $url = ($property->getAttribute('url') != '' || $property->getAttribute('dvburl') != '');
         $fontFamily = ($property->getAttribute('fontFamily') != '' || $property->getAttribute('dvb:fontFamily') != '');
         $mimeType = ($property->getAttribute('mimeType') != '' || $property->getAttribute('dvb:mimeType') != '');
@@ -58,7 +58,7 @@ foreach ($essentialProperties as $property) {
         $property->getAttribute('schemeIdUri') == 'urn:dvb:dash:fontdownload:2014' &&
         $property->getAttribute('value') == '1'
     ) {
-      ///\todo shouldn't this be dvb:url?
+      ///\Correctness shouldn't this be dvb:url?
         $url = ($property->getAttribute('url') != '' || $property->getAttribute('dvburl') != '');
         $fontFamily = ($property->getAttribute('fontFamily') != '' || $property->getAttribute('dvb:fontFamily') != '');
         $mimeType = ($property->getAttribute('mimeType') != '' || $property->getAttribute('dvb:mimeType') != '');

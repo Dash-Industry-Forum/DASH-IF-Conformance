@@ -406,8 +406,6 @@ foreach ($mpd_dom->childNodes as $node) {
         $this->fallbackOperationChecks($audioAdaptations);
     }
 
-      ///\todo enable this check
-    /*
     if ($mainAudioFound && !empty($hoh_subtitle_lang)) {
         $mainLanguage = array();
         foreach ($main_audios as $main_audio) {
@@ -418,17 +416,20 @@ foreach ($mpd_dom->childNodes as $node) {
 
         foreach ($hoh_subtitle_lang as $hoh_lang) {
             if (!empty($mainLanguages)) {
-                if (!in_array($hoh_lang, $main_lang)) {
-                  fwrite($mpdreport, "###'DVB check violated: Section 7.1.2-
-                    According to Table 11, when hard of hearing subtitle type is signalled the
-                    @lang attribute of the subtitle representation SHALL be the same as the
-                    main audio for the programme', @lang attributes do not match in Period
-                    $period_count.\n");
-                }
+                $logger->test(
+                    "HbbTV-DVB DASH Validation Requirements",
+                    "DVB: Section 7.1.2",
+                    "According to Table 11, when hard of hearing subtitle type is signalled the " .
+                    "@lang attribute of the subtitle representation SHALL be the same as the " .
+                    "main audio for the programme",
+                    in_array($hoh_lang, $main_lang),
+                    "FAIL",
+                    "Attributes match for period $this->periodCount",
+                    "Attributes don't match for period $this->periodCount",
+                );
             }
         }
     }
-     */
 }
 
 $logger->test(

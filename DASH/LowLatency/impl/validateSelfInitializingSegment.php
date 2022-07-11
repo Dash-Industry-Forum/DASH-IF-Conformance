@@ -27,7 +27,7 @@ while ($line !== false) {
     $line = fgets($representionInformationFile);
 }
 
-///This seems contradicting, but adheres to previously existing logic
+//This seems contradicting, but adheres to previously existing logic
 if (!$selfInitializingSegmentFound) {
     return true;
 }
@@ -167,7 +167,7 @@ for ($i = 0; $i < $subsegmentCount; $i++) {
     $sapType = $subsegment->getAttribute('SAP_type');
     $SAP_delta_time = $subsegment->getAttribute('SAP_delta_time');
 
-    ///Discuss This check was on '0', but message says 1. Updated check.
+    ///\Correctness This check was on '0', but message says 1. Updated check.
     $returnValue = $logger->test(
         "DASH-IF IOP CR Low Latency Live",
         "Section 9.X.4.5 (As part of MPEG-DASH 8.X.3 referenced in 8.X.4)",
@@ -181,7 +181,7 @@ for ($i = 0; $i < $subsegmentCount; $i++) {
         ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "subsegment $i",
     ) && $returnValue;
 
-    ///Discuss Updated check from if ($SAP_type != '1' || $SAP_type != '2') {
+    ///\Correctness Updated check from if ($SAP_type != '1' || $SAP_type != '2') {
     $returnValue = $logger->test(
         "DASH-IF IOP CR Low Latency Live",
         "Section 9.X.4.5 (As part of MPEG-DASH 8.X.3 referenced in 8.X.4)",
@@ -242,7 +242,7 @@ $returnValue = $logger->test(
     ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
 ) && $returnValue;
 
-///\Discuss Message and check don't correspond at all.
+///\Correctness Message and check don't correspond at all.
 $returnValue = $logger->test(
     "DASH-IF IOP CR Low Latency Live",
     "Section 9.X.4.5 (As part of MPEG-DASH 8.X.3 referenced in 8.X.4)",

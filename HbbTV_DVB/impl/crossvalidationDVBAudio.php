@@ -197,7 +197,7 @@ $logger->test(
 ##
 
 ## Section 6.4 on DTS audio frame durations
-///\Not sure if this is the correct way to handle this...
+///\Correctness The codecs are checked separate on each representation, shouldn't they be equal?
 $DTSCodecs = ['dtsc','dtsh','dtse','dtsl'];
 $DTSCodecFound = DASHIF\Utility\inStringAtLeastOne($DTSCodecs, $adaptationCodecs);
 if ($adaptationCodecs == '') {

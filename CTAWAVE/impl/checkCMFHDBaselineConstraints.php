@@ -13,7 +13,7 @@ for ($i = 0; $i < $periodCount; $i++) {
     array_push($presentationProfileArray, $presentationProfile);
 }
 
-///\todo Fix this
+///\RefactorTodo Fix this
 /*
   if (!(count(array_unique($presentationProfileArray)) === 1 &&
     array_unique($presentationProfileArray)[0] == "CMFHD")) {

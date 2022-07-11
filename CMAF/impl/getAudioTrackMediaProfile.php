@@ -72,7 +72,7 @@ if ($mpParameters['brand'] == '') {
     return "AAC Core";
 }
 
-///At this point, we have not found a valid aac codec, so this test will always fail
+//At this point, we have not found a valid aac codec, so this test will always fail
 $validSamplingRate = $logger->test(
     "CMAF",
     "Section 10.4",

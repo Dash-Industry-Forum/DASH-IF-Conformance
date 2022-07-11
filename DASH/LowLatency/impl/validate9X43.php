@@ -102,7 +102,7 @@ foreach ($representations as $representationId => $representation) {
     if (!$validProducerReferenceTime) {
         $validRepPoints[$representationId] = false;
     } else {
-      ///\Discuss Check says information, spec says shall
+      ///\Correctness Check says information, spec says shall
         $logger->test(
             "DASH-IF IOP CR Low Latency Live",
             "Section 9.X.4.3",
@@ -166,7 +166,7 @@ foreach ($representations as $representationId => $representation) {
     );
     if ($inbandEventStreams != null) {
         foreach ($inbandEventStreams as $inbandEventStream) {
-          ///\Discuss these checks do not match the spec
+          ///\Correctness these checks do not match the spec
             if ($inbandEventStream['schemeIdUri'] == 'urn:mpeg:dash:event:2012') {
                 $logger->test(
                     "DASH-IF IOP CR Low Latency Live",

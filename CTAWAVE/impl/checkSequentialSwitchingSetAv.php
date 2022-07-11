@@ -49,7 +49,7 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
                 $presentationTime2 = $earliestCompositionTime2 + $mediaTime2;
             }
         }
-        ///\todo Fix this optioncheck
+        ///\RefactorTodo Fix this optioncheck
         /*
         if ($hdlrType1 == $hdlrType2 && ($hdlrType1 == "vide" || $hdlrType1 == "soun")) {
           if ((($earliestCompositionTime1 + $mediaTime1 + $sumSampleDur) / $timeScale1) !=
