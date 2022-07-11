@@ -8,6 +8,33 @@ class ModuleCTAWAVE extends ModuleInterface
     {
         parent::__construct();
         $this->name = "CTA-WAVE";
+
+        $this->mediaProfileAttributesVideo = array(
+        "codec" => "",
+        "profile" => "",
+        "level" => "",
+        "height" => "",
+        "width" => "",
+        "framerate" => "",
+        "color_primaries" => "",
+        "transfer_char" => "",
+        "matrix_coeff" => "",
+        "tier" => "",
+        "brand" => "");
+
+        $this->mediaProfileAttributesAudio = array(
+        "codec" => "",
+        "profile" => "",
+        "level" => "",
+        "channels" => "",
+        "sampleRate" => "",
+        "brand" => "");
+
+        $this->mediaProfileAttributesSubtitle = array(
+        "codec" => "",
+        "mimeType" => "",
+        "mimeSubtype" => "",
+        "brand" => "");
     }
 
     protected function addCLIArguments()
@@ -31,7 +58,8 @@ class ModuleCTAWAVE extends ModuleInterface
 
     public function hookBeforeAdaptationSet()
     {
-        CTASelectionSet();
+        $this->CTACheckSelectionSet();
+        $this->CTACheckSingleInitSwitchingSet();
         $this->CTACheckPresentation();
     }
 
@@ -138,6 +166,45 @@ class ModuleCTAWAVE extends ModuleInterface
     private function getPresentationProfile($encryptedTrackFound, $cencSwSetFound, $cbcsSwSetFound)
     {
         return include 'impl/getPresentationProfile.php';
+    }
+
+    private function CTACheckSingleInitSwitchingSet()
+    {
+        include 'impl/CTACheckSingleInitSwitchingSet.php';
+    }
+
+    private function fourCCEquivalent($mediaProfile)
+    {
+        return include 'impl/fourCCEquivalent.php';
+    }
+
+    private function checkAndGetConformingSubtitleProfile(
+        $mediaProfileParameters,
+        $representationIndex,
+        $adaptationIndex
+    ) {
+        return include 'impl/checkAndGetConformingSubtitleProfile.php';
+    }
+
+    private function checkAndGetConformingAudioProfile(
+        $mediaProfileParameters,
+        $representationIndex,
+        $adaptationIndex
+    ) {
+        return include 'impl/checkAndGetConformingAudioProfile.php';
+    }
+
+    private function checkAndGetConformingVideoProfile(
+        $mediaProfileParameters,
+        $representationIndex,
+        $adaptationIndex
+    ) {
+        return include 'impl/checkAndGetConformingVideoProfile.php';
+    }
+
+    private function getMediaProfile($xml, $hdlrType, $representationIndex, $adaptationIndex)
+    {
+        return include 'impl/getMediaProfile.php';
     }
 }
 

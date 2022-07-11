@@ -175,7 +175,7 @@ if (in_array("", $presentationProfileArray)) {
     $presentationProfile = "";
 }
 
-$conforms = $logger->test(
+$logger->test(
     "CTAWAVE",
     "Informative",
     "Wave set conformance to CMAF Presentation Profile",
