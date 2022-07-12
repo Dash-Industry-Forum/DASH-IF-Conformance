@@ -51,6 +51,7 @@ for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex
         }
 
         $hdlrBox = $xml->getElementsByTagName("hdlrBox")->item(0);
+        if (!$hdlrBox){continue;}
         $hdlrType = $hdlrBox->getAttribute("hdlrType");
 
         $mediaProfileResult = $this->getMediaProfile($xml, $hdlrType, $fileIndex, $adaptationIndex);

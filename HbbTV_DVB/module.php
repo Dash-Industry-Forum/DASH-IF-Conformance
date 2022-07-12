@@ -212,13 +212,13 @@ class ModuleHbbTVDVB extends ModuleInterface
     public function hookBeforeAdaptationSet()
     {
         parent::hookBeforeAdaptationSet();
-        return addOrRemoveImages('REMOVE');
+        $this->addOrRemoveImages('REMOVE');
     }
 
     public function hookAdaptationSet()
     {
         parent::hookAdaptationSet();
-        return CrossValidation_HbbTV_DVB();
+        $this->crossValidation();
     }
 
     private function moveScripts()

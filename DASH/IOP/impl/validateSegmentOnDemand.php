@@ -37,7 +37,6 @@ if (
     !($selfInitializingSegmentFile =
     open_file($session_dir . '/Period' . $current_period . '/' . $rep_dir_name . '.txt', 'r'))
 ) {
-    echo "Error opening file: " . "$session_dir.'/'.$rep_dir_name" . '.txt';
     return;
 }
 
@@ -62,7 +61,7 @@ $logger->test(
     "DASH-IF IOP 4.3",
     "Section 3.10.3.2",
     "Each Representation SHALL have one Segment that complies with Indexed Self-Initializing Media Segment",
-    $selfInitializingSegmentFound && $segment_count == 1
+    $selfInitializingSegmentFound && $segment_count == 1,
     "FAIL",
     "Check succesful",
     "found $segment_count Segment(s) and Indexed Self-Initializing Media Segment to be " .

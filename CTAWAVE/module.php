@@ -166,6 +166,10 @@ class ModuleCTAWAVE extends ModuleInterface
     {
         include 'impl/CTACheckPresentation.php';
     }
+    private function CTACheckSelectionSet()
+    {
+        include 'impl/CTACheckSelectionSet.php';
+    }
 
     private function getPresentationProfile($encryptedTrackFound, $cencSwSetFound, $cbcsSwSetFound)
     {

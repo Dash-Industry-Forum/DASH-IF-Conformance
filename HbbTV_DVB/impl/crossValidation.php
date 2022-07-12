@@ -44,7 +44,7 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
             }
         }
     }
-    $this->initSegmentCommonChecks($files);
+    $this->initializationSegmentCommonCheck($files);
     if ($dvb_conformance) {
         $this->DVBPeriodContinousAdapatationSetsCheck();
     }

@@ -5,12 +5,12 @@ global $current_period, $service_description_info, $logger;
 // Bullet 2
 $dashSegCmafFrag = true;
 
-$cmafDash = validateDASHProfileCMAF($adaptationSet, $adaptationSetId, $segmentAccessInfo, $infoFileAdapt);
+$cmafDash = $this->validateDASHProfileCMAF($adaptationSet, $adaptationSetId, $segmentAccessInfo, $infoFileAdapt);
 
 $logger->test(
     "DASH-IF IOP CR Low Latency Live",
     "Section 9.X.4.5",
-    "Each Segment SHALL conform to a CMAF Fragment"
+    "Each Segment SHALL conform to a CMAF Fragment",
     sizeof(array_unique($cmafDash)) == 1 && $cmafDash[0] == true,
     "FAIL",
     "All segments conform in Period " . ($current_period + 1) . ' Adaptation ' . ($adaptationSetId + 1),
@@ -286,7 +286,7 @@ foreach ($representations as $representationId => $representation) {
 
     // Bullet 8
 if (sizeof($representations) > 1) {
-    $extendedChecks = validate9X45Extended($adaptationSet, $adaptationSetId);
+    $extendedChecks = $this->validate9X45Extended($adaptationSet, $adaptationSetId);
     $logger->test(
         "DASH-IF IOP CR Low Latency Live",
         "Section 9.X.4.5",

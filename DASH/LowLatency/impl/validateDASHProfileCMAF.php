@@ -117,13 +117,13 @@ foreach ($representations as $representationId => $representation) {
 
     ///\Correctness Changed this check
     $codecs = ($representation['codecs'] != null) ? $representation['codecs'] : $adaptationSet['codecs'];
-    $validCodecs = $codecs != null
-    if ($validCodecs != null) {
+    $validCodecs = $codecs != null;
+    if ($validCodecs) {
         $sample_description = $hdlr_type . '_sampledescription';
         $stsdBoxes = $xml->getElementsByTagName('stsd');
         $sdType = $stsdBoxes->item(0)->getElementsByTagName($sample_description)->item(0)->getAttribute('sdType');
         if (strpos($codecs, $sdType) === false) {
-            $validCodecs == false;
+            $validCodecs = false;
         }
     }
     $logger->test(

@@ -42,7 +42,7 @@ if ($isAvc) {
         "Initialitization Segment containing 'avcC' box",
         $codecBoxes->length > 0,
         "FAIL",
-        $codecBoxes->length " 'avcC' boxes found for Period $current_period Adaptation Set $current_adaptation_set " .
+        $codecBoxes->length . " 'avcC' boxes found for Period $current_period Adaptation Set $current_adaptation_set " .
         "Representation $current_representation.",
         "No 'avcC' boxes found for Period $current_period Adaptation Set $current_adaptation_set " .
         "Representation $current_representation."
@@ -97,7 +97,7 @@ if ($isHevc) {
         "Initialitization Segment containing 'hvcC' box",
         $codecBoxes->length > 0,
         "FAIL",
-        $codecBoxes->length " 'hvcC' boxes found for Period $current_period Adaptation Set $current_adaptation_set " .
+        $codecBoxes->length . " 'hvcC' boxes found for Period $current_period Adaptation Set $current_adaptation_set " .
         "Representation $current_representation.",
         "No 'hvcC' boxes found for Period $current_period Adaptation Set $current_adaptation_set " .
         "Representation $current_representation."
@@ -147,7 +147,7 @@ if ($isAvc || $isHevc) {
             "DASH-IF IOP 4.3",
             "Section 6.2.5.2",
             "Edit lists SHALL NOT be present in video Adaptation Sets unless they are offered in On-Demand profile",
-            $elstBoxes->length == 0
+            $elstBoxes->length == 0,
             "FAIL",
             "No edit lists found for Period $current_period Adaptation Set $current_adaptation_set " .
             "Representation $current_representation",

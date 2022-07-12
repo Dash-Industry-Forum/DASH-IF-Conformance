@@ -31,7 +31,7 @@ $UUIDToDRMSystem = array ('urn:mpeg:dash:mp4protection:2011' => 'Generic Identif
 
 $adaptationIndex = 0;
 $keyRotationUsed = false;
-foreach ($mpd_dom->getElementsByTagName('AdaptationSet') as adaptationSetNode) {
+foreach ($mpd_dom->getElementsByTagName('AdaptationSet') as $adaptationSetNode) {
     $adaptationId = $adaptationIndex + 1;
     $reportLocation = str_replace('$AS$', $adaptationIndex, $hbbtv_dvb_crossvalidation_logfile);
     $adaptationReport = open_file($session_dir . '/Period' . $current_period . '/' . $reportLocation . '.txt', 'a+b');
@@ -47,7 +47,7 @@ foreach ($mpd_dom->getElementsByTagName('AdaptationSet') as adaptationSetNode) {
     $MPDKIDFlag = false;
     $genericIdentifier = "";
     $contentProtectionFlag = false;
-    foreach (adaptationSetNode->getElementsByTagName('ContentProtection') as $contentProtectionNode) {
+    foreach ($adaptationSetNode->getElementsByTagName('ContentProtection') as $contentProtectionNode) {
         // only if there is a content protection instance the below will be executed
         $contentProtectionFlag = true;
         if (
@@ -151,7 +151,7 @@ foreach ($mpd_dom->getElementsByTagName('AdaptationSet') as adaptationSetNode) {
     );
 
     $tencKIDs = array();
-    foreach (adaptationSetNode->getElementsByTagName('Representation') as $representationNode) {
+    foreach ($adaptationSetNode->getElementsByTagName('Representation') as $representationNode) {
         $duplicationFlag = false;
         $inconsistencyFlag = false;
         $missingPSSHFlag = false;
@@ -308,7 +308,7 @@ foreach ($mpd_dom->getElementsByTagName('AdaptationSet') as adaptationSetNode) {
             "HbbTV-DVB DASH Validation Requirements",
             "Section 'DRM'",
             "Informative",
-            !$inconsistencyFlag
+            !$inconsistencyFlag,
             "WARN",
             "No inconsistent DRM between MPD and PSSH Boxes " .
             "in adaptation $adaptationId, representation $representationID",

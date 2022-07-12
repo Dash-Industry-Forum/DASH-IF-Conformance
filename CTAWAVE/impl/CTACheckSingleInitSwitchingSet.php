@@ -34,7 +34,7 @@ for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex
 
         $logger->test(
             "CTAWAVE",
-            "WAVE Content Spec 2018Ed-Section 7.2.2"
+            "WAVE Content Spec 2018Ed-Section 7.2.2",
             "Switching Set May conform to CMAF Single Initialization Constraints to indicate reinitialization " .
             "not req on Track switches",
             $sampleDesc->length == 1,

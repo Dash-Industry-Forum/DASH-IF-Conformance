@@ -5,6 +5,8 @@ global $session_dir, $mpd_features, $current_period, $current_adaptation_set, $c
        $reprsentation_mdat_template, $profiles, $cmaf_mediaTypes,
        $progress_report, $progress_xml, $cmaf_mediaProfiles;
 
+global $logger;
+
 $adaptationDirectory = str_replace('$AS$', $current_adaptation_set, $adaptation_set_template);
 $xmlRepresentationDirectory = str_replace(
     array('$AS$', '$R$'),

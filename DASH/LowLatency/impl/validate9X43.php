@@ -4,7 +4,7 @@ global $mpd_features, $current_period, $utc_timing_info, $logger;
 
 
 $segmentAccessInfo = array();
-IsegmentTemplateCombined = get_segment_access(
+$segmentTemplateCombined = get_segment_access(
     $period['SegmentTemplate'],
     $adaptationSet['SegmentTemplate']
 );
@@ -123,7 +123,7 @@ foreach ($representations as $representationId => $representation) {
     } else {
         $check1 = $segmentTemplateCombined[0]['duration'] != null &&
           strpos($segmentTemplateCombined[0]['media'], '$Number') !== false;
-        $check2 = $segmentTemplateCombined[0]['SegmentTimeline'] != null && i
+        $check2 = $segmentTemplateCombined[0]['SegmentTimeline'] != null && 
           strpos($segmentTemplateCombined[0]['media'], '$Number') !== false &&
           strpos($segmentTemplateCombined[0]['media'], '$Time') !== false;
         if (!($check1 || $check2)) {
@@ -231,6 +231,6 @@ $logger->test(
     ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
 );
 
-$this->validate9X42($adaptationSet, $adaptationSetId, $valid9X44));
+$this->validate9X42($adaptationSet, $adaptationSetId, $valid9X44);
 
 return $isLowLatencyAdaptation;

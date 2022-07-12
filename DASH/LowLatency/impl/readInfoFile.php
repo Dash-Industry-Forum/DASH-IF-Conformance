@@ -16,7 +16,6 @@ foreach ($representations as $representationId => $representation) {
         !($representationInformationFile =
         open_file($session_dir . '/Period' . $current_period . '/' . $repInfoFile . '.txt', 'r'))
     ) {
-        echo "Error opening file: " . "$session_dir.'/'.$repInfoFile" . '.txt';
         return;
     }
 

@@ -226,7 +226,7 @@ for ($adaptationSetIndex = 0; $adaptationSetIndex < sizeof($adaptationSets); $ad
                             );
                         }
                         if ($this->encryptedSwitchingSetFound = 0 && $encryptedCounter == $filecount) {
-                            $this-> < encryptedSwitchingSetFound = 1;
+                            $this->encryptedSwitchingSetFound = 1;
                         }
                     }
                 }
@@ -248,7 +248,7 @@ for ($adaptationSetIndex = 0; $adaptationSetIndex < sizeof($adaptationSets); $ad
                             );
                         }
                         if ($this->encryptedSwitchingSetFound = 0 && $encryptedCounter == $filecount) {
-                            $this-> < encryptedSwitchingSetFound = 1;
+                            $this->encryptedSwitchingSetFound = 1;
                         }
                     }
                 }
@@ -326,7 +326,7 @@ if ($cmfhdProfile || $cmfhdcProfile || $cmfhdsProfile) {
         $logger->test(
             "CMAF",
             "Section A.1.2/A.1.3/A.1.4",
-            "If containing video, SHALL include at least one Switching Set constrained to the 'cfhd' Media Profile"m
+            "If containing video, SHALL include at least one Switching Set constrained to the 'cfhd' Media Profile",
             $this->cfhdSwitchingSetFound,
             "FAIL",
             "'cfhd' compatible set found",
@@ -337,7 +337,7 @@ if ($cmfhdProfile || $cmfhdcProfile || $cmfhdsProfile) {
         $logger->test(
             "CMAF",
             "Section A.1.2/A.1.3/A.1.4",
-            "If containing audio, SHALL include at least one Switching Set constrained to the 'caac' Media Profile"m
+            "If containing audio, SHALL include at least one Switching Set constrained to the 'caac' Media Profile",
             $this->caacSwitchingSetFound,
             "FAIL",
             "'caac' compatible set found",

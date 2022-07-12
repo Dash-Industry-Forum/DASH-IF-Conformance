@@ -31,7 +31,7 @@ $logger->test(
     "Found only 1 set"
 );
 if (count($indices) == 1) {
-    return
+    return;
 }
 
 // For this naming there is no automation yet, since this implementation has an assumption on ids
@@ -81,7 +81,7 @@ for ($i = 0; $i < $fileCount1; $i++) {
         "file/directory for box info is created.)"
     );
     if (!file_exists($location2)) {
-        return
+        return;
     }
     for ($j = 0; $j < $fileCount2; $j++) {
         $xml2 = get_DOM($files2[$j], 'atomlist');
@@ -128,7 +128,7 @@ for ($i = 0; $i < $fileCount1; $i++) {
                 "CMAF",
                 "7.3.4.4",
                 "Aligned Switching Sets SHALL contain CMAF switching sets of equal duration",
-                $equalDuration
+                $equalDuration,
                 "FAIL",
                 "Matches between Set $indices[0] rep $id and Set $indices[1] rep $id2",
                 "Differs between Set $indices[0] rep $id and Set $indices[1] rep $id2",

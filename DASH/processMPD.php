@@ -123,23 +123,11 @@ function processAdaptationSetOfCurrentPeriod($period, $curr_period_dir, $ResultX
 
 
             $additional_flags = '';
-            fwrite(STDERR, "Checking hookBeforeRepresentation on representation $representation\n");
             foreach ($modules as $module) {
                 if ($module->isEnabled()) {
                     $module->hookBeforeRepresentation();
                 }
             }
-            /*
-            if ($cmaf_conformance) {
-                $return_val = $cmaf_function_name($cmaf_when_to_call[0]);
-            }
-            if ($hbbtv_conformance || $dvb_conformance) {
-                $is_subtitle_rep = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[2]);
-            }
-            if ($ctawave_conformance) {
-                $return_cta = $ctawave_function_name($ctawave_when_to_call[0]);
-            }
-             */
 
             $return_seg_val = validate_segment($curr_adapt_dir, $curr_rep_dir, $period, $adaptation_set, $representation, $segment_url, $rep_dir_name, $is_subtitle_rep);
             ValidateDolby($adaptation_set, $representation);
@@ -150,37 +138,16 @@ function processAdaptationSetOfCurrentPeriod($period, $curr_period_dir, $ResultX
                 }
             }
 
-            /*
-            if ($dashif_conformance) {
-                $return_seg_val[] = $iop_function_name($iop_when_to_call[1]);
-            }
-            if ($cmaf_conformance) {
-                $return_seg_val[] = $cmaf_function_name($cmaf_when_to_call[1]);
-            }
-            if ($hbbtv_conformance || $dvb_conformance) {
-                $return_seg_val[] = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[3]);
-            }
-             */
-
-            ## Report to client
-            //$send_string = json_encode($return_seg_val);
-            #error_log('RepresentationDownloaded_Return:' . $send_string);
-
-            //err_file_op(1);
-            //print_console(dirname(__DIR__) . '/' . explode('.', $return_seg_val[1])[0] . '.txt', "Period " . ($current_period + 1) . " Adaptation Set " . ($current_adaptation_set + 1) . " Representation " . ($current_representation + 1) . " Results");
-            //$segment_log = 'Period' . $current_period . '/' . str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_error_log_template);
-            //tabulateResults($session_dir . '/' . $segment_log . '.txt', 'Segment');
-
             $current_representation++;
         }
 
         ## Representations in current Adaptation Set finished
         crossRepresentationProcess();
-        if ($hbbtv_conformance || $dvb_conformance) {
-            $return_seg_val[] = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[4]);
-        }
-        if ($cmaf_conformance) {
-            $return_arr = $cmaf_function_name($cmaf_when_to_call[2]);
+
+        foreach ($modules as $module) {
+            if ($module->isEnabled()) {
+                $module->hookBeforeAdaptationSet();
+            }
         }
 
         $current_representation = 0;
@@ -188,6 +155,12 @@ function processAdaptationSetOfCurrentPeriod($period, $curr_period_dir, $ResultX
     }
 
     ## Adaptation Sets in current Period finished
+    foreach ($modules as $module) {
+        if ($module->isEnabled()) {
+            $module->hookAdaptationSet();
+        }
+    }
+    /*
     if ($dashif_conformance) {
         $iop_function_name($iop_when_to_call[2]);
     }
@@ -205,7 +178,7 @@ function processAdaptationSetOfCurrentPeriod($period, $curr_period_dir, $ResultX
     }
     if ($low_latency_dashif_conformance) {
         $return_arr = $low_latency_function_name($low_latency_when_to_call[1]);
-    }
+    }*/
 
     //err_file_op(2);
     $current_adaptation_set = 0;

@@ -117,7 +117,7 @@ class ModuleCMAF extends ModuleInterface
     public function hookBeforeAdaptationSet()
     {
         parent::hookBeforeAdaptationSet();
-        return checkSwitchingSets();
+        $this->checkSwitchingSets();
     }
 
     public function hookAdaptationSet()

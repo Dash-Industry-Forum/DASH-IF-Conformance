@@ -57,7 +57,8 @@ class ModuleDASHLowLatency extends ModuleInterface
     $presentation_times = array();
     $decode_times = array();
          */
-        return low_latency_validate_cross();
+        
+        $this->validateCross();
     }
 
     private function validateCross()

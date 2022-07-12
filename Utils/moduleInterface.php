@@ -187,6 +187,7 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("BeforeAdaptationSet");
+      fwrite(STDERR, "Initialized $this->name hookBeforeAdaptationSet\n");
     }
     /**
      * A hook that is run after running a crossRepresentationProcess.
@@ -219,6 +220,7 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("AdaptationSet");
+      fwrite(STDERR, "Initialized $this->name hookAdaptationSet\n");
     }
 
     /**
@@ -235,5 +237,6 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("Period");
+      fwrite(STDERR, "Initialized $this->name hookPeriod\n");
     }
 }

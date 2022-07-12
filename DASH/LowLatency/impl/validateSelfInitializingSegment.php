@@ -11,7 +11,6 @@ if (
     !($representionInformationFile =
     open_file($session_dir . '/Period' . $current_period . '/' . $repDirName . '.txt', 'r'))
 ) {
-    echo "Error opening file: " . "$session_dir.'/'.$rep_info_file" . '.txt';
     return;
 }
 
