@@ -198,22 +198,26 @@ class ModuleHbbTVDVB extends ModuleInterface
 
     public function hookBeforeRepresentation()
     {
-        HbbTV_DVB_flags();
-        return is_subtitle();
+        parent::hookBeforeRepresentation();
+        $this->flags();
+        return $this->isSubtitle();
     }
 
     public function hookRepresentation()
     {
-        return representationValidation();
+        parent::hookRepresentation();
+        return $this->representationValidation();
     }
 
     public function hookBeforeAdaptationSet()
     {
+        parent::hookBeforeAdaptationSet();
         return addOrRemoveImages('REMOVE');
     }
 
     public function hookAdaptationSet()
     {
+        parent::hookAdaptationSet();
         return CrossValidation_HbbTV_DVB();
     }
 

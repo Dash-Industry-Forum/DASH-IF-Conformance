@@ -2,9 +2,6 @@
 
 namespace DASHIF;
 
-include_once 'LowLatency_Initialization.php';
-
-
 class ModuleDASHLowLatency extends ModuleInterface
 {
     public function __construct()
@@ -52,6 +49,7 @@ class ModuleDASHLowLatency extends ModuleInterface
 
     public function hookAdaptationSet()
     {
+        parent::hookAdaptationSet();
         /*
     $maxSegmentDurations = array();
     $first_option = array();
@@ -59,7 +57,6 @@ class ModuleDASHLowLatency extends ModuleInterface
     $presentation_times = array();
     $decode_times = array();
          */
-        parent::hookAdaptationSet();
         return low_latency_validate_cross();
     }
 

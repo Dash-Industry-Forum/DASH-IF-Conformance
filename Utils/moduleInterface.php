@@ -130,6 +130,10 @@ class ModuleInterface
      */
     public function hookBeforeRepresentation()
     {
+        global $logger;
+        $logger->setModule($this->name);
+        $logger->setHook("BeforeRepresentation");
+      fwrite(STDERR, "Initialized $this->name hookBeforeRepresentation\n");
     }
     /**
      * A hook that is run after downloading and validating the first segment
@@ -161,6 +165,10 @@ class ModuleInterface
      */
     public function hookRepresentation()
     {
+        global $logger;
+        $logger->setModule($this->name);
+        $logger->setHook("Representation");
+      fwrite(STDERR, "Initialized $this->name Representation\n");
     }
 
     /**
@@ -176,6 +184,9 @@ class ModuleInterface
      */
     public function hookBeforeAdaptationSet()
     {
+        global $logger;
+        $logger->setModule($this->name);
+        $logger->setHook("BeforeAdaptationSet");
     }
     /**
      * A hook that is run after running a crossRepresentationProcess.
@@ -205,6 +216,9 @@ class ModuleInterface
      */
     public function hookAdaptationSet()
     {
+        global $logger;
+        $logger->setModule($this->name);
+        $logger->setHook("AdaptationSet");
     }
 
     /**
@@ -218,5 +232,8 @@ class ModuleInterface
      */
     public function hookPeriod()
     {
+        global $logger;
+        $logger->setModule($this->name);
+        $logger->setHook("Period");
     }
 }

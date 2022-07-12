@@ -50,7 +50,7 @@ if ($xmlRepresentation) {
 }
 
 
-addOrRemoveImages('REMOVE');
+$this->addOrRemoveImages('REMOVE');
 $hbbtv_string_info = "<img id=\"segmentReport\" src=\"$segmentDurationName\" width=\"650\" height=\"350\">" .
                      "<img id=\"bitrateReport\" src=\"$bitrate_report_name\" width=\"650\" height=\"350\"/>\n";
-addOrRemoveImages('ADD', $hbbtv_string_info);
+$this->addOrRemoveImages('ADD', $hbbtv_string_info);

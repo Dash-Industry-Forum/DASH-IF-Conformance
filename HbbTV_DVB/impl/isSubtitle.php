@@ -28,7 +28,7 @@ if (
 
 if ($subtitleRepresentation) {
     $subtitle_dir = "$session_dir/Period$current_period/Adapt$current_adaptation_set" .
-                    "rep$current_representation/Subtitles/';
+                    "rep$current_representation/Subtitles/";
     if (!file_exists($subtitle_dir)) {
         $oldmask = umask(0);
         mkdir($subtitle_dir, 0777, true);

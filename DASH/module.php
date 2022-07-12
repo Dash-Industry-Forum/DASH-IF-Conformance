@@ -13,16 +13,16 @@ class ModuleDASH extends ModuleInterface
 
     protected function addCLIArguments()
     {
-//        global $argumentParser;
-//        $argumentParser->addOption("dash", "d", "dash", "Enable DASH-IF checking");
+        global $argumentParser;
+        $argumentParser->addOption("dash", "d", "dash", "Enable DASH-IF checking");
     }
 
     public function handleArguments()
     {
-//        global $argumentParser;
-//        if ($argumentParser->getOption("dash")) {
-//            $this->enabled = true;
-//        }
+        global $argumentParser;
+        if ($argumentParser->getOption("dash")) {
+            $this->enabled = true;
+        }
     }
 
 

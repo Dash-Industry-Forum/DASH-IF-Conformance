@@ -5,12 +5,12 @@ $reprsentation_template, $CTAspliceConstraitsLog;
 
 ///\RefactorTodo Create Separate Logger Instance
 ///\RefactorTodo If possible, loop once instead of in each file
-$this->checkSequentialSwSetMProfile();
+$this->checkSequentialSwitchingSetMediaProfile();
 $this->checkDiscontinuousSplicePoints();
 $this->checkEncryptionChangeSplicePoint();
 $this->checkSampleEntryChangeSplicePoint();
 $this->checkDefaultKIDChangeSplicePoint();
-$this->checkPicAspectRatioSplicePoint();
+$this->checkPictureAspectRatioSplicePoint();
 $this->checkFrameRateSplicePoint();
 $this->checkAudioChannelSplicePoint();
 

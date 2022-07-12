@@ -53,11 +53,14 @@ class ModuleCTAWAVE extends ModuleInterface
 
     public function hookBeforeRepresentation()
     {
-        return CTAFlags();
+        parent::hookBeforeRepresentation();
+        global $additional_flags;
+        $additional_flags .= ' -ctawave';
     }
 
     public function hookBeforeAdaptationSet()
     {
+        parent::hookBeforeAdaptationSet();
         $this->CTACheckSelectionSet();
         $this->CTACheckSingleInitSwitchingSet();
         $this->CTACheckPresentation();
@@ -65,7 +68,8 @@ class ModuleCTAWAVE extends ModuleInterface
 
     public function hookPeriod()
     {
-        return CTABaselineSpliceChecks();
+        parent::hookPeriod();
+        return $this->CTABaselineSpliceChecks();
     }
 
     private function waveProgramChecks()
@@ -88,7 +92,7 @@ class ModuleCTAWAVE extends ModuleInterface
         include 'impl/ctaBaselineSpliceChecks.php';
     }
 
-    private function checkSequentialSwSetMediaProfile()
+    private function checkSequentialSwitchingSetMediaProfile()
     {
         return include 'impl/checkSequentialSwitchingSetMediaProfile.php';
     }

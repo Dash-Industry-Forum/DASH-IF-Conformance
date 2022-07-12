@@ -38,8 +38,8 @@ include 'VisitorCounter.php';  //#Various Session-based functions. No Direct Exe
 //#conditional extra includes for module initialization
 include 'GlobalVariables.php';
 include 'PrettyPrint.php';     //#Pretty printing functions for terminal output. No Direct Executable Code.
-include 'SegmentDownload.php'; //#Very large function for downloading data. No Direct Executable Code.
-include 'SegmentValidation.php'; //#Segment validation functions. No Direct Executable Code.
+include 'segmentDownload.php'; //#Very large function for downloading data. No Direct Executable Code.
+include 'segmentValidation.php'; //#Segment validation functions. No Direct Executable Code.
 //#Dolby validation functions. Attempt at use of objects. No Direct Executable Code.
 include 'DolbySegmentValidation.php';
 
@@ -49,11 +49,10 @@ include 'MPDUtility.php';
 
 include '../DASH/module.php';
 include '../CMAF/module.php';
-include '../CMAF/CTAWAVE/module.php';
+include '../CTAWAVE/module.php';
 include '../HbbTV_DVB/module.php';
 include '../DASH/LowLatency/module.php';
 include '../DASH/IOP/module.php';
-
 
 $argumentParser->parseAll();
 
@@ -61,7 +60,7 @@ $mpd_url = $argumentParser->getPositionalArgument("url");
 $logger->setSource($mpd_url);
 
 
-$mpd_validation_only = true;
+$mpd_validation_only = false;
 
 
 
@@ -72,7 +71,7 @@ include '../DASH/MPDFeatures.php';
 include '../DASH/MPDValidation.php';
 include '../DASH/MPDInfo.php';
 include '../DASH/SchematronIssuesAnalyzer.php';
-include '../DASH/CrossValidation.php';
+include '../DASH/crossValidation.php';
 include '../DASH/Representation.php';
 include '../DASH/SegmentURLs.php';
 include '../HLS/HLSProcessing.php';
@@ -100,6 +99,5 @@ if (!$hls_manifest) {
     processHLS();
 }
 
-  echo($logger->asJSON());
-  echo("\n");
+  echo($logger->asJSON() . "\n");
 ?>

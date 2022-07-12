@@ -99,22 +99,30 @@ class ModuleCMAF extends ModuleInterface
 
     public function hookBeforeRepresentation()
     {
+        parent::hookBeforeRepresentation();
         global $additional_flags;
         $additional_flags .= " -cmaf";
     }
 
     public function hookRepresentation()
     {
-        return checkCMAFTracks();
+        parent::hookRepresentation();
+        $this->checkCMAFTracks();
+    }
+
+    private function checkCMAFTracks(){
+      include 'impl/checkCMAFTracks.php';
     }
 
     public function hookBeforeAdaptationSet()
     {
+        parent::hookBeforeAdaptationSet();
         return checkSwitchingSets();
     }
 
     public function hookAdaptationSet()
     {
+        parent::hookAdaptationSet();
         $this->checkCMAFPresentation();
         $this->checkSelectionSet();
         $this->checkAlignedSwitchingSets();

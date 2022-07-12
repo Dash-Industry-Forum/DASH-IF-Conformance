@@ -56,6 +56,7 @@ class ModuleDASHInteroperability extends ModuleInterface
 
     public function hookRepresentation()
     {
+        parent::hookRepresentation();
         $this->validateSegment();
     }
 
@@ -76,6 +77,7 @@ class ModuleDASHInteroperability extends ModuleInterface
 
     public function hookAdaptationSet()
     {
+        parent::hookAdaptationSet();
         $this->validateCross();
     }
 

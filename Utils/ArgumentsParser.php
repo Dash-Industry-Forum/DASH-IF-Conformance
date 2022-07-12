@@ -15,6 +15,8 @@ class ArgumentsParser
 
     public function parseAll()
     {
+        global $modules;
+
         $restidx = null;
         $this->parsedOptions = getopt($this->getShortOpts(), $this->getLongOpts(), $restidx);
 
@@ -26,9 +28,10 @@ class ArgumentsParser
             exit($this->help());
         }
 
-        global $modules;
-        foreach ($modules as $module) {
+        foreach ($modules as &$module) {
+          fwrite(STDERR, "Module $module->name : ");
             $module->handleArguments();
+          fwrite(STDERR, "enabled = " . $module->isEnabled() . "\n");
         }
     }
 

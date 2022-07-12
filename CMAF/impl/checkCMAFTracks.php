@@ -15,11 +15,13 @@ $xmlRepresentation = $session_dir . '/Period' . $current_period . '/' .
                      $adaptationDirectory . '/' . $xmlRepresentationDirectory . '.xml';
 
 if (!file_exists($xmlRepresentation)) {
+  fwrite(STDERR, "Can't open $xmlRepresentation\n");
     return;
 }
 $xml = get_DOM($xmlRepresentation, 'atomlist');
 
 if (!$xml) {
+  fwrite(STDERR, "NO xml in $xmlRepresentation\n");
     return;
 }
 
@@ -158,7 +160,7 @@ for ($j = 0; $j < $moofBoxesCount; $j++) {
         $mdatInfo = explode(" ", fgets($mdatFile));
     }
 
-    if (empty($mdatInfo){
+    if (empty($mdatInfo)){
         continue;
     }
     $moofOffset = $moofBoxes->item($j)->getAttribute('offset');
@@ -264,7 +266,7 @@ if ($videoSampleDescription->length > 0) {
                 "Section B.2.3",
                 "The HEVCSampleEntry SHALL contain an HEVCConfigurationBox (hvcC) containing an " .
                 "HEVCDecoderConfigurationRecord",
-                $hvccBoxes->length == 1
+                $hvccBoxes->length == 1,
                 "FAIL",
                 "Representation/Track $id valid (found exactly 1 hvcc box)",
                 "Representation/Track $id not valid (found $hvccBoxes->length hvcc boxes)"
