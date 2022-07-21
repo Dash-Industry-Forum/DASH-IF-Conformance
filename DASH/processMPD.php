@@ -16,8 +16,7 @@
 
 function process_MPD()
 {
-    global $session_dir, $mpd_dom, $mpd_features, $mpd_validation_only,
-            $current_period, $profiles;
+    global $session_dir, $mpd_dom, $mpd_features, $mpd_validation_only, $current_period, $profiles;
 
     global $modules;
 
@@ -58,7 +57,9 @@ function process_MPD()
 
     //------------------------------------------------------------------------//
     ## Perform Segment Validation for each representation in each adaptation set within the current period
-    check_before_segment_validation();
+    if (!checkBeforeSegmentValidation()){
+      return;
+    }
     if ($mpd_features['type'] !== 'dynamic') {
         $current_period = 0;
     }
@@ -92,13 +93,8 @@ function process_MPD()
 
 function processAdaptationSetOfCurrentPeriod($period, $curr_period_dir, $ResultXML, $segment_urls)
 {
-    global  $mpd_features, $current_period, $current_adaptation_set, $adaptation_set_template,$current_representation,$reprsentation_template,$session_dir,
-           $progress_report, $reprsentation_error_log_template, $additional_flags,
-           $dashif_conformance, $iop_function_name, $iop_when_to_call,                                      // DASH-IF IOP data
-           $cmaf_conformance, $cmaf_function_name, $cmaf_when_to_call,                                      // CMAF data
-           $hbbtv_conformance, $dvb_conformance, $hbbtv_dvb_function_name, $hbbtv_dvb_when_to_call,         // HbbTV-DVB data
-           $ctawave_conformance, $ctawave_function_name, $ctawave_when_to_call,                             // CTA WAVE data
-           $low_latency_dashif_conformance, $low_latency_function_name, $low_latency_when_to_call;          // Low Latency DASH-IF data
+    global  $current_adaptation_set, $adaptation_set_template,$current_representation,$reprsentation_template,
+            $additional_flags;
 
     global $modules;
 
@@ -160,33 +156,13 @@ function processAdaptationSetOfCurrentPeriod($period, $curr_period_dir, $ResultX
             $module->hookAdaptationSet();
         }
     }
-    /*
-    if ($dashif_conformance) {
-        $iop_function_name($iop_when_to_call[2]);
-    }
-    if ($cmaf_conformance) {
-        $return_arr = $cmaf_function_name($cmaf_when_to_call[3]);
-        foreach ($return_arr as $return_item) {
-            $file_error[] = $return_item;
-        }
-    }
-    if ($hbbtv_conformance || $dvb_conformance) {
-        $return_arr = $hbbtv_dvb_function_name($hbbtv_dvb_when_to_call[5]);
-    }
-    if ($ctawave_conformance) {
-        $return_arr = $ctawave_function_name($ctawave_when_to_call[1]);
-    }
-    if ($low_latency_dashif_conformance) {
-        $return_arr = $low_latency_function_name($low_latency_when_to_call[1]);
-    }*/
-
     //err_file_op(2);
     $current_adaptation_set = 0;
 }
 
-function check_before_segment_validation()
+function checkBeforeSegmentValidation()
 {
-    global $session_dir, $mpd_features, $mpd_dom, $progress_report;
+  global $mpd_dom;
 
 
     $supplemental = $mpd_dom->getElementsByTagName('SupplementalProperty');
@@ -199,6 +175,7 @@ function check_before_segment_validation()
 
     if ($mpd_dom->getElementsByTagName('SegmentList')->length !== 0) {
         session_close();
-        exit;
+        return false;
     }
+    return true;
 }
