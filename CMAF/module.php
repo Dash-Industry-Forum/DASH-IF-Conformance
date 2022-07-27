@@ -110,8 +110,9 @@ class ModuleCMAF extends ModuleInterface
         $this->checkCMAFTracks();
     }
 
-    private function checkCMAFTracks(){
-      include 'impl/checkCMAFTracks.php';
+    private function checkCMAFTracks()
+    {
+        include 'impl/checkCMAFTracks.php';
     }
 
     public function hookBeforeAdaptationSet()
@@ -158,7 +159,7 @@ class ModuleCMAF extends ModuleInterface
         include 'impl/checkAlignedSwitchingSets.php';
     }
 
-    private function checkCMAFMessages($logFile)
+    private function checkCMAFMessages($representationDirectory)
     {
         return include 'impl/checkCMAFMessages.php';
     }

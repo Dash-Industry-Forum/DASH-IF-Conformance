@@ -1,7 +1,7 @@
 <?php
 
 ## Here the implementation follows the DASH-IF IOP guideline for signaling the switchable adaptation sets
-global $session_dir, $mpd_features, $current_period, $alignedswitching_infofile;
+global $session, $mpd_features, $current_period, $alignedswitching_infofile;
 
 $indices = array();
 
@@ -35,9 +35,9 @@ if (count($indices) == 1) {
 }
 
 // For this naming there is no automation yet, since this implementation has an assumption on ids
-$location1 = $session_dir . '/Period' . $current_period . '/Adapt' . ($indices[0] - 1) . '/';
+$location1 = $session->getAdaptationDir($current_period, $indices[0] - 1);
 $fileCount1 = 0;
-$files1 = glob($location1 . "*.xml");
+$files1 = glob($location1 . "/*.xml");
 if ($files1) {
     $fileCount1 = count($files1);
 }
@@ -64,9 +64,9 @@ for ($i = 0; $i < $fileCount1; $i++) {
         return;
     }
     // For this naming there is no automation yet, since this implementation has an assumption on ids
-    $location2 = $session_dir . '/Period' . $current_period . '/Adapt' . ($indices[1] - 1) . '/';
+    $location2 = $session->getAdaptationDir($current_period, $indices[1] - 1);
     $fileCount2 = 0;
-    $files2 = glob($location2 . "*.xml");
+    $files2 = glob($location2 . "/*.xml");
     if ($files2) {
         $fileCount2 = count($files2);
     }

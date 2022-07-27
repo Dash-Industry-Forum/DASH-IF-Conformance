@@ -1,6 +1,6 @@
 <?php
 
-global $session_dir, $mpd_features, $current_period, $profiles, $period_timing_info,
+global  $mpd_features, $current_period, $profiles, $period_timing_info,
         $cfhd_SwSetFound,$caac_SwSetFound, $encryptedSwSetFound,
         $presentation_infofile, $adaptation_set_template;
 
@@ -24,10 +24,9 @@ $adaptationSets = $mpd_features['Period'][$current_period]['adaptationSetationSe
 for ($adaptationSetIndex = 0; $adaptationSetIndex < sizeof($adaptationSets); $adaptationSetIndex++) {
     $adaptationSet = $adaptationSets[$adaptationSetIndex];
 
-    $adaptationSetDirectory = str_replace('$AS$', $adaptationSetIndex, $adaptation_set_template);
-    $location = $session_dir . '/Period' . $current_period . '/' . $adaptationSetDirectory . '/';
+    $location = $session->getAdaptationDirectory($current_period, $adaptationSetIndex);
     $filecount = 0;
-    $files = glob($location . "*.xml");
+    $files = glob($location . "/*.xml");
     if ($files) {
         $filecount = count($files);
     }

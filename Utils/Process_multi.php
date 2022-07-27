@@ -15,8 +15,6 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//unlink("../Conformance-Frontend/temp/mpdreport.txt");
-
 ini_set('memory_limit', '-1');
 ini_set('display_errors', 'stderr');
 error_reporting(E_ERROR | E_PARSE);
@@ -57,11 +55,6 @@ include __DIR__ . '/../DASH/IOP/module.php';
 
 $argumentParser->parseAll();
 
-$mpd_url = $argumentParser->getPositionalArgument("url");
-$logger->setSource($mpd_url);
-
-
-//#Cross repo includes. These should be made optional at the very least.
 include __DIR__ . '/../DASH/processMPD.php';
 include __DIR__ . '/../DASH/MPDFeatures.php';
 include __DIR__ . '/../DASH/validateMPD.php';
@@ -79,23 +72,60 @@ set_time_limit(0);
 ini_set("log_errors", 1);
 ini_set("error_log", "myphp-error.log");
 
-//$session_id = (array_key_exists('sessionid', $_POST) ? json_decode($_POST['sessionid']) : "test");
-#session_name($session_id);
-#session_start();
-#error_log("session_start:" . session_name());
 
-#session_create();
+$streamsToTest = array(
+  array(
+    "id" => "Sintel_001",
+    "url" => "http://localhost:8000/3a/fraunhofer/aac-lc_stereo_without_video/Sintel/sintel_audio_only_aaclc_stereo_sidx.mpd",
+    "modules" => array("MPEG-DASH Common", "CTA-WAVE")
+  ),
+  array(
+    "url" => "http://localhost:8000/3a/fraunhofer/aac-lc_stereo_without_video/ElephantsDream/elephants_dream_audio_only_aaclc_stereo_sidx.mpd",
+    "modules" => array("!CMAF", "CTA-WAVE")
+  ),
+  "http://localhost:8000/3a/fraunhofer/heaac_stereo_without_video/Sintel/sintel_audio_only_heaac_stereo_sidx.mpd",
+  "http://localhost:8000/3a/fraunhofer/heaac_stereo_without_video/ElephantsDream/elephants_dream_audio_only_heaac_stereo_sidx.mpd",
+  "http://localhost:8000/3a/fraunhofer/heaacv2_stereo_without_video/Sintel/sintel_audio_only_heaacv2_stereo_sidx.mpd",
+  "http://localhost:8000/3a/fraunhofer/heaacv2_stereo_without_video/ElephantsDream/elephants_dream_audio_only_heaacv2_stereo_sidx.mpd"
+);
 
-//update_visitor_counter();
-
-
-if (!$hls_manifest) {
-    process_MPD(false);//MPD Only
-    //process_MPD(true);//MPD and Segments
-    process_MPD();
-} else {
-    processHLS();
+$commandLineEnabledModules = [];
+foreach ($modules as &$module) {
+    if ($module->isEnabled()) {
+      $commandLineEnabledModules[] = $module->name;
+    }
 }
 
-  echo($logger->asJSON() . "\n");
+foreach ($streamsToTest as $idx => $stream) {
+    
+    $mpd_url = $stream;
+    $enabledModules = [];
+    $id = null;
+
+    if (is_array($mpd_url)){
+      $enabledModules = $mpd_url["modules"];
+      $id = $mpd_url["id"];
+      $mpd_url = $mpd_url["url"];
+    }
+
+    $logger->reset($id);
+    $logger->setSource($mpd_url);
+
+    fwrite(STDERR, "Going to parse stream $mpd_url\n");
+    fwrite(STDERR, "Enabled modules: ");
+    foreach ($modules as &$module) {
+      $inCommon = in_array($module->name, $commandLineEnabledModules);
+      $inSpecific = in_array($module->name, $enabledModules);
+      $negateInCommon = in_array("!$module->name", $enabledModules);
+
+      $module->setEnabled(($inCommon && !$negateInCommon) || $inSpecific);
+        if ($module->isEnabled()) {
+            fwrite(STDERR, "$module->name, ");
+        }
+    }
+    fwrite(STDERR, "\n");
+
+    //process_MPD(true);//MPD and Segments <==== This currently always leads to FAIL, as session files are moved around
+    process_MPD(false);//MPD Only
+}
 ?>

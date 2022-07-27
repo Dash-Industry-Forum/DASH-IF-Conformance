@@ -29,9 +29,7 @@ class ArgumentsParser
         }
 
         foreach ($modules as &$module) {
-          fwrite(STDERR, "Module $module->name : ");
             $module->handleArguments();
-          fwrite(STDERR, "enabled = " . $module->isEnabled() . "\n");
         }
     }
 

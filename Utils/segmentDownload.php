@@ -91,7 +91,7 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
             $location = 1;
             $box_name = null;
             $box_size = 0;
-            $newfile = open_file($directory . $filename, 'a+b');
+            $newfile = open_file($directory . "/" . $filename, 'a+b');
 
             # Assure that the pointer doesn't exceed size of downloaded bytes
             $byte_array = unpack('C*', $content);
@@ -124,7 +124,7 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
                         ## Save the mdat boxes' content into xml files
                         if ($is_subtitle_rep) {
                             $subtitle_xml_string = '<subtitle>';
-                            $mdat_file = $directory . 'Subtitles/' . $mdat_index . '.xml';
+                            $mdat_file = $directory . '/Subtitles/' . $mdat_index . '.xml';
                             fopen($mdat_file, 'w');
                             chmod($mdat_file, 0777);
                             $mdat_index++;
@@ -156,7 +156,7 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
                 $location = 1; // temporary pointer
                 $name = null; // box name
                 $box_size = 0; // box size
-                $newfile = open_file($directory . $filename, 'a+b'); // create an empty mp4 file to contain data needed from remote segment
+                $newfile = open_file($directory . "/" . $filename, 'a+b'); // create an empty mp4 file to contain data needed from remote segment
 
                 # Download the partial content and unpack
                 $content = partial_download($filePath, $ch, $sizepos, $sizepos + 1500);
@@ -223,7 +223,7 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
                             ## Save the mdat boxes' content into xml files
                             if ($is_subtitle_rep) {
                                 $subtitle_xml_string = '<subtitle>';
-                                $mdat_file = $directory . 'Subtitles/' . $mdat_index . '.xml';
+                                $mdat_file = $directory . '/Subtitles/' . $mdat_index . '.xml';
                                 fopen($mdat_file, 'w');
                                 chmod($mdat_file, 0777);
                                 $mdat_index++;

@@ -14,18 +14,22 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function process_MPD()
+function process_MPD($parseSegments = false)
 {
-    global $session_dir, $mpd_dom, $mpd_features, $mpd_validation_only, $current_period, $profiles;
+    global $mpd_dom, $mpd_features, $mpd_validation_only, $current_period, $profiles;
+
+    global $session;
 
     global $modules;
 
     $mpd_dom = mpd_load();
     if (!$mpd_dom) {
         ///\RefactorTodo Add global error message!
+        fwrite(STDERR, "Unable to load mpd dom\n");
         //die("Error: Failed loading XML file\n");
         return;
     }
+
 
     foreach ($modules as $module) {
         if ($module->isEnabled()) {
@@ -37,11 +41,12 @@ function process_MPD()
     $mpd_features = MPD_features($mpd_dom);
     $profiles = derive_profiles();
 
+
     //------------------------------------------------------------------------//
     ## Perform MPD Validation
     ## Write to MPD report
-    ## If only MPD validation is requested or inferred, exit
-    ## If any error is found in the MPD validation process, exit
+    ## If only MPD validation is requested or inferred, stop
+    ## If any error is found in the MPD validation process, stop
     ## If no error is found, then proceed with segment validation below
     $valid_mpd = validate_MPD();
 
@@ -51,14 +56,15 @@ function process_MPD()
         }
     }
 
-    if (!$valid_mpd[0] || $mpd_validation_only) {
+    if (!$valid_mpd[0] || !$parseSegments) {
+        fwrite(STDERR, ($valid_mpd[0] ? "" : "IN") . "VALID MPD AND " . ($parseSegments ? "DO " : "DO NOT ") . "parse segments\n");
         return;
     }
 
     //------------------------------------------------------------------------//
     ## Perform Segment Validation for each representation in each adaptation set within the current period
-    if (!checkBeforeSegmentValidation()){
-      return;
+    if (!checkBeforeSegmentValidation()) {
+        return;
     }
     if ($mpd_features['type'] !== 'dynamic') {
         $current_period = 0;
@@ -68,13 +74,8 @@ function process_MPD()
         $urls = process_base_url();
         $segment_urls = derive_segment_URLs($urls, $period_info);
 
-        $period_dir_name = "Period" . $current_period;
-        $curr_period_dir = $session_dir . '/' . $period_dir_name;
-        create_folder_in_session($curr_period_dir);
-
-
         $period = $mpd_features['Period'][$current_period];
-        processAdaptationSetOfCurrentPeriod($period, $curr_period_dir, $ResultXML, $segment_urls);
+        processAdaptationSetOfCurrentPeriod($period, $ResultXML, $segment_urls);
 
         if ($mpd_features['type'] === 'dynamic') {
             break;
@@ -91,10 +92,12 @@ function process_MPD()
     }
 }
 
-function processAdaptationSetOfCurrentPeriod($period, $curr_period_dir, $ResultXML, $segment_urls)
+function processAdaptationSetOfCurrentPeriod($period, $ResultXML, $segment_urls)
 {
     global  $current_adaptation_set, $adaptation_set_template,$current_representation,$reprsentation_template,
-            $additional_flags;
+            $additional_flags, $current_period;
+
+    global $session;
 
     global $modules;
 
@@ -103,19 +106,14 @@ function processAdaptationSetOfCurrentPeriod($period, $curr_period_dir, $ResultX
         $adaptation_set = $adaptation_sets[$current_adaptation_set];
         $representations = $adaptation_set['Representation'];
 
-        $adapt_dir_name = str_replace('$AS$', $current_adaptation_set, $adaptation_set_template);
-        $curr_adapt_dir = $curr_period_dir . '/' . $adapt_dir_name . '/';
-        create_folder_in_session($curr_adapt_dir);
+        $adaptationDirectory = $session->getAdaptationDir($current_period, $current_adaptation_set);
 
 
         while ($current_representation < sizeof($representations)) {
             $representation = $representations[$current_representation];
             $segment_url = $segment_urls[$current_adaptation_set][$current_representation];
 
-
-            $rep_dir_name = str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_template);
-            $curr_rep_dir = $curr_period_dir . '/' . $rep_dir_name . '/';
-            create_folder_in_session($curr_rep_dir);
+            $representationDirectory = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
 
 
             $additional_flags = '';
@@ -125,7 +123,7 @@ function processAdaptationSetOfCurrentPeriod($period, $curr_period_dir, $ResultX
                 }
             }
 
-            $return_seg_val = validate_segment($curr_adapt_dir, $curr_rep_dir, $period, $adaptation_set, $representation, $segment_url, $rep_dir_name, $is_subtitle_rep);
+            validate_segment($adaptationDirectory, $representationDirectory, $period, $adaptation_set, $representation, $segment_url, $is_subtitle_rep);
             ValidateDolby($adaptation_set, $representation);
 
             foreach ($modules as $module) {
@@ -162,7 +160,7 @@ function processAdaptationSetOfCurrentPeriod($period, $curr_period_dir, $ResultX
 
 function checkBeforeSegmentValidation()
 {
-  global $mpd_dom;
+    global $mpd_dom;
 
 
     $supplemental = $mpd_dom->getElementsByTagName('SupplementalProperty');

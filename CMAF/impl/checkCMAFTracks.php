@@ -1,11 +1,11 @@
 <?php
 
-global $session_dir, $mpd_features, $current_period, $current_adaptation_set, $current_representation,
+global $mpd_features, $current_period, $current_adaptation_set, $current_representation,
        $adaptation_set_template, $reprsentation_template, $reprsentation_error_log_template,
        $reprsentation_mdat_template, $profiles, $cmaf_mediaTypes,
        $progress_report, $progress_xml, $cmaf_mediaProfiles;
 
-global $logger;
+global $session, $logger;
 
 $adaptationDirectory = str_replace('$AS$', $current_adaptation_set, $adaptation_set_template);
 $xmlRepresentationDirectory = str_replace(
@@ -13,27 +13,24 @@ $xmlRepresentationDirectory = str_replace(
     array($current_adaptation_set, $current_representation),
     $reprsentation_template
 );
-$xmlRepresentation = $session_dir . '/Period' . $current_period . '/' .
-                     $adaptationDirectory . '/' . $xmlRepresentationDirectory . '.xml';
+
+$representationDirectory = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
+
+$xmlRepresentation = "$representationDirectory/atomInfo.xml";
 
 if (!file_exists($xmlRepresentation)) {
-  fwrite(STDERR, "Can't open $xmlRepresentation\n");
+    fwrite(STDERR, "Can't open $xmlRepresentation\n");
     return;
 }
 $xml = get_DOM($xmlRepresentation, 'atomlist');
 
 if (!$xml) {
-  fwrite(STDERR, "NO xml in $xmlRepresentation\n");
+    fwrite(STDERR, "NO xml in $xmlRepresentation\n");
     return;
 }
 
-$errorFile = str_replace(
-    array('$AS$', '$R$'),
-    array($current_adaptation_set, $current_representation),
-    $reprsentation_error_log_template
-);
 
-$return_array = $this->checkCMAFMessages($errorFile);
+$return_array = $this->checkCMAFMessages($representationDirectory);
 
 $cmaf_cmfc = $return_array[0];
 $cmaf_cmf2 = $return_array[1];
@@ -129,13 +126,7 @@ for ($j = 1; $j < $moofBoxesCount; $j++) {
     );
 }
 
-$offsetInfo = 'Period' . $current_period . '/' . str_replace(
-    array('$AS$', '$R$'),
-    array($current_adaptation_set, $current_representation),
-    $reprsentation_mdat_template
-);
-
-$mdatFile = open_file($session_dir . '/' . $offsetInfo . '.txt', 'r');
+$mdatFile = open_file("$representationDirectory/mdatoffset.txt", 'r');
 for ($j = 0; $j < $moofBoxesCount; $j++) {
     $currentTrunBox = $trunBoxes->item($j);
     if ($currentTrunBox->getAttribute('version') == 1) {
@@ -162,7 +153,7 @@ for ($j = 0; $j < $moofBoxesCount; $j++) {
         $mdatInfo = explode(" ", fgets($mdatFile));
     }
 
-    if (empty($mdatInfo)){
+    if (empty($mdatInfo)) {
         continue;
     }
     $moofOffset = $moofBoxes->item($j)->getAttribute('offset');

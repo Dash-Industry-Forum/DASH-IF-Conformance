@@ -1,19 +1,15 @@
 <?php
 
-global $session_dir, $MediaProfDatabase, $adaptation_set_template, $reprsentation_template;
+global $session, $MediaProfDatabase, $adaptation_set_template, $reprsentation_template;
+
 $errorMsg = "";
 $periodCount = sizeof($MediaProfDatabase);
 $adaptationCount = sizeof($MediaProfDatabase[0]);
 for ($i = 0; $i < ($periodCount - 1); $i++) {
     for ($adaptation = 0; $adaptation < $adaptationCount; $adaptation++) {
-        $adaptationDirectory = str_replace('$AS$', $adaptation, $adaptation_set_template);
-        $representationDirectory = str_replace(
-            array('$AS$', '$R$'),
-            array($adaptation, 0),
-            $reprsentation_template
-        );
-        $xml1 = get_DOM($session_dir . '/Period' . $i . '/' . $adaptationDirectory . '/' .
-                              $representationDirectory . '.xml', 'atomlist');
+        $representationDirectory = $session->getRepresentationDir($i, $adaptation, 0);
+        $xml1 = get_DOM($session->getRepresentationDir($i, $adaptation, 0) + "/atomInfo.xml", 'atomlist');
+
         if ($xml1) {
             $moofCount1 = $xml1->getElementsByTagName("moof")->length;
             if ($moofCount1 > 0) {
@@ -25,8 +21,7 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
                 $timeScale1 = $mdhd->getAttribute("timescale");
             }
         }
-        $xml2 = get_DOM($session_dir . '/Period' . ($i + 1) . '/' . $adaptationDirectory . '/' .
-                              $representationDirectory . '.xml', 'atomlist');
+        $xml2 = get_DOM($session->getRepresentationDir($i + 1, $adaptation, 0) + "/atomInfo.xml", 'atomlist');
         if ($xml2) {
             $moofCount2 = $xml2->getElementsByTagName("moof")->length;
             if ($moofCount2 > 0) {

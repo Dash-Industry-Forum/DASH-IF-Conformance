@@ -1,8 +1,8 @@
 <?php
 
-global $session_dir, $current_period, $cmaf_mediaTypes, $adaptation_set_template, $selectionset_infofile;
+global $current_period, $cmaf_mediaTypes, $adaptation_set_template, $selectionset_infofile;
 
-global $logger;
+global $logger, $session;
 
 $selectionSets = $this->getSelectionSets();
 foreach ($selectionSets as $selectionSet) {
@@ -45,10 +45,9 @@ foreach ($selectionSets as $selectionSet) {
             );
         }
 
-        $adaptationDirectory = str_replace('$AS$', $adaptationIndex, $adaptation_set_template);
-        $location = $session_dir . '/Period' . $current_period . '/' . $adaptationDirectory . '/';
+        $location = $session->getAdaptationDirectory($current_period, $adaptationIndex);
         $filecount = 0;
-        $files = glob($location . "*.xml");
+        $files = glob($location . "/*.xml");
         if ($files) {
             $filecount = count($files);
         }

@@ -36,16 +36,17 @@ class ModuleDASH extends ModuleInterface
 
     private function validateMPD()
     {
-        global $main_dir, $mpd_dom, $mpd_url, $session_dir, $mpd_log,
+        global $session, $main_dir, $mpd_dom, $mpd_url, $mpd_log,
         $featurelist_log_html, $mpd_xml, $mpd_xml_string, $mpd_xml_report;
 
         global $logger;
         $schematronIssuesReport = null;
 
         $mpd_xml = simplexml_load_string($mpd_xml_string);
-        $mpd_xml->asXml($session_dir . '/' . $mpd_xml_report);
+        $mpd_xml->asXml($session->getDir() . '/' . $mpd_xml_report);
         if (!$mpd_xml) {
-            exit;
+            fwrite(STDERR, "Can't open $mpd_xml_string");
+            return;
         }
 
         $result = $this->validateSchematron();
@@ -93,14 +94,14 @@ class ModuleDASH extends ModuleInterface
 
     private function validateSchematron()
     {
-        global $logger, $mpd_url, $session_dir, $dash_schema_location, $mpd_xml_report;
+        global $logger, $session, $mpd_url, $dash_schema_location, $mpd_xml_report;
 
         chdir('../DASH/mpdvalidator');
         $dash_schema_location = $this->findOrDownloadSchema();
 
-        $mpdvalidator = syscall('java -cp "saxon9he.jar:xercesImpl.jar:bin" Validator ' .
-          '"' . explode('#', $mpd_url)[0] . '"' . " " . "$session_dir" .
-          "/resolved.xml $dash_schema_location $session_dir/$mpd_xml_report");
+        $mpdvalidator = syscall("java -cp \"saxon9he.jar:xercesImpl.jar:bin\" Validator \"" .
+          explode('#', $mpd_url)[0] . "\" " . $session->getDir() .
+          "/resolved.xml $dash_schema_location " . $session->getDir() . "/$mpd_xml_report");
 
         $result = extract_relevant_text($mpdvalidator);
         delete_schema($dash_schema_location);

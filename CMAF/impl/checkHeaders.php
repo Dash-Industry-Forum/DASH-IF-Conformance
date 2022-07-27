@@ -1,7 +1,6 @@
 <?php
 
-global $session_dir, $current_period, $current_adaptation_set,
-        $adaptation_set_template, $infofile_template;
+global $current_adaptation_set;
 
 $this->compare($xml1, $xml2, $id1, $id2, $currentAdaptionDir, $index, $path);
 

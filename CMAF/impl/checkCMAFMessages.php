@@ -1,11 +1,9 @@
 <?php
 
-global $session_dir, $current_period;
-
 $validCMFC = true;
 $validCMF2 = true;
 
-$logs = file_get_contents($session_dir . '/Period' . $current_period . '/' . $logFile . '.txt');
+$logs = file_get_contents("$representationDirectory/log.txt");
 $logs_array = explode("\n", $logs);
 $size = sizeof($logs_array);
 for ($log_index = 0; $log_index < $size; $log_index++) {

@@ -37,6 +37,11 @@ class ModuleInterface
         return $this->enabled;
     }
 
+    public function setEnabled($newVal)
+    {
+        $this->enabled = $newVal;
+    }
+
 
     protected function message($message)
     {
@@ -133,7 +138,6 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("BeforeRepresentation");
-      fwrite(STDERR, "Initialized $this->name hookBeforeRepresentation\n");
     }
     /**
      * A hook that is run after downloading and validating the first segment
@@ -168,7 +172,6 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("Representation");
-      fwrite(STDERR, "Initialized $this->name Representation\n");
     }
 
     /**
@@ -187,7 +190,6 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("BeforeAdaptationSet");
-      fwrite(STDERR, "Initialized $this->name hookBeforeAdaptationSet\n");
     }
     /**
      * A hook that is run after running a crossRepresentationProcess.
@@ -220,7 +222,6 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("AdaptationSet");
-      fwrite(STDERR, "Initialized $this->name hookAdaptationSet\n");
     }
 
     /**
@@ -237,6 +238,5 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("Period");
-      fwrite(STDERR, "Initialized $this->name hookPeriod\n");
     }
 }
