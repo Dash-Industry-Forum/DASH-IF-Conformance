@@ -105,7 +105,7 @@ function update_visitor_counter(){
 function getUserIPAddr(){
     $client  = @$_SERVER['HTTP_CLIENT_IP'];
     $forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
-    $remote  = $_SERVER['REMOTE_ADDR'];
+    $remote  = @$_SERVER['REMOTE_ADDR'];
 
     if(filter_var($client, FILTER_VALIDATE_IP))
         $ip = $client;

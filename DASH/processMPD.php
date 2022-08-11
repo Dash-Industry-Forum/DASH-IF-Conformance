@@ -72,7 +72,7 @@ function process_MPD(){
         if(strpos($mpd_dom->getAttribute('profiles'), 'urn:hbbtv:dash:profile:isoff-live:2012') !== FALSE){
             $hbbtv_conformance = 1;
             if(!$dvb_conformance)
-                include '../HbbTV_DVB/HbbTV_DVB_Initialization.php';
+                include 'HbbTV_DVB/HbbTV_DVB_Initialization.php';
         }
     }
     if(!$dvb_conformance){

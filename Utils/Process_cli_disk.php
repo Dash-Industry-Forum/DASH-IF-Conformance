@@ -64,8 +64,6 @@ $logger->setSource($mpd_url);
 $mpd_validation_only = true;
 
 
-
-
 //#Cross repo includes. These should be made optional at the very least.
 include '../DASH/processMPD.php';
 include '../DASH/MPDFeatures.php';
