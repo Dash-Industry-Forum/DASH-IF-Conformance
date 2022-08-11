@@ -251,6 +251,7 @@ if ($chunkOverlapWithinRep != '') {
         $allRepresentationPoints[$i]--;
     }
 }
+}
 
 $validAllRepresentationsFound = false;
 if (sizeof(array_unique($allRepresentationPoints)) == 1 && $allRepresentationPoints[0] == 1) {

@@ -1,10 +1,12 @@
 <?php
 
-///\todo Make this return true/false
 global $session_dir, $current_period, $adaptation_set_template, $reprsentation_template,
        $reprsentation_mdat_template, $logger;
 
 $returnValue = true;
+
+///\RefactorTodo Make this work with a separate logger instance?
+
 //This entire function has only "PASS" checks, as validation is done based on the return value.
 //Every check is in essence a "FAIL" check, but there are two valid options in the outer scope.
 //Therefore, we store the combined result of all tests, and we return whether all succeeded.
@@ -13,12 +15,12 @@ $adapt_dir = str_replace('$AS$', $adaptationSetId, $adaptation_set_template);
 $rep_xml_dir = str_replace(array('$AS$', '$R$'), array($adaptationSetId, $representationId), $reprsentation_template);
 $rep_xml = $session_dir . '/Period' . $current_period . '/' . $adapt_dir . '/' . $rep_xml_dir . '.xml';
 
-///\Discuss this doesn't seem right....
+///Correctness this doesn't seem right....
 if (!file_exists($rep_xml)) {
     return true;
 }
 
-xml = get_DOM($rep_xml, 'atomlist');
+$xml = get_DOM($rep_xml, 'atomlist');
 if (!$xml) {
     return true;
 }
@@ -43,8 +45,6 @@ foreach ($emsgBoxes as $emsgIndex => $emsgBox) {
         $emsgConformance = true;
     } else {
         $beforeMoofFound = false;
-    ///\Discuss this variable is set but not used in the original code as well
-        $beforeMdatFound = false;
         for ($i = 0; $i < $moofBoxes->length; $i++) {
             $moofBox = $moofBoxes->item($i);
             $moofOffset = $moofBox->getAttribute('offset');
@@ -58,7 +58,6 @@ foreach ($emsgBoxes as $emsgIndex => $emsgBox) {
                 $beforeMoofFound = true;
                 break;
             } elseif (($emsgOffset > $moofOffset + $moofSize) && ($emsgOffset < $mdatOffset)) {
-                $beforeMdatFound = true;
                 break;
             }
         }

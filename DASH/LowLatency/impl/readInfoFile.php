@@ -12,8 +12,10 @@ foreach ($representations as $representationId => $representation) {
         $reprsentation_info_log_template
     );
 
-    if (!($opfile = open_file($session_dir . '/Period' . $current_period . '/' . $repInfoFile . '.txt', 'r'))) {
-        echo "Error opening file: " . "$session_dir.'/'.$repInfoFile" . '.txt';
+    if (
+        !($representationInformationFile =
+        open_file($session_dir . '/Period' . $current_period . '/' . $repInfoFile . '.txt', 'r'))
+    ) {
         return;
     }
 
@@ -23,7 +25,7 @@ foreach ($representations as $representationId => $representation) {
       'PresEnd' => array(),
       'NextPresStart' => array()
     );
-    while (($line = fgets($opfile)) !== false) {
+    while (($line = fgets($representationInformationFile)) !== false) {
         $lineInfo = explode(' ', $line);
         if (sizeof($lineInfo) < 3) {
             continue;
@@ -34,7 +36,7 @@ foreach ($representations as $representationId => $representation) {
         $infoFileInfo['PresEnd'][] = $lineInfo[2];
         $infoFileInfo['NextPresStart'][] = (sizeof($lineInfo) > 3) ? explode("\n", $lineInfo[3])[0] : PHP_INT_MAX;
     }
-    fclose($opfile);
+    fclose($representationInformationFile);
 
     $infoFileInfoAdaptationSet[$representationId] = $infoFileInfo;
 }

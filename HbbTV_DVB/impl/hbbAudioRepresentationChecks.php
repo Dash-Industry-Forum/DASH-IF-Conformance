@@ -22,6 +22,16 @@ $logger->test(
     "Invalid codecs in $codecs found for adaptation set $adaptationNumber, period $periodNumber"
 );
 
+$logger->test(
+    "HbbTV-DVB DASH Validation Requirements",
+    "HbbTV Secion E.2.3",
+    "The profile-specific MPD shall provide @lang information inherited by all Representations",
+    $language != null,
+    "FAIL",
+    "Valid lang found for adaptation set $adaptationNumber, period $periodNumber",
+    "No lang found for adaptation set $adaptationNumber, period $periodNumber"
+);
+
 $i = 0;
 foreach ($representations as $representation) {
     $i++;
@@ -33,16 +43,6 @@ foreach ($representations as $representation) {
         "FAIL",
         "Valid audioSamplingRate found for representation $i, adaptation set $adaptationNumber, period $periodNumber",
         "No audioSamplingRate found for representation $i, adaptation set $adaptationNumber, period $periodNumber"
-    );
-    ///\Discussion Move this check to higher level so it only triggers once?
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "HbbTV Secion E.2.3",
-        "The profile-specific MPD shall provide @lang information inherited by all Representations",
-        $language != null,
-        "FAIL",
-        "Valid lang found for representation $i, adaptation set $adaptationNumber, period $periodNumber",
-        "No lang found for representation $i, adaptation set $adaptationNumber, period $periodNumber"
     );
     if ($roleValue == "commentary" && $accessibilityValue == 1) {
         $logger->test(

@@ -113,7 +113,7 @@ foreach ($representations as $representationId => $representation) {
             $logger->test(
                 "DASH-IF IOP CR Low Latency Live",
                 "Section 9.X.4.4",
-                "If Segments include only a single 'moof', then Segment MAY carry a 'smds' brand"
+                "If Segments include only a single 'moof', then Segment MAY carry a 'smds' brand",
                 $isSMDSInSegment,
                 "PASS",
                 "\"smds\" found in Period " . ($current_period + 1) . ' Adaptation Set ' .
@@ -129,7 +129,7 @@ foreach ($representations as $representationId => $representation) {
                 "Section 9.X.4.4",
                 "If Segments include only a single 'moof' and carries a 'smds' brand, it SHALL signal this by " .
                 "providing the @segmentProfiles including the 'smds' brand",
-                "If Segments include only a single 'moof', then Segment MAY carry a 'smds' brand"
+                "If Segments include only a single 'moof', then Segment MAY carry a 'smds' brand",
                 $isSMDSInSegmentProfiles[$i],
                 "FAIL",
                 "Corresponding segmentProfile found in Period " . ($current_period + 1) . ' Adaptation Set ' .
@@ -203,4 +203,4 @@ if (sizeof(array_unique($lowLatencySegmentPoints)) == 1 && $lowLatencySegmentPoi
     $isLowLatencySegment = true;
 }
 
-return $isLowLatencySegment
+return $isLowLatencySegment;

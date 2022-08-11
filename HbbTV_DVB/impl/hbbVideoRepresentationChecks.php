@@ -57,7 +57,7 @@ for ($i = 0; $i < $representations->length; $i++) {
         "No scanType found for representation $i, adaptation set $adaptationNumber, period $periodNumber"
     );
 
-    ///\Discussion This check doesn't seem to do the same as above
+    ///\Correctness This check doesn't seem to do the same as above
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
         "HbbTV Secion E.2.1",

@@ -5,12 +5,12 @@ global $current_period, $service_description_info, $logger;
 // Bullet 2
 $dashSegCmafFrag = true;
 
-$cmafDash = validateDASHProfileCMAF($adaptationSet, $adaptationSetId, $segmentAccessInfo, $infoFileAdapt);
+$cmafDash = $this->validateDASHProfileCMAF($adaptationSet, $adaptationSetId, $segmentAccessInfo, $infoFileAdapt);
 
 $logger->test(
     "DASH-IF IOP CR Low Latency Live",
     "Section 9.X.4.5",
-    "Each Segment SHALL conform to a CMAF Fragment"
+    "Each Segment SHALL conform to a CMAF Fragment",
     sizeof(array_unique($cmafDash)) == 1 && $cmafDash[0] == true,
     "FAIL",
     "All segments conform in Period " . ($current_period + 1) . ' Adaptation ' . ($adaptationSetId + 1),
@@ -44,7 +44,7 @@ foreach ($representations as $representationId => $representation) {
     foreach ($segmentIndexes as $segmentIndexId => $segmentIndex) {
         $moofsInSegment = $moofsInSegments[$segmentIndexId];
 
-        ///\Discuss same check twice, different statements?
+        ///\Correctness same check twice, different statements?
         $logger->test(
             "DASH-IF IOP CR Low Latency Live",
             "Section 9.X.4.5",
@@ -161,7 +161,7 @@ foreach ($representations as $representationId => $representation) {
                 ', maximum is ' . $this->maxSegmentDurations[$representationId] . ', target is ' . $target
             );
 
-            ///\Discuss this check used to be different
+            ///\Correctness this check used to be different
             $availabilityTimeOffsetOnSegmentTemplate = true;
             if ($adaptationSet['SegmentTemplate'] == null) {
                 $availabilityTimeOffsetOnSegmentTemplate = false;
@@ -212,7 +212,7 @@ foreach ($representations as $representationId => $representation) {
           ($segmentAccessInfo[$representationId][0]['availabilityTimeComplete'] == false);
     }
 
-    ///\Discussion These checks seem somewhat contradicting?
+    ///\Correctness These checks seem somewhat contradicting?
     $logger->test(
         "DASH-IF IOP CR Low Latency Live",
         "Section 9.X.4.5",
@@ -286,7 +286,7 @@ foreach ($representations as $representationId => $representation) {
 
     // Bullet 8
 if (sizeof($representations) > 1) {
-    $extendedChecks = validate9X45Extended($adaptationSet, $adaptationSetId);
+    $extendedChecks = $this->validate9X45Extended($adaptationSet, $adaptationSetId);
     $logger->test(
         "DASH-IF IOP CR Low Latency Live",
         "Section 9.X.4.5",

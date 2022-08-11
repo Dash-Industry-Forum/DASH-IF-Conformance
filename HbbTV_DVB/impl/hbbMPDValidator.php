@@ -165,7 +165,7 @@ foreach ($mpd_dom->childNodes as $node) {
                 }
             }
 
-            ///\Discuss check not at right place?
+            ///\RefactorTodo Reimplement at correct spot
             /*
             //Following has error reporting code if MPD element is not part of validating profile.
             if ($rep_count > 16) {

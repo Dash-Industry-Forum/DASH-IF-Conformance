@@ -19,8 +19,15 @@ class ModuleLogger
 
     public function __construct()
     {
-        global $session_dir;
-        $this->logfile = $session_dir . './logger.txt';
+        $this->reset();
+    }
+
+    public function reset($id = null)
+    {
+        global $session;
+        $session->reset($id);
+
+        $this->logfile = $session->getDir() . '/logger.txt';
         $this->entries = array();
         $this->features = array();
         $this->currentModule = '';
@@ -135,6 +142,17 @@ class ModuleLogger
                 $this->entries['verdict'] = "WARN";
             }
         }
+        if ($severity == "PASS") {
+            if (empty($this->entries[$this->currentModule][$this->currentHook]['verdict'])) {
+                $this->entries[$this->currentModule][$this->currentHook]['verdict'] = "PASS";
+            }
+            if (empty($this->entries[$this->currentModule]['verdict'])) {
+                $this->entries[$this->currentModule]['verdict'] = "PASS";
+            }
+            if (empty($this->entries['verdict'])) {
+                $this->entries['verdict'] = "PASS";
+            }
+        }
     }
 
     private function &findTest($spec, $section, $test)
@@ -219,24 +237,21 @@ class ModuleLogger
     private function write()
     {
         $this->entries['Stats']['LastWritten'] = date("Y-m-d h:i:s");
-        file_put_contents($this->logfile, json_encode($this->entries));
+        file_put_contents($this->logfile, json_encode($this->asArray()));
     }
 
     public function asJSON()
     {
-      return json_encode($this->asArray());
+        return json_encode($this->asArray());
     }
 
-    public function getSource() {
-        return $this->streamSource;
-    }
-
-    public function asArray(){
+    public function asArray()
+    {
         $result = array();
         $result['source'] = $this->streamSource;
         $result['entries'] = $this->entries;
         $result['verdict'] = "PASS";
-        if (array_key_exists("verdict", $this->entries)) {
+        if (array_key_exists("verdict", $this->entries) && !empty($this->entries['verdict'])) {
             $result['verdict'] = $this->entries['verdict'];
         }
 

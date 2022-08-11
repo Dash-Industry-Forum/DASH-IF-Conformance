@@ -198,23 +198,27 @@ class ModuleHbbTVDVB extends ModuleInterface
 
     public function hookBeforeRepresentation()
     {
-        HbbTV_DVB_flags();
-        return is_subtitle();
+        parent::hookBeforeRepresentation();
+        $this->flags();
+        return $this->isSubtitle();
     }
 
     public function hookRepresentation()
     {
-        return RepresentationValidation_HbbTV_DVB();
+        parent::hookRepresentation();
+        return $this->representationValidation();
     }
 
     public function hookBeforeAdaptationSet()
     {
-        return add_remove_images('REMOVE');
+        parent::hookBeforeAdaptationSet();
+        $this->addOrRemoveImages('REMOVE');
     }
 
     public function hookAdaptationSet()
     {
-        return CrossValidation_HbbTV_DVB();
+        parent::hookAdaptationSet();
+        $this->crossValidation();
     }
 
     private function moveScripts()
@@ -227,6 +231,106 @@ class ModuleHbbTVDVB extends ModuleInterface
         copy(dirname(__FILE__) . "/$segment_duration_script", "$session_dir/$segment_duration_script");
         chmod("$session_dir/$segment_duration_script", 0777);
        */
+    }
+
+    private function representationValidation()
+    {
+        return include 'impl/representationValidation.php';
+    }
+
+    private function addOrRemoveImages($request)
+    {
+        include 'impl/addOrRemoveImages.php';
+    }
+
+    private function flags()
+    {
+        include 'impl/flags.php';
+    }
+
+    private function isSubtitle()
+    {
+        return include 'impl/isSubtitle.php';
+    }
+
+    private function commonDVBValidation($xmlRepresentation, $mediaTypes)
+    {
+        include 'impl/commonDVBValidation.php';
+    }
+
+    private function commonHbbTVValidation($xmlRepresentation)
+    {
+        include 'impl/commonHbbTVValidation.php';
+    }
+
+    private function resolutionCheck($adaptation, $representation)
+    {
+        return include 'impl/resolutionCheck.php';
+    }
+
+    private function segmentTimingCommon($xmlRepresentation)
+    {
+        include 'impl/segmentTimingCommon.php';
+    }
+
+    private function bitrateReport($xmlRepresentation)
+    {
+        return include 'impl/bitrateReport.php';
+    }
+
+    private function segmentDurationChecks()
+    {
+        return include 'impl/segmentDurationChecks.php';
+    }
+
+    private function segmentToPeriodDurationCheck($xmlRepresentation)
+    {
+        return include 'impl/segmentToPeriodDurationCheck.php';
+    }
+
+    private function crossValidation()
+    {
+        include 'impl/crossValidation.php';
+    }
+
+    private function crossValidationDVB($xmlDom1, $xmlDom2, $adaptationIndex, $xmlIndex1, $xmldIndex2)
+    {
+        include 'impl/crossvalidationDVB.php';
+    }
+
+    private function crossValidationDVBAudio($xmlDom1, $xmlDom2, $adaptationIndex, $xmlIndex1, $xmldIndex2)
+    {
+        include 'impl/crossvalidationDVBAudio.php';
+    }
+
+    private function crossValidationDVBVideo($xmlDom1, $xmlDom2, $adaptationIndex, $xmlIndex1, $xmldIndex2)
+    {
+        include 'impl/crossvalidationDVBVideo.php';
+    }
+
+    private function crossValidationHbbTV($xmlDom1, $xmlDom2, $adaptationIndex, $xmlIndex1, $xmldIndex2)
+    {
+        include 'impl/crossvalidationHbbTV.php';
+    }
+
+    private function initializationSegmentCommonCheck($files)
+    {
+        include 'impl/inititializationSegmentCommonCheck.php';
+    }
+
+    private function contentProtectionReport()
+    {
+        include 'impl/contentProtectionReport.php';
+    }
+
+    private function dvbPeriodContinousAdaptationSetsCheck()
+    {
+        include 'impl/dvbPeriodContinousAdaptationSetsCheck.php';
+    }
+
+    private function segmentTimingInfo($xmlRepresentation)
+    {
+        return include 'impl/segmentTimingInfo.php';
     }
 }
 

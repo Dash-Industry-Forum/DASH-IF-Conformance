@@ -30,7 +30,6 @@ foreach ($adaptations as $adaptationGroupName => $adaptationGroup) {
 
         $audioPresent = ($adaptations['audio'] != null);
         $isAdaptLL[] = $this->validate9X43(
-            $opfile,
             $period,
             $adaptation,
             $adaptationId,
@@ -40,7 +39,7 @@ foreach ($adaptations as $adaptationGroupName => $adaptationGroup) {
         );
     }
 
-  ///\Discuss this check only parses the last group as is
+    ///\Correctness this check only parses the last group as is
     if ($adaptationGroup != null) {
         $conformingAdaptationIds = array_keys($isAdaptLL, true);
         $logger->test(

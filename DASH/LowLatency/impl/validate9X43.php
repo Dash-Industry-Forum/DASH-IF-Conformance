@@ -4,7 +4,7 @@ global $mpd_features, $current_period, $utc_timing_info, $logger;
 
 
 $segmentAccessInfo = array();
-IsegmentTemplateCombined = get_segment_access(
+$segmentTemplateCombined = get_segment_access(
     $period['SegmentTemplate'],
     $adaptationSet['SegmentTemplate']
 );
@@ -102,7 +102,7 @@ foreach ($representations as $representationId => $representation) {
     if (!$validProducerReferenceTime) {
         $validRepPoints[$representationId] = false;
     } else {
-      ///\Discuss Check says information, spec says shall
+      ///\Correctness Check says information, spec says shall
         $logger->test(
             "DASH-IF IOP CR Low Latency Live",
             "Section 9.X.4.3",
@@ -123,7 +123,7 @@ foreach ($representations as $representationId => $representation) {
     } else {
         $check1 = $segmentTemplateCombined[0]['duration'] != null &&
           strpos($segmentTemplateCombined[0]['media'], '$Number') !== false;
-        $check2 = $segmentTemplateCombined[0]['SegmentTimeline'] != null && i
+        $check2 = $segmentTemplateCombined[0]['SegmentTimeline'] != null && 
           strpos($segmentTemplateCombined[0]['media'], '$Number') !== false &&
           strpos($segmentTemplateCombined[0]['media'], '$Time') !== false;
         if (!($check1 || $check2)) {
@@ -166,7 +166,7 @@ foreach ($representations as $representationId => $representation) {
     );
     if ($inbandEventStreams != null) {
         foreach ($inbandEventStreams as $inbandEventStream) {
-          ///\Discuss these checks do not match the spec
+          ///\Correctness these checks do not match the spec
             if ($inbandEventStream['schemeIdUri'] == 'urn:mpeg:dash:event:2012') {
                 $logger->test(
                     "DASH-IF IOP CR Low Latency Live",
@@ -231,6 +231,6 @@ $logger->test(
     ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
 );
 
-$this->validate9X42($adaptationSet, $adaptationSetId, $valid9X44));
+$this->validate9X42($adaptationSet, $adaptationSetId, $valid9X44);
 
 return $isLowLatencyAdaptation;
