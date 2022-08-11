@@ -268,5 +268,4 @@ class ModuleLogger
         return $result;
     }
 }
-
 $logger = new ModuleLogger();

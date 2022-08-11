@@ -66,4 +66,5 @@ class SessionHandler
         }
     }
 }
-$session = new SessionHandler();
+global $session;
+$session= new SessionHandler();
