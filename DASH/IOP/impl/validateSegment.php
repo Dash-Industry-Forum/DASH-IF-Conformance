@@ -1,16 +1,9 @@
 <?php
 
-global $session_dir, $current_period, $current_adaptation_set, $current_representation,
-       $adaptation_set_template, $reprsentation_template, $reprsentation_error_log_template,
-       $string_info, $progress_xml, $progress_report, $logger;
+global $session, $current_period, $current_adaptation_set, $current_representation;
 
-$adapt_dir = str_replace('$AS$', $current_adaptation_set, $adaptation_set_template);
-$rep_dir = str_replace(
-    array('$AS$', '$R$'),
-    array($current_adaptation_set, $current_representation),
-    $reprsentation_template
-);
-$rep_xml = $session_dir . '/Period' . $current_period . '/' . $adapt_dir . '/' . $rep_dir . '.xml';
+$rep_xml = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation) .
+  '/atomInfo.xml';
 
 if (!file_exists($rep_xml)) {
     return;

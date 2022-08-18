@@ -4,3 +4,4 @@ Conformance-Frontend/temp
 *log*.txt
 vendor/*
 html-log/*
+sessions/*

@@ -1,8 +1,6 @@
 <?php
 
-global $session_dir, $mpd_features, $associativity, $adaptation_set_template, $reprsentation_template;
-
-global $logger;
+global $session, $mpd_features, $associativity, $logger;
 
 $periods = $mpd_features['Period'];
 $periodCount = sizeof($periods);
@@ -54,15 +52,11 @@ for ($i = 0; $i < $periodCount; $i++) {
                     $EPT1 = array();
                     $representations1 = $adaptation1['Representation'];
                     for ($thisRep = 0; $thisRep < sizeof($representations1); $thisRep++) {
-                        $adaptationDirectory = str_replace('$AS$', $a1, $adaptation_set_template);
-                        $representationDirectory = str_replace(
-                            array('$AS$', '$R$'),
-                            array($a1, $thisRep),
-                            $reprsentation_template
+                      ///\RefactorTodo This was also pointing to the wrong directory....
+                        $xmlRepresentation = get_DOM(
+                            $session->getRepresentationDir($i, $a1, $thisRep) . '/atomInfo.xml',
+                            'atomlist'
                         );
-
-                        $xmlRepresentation = get_DOM($session_dir . '/Period' . $i . '/' . $adaptationDirectory .
-                                                     '/' . $representationDirectory . '.xml', 'atomlist');
                         if ($xmlRepresentation) {
                             $EPT1[] = $this->segmentTimingInfo($xmlRepresentation);
                         }

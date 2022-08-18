@@ -1,7 +1,6 @@
 <?php
 
-global $session_dir, $profiles, $current_period, $current_adaptation_set, $current_representation,
-$reprsentation_template, $logger;
+global $profiles, $current_period, $current_adaptation_set, $current_representation, $logger;
 
 if (
     strpos(
@@ -26,17 +25,11 @@ $logger->test(
     "Representation $current_representation"
 );
 
-///\Correctness Does all the code below does what it should do?
-$rep_dir_name = str_replace(
-    array('$AS$', '$R$'),
-    array($current_adaptation_set, $current_representation),
-    $reprsentation_template
-);
+$repDir = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
+///\RefactorTodo Check where this file should come from.
+$fileName = "$repDir/representation.txt";
 
-if (
-    !($selfInitializingSegmentFile =
-    open_file($session_dir . '/Period' . $current_period . '/' . $rep_dir_name . '.txt', 'r'))
-) {
+if (!($selfInitializingSegmentFile = open_file($fileName, 'r'))) {
     return;
 }
 
@@ -53,8 +46,8 @@ while ($line !== false) {
     $line = fgets($selfInitializingSegmentFile);
 }
 
-$segment_count = count(glob($session_dir . '/' . $rep_dir_name . '/*')) -
-  count(glob($session_dir . '/' . $rep_dir_name . '/*', GLOB_ONLYDIR));
+$segment_count = count(glob("$repDir/*")) -
+  count(glob("$repDir/*", GLOB_ONLYDIR));
 
 
 $logger->test(

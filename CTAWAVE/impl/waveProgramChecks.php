@@ -1,7 +1,5 @@
 <?php
 
-global $MediaProfDatabase, $session_dir,$adaptation_set_template,$CTAspliceConstraitsLog,$reprsentation_template;
-
 $error = $this->checkSequentialSwitchingSetAV();
 
 //Call the CMFHD Baseline constraints.

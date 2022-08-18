@@ -1,7 +1,6 @@
 <?php
 
-global $mpd_features, $current_period, $current_adaptation_set, $current_representation,
-       $session_dir, $subtitle_segments_location;
+global $mpd_features, $current_period, $current_adaptation_set, $current_representation;
 
 $subtitleRepresentation = false;
 $adaptation = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
@@ -27,8 +26,8 @@ if (
 }
 
 if ($subtitleRepresentation) {
-    $subtitle_dir = "$session_dir/Period$current_period/Adapt$current_adaptation_set" .
-                    "rep$current_representation/Subtitles/";
+    $subtitle_dir = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation) .
+    '/Subtitles/';
     if (!file_exists($subtitle_dir)) {
         $oldmask = umask(0);
         mkdir($subtitle_dir, 0777, true);

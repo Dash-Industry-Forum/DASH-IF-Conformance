@@ -1,24 +1,25 @@
 <?php
 
-global $session_dir, $MediaProfDatabase, $adaptation_set_template, $reprsentation_template;
+global $session, $MediaProfDatabase;
 
 $errorMsg = "";
 $periodCount = sizeof($MediaProfDatabase);
 $adaptationCount = sizeof($MediaProfDatabase[0]);
 for ($i = 0; $i < ($periodCount - 1); $i++) {
     for ($adapt = 0; $adapt < $adaptationCount; $adapt++) {
-        $adaptationDirectory = str_replace('$AS$', $adapt, $adaptation_set_template);
-        $representationDirectory = str_replace(array('$AS$', '$R$'), array($adapt, 0), $reprsentation_template);
-        $xml1 = get_DOM($session_dir . '/Period' . $i . '/' . $adaptationDirectory . '/' .
-          $representationDirectory . '.xml', 'atomlist');
+        $dir1 = $session->getRepresentationDir($i, $adapt, 0);
+        $xml1 = get_DOM($dir1 . '/atomInfo.xml', 'atomlist');
+
+        $dir2 = $session->getRepresentationDir($i + 1, $adapt, 0);
+        $xml2 = get_DOM($dir2 . '/atomInfo.xml', 'atomlist');
+
         if ($xml1) {
             $tkhd = $xml1->getElementsByTagName("tkhd");
             if ($tkhd->length > 0) {
                 $trackID1 = $tkhd->item(0)->getAttribute("trackID");
             }
         }
-        $xml2 = get_DOM($session_dir . '/Period' . ($i + 1) . '/' . $adaptationDirectory . '/' .
-          $representationDirectory . '.xml', 'atomlist');
+
         if ($xml2) {
             $tkhd = $xml2->getElementsByTagName("tkhd");
             if ($tkhd->length > 0) {

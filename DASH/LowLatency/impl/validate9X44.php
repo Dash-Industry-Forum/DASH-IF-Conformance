@@ -1,7 +1,6 @@
 <?php
 
-global $session_dir, $current_period, $service_description_info, $maxSegmentDurations,
-       $adaptationSet_template, $reprsentation_template, $logger;
+global $session, $current_period, $service_description_info, $maxSegmentDurations, $logger;
 
 
 $representations = $adaptationSet['Representation'];
@@ -12,13 +11,7 @@ foreach ($representations as $representationId => $representation) {
     $targetExceeds50Segment = false;
     $targetExceeds30Segment = false;
 
-    $adapt_dir = str_replace('$AS$', $adaptationSetId, $adaptationSet_template);
-    $rep_xml_dir = str_replace(
-        array('$AS$', '$R$'),
-        array($adaptationSetId, $representationId),
-        $reprsentation_template
-    );
-    $rep_xml = $session_dir . '/Period' . $current_period . '/' . $adapt_dir . '/' . $rep_xml_dir . '.xml';
+    $rep_xml = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId) . '/atomInfo.xml';
 
     if (!file_exists($rep_xml)) {
         continue;

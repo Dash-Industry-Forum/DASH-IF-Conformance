@@ -92,20 +92,19 @@ $streamsToTest = array(
 $commandLineEnabledModules = [];
 foreach ($modules as &$module) {
     if ($module->isEnabled()) {
-      $commandLineEnabledModules[] = $module->name;
+        $commandLineEnabledModules[] = $module->name;
     }
 }
 
 foreach ($streamsToTest as $idx => $stream) {
-    
     $mpd_url = $stream;
     $enabledModules = [];
     $id = null;
 
-    if (is_array($mpd_url)){
-      $enabledModules = $mpd_url["modules"];
-      $id = $mpd_url["id"];
-      $mpd_url = $mpd_url["url"];
+    if (is_array($mpd_url)) {
+        $enabledModules = $mpd_url["modules"];
+        $id = $mpd_url["id"];
+        $mpd_url = $mpd_url["url"];
     }
 
     $logger->reset($id);
@@ -114,18 +113,18 @@ foreach ($streamsToTest as $idx => $stream) {
     fwrite(STDERR, "Going to parse stream $mpd_url\n");
     fwrite(STDERR, "Enabled modules: ");
     foreach ($modules as &$module) {
-      $inCommon = in_array($module->name, $commandLineEnabledModules);
-      $inSpecific = in_array($module->name, $enabledModules);
-      $negateInCommon = in_array("!$module->name", $enabledModules);
+        $inCommon = in_array($module->name, $commandLineEnabledModules);
+        $inSpecific = in_array($module->name, $enabledModules);
+        $negateInCommon = in_array("!$module->name", $enabledModules);
 
-      $module->setEnabled(($inCommon && !$negateInCommon) || $inSpecific);
+        $module->setEnabled(($inCommon && !$negateInCommon) || $inSpecific);
         if ($module->isEnabled()) {
             fwrite(STDERR, "$module->name, ");
         }
     }
     fwrite(STDERR, "\n");
 
-    //process_MPD(true);//MPD and Segments <==== This currently always leads to FAIL, as session files are moved around
-    process_MPD(false);//MPD Only
+    process_MPD(true);//MPD and Segments <==== This currently always leads to FAIL, as session files are moved around
+    //process_MPD(false);//MPD Only
 }
 ?>

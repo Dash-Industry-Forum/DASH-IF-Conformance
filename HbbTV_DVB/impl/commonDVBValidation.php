@@ -1,7 +1,7 @@
 <?php
 
-global $session_dir, $mpd_features, $current_period, $current_adaptation_set, $current_representation, $profiles,
-        $sizearray, $reprsentation_template, $subtitle_segments_location;
+global $mpd_features, $current_period, $current_adaptation_set, $current_representation, $profiles,
+$sizearray;
 
 global $logger;
 
@@ -252,12 +252,9 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
         // EBU-TT-D
         $validEBUTTD = true;
         $subtitleTimings = array();
-        $subtitleLocation = str_replace(
-            array('$AS$', '$R$'),
-            array($current_adaptation_set, $current_representation),
-            $subtitle_segments_location
-        );
-        $files = glob($session_dir . '/' . $subtitleLocation . '*');
+        $repDir = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
+        ///\RefactorTodo Make this reflect the correct location
+        $files = glob("$repDir/Subtitles/*");
         natsort($files);
 
         foreach ($files as $file) {
@@ -425,8 +422,7 @@ if (
         array($current_adaptation_set, $current_representation),
         $representationrsentation_template
     );
-    $segmentCount = count(glob($session_dir . '/' . $segmentLocation . '/*')) -
-        count(glob($session_dir . '/' . $segmentLocation . '/*', GLOB_ONLYDIR));
+    $segmentCount = count(glob("$repDir/*")) - count(glob("$repDir/*", GLOB_ONLYDIR));
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
         "DVB: Section 4.3 (For On Demand Profile)",

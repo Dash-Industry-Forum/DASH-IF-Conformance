@@ -1,6 +1,6 @@
 <?php
 
-global $MediaProfDatabase, $session_dir,$adaptation_set_template,$CTAspliceConstraitsLog;
+global $MediaProfDatabase, $session, $adaptation_set_template, $CTAspliceConstraitsLog;
 
 //Check for CMFHD presentation profile for all periods/presentations
 //and then check WAVE Baseline constraints . If both are satisfied, then CMFHD Baseline Constraints are satisfied.
@@ -24,7 +24,7 @@ for ($i = 0; $i < $periodCount; $i++) {
 
 //WAVE Baseline constraints are already checked, open the log file and check if contains errors and print related
 //error message.
-$searchfiles = file_get_contents($session_dir . '/' . $CTAspliceConstraitsLog . '.txt');
+$searchfiles = file_get_contents($session->getDir() . '/' . $CTAspliceConstraitsLog . '.txt');
 if (strpos($searchfiles, "###CTAWAVE check violated") !== false) {
   $errorMsg .= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 6.2: 'WAVE CMFHD Baseline Program's
     Sequential Sw Sets Shall only contain splices conforming to WAVE Baseline Splice profile (section 7.2)', but

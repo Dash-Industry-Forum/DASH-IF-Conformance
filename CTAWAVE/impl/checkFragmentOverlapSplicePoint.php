@@ -1,16 +1,14 @@
 <?php
 
-global $session_dir, $MediaProfDatabase, $adaptation_set_template, $reprsentation_template;
+global $session $MediaProfDatabase;
 
 $periodCount = sizeof($MediaProfDatabase);
 $adaptationCount = sizeof($MediaProfDatabase[0]);
 $errorMsg = "";
 for ($i = 0; $i < ($periodCount - 1); $i++) {
     for ($adapt = 0; $adapt < $adaptationCount; $adapt++) {
-        $adaptationDirectory = str_replace('$AS$', $adapt, $adaptation_set_template);
-        $representationDirectory = str_replace(array('$AS$', '$R$'), array($adapt, 0), $reprsentation_template);
-        $xml1 = get_DOM($session_dir . '/Period' . $i . '/' . $adaptationDirectory . '/' .
-          $representationDirectory . '.xml', 'atomlist');
+        $dir1 = $session->getRepresentationDir($i, $adapt, 0);
+        $xml1 = get_DOM($dir1 . '/atomInfo.xml', 'atomlist');
         if ($xml1) {
             $trun = $xml1->getElementsByTagName('trun')->item(0);
             $earlyCompTime_p1 = $trun->getAttribute('earliestCompositionTime');
@@ -25,8 +23,8 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
                 $sumSampleDur += $trun->item($j)->getAttribute("cummulatedSampleDuration");
             }
         }
-        $xml2 = get_DOM($session_dir . '/Period' . ($i + 1) . '/' . $adaptationDirectory . '/' .
-          $representationDirectory . '.xml', 'atomlist');
+        $dir2 = $session->getRepresentationDir($i + 1, $adapt, 0);
+        $xml2 = get_DOM($dir2 . '/atomInfo.xml', 'atomlist');
         if ($xml2) {
             $sidx = $xml2->getElementsByTagName('sidx');
             if ($sidx->length > 0) {

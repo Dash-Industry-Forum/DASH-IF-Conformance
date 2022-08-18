@@ -1,16 +1,17 @@
 <?php
 
-global $mpd_features, $current_period, $session_dir, $adaptation_set_template;
+global $mpd_features, $current_period, $session;
 
 global $logger;
+
 $adaptations = $mpd_features['Period'][$current_period]['AdaptationSet'];
 $adaptationCount = sizeof($adaptations);
 
 for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex++) {
-    $adaptationDirectory = str_replace('$AS$', $adaptationIndex, $adaptation_set_template);
-    $location = $session_dir . '/' . $adaptationDirectory . '/';
+    $location = $session->getAdaptationDir($current_period, $adaptationIndex);
     $fileCount = 0;
-    $files = glob($location . "*.xml");
+    ///\RefactorTodo This pattern is used in multiple locations, but won't work anymore
+    $files = glob($location . "/*.xml");
     if (!$files) {
         continue;
     }

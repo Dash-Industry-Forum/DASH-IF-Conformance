@@ -1,9 +1,6 @@
 <?php
 
-global $session_dir, $mpd_features, $current_period, $current_adaptation_set, $current_representation,
-       $reprsentation_template;
-
-global $logger;
+global $session, $mpd_features, $current_period, $current_adaptation_set, $current_representation, $logger;
 
 $adaptation = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
 $representation = $adaptation['Representation'][$current_representation];
@@ -359,17 +356,15 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
     }
 }
 
-$segmentLocation = str_replace(
-    array('$AS$', '$R$'),
-    array($current_adaptation_set, $current_representation),
-    $reprsentation_template
-);
+
+$repDir = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
+///\RefactorTodo This used to check a location for segments, not entirely sure if still correct check
 if ($mpd_features['type'] == 'dynamic') {
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
         "HbbTV: Section 'segments'",
         "Segment includes features that are not required by the profile being validated against",
-        count(glob($session_dir . '/' . $segmentLocation . '/*')) != 1,
+        count(glob("$repDir/*")) != 1,
         "FAIL",
         "Check succesful",
         "found only segment in the representation while MPD@type is dynamic."

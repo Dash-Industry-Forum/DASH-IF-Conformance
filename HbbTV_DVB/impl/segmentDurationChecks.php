@@ -1,9 +1,8 @@
 <?php
 
-global $session_dir, $mpd_features, $current_period, $current_adaptation_set, $current_representation,
-$segment_duration_array, $adaptation_set_template, $reprsentation_template;
+global $mpd_features, $current_period, $current_adaptation_set, $current_representation,
+$segment_duration_array, $logger, $session;
 
-global $logger;
 
 $period = $mpd_features['Period'][$current_period];
 $adaptationSet = $period['AdaptationSet'][$current_adaptation_set];
@@ -95,19 +94,8 @@ $logger->test(
     "representation $representationId: $differenceMessage"
 );
 
-//load the atom xml file into a dom Document
-$adaptationLocation = str_replace(
-    '$AS$',
-    $current_adaptation_set,
-    $adaptation_set_template
-);
-$representationLocation = str_replace(
-    array('$AS$', '$R$'),
-    array($current_adaptation_set, $current_representation),
-    $reprsentation_template
-);
-$xmlFileLocation = $session_dir . '/' . $adaptationLocation . '/' . $representationLocation . '.xml';
-$abs = get_DOM($xmlFileLocation, 'atomlist'); // load mpd from url
+$repDir = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
+$abs = get_DOM("$repDir/atomInfo.xml", 'atomlist'); // load mpd from url
 if ($abs) {
     if ($abs->getElementsByTagName('mehd')->length && $abs->getElementsByTagName('mvhd')->length) {
         $fragmentDuration = $abs->getElementsByTagName('mehd')->item(0)->getAttribute('fragmentDuration');
@@ -138,9 +126,10 @@ if (!empty($MPDDurationSeconds_array)) {
 }
 
 
+$sessionDir = $session->getDir();
 $durationArrayString = implode(',', $segment_duration_array);
-$location = $session_dir . '/Period' . $current_period . '/' . $representationLocation . '_.png';
-$command = "cd $session_dir && python seg_duration.py  $durationArrayString $MPDDurationSeconds $location";
+$location = "$repDir/_.png";
+$command = "cd $sessionDir && python seg_duration.py  $durationArrayString $MPDDurationSeconds $location";
 ///\RefactorTodo: Eliminate Python
 //exec($command);
 

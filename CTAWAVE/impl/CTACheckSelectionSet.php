@@ -1,7 +1,6 @@
 <?php
 
-global $mpd_features, $current_period, $session_dir, $adaptation_set_template;
-global $MediaProfDatabase;
+global $mpd_features, $current_period, $session, $MediaProfDatabase;
 
 global $logger;
 
@@ -25,10 +24,9 @@ $subtitlemediaProfileArray = array("TTML_IMSC1_Text", "TTML_IMSC1_Image");
 
 for ($adaptationIndex = 0; $adaptationIndex < $adapts_count; $adaptationIndex++) {
     $switchingSetMediaProfile = array();
-    $adaptationDirectory = str_replace('$AS$', $adaptationIndex, $adaptation_set_template);
-    $location = $session_dir . '/Period' . $current_period . '/' . $adaptationDirectory . '/';
+    $location = $session->getAdaptationDir($current_period, $adaptationIndex);
     $fileCount = 0;
-    $files = glob($location . "*.xml");
+    $files = glob($location . "/*.xml");
     if ($files) {
         $fileCount = count($files);
     }

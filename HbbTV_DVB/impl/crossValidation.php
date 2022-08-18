@@ -1,16 +1,13 @@
 <?php
 
-global $hbbtv_conformance, $dvb_conformance, $session_dir, $mpd_features,
-       $current_period, $adaptation_set_template, $hbbtv_dvb_crossvalidation_logfile,
-       $string_info, $progress_xml, $progress_report;
+global $hbbtv_conformance, $dvb_conformance, $mpd_features, $current_period;
 
 $this->contentProtectionReport();
 $adaptations = $mpd_features['Period'][$current_period]['AdaptationSet'];
 for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationIndex++) {
-    $adaptationDirectory = str_replace('$AS$', $adaptationIndex, $adaptation_set_template);
-    $loc = $session_dir . '/Period' . $current_period . '/' . $adaptationDirectory . '/';
+    $loc = $session->getAdaptationDir($current_period, $adaptationIndex);
     $fileCount = 0;
-    $files = glob($loc . "*.xml");
+    $files = glob($loc . "/*.xml");
     if ($files) {
         $fileCount = count($files);
     }

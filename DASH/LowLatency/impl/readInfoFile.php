@@ -1,21 +1,14 @@
 <?php
 
-global $session_dir, $current_period, $reprsentation_info_log_template;
+global $session, $current_period;
 
 $infoFileInfoAdaptationSet = array();
 $representations = $adaptationSet['Representation'];
 
 foreach ($representations as $representationId => $representation) {
-    $repInfo_file = str_replace(
-        array('$AS$', '$R$'),
-        array($adaptationSetId, $representationId),
-        $reprsentation_info_log_template
-    );
-
-    if (
-        !($representationInformationFile =
-        open_file($session_dir . '/Period' . $current_period . '/' . $repInfoFile . '.txt', 'r'))
-    ) {
+    $repDir = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId);
+    ///\RefactorTodo look where this file should come from
+    if (!($representationInformationFile = open_file("$repDir/representation.txt", 'r'))) {
         return;
     }
 
@@ -25,6 +18,7 @@ foreach ($representations as $representationId => $representation) {
       'PresEnd' => array(),
       'NextPresStart' => array()
     );
+
     while (($line = fgets($representationInformationFile)) !== false) {
         $lineInfo = explode(' ', $line);
         if (sizeof($lineInfo) < 3) {

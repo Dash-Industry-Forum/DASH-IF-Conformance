@@ -1,6 +1,6 @@
 <?php
 
-global $session_dir, $MediaProfDatabase, $adaptation_set_template, $reprsentation_template;
+global $session, $MediaProfDatabase;
 
 $errorMsg = "";
 $periodCount = sizeof($MediaProfDatabase);
@@ -10,18 +10,16 @@ $encryptionSchemePeriod = array();
 for ($i = 0; $i < ($periodCount - 1); $i++) {
     $encryptionSchemeAdaptation = array();
     for ($adaptation = 0; $adaptation < $adaptationCount; $adaptation++) {
-        $adaptationDirectory = str_replace('$AS$', $adaptation, $adaptation_set_template);
-        $representationDirectory = str_replace(array('$AS$', '$R$'), array($adaptation, 0), $reprsentation_template);
-        $xml1 = get_DOM($session_dir . '/Period' . $i . '/' . $adaptationDirectory . '/' .
-                        $representationDirectory . '.xml', 'atomlist');
+        $dir1 = $session->getRepresentationDir($i, $adapt, 0);
+        $xml1 = get_DOM($dir1 . '/atomInfo.xml', 'atomlist');
         if ($xml1) {
             $encryptionScheme1 = getEncrytionScheme($xml1);
             if ($encryptionScheme1 !== 0) {
                 array_push($encryptionSchemeAdaptation, $encryptionScheme1);
             }
         }
-        $xml2 = get_DOM($session_dir . '/Period' . ($i + 1) . '/' . $adaptationDirectory . '/' .
-                        $representationDirectory . '.xml', 'atomlist');
+        $dir2 = $session->getRepresentationDir($i + 1, $adapt, 0);
+        $xml2 = get_DOM($dir2 . '/atomInfo.xml', 'atomlist');
         if ($xml2) {
             $encryptionScheme2 = getEncrytionScheme($xml2);
         }

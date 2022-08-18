@@ -1,16 +1,10 @@
 <?php
 
-global $session_dir, $current_period, $reprsentation_template, $logger;
-$repDirName = str_replace(
-    array('$AS$', '$R$'),
-    array($adaptationSetId, $representationId),
-    $reprsentation_template
-);
+global $session, $current_period, $logger;
 
-if (
-    !($representionInformationFile =
-    open_file($session_dir . '/Period' . $current_period . '/' . $repDirName . '.txt', 'r'))
-) {
+$repDir = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId);
+///\RefactorTodo look where this file should come from
+if (!($representationInformationFile = open_file("$repDir/representation.txt", 'r'))) {
     return;
 }
 

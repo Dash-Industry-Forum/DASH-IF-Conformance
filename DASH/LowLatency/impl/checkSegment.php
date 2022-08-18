@@ -1,10 +1,8 @@
 <?php
 
-global $session_dir, $current_period, $adaptation_set_template, $reprsentation_template, $reprsentation_mdat_template;
+global $session, $current_period;
 
-$adaptDir = str_replace('$AS$', $adapatationSetId, $adaptation_set_template);
-$repXmlDir = str_replace(array('$AS$', '$R$'), array($adapatationSetId, $representationId), $reprsentation_template);
-$repXml = $session_dir . '/Period' . $current_period . '/' . $adaptDir . '/' . $repXmlDir . '.xml';
+$repXml = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId) . '/atomInfo.xml';
 
 if (!file_exists($repXml)) {
     return null;

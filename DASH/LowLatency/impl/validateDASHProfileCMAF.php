@@ -1,19 +1,12 @@
 <?php
 
-global $session_dir, $current_period, $adaptationSet_template,
-$reprsentation_template, $reprsentation_error_log_template, $logger;
+global $session, $current_period, $logger;
 
 $dashConformsToCmafFrag = array();
 $representations = $adaptationSet['Representation'];
 
 foreach ($representations as $representationId => $representation) {
-    $adapt_dir = str_replace('$AS$', $adaptationSetId, $adaptationSet_template);
-    $rep_xml_dir = str_replace(
-        array('$AS$', '$R$'),
-        array($adaptationSetId, $representationId),
-        $reprsentation_template
-    );
-    $rep_xml = $session_dir . '/Period' . $current_period . '/' . $adapt_dir . '/' . $rep_xml_dir . '.xml';
+    $rep_xml = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId) . '/atomInfo.xml';
 
     if (!file_exists($rep_xml)) {
         continue;
@@ -281,13 +274,10 @@ foreach ($representations as $representationId => $representation) {
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
     );
 
-    $rep_error_file = str_replace(
-        array('$AS$', '$R$'),
-        array($adaptationSetId, $representationId),
-        $reprsentation_error_log_template
-    );
 
-    $errors = file_get_contents($session_dir . '/Period' . $current_period . '/' . $rep_error_file . '.txt');
+    $errors = file_get_contents(
+        $session->getRepresentationDir($current_period, $adaptationSetId, $representationId) . '/stderr.txt'
+    );
 
     $logger->test(
         "DASH-IF IOP CR Low Latency Live",

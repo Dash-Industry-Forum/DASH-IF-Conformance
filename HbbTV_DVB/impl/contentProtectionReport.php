@@ -1,9 +1,6 @@
 <?php
 
-global $session_dir, $mpd_dom, $current_period, $adaptation_set_template, $reprsentation_template,
-       $hbbtv_dvb_crossvalidation_logfile;
-
-global $logger;
+global $mpd_dom, $current_period, $logger;
 
 $UUIDToDRMSystem = array ('urn:mpeg:dash:mp4protection:2011' => 'Generic Identifier 1',
                          'urn:mpeg:dash:13818:1:CA_descriptor:2011' => 'Generic Identifier 2',
@@ -33,8 +30,10 @@ $adaptationIndex = 0;
 $keyRotationUsed = false;
 foreach ($mpd_dom->getElementsByTagName('AdaptationSet') as $adaptationSetNode) {
     $adaptationId = $adaptationIndex + 1;
-    $reportLocation = str_replace('$AS$', $adaptationIndex, $hbbtv_dvb_crossvalidation_logfile);
-    $adaptationReport = open_file($session_dir . '/Period' . $current_period . '/' . $reportLocation . '.txt', 'a+b');
+    $adaptationReport = open_file(
+        $session->getAdaptationDir($current_period, $adaptationIndex) . '/hbbDvbCross.txt',
+        'a+b'
+    );
     if ($adaptationReport === false) {
         $adaptationIndex++; //move to check the next adapt set
         continue;
@@ -158,17 +157,12 @@ foreach ($mpd_dom->getElementsByTagName('AdaptationSet') as $adaptationSetNode) 
         $PSSHSystemIDs = array(); // to see the DRM uuid in mpd and pssh and compare them
         $tencKIDFlag = false;
 
-        $adaptationDirectory = str_replace('$AS$', $adaptationIndex, $adaptation_set_template);
-        $representationDirectory = str_replace(
-            array('$AS$', '$R$'),
-            array($adaptationIndex, $representationIndex),
-            $reprsentation_template
-        );
 
         //first rep of the adapt set will have the same pssh as the rest
-        $xmlFileLocation = $session_dir . '/Period' . $current_period . '/' .
-                           $adaptationDirectory . '/' . $representationDirectory . '.xml';
-        $abs = get_DOM($xmlFileLocation, 'atomlist'); // load mpd from url
+        ///\RefactorTodo This was definitely pointing to a wrong directory. Probably not intentional.
+        $xmlFilePath = $session->getRepresentationDir($current_period, $adaptationIndex, $representationIndex) .
+          '/atomInfo.xml';
+        $abs = get_DOM($xmlFilePath, 'atomlist'); // load mpd from url
 
         if (!$abs) {
             $representationIndex++;

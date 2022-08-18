@@ -1,7 +1,7 @@
 <?php
 
-global $session_dir, $mpd_features, $current_period, $current_adaptation_set, $current_representation,
-        $sizearray, $segment_duration_array, $reprsentation_template;
+global $session, $mpd_features, $current_period, $current_adaptation_set, $current_representation,
+$sizearray, $segment_duration_array;
 
 $bandwidth = $mpd_features['Period'][$current_period]
                           ['AdaptationSet'][$current_adaptation_set]
@@ -61,16 +61,14 @@ if (empty($subsegmentSignaling)) {
     }
 }
 
+$sessionDir = $session->getDir();
 $bitrateInfo = substr($bitrateInfo, 0, strlen($bitrateInfo) - 2);
-$bitrateReportName = str_replace(
-    array('$AS$', '$R$'),
-    array($current_adaptation_set, $current_representation),
-    $reprsentation_template
-) . '.png';
-$location = $session_dir . '/Period' . $current_period . '/' . $bitrateReportName;
-$command = "cd $session_dir && python bitratereport.py $bitrateInfo $bandwidth $location";
+$location = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation) .
+  'bitrateReport.png';
+
+$command = "cd $sessionDir && python bitratereport.py $bitrateInfo $bandwidth $location";
 ///\RefactorTodo Eliminate Python
 //exec($command);
-//chmod($session_dir.'/'.$bitrateReportName, 777);
+//chmod($location, 777);
 
-return $bitrateReportName;
+return $location;

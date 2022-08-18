@@ -1,28 +1,15 @@
 <?php
 
-global $hbbtv_conformance, $dvb_conformance, $session_dir, $mpd_dom,
+global $hbbtv_conformance, $dvb_conformance,  $mpd_dom,
         $current_period, $current_adaptation_set, $current_representation,
-        $period_timing_info, $adaptation_set_template, $reprsentation_template,$subtitle_segments_location,
-        $reprsentation_error_log_template, $string_info, $progress_report, $progress_xml;
+        $period_timing_info, $logger;
 
-global $logger;
 
-$representationErrorFile = str_replace(
-    array('$AS$', '$R$'),
-    array($current_adaptation_set, $current_representation),
-    $reprsentation_error_log_template
-);
-$errorFilePath = $session_dir . "/Period" . $current_period . "/" . $representationErrorFile . "txt";
+$repDir = $session->getRepresentationDir($current_representation, $current_adaptation_set, $current_representation);
+$errorFilePath = "$repDir/stderr.txt";
 
-## Representation checks
-$adaptationDirectory = str_replace('$AS$', $current_adaptation_set, $adaptation_set_template);
-$representationDirectory = str_replace(
-    array('$AS$', '$R$'),
-    array($current_adaptation_set, $current_representation),
-    $reprsentation_template
-);
-$xmlRepresentation = get_DOM($session_dir . '/Period' . $current_period . '/' . $adaptationDirectory . '/' .
-  $representationDirectory . '.xml', 'atomlist');
+///\RefactorTodo Wrong directory, again..?
+$xmlRepresentation = get_DOM("$repDir/atomInfo.xml", 'atomlist');
 if ($xmlRepresentation) {
     if ($dvb_conformance) {
         $media_types = media_types($mpd_dom->getElementsByTagName('Period')->item($current_period));

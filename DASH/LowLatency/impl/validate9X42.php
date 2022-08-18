@@ -1,6 +1,6 @@
 <?php
 
-global $session_dir, $current_period, $adaptationSet_template, $reprsentation_template, $logger;
+global $session, $current_period, $logger;
 
 $eventMessageStreamsPresent = false;
 $inbandEventMessageStreamsPresent = false;
@@ -11,13 +11,7 @@ foreach ($representations as $representationId => $representation) {
     $inbandEventStreams = ($representation['InbandEventStream']) ?
       $representation['InbandEventStream'] : $adaptationSet['InbandEventStream'];
 
-    $adapt_dir = str_replace('$AS$', $adaptationSetId, $adaptationSet_template);
-    $rep_xml_dir = str_replace(
-        array('$AS$', '$R$'),
-        array($adaptationSetId, $representationId),
-        $reprsentation_template
-    );
-    $rep_xml = $session_dir . '/Period' . $current_period . '/' . $adapt_dir . '/' . $rep_xml_dir . '.xml';
+    $rep_xml = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId) . '/atomInfo.xml';
 
     if (file_exists($rep_xml)) {
         $xml = get_DOM($rep_xml, 'atomlist');

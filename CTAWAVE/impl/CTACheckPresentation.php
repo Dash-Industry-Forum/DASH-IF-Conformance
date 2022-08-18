@@ -1,7 +1,6 @@
 <?php
 
-global $mpd_features,$session_dir,$CTApresentation_infofile,$current_period,$adaptation_set_template,
-$string_info, $progress_xml, $progress_report;
+global $mpd_features,$session,$CTApresentation_infofile,$current_period, $string_info, $progress_xml, $progress_report;
 
 global $logger;
 
@@ -23,10 +22,9 @@ $presentationProfile = "";
 for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex++) {
     $switchingSetMediaProfiles = array();
     $encryptedTracks = array();
-    $adaptationDirectory = str_replace('$AS$', $adaptationIndex, $adaptation_set_template);
-    $location = $session_dir . '/Period' . $current_period . '/' . $adaptationDirectory . '/';
+    $location = $session->getAdaptationDir($current_period, $adaptationIndex);
     $fileCount = 0;
-    $files = glob($location . "*.xml");
+    $files = glob($location . "/*.xml");
     if ($files) {
         $fileCount = count($files);
     }
@@ -51,7 +49,9 @@ for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex
         }
 
         $hdlrBox = $xml->getElementsByTagName("hdlrBox")->item(0);
-        if (!$hdlrBox){continue;}
+        if (!$hdlrBox) {
+            continue;
+        }
         $hdlrType = $hdlrBox->getAttribute("hdlrType");
 
         $mediaProfileResult = $this->getMediaProfile($xml, $hdlrType, $fileIndex, $adaptationIndex);
