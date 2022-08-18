@@ -5,3 +5,10 @@ Conformance-Frontend/temp
 vendor/*
 html-log/*
 sessions/*
+.idea
+html-coverage
+.phpunit.cache
+html-reports
+html-reports-functional-tests
+xml-reports-functional-tests
+

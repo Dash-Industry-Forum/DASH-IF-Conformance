@@ -23,7 +23,7 @@ function validate_MPD(){
         exit;
     }
 
-    chdir('../DASH/mpdvalidator');
+    chdir('DASH/mpdvalidator');
     $dash_schema_location = download_schema();
     $mpdvalidator = syscall('java -cp "saxon9he.jar:xercesImpl.jar:bin" Validator ' . '"' . explode('#', $mpd_url)[0] . '"' . " " . "$session_dir" . "/resolved.xml $dash_schema_location $session_dir/$mpd_xml_report");
     $result = extract_relevant_text($mpdvalidator);

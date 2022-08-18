@@ -15,7 +15,7 @@
 
 include 'LowLatency_Handle.php';
 include 'LowLatency_MPDValidation.php';
-include 'LowLatency_RepresentationValidation.php';
+//include 'LowLatency_RepresentationValidation.php';
 include 'LowLatency_CrossValidation.php';
 
 global $mpd_xml_string;
