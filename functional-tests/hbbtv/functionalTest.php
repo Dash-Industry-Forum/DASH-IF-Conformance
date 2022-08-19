@@ -67,20 +67,22 @@ final class FunctionalTests extends TestCase
 
     public function testMultipleVectorsViaCli(): void
     {
-        $content = file_get_contents(
-            "functional-tests/dashjs.json");
-        $dbJson = json_decode($content);
-        $streamsToTest = array();
-        foreach($dbJson->items as $item) {
-            foreach($item->submenu as $submenu) {
-                array_push($streamsToTest, $submenu->url);
+        // Construct the iterator
+        $it = new RecursiveDirectoryIterator("functional-tests/hbbtv/sources");
+
+        // Loop through files
+        $streamsToTest = [];
+        foreach (new RecursiveIteratorIterator($it) as $file) {
+            if ($file->getExtension() == 'mpd') {
+                $streamsToTest[] = 'http://localhost:3000/'.$file->getPathname();
             }
         }
+
 
         foreach ($streamsToTest as $idx => $stream) {
 
             $GLOBALS['mpd_url'] = $stream;
-            $enabledModules = ["MPEG-DASH Common", "DASH-IF IOP Conformance"];
+            $enabledModules = ["MPEG-DASH Common", "HbbTV_DVB"];
             $id = null;
 
             $GLOBALS['logger']->reset($id);
