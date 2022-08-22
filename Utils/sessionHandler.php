@@ -61,7 +61,6 @@ class SessionHandler
     private function createFolderIfNotExists($folder, $type)
     {
         if (!file_exists($folder)) {
-            fwrite(STDERR, "Creating $type folder $folder\n");
             mkdir($folder, 0777, true);
         }
     }

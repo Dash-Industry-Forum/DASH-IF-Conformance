@@ -62,13 +62,66 @@ ini_set("log_errors", 1);
 ini_set("error_log", "myphp-error.log");
 ini_set("allow_url_fopen", 1);
 
-final class FunctionalTests extends TestCase
+final class functionalTest extends TestCase
 {
+  /**
+   * @dataProvider streamProvider
+   */
+  public function testThis($stream) : void {
+            $GLOBALS['mpd_url'] = $stream;
+            $enabledModules = ["MPEG-DASH Common", "DASH-IF IOP Conformance", "CMAF", "CTA-WAVE", "HbbTV-DVB"];
+            $id = null;
 
-    public function testMultipleVectorsViaCli(): void
-    {
+            $GLOBALS['logger']->reset($id);
+            $GLOBALS['logger']->setSource($GLOBALS['mpd_url']);
+
+            foreach ($GLOBALS['modules'] as $module) {
+                $enabled = in_array($module->name, $enabledModules);
+
+                $module->setEnabled($enabled);
+                if ($module->isEnabled()) {
+                    fwrite(STDERR, "$module->name, ");
+                }
+            }
+
+            fwrite(STDERR, "Going to parse stream " . $GLOBALS['mpd_url'] . "\n");
+
+            //process_MPD(true);//MPD and Segments
+            process_MPD(false);//MPD Only
+            //
+            $this->assertSame(true,true);
+  }
+
+  /**
+   * @codeCoverageIgnore
+   */
+  public function streamProvider() {
+    $i = 0;
+    $limit = 20;
         $content = file_get_contents(
             "functional-tests/dashjs.json");
+        $dbJson = json_decode($content);
+        $streamsToTest = array();
+        foreach($dbJson->items as $item) {
+            foreach($item->submenu as $submenu) {
+              if ($limit && $i >= $limit){
+                break;
+              }
+              $streamsToTest["$item->name::$submenu->name"] = array($submenu->url);
+              $i++;
+            }
+        }
+        return $streamsToTest;
+  }
+
+  /*
+    public function testMultipleVectorsViaCli(): void
+    {
+
+      $limit = 10;
+      $currentIndex = 0;
+        $content = file_get_contents(
+            "functional-tests/dashjs.json_single");
         $dbJson = json_decode($content);
         $streamsToTest = array();
         foreach($dbJson->items as $item) {
@@ -78,6 +131,9 @@ final class FunctionalTests extends TestCase
         }
 
         foreach ($streamsToTest as $idx => $stream) {
+          if ($limit > 0 && $currentIndex >= $limit){
+            break;
+          }
 
             $GLOBALS['mpd_url'] = $stream;
             $enabledModules = ["MPEG-DASH Common", "DASH-IF IOP Conformance"];
@@ -97,8 +153,11 @@ final class FunctionalTests extends TestCase
 
             fwrite(STDERR, "Going to parse stream " . $GLOBALS['mpd_url'] . "\n");
 
-            //process_MPD(true);//MPD and Segments <==== This currently always leads to FAIL, as session files are moved around
-            process_MPD(false);//MPD Only
+            process_MPD(true);//MPD and Segments <==== This currently always leads to FAIL, as session files are moved around
+            //process_MPD(false);//MPD Only
+            //
+            //
+            $currentIndex++;
         }
         //update_visitor_counter();
         $output = $GLOBALS['logger']->asJSON();
@@ -107,4 +166,5 @@ final class FunctionalTests extends TestCase
             "Output is not null"
         );
     }
+   */
 }
