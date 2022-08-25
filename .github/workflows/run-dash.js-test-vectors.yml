@@ -1,4 +1,4 @@
-name: run-test-vectors
+name: run-dash.js-test-vectors
 
 on:
   push:
