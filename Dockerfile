@@ -15,6 +15,7 @@ RUN python2.7 get-pip.py
 RUN pip2 install matplotlib
 RUN update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
 
+RUN rm /var/www/html/index.html
 COPY --chown=www-data:www-data . /var/www/html/
 RUN cd /var/www/html/ISOSegmentValidator/public/linux && make clean && make -j
 
