@@ -203,8 +203,6 @@ function SingleTest( $xml_file, $item1, $item2, $msg )
 
 function ValidateDolby($adaptation_set, $representation)
 {
-        ///\TodoRefactor: Re-enalbe this one
-        return;
     global $session_dir, $current_period, $reprsentation_error_log_template;
     global $current_adaptation_set, $current_representation;
     global $ac4_toc, $ac4_dac4;

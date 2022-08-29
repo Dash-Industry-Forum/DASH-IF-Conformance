@@ -41,9 +41,6 @@ include __DIR__ . '/GlobalVariables.php';
 include __DIR__ . '/PrettyPrint.php';     //#Pretty printing functions for terminal output. No Direct Executable Code.
 include __DIR__ . '/segmentDownload.php'; //#Very large function for downloading data. No Direct Executable Code.
 include __DIR__ . '/segmentValidation.php'; //#Segment validation functions. No Direct Executable Code.
-//#Dolby validation functions. Attempt at use of objects. No Direct Executable Code.
-include __DIR__ . '/DolbySegmentValidation.php';
-
 
 include __DIR__ . '/MPDUtility.php';
 
@@ -54,6 +51,7 @@ include __DIR__ . '/../CTAWAVE/module.php';
 include __DIR__ . '/../HbbTV_DVB/module.php';
 include __DIR__ . '/../DASH/LowLatency/module.php';
 include __DIR__ . '/../DASH/IOP/module.php';
+include __DIR__ . '/../Dolby/module.php';
 
 $argumentParser->parseAll();
 

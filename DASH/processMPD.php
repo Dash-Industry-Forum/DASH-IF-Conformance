@@ -124,7 +124,6 @@ function processAdaptationSetOfCurrentPeriod($period, $ResultXML, $segment_urls)
             }
 
             validate_segment($adaptationDirectory, $representationDirectory, $period, $adaptation_set, $representation, $segment_url, $is_subtitle_rep);
-            ValidateDolby($adaptation_set, $representation);
 
             foreach ($modules as $module) {
                 if ($module->isEnabled()) {

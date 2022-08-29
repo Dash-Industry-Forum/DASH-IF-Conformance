@@ -30,6 +30,21 @@ class SessionHandler
         return $this->sessionId;
     }
 
+    public function clearDirectory(){
+      $dir = $this->getDir();
+      $files = new RecursiveIteratorIterator(
+    new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
+    RecursiveIteratorIterator::CHILD_FIRST
+);
+
+foreach ($files as $fileinfo) {
+    $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+    $todo($fileinfo->getRealPath());
+}
+
+rmdir($dir);
+    }
+
     public function getDir()
     {
         $sessionDir =  __DIR__ . "/../sessions/" . $this->getId();
