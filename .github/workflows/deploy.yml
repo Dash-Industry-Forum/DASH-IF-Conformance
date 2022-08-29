@@ -27,9 +27,6 @@ jobs:
       - name: Convert repository name to lower case
         run: |
           echo REPOSITORY_LC=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
-      - name: Get short commit ref
-        run: |
-          echo SHORT_SHA=$(git rev-parse --short HEAD) >> $GITHUB_ENV
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -51,7 +48,7 @@ jobs:
             export CR_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
             echo $CR_GITHUB_TOKEN | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
             docker pull ghcr.io/${{ env.REPOSITORY_LC }}:${{inputs.docker_tag}}
-            docker run --name ${{inputs.envname}} --env SHORT_SHA=${{ env.SHORT_SHA }} -d -p ${{inputs.docker_port}}:80 --restart unless-stopped ghcr.io/${{ env.REPOSITORY_LC }}:${{inputs.docker_tag}}
+            docker run --name ${{inputs.envname}} --env SHORT_SHA=$( echo ${{ github.sha }} | cut -c 1-7 ) -d -p ${{inputs.docker_port}}:80 --restart unless-stopped ghcr.io/${{ env.REPOSITORY_LC }}:${{inputs.docker_tag}}
           host: ${{ secrets.host }}
           user: ${{ secrets.user }}
           key: ${{ secrets.private_key }}
