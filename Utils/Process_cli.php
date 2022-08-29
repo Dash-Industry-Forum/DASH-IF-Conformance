@@ -88,9 +88,8 @@ ini_set("error_log", "myphp-error.log");
 
 
 if (!$hls_manifest) {
-    process_MPD(false);//MPD Only
-    //process_MPD(true);//MPD and Segments
-    process_MPD();
+    //process_MPD(false);//MPD Only
+    process_MPD(true);//MPD and Segments
 } else {
     processHLS();
 }

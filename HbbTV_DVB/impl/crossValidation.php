@@ -1,6 +1,6 @@
 <?php
 
-global $hbbtv_conformance, $dvb_conformance, $mpd_features, $current_period;
+global $hbbtv_conformance, $dvb_conformance, $mpd_features, $current_period, $session;
 
 $this->contentProtectionReport();
 $adaptations = $mpd_features['Period'][$current_period]['AdaptationSet'];

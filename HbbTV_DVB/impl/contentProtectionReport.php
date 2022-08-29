@@ -1,6 +1,6 @@
 <?php
 
-global $mpd_dom, $current_period, $logger;
+global $mpd_dom, $current_period, $logger, $session;
 
 $UUIDToDRMSystem = array ('urn:mpeg:dash:mp4protection:2011' => 'Generic Identifier 1',
                          'urn:mpeg:dash:13818:1:CA_descriptor:2011' => 'Generic Identifier 2',

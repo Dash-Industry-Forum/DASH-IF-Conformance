@@ -3,6 +3,9 @@
 global $mpd_features, $current_period, $current_adaptation_set, $current_representation,
 $segment_duration_array, $logger, $session;
 
+if (!$this->hasJPGraph || !$this->hasJPBarGraph){
+  return;
+}
 
 $period = $mpd_features['Period'][$current_period];
 $adaptationSet = $period['AdaptationSet'][$current_adaptation_set];
@@ -128,10 +131,26 @@ if (!empty($MPDDurationSeconds_array)) {
 
 $sessionDir = $session->getDir();
 $durationArrayString = implode(',', $segment_duration_array);
-$location = "$repDir/_.png";
-$command = "cd $sessionDir && python seg_duration.py  $durationArrayString $MPDDurationSeconds $location";
-///\RefactorTodo: Eliminate Python
-//exec($command);
+
+
+
+if($this->hasJPGraph && $this->hasJPBarGraph){
+  $segmentDuration = $segment_duration_array;
+  if (!$segmentDuration->len){
+    $segmentDuration[] = 0;
+  }
+  $location = "$repDir/segmentDurations.png";
+
+  $graph = new Graph();
+  $graph->title->set("Segment duration report");
+  $graph->SetScale("textlin");
+
+  $p1 = new BarPlot($segmentDuration);
+  $graph->Add($p1);
+
+  $graph->Stroke($location);
+}
+
 
 // Check if the average segment duration is consistent with that of the duration information in the MPD
 $segmentCount = sizeof($segment_duration_array);

@@ -2,7 +2,7 @@
 
 global $hbbtv_conformance, $dvb_conformance,  $mpd_dom,
         $current_period, $current_adaptation_set, $current_representation,
-        $period_timing_info, $logger;
+        $period_timing_info, $logger, $session;
 
 
 $repDir = $session->getRepresentationDir($current_representation, $current_adaptation_set, $current_representation);

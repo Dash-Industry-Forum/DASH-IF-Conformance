@@ -207,8 +207,11 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     if (!$hls_manifest) {
         $file = open_file("$representationDirectory/segmentValidatorConfig.txt", 'w');
         fwrite($file, "$representationDirectory/assembled.mp4 \n");
+              ///\TodoRefactor -- Generate correct infofile 
+        /*
         fwrite($file, "-infofile" . "\n");
         fwrite($file, "$representationDirectory/infoFile.txt \n");
+         */
     } else {
               ///\TodoRefactor -- Also fix for hls
               /*
@@ -220,8 +223,11 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     }
 
     if (!$is_dolby) {
+              ///\TodoRefactor -- Generate correct offsetfile 
+      /*
         fwrite($file, "-offsetinfo" . "\n");
         fwrite($file, "$representationDirectory/offsetInfo.txt \n");
+        */
     }
 
     $flags = (!$hls_manifest) ? construct_flags($period, $adaptation_set, $representation) . $additional_flags : $additional_flags;
