@@ -53,6 +53,10 @@ include __DIR__ . '/../DASH/LowLatency/module.php';
 include __DIR__ . '/../DASH/IOP/module.php';
 include __DIR__ . '/../Dolby/module.php';
 
+
+
+$argumentParser->addOption("segments", "s", "segments", "Enable segment validation");
+
 $argumentParser->parseAll();
 
 $mpd_url = $argumentParser->getPositionalArgument("url");
@@ -86,10 +90,10 @@ ini_set("error_log", "myphp-error.log");
 
 //update_visitor_counter();
 
+$parseSegments = $argumentParser->getOption("dash");
 
 if (!$hls_manifest) {
-    //process_MPD(false);//MPD Only
-    process_MPD(true);//MPD and Segments
+    process_MPD($parseSegments);
 } else {
     processHLS();
 }

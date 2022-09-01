@@ -35,6 +35,11 @@ class ModuleLogger
         $this->verdict = "PASS";
         $this->streamSource = '';
         $this->currentTest = null;
+        $this->parseSegments = false;
+    }
+
+    public function setParseSegments($parseSegments){
+      $this->parseSegments = $parseSegments;
     }
 
     public function testCountCurrentHook()
@@ -248,6 +253,7 @@ class ModuleLogger
     public function asArray()
     {
         $result = array();
+        $result['parse_segments'] = $this->parseSegments;
         $result['source'] = $this->streamSource;
         $result['entries'] = $this->entries;
         $result['verdict'] = "PASS";

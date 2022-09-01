@@ -22,6 +22,10 @@ function process_MPD($parseSegments = false)
 
     global $modules;
 
+    global $logger;
+
+    $logger->parseSegments = true;
+
     $mpd_dom = mpd_load();
     if (!$mpd_dom) {
         ///\RefactorTodo Add global error message!
