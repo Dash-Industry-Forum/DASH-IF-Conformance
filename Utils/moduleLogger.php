@@ -16,6 +16,7 @@ class ModuleLogger
     private $currentTest;
 
     private $features;
+    private $parseArguments;
 
     public function __construct()
     {

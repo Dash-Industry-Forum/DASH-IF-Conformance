@@ -24,7 +24,7 @@ function process_MPD($parseSegments = false)
 
     global $logger;
 
-    $logger->parseSegments = true;
+    $logger->parseSegments = $parseSegments;
 
     $mpd_dom = mpd_load();
     if (!$mpd_dom) {

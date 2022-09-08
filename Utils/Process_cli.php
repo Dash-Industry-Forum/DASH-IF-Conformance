@@ -90,7 +90,7 @@ ini_set("error_log", "myphp-error.log");
 
 //update_visitor_counter();
 
-$parseSegments = $argumentParser->getOption("dash");
+$parseSegments = $argumentParser->getOption("segments");
 
 if (!$hls_manifest) {
     process_MPD($parseSegments);
