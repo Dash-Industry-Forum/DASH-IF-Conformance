@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  dpctf:
+    container_name: dc-tester
+    image: dash-if-conformance:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    network_mode: "bridge"
+    volumes:
+      - ./Conformance-Frontend:/var/www/html/Conformance-Frontend
