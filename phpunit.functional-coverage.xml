@@ -11,11 +11,13 @@
          convertDeprecationsToExceptions="true"
          failOnRisky="true"
          backupGlobals="false"
-         failOnWarning="true"
+         failOnWarning="false"
+         enforceTimeLimit="false"
+         timeoutForLargeTests="360"
          verbose="true">
     <testsuites>
         <testsuite name="default">
-            <directory>functional-tests</directory>
+            <directory>functional-tests/dashif</directory>
         </testsuite>
     </testsuites>
 
