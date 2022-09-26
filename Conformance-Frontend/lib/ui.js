@@ -12,6 +12,7 @@ const UI = (function () {
         case "placeholder":
         case "title":
         case "accept":
+        case "href":
           element.setAttribute(property, value);
           return;
         case "style":
@@ -20,10 +21,8 @@ const UI = (function () {
           for (let cssKey in value) {
             let cssValue = value[cssKey];
             cssKey = kebabize(cssKey);
-            console.log("applying", cssKey, cssValue);
             element.style[cssKey] = cssValue;
           }
-          console.log(element.style);
           return;
         case "classname":
           element.setAttribute("class", value);

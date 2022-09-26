@@ -1,0 +1,10 @@
+.nav {
+    --bs-nav-link-color: #ddd;
+    --bs-nav-link-hover-color: #fff;
+    --bs-nav-link-disabled-color: #999;
+}
+
+.nav-pills {
+    --bs-nav-pills-link-active-color: #007BFF;
+    --bs-nav-pills-link-active-bg: #eee;
+}
