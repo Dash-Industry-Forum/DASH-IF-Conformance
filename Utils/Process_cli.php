@@ -29,6 +29,7 @@ $argumentParser = new DASHIF\ArgumentsParser();
 include __DIR__ . '/sessionHandler.php';
 require __DIR__ . '/moduleInterface.php';
 include __DIR__ . '/moduleLogger.php';
+include __DIR__ . '/MPDHandler.php';
 
 include __DIR__ . '/Session.php';         //#Session Functions, No Direct Executable Code
 //#Document loading functions, mostly xml. Some assertion options and error initialization
@@ -39,8 +40,8 @@ include __DIR__ . '/VisitorCounter.php';  //#Various Session-based functions. No
 //#conditional extra includes for module initialization
 include __DIR__ . '/GlobalVariables.php';
 include __DIR__ . '/PrettyPrint.php';     //#Pretty printing functions for terminal output. No Direct Executable Code.
-include __DIR__ . '/segmentDownload.php'; //#Very large function for downloading data. No Direct Executable Code.
-include __DIR__ . '/segmentValidation.php'; //#Segment validation functions. No Direct Executable Code.
+include __DIR__ . '/segment_download.php'; //#Very large function for downloading data. No Direct Executable Code.
+include __DIR__ . '/segment_validation.php'; //#Segment validation functions. No Direct Executable Code.
 
 include __DIR__ . '/MPDUtility.php';
 
@@ -69,7 +70,7 @@ include __DIR__ . '/../DASH/MPDFeatures.php';
 include __DIR__ . '/../DASH/validateMPD.php';
 include __DIR__ . '/../DASH/MPDInfo.php';
 include __DIR__ . '/../DASH/SchematronIssuesAnalyzer.php';
-include __DIR__ . '/../DASH/crossValidation.php';
+include __DIR__ . '/../DASH/cross_validation.php';
 include __DIR__ . '/../DASH/Representation.php';
 include __DIR__ . '/../DASH/SegmentURLs.php';
 include __DIR__ . '/../HLS/HLSProcessing.php';

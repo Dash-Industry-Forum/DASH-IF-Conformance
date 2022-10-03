@@ -26,8 +26,8 @@ include 'Utils/VisitorCounter.php';  //#Various Session-based functions. No Dire
 //#conditional extra includes for module initialization
 include 'Utils/GlobalVariables.php';
 include 'Utils/PrettyPrint.php';     //#Pretty printing functions for terminal output. No Direct Executable Code.
-include 'Utils/segmentDownload.php'; //#Very large function for downloading data. No Direct Executable Code.
-include 'Utils/segmentValidation.php'; //#Segment validation functions. No Direct Executable Code.
+include 'Utils/segment_download.php'; //#Very large function for downloading data. No Direct Executable Code.
+include 'Utils/segment_validation.php'; //#Segment validation functions. No Direct Executable Code.
 //#Dolby validation functions. Attempt at use of objects. No Direct Executable Code.
 include 'Utils/DolbySegmentValidation.php';
 
@@ -49,7 +49,7 @@ include 'DASH/MPDFeatures.php';
 include 'DASH/validateMPD.php';
 include 'DASH/MPDInfo.php';
 include 'DASH/SchematronIssuesAnalyzer.php';
-include 'DASH/crossValidation.php';
+include 'DASH/cross_validation.php';
 include 'DASH/Representation.php';
 include 'DASH/SegmentURLs.php';
 include 'HLS/HLSProcessing.php';
