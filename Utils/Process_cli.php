@@ -99,5 +99,9 @@ if (!$hls_manifest) {
     processHLS();
 }
 
-  echo($logger->asJSON($compactOutput) . "\n");
+echo($logger->asJSON($compactOutput) . "\n");
+
+
+global $session;
+$session->clearDirectory();
 ?>

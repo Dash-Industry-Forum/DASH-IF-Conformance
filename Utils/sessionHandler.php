@@ -8,16 +8,21 @@ class SessionHandler
 
     public function __construct()
     {
-        $this->reset();
+      $this->sessionId = null;
+      $this->reset();
     }
 
-    public function reset($id = null)
+    public function reset($id = null, $clearPrevious = true, $keepOutput = true)
     {
-        $this->setId($id);
+      if ($clearPrevious){
+        $this->clearDirectory($keepOutput);
+      }
+      $this->setId($id);
     }
 
     public function setId($id)
     {
+        fwrite(STDERR, "Setting session id to $id \n ");
         $this->sessionId = $id;
     }
 
@@ -30,19 +35,16 @@ class SessionHandler
         return $this->sessionId;
     }
 
-    public function clearDirectory(){
+    public function clearDirectory($keepOutput = true){
       $dir = $this->getDir();
-      $files = new RecursiveIteratorIterator(
-    new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
-    RecursiveIteratorIterator::CHILD_FIRST
-);
-
-foreach ($files as $fileinfo) {
-    $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
-    $todo($fileinfo->getRealPath());
-}
-
-rmdir($dir);
+      $directoryContents = `ls $dir`;
+      if ($directoryContents == '' || !$keepOutput){
+        `rm -r $dir`;
+        return;
+      }
+      `mv $dir/logger.txt $dir/.logger.txt`;
+      `rm -r $dir/*`;
+      `mv $dir/.logger.txt $dir/logger.txt`;
     }
 
     public function getDir()
