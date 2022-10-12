@@ -45,7 +45,7 @@ foreach ($selectionSets as $selectionSet) {
             );
         }
 
-        $location = $session->getAdaptationDirectory($current_period, $adaptationIndex);
+        $location = $session->getAdaptationDir($current_period, $adaptationIndex);
         $filecount = 0;
         $files = glob($location . "/*.xml");
         if ($files) {

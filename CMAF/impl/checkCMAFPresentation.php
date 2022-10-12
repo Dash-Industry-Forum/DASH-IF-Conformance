@@ -24,7 +24,7 @@ $adaptationSets = $mpd_features['Period'][$current_period]['adaptationSetationSe
 for ($adaptationSetIndex = 0; $adaptationSetIndex < sizeof($adaptationSets); $adaptationSetIndex++) {
     $adaptationSet = $adaptationSets[$adaptationSetIndex];
 
-    $location = $session->getAdaptationDirectory($current_period, $adaptationSetIndex);
+    $location = $session->getAdaptationDir($current_period, $adaptationSetIndex);
     $filecount = 0;
     $files = glob($location . "/*.xml");
     if ($files) {
