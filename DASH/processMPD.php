@@ -24,6 +24,9 @@ function process_MPD($parseSegments = false)
 
     global $logger;
 
+    global $mpd_url;
+
+
     $logger->parseSegments = $parseSegments;
 
     $mpd_dom = mpd_load();
@@ -42,9 +45,16 @@ function process_MPD($parseSegments = false)
         }
     }
 
+    $mpdHandler = new DASHIF\MPDHandler($mpd_url);
+
     ## Get MPD features into an array
-    $mpd_features = MPD_features($mpd_dom);
-    $profiles = derive_profiles();
+    ///\RefactorTodo Remove this global!!
+    $mpd_features = $mpdHandler->getFeatures();
+
+
+    ///\RefactorTodo Remove this global!!
+    $profiles = $mpdHandler->getProfiles();
+
 
 
     //------------------------------------------------------------------------//
