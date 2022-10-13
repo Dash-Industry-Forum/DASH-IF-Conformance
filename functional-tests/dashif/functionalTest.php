@@ -111,7 +111,8 @@ final class functionalTest extends TestCase
             "https://dash.akamaized.net/dash264/TestCasesIOP33/adapatationSetSwitching/4/manifest.mpd",
             "https://dash.akamaized.net/dash264/TestCases/9c/qualcomm/1/MultiRate.mpd",
             "https://dash.akamaized.net/dash264/TestCasesHD/2c/qualcomm/1/MultiResMPEG2.mpd",
-            "https://livesim.dashif.org/livesim/periods_20/testpic_2s/Manifest.mpd"
+            "https://livesim.dashif.org/livesim/periods_20/testpic_2s/Manifest.mpd",
+            "https://livesim.dashif.org/livesim/testpic_2s/Manifest.mpd#t=posix:now"
         ];
         $content = file_get_contents(
             "functional-tests/dashif/dashjs.json");

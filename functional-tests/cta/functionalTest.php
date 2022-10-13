@@ -71,7 +71,7 @@ final class functionalTest extends TestCase
     public function testThis($stream): void
     {
         $GLOBALS['mpd_url'] = $stream;
-        $enabledModules = ["MPEG-DASH Common", "CTA-WAVE"];
+        $enabledModules = ["MPEG-DASH Common", "CTA-WAVE", "CMAF"];
         $id = null;
 
         $GLOBALS['logger']->reset($id);
