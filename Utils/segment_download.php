@@ -38,13 +38,13 @@
  */
 function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
 {
-    global $session_dir, $progress_report, $current_period, $reprsentation_mdat_template, $missinglink_file, $current_adaptation_set, $current_representation,
+    global $session, $progress_report, $current_period, $reprsentation_mdat_template, $missinglink_file, $current_adaptation_set, $current_representation,
            $hls_byte_range_begin, $hls_byte_range_size, $hls_manifest, $hls_mdat_file, $low_latency_dashif_conformance, $availability_times;
 
     $mdat_file = (!$hls_manifest) ?
             'Period' . $current_period . '/' . str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_mdat_template) :
             $hls_mdat_file;
-    $sizefile = open_file($session_dir . '/' . $mdat_file . '.txt', 'a+b'); //create text file containing the original size of Mdat box that is ignored
+    $sizefile = open_file($session->getDir() . '/' . $mdat_file . '.txt', 'a+b'); //create text file containing the original size of Mdat box that is ignored
 
     $segment_count = sizeof($array_file);
     $initoffset = 0; // Set pointer to 0
@@ -73,8 +73,8 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
 
         if (!$file_exists) {
             $missing = (!$hls_manifest) ?
-                    open_file($session_dir . '/Period' . $current_period . '/' . $missinglink_file . '.txt', 'a+b') :
-                    open_file($session_dir . '/' . $missinglink_file . '.txt', 'a+b');
+                    open_file($session->getDir() . '/Period' . $current_period . '/' . $missinglink_file . '.txt', 'a+b') :
+                    open_file($session->getDir() . '/' . $missinglink_file . '.txt', 'a+b');
             fwrite($missing, $filePath . "\n");
             continue;
         }
@@ -324,10 +324,10 @@ function remote_file_size($url)
  */
 function partial_download($url, &$ch, $begin = 0, $end = 0)
 {
-    global $session_dir;
+    global $session;
 
     # Temporary container for partial segments downloaded
-    $temp_file = $session_dir . '//' . "getthefile.mp4";
+    $temp_file = $session->getDir() . '//' . "getthefile.mp4";
     if (!($fp = open_file($temp_file, "w+"))) {
         exit;
     }

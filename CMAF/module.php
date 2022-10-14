@@ -4,6 +4,17 @@ namespace DASHIF;
 
 class ModuleCMAF extends ModuleInterface
 {
+    private $CMAFMediaProfileAttributesVideo;
+    private $CMAFMediaProfileAttributesAudio;
+    private $CMAFMediaProfileAttributesSubtitle;
+    private $careAboutFtyp;
+    private $careAboutElst;
+    private $careAboutMdhd;
+    private $boxList;
+       private $cfhdSwitchingSetFound;
+       private $caadSwitchingSetFound;
+       private $encryptedSwitchingSetFound;
+
     public function __construct()
     {
         parent::__construct();

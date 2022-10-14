@@ -1,4 +1,5 @@
 <?php
+
 /* This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
@@ -18,7 +19,7 @@
  * This PHP script is responsible for DOM XML loading
  * either for MPD or other possible XML files.
  * @name: Load.php
- * @entities: 
+ * @entities:
  *      @functions{
  *          mpd_load(),
  *          get_doc($path),
@@ -33,17 +34,20 @@
  * @input: NA
  * @output: FALSE or MPD DOM element
  */
-function mpd_load(){
+function mpd_load()
+{
     global $mpd_url;
-    $return_val = FALSE;
-    
-    if(!$mpd_url)
+    $return_val = false;
+
+    if (!$mpd_url) {
         return $return_val;
-    
+    }
+
     $MPD = get_DOM($mpd_url, 'MPD');
-    if(!$MPD)
+    if (!$MPD) {
         return $return_val;
-    
+    }
+
     return $MPD;
 }
 
@@ -55,11 +59,11 @@ assert_options(ASSERT_QUIET_EVAL, 1);
 
 function show_errors()
 {
-	$errors = libxml_get_errors();
-	foreach ($errors as $error) {
-		echo display_xml_error($error, $xml);
-	}
-	libxml_clear_errors();
+    $errors = libxml_get_errors();
+    foreach ($errors as $error) {
+        echo display_xml_error($error, $xml);
+    }
+    libxml_clear_errors();
 }
 
 function display_xml_error($error, $xml)
@@ -68,27 +72,27 @@ function display_xml_error($error, $xml)
     $return .= str_repeat('-', $error->column) . "^\n";
 
     switch ($error->level) {
-	   case LIBXML_ERR_WARNING:
-		    $return .= "Warning $error->code: ";
-	    break;
-	   case LIBXML_ERR_ERROR:
-		  $return .= "Error $error->code: ";
-	   break;
-	   case LIBXML_ERR_FATAL:
-		  $return .= "Fatal Error $error->code: ";
-	   break;
+        case LIBXML_ERR_WARNING:
+            $return .= "Warning $error->code: ";
+            break;
+        case LIBXML_ERR_ERROR:
+            $return .= "Error $error->code: ";
+            break;
+        case LIBXML_ERR_FATAL:
+            $return .= "Fatal Error $error->code: ";
+            break;
     }
 
     $return .= trim($error->message) .
-	       "\n  Line: $error->line" .
-	"\n  Column: $error->column";
+           "\n  Line: $error->line" .
+    "\n  Column: $error->column";
 
     if ($error->file) {
-	$return .= "\n  File: $error->file";
+        $return .= "\n  File: $error->file";
     }
 
     return "$return\n\n--------------------------------------------\n\n";
-}	
+}
 
 
 /*
@@ -97,24 +101,28 @@ function display_xml_error($error, $xml)
  * @input: $path - path of the XML file (url or local path)
  * @output: FALSE or DOM document
  */
-function get_doc($path){
-    $return_val = FALSE;
+function get_doc($path)
+{
+    $return_val = false;
 
     $contents  = file_get_contents($path);
 
     $loaded = simplexml_load_file($path);
-    if(!$loaded)
+    if (!$loaded) {
         return $return_val;
-    
+    }
+
     $dom_sxe = dom_import_simplexml($loaded);
-    if(!$dom_sxe)
+    if (!$dom_sxe) {
         return $return_val;
-    
+    }
+
     $dom_doc = new DOMDocument('1.0');
     $dom_sxe = $dom_doc->importNode($dom_sxe, true);
-    if(!$dom_sxe)
+    if (!$dom_sxe) {
         return $return_val;
-    
+    }
+
     $dom_doc->appendChild($dom_sxe);
     return $dom_doc;
 }
@@ -127,16 +135,19 @@ function get_doc($path){
  * @output: FALSE or the DOM XML element with the outer element
  *          specified by the $main_element
  */
-function get_DOM($path, $main_element){
-    $return_val = FALSE;
-    
+function get_DOM($path, $main_element)
+{
+    $return_val = false;
+
     $dom_doc = get_doc($path);
-    if(!$dom_doc)
+    if (!$dom_doc) {
         return $return_val;
-    
+    }
+
     $main_element_nodes = $dom_doc->getElementsByTagName($main_element);
-    if($main_element_nodes->length == 0)
+    if ($main_element_nodes->length == 0) {
         return $return_val;
-    
+    }
+
     return $main_element_nodes->item(0);
 }

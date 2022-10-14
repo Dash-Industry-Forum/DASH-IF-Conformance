@@ -1,4 +1,3 @@
-#!/usr/bin/php7.4
 <?php
 
 /* This program is free software: you can redistribute it and/or modify
@@ -57,6 +56,7 @@ include __DIR__ . '/../Dolby/module.php';
 
 
 $argumentParser->addOption("segments", "s", "segments", "Enable segment validation");
+$argumentParser->addOption("compact", "C", "compact", "Make JSON output compact");
 
 $argumentParser->parseAll();
 
@@ -92,6 +92,7 @@ ini_set("error_log", "myphp-error.log");
 //update_visitor_counter();
 
 $parseSegments = $argumentParser->getOption("segments");
+$compactOutput = $argumentParser->getOption("compact");
 
 if (!$hls_manifest) {
     process_MPD($parseSegments);
@@ -99,5 +100,5 @@ if (!$hls_manifest) {
     processHLS();
 }
 
-  echo($logger->asJSON() . "\n");
+  echo($logger->asJSON($compactOutput) . "\n");
 ?>
