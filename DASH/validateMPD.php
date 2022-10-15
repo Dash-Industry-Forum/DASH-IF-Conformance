@@ -47,7 +47,7 @@ function validate_MPD()
         $mpd_xml->xlink = "error";
         $mpd_xml->schema = "error";
         $mpd_xml->schematron = "error";
-        $mpd_xml->asXml($session->getDir() . '/' . $mpd_xml_report);
+        //$mpd_xml->asXml($session->getDir() . '/' . $mpd_xml_report);
     } else {
         $string .= 'true ';
     }

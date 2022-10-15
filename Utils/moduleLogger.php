@@ -39,8 +39,9 @@ class ModuleLogger
         $this->parseSegments = false;
     }
 
-    public function setParseSegments($parseSegments){
-      $this->parseSegments = $parseSegments;
+    public function setParseSegments($parseSegments)
+    {
+        $this->parseSegments = $parseSegments;
     }
 
     public function testCountCurrentHook()
@@ -243,12 +244,35 @@ class ModuleLogger
     private function write()
     {
         $this->entries['Stats']['LastWritten'] = date("Y-m-d h:i:s");
-        file_put_contents($this->logfile, json_encode($this->asArray()));
+        file_put_contents($this->logfile, \json_encode($this->asArray()));
     }
 
-    public function asJSON()
+    public function asJSON($compact = false)
     {
-        return json_encode($this->asArray());
+        if (!$compact) {
+            return \json_encode($this->asArray());
+        }
+
+        $entries = $this->entries;
+
+        foreach ($this->entries as $k1 => &$module) {
+            foreach ($module as $k2 => &$element) {
+                if ($k2 == "verdict") {
+                    continue;
+                }
+                foreach ($element as $key => &$test) {
+                    if ($key != "test") {
+                        continue;
+                    }
+                    foreach ($test as $idx => &$t) {
+                        if ($t['state'] == "PASS") {
+                              unset($t['messages']);
+                        }
+                    }
+                }
+            }
+        }
+        return \json_encode($this->entries);
     }
 
     public function asArray()

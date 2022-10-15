@@ -96,12 +96,14 @@ class ModuleDASH extends ModuleInterface
     {
         global $logger, $session, $mpd_url, $dash_schema_location, $mpd_xml_report;
 
+
+        $sessionDir = $session->getDir();
+
         chdir('../DASH/mpdvalidator');
         $dash_schema_location = $this->findOrDownloadSchema();
 
         $mpdvalidator = syscall("java -cp \"saxon9he.jar:xercesImpl.jar:bin\" Validator \"" .
-          explode('#', $mpd_url)[0] . "\" " . $session->getDir() .
-          "/resolved.xml $dash_schema_location " . $session->getDir() . "/$mpd_xml_report");
+          explode('#', $mpd_url)[0] . "\" $sessionDir/resolved.xml $dash_schema_location $sessionDir/$mpd_xml_report");
 
         $result = extract_relevant_text($mpdvalidator);
         delete_schema($dash_schema_location);

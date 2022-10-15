@@ -35,6 +35,7 @@ function process_MPD($parseSegments = false)
     }
 
 
+
     foreach ($modules as $module) {
         if ($module->isEnabled()) {
             $module->hookBeforeMPD();
@@ -52,7 +53,9 @@ function process_MPD($parseSegments = false)
     ## If only MPD validation is requested or inferred, stop
     ## If any error is found in the MPD validation process, stop
     ## If no error is found, then proceed with segment validation below
-    $valid_mpd = validate_MPD();
+    //$valid_mpd = validate_MPD();
+
+
 
     foreach ($modules as $module) {
         if ($module->isEnabled()) {
@@ -60,8 +63,8 @@ function process_MPD($parseSegments = false)
         }
     }
 
-    if (!$valid_mpd[0] || !$parseSegments) {
-        fwrite(STDERR, ($valid_mpd[0] ? "" : "IN") . "VALID MPD AND " . ($parseSegments ? "DO " : "DO NOT ") . "parse segments\n");
+    if (!$parseSegments) {
+        fwrite(STDERR,($parseSegments ? "DO " : "DO NOT ") . "parse segments\n");
         return;
     }
 
@@ -104,6 +107,7 @@ function processAdaptationSetOfCurrentPeriod($period, $ResultXML, $segment_urls)
     global $session;
 
     global $modules;
+
 
     $adaptation_sets = $period['AdaptationSet'];
     while ($current_adaptation_set < sizeof($adaptation_sets)) {

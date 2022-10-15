@@ -18,6 +18,7 @@ function validate_segment($adaptationDirectory, $representationDirectory, $perio
 {
     global $sizearray, $current_adaptation_set, $current_representation;
 
+
     $sizearray = array();
     $codecs = ($adaptation_set['codecs'] == null) ? $representation['codecs'] : $adaptation_set['codecs'];
     $is_dolby = (($codecs != null) and
@@ -207,7 +208,7 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     if (!$hls_manifest) {
         $file = open_file("$representationDirectory/segmentValidatorConfig.txt", 'w');
         fwrite($file, "$representationDirectory/assembled.mp4 \n");
-              ///\TodoRefactor -- Generate correct infofile 
+              ///\TodoRefactor -- Generate correct infofile
         /*
         fwrite($file, "-infofile" . "\n");
         fwrite($file, "$representationDirectory/infoFile.txt \n");
@@ -223,7 +224,7 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     }
 
     if (!$is_dolby) {
-              ///\TodoRefactor -- Generate correct offsetfile 
+              ///\TodoRefactor -- Generate correct offsetfile
       /*
         fwrite($file, "-offsetinfo" . "\n");
         fwrite($file, "$representationDirectory/offsetInfo.txt \n");
