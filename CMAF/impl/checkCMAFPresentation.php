@@ -4,7 +4,7 @@ global  $mpd_features, $current_period, $profiles, $period_timing_info,
         $cfhd_SwSetFound,$caac_SwSetFound, $encryptedSwSetFound,
         $presentation_infofile, $adaptation_set_template;
 
-global $logger;
+global $logger, $session;
 
 //Assuming one of the CMAF profiles will be present.
 $videoFound = 0;
@@ -20,7 +20,7 @@ $longestFragmentDuration = 0;
 $videoFragDur = 0;
 
 $presentationDuration = $period_timing_info[1];
-$adaptationSets = $mpd_features['Period'][$current_period]['adaptationSetationSet'];
+$adaptationSets = $mpd_features['Period'][$current_period]['AdaptationSet'];
 for ($adaptationSetIndex = 0; $adaptationSetIndex < sizeof($adaptationSets); $adaptationSetIndex++) {
     $adaptationSet = $adaptationSets[$adaptationSetIndex];
 
@@ -288,7 +288,7 @@ $logger->test(
 );
 
 //Check if presentation duration is same as longest track duration.
-if ($presentationDuration) {
+if ($presentationDuration && sizeof($trackDurArray)) {
     $logger->test(
         "CMAF",
         "Section 7.3.6",

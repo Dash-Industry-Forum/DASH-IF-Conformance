@@ -99,7 +99,11 @@ class ModuleDASH extends ModuleInterface
 
         $sessionDir = $session->getDir();
 
-        chdir('../DASH/mpdvalidator');
+
+        $currentDir = getcwd();
+
+
+        chdir(__DIR__ . '/mpdvalidator');
         $dash_schema_location = $this->findOrDownloadSchema();
 
         $mpdvalidator = syscall("java -cp \"saxon9he.jar:xercesImpl.jar:bin\" Validator \"" .
@@ -109,7 +113,7 @@ class ModuleDASH extends ModuleInterface
         delete_schema($dash_schema_location);
 
         $logger->message("Schematron output: " . $result);
-        chdir('../');
+        chdir($currentDir);
 
         return $result;
     }
