@@ -47,7 +47,7 @@ if ($codecs != '') {
         "HbbTV-DVB DASH Validation Requirements",
         "DVB: Section 'Codec information'",
         "The codecs found in the MPD should be supported by the specification",
-        $unsupportedCodecs == ''
+        $unsupportedCodecs == '',
         "WARN",
         "All found codecs supported",
         "Codecs '" . $unsupportedCodecs . "' not supported"
@@ -200,7 +200,7 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
         $logger->test(
             "HbbTV-DVB DASH Validation Requirements",
             "DVB: Section 'Subtitles'",
-            "For subtitle media, handler type in the Initialization Segment SHALL be \"subt\""
+            "For subtitle media, handler type in the Initialization Segment SHALL be \"subt\"",
             $hdlrType == "subt",
             "FAIL",
             "Valid handler type found",
@@ -240,7 +240,7 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
                 "EBU TECH 3381 Section 5- When the subtitle track is associated with a video object the width and " .
                 "height of the subtitle track SHOULD NOT be set",
                 "For subtitle media, sample entry type SHALL be \"stpp (XMLSubtitleSampleEntry)\"",
-                (int)($tkhd->getAttribute('width')) == 0 && (int)($tkhd->getAttribute('height')) == 0
+                (int)($tkhd->getAttribute('width')) == 0 && (int)($tkhd->getAttribute('height')) == 0,
                 "WARN",
                 "Width and height not set",
                 "Width and/or height set"
@@ -349,12 +349,12 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
                         $logger->test(
                             "HbbTV-DVB DASH Validation Requirements",
                             "DVB: Section 'Subtitles'",
-                            "Subtitle segments SHALL contain ISO-BMFF packaged EBU-TT-D",
+                            "Subtitle segments SHALL contain ISO-BMFF packaged EBU-TT-D".
                             "For subtitle media, timing of all subtitles should conform to the segment time period",
                             $subtitleBegin[$be] <= $cumulativeSubsegmentDuration,
                             "WARN",
                             "Subtitle $be within segment boundaries",
-                            "Subtitle $be starting at " . $subtitleBegin[$be] . " not within segment boundaries"
+                            "Subtitle $be starting at " . $subtitleBegin[$be] . " not within segment boundaries",
                         );
                     }
                 } else {
@@ -442,7 +442,7 @@ foreach ($moofBoxes as $moofBox) {
         "HbbTV-DVB DASH Validation Requirements",
         "DVB: Section 4.3",
         "The 'moof' box SHALL contain only one 'traf' box",
-        $trafCount == 1
+        $trafCount == 1,
         "FAIL",
         "1 'traf' box found",
         "$trafCount 'traf' boxes found"
@@ -519,7 +519,7 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
                 "HbbTV-DVB DASH Validation Requirements",
                 "DVB: Section 4.5",
                 "Segment duration SHALL be at least 1 second except for the last segment of a Period",
-                $cumulativeSubsegmentDuration >= 1
+                $cumulativeSubsegmentDuration >= 1,
                 "FAIL",
                 "Duration of segment " . $j + 1 . " is at least 1 second",
                 "Duration of segment " . $j + 1 . " is less than 1 second",
@@ -597,7 +597,7 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
                     "HbbTV-DVB DASH Validation Requirements",
                     "DVB: Section 4.5",
                     "Segment duration SHALL be at least 1 second except for the last segment of a Period",
-                    $cumulativeSubsegmentDuration >= 1
+                    $cumulativeSubsegmentDuration >= 1,
                     "FAIL",
                     "Duration of segment " . $j + 1 . " is at least 1 second",
                     "Duration of segment " . $j + 1 . " is less than 1 second",
@@ -716,7 +716,7 @@ if ($hdlrType == 'subt') {
         "HbbTV-DVB DASH Validation Requirements",
         "DVB: Section 4.5",
         "Subtitle segments SHALL have a maximum segment size of 512KB",
-        $validSegmentSizes
+        $validSegmentSizes,
         "FAIL",
         "All valid",
         "At least one segment is too large"

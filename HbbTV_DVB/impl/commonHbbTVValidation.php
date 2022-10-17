@@ -15,7 +15,7 @@ if ($codecs == '') {
 if ($codecs != '') {
     $codecList = explode(',', $codecs);
 
-    $unsupportedCodecs
+    $unsupportedCodecsi = '';
     foreach ($codecList as $codec) {
         if (
             strpos($codec, 'avc') === false &&
@@ -30,7 +30,7 @@ if ($codecs != '') {
         "HbbTV-DVB DASH Validation Requirements",
         "HbbTV: Section 'Codec information'",
         "The codecs found in the MPD should be supported by the specification",
-        $unsupportedCodecs == ''
+        $unsupportedCodecs == '',
         "FAIL",
         "All found codecs supported",
         "Codecs '" . $unsupportedCodecs . "' not supported"
@@ -153,7 +153,7 @@ if ($hdlrType == 'vide') {
             $logger->test(
                 "HbbTV-DVB DASH Validation Requirements",
                 "HbbTV: Section E.2.3",
-                "All info necessary to decode any Segment shall be provided in Initialization Segment"
+                "All info necessary to decode any Segment shall be provided in Initialization Segment",
                 $spsFound == 1,
                 "FAIL",
                 "AVC video: SPS (Sequence parameter set) found",
@@ -162,7 +162,7 @@ if ($hdlrType == 'vide') {
             $logger->test(
                 "HbbTV-DVB DASH Validation Requirements",
                 "HbbTV: Section E.2.3",
-                "All info necessary to decode any Segment shall be provided in Initialization Segment"
+                "All info necessary to decode any Segment shall be provided in Initialization Segment",
                 $ppsFound == 1,
                 "FAIL",
                 "AVC video: PPS (Picture parameter set) found",
@@ -173,7 +173,7 @@ if ($hdlrType == 'vide') {
         $logger->test(
             "HbbTV-DVB DASH Validation Requirements",
             "HbbTV: Section E.2.3",
-            "All info necessary to decode any Segment shall be provided in Initialization Segment"
+            "All info necessary to decode any Segment shall be provided in Initialization Segment",
             $sdType == "avc3",
             "FAIL",
             "AVC video: decoder config record found",
@@ -191,7 +191,7 @@ if ($hdlrType == 'vide') {
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
         "HbbTV: Section E.2.3",
-        "All info necessary to decode any Segment shall be provided in Initialization Segment"
+        "All info necessary to decode any Segment shall be provided in Initialization Segment",
         $sdType != null,
         "FAIL",
         "Audio: Sample description type found",
@@ -200,7 +200,7 @@ if ($hdlrType == 'vide') {
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
         "HbbTV: Section E.2.3",
-        "All info necessary to decode any Segment shall be provided in Initialization Segment"
+        "All info necessary to decode any Segment shall be provided in Initialization Segment",
         $samplingRate != null,
         "FAIL",
         "Audio: Sampling rate found",
@@ -209,7 +209,7 @@ if ($hdlrType == 'vide') {
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
         "HbbTV: Section E.2.3",
-        "All info necessary to decode any Segment shall be provided in Initialization Segment"
+        "All info necessary to decode any Segment shall be provided in Initialization Segment",
         $channelConfig != null,
         "FAIL",
         "Audio: Channel config found in decoder specific info",

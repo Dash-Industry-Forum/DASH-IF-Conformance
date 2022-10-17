@@ -14,7 +14,7 @@ $logger->test(
     "HbbTV-DVB DASH Validation Requirements",
     "DVB: Section 10.4",
     "Players SHALL support seamless swicthing between video Representations",
-    $equalRepresentationCount;
+    $equalRepresentationCount,
     "PASS",
     "Adaptation $adaptationIndex: " .
     "representations $xmlIndex1 and $xmlIndex2 contain the same attributes",

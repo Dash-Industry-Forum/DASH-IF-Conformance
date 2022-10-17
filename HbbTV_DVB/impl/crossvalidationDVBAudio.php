@@ -8,7 +8,7 @@ $adaptation = $mpd_features['Period'][$current_period]['AdaptationSet'][$adaptat
 $representation1 = $adaptation['Representation'][$xmlIndex1];
 $representation2 = $adaptation['Representation'][$xmlIndex2];
 
-$equalRepresentationCount = (sizeof($representation1) == sizeof($representation2);
+$equalRepresentationCount = (sizeof($representation1) == sizeof($representation2));
 
 $logger->test(
     "HbbTV-DVB DASH Validation Requirements",
@@ -202,7 +202,7 @@ $DTSCodecs = ['dtsc','dtsh','dtse','dtsl'];
 $DTSCodecFound = DASHIF\Utility\inStringAtLeastOne($DTSCodecs, $adaptationCodecs);
 if ($adaptationCodecs == '') {
     $DTSCodecFound = (DASHIF\Utility\inStringAtLeastOne($DTSCodecs, $representationCodecs1) &&
-                      DASHIF\Utility\inStringAtLeastOne($DTSCodecs, $representationCodecs2))
+                      DASHIF\Utility\inStringAtLeastOne($DTSCodecs, $representationCodecs2));
 }
 if ($DTSCodecFound) {
     $timescale1 = (int)($xmlDom1->getElementsByTagName('mdhd')->item(0)->getAttribute('timescale'));

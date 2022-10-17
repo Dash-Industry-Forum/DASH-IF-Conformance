@@ -114,7 +114,15 @@ foreach ($representations as $representationId => $representation) {
     if ($validCodecs) {
         $sample_description = $hdlr_type . '_sampledescription';
         $stsdBoxes = $xml->getElementsByTagName('stsd');
-        $sdType = $stsdBoxes->item(0)->getElementsByTagName($sample_description)->item(0)->getAttribute('sdType');
+        $sdType = '';
+        if (!empty($stsdBoxes)){
+          $sampleDescriptions = $stsdBoxes->item(0)->getElementsByTagName($sample_description);
+          if (!empty($sampleDescriptions)){
+            if ( $sampleDescriptions->item(0) !== null){
+              $sdType = $sampleDescriptions->item(0)->getAttribute('sdType');
+            }
+          }
+        }
         if (strpos($codecs, $sdType) === false) {
             $validCodecs = false;
         }

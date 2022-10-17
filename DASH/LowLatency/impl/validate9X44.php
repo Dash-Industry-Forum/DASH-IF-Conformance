@@ -85,7 +85,7 @@ foreach ($representations as $representationId => $representation) {
 
     $maxSegmentDurations[$representationId] = $maxSegmentDuration;
 
-    $moofsInSegments = checkSegment($adaptationSetId, $representationId, $segmentDurations);
+    $moofsInSegments = $this->checkSegment($adaptationSetId, $representationId, $segmentDurations);
     if ($moofsInSegments != null) {
         for ($i = 0; $i < $segmentCount; $i++) {
             $logger->test(

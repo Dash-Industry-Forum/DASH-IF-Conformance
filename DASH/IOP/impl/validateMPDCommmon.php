@@ -12,7 +12,7 @@ $validateYearMonth = function ($property, $location) {
         "$location is valid",
         "$location contains year and/or month units",
     );
-}
+};
 
 $validateYearMonth($mpd_dom->getAttribute('mediaPresentationDuration'), "@mediaPresentationDuration in MPD");
 $validateYearMonth($mpd_dom->getAttribute('minimumUpdatePeriod'), "@minimumUpdatePeriod in MPD");

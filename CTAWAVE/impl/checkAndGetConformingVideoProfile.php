@@ -103,7 +103,7 @@ if ($codec == "AVC") {
         "CTAWAVE",
         "WAVE Content Spec 2018Ed-Section 4.2.1",
         "Each WAVE video Media Profile SHALL conform to normative ref. listed in Table 1",
-        false
+        false,
         "FAIL",
         "",
         "Invalid level for track $representationIndex of switching set $adaptationIndex",
@@ -256,7 +256,7 @@ if ($codec == "HEVC") {
                 "CTAWAVE",
                 "WAVE Content Spec 2018Ed-Section 4.2.1",
                 "Each WAVE video Media Profile SHALL conform to normative ref. listed in Table 1",
-                false
+                false,
                 "FAIL",
                 "",
                 "Invalid combination of color primaries, transfer characteristics and matrix coefficients " .
@@ -269,7 +269,7 @@ if ($codec == "HEVC") {
             "CTAWAVE",
             "WAVE Content Spec 2018Ed-Section 4.2.1",
             "Each WAVE video Media Profile SHALL conform to normative ref. listed in Table 1",
-            false
+            false,
             "FAIL",
             "",
             "Invalid level for track $representationIndex of switching set $adaptationIndex",
@@ -383,7 +383,7 @@ if ($codec == "HEVC") {
             "CTAWAVE",
             "WAVE Content Spec 2018Ed-Section 4.2.1",
             "Each WAVE video Media Profile SHALL conform to normative ref. listed in Table 1",
-            false
+            false,
             "FAIL",
             "",
             "Invalid level for track $representationIndex of switching set $adaptationIndex",
@@ -394,7 +394,7 @@ if ($codec == "HEVC") {
         "CTAWAVE",
         "WAVE Content Spec 2018Ed-Section 4.2.1",
         "Each WAVE video Media Profile SHALL conform to normative ref. listed in Table 1",
-        false
+        false,
         "FAIL",
         "",
         "Invalid profile for track $representationIndex of switching set $adaptationIndex",
@@ -407,7 +407,7 @@ $logger->test(
     "CTAWAVE",
     "WAVE Content Spec 2018Ed-Section 4.2.1",
     "Each WAVE video Media Profile SHALL conform to normative ref. listed in Table 1",
-    false
+    false,
     "FAIL",
     "",
     "Invalid codec for track $representationIndex of switching set $adaptationIndex",

@@ -123,7 +123,7 @@ if ($tenc1->length && $tenc2->length) {
             "DVB: Section 8.3",
             "In cases where HD and SD content are contained in one presentation and MPD, but different licence " .
             "rights are given for each resolution, then they SHALL be contained in different HD and SD Adaptation Sets",
-            !$haveSDAndHD
+            !$haveSDAndHD,
             "FAIL",
             "Adaptation $adaptationIndex: " .
             "representations $xmlIndex1 and $xmlIndex2 are valid in this respect",

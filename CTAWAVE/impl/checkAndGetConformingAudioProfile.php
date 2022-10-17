@@ -75,7 +75,7 @@ if ($codec == "AAC") {
         "CTAWAVE",
         "WAVE Content Spec 2018Ed-Section 4.3.1",
         "Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2",
-        false
+        false,
         "FAIL",
         "",
         "Invalid channels for track $representationIndex of switching set $adaptationIndex",
@@ -150,7 +150,7 @@ $logger->test(
     "CTAWAVE",
     "WAVE Content Spec 2018Ed-Section 4.3.1",
     "Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2",
-    false
+    false,
     "FAIL",
     "",
     "Invalid codecfor track $representationIndex of switching set $adaptationIndex",

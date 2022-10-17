@@ -24,7 +24,7 @@ $validLevel = $logger->test(
     "CMAF",
     "Section 10.4",
     "Each AAC elementary stream SHALL be encoded using MPEG-4 AAC LC, HE-AAC Level 2, or HE-AACv2 Level 2",
-    $mpParameters['level'] === "" || strpos($mpParameters['level'], "AAC@L2") !== false
+    $mpParameters['level'] === "" || strpos($mpParameters['level'], "AAC@L2") !== false,
     "FAIL",
     "Valid level information found",
     "Nonvalid level information found"
