@@ -39,7 +39,7 @@ $cmaf_cmf2 = $return_array[1];
 $mediaType = $xml->getElementsByTagName('hdlr')->item(0)->getAttribute('handler_type');
 $cmaf_mediaTypes[$current_period][$current_adaptation_set][$current_representation] = $mediaType;
 
-$adaptationSet = $mpd_features['Period'][$current_period]['adaptationSetationSet'][$current_adaptation_set];
+$adaptationSet = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
 
 $errorInTrack = 0;
 $id = $adaptationSet['Representation'][$current_representation]['id'];
