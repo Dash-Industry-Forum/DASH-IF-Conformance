@@ -1,8 +1,0 @@
-dhtmlxdataprocessor___dataprocessor7.png
-icons___file.gif
-icons___dataprocessor.gif
-common___any_ed.gif
-dhtmlxdataprocessor___live_updates.png
-dhtmlxdataprocessor___live_updates_logic.png
-dhtmlxgrid___dataprocessor.png
-dhtmlxdataprocessor___processor2.png
