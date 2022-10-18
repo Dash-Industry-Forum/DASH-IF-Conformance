@@ -53,6 +53,7 @@ const UI = (function () {
           return;
         case "type":
           if (elementType === "input") element.setAttribute("type", value);
+          if (elementType === "button") element.setAttribute("type", value);
           return;
         case "children":
           if (value instanceof Array) {
@@ -110,6 +111,32 @@ const UI = (function () {
     scrollElement.scrollRight = UI.scrollPositions[elementId].scrollRight;
   }
 
+  function replaceElement(elementId, newElement) {
+    let element = getElement(elementId);
+    if (!element) throw new Error(`Couldn't find element '${elementId}'`);
+
+    element.parentNode.replaceChild(newElement, element);
+  }
+
+  function clearElement(elementId) {
+    let element = getElement(elementId);
+    if (!element) throw new Error(`Couldn't find element '${elementId}'`);
+
+    replaceElement(
+      elementId,
+      createElement({ id: elementId, element: element.localName })
+    );
+  }
+
+  function generateElementId() {
+    while (true) {
+      let id = Math.floor(100000 + Math.random() * 900000);
+      let element = getElement(id);
+      if (element) continue;
+      return id;
+    }
+  }
+
   function kebabize(str) {
     return str
       .split("")
@@ -124,6 +151,9 @@ const UI = (function () {
   return {
     createElement,
     getElement,
+    replaceElement,
+    clearElement,
+    generateElementId,
     getRoot,
     saveScrollPosition,
     loadScrollPosition,

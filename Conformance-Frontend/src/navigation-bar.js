@@ -5,10 +5,11 @@ function NavigationBar() {
     { id: "home", text: "Home" },
     { id: "about", text: "About" },
     { id: "howto", text: "How to use" },
-    { id: "faq", text: "FAQ" }
-  ]
+    { id: "faq", text: "FAQ" },
+  ];
 
-  let _rootElement;
+  let _rootElementId;
+  let _buttonsElementId;
   let eventHandler = new EventHandler();
   let activeLocation = locations[0].id;
 
@@ -28,9 +29,11 @@ function NavigationBar() {
     activeLocation = location;
   }
 
-  function render(rootElement) {
-    _rootElement = rootElement = rootElement || _rootElement;
+  function render(rootElementId) {
+    _rootElementId = rootElementId = rootElementId || _rootElementId;
+    let buttonsElementId = UI.generateElementId();
     let navigationBar = UI.createElement({
+      id: _rootElementId,
       style: {
         backgroundColor: "#007BFF",
         width: "100%",
@@ -65,32 +68,44 @@ function NavigationBar() {
               text: "Conformance Tool",
             },
             {
-              element: "ul",
-              className: "nav nav-pills",
-              children: locations.map(location => ({
-                element: "li",
-                className: "nav-item",
-                children: {
-                  element: "a",
-                  className: "nav-link" + (activeLocation === location.id ? " active" : ""),
-                  text: location.text,
-                  href: "#",
-                  onclick: () => handleLocationChange(location.id)
-                }
-              })),
+              id: buttonsElementId,
             },
           ],
         },
       ],
     });
-    rootElement.appendChild(navigationBar);
+    UI.replaceElement(_rootElementId, navigationBar);
+    renderButtons(buttonsElementId);
+  }
+
+  function renderButtons(elementId) {
+    _buttonsElementId = elementId = elementId || _buttonsElementId;
+    let buttons = UI.createElement({
+      id: _buttonsElementId,
+      element: "ul",
+      className: "nav nav-pills",
+      children: locations.map((location) => ({
+        element: "li",
+        className: "nav-item",
+        children: {
+          element: "a",
+          className:
+            "nav-link" + (activeLocation === location.id ? " active" : ""),
+          text: location.text,
+          href: "#",
+          onclick: () => handleLocationChange(location.id),
+        },
+      })),
+    });
+    UI.replaceElement(elementId, buttons);
   }
 
   let instance = {
     render,
+    renderButtons,
     onLocationChange,
     offLocationChange,
-    setActiveLocation
+    setActiveLocation,
   };
   return instance;
 }
