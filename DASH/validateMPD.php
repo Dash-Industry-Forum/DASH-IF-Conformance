@@ -67,6 +67,8 @@ function validate_MPD()
     }
 
     ## Featurelist generate
+    ///\RefactorTodo re-enable?
+    /*
     if (!is_valid($mpdvalidator, 'Schematron validation successful')) {
         $schematronIssuesReport = analyzeSchematronIssues($mpdvalidator);
     }
@@ -75,6 +77,7 @@ function validate_MPD()
     convertToHtml();
 
     chdir('../');
+     */
     return array(!$exit, $string);
 }
 

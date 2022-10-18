@@ -354,7 +354,7 @@ function loadAndCheckSegmentDuration()
 
         $offsetmod = (float)$timeoffset / $timescale;
         $duration = (float)$duration / $timescale;
-        if ((sizeof($adaptation_set['SegmentTemplate']) > 0 || sizeof($representation['SegmentTemplate']) > 0) && $duration != 0) {
+        if ((($adaptation_set['SegmentTemplate'] && sizeof($adaptation_set['SegmentTemplate']) > 0) || ($representation['SegmentTemplate'] && sizeof($representation['SegmentTemplate']) > 0)) && $duration != 0) {
             $representationDirectory = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
             loadSegmentInfoFile($offsetmod, $duration, $representationDirectory);
         }

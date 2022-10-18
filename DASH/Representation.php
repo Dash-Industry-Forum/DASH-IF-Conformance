@@ -69,16 +69,22 @@ function construct_flags($period, $adaptation_set, $representation){
             $processArguments .= ' -isolive';
         if(in_array($rep_profile, $main))
             $processArguments .= ' -isomain';
-        if(strpos($rep_profile, $dash264) !== FALSE || $dashif_conformance)
+        ///\RefactorTodo changed from strpos!!
+        if(in_array($rep_profile, $dash264) !== FALSE || $dashif_conformance)
             $processArguments .= ' -dash264base';
-        if(strpos($rep_profile, $dashif_ondemand) !== FALSE)
+        if(in_array($rep_profile, $dashif_ondemand) !== FALSE)
             $processArguments .= ' -dashifondemand';
-        if(strpos($rep_profile, $dashif_mixed_ondemand) !== FALSE)
+        if(in_array($rep_profile, $dashif_mixed_ondemand) !== FALSE)
             $processArguments .= ' -dashifmixed';
     }
 
     ## ContentProtection
-    $content_protection_len = (!$adaptation_set['ContentProtection']) ? sizeof($representation['ContentProtection']) : sizeof($adaptation_set['ContentProtection']);
+    $content_protection_len = 0;
+    if ($adaptation_set['ContentProtection']) {
+      $content_protection_len = sizeof($adaptation_set['ContentProtection']);
+    }else if ($representation['ContentProtection']){
+      $content_protection_len = sizeof($representation['ContentProtection']);
+    }
     if($content_protection_len > 0 && strpos($processArguments, 'dash264base') !== FALSE)
         $processArguments .= ' -dash264enc';
 

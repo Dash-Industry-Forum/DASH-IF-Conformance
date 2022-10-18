@@ -273,8 +273,8 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
     curl_close($ch);
     fflush($sizefile);
     fclose($sizefile);
-    fflush($missing);
-    fclose($missing);
+//    fflush($missing);
+//    fclose($missing);
 
     if (!isset($sizearray)) {
         $sizearray = 0;

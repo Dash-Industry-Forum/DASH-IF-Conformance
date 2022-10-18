@@ -287,8 +287,9 @@ $logger->test(
     "Presentation duration is not known, skipping further duration checks"
 );
 
+
 //Check if presentation duration is same as longest track duration.
-if ($presentationDuration && sizeof($trackDurArray)) {
+if ($presentationDuration && !empty($trackDurArray)) {
     $logger->test(
         "CMAF",
         "Section 7.3.6",

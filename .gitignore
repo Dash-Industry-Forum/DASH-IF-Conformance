@@ -15,3 +15,5 @@ Conformance-Frontend/node_modules
 functional-tests/hbbtv/sources
 Utils/sessions
 unit-test-results
+
+external/*

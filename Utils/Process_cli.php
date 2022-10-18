@@ -103,5 +103,5 @@ echo($logger->asJSON($compactOutput) . "\n");
 
 
 global $session;
-$session->clearDirectory();
+//$session->clearDirectory();
 ?>

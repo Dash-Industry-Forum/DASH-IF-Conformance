@@ -176,7 +176,9 @@ for ($j = 0; $j < $moofBoxesCount; $j++) {
         "Representation $id, chunk $j not valid"
     );
 }
-fclose($mdatFile);
+if ($mdatFile !== null){
+  fclose($mdatFile);
+}
 
 $logger->test(
     "CMAF",
@@ -425,9 +427,17 @@ $dash264 = strpos(
     "http://dashif.org/guidelines/dash264"
 ) !== false;
 
-$contentProtectionLength = (!$adaptationSet['ContentProtection']) ?
-  sizeof($adaptationSet['Representation'][$current_representation]['ContentProtection']) :
-  sizeof($adaptationSet['ContentProtection']);
+$contentProtectionLength = 0;
+if($adaptationSet['ContentProtection']){
+  $contentProtectionLength = sizeof($adaptationSet['ContentProtection']);
+}else if (
+$adaptationSet['Representation'] &&
+$adaptationSet['Representation'][$current_representation] &&
+$adaptationSet['Representation'][$current_representation]['ContentProtection']
+){
+  $contentProtectionLength = sizeof($adaptationSet['Representation'][$current_representation]['ContentProtection']);
+}
+
 
 if ($contentProtectionLength > 0 && $dash264 == true) {
     $decryptionPossible = true;
