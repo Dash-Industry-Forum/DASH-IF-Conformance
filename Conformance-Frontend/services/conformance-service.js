@@ -1,50 +1,25 @@
-let ConformanceService = function () {
-  async function validateContentByUrl(url) {
-    let sessionId = "id" + Math.floor(100000 + Math.random() * 900000);
-    let directoryId = "id" + Math.floor(Math.random() * 10000000000 + 1);
+const { wait } = Tools;
 
-    let payload = "";
-    payload += 'url="' + url + '"';
-    payload = encodeURIComponent(payload);
+const ConformanceService = (function () {
+  async function validateContentByUrl(url, progressCallback) {
+    const results = Mock.testResults[0];
+    for (let entryName in results.entries) {
+      let entry = results.entries[entryName];
+      if (entryName === "verdict" || entryName === "Stats") continue;
 
-    try {
-      let method = "POST";
-      let requestUrl = "../Utils/Process.php";
-      let headers = {
-        "content-type": "application/x-www-form-urlencoded",
-      };
-      let response = await sendRequest(method, requestUrl, headers, payload);
-      console.log(response);
-    } catch (error) {
-      console.error(error);
+      let moduleName = entryName;
+      let module = entry;
+      progressCallback({level: "module", type: "start", payload: moduleName});
+      await wait(200);
+      
+
+      progressCallback({level: "module", type: "end"});
+      await wait(200);
     }
-  }
-
-  function sendRequest(method, uri, headers, data) {
-    return new Promise((resolve, reject) => {
-      var xhr = new XMLHttpRequest();
-      xhr.onload = function () {
-        if (xhr.status === 200) {
-          resolve(xhr.response);
-        } else {
-          reject({ status: xhr.status, response: xhr.response });
-        }
-      };
-      xhr.onerror = function () {
-        reject();
-      };
-      xhr.open(method, uri, true);
-      for (var header in headers) {
-        xhr.setRequestHeader(header, headers[header]);
-      }
-      xhr.send(data);
-    });
   }
 
   let instance = {
     validateContentByUrl,
   };
   return instance;
-};
-
-ConformanceService = new ConformanceService();
+})();
