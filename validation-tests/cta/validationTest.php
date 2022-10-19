@@ -95,11 +95,7 @@ final class validationTest extends TestCase
         $source = $GLOBALS['mpd_url'];
         $id = str_replace("/","_", str_replace([".mpd", "http://", "https://"], [""], $source));
         $output_path = "/home/dsi/DASH-IF-Conformance/validation-test-results/cta/" . $id . ".json";
-        if (file_put_contents($output_path, $GLOBALS['logger']->asJSON())) {
-            echo "JSON file created successfully...";
-        } else {
-            echo "Oops! Error creating json file...";
-        }
+        file_put_contents($output_path, $GLOBALS['logger']->asJSON());
         $this->assertSame(true, true);
     }
 
@@ -120,7 +116,7 @@ final class validationTest extends TestCase
             "https://dash.akamaized.net/WAVE/vectors/avc_sets/15_30_60/t3/2022-01-17/stream.mpd"
         ];
         $content = file_get_contents(
-            "functional-tests/cta/wave.json");
+            "validations-tests/cta/wave.json");
         $dbJson = json_decode($content);
         $streamsToTest = array();
         foreach ($dbJson as $item) {

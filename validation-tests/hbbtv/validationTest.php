@@ -92,8 +92,8 @@ final class validationTest extends TestCase
         //process_MPD(false);//MPD Only
         //
         $source = $GLOBALS['mpd_url'];
-        $id = str_replace("/", "_", str_replace([".mpd", "http://", "https://"], [""], $source));
-        $output_path = "/home/dsi/DASH-IF-Conformance/validation-test-results/dashif/" . $id . ".json";
+        $id = str_replace("/","_", str_replace([".mpd", "http://", "https://"], [""], $source));
+        $output_path = "/home/dsi/DASH-IF-Conformance/validation-test-results/hbbtv/" . $id . ".json";
         if (file_put_contents($output_path, $GLOBALS['logger']->asJSON())) {
             echo "JSON file created successfully...";
         } else {
@@ -107,12 +107,11 @@ final class validationTest extends TestCase
      */
     public function streamProvider()
     {
+        /*
         $i = 0;
         $limit = 2000;
         $startnumber = 0;
         $blacklist = [
-            "https://dash.akamaized.net/dash264/TestAdvertising/DRM/Axinom-DRM-in-disconnected-environments_AVC_MultiRes_MultiRate_2997fps.mpd",
-            "https://dash.akamaized.net/dash264/TestAdvertising/CMS/Axinom-CMS_AVC_MultiRes_MultiRate_2997fps.mpd",
             "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey/Manifest_1080p.mpd",
             "https://dash.akamaized.net/WAVE/vectors/avc_sets/14.985_29.97_59.94/t3/2022-01-17/stream.mpd",
             "https://livesim.dashif.org/livesim/periods_60/mpdcallback_30/testpic_2s/Manifest.mpd",
@@ -125,7 +124,7 @@ final class validationTest extends TestCase
             "https://livesim.dashif.org/livesim/testpic_2s/Manifest.mpd#t=posix:now"
         ];
         $content = file_get_contents(
-            "validation-tests/dashif/dashjs.json");
+            "functional-tests/dashif/dashjs.json");
         $dbJson = json_decode($content);
         $streamsToTest = array();
         foreach ($dbJson->items as $item) {
@@ -139,6 +138,11 @@ final class validationTest extends TestCase
                 $i++;
             }
         }
+        return $streamsToTest;
+        */
+        $streamsToTest = array(
+            array("http://127.0.0.1:3333/jccp/hbbtv/org.hbbtv_MSE-LL0200/content/MSE_integration_throughput_XHR_HD/manifest.mpd")
+        );
         return $streamsToTest;
     }
 
