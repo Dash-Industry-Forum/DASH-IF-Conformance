@@ -1,7 +1,7 @@
 <?php
 
 ## Here the implementation follows the DASH-IF IOP guideline for signaling the switchable adaptation sets
-global $session, $mpd_features, $current_period, $alignedswitching_infofile;
+global $session, $mpd_features, $current_period, $alignedswitching_infofile, $logger;
 
 $indices = array();
 
