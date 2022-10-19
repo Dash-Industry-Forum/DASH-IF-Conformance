@@ -1,4 +1,8 @@
 function ToolView() {
+  const URL = "url";
+  const FILE = "file";
+  const TEXT = "text";
+
   let additionalTests = [
     { id: "segment-validation", text: "Segment Validation" },
     { id: "dash-if", text: "Dash-IF" },
@@ -10,12 +14,21 @@ function ToolView() {
     { id: "cta-wave", text: "CTA-WAVE" },
   ];
 
+  let mpdForms = [
+    { type: "url", text: "URL" },
+    { type: "file", text: "File Upload" },
+    { type: "text", text: "Text Input" },
+  ];
+
   let _result;
+  let _detailSelect = { module: null, part: null, section: null, test: null };
+  let _activeMpdForm = mpdForms[0].type;
 
   let _rootElementId;
   let _validatorFormElementId;
   let _resultsElementId;
   let _resultSummaryId;
+  let _resultDetailsId;
 
   async function handleValidation() {
     const mpdUrlInput = UI.getElement("mpd-url");
@@ -62,12 +75,41 @@ function ToolView() {
               },
               {
                 className: "col-sm-10",
-                children: {
-                  element: "input",
-                  type: "textbox",
-                  className: "form-control",
-                  id: "mpd-url",
-                },
+                children: [
+                  {
+                    element: "ul",
+                    className: "nav nav-tabs",
+                    children: mpdForms.map((form) => ({
+                      element: "li",
+                      className: "nav-item",
+                      children: {
+                        element: "a",
+                        className:
+                          "nav-link" +
+                          (_activeMpdForm === form.type ? " active" : ""),
+                        onclick:
+                          _activeMpdForm === form.type
+                            ? () => {}
+                            : () => {
+                                _activeMpdForm = form.type;
+                                renderValidatorForm();
+                              },
+                        href: "#",
+                        text: form.text,
+                      },
+                    })),
+                  },
+                  {
+                    className:
+                      "p-3 border border-top-0 rounded-bottom bg-white",
+                    children: {
+                      element: "input",
+                      type: "textbox",
+                      className: "form-control",
+                      id: "mpd-url",
+                    },
+                  },
+                ],
               },
             ],
           },
@@ -127,90 +169,232 @@ function ToolView() {
     let resultsView = UI.createElement({
       id: elementId,
       children: [
-        { element: "h2", text: "Results" },
+        { element: "h2", text: "Results", className: "pt-3" },
         {
-          className: "border rounded p-3",
-          children: [{ id: resultSummaryId, className: "border-end" }, { id: resultDetailsId, style: "width: 300px" }],
+          className: "container-fluid d-flex border rounded p-0",
+          children: [{ id: resultSummaryId }, { id: resultDetailsId }],
         },
       ],
     });
 
     UI.replaceElement(_resultsElementId, resultsView);
     renderResultSummary(resultSummaryId);
+    renderResultDetails(resultDetailsId);
   }
 
   function renderResultSummary(elementId) {
     _resultSummaryId = elementId = elementId || _resultSummaryId;
     let resultSummary = UI.createElement({
       id: elementId,
-      children: Object.keys(_result.entries)
-        .filter((key) => key !== "Stats" && key !== "verdict")
-        .map((module) => ({
-          children: [
-            {
+      className: "border-end p-3 w-50",
+      children: [
+        { element: "h5", text: "Summary" },
+        {
+          children: Object.keys(_result.entries)
+            .filter((key) => key !== "Stats" && key !== "verdict")
+            .map((module) => ({
               children: [
                 {
-                  element: "i",
-                  className: getVerdictIcon(_result.entries[module].verdict),
-                  style: "width: 1.5em",
-                },
-                { element: "span", text: module },
-              ],
-            },
-            {
-              style: "padding-left: 1.5em",
-              children: Object.keys(_result.entries[module])
-                .filter((key) => key !== "verdict")
-                .map((part) => ({
                   children: [
                     {
+                      element: "i",
+                      className: getVerdictIcon(
+                        _result.entries[module].verdict
+                      ),
+                      style: "width: 1.5em",
+                    },
+                    { element: "span", text: module },
+                  ],
+                },
+                {
+                  style: "padding-left: 1.5em",
+                  children: Object.keys(_result.entries[module])
+                    .filter((key) => key !== "verdict")
+                    .map((part) => ({
                       children: [
                         {
-                          element: "i",
-                          className: getVerdictIcon(
-                            _result.entries[module][part].verdict
-                          ),
-                          style: "width: 1.5em",
-                        },
-                        { element: "span", text: part },
-                      ],
-                    },
-                    {
-                      style: "padding-left: 1.5em",
-                      children: _result.entries[module][part].test.map(
-                        (test) => ({
                           children: [
                             {
                               element: "i",
-                              className: getVerdictIcon(test.state),
+                              className: getVerdictIcon(
+                                _result.entries[module][part].verdict
+                              ),
                               style: "width: 1.5em",
                             },
-                            { element: "span", text: test.section },
-                            {
-                              element: "i",
-                              className: "fa-solid fa-circle mx-2",
-                              style: "font-size: 0.3em; vertical-align: 1em",
-                            },
-                            { element: "span", text: test.test },
+                            { element: "span", text: part },
                           ],
-                        })
-                      ),
-                    },
-                  ],
-                })),
-            },
-          ],
-        })),
+                        },
+                        {
+                          style: "padding-left: 1.5em",
+                          children: _result.entries[module][part].test.map(
+                            ({ section, test, state }) => ({
+                              className:
+                                "pb-2 " +
+                                (isSelected({ module, part, section, test })
+                                  ? "fw-semibold"
+                                  : "link-primary text-decoration-underline"),
+                              style: { cursor: "pointer" },
+                              onclick: isSelected({
+                                module,
+                                part,
+                                section,
+                                test,
+                              })
+                                ? () => {}
+                                : () => {
+                                    _detailSelect = {
+                                      module,
+                                      part,
+                                      section,
+                                      test,
+                                    };
+                                    renderResultSummary();
+                                    renderResultDetails();
+                                  },
+                              children: [
+                                {
+                                  element: "i",
+                                  className: getVerdictIcon(state),
+                                  style: "width: 1.5em",
+                                },
+                                { element: "span", text: section },
+                                {
+                                  element: "i",
+                                  className: "fa-solid fa-circle mx-2",
+                                  style:
+                                    "font-size: 0.3em; vertical-align: 1em",
+                                },
+                                {
+                                  element: "span",
+                                  text: test,
+                                },
+                              ],
+                            })
+                          ),
+                        },
+                      ],
+                    })),
+                },
+              ],
+            })),
+        },
+      ],
     });
     UI.replaceElement(_resultSummaryId, resultSummary);
+  }
+
+  function renderResultDetails(elementId) {
+    _resultDetailsId = elementId = elementId || _resultDetailsId;
+    let { module, part, section, test } = _detailSelect;
+    if (!module || !part || !section || !test) {
+      let instructions = UI.createElement({
+        id: elementId,
+        className: "bg-light w-50",
+        children: {
+          className:
+            "container-fluid text-center text-secondary h-100 d-flex flex-column justify-content-center",
+          style: { maxHeight: "40vh" },
+          children: [
+            {
+              element: "i",
+              className: "fa-solid fa-circle-info mb-3",
+              style: "font-size: 5em",
+            },
+            {
+              text: "Select a test to see details",
+            },
+          ],
+        },
+      });
+      UI.replaceElement(elementId, instructions);
+      return;
+    }
+    let { state, messages } = _result.entries[module][part].test.find(
+      (element) => element.test === test && element.section === section
+    );
+    let resultDetails = UI.createElement({
+      id: elementId,
+      className: "p-3 w-50",
+      children: [
+        { element: "h5", text: "Details" },
+        {
+          element: "table",
+          className: "table",
+          children: {
+            element: "tbody",
+            children: [
+              {
+                element: "tr",
+                children: [
+                  { element: "td", text: "Section" },
+                  { element: "td", text: section },
+                ],
+              },
+              {
+                element: "tr",
+                children: [
+                  { element: "td", text: "Test" },
+                  { element: "td", text: test },
+                ],
+              },
+              {
+                element: "tr",
+                children: [
+                  { element: "td", text: "State" },
+                  {
+                    element: "td",
+                    children: [
+                      { element: "i", className: getVerdictIcon(state) },
+                      { element: "span", text: state, className: "ms-1" },
+                    ],
+                  },
+                ],
+              },
+              {
+                element: "tr",
+                children: [
+                  { element: "td", text: "Module" },
+                  { element: "td", text: module },
+                ],
+              },
+              {
+                element: "tr",
+                children: [
+                  { element: "td", text: "Messages" },
+                  {
+                    element: "td",
+                    children: {
+                      className:
+                        "font-monospace overflow-auto border rounded bg-light p-2",
+                      style: "max-height: 30em",
+                      children: messages.map((message) => ({ text: message })),
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    });
+    UI.replaceElement(elementId, resultDetails);
+  }
+
+  function isSelected({ module, part, section, test }) {
+    let isSelected = true;
+    isSelected = isSelected && module === _detailSelect.module;
+    isSelected = isSelected && part === _detailSelect.part;
+    isSelected = isSelected && section === _detailSelect.section;
+    isSelected = isSelected && test === _detailSelect.test;
+    return isSelected;
   }
 
   function getVerdictIcon(verdict) {
     switch (verdict) {
       case "PASS":
-        return "fa-solid fa-check";
+        return "fa-solid fa-check text-success";
       case "FAIL":
-        return "fa-solid fa-xmark";
+        return "fa-solid fa-xmark text-danger";
       default:
         return "fa-solid fa-question";
     }

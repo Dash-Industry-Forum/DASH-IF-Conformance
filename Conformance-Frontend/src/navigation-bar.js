@@ -41,6 +41,7 @@ function NavigationBar() {
         paddingBottom: "0.5em",
         color: "white",
       },
+      className: "main-navigation",
       children: [
         {
           className: "container-xl d-flex flex-row align-items-center",

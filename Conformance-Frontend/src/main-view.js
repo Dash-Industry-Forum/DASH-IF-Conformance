@@ -31,7 +31,7 @@ function MainView() {
       children: [
         { id: navigationElementId },
         {
-          className: "container-xl flex-fill pt-4",
+          className: "container-xl flex-fill py-4 overflow-auto",
           style: {
             backgroundColor: "white",
           },
