@@ -2,9 +2,9 @@ function NavigationBar() {
   const EVENT_LOCATION_CHANGE = "location_change";
 
   const locations = [
-    { id: "home", text: "Home" },
-    { id: "about", text: "About" },
-    { id: "howto", text: "How to use" },
+    { id: "home", text: "Validator", icon: "fa-solid fa-gears" },
+    { id: "about", text: "About", icon: "fa-solid fa-info-circle" },
+    { id: "howto", text: "How to use", icon: "fa-solid fa-question-circle" },
     { id: "faq", text: "FAQ" },
   ];
 
@@ -88,14 +88,21 @@ function NavigationBar() {
       children: locations.map((location) => ({
         element: "li",
         className: "nav-item",
-        children: {
-          element: "a",
-          className:
-            "nav-link" + (activeLocation === location.id ? " active" : ""),
-          text: location.text,
-          href: "#",
-          onclick: () => handleLocationChange(location.id),
-        },
+        children: [
+          {
+            element: "a",
+            className:
+              "nav-link" + (activeLocation === location.id ? " active" : ""),
+            href: "#",
+            onclick: () => handleLocationChange(location.id),
+            children: [
+              location.icon
+                ? { element: "i", className: location.icon + " me-2" }
+                : null,
+              { element: "span", text: location.text },
+            ],
+          },
+        ],
       })),
     });
     UI.replaceElement(elementId, buttons);

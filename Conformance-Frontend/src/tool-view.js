@@ -3,16 +3,10 @@ function ToolView() {
   const FILE = "file";
   const TEXT = "text";
 
-  let additionalTests = [
-    { id: "segment-validation", text: "Segment Validation" },
-    { id: "dash-if", text: "Dash-IF" },
-    { id: "ll-dash-if", text: "LL Dash-IF" },
-    { id: "dvb-19", text: "DVB (2019)" },
-    { id: "dvb-18", text: "DVB (2018)" },
-    { id: "hbbtv", text: "HbbTV" },
-    { id: "cmaf", text: "CMAF" },
-    { id: "cta-wave", text: "CTA-WAVE" },
-  ];
+  const READY = "ready";
+  const PROCESSING = "processing";
+
+  let modules = ConformanceService.modules;
 
   let mpdForms = [
     { type: "url", text: "URL" },
@@ -20,9 +14,14 @@ function ToolView() {
     { type: "text", text: "Text Input" },
   ];
 
-  let _result;
-  let _detailSelect = { module: null, part: null, section: null, test: null };
-  let _activeMpdForm = mpdForms[0].type;
+  let _state = {
+    result: null,
+    detailSelect: { module: null, part: null, section: null, test: null },
+    activeMpdForm: mpdForms[0].type,
+    mpdUrl: null,
+    activeModules: {},
+    validatorState: READY,
+  };
 
   let _rootElementId;
   let _validatorFormElementId;
@@ -31,10 +30,18 @@ function ToolView() {
   let _resultDetailsId;
 
   async function handleValidation() {
-    const mpdUrlInput = UI.getElement("mpd-url");
-    const mpdUrl = mpdUrlInput.value;
-    _result = await ConformanceService.validateContentByUrl(mpdUrl);
-    renderResults();
+    if (_state.activeMpdForm === "url") {
+      _state.validatorState = PROCESSING;
+      renderValidatorForm();
+      let { mpdUrl, activeModules } = _state;
+      _state.result = await ConformanceService.validateContentByUrl({
+        mpdUrl,
+        activeModules,
+      });
+      _state.validatorState = READY;
+      renderValidatorForm();
+      renderResults();
+    }
   }
 
   function render(rootElementId) {
@@ -45,7 +52,7 @@ function ToolView() {
       id: _rootElementId,
       className: "d-flex flex-column",
       children: [
-        { element: "h1", text: "Home" },
+        { element: "h1", text: "Validator" },
         { id: validatorFormElementId },
         { id: resultsElementId },
       ],
@@ -86,12 +93,12 @@ function ToolView() {
                         element: "a",
                         className:
                           "nav-link" +
-                          (_activeMpdForm === form.type ? " active" : ""),
+                          (_state.activeMpdForm === form.type ? " active" : ""),
                         onclick:
-                          _activeMpdForm === form.type
+                          _state.activeMpdForm === form.type
                             ? () => {}
                             : () => {
-                                _activeMpdForm = form.type;
+                                _state.activeMpdForm = form.type;
                                 renderValidatorForm();
                               },
                         href: "#",
@@ -107,6 +114,10 @@ function ToolView() {
                       type: "textbox",
                       className: "form-control",
                       id: "mpd-url",
+                      value: _state.mpdUrl,
+                      onchange: (event) => {
+                        _state.mpdUrl = event.target.value;
+                      },
                     },
                   },
                 ],
@@ -123,20 +134,24 @@ function ToolView() {
               },
               {
                 className: "col-sm-10",
-                children: additionalTests.map((test) => ({
+                children: modules.map((module) => ({
                   className: "form-check",
                   children: [
                     {
                       element: "input",
                       type: "checkbox",
                       className: "form-check-input",
-                      id: test.id,
+                      id: module.id,
+                      onchange: (event) => {
+                        _state.activeModules[module.id] = event.target.checked;
+                      },
+                      checked: _state.activeModules[module.id],
                     },
                     {
                       element: "label",
                       className: "form-check-label",
-                      for: test.id,
-                      text: test.text,
+                      for: module.id,
+                      text: module.text,
                     },
                   ],
                 })),
@@ -149,9 +164,27 @@ function ToolView() {
               {
                 element: "button",
                 type: "button",
-                className: "btn btn-primary",
-                text: "Validate",
+                className:
+                  "btn btn-primary" +
+                  (_state.validatorState === READY ? "" : " disabled"),
                 onclick: handleValidation,
+                children: (() => {
+                  switch (_state.validatorState) {
+                    case READY:
+                      return [
+                        { element: "i", className: "fa-solid fa-play me-2" },
+                        { element: "span", text: "Process" },
+                      ];
+                    case PROCESSING:
+                      return [
+                        {
+                          element: "i",
+                          className: "fa-solid fa-gear fa-spin me-2",
+                        },
+                        { element: "span", text: "Processing" },
+                      ];
+                  }
+                })(),
               },
             ],
           },
@@ -163,7 +196,7 @@ function ToolView() {
 
   function renderResults(elementId) {
     _resultsElementId = elementId = elementId || _resultsElementId;
-    if (!_result) return;
+    if (!_state.result) return;
     let resultSummaryId = UI.generateElementId();
     let resultDetailsId = UI.generateElementId();
     let resultsView = UI.createElement({
@@ -188,18 +221,19 @@ function ToolView() {
       id: elementId,
       className: "border-end p-3 w-50",
       children: [
-        { element: "h5", text: "Summary" },
+        { element: "h5", text: "Summary", className: "mb-3 fw-semibold" },
         {
-          children: Object.keys(_result.entries)
+          children: Object.keys(_state.result.entries)
             .filter((key) => key !== "Stats" && key !== "verdict")
-            .map((module) => ({
+            .map((module, index) => ({
               children: [
                 {
+                  className: "fs-5 mb-2",
                   children: [
                     {
                       element: "i",
                       className: getVerdictIcon(
-                        _result.entries[module].verdict
+                        _state.result.entries[module].verdict
                       ),
                       style: "width: 1.5em",
                     },
@@ -208,7 +242,7 @@ function ToolView() {
                 },
                 {
                   style: "padding-left: 1.5em",
-                  children: Object.keys(_result.entries[module])
+                  children: Object.keys(_state.result.entries[module])
                     .filter((key) => key !== "verdict")
                     .map((part) => ({
                       children: [
@@ -217,7 +251,7 @@ function ToolView() {
                             {
                               element: "i",
                               className: getVerdictIcon(
-                                _result.entries[module][part].verdict
+                                _state.result.entries[module][part].verdict
                               ),
                               style: "width: 1.5em",
                             },
@@ -226,55 +260,55 @@ function ToolView() {
                         },
                         {
                           style: "padding-left: 1.5em",
-                          children: _result.entries[module][part].test.map(
-                            ({ section, test, state }) => ({
-                              className:
-                                "pb-2 " +
-                                (isSelected({ module, part, section, test })
-                                  ? "fw-semibold"
-                                  : "link-primary text-decoration-underline"),
-                              style: { cursor: "pointer" },
-                              onclick: isSelected({
-                                module,
-                                part,
-                                section,
-                                test,
-                              })
-                                ? () => {}
-                                : () => {
-                                    _detailSelect = {
-                                      module,
-                                      part,
-                                      section,
-                                      test,
-                                    };
-                                    renderResultSummary();
-                                    renderResultDetails();
-                                  },
-                              children: [
-                                {
-                                  element: "i",
-                                  className: getVerdictIcon(state),
-                                  style: "width: 1.5em",
-                                },
-                                { element: "span", text: section },
-                                {
-                                  element: "i",
-                                  className: "fa-solid fa-circle mx-2",
-                                  style:
-                                    "font-size: 0.3em; vertical-align: 1em",
-                                },
-                                {
-                                  element: "span",
-                                  text: test,
-                                },
-                              ],
+                          children: _state.result.entries[module][
+                            part
+                          ].test.map(({ section, test, state }) => ({
+                            className:
+                              "pb-2 " +
+                              (isSelected({ module, part, section, test })
+                                ? "fw-semibold"
+                                : "link-primary text-decoration-underline"),
+                            style: { cursor: "pointer" },
+                            onclick: isSelected({
+                              module,
+                              part,
+                              section,
+                              test,
                             })
-                          ),
+                              ? () => {}
+                              : () => {
+                                  _state.detailSelect = {
+                                    module,
+                                    part,
+                                    section,
+                                    test,
+                                  };
+                                  renderResultSummary();
+                                  renderResultDetails();
+                                },
+                            children: [
+                              {
+                                element: "i",
+                                className: getVerdictIcon(state),
+                                style: "width: 1.5em",
+                              },
+                              { element: "span", text: section },
+                              {
+                                element: "i",
+                                className: "fa-solid fa-circle mx-2",
+                                style: "font-size: 0.3em; vertical-align: 1em",
+                              },
+                              {
+                                element: "span",
+                                text: test,
+                              },
+                            ],
+                          })),
                         },
                       ],
                     })),
                 },
+                Object.keys(_state.result.entries).length - 3 === index ? null : { element: "hr" },
               ],
             })),
         },
@@ -285,7 +319,7 @@ function ToolView() {
 
   function renderResultDetails(elementId) {
     _resultDetailsId = elementId = elementId || _resultDetailsId;
-    let { module, part, section, test } = _detailSelect;
+    let { module, part, section, test } = _state.detailSelect;
     if (!module || !part || !section || !test) {
       let instructions = UI.createElement({
         id: elementId,
@@ -309,7 +343,7 @@ function ToolView() {
       UI.replaceElement(elementId, instructions);
       return;
     }
-    let { state, messages } = _result.entries[module][part].test.find(
+    let { state, messages } = _state.result.entries[module][part].test.find(
       (element) => element.test === test && element.section === section
     );
     let resultDetails = UI.createElement({
@@ -382,10 +416,10 @@ function ToolView() {
 
   function isSelected({ module, part, section, test }) {
     let isSelected = true;
-    isSelected = isSelected && module === _detailSelect.module;
-    isSelected = isSelected && part === _detailSelect.part;
-    isSelected = isSelected && section === _detailSelect.section;
-    isSelected = isSelected && test === _detailSelect.test;
+    isSelected = isSelected && module === _state.detailSelect.module;
+    isSelected = isSelected && part === _state.detailSelect.part;
+    isSelected = isSelected && section === _state.detailSelect.section;
+    isSelected = isSelected && test === _state.detailSelect.test;
     return isSelected;
   }
 
