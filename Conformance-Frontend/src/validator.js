@@ -1,6 +1,7 @@
 function Validator({ modules }) {
   const READY = "ready";
   const PROCESSING = "processing";
+  const NOT_IMPLEMENTED = "not_implemented";
 
   const PROCESSING_FINISHED = "processing_finished";
 
@@ -78,6 +79,7 @@ function Validator({ modules }) {
                             ? () => {}
                             : () => {
                                 _state.activeMpdForm = form.type;
+                                _state.validatorState = form.type === "url" ? READY : NOT_IMPLEMENTED;
                                 render();
                               },
                         href: "#",
@@ -88,16 +90,42 @@ function Validator({ modules }) {
                   {
                     className:
                       "p-3 border border-top-0 rounded-bottom bg-white",
-                    children: {
-                      element: "input",
-                      type: "textbox",
-                      className: "form-control",
-                      id: "mpd-url",
-                      value: _state.mpdUrl,
-                      onchange: (event) => {
-                        _state.mpdUrl = event.target.value;
-                      },
-                    },
+                    children: (() => {
+                      switch (_state.activeMpdForm) {
+                        case "url":
+                          return {
+                            element: "input",
+                            type: "textbox",
+                            className: "form-control",
+                            id: "mpd-url",
+                            value: _state.mpdUrl,
+                            onchange: (event) => {
+                              _state.mpdUrl = event.target.value;
+                            },
+                          };
+                        case "file":
+                          return {
+                            element: "input",
+                            type: "file",
+                            className: "form-control",
+                            id: "mpd-file",
+                            onchange: (event) => {
+                              _state.mpdFile = event.target.value;
+                            },
+                          };
+                        case "text":
+                          return {
+                            element: "textarea",
+                            className: "form-control",
+                            id: "mpd-text",
+                            onchange: (event) => {
+                              _state.mpdText = event.target.value;
+                              _state.validatorState = "not_implemented";
+                              render();
+                            },
+                          };
+                      }
+                    })(),
                   },
                 ],
               },
@@ -149,6 +177,7 @@ function Validator({ modules }) {
                 onclick: handleValidation,
                 children: (() => {
                   switch (_state.validatorState) {
+                    case NOT_IMPLEMENTED:
                     case READY:
                       return [
                         { element: "i", className: "fa-solid fa-play me-2" },
