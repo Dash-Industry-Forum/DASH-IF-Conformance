@@ -81,6 +81,15 @@ const UI = (function () {
         case "indeterminate":
           element.indeterminate = value;
           return;
+        case "role":
+          element.setAttribute("role", value);
+          return;
+        case "databsdismiss":
+          element.setAttribute("data-bs-dismiss", value);
+          return;
+        case "arialabel":
+          element.setAttribute("aria-label", value);
+          return;
       }
     });
     return element;
