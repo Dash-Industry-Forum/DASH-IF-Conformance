@@ -51,15 +51,57 @@ function ToolView() {
       id: elementId,
       children: [
         {
-          className: "d-flex flex-row align-items-baseline pt-3",
+          className: "d-flex flex-row align-items-baseline pt-3 mb-2",
           children: [
             { text: "Result", className: "fs-2 flex-grow-1" },
             {
+              className: "d-flex flex-row align-items-center",
               children: [
                 {
+                  className: "me-2",
                   text: `Processing Time: ${Tools.msToTime(_state.duration, {
                     alwaysShowMins: true,
                   })}`,
+                },
+                {
+                  className: "btn-group btn-group-sm",
+                  role: "group",
+                  ariaLabel: "Export",
+                  children: [
+                    {
+                      element: "button",
+                      type: "button",
+                      className: "btn btn-outline-dark",
+                      children: [
+                        {
+                          element: "i",
+                          className: "fa-solid fa-download me-2",
+                        },
+                        { element: "span", text: "json" },
+                      ],
+                      onClick: () => {
+                        let fileName =
+                          "val-result-" + new Date().toISOString() + ".json";
+                        let type = "application/json";
+                        let data = JSON.stringify(_state.result, null, 2);
+
+                        Tools.downloadFileFromData({ fileName, type, data });
+                      },
+                    },
+                    {
+                      element: "button",
+                      type: "button",
+                      className: "btn btn-outline-dark disabled",
+                      children: [
+                        {
+                          element: "i",
+                          className:
+                            "fa-solid fa-arrow-up-right-from-square me-2",
+                        },
+                        { element: "span", text: "html" },
+                      ],
+                    },
+                  ],
                 },
               ],
             },
