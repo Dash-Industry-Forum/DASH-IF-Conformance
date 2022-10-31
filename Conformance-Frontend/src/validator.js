@@ -17,11 +17,16 @@ function Validator({ modules }) {
     activeModules: {},
     validatorState: READY,
     mpdUrl: null,
-    error: "Error",
+    error: null,
+    processingStartDate: null,
+    processingEndDate: null,
   };
   let eventHandler = new EventHandler();
 
+  let _durationInterval;
+
   let _rootElementId;
+  let _durationElementId;
 
   async function handleValidation() {
     _state.error = null;
@@ -33,14 +38,19 @@ function Validator({ modules }) {
         return;
       }
       _state.validatorState = PROCESSING;
+      _state.processingStartDate = Date.now();
+      updateDuration();
+      _durationInterval = setInterval(updateDuration, 1000);
       render();
       let result = await ConformanceService.validateContentByUrl({
         mpdUrl,
         activeModules,
       });
       _state.validatorState = READY;
+      _state.processingEndDate = Date.now();
       render();
-      eventHandler.dispatchEvent(PROCESSING_FINISHED, { result });
+      let duration = _state.processingEndDate - _state.processingStartDate;
+      eventHandler.dispatchEvent(PROCESSING_FINISHED, { result, duration });
     }
   }
 
@@ -48,8 +58,24 @@ function Validator({ modules }) {
     eventHandler.on(PROCESSING_FINISHED, callback);
   }
 
+  function updateDuration() {
+    if (_state.validatorState !== PROCESSING) {
+      clearInterval(_durationInterval);
+      UI.clearElement(_durationElementId);
+      return;
+    }
+    let durationElement = UI.createElement({
+      id: _durationElementId,
+      text: Tools.msToTime(Date.now() - _state.processingStartDate, {
+        alwaysShowMins: true,
+      }),
+    });
+    UI.replaceElement(_durationElementId, durationElement);
+  }
+
   function render(elementId) {
     _rootElementId = elementId = elementId || _rootElementId;
+    _durationElementId = UI.generateElementId();
 
     let validator = UI.createElement({
       id: elementId,
@@ -200,8 +226,12 @@ function Validator({ modules }) {
               ],
             },
             {
-              className: "d-grid gap-2 d-md-flex justify-content-md-end",
+              className:
+                "d-grid gap-2 d-md-flex justify-content-md-end align-items-center",
               children: [
+                {
+                  id: _durationElementId,
+                },
                 {
                   element: "button",
                   type: "button",
@@ -236,6 +266,8 @@ function Validator({ modules }) {
     });
 
     UI.replaceElement(elementId, validator);
+
+    if (_state.validatorState === PROCESSING) updateDuration();
   }
 
   instance = {

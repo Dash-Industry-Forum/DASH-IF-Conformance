@@ -17,8 +17,9 @@ function ToolView() {
 
   let _validator = new Validator({ modules });
 
-  async function handleProcessingFinished({ result }) {
+  async function handleProcessingFinished({ result, duration }) {
     _state.result = result;
+    _state.duration = duration;
     renderResults();
   }
   _validator.onProcessingFinished(handleProcessingFinished);
@@ -49,7 +50,21 @@ function ToolView() {
     let resultsView = UI.createElement({
       id: elementId,
       children: [
-        { element: "h2", text: "Results", className: "pt-3" },
+        {
+          className: "d-flex flex-row align-items-baseline pt-3",
+          children: [
+            { text: "Result", className: "fs-2 flex-grow-1" },
+            {
+              children: [
+                {
+                  text: `Processing Time: ${Tools.msToTime(_state.duration, {
+                    alwaysShowMins: true,
+                  })}`,
+                },
+              ],
+            },
+          ],
+        },
         {
           className: "container-fluid d-flex border rounded p-0",
           children: [{ id: resultSummaryId }, { id: resultDetailsId }],
