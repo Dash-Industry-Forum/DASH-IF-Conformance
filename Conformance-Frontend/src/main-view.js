@@ -36,6 +36,7 @@ function MainView() {
             className: "container-xl py-4",
             style: {
               backgroundColor: "white",
+              minHeight: "100%",
             },
             children: { id: contentElementId },
           },
