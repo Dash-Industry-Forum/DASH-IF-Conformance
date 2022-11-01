@@ -99,8 +99,9 @@ const UI = (function () {
     return document.getElementById(id);
   }
 
-  function getRoot() {
-    return document.getElementsByTagName("body")[0];
+  function getRoot(doc) {
+    if (!doc) doc = document;
+    return doc.getElementsByTagName("body")[0];
   }
 
   function saveScrollPosition(elementId) {

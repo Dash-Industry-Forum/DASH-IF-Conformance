@@ -6,7 +6,7 @@ function ToolView() {
   let modules = ConformanceService.modules;
 
   let _state = {
-    result: null,
+    result: Mock.testResults[0],
     detailSelect: { module: null, part: null, section: null, test: null },
   };
 
@@ -91,7 +91,7 @@ function ToolView() {
                     {
                       element: "button",
                       type: "button",
-                      className: "btn btn-outline-dark disabled",
+                      className: "btn btn-outline-dark",
                       children: [
                         {
                           element: "i",
@@ -100,6 +100,10 @@ function ToolView() {
                         },
                         { element: "span", text: "html" },
                       ],
+                      onClick: () => {
+                        let report = HtmlReport.generateReport(_state.result);
+                        HtmlReport.openReport(report);
+                      },
                     },
                   ],
                 },

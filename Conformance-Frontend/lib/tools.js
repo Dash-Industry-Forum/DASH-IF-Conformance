@@ -42,10 +42,22 @@ const Tools = (function () {
     link.click();
   }
 
+  function kebabize(str) {
+    return str
+      .split("")
+      .map((letter, idx) => {
+        return letter.toUpperCase() === letter
+          ? `${idx !== 0 ? "-" : ""}${letter.toLowerCase()}`
+          : letter;
+      })
+      .join("");
+  }
+
   let instance = {
     wait,
     msToTime,
     downloadFileFromData,
+    kebabize,
   };
   return instance;
 })();
