@@ -20,6 +20,7 @@ function ToolView() {
   async function handleProcessingFinished({ result, duration }) {
     _state.result = result;
     _state.duration = duration;
+    _state.detailSelect = { module: null, part: null, section: null, test: null },
     renderResults();
   }
   _validator.onProcessingFinished(handleProcessingFinished);
