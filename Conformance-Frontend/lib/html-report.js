@@ -2,7 +2,8 @@ const HtmlReport = (() => {
   let instance;
 
   function openReport(report) {
-    let child = window.open("about:blank", "myChild");
+    let id = UI.generateElementId();
+    let child = window.open("about:blank", id);
     child.document.write(
       `<html>
          <head>
@@ -11,11 +12,15 @@ const HtmlReport = (() => {
          <script>
            location.href = "#";
          </script>
+         <body>
+         </body>
        </html>`
     );
-    let root = UI.getRoot(child.document);
-    root.appendChild(report);
     child.document.close();
+    child.addEventListener("load", () => {
+      let root = UI.getRoot(child.document);
+      root.appendChild(report);
+    });
   }
 
   function generateReport(result) {
@@ -114,11 +119,10 @@ const HtmlReport = (() => {
         {
           className: "list-group",
           children: moduleNames.reduce((elements, moduleName) => {
-            console.log("elements", elements);
             let { verdict } = modules[moduleName];
             let parts = modules[moduleName];
             let partNames = Object.keys(modules[moduleName]).filter(
-              (part) => part !== "verdict"
+              (part) => part !== "verdict" && part !== "name"
             );
 
             elements.push({
