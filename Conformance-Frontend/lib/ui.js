@@ -1,4 +1,6 @@
 const UI = (function () {
+  let scrollPositions = {};
+
   function createElement(config) {
     if (!config) return;
     const elementType = config.element || "div";
@@ -106,19 +108,21 @@ const UI = (function () {
 
   function saveScrollPosition(elementId) {
     let scrollElement = UI.getElement(elementId);
+    console.log(scrollElement);
     if (!scrollElement) return;
-    UI.scrollPositions[elementId] = {
+    scrollPositions[elementId] = {
       scrollLeft: scrollElement.scrollLeft,
-      scrollRight: scrollElement.scrollRight,
+      scrollTop: scrollElement.scrollTop,
     };
+    console.log(scrollPositions[elementId])
   }
 
   function loadScrollPosition(elementId) {
     let scrollElement = UI.getElement(elementId);
     if (!scrollElement) return;
-    if (!UI.scrollPositions[elementId]) return;
-    scrollElement.scrollLeft = UI.scrollPositions[elementId].scrollLeft;
-    scrollElement.scrollRight = UI.scrollPositions[elementId].scrollRight;
+    if (!scrollPositions[elementId]) return;
+    scrollElement.scrollLeft = scrollPositions[elementId].scrollLeft;
+    scrollElement.scrollTop = scrollPositions[elementId].scrollTop;
   }
 
   function replaceElement(elementId, newElement) {

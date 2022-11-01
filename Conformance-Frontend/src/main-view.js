@@ -31,11 +31,14 @@ function MainView() {
       children: [
         { id: navigationElementId },
         {
-          className: "container-xl flex-fill py-4 overflow-auto",
-          style: {
-            backgroundColor: "white",
+          className: "flex-fill overflow-auto",
+          children: {
+            className: "container-xl py-4",
+            style: {
+              backgroundColor: "white",
+            },
+            children: { id: contentElementId },
           },
-          children: { id: contentElementId },
         },
       ],
     });

@@ -113,6 +113,7 @@ function ToolView() {
         },
         {
           className: "container-fluid d-flex border rounded p-0",
+          style: "max-height: 90vh",
           children: [{ id: resultSummaryId }, { id: resultDetailsId }],
         },
       ],
@@ -127,13 +128,19 @@ function ToolView() {
     _resultSummaryId = elementId = elementId || _resultSummaryId;
     let resultSummary = UI.createElement({
       id: elementId,
-      className: "border-end p-3 w-50",
+      className: "border-end w-50 d-flex flex-column",
       children: [
-        { element: "h5", text: "Summary", className: "mb-3 fw-semibold" },
         {
+          text: "Summary",
+          className: "fs-5 fw-semibold bg-light border-bottom py-2 px-3",
+        },
+        {
+          id: elementId + "-scroll",
+          className: "flex-grow-1 overflow-auto",
           children: Object.keys(_state.result.entries)
             .filter((key) => key !== "Stats" && key !== "verdict")
             .map((module, index) => ({
+              className: "p-3 border-bottom",
               children: [
                 {
                   className: "fs-5 mb-2",
@@ -143,18 +150,17 @@ function ToolView() {
                       className: getVerdictIcon(
                         _state.result.entries[module].verdict
                       ),
-                      style: "width: 1.5em",
                     },
-                    { element: "span", text: module },
+                    { element: "span", className: "ms-2", text: module },
                   ],
                 },
                 {
-                  style: "padding-left: 1.5em",
                   children: Object.keys(_state.result.entries[module])
                     .filter((key) => key !== "verdict")
                     .map((part) => ({
                       children: [
                         {
+                          className: "my-3 fw-semibold",
                           children: [
                             {
                               element: "i",
@@ -167,17 +173,18 @@ function ToolView() {
                           ],
                         },
                         {
-                          style: "padding-left: 1.5em",
+                          className: "list-group",
                           children: _state.result.entries[module][
                             part
                           ].test.map(({ section, test, state }) => ({
+                            element: "a",
                             className:
-                              "pb-2 " +
+                              "list-group-item list-group-item-action" +
                               (isSelected({ module, part, section, test })
-                                ? "fw-semibold"
-                                : "link-primary text-decoration-underline"),
-                            style: { cursor: "pointer" },
-                            onclick: isSelected({
+                                ? " fw-semibold bg-light"
+                                : ""),
+                            href: "#",
+                            onClick: isSelected({
                               module,
                               part,
                               section,
@@ -191,6 +198,7 @@ function ToolView() {
                                     section,
                                     test,
                                   };
+                                  UI.saveScrollPosition(elementId + "-scroll");
                                   renderResultSummary();
                                   renderResultDetails();
                                 },
@@ -216,15 +224,13 @@ function ToolView() {
                       ],
                     })),
                 },
-                Object.keys(_state.result.entries).length - 3 === index
-                  ? null
-                  : { element: "hr" },
               ],
             })),
         },
       ],
     });
     UI.replaceElement(_resultSummaryId, resultSummary);
+    UI.loadScrollPosition(elementId + "-scroll");
   }
 
   function renderResultDetails(elementId) {
@@ -258,9 +264,12 @@ function ToolView() {
     );
     let resultDetails = UI.createElement({
       id: elementId,
-      className: "p-3 w-50",
+      className: "w-50",
       children: [
-        { element: "h5", text: "Details" },
+        {
+          text: "Details",
+          className: "fs-5 fw-semibold bg-light border-bottom py-2 px-3",
+        },
         {
           element: "table",
           className: "table",
