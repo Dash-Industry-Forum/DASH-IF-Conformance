@@ -36,8 +36,10 @@ $cmaf_cmfc = $return_array[0];
 $cmaf_cmf2 = $return_array[1];
 
 # Store media type for selection set checks later
-$mediaType = $xml->getElementsByTagName('hdlr')->item(0)->getAttribute('handler_type');
-$cmaf_mediaTypes[$current_period][$current_adaptation_set][$current_representation] = $mediaType;
+if($xml->getElementsByTagName('hdlr')->item(0)){
+  $mediaType = $xml->getElementsByTagName('hdlr')->item(0)->getAttribute('handler_type');
+  $cmaf_mediaTypes[$current_period][$current_adaptation_set][$current_representation] = $mediaType;
+}
 
 $adaptationSet = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
 
