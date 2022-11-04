@@ -1,0 +1,21 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - 'development'
+
+jobs:
+  deploy_staging:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      envname: staging
+      docker_tag: latest
+      docker_port: 8000
+    secrets:
+      host: ${{secrets.HOST}}
+      user: ${{secrets.USER}}
+      private_key: ${{secrets.PRIVATE_KEY}}
+
+
+
