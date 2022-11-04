@@ -151,8 +151,7 @@ if (!$tExists) {
     return;
 }
 
-///\todo enable when period duration info is coded
-$periodDurations = array(0,0);//DASHIF\Utility\periodDurationInfo();
+$periodDurations = DASHIF\Utility\periodDurationInfo();
 $pStarts = $periodDurations[0];
 $pDurations = $periodDurations[1];
 $coverage = false;

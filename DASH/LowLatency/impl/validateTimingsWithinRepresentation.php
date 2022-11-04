@@ -1,7 +1,6 @@
 <?php
 
-global $session_dir, $current_period, $presentation_times, $decode_times, $adaptation_set_template,
-$reprsentation_template, $logger;
+global $session, $current_period, $presentation_times, $decode_times, $logger;
 
 $representations = $adaptationSet['Representation'];
 
@@ -34,9 +33,7 @@ for ($i = 0; $i < sizeof($presStarts); $i++) {
     $presentation_times[$current_period][$adaptationSetId][$representationId][] = $earliestPresentationTime;
 }
 
-$adapt_dir = str_replace('$AS$', $adaptationSetId, $adaptation_set_template);
-$repXmlDir = str_replace(array('$AS$', '$R$'), array($adaptationSetId, $representationId), $reprsentation_template);
-$repXml = $session_dir . '/Period' . $current_period . '/' . $adapt_dir . '/' . $repXmlDir . '.xml';
+$repXml = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId) . '/atomInfo.xml';
 
 if (file_exists($repXml)) {
     $xml = get_DOM($repXml, 'atomlist');

@@ -2,11 +2,12 @@
 
 namespace DASHIF;
 
-include_once 'LowLatency_Initialization.php';
-
-
 class ModuleDASHLowLatency extends ModuleInterface
 {
+    private $maxSegmentDurations;
+    private $firstOption;
+    private $secondOption;
+
     public function __construct()
     {
         parent::__construct();
@@ -41,17 +42,11 @@ class ModuleDASHLowLatency extends ModuleInterface
         $this->validateUTCTiming();
         $this->validateLeapSecondInformation();
 
-
-        global $session_dir, $mpd_xml_report;
-        $mpd_xml = simplexml_load_file($session_dir . '/' . $mpd_xml_report);
-        $mpd_xml->dashif_ll = 'true';//NOTE this will be deprecated anyway
-        $mpd_xml->asXml($session_dir . '/' . $mpd_xml_report);
-
-        return 'true';
     }
 
     public function hookAdaptationSet()
     {
+        parent::hookAdaptationSet();
         /*
     $maxSegmentDurations = array();
     $first_option = array();
@@ -59,13 +54,13 @@ class ModuleDASHLowLatency extends ModuleInterface
     $presentation_times = array();
     $decode_times = array();
          */
-        parent::hookAdaptationSet();
-        return low_latency_validate_cross();
+        
+        $this->validateCross();
     }
 
     private function validateCross()
     {
-        include 'impl/validateCross.php';
+        $this->validateAdaptationSets();
     }
 
     private function validateAdaptationSets()

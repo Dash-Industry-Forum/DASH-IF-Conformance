@@ -37,6 +37,11 @@ class ModuleInterface
         return $this->enabled;
     }
 
+    public function setEnabled($newVal)
+    {
+        $this->enabled = $newVal;
+    }
+
 
     protected function message($message)
     {
@@ -69,6 +74,7 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("BeforeMPD");
+        $logger->message(null);
     }
     /**
      * A hook that is run between validating the MPD DOM, and reporting on it.
@@ -109,6 +115,7 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("MPD");
+        $logger->message(null);
     }
 
     /**
@@ -130,6 +137,10 @@ class ModuleInterface
      */
     public function hookBeforeRepresentation()
     {
+        global $logger;
+        $logger->setModule($this->name);
+        $logger->setHook("BeforeRepresentation");
+        $logger->message(null);
     }
     /**
      * A hook that is run after downloading and validating the first segment
@@ -161,6 +172,10 @@ class ModuleInterface
      */
     public function hookRepresentation()
     {
+        global $logger;
+        $logger->setModule($this->name);
+        $logger->setHook("Representation");
+        $logger->message(null);
     }
 
     /**
@@ -176,6 +191,10 @@ class ModuleInterface
      */
     public function hookBeforeAdaptationSet()
     {
+        global $logger;
+        $logger->setModule($this->name);
+        $logger->setHook("BeforeAdaptationSet");
+        $logger->message(null);
     }
     /**
      * A hook that is run after running a crossRepresentationProcess.
@@ -205,6 +224,10 @@ class ModuleInterface
      */
     public function hookAdaptationSet()
     {
+        global $logger;
+        $logger->setModule($this->name);
+        $logger->setHook("AdaptationSet");
+        $logger->message(null);
     }
 
     /**
@@ -218,5 +241,9 @@ class ModuleInterface
      */
     public function hookPeriod()
     {
+        global $logger;
+        $logger->setModule($this->name);
+        $logger->setHook("Period");
+        $logger->message(null);
     }
 }

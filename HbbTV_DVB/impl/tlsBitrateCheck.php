@@ -1,8 +1,7 @@
 <?php
 
-global $session_dir, $mpd_dom, $locate;
+global $mpd_dom, $locate, $logger;
 
-global $logger;
 //test link https://media.axprod.net/TestVectors/v7-MultiDRM-SingleKey/Manifest.mpd
 if ($mpd_dom->getElementsByTagName('BaseURL')->length != 0) {
     $base_url = $mpd_dom->getElementsByTagName('BaseURL')->item(0)->textContent;

@@ -1,7 +1,6 @@
 <?php
 
-global $session_dir, $current_period, $service_description_info, $maxSegmentDurations,
-       $adaptationSet_template, $reprsentation_template, $logger;
+global $session, $current_period, $service_description_info, $maxSegmentDurations, $logger;
 
 
 $representations = $adaptationSet['Representation'];
@@ -12,13 +11,7 @@ foreach ($representations as $representationId => $representation) {
     $targetExceeds50Segment = false;
     $targetExceeds30Segment = false;
 
-    $adapt_dir = str_replace('$AS$', $adaptationSetId, $adaptationSet_template);
-    $rep_xml_dir = str_replace(
-        array('$AS$', '$R$'),
-        array($adaptationSetId, $representationId),
-        $reprsentation_template
-    );
-    $rep_xml = $session_dir . '/Period' . $current_period . '/' . $adapt_dir . '/' . $rep_xml_dir . '.xml';
+    $rep_xml = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId) . '/atomInfo.xml';
 
     if (!file_exists($rep_xml)) {
         continue;
@@ -92,7 +85,7 @@ foreach ($representations as $representationId => $representation) {
 
     $maxSegmentDurations[$representationId] = $maxSegmentDuration;
 
-    $moofsInSegments = checkSegment($adaptationSetId, $representationId, $segmentDurations);
+    $moofsInSegments = $this->checkSegment($adaptationSetId, $representationId, $segmentDurations);
     if ($moofsInSegments != null) {
         for ($i = 0; $i < $segmentCount; $i++) {
             $logger->test(
@@ -113,7 +106,7 @@ foreach ($representations as $representationId => $representation) {
             $logger->test(
                 "DASH-IF IOP CR Low Latency Live",
                 "Section 9.X.4.4",
-                "If Segments include only a single 'moof', then Segment MAY carry a 'smds' brand"
+                "If Segments include only a single 'moof', then Segment MAY carry a 'smds' brand",
                 $isSMDSInSegment,
                 "PASS",
                 "\"smds\" found in Period " . ($current_period + 1) . ' Adaptation Set ' .
@@ -129,7 +122,7 @@ foreach ($representations as $representationId => $representation) {
                 "Section 9.X.4.4",
                 "If Segments include only a single 'moof' and carries a 'smds' brand, it SHALL signal this by " .
                 "providing the @segmentProfiles including the 'smds' brand",
-                "If Segments include only a single 'moof', then Segment MAY carry a 'smds' brand"
+                "If Segments include only a single 'moof', then Segment MAY carry a 'smds' brand",
                 $isSMDSInSegmentProfiles[$i],
                 "FAIL",
                 "Corresponding segmentProfile found in Period " . ($current_period + 1) . ' Adaptation Set ' .
@@ -203,4 +196,4 @@ if (sizeof(array_unique($lowLatencySegmentPoints)) == 1 && $lowLatencySegmentPoi
     $isLowLatencySegment = true;
 }
 
-return $isLowLatencySegment
+return $isLowLatencySegment;

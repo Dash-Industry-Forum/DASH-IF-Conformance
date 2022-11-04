@@ -9,9 +9,16 @@
 NAME=  ValidateMP4
 
 ### include debug information: 1=yes, 0=no
-DBG= 1
+DBG=1
+SAN=0
+COV=0
 
-compatibility= -m32 -static-libstdc++
+FLAGS+=-Wall -Wextra -Werror
+
+## TODO: remove these
+FLAGS+=-Wno-unused-but-set-variable -Wno-unused-variable -Wno-unused-label -Wno-unused-parameter -Wno-int-to-pointer-cast -Wno-sequence-point -Wno-stringop-truncation
+
+#compatibility=-static-libstdc++
 
 DEPEND= dependencies
 
@@ -23,10 +30,20 @@ OBJDIR= ./obj
 
 CC=     $(shell which g++)
 
+FLAGS+=-std=c++11 -ffloat-store -Wall -I$(INCDIR) -DLITTLEENDIAN -Wno-multichar -Wno-unknown-pragmas -fpermissive -Wno-write-strings -fno-stack-protector
+
+ifdef COV
 LIBS= -lgcov #-lcurl
-FLAGS=-ffloat-store -Wall -I$(INCDIR) -DLITTLEENDIAN -Wno-multichar -Wno-unknown-pragmas -fpermissive -Wno-write-strings -fno-stack-protector
 FLAGS+=-fprofile-generate -fprofile-arcs -ftest-coverage -Wl,-lgcov
 LDFLAGS+=" -lgcov --coverage -WL -lgcov"
+endif
+
+ifdef SAN
+FLAGS+=-fsanitize=address,undefined -fno-sanitize=vptr -g3
+LDFLAGS+=-g
+LIBS+=-fsanitize=address,undefined
+endif
+
 ifdef DBG
 SUFFIX= #.dbg
 FLAGS+= -g
@@ -35,7 +52,9 @@ SUFFIX=
 FLAGS+= -O2 -DGCC
 endif
 
+ifdef COV
 FLAGS+=-ftest-coverage -fprofile-arcs
+endif
 
 OBJSUF= .o$(SUFFIX)
 

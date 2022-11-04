@@ -1,6 +1,6 @@
 <?php
 
-global $mpd_features, $session_dir, $current_period, $adaptation_set_template, $reprsentation_template, $logger;
+global $mpd_features, $session, $current_period, $logger;
 
 $period = $mpd_features['Period'][$current_period];
 $representations = $adaptation_set['Representation'];
@@ -16,9 +16,7 @@ $profiles = array();
 $levels = array();
 $elsts = array();
 foreach ($representations as $representationId => $representation) {
-    $adapt_dir = str_replace('$AS$', $adaptationSetId, $adaptation_set_template);
-    $rep_dir = str_replace(array('$AS$', '$R$'), array($adaptationSetId, $representationId), $reprsentation_template);
-    $rep_xml = $session_dir . '/Period' . $current_period . '/' . $adapt_dir . '/' . $rep_dir . '.xml';
+    $rep_xml = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId) . '/atomInfo.xml';
 
     if (!file_exists($rep_xml)) {
         return;

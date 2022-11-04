@@ -49,7 +49,7 @@ foreach ($metrics as $metric) {
             "Neither of reportingUrl or dvb:reportingUrl is an absolute URL for reporting schema $reporting_idx"
         );
 
-        ///\todo Check if this is the right validation (e.g. is empty valid)
+        ///\Correctness Check if this is the right validation (e.g. is empty valid)
         $logger->test(
             "HbbTV-DVB DASH Validation Requirements",
             "DVB: Section 10.12.3",
@@ -61,7 +61,7 @@ foreach ($metrics as $metric) {
             "probability is given, but not a valid integer for reporting schema $reporting_idx",
         );
 
-        ///\todo Check if this is the right validation (e.g. is empty valid)
+        ///\Correctness Check if this is the right validation (e.g. is empty valid)
         $logger->test(
             "HbbTV-DVB DASH Validation Requirements",
             "DVB: Section 10.12.3",

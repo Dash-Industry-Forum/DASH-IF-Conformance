@@ -98,9 +98,9 @@ UInt32 GetBits(BitBuffer *bb, UInt32 nBits, OSErr *errout)
 		goto bail;
 	}
 	
-    if (bb->curbits <= 0) {
-        bb->cbyte = *++bb->cptr;
-        bb->curbits = 8;
+	if (bb->curbits <= 0) {
+		bb->cbyte = *++bb->cptr;
+		bb->curbits = 8;
 		
 		if (bb->prevent_emulation != 0) {
 			if ((bb->emulation_position >= 2) && (bb->cbyte == 3)) {
@@ -117,7 +117,7 @@ UInt32 GetBits(BitBuffer *bb, UInt32 nBits, OSErr *errout)
 		}
 	}
 	
-	if (nBits > bb->curbits)
+	if (nBits > (UInt32)bb->curbits)
 		myBits = bb->curbits;
 	else
 		myBits = nBits;
@@ -163,7 +163,7 @@ UInt32 PeekBits(BitBuffer *bb, UInt32 nBits, OSErr *errout)
 		bb->curbits = 8;
 	}
 	
-	if (nBits > bb->curbits)
+	if (nBits > (UInt32)bb->curbits)
 		myBits = bb->curbits;
 	else
 		myBits = nBits;

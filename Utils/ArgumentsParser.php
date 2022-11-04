@@ -15,6 +15,8 @@ class ArgumentsParser
 
     public function parseAll()
     {
+        global $modules;
+
         $restidx = null;
         $this->parsedOptions = getopt($this->getShortOpts(), $this->getLongOpts(), $restidx);
 
@@ -26,8 +28,7 @@ class ArgumentsParser
             exit($this->help());
         }
 
-        global $modules;
-        foreach ($modules as $module) {
+        foreach ($modules as &$module) {
             $module->handleArguments();
         }
     }
@@ -43,6 +44,9 @@ class ArgumentsParser
                     return true;
                 }
             }
+        }
+        if ($_REQUEST[$name]) {
+            return true;
         }
         return false;
     }
@@ -72,6 +76,9 @@ class ArgumentsParser
 
     public function getPositionalArgument($argname)
     {
+        if ($argname == "url" && $_REQUEST["url"]) {
+            return urldecode($_REQUEST["url"]);
+        }
         switch ($argname) {
             case 'url':
                 return $this->extraArguments[0];
@@ -79,8 +86,28 @@ class ArgumentsParser
         return null;
     }
 
+    public function helpAPI(){
+      $helpObject = array(
+        description => "API Help for the DASH IF Conformance checker. All options can be passed in as either GET or POST parameters",
+        options => array(
+          url => "An url-encoded url to a DASH Manifest"
+        )
+      );
+        foreach ($this->allOptions as $option) {
+          $helpObject['options'][$option->long] = $option->desc;
+        }
+
+      return \json_encode($helpObject);
+
+    }
+
     public function help()
     {
+       
+      if (http_response_code() !== FALSE){
+        return $this->helpAPI();
+      }
+
         global $argv;
         $helptext = "Usage: " . $argv[0] . " [options] URL\n";
         foreach ($this->allOptions as $option) {

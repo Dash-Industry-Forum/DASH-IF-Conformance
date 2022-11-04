@@ -24257,3 +24257,9 @@ Stack trace:
 [08-Jun-2020 17:05:26 Europe/Berlin] PHP   3. validate_MPD() /var/www/html/Last/DASH-IF-Conformance/DASH/MPDProcessing.php:100
 [08-Jun-2020 17:05:26 Europe/Berlin] PHP   4. createMpdFeatureList() /var/www/html/Last/DASH-IF-Conformance/DASH/MPDValidation.php:54
 [08-Jun-2020 17:05:26 Europe/Berlin] PHP   5. formCurrentXmlPath() /var/www/html/Last/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php:90
+[21-Jul-2022 08:46:27 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method stdClass::asXml() in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/validateMPD.php:50
+Stack trace:
+#0 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/processMPD.php(51): validate_MPD()
+#1 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Utils/Process_cli.php(94): process_MPD()
+#2 {main}
+  thrown in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/validateMPD.php on line 50
