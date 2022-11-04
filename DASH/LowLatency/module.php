@@ -4,6 +4,10 @@ namespace DASHIF;
 
 class ModuleDASHLowLatency extends ModuleInterface
 {
+    private $maxSegmentDurations;
+    private $firstOption;
+    private $secondOption;
+
     public function __construct()
     {
         parent::__construct();

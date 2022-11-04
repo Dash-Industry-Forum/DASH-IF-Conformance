@@ -4,6 +4,15 @@ namespace DASHIF;
 
 class ModuleHbbTVDVB extends ModuleInterface
 {
+    private $periodCount;
+    private $hohSubtitleLanguages;
+    private $videoBandwidth;
+    private $audioBandwidth;
+    private $subtitleBandwidth;
+    private $associativity;
+    private $hasJPGraph;
+    private $hasJPBarGraph;
+
     public function __construct()
     {
         parent::__construct();
