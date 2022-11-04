@@ -209,7 +209,9 @@ class ModuleLogger
         if (!array_key_exists($this->currentHook, $this->entries[$this->currentModule])) {
             $this->entries[$this->currentModule][$this->currentHook] = array('verdict' => 'PASS');
         }
-        $this->entries[$this->currentModule][$this->currentHook][$type][] = $entry;
+        if ($entry !== null){
+          $this->entries[$this->currentModule][$this->currentHook][$type][] = $entry;
+        }
 
         $this->write();
     }
