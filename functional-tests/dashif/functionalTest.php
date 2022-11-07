@@ -115,7 +115,7 @@ final class functionalTest extends TestCase
             "https://livesim.dashif.org/livesim/testpic_2s/Manifest.mpd#t=posix:now"
         ];
         $content = file_get_contents(
-            "functional-tests/dashif/dashjs.json");
+            "functional-tests/dashif/dashjs-smoke.json");
         $dbJson = json_decode($content);
         $streamsToTest = array();
         foreach ($dbJson->items as $item) {

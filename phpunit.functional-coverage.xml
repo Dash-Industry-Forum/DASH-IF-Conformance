@@ -30,8 +30,8 @@
             <directory suffix=".php">vendor</directory>
         </exclude>
         <report>
-            <html outputDirectory="html-reports-functional-tests" lowUpperBound="50" highLowerBound="90"/>
-            <xml outputDirectory="xml-reports-functional-tests" lowUpperBound="50" highLowerBound="90"/>
+            <html outputDirectory="functional-test-results/html-reports-functional-tests" lowUpperBound="50" highLowerBound="90"/>
+            <xml outputDirectory="functional-test-results/xml-reports-functional-tests" lowUpperBound="50" highLowerBound="90"/>
         </report>
     </coverage>
 </phpunit>
