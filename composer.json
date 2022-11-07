@@ -1,5 +1,9 @@
 {
     "require-dev": {
-        "phpunit/phpunit": "^9"
+        "ext-curl": "*",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "ext-sqlite3": "*",
+        "phpunit/phpunit": "9.5.20"
     }
 }

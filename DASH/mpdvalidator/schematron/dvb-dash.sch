@@ -6,7 +6,7 @@
 	<ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
 	<ns prefix="dlb" uri="http://www.dolby.com/ns/2019/dash-if"/>
 
-	<let name="dvbdash-profile-2017" value="'dvbdash-profile-2017'"/>
+	<let name="dvbdash-profile-2017" value="'urn:dvb:dash:profile:dvb-dash:2017'"/>
 	<pattern>
 		<title>AdaptationSet element for DVB DASH 2017 profile</title>
 		<!-- Check the conformance of AdaptationSet -->

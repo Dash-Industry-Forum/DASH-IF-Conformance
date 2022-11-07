@@ -1,6 +1,6 @@
 <?php
 
-global $session $MediaProfDatabase;
+global $session, $MediaProfDatabase;
 
 $periodCount = sizeof($MediaProfDatabase);
 $adaptationCount = sizeof($MediaProfDatabase[0]);

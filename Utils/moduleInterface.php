@@ -74,6 +74,7 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("BeforeMPD");
+        $logger->message(null);
     }
     /**
      * A hook that is run between validating the MPD DOM, and reporting on it.
@@ -114,6 +115,7 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("MPD");
+        $logger->message(null);
     }
 
     /**
@@ -138,6 +140,7 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("BeforeRepresentation");
+        $logger->message(null);
     }
     /**
      * A hook that is run after downloading and validating the first segment
@@ -172,6 +175,7 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("Representation");
+        $logger->message(null);
     }
 
     /**
@@ -190,6 +194,7 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("BeforeAdaptationSet");
+        $logger->message(null);
     }
     /**
      * A hook that is run after running a crossRepresentationProcess.
@@ -222,6 +227,7 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("AdaptationSet");
+        $logger->message(null);
     }
 
     /**
@@ -238,5 +244,6 @@ class ModuleInterface
         global $logger;
         $logger->setModule($this->name);
         $logger->setHook("Period");
+        $logger->message(null);
     }
 }

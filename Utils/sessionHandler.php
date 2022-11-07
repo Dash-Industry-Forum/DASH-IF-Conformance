@@ -48,7 +48,8 @@ rmdir($dir);
     public function getDir()
     {
 
-        $sessionDir =  sys_get_temp_dir() . "/sessions/" . $this->getId();
+        //$sessionDir =  sys_get_temp_dir() . "/sessions/" . $this->getId();
+        $sessionDir =  __DIR__ . "/sessions/" . $this->getId();
         $this->createFolderIfNotExists($sessionDir, "session");
         return realpath($sessionDir);
     }

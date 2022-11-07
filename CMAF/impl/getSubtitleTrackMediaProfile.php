@@ -3,7 +3,7 @@
 $subtitleMediaProfile = "unknown";
 if ($mpParameters['codec'] == "WebVTT") {
     if ($mpParameters['brand'] == 'cwvt') {
-        retrun "WebVTT";
+        return "WebVTT";
     }
 } else {
     if (
