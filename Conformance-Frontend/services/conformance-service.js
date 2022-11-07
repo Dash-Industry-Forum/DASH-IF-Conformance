@@ -7,13 +7,14 @@ const ConformanceService = (function () {
       text: "Segment Validation",
       queryParam: "segments",
     },
-    { id: "dash-if", text: "Dash-IF" },
-    { id: "ll-dash-if", text: "LL Dash-IF" },
-    { id: "dvb-19", text: "DVB (2019)" },
-    { id: "dvb-18", text: "DVB (2018)" },
-    { id: "hbbtv", text: "HbbTV" },
+    { id: "dash-if", text: "Dash-IF", queryParam: "dash" },
     { id: "cmaf", text: "CMAF", queryParam: "cmaf" },
-    { id: "cta-wave", text: "CTA-WAVE" },
+    { id: "cta-wave", text: "CTA-WAVE", queryParam: "ctawave" },
+    { id: "hbbtv", text: "HbbTV", queryParam: "hbbtv" },
+    { id: "dvb", text: "DVB", queryParam: "dvb" },
+    { id: "dash-if-ll", text: "Dash-IF IOP Low Latency", queryParam: "lowlatency" },
+    { id: "dash-if-iop", text: "Dash-IF interoperability", queryParam: "iop" },
+    { id: "dolby", text: "Dolby", queryParam: "dolby" },
   ];
 
   async function validateContentByUrl({ mpdUrl, activeModules }) {
