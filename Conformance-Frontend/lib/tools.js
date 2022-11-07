@@ -1,4 +1,6 @@
 const Tools = (function () {
+  let _markdownConverter = null;
+
   async function wait(millis) {
     return new Promise(function (resolve) {
       setTimeout(resolve, millis);
@@ -53,11 +55,49 @@ const Tools = (function () {
       .join("");
   }
 
+  function getMarkdownConverter() {
+    if (_markdownConverter) return _markdownConverter;
+
+    const classMap = {
+//      body: "container",
+//      h1: "ui large header",
+//      h2: "ui medium header",
+//      ul: "ui list",
+//      li: "ui item",
+    };
+
+    const bindings = Object.keys(classMap).map((key) => ({
+      type: "output",
+      regex: new RegExp(`<${key}(.*)>`, "g"),
+      replace: `<${key} class="${classMap[key]}" $1>`,
+    }));
+
+    _markdownConverter = new showdown.Converter({
+      extensions: bindings,
+    });
+
+    return _markdownConverter;
+  }
+
+  function markdownToHtml(markdownText) {
+    let converter = getMarkdownConverter();
+    let content = converter.makeHtml(markdownText);
+    let parser = new DOMParser();
+    let doc = parser.parseFromString(content, "text/html");
+    let html = UI.createElement({
+      className: "container",
+    });
+    let elements = Array.from(doc.body.children);
+    elements.forEach(element => html.appendChild(element));
+    return html;
+  }
+
   let instance = {
     wait,
     msToTime,
     downloadFileFromData,
     kebabize,
+    markdownToHtml,
   };
   return instance;
 })();

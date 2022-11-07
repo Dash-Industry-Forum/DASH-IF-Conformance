@@ -1,17 +1,11 @@
 function NavigationBar() {
   const EVENT_LOCATION_CHANGE = "location_change";
 
-  const locations = [
-    { id: "home", text: "Validator", icon: "fa-solid fa-gears" },
-    { id: "about", text: "About", icon: "fa-solid fa-info-circle" },
-    { id: "howto", text: "How to use", icon: "fa-solid fa-question-circle" },
-    { id: "faq", text: "FAQ" },
-  ];
+  let locations = [];
 
   let _rootElementId;
   let _buttonsElementId;
   let eventHandler = new EventHandler();
-  let activeLocation = locations[0].id;
 
   function onLocationChange(callback) {
     eventHandler.on(EVENT_LOCATION_CHANGE, callback);
@@ -27,6 +21,10 @@ function NavigationBar() {
 
   function setActiveLocation(location) {
     activeLocation = location;
+  }
+
+  function setLocations(newLocations) {
+    locations = newLocations;
   }
 
   function render(rootElementId) {
@@ -114,6 +112,7 @@ function NavigationBar() {
     onLocationChange,
     offLocationChange,
     setActiveLocation,
+    setLocations,
   };
   return instance;
 }

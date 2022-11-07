@@ -1,7 +1,17 @@
 function MainView() {
   const PAGE_HOME = "home";
+  const PAGE_ABOUT = "about";
+  const PAGE_FAQ = "faq";
+
+  const locations = [
+    { id: "home", text: "Validator", icon: "fa-solid fa-gears", getView: () => new ToolView() },
+    { id: "about", text: "About", icon: "fa-solid fa-info-circle", getView: () => new AboutView() },
+    { id: "faq", text: "FAQ", icon: "fa-solid fa-question-circle", getView: () => new FaqView() },
+  ];
 
   let _navigationBar = new NavigationBar();
+  _navigationBar.setLocations(locations);
+  _navigationBar.setActiveLocation(locations[0].id);
   let _activePage = PAGE_HOME;
   let _rootElementId;
   let _contentElementId;
@@ -31,7 +41,7 @@ function MainView() {
       children: [
         { id: navigationElementId },
         {
-          className: "flex-fill overflow-auto",
+          className: "flex-fill overflow-scroll",
           children: {
             className: "container-xl py-4",
             style: {
@@ -52,13 +62,10 @@ function MainView() {
 
   function renderContent(rootElementId) {
     _contentElementId = rootElementId = rootElementId || _contentElementId;
-    console.log("render content");
     UI.clearElement(rootElementId);
-    switch (_activePage) {
-      case PAGE_HOME:
-        let toolView = new ToolView();
-        return toolView.render(rootElementId);
-    }
+    let location = locations.find(location => location.id === _activePage)
+    let view = location.getView();
+    view.render(rootElementId);
   }
 
   let instance = {
