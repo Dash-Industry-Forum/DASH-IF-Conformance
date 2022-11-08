@@ -3,7 +3,7 @@ name: unit-test-coverage
 on:
   push:
     branches:
-      - 'fix/unit-test-coverage'
+      - 'development'
 
 jobs:
   unit-test:
