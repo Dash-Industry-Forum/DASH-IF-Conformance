@@ -40,11 +40,11 @@ foreach ($profilesArray as $profile) {
 }
 
 ## Compare each profile-specific MPD with the original MPD
-$mpd_media_types = DASHIF\Utility\media_types($mpd_dom);
+$mpd_media_types = DASHIF\Utility\mediaTypes($mpd_dom);
 $ind = 0;
 
 foreach ($profile_specific_MPDs as $profile_specific_MPD) {
-    $mpd_media_types_new = DASHIF\Utility\media_types($profile_specific_MPD->getElementsByTagName('MPD')->item(0));
+    $mpd_media_types_new = DASHIF\Utility\mediaTypes($profile_specific_MPD->getElementsByTagName('MPD')->item(0));
 
     $str = '';
     foreach ($mpd_media_types as $mpd_media_type) {

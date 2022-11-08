@@ -8,7 +8,7 @@ $tfdtBoxes = $xmlRepresentation->getElementsByTagName('tfdt');
 
 ## Consistency check of the start times within the segments with the timing indicated by the MPD
 // MPD information
-$mpdTiming = mdp_timing_info();
+$mpdTiming = $this->mpdTimingInfo();
 
 // Segment information
 $type = $mpd_features['type'];

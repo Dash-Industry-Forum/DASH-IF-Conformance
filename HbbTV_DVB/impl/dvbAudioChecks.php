@@ -111,9 +111,9 @@ $logger->test(
 
 $adapt_role_element_found = false;
 $adaptationMimeType = $adaptation->getAttribute('mimeType');
-$adapt_audioSamplingRate = $adapt->getAttribute('audioSamplingRate');
+$adapt_audioSamplingRate = $adaptation->getAttribute('audioSamplingRate');
 
-$adaptationCodecs = $adaptatation->getAttribute('codecs');
+$adaptationCodecs = $adaptation->getAttribute('codecs');
 
 
 if ($contentType == 'audio') {
@@ -131,7 +131,7 @@ if ($contentType == 'audio') {
 
 ## Information from this part is for Section 6.3:Dolby and 6.4:DTS
 if (!empty($audioConfigurationSchemes)) {
-    if (DASHIF\Utility\profileListContains($adaptationCodecs, 'ec-3')) {
+    if (DASHIF\Utility\profileListContainsProfile($adaptationCodecs, 'ec-3')) {
         $logger->test(
             "HbbTV-DVB DASH Validation Requirements",
             "Section E.2.5",
@@ -150,7 +150,7 @@ if (!empty($audioConfigurationSchemes)) {
             "No scheme found Period $this->periodCount adaptation set " . ($i + 1)
         );
     }
-    if (DASHIF\Utility\profileListContains($adaptationCodecs, 'ac-4')) {
+    if (DASHIF\Utility\profileListContainsProfile($adaptationCodecs, 'ac-4')) {
         $logger->test(
             "HbbTV-DVB DASH Validation Requirements",
             "Section 6.3",
@@ -207,7 +207,7 @@ foreach ($representations as $representation) {
 
     $dependencyIds[] = $representation->getAttribute('dependencyId');
 
-    $representationCodecs = $rep->getAttribute('codecs');
+    $representationCodecs = $representation->getAttribute('codecs');
 
     $representationRoleElementFound = !empty($representation->getElementsByTagName('Role'));
 

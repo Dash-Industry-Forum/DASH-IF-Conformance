@@ -67,7 +67,7 @@ $logger->test(
 ## Warn on low values of MPD@minimumUpdatePeriod (for now the lowest possible value is assumed to be 1 second)
 $minimumUpdateWarning = false;
 if ($mpd_dom->getAttribute('minimumUpdatePeriod') != '') {
-    $mup = time_parsing($mpd_dom->getAttribute('minimumUpdatePeriod'));
+    $mup = DASHIF\Utility\timeParsing($mpd_dom->getAttribute('minimumUpdatePeriod'));
     if ($mup < 1) {
         $minimumUpdateWarning = true;
     }

@@ -124,14 +124,14 @@ foreach ($anchorParts as $anchor) {
             );
 
             $timeRange = explode(',', substr($value, strpos($value, 'posix') + 6));
-            $t = DASHIF\Utility\compute_timerange($timeRange);
+            $t = $this->computeTimerange($timeRange);
         } else {
             if (strpos($value, 'npt') !== false) {
                 $timeRange = explode(',', substr($value, strpos($value, 'npt') + 4));
-                $t = DASHIF\Utility\compute_timerange($timeRange);
+                $t = $this->computeTimerange($timeRange);
             } else {
                 $timeRange = explode(',', $value);
-                $t = DASHIF\Utility\compute_timerange($timeRange);
+                $t = $this->computeTimerange($timeRange);
             }
         }
     }

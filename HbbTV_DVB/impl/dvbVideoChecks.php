@@ -96,7 +96,7 @@ $representationFrameRate = array();
 
 
 $j = 0;
-foreach ($representations as $respresentation) {
+foreach ($representations as $representation) {
     $j++;
     $representationWidthPresent = ($representation->getAttribute("width") != '');
     $representationHeightPresent  = ($representation->getAttribute("height") != '');
@@ -149,7 +149,7 @@ foreach ($representations as $respresentation) {
     }
 
     $codecs[] = $representation->getAttribute('codecs');
-    $subRepresentations = $rep->getElementsByTagName('SubRepresentation');
+    $subRepresentations = $representation->getElementsByTagName('SubRepresentation');
     foreach ($subRepresentations as $subRepresentation) {
         $subRepresentationCodecs[] = $subRepresentation->getAttribute('codecs');
 

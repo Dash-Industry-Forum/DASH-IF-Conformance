@@ -62,6 +62,7 @@ class ModuleHbbTVDVB extends ModuleInterface
         }
     }
 
+
     public function hookBeforeMPD()
     {
         parent::hookBeforeMPD();
@@ -115,6 +116,10 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/dvbAudioChecks.php';
     }
 
+    private function mpdTimingInfo(){
+      return include 'impl/mpdTimingInfo.php';
+    }
+
     private function dvbSubtitleChecks($adaptation, $representations, $i)
     {
         include 'impl/dvbSubtitleChecks.php';
@@ -123,6 +128,11 @@ class ModuleHbbTVDVB extends ModuleInterface
     private function dvbMpdAnchorCheck()
     {
         include 'impl/dvbMpdAnchorCheck.php';
+    }
+
+    private function computeTimerange($timeRange)
+    {
+        return include 'impl/MPDUtility/computeTimerange.php';
     }
 
     private function dvbContentProtection($adaptation, $representations, $i, $cenc)

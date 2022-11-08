@@ -1,9 +1,10 @@
 <?php
 
 global $logger;
+
 $protectionCount = 0;
 $defaultKIDs = array();
-$contentProtection = $adapt->getElementsByTagName('ContentProtection');
+$contentProtection = $adaptation->getElementsByTagName('ContentProtection');
 foreach ($contentProtection as $protection) {
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",

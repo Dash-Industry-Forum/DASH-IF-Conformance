@@ -182,8 +182,12 @@ if ($hdlrType == 'vide') {
     }
 } elseif ($hdlrType == 'soun') {
     $soundSampleDescription = $xmlRepresentation->getElementsByTagName('soundSampleDescriptiondescription');
-    $sdType = $soundSampleDescription->item(0)->getAttribute('sdType');
-    $samplingRate = $soundSampleDescription->item(0)->getAttribute('sampleRate');
+    $sdType = null;
+    $samplingRate = null;
+    if ($soundSampleDescription->item(0)){
+     $sdType = $soundSampleDescription->item(0)->getAttribute('sdType');
+      $samplingRate = $soundSampleDescription->item(0)->getAttribute('sampleRate');
+    }
     $audioDecoderSpecificInfo = $xmlRepresentation->getElementsByTagName('DecoderSpecificInfo');
     if ($audioDecoderSpecificInfo->length > 0) {
         $channelConfig = $audioDecoderSpecificInfo->item(0)->getAttribute('channelConfig');
@@ -221,7 +225,7 @@ if ($hdlrType == 'vide') {
 $sidxBoxes = $xmlRepresentation->getElementsByTagName('sidx');
 $subsegmentSignaling = array();
 if ($sidxBoxes->length != 0) {
-    foreach ($sidxBoxes as $sidx_box) {
+    foreach ($sidxBoxes as $sidxBox) {
         $subsegmentSignaling[] = (int)($sidxBox->getAttribute('referenceCount'));
     }
 }
