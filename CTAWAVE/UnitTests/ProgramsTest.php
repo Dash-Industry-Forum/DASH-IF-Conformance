@@ -9,7 +9,7 @@ declare(strict_types=1);
 require_once __DIR__.'/../CTAWAVE_Programs.php';
 require_once __DIR__.'/../CTAWAVE_PresentationProfile.php';
 require_once __DIR__.'/../CTAWAVE_SelectionSet.php';
-require_once __DIR__.'/../../../Utils/Load.php';
+require_once __DIR__.'/../../Utils/Load.php';
 
 use PHPUnit\Framework\TestCase;
 
