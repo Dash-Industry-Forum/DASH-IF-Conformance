@@ -12,4 +12,4 @@ $this->resolved = $this->xlinkResolveRecursive($this->resolved);
 $printable = new \DOMDocument('1.0');
 $node = $printable->importNode($this->resolved, true);
 $printable->appendChild($node);
-fwrite(STDERR, "Resolved:\n" . $printable->saveXML() . "\n\n");
+//fwrite(STDERR, "Resolved:\n" . $printable->saveXML() . "\n\n");

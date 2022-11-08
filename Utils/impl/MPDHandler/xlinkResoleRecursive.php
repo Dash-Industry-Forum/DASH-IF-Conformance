@@ -10,8 +10,6 @@ $children = $node->childNodes;
 foreach ($attributes as $attribute) {
     if ($attribute->nodeName == "xlink:href") {
         $res = file_get_contents($attribute->nodeValue);
-        fwrite(STDERR, "$attribute->nodeValue \n");
-        fwrite(STDERR, "$res\n");
 
         $simpleXML = simplexml_load_string($res);
         if (!$simpleXML) {
