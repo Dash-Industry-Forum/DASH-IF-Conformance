@@ -34,11 +34,9 @@ include __DIR__ . '/Session.php';         //#Session Functions, No Direct Execut
 //#Document loading functions, mostly xml. Some assertion options and error initialization
 include __DIR__ . '/Load.php';
 include __DIR__ . '/FileOperations.php';  //#Filesystem and XML checking functions. No Direct Executable Code.
-include __DIR__ . '/VisitorCounter.php';  //#Various Session-based functions. No Direct Executable Code.
 //#Global variables. Direct evaluation of post/session vars to define conditionals,
 //#conditional extra includes for module initialization
 include __DIR__ . '/GlobalVariables.php';
-include __DIR__ . '/PrettyPrint.php';     //#Pretty printing functions for terminal output. No Direct Executable Code.
 include __DIR__ . '/segment_download.php'; //#Very large function for downloading data. No Direct Executable Code.
 include __DIR__ . '/segment_validation.php'; //#Segment validation functions. No Direct Executable Code.
 
@@ -89,7 +87,6 @@ ini_set("error_log", "myphp-error.log");
 
 #session_create();
 
-//update_visitor_counter();
 
 $parseSegments = $argumentParser->getOption("segments");
 $compactOutput = $argumentParser->getOption("compact");
