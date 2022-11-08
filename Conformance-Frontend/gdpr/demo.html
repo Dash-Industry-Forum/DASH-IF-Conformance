@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+	<title>jQuery EU Cookie Law popups</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<!-- Dependencies: JQuery should be loaded first -->
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+	<!-- CSS and JS for our code -->
+	<link rel="stylesheet" type="text/css" href="css/jquery-eu-cookie-law-popup.css"/>
+	<script src="js/jquery-eu-cookie-law-popup.js"></script>
+
+	<!-- Bootstrap for the Bootstrap examples -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/demo.css"/>
+
+</head>
+<body>
+
+	<div class="eupopup eupopup-top"></div>
+
+	<h1>jQuery EU Cookie Law plugin</h1>
+
+	<div class="description">
+		<b>An easy-to-install jQuery plugin to create EU Cookie Law popups and for GDPR compliance.</b>
+		<br/><br>
+		Supports multiple layouts out of the box. Works well with Bootstrap. Easy to customize markup and CSS.
+		<br/><br>
+		This is a demo page; the newest live demo will always be <a href="http://www.wimagguc.com/2018/05/gdpr-compliance-with-the-jquery-eu-cookie-law-plugin/">here</a>.
+		<br/>
+		For the code, install instructions and to see how amazingly free it is, <a href="https://github.com/wimagguc/jquery-eu-cookie-law-popup">go to Github</a>.
+		<br/>
+		Also, you might find other interesting things on my blog at <a href="http://www.wimagguc.com/">wimagguc.com</a>.<br/>
+	</div>
+
+	<H2>Get started</H2>
+
+	<div class="description">
+		To get started, first include jQuery and import the plugin's files:
+	</div>
+
+	<div class="code">
+&lt;script src="https://code.jquery.com/jquery-3.3.1.min.js"&gt;&lt;/script&gt;
+<br>
+&lt;link rel="stylesheet" type="text/css" href="css/jquery-eu-cookie-law-popup.css"/&gt;
+<br>
+&lt;script src="js/jquery-eu-cookie-law-popup.js"&gt;&lt;/script&gt;
+	</div>
+
+	<div class="description">
+		(Mind you, you need to run the code on a webserver to be able to set cookies.)
+	</div>
+
+	<H2>Simple popup</H2>
+
+	<div class="description">
+		In its simplest form, you can add an EU Cookie Law popup by simply adding the "eupopup" classes to any HTML tag.
+	</div>
+
+	<div class="code">
+&lt;body class="eupopup eupopup-top"&gt;
+	</div>
+
+	<div class="description">
+		You can also choose from these layouts:
+		<br/>
+		<img src="docs/eucookielaw-demo.jpg" width="70%"/>
+		<br/>
+		<ul>
+			<li>Top of the page (“eupopup”, or “eupopup eupopup-top”)</li>
+			<li>Fixed banner on top (“eupopup eupopup-fixedtop”)</li>
+			<li>Fixed to bottom (“eupopup eupopup-bottom”)</li>
+			<li>Fixed window, to bottom left (“eupopup eupopup-bottomleft”)</li>
+			<li>Fixed window, bottom right (“eupopup eupopup-bottomright”)</li>
+			<li>Inline (“eupopup eupopup-block”)</li>
+		</ul>
+		<br>
+		And these colours or styles:
+		<br>
+		<img src="docs/eucookielaw-demo2.jpg" width="70%"/>
+		<ul>
+			<li>White text on dark background ("eupopup-color-default")</li>
+			<li>Dark text on light background ("eupopup-color-inverse")</li>
+			<li>Compact ("eupopup-style-compact")</li>
+		</ul>
+	</div>
+
+	<H2>Custom HTML</H2>
+
+	<div class="description">
+		To use a custom HTML markup, you can either add it as a Javascript parameter (read about it later), or by adding a DIV with the classname "eupopup-markup".
+	</div>
+
+	<div class="code">
+&lt;div class="eupopup eupopup-container eupopup-container-block"&gt;
+<br>
+&nbsp; &lt;div class="eupopup-markup"&gt;
+<br>
+&nbsp; &nbsp; &lt;div class="eupopup-head"&gt;This website is using cookies&lt;/div&gt;
+<br>
+&nbsp; &nbsp; &lt;div class="eupopup-body"&gt;We use cookies to ensure that we give you the best experience on our website. If you continue using the site, we\'ll assume that you are happy to receive all cookies on this website.&lt;/div&gt;
+<br>
+&nbsp; &nbsp; &lt;div class="eupopup-buttons"&gt;
+<br>
+&nbsp; &nbsp; &nbsp; &lt;a href="#" class="eupopup-button eupopup-button_1"&gt;Continue&lt;/a&gt;
+<br>
+&nbsp; &nbsp; &nbsp; &lt;a href="/?cookie-policy" target="_blank" class="eupopup-button eupopup-button_2"&gt;Learn more&lt;/a&gt;
+<br>
+&nbsp; &nbsp; &lt;/div&gt;
+<br>
+&nbsp; &nbsp; &lt;div class="clearfix"&gt;&lt;/div&gt;
+<br>
+&nbsp; &nbsp; &lt;a href="#" class="eupopup-closebutton"&gt;x&lt;/a&gt;
+<br>
+&nbsp; &lt;/div&gt;
+<br>
+&lt;/div&gt;
+	</div>
+
+	<H2>Parameters</H2>
+
+	<div class="description">
+		The script takes quite a few parameters. The suggested method to override these is from the init method (find the out-of-the-box one in the jquery-eu-cookie-law-popup.js):
+	</div>
+
+	<div class="code">
+		$(document).euCookieLawPopup().init({
+		<br>
+		&nbsp; 	cookiePolicyUrl : '/?cookie-policy',
+		<br>
+		&nbsp; 	popupPosition : 'top',
+		<br>
+		&nbsp; 	colorStyle : 'default',
+		<br>
+		&nbsp; 	compactStyle : false,
+		<br>
+		&nbsp; 	popupTitle : 'This website is using cookies',
+		<br>
+		&nbsp; 	popupText : 'We use cookies to ensure that we give you the best experience on our website. If you continue without changing your settings, we\'ll assume that you are happy to receive all cookies on this website.',
+		<br>
+		&nbsp; 	buttonContinueTitle : 'Continue',
+		<br>
+		&nbsp; 	buttonLearnmoreTitle : 'Learn&nbsp;more',
+		<br>
+		&nbsp; 	buttonLearnmoreOpenInNewWindow : true,
+		<br>
+		&nbsp; 	agreementExpiresInDays : 30,
+		<br>
+		&nbsp; 	autoAcceptCookiePolicy : false,
+		<br>
+		&nbsp; 	htmlMarkup : null
+		<br>
+		});
+	</div>
+
+	<H2>Events</H2>
+
+	<div class="description">
+		If you need to be notified about the consent somewhere in your code (for example, to enable the cookies in other parts of your software), you can listen to the events.
+    <br><br>
+    <b>'user_cookie_consent_changed'</b> event is fired right after the user accepted or rejected the popup.
+    <br><br>
+    <b>'user_cookie_already_accepted'</b> event is fired on page load if the user already accepted using cookies in a previous session.
+	</div>
+
+  <div class="code">
+	$(document).bind("user_cookie_consent_changed", function(event, object) {
+	<br>
+	&nbsp; 	// true or false
+	<br>
+	&nbsp; 	console.log("User consent: " + $(object).attr('consent') );
+	<br>
+	});
+	</div>
+
+  <div class="code">
+	$(document).bind("user_cookie_already_accepted", function(event, object) {
+	<br>
+	&nbsp; 	// true or false
+	<br>
+	&nbsp; 	console.log("User consent: " + $(object).attr('consent') );
+	<br>
+	});
+	</div>
+
+  <H2>GDPR compliance</H2>
+
+  <div class="description">
+    There are certain things that the website simply cannot do without the user's consent. With this plugin you can ask the user first and perform certain actions based on their decision, using the built-in events.
+    <br><br>
+    Using Google Analytics integration as an example: it's still safe to ignore most of the code as per usual, but only call the initialisation function when the user consent status changed.
+  </div>
+
+  <div class="code">
+    &lt;!-- still include most of the snippet --&gt;<br>
+    &lt;script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"&gt;&lt;/script&gt;<br>
+    &lt;script&gt;<br>
+      window.dataLayer = window.dataLayer || [];<br>
+      function gtag(){dataLayer.push(arguments);}<br>
+    <br>
+      // Don't call the init functions just yet:<br>
+      // gtag('js', new Date());<br>
+      // gtag('config', 'UA-XXXXXXXX-1');<br>
+    <br>
+      function initialiseGoogleAnalytics() {<br>
+        &nbsp; gtag('js', new Date());<br>
+        &nbsp; gtag('config', 'UA-XXXXXXXX-1');<br>
+      }<br>
+    <br>
+      // Subscribe for the cookie consent events<br>
+      $(document).bind("user_cookie_already_accepted", function(event, object) {<br>
+        &nbsp; initialiseGoogleAnalytics();<br>
+      });<br>
+    <br>
+      $(document).bind("user_cookie_consent_changed", function(event, object) {<br>
+        &nbsp; const userConsentGiven = $(object).attr('consent');<br>
+        &nbsp; if (userConsentGiven) {<br>
+          &nbsp; &nbsp; // User clicked on enabling cookies. Now it's safe to call the<br>
+          &nbsp; &nbsp; // init functions.<br>
+          &nbsp; &nbsp; initialiseGoogleAnalytics();<br>
+        &nbsp; }<br>
+      });<br>
+    &lt;/script&gt;<br>
+  </div>
+
+	<H2>Created By</H2>
+
+	<div class="description">
+		Richard Dancsi<br/><br/>
+		Blog: <a href="http://www.wimagguc.com/">www.wimagguc.com</a>
+		<br/>
+		Twitter: <a href="http://twitter.com/wimagguc">twitter.com/wimagguc</a>
+		<br/>
+		Github: <a href="http://github.com/wimagguc/">github.com/wimagguc</a>
+		<br/><br/>
+		<a href="https://github.com/wimagguc/jquery-eu-cookie-law-popup/blob/master/LICENSE.md">MIT, do-with-the-code-whatever-you-please License</a>
+	</div>
+
+</body>
+</html>
