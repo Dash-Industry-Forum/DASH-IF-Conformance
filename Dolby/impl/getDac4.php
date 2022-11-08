@@ -13,7 +13,7 @@ class DAC4
 
 $result = array();
 
-$doms  = $xml->getElementsByTagName('ac4_dsi_v1');
+$doms  = $atomInfo->getElementsByTagName('ac4_dsi_v1');
 foreach ($doms as $dom)
 {
     $dac4 = new DAC4();
