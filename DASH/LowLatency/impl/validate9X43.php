@@ -4,7 +4,7 @@ global $mpd_features, $current_period, $utc_timing_info, $logger;
 
 
 $segmentAccessInfo = array();
-$segmentTemplateCombined = get_segment_access(
+$segmentTemplateCombined = DASHIF\Utility\mergeSegmentAccess(
     $period['SegmentTemplate'],
     $adaptationSet['SegmentTemplate']
 );
@@ -14,7 +14,7 @@ $inbandEventStreams = $adaptationSet['InbandEventStream'];
 $representations = $adaptationSet['Representation'];
 foreach ($representations as $representationId => $representation) {
     $validRepPoints[$representationId] = true;
-    $segmentTemplateCombined = get_segment_access(
+    $segmentTemplateCombined = DASHIF\Utility\mergeSegmentAccess(
         $segmentTemplateCombined,
         $representation['SegmentTemplate']
     );
@@ -59,7 +59,7 @@ foreach ($representations as $representationId => $representation) {
         $availabilityStartTime = $mpd_features['availabilityStartTime'];
         if ($availabilityStartTime != null) {
             if (
-                (time_parsing($availabilityStartTime) - time_parsing($producerReferenceTime['wallClockTime'])) !=
+                (DASHIF\Utility\timeParsing($availabilityStartTime) - DASHIF\Utility\timeParsing($producerReferenceTime['wallClockTime'])) !=
                 (int) ($producerReferenceTime['presentationTime'])
             ) {
                 continue;
@@ -123,7 +123,7 @@ foreach ($representations as $representationId => $representation) {
     } else {
         $check1 = $segmentTemplateCombined[0]['duration'] != null &&
           strpos($segmentTemplateCombined[0]['media'], '$Number') !== false;
-        $check2 = $segmentTemplateCombined[0]['SegmentTimeline'] != null && 
+        $check2 = $segmentTemplateCombined[0]['SegmentTimeline'] != null &&
           strpos($segmentTemplateCombined[0]['media'], '$Number') !== false &&
           strpos($segmentTemplateCombined[0]['media'], '$Time') !== false;
         if (!($check1 || $check2)) {

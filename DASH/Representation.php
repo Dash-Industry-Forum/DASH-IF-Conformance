@@ -17,7 +17,7 @@ function construct_flags($period, $adaptation_set, $representation){
     global $session_dir, $mpd_features, $dashif_conformance, $low_latency_dashif_conformance, $inband_event_stream_info, $current_period, $current_adaptation_set, $current_representation, $profiles;
     
     ## @minimumBufferTime 
-    $timeSeconds = (string) time_parsing($mpd_features['minBufferTime']);
+    $timeSeconds = (string) DASHIF\Utility\timeParsing($mpd_features['minBufferTime']);
     $processArguments = ' -minbuffertime ' . $timeSeconds;
 
     ## @bandwidth
