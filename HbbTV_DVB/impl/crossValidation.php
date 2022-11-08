@@ -7,7 +7,7 @@ $adaptations = $mpd_features['Period'][$current_period]['AdaptationSet'];
 for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationIndex++) {
     $loc = $session->getAdaptationDir($current_period, $adaptationIndex);
     $fileCount = 0;
-    $files = glob($loc . "/*.xml");
+    $files = DASHIF\rglob("$loc/*.xml");
     if ($files) {
         $fileCount = count($files);
     }

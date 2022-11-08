@@ -26,7 +26,7 @@ for ($adaptationSetIndex = 0; $adaptationSetIndex < sizeof($adaptationSets); $ad
 
     $location = $session->getAdaptationDir($current_period, $adaptationSetIndex);
     $filecount = 0;
-    $files = glob($location . "/*.xml");
+    $files = DASHIF\rglob("$location/*.xml");
     if ($files) {
         $filecount = count($files);
     }

@@ -37,7 +37,7 @@ if (count($indices) == 1) {
 // For this naming there is no automation yet, since this implementation has an assumption on ids
 $location1 = $session->getAdaptationDir($current_period, $indices[0] - 1);
 $fileCount1 = 0;
-$files1 = glob($location1 . "/*.xml");
+$files1 = DASHIF\rglob("$location1/*.xml");
 if ($files1) {
     $fileCount1 = count($files1);
 }
@@ -66,7 +66,7 @@ for ($i = 0; $i < $fileCount1; $i++) {
     // For this naming there is no automation yet, since this implementation has an assumption on ids
     $location2 = $session->getAdaptationDir($current_period, $indices[1] - 1);
     $fileCount2 = 0;
-    $files2 = glob($location2 . "/*.xml");
+    $files2 = DASHIF\rglob("$location2/*.xml");
     if ($files2) {
         $fileCount2 = count($files2);
     }

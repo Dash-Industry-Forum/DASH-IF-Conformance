@@ -47,7 +47,7 @@ foreach ($selectionSets as $selectionSet) {
 
         $location = $session->getAdaptationDir($current_period, $adaptationIndex);
         $filecount = 0;
-        $files = glob($location . "/*.xml");
+        $files = DASHIF\rglob("$location/*.xml");
         if ($files) {
             $filecount = count($files);
         }

@@ -25,6 +25,7 @@ require_once 'ArgumentsParser.php';
 
 $argumentParser = new DASHIF\ArgumentsParser();
 
+include __DIR__ . '/functions.php';
 include __DIR__ . '/sessionHandler.php';
 require __DIR__ . '/moduleInterface.php';
 include __DIR__ . '/moduleLogger.php';

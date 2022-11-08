@@ -10,8 +10,7 @@ $adaptationCount = sizeof($adaptations);
 for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex++) {
     $location = $session->getAdaptationDir($current_period, $adaptationIndex);
     $fileCount = 0;
-    ///\RefactorTodo This pattern is used in multiple locations, but won't work anymore
-    $files = glob($location . "/*.xml");
+    $files = DASHIF\rglob("$location/*.xml");
     if (!$files) {
         continue;
     }
