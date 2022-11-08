@@ -76,7 +76,6 @@ function processHLS(){
                     $return_seg_val[] = $cmaf_function_name($cmaf_when_to_call[1]);
                 
                 err_file_op(1);
-                print_console($session_dir . '/Period0/' . $error_log . '.txt', "Period 1 AdaptationSet " . ($current_adaptation_set+1) . " Representation " . ($current_representation+1) . " Results");
                 $current_representation++;
             }
             
@@ -101,7 +100,6 @@ function processHLS(){
     $progress_xml->completed = "true";
     $progress_xml->completed->addAttribute('time', time());
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
-    writeEndTime((int)$progress_xml->completed->attributes());
     exit;
 }
 
