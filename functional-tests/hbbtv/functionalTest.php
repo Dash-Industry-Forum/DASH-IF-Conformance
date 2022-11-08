@@ -99,32 +99,6 @@ final class functionalTest extends TestCase
      */
     public function streamProvider()
     {
-        /*$i = 0;
-        $limit = 2000;
-        $startnumber = 0;
-        $blacklist = [
-            "https://dash.akamaized.net/WAVE/vectors/avc_sets/12.5_25_50/t16/2022-01-17/stream.mpd",
-            "https://dash.akamaized.net/WAVE/vectors/avc_sets/14.985_29.97_59.94/t16/2022-01-17/stream.mpd",
-            "https://dash.akamaized.net/WAVE/vectors/avc_sets/12.5_25_50/t3/2022-01-17/stream.mpd",
-            "https://dash.akamaized.net/WAVE/vectors/avc_sets/14.985_29.97_59.94/t3/2022-01-17/stream.mpd",
-            "https://dash.akamaized.net/WAVE/vectors/avc_sets/15_30_60/t16/2022-01-17/stream.mpd",
-            "https://dash.akamaized.net/WAVE/vectors/avc_sets/15_30_60/t3/2022-01-17/stream.mpd"
-        ];
-        $content = file_get_contents(
-            "functional-tests/cta/wave.json");
-        $dbJson = json_decode($content);
-        $streamsToTest = array();
-        foreach ($dbJson as $item) {
-            foreach ($item as $subitem) {
-                if ($limit && $i >= $limit) {
-                    break;
-                }
-                if (!in_array($subitem->mpdPath, $blacklist) && $i >= $startnumber) {
-                    $streamsToTest[] = array($subitem->mpdPath);
-                }
-                $i++;
-            }
-        }*/
         $streamsToTest = array(
             array("http://127.0.0.1:3333/jccp/hbbtv/org.hbbtv_MSE-LL0200/content/MSE_integration_throughput_XHR_HD/manifest.mpd")
         );
