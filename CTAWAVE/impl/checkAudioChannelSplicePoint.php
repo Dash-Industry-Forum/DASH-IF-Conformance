@@ -13,7 +13,9 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
             $hdlr = $xml1->getElementsByTagName("hdlr")->item(0)->getAttribute("handler_type");
             if ($hdlr == "soun") {
                 $decoderSpecInfo = $xml1->getElementsByTagName("DecoderSpecificInfo")->item(0);
-                $channels_p1 = $decoderSpecInfo->getAttribute("channelConfig");
+                if ($decoderSpecInfo){
+                  $channels_p1 = $decoderSpecInfo->getAttribute("channelConfig");
+                }
             }
         }
         $dir2 = $session->getRepresentationDir($i + 1, $adapt, 0);
@@ -22,7 +24,9 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
             $hdlr = $xml2->getElementsByTagName("hdlr")->item(0)->getAttribute("handler_type");
             if ($hdlr == "soun") {
                 $decoderSpecInfo = $xml2->getElementsByTagName("DecoderSpecificInfo")->item(0);
-                $channels_p2 = $decoderSpecInfo->getAttribute("channelConfig");
+                if ($decoderSpecInfo){
+                  $channels_p2 = $decoderSpecInfo->getAttribute("channelConfig");
+                }
 
                 if ($channels_p1 != $channels_p2) {
                     $errorMsg = "###Warning: WAVE Content Spec 2018Ed-Section 7.2.2: 'Audio channel configuration " .

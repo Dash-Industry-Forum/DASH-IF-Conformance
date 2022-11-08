@@ -22,7 +22,7 @@ $audiomediaProfileArray = array("AAC_Core", "Adaptive_AAC_Core", "AAC_Multichann
                       "Enhanced_AC-3","AC-4_SingleStream","MPEG-H_SingleStream");
 $subtitlemediaProfileArray = array("TTML_IMSC1_Text", "TTML_IMSC1_Image");
 
-for ($adaptationIndex = 0; $adaptationIndex < $adapts_count; $adaptationIndex++) {
+for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex++) {
     $switchingSetMediaProfile = array();
     $location = $session->getAdaptationDir($current_period, $adaptationIndex);
     $fileCount = 0;
@@ -50,7 +50,7 @@ for ($adaptationIndex = 0; $adaptationIndex < $adapts_count; $adaptationIndex++)
             continue;
         }
         $hdlrBox = $xml->getElementsByTagName("hdlr")->item(0);
-        $hdlrType = $hdlrBox->getAttribute("hdlrType");
+        $hdlrType = $hdlrBox->getAttribute("handler_type");
         $mediaProfileTrackResult = $this->getMediaProfile($xml, $hdlrType, $fileIndex, $adaptationIndex);
         $mediaProfileTrack = $mediaProfileTrackResult[0];
 

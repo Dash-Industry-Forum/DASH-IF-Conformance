@@ -48,11 +48,11 @@ for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex
             continue;
         }
 
-        $hdlrBox = $xml->getElementsByTagName("hdlrBox")->item(0);
+        $hdlrBox = $xml->getElementsByTagName("hdlr")->item(0);
         if (!$hdlrBox) {
             continue;
         }
-        $hdlrType = $hdlrBox->getAttribute("hdlrType");
+        $hdlrType = $hdlrBox->getAttribute("handler_type");
 
         $mediaProfileResult = $this->getMediaProfile($xml, $hdlrType, $fileIndex, $adaptationIndex);
         array_push($switchingSetMediaProfiles, $mediaProfileResult[0]);

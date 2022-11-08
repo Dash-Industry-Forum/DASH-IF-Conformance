@@ -5,7 +5,7 @@ global $CMAFMediaProfileAttributesVideo, $CMAFMediaProfileAttributesAudio, $CMAF
 global $logger;
 
 $compatibleBrands = $xml->getElementsByTagName("ftyp")->item(0)->getAttribute("compatibleBrands");
-$hdlrType = $xml->getElementsByTagName("hdlr")->item(0)->getAttribute("hdlrType");
+$hdlrType = $xml->getElementsByTagName("hdlr")->item(0)->getAttribute("handler_type");
 
 if ($hdlrType == 'vide') {
     $mediaProfileParameters = $CMAFMediaProfileAttributesVideo;

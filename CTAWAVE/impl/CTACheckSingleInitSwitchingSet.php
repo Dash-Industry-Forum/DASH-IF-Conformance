@@ -11,6 +11,7 @@ for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex
     $location = $session->getAdaptationDir($current_period, $adaptationIndex);
     $fileCount = 0;
     $files = DASHIF\rglob("$location/*.xml");
+
     if (!$files) {
         continue;
     }
@@ -22,7 +23,7 @@ for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex
             continue;
         }
         $hdlrBox = $xml->getElementsByTagName("hdlrBox")->item(0);
-        if ($hdlrBox->getAttribute("hdlrType") != "vide") {
+        if ($hdlrBox == null || $hdlrBox->getAttribute("handler_type") != "vide") {
             continue;
         }
 
