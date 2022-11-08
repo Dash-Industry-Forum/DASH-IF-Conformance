@@ -17,7 +17,7 @@
          verbose="true">
     <testsuites>
         <testsuite name="default">
-            <directory>functional-tests/dashif</directory>
+            <directory>validation-tests/dashif</directory>
         </testsuite>
     </testsuites>
 
@@ -29,9 +29,5 @@
         <exclude>
             <directory suffix=".php">vendor</directory>
         </exclude>
-        <report>
-            <html outputDirectory="functional-test-results/html-reports-functional-tests" lowUpperBound="50" highLowerBound="90"/>
-            <xml outputDirectory="functional-test-results/xml-reports-functional-tests" lowUpperBound="50" highLowerBound="90"/>
-        </report>
     </coverage>
 </phpunit>

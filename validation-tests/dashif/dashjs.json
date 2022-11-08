@@ -1,0 +1,1644 @@
+{
+  "items": [
+    {
+      "name": "Single Resolution Multi-Rate",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/1a/netflix/exMPD_BIP_TC1.mpd",
+          "name": "AVC, Single-Resolution Multi-Rate, On Demand profile, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/1a/sony/SNE_DASH_SD_CASE1A_REVISED.mpd",
+          "name": "AVC, Single-Resolution Multi-Rate, On Demand profile, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/1a/qualcomm/1/MultiRate.mpd",
+          "name": "AVC, Single-Resolution Multi-Rate, On Demand profile, 3",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/1a/qualcomm/2/MultiRate.mpd",
+          "name": "AVC, Single-Resolution Multi-Rate, On Demand profile, 4",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/1b/qualcomm/1/MultiRatePatched.mpd",
+          "name": "AVC, Single-Resolution Multi-Rate, Live profile, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/1b/qualcomm/2/MultiRate.mpd",
+          "name": "AVC, Single-Resolution Multi-Rate, Live profile, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/1c/qualcomm/1/MultiRate.mpd",
+          "name": "AVC, Single-Resolution Multi-Rate, Live profile, SegmentTimeline, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/1c/qualcomm/2/MultiRate.mpd",
+          "name": "AVC, Single-Resolution Multi-Rate, Live profile, SegmentTimeline, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/1b/qualcomm/1_1/MultiRatePatched.mpd",
+          "name": "AVC, Single-Resolution Multi-Rate, Live profile, Video-Only",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dashif/ad-insertion-testcase1/batch5/counter/a/ad-insertion-testcase1.mpd",
+          "name": "counter/a",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dashif/ad-insertion-testcase1/batch5/counter/b/ad-insertion-testcase1.mpd",
+          "name": "counter/b",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dashif/ad-insertion-testcase1/batch5/counter/c/ad-insertion-testcase1.mpd",
+          "name": "counter/c",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dashif/ad-insertion-testcase1/batch5/real/a/ad-insertion-testcase1.mpd",
+          "name": "real/a",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dashif/ad-insertion-testcase1/batch5/real/b/ad-insertion-testcase1.mpd",
+          "name": "real/b",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Multi-Resolution Multi-Rate",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/2a/qualcomm/1/MultiResMPEG2.mpd",
+          "name": "AVC, Multi-Resolution Multi-Rate, On Demand profile, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/2a/qualcomm/2/MultiRes.mpd",
+          "name": "AVC, Multi-Resolution Multi-Rate, On Demand profile, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/2b/qualcomm/1/MultiResMPEG2.mpd",
+          "name": "AVC, Multi-Resolution Multi-Rate, Live profile, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/2b/qualcomm/2/MultiRes.mpd",
+          "name": "AVC, Multi-Resolution Multi-Rate, Live profile, 3",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/2c/qualcomm/1/MultiResMPEG2.mpd",
+          "name": "AVC, Multi-Resolution Multi-Rate, Live profile,  SegmentTimeline, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/2c/qualcomm/2/MultiRes.mpd",
+          "name": "AVC, Multi-Resolution Multi-Rate, Live profile,  SegmentTimeline, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/2a/qualcomm/1/MultiResMPEG2.mpd",
+          "name": "AVC, Multi-Resolution Multi-Rate, On Demand profile, upto 1080p, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/2a/qualcomm/2/MultiRes.mpd",
+          "name": "AVC, Multi-Resolution Multi-Rate, On Demand profile, upto 1080p, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/2b/DTV/1/live.mpd",
+          "name": "AVC, Multi-Resolution Multi-Rate, Live profile, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/2b/qualcomm/1/MultiResMPEG2.mpd",
+          "name": "AVC, Multi-Resolution Multi-Rate, Live profile,  upto 1080p, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/2b/qualcomm/2/MultiRes.mpd",
+          "name": "AVC, Multi-Resolution Multi-Rate, Live profile,  upto 1080p, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/2c/qualcomm/1/MultiResMPEG2.mpd",
+          "name": "AVC, Multi-Resolution Multi-Rate, Live profile, upto 1080p,  SegmentTimeline, 1",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Multiple Audio Representations",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/3a/fraunhofer/aac-lc_stereo_without_video/ElephantsDream/elephants_dream_audio_only_aaclc_stereo_sidx.mpd",
+          "name": "Multiple Audio Representations, On Demand profile, Audio-only, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/3a/fraunhofer/aac-lc_stereo_without_video/Sintel/sintel_audio_only_aaclc_stereo_sidx.mpd",
+          "name": "Multiple Audio Representations, On Demand profile, Audio-only, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/3a/fraunhofer/heaac_stereo_without_video/ElephantsDream/elephants_dream_audio_only_heaac_stereo_sidx.mpd",
+          "name": "Multiple Audio Representations, On Demand profile, Audio-only, HEAAC, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/3a/fraunhofer/heaac_stereo_without_video/Sintel/sintel_audio_only_heaac_stereo_sidx.mpd",
+          "name": "Multiple Audio Representations, On Demand profile, Audio-only, HEAAC, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/3a/fraunhofer/heaacv2_stereo_without_video/ElephantsDream/elephants_dream_audio_only_heaacv2_stereo_sidx.mpd",
+          "name": "Multiple Audio Representations, On Demand profile, Audio-only, HEAACv2, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/3a/fraunhofer/heaacv2_stereo_without_video/Sintel/sintel_audio_only_heaacv2_stereo_sidx.mpd",
+          "name": "Multiple Audio Representations, On Demand profile, Audio-only, HEAACv2, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/3b/fraunhofer/aac-lc_stereo_with_video/ElephantsDream/elephants_dream_480p_aaclc_stereo_sidx.mpd",
+          "name": "Multiple Audio Representations, On Demand profile, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/3b/fraunhofer/aac-lc_stereo_with_video/Sintel/sintel_480p_aaclc_stereo_sidx.mpd",
+          "name": "Multiple Audio Representations, On Demand profile, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/3b/fraunhofer/heaac_stereo_with_video/ElephantsDream/elephants_dream_480p_heaac_stereo_sidx.mpd",
+          "name": "Multiple Audio Representations, On Demand profile, HEAAC, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/3b/fraunhofer/heaac_stereo_with_video/Sintel/sintel_480p_heaac_stereo_sidx.mpd",
+          "name": "Multiple Audio Representations, On Demand profile, HEAAC, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/3b/fraunhofer/heaacv2_stereo_with_video/ElephantsDream/elephants_dream_480p_heaacv2_stereo_sidx.mpd",
+          "name": "Multiple Audio Representations, On Demand profile, HEAACv2, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/3b/fraunhofer/heaacv2_stereo_with_video/Sintel/sintel_480p_heaacv2_stereo_sidx.mpd",
+          "name": "Multiple Audio Representations, On Demand profile, HEAACv2, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/3b/sony/SNE_DASH_CASE3B_SD_REVISED.mpd",
+          "name": "Multiple Audio Adaptation Sets, Multiple Video Representations, On Demand profile, 1",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Addition of Subtitles",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/4b/qualcomm/1/ED_OnDemand_5SecSeg_Subtitles.mpd",
+          "name": "Multiple Subtitles, XML",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/4b/qualcomm/2/TearsOfSteel_onDem5secSegSubTitles.mpd",
+          "name": "Multiple Subtitles, TTML",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/4b/qualcomm/3/Solekai.mpd",
+          "name": "Singe Subtitle, XML",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/4c/1/dash.mpd",
+          "name": "Test Vector 4",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Multiple Periods",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5a/nomor/1.mpd",
+          "name": "Multiple Period, Multi-Rate Single-Resolution, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5a/nomor/3.mpd",
+          "name": "Multiple Period, Multi-Rate Single-Resolution, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5a/nomor/4.mpd",
+          "name": "Multiple Period, Multi-Rate Single-Resolution, Different Content, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5a/nomor/5.mpd",
+          "name": "Multiple Period, Multi-Rate Single-Resolution, 3",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5b/nomor/1.mpd",
+          "name": "Multiple Period, Multi-Rate Single-Resolution, Different Content, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5b/nomor/2.mpd",
+          "name": "Multiple Period, Multi-Rate Single-Resolution, Different Content, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5b/nomor/3.mpd",
+          "name": "Multiple Period, Multi-Rate Single-Resolution, Different Content with no Audio, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5b/nomor/4.mpd",
+          "name": "Multiple Period, Multi-Rate Single-Resolution, xlink (onRequest), 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5b/nomor/5.mpd",
+          "name": "Multiple Period, Multi-Rate Single-Resolution, xlink (onRequest), 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5b/nomor/6.mpd",
+          "name": "Multiple Period, Multi-Rate Single-Resolution, xlink (onLoad), 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5b/nomor/7.mpd",
+          "name": "Multiple Period, Multi-Rate Single-Resolution, xlink (onLoad), 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5b/nomor/8.mpd",
+          "name": "Multiple Period, Multi-Rate Single-Resolution, xlink (onRequest), 3",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5b/nomor/9.mpd",
+          "name": "Multiple Period, Multi-Rate Single-Resolution, xlink (onRequest), 4",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5b/nomor/10.mpd",
+          "name": "Multiple Period, Multi-Rate Single-Resolution, xlink (onLoad), 3",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5b/nomor/11.mpd",
+          "name": "Multiple Period, Multi-Rate Single-Resolution, xlink (onLoad), 4",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5c/nomor/4_1a.mpd",
+          "name": "Multiple period,remote entity with xlink, continuous with asset id",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5c/nomor/4_1b.mpd",
+          "name": "Multiple period with 2 period remote entity",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5c/nomor/4_1c.mpd",
+          "name": "Multiple period, remote entity has xlink",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5c/nomor/4_1d.mpd",
+          "name": "Multi period, an xlink returns a 404",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5c/nomor/4_1e.mpd",
+          "name": "Multi period, xlink period has default content, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5c/nomor/4_1f.mpd",
+          "name": "Multi period with duration attribute in last period",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5c/nomor/5_1a.mpd",
+          "name": "Multi period with xlink, continuous with asset identifier",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5c/nomor/5_1b.mpd",
+          "name": "Multi period with 2 period remote entity (onRequest)",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5c/nomor/5_1c.mpd",
+          "name": "Multi period with xlink(onRequest) in a remote entity",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5c/nomor/5_1d.mpd",
+          "name": "Multi period with xlink returning 404",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5c/nomor/5_1e.mpd",
+          "name": "Multi period, xlink period has default content, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/5c/nomor/5_1f.mpd",
+          "name": "Multi period with only duration attribute in last period (onRequest)",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Dynamic Segment Offering",
+      "submenu": [
+        {
+          "url": "http://54.72.87.160/stattodyn/statodyn.php?type=mpd&pt=1376172180&tsbd=120&origmpd=https%3A%2F%2Fdash.akamaized.net%2Fdash264%2FTestCases%2F1b%2Fqualcomm%2F2%2FMultiRate.mpd&php=http%3A%2F%2Fdasher.eu5.org%2Fstatodyn.php&mpd=&debug=0&hack=.mpd",
+          "name": "Dynamic Segment, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "http://54.72.87.160/stattodyn/statodyn.php?type=mpd&pt=1376172390&tsbd=120&origmpd=http%3A%2F%2Fdash.akamaized.net%2Fdash264%2FTestCases%2F1b%2Fqualcomm%2F2%2FMultiRate.mpd&php=http%3A%2F%2Fdasher.eu5.org%2Fstatodyn.php&mpd=&debug=0&hack=.mpd",
+          "name": "Dynamic Segment, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "http://54.72.87.160/stattodyn/statodyn.php?type=mpd&pt=1376172485&tsbd=10&origmpd=http%3A%2F%2Fdash.akamaized.net%2Fdash264%2FTestCases%2F1b%2Fqualcomm%2F1%2FMultiRatePatched.mpd&php=http%3A%2F%2Fdasher.eu5.org%2Fstatodyn.php&mpd=&debug=0&hack=.mpd",
+          "name": "Dynamic Segment, 3",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Dynamic Segment Offering with MPD Update",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/1a/netflix/exMPD_BIP_TC1.mpd",
+          "name": "AVC, Single-Resolution Multi-Rate, On Demand profile, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic), basic",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim/start_1800/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with availability start time",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim/mup_300/tsbd_500/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with minimum update period, time shift buffer depth",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim/modulo_10/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with time limited sessions",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim/periods_20/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with period addition",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim/scte35_2/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with scte35 ad splice",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim/utc_direct-head/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with utc timing in manifest",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/periods_60/xlink_30/insertad_1/testpic_2s/Manifest.mpd",
+          "name": "Live with xlink period, continuous with asset identifier ",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/periods_60/xlink_30/insertad_2/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with 2 period remote entity",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/periods_60/xlink_30/insertad_3/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic), remote entity with xlink",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/periods_60/xlink_30/insertad_4/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with a 404 xlink",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/periods_60/xlink_30/insertad_5/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with default content in xlink period",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/periods_1/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with SegmentTemplate ('$Number$')",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/segtimeline_1/testpic_6s/Manifest.mpd",
+          "name": "Live (dynamic) with SegmentTemplate ('$Time$')",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with SegmentTemplate (@duration)",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/segtimeline_1/testpic_6s/Manifest.mpd",
+          "name": "Live (dynamic) with SegmentTimeline",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/baseurl_u10_d20/baseurl_d10_u20/periods_10/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with multiple BaseURL, period addition",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/periods_0/peroff_1/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with PTO",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/periods_2/peroff_1/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with PTO, period addition",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/periods_1/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with single period",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/periods_60/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with multiple periods",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/periods_60/continuous_1/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with period continuity",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/periods_60/utc_ntp/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with UTCTiming (NTP)",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/periods_60/utc_sntp/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with UTCTiming (SNTP)",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim/scte35_2/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with inband dash event",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/periods_60/etp_30/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with period duration, early termination default",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/periods_60/etp_30/etpDuration_10/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with period duration, early termination",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim-dev/baseurl_d40_u20/baseurl_u40_d20/testpic_2s/Manifest.mpd",
+          "name": "Live (dynamic) with multiple BaseURL",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Addition of Trick Mode",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/9a/qualcomm/1/MultiRate.mpd",
+          "name": "Trick Mode, On-Demand profile, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/9a/qualcomm/2/MultiRate.mpd",
+          "name": "Trick Mode, On-Demand profile, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/9b/qualcomm/1/MultiRate.mpd",
+          "name": "Trick Mode, Live profile, Segment Template, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/9b/qualcomm/2/MultiRate.mpd",
+          "name": "Trick Mode, Live profile, Segment Template, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/9c/qualcomm/1/MultiRate.mpd",
+          "name": "Trick Mode, Live profile, Segment Timeline, 1",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Multiple Track Content",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/10a/1/iis_forest_short_poem_multi_lang_480p_single_adapt_aaclc_sidx.mpd",
+          "name": "Multiple Track Content, Multiple Audio, Single Video, 1",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Single Resolution Multi-Rate",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/MultiPeriod_OnDemand/TwoPeriods/TwoPeriod_OnDemand.mpd",
+          "name": "Two period OnDemand",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/MultiPeriod_OnDemand/ThreePeriods/ThreePeriod_OnDemand2.mpd",
+          "name": "Three period OnDemand ",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/MultiPeriod_OnDemand/TwoPeriods/TwoPeriod_OnDemand_presentationDur.mpd",
+          "name": "Two periods with presentationDuration",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/MultiPeriod_OnDemand/ThreePeriods/ThreePeriod_OnDemand_presentationDur.mpd",
+          "name": "Three periods with presentationDuration",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/MultiPeriod_OnDemand/ThreePeriods/ThreePeriod_OnDemand_presentationDur_AudioTrim.mpd",
+          "name": "Three periods with presentationDuration and trimmed audio",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Dolby Audio 6-Channel ID",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dolby/1/1/ChID_voices_51_256_ddp.mpd",
+          "name": "Multi Channel Audio, Dolby Audio 6-Channel ID",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Dolby Single Stereo Audio Track",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dolby/3/1/ChID_voices_20_128_ddp.mpd",
+          "name": "Multi Channel Audio, Dolby Audio EC-3, On Demand profile, Single Stereo",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Dolby Multiple Adaptation Sets",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dolby/2/1/ChID_voices_71_768_ddp.mpd",
+          "name": "Multi Channel Audio, Dolby Audio EC-3, On Demand profile, Single Audio Representation",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dolby/4/1/ChID_voices_71_384_448_768_ddp.mpd",
+          "name": "Multi Channel Audio, Dolby Audio EC-3, On Demand profile, Multiple Audio Representations",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Dolby Audio AC-4",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesDolby/1/Living_Room_1080p_20_96k_25fps.mpd",
+          "name": "Multi Channel Audio, Dolby Audio AC-4, On Demand profile, Stereo, 25fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesDolby/2/Living_Room_1080p_20_96k_2997fps.mpd",
+          "name": "Multi Channel Audio, Dolby Audio AC-4, On Demand profile, Stereo, 29.97fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesDolby/3/Living_Room_1080p_51_192k_25fps.mpd",
+          "name": "Multi Channel Audio, Dolby Audio AC-4, On Demand profile, 5.1 channels, 25fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesDolby/4/Living_Room_1080p_51_192k_2997fps.mpd",
+          "name": "Multi Channel Audio, Dolby Audio AC-4, On Demand profile, 5.1 channels, 29.97fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesDolby/5/Living_Room_1080p_51_192k_320k_25fps.mpd",
+          "name": "Multi Channel Audio, Dolby Audio AC-4, On Demand profile, 5.1 channels, 25fps, Multiple Audio Representation",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesDolby/6/Living_Room_1080p_51_192k_320k_2997fps.mpd",
+          "name": "Multi Channel Audio, Dolby Audio AC-4, On Demand profile, 5.1 channels, 29.97fps, Multiple Audio Representation",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesDolby/7/Living_Room_1080p_20_96k_25fps.mpd",
+          "name": "Multi Channel Audio, Dolby Audio AC-4, Live profile, Stereo, 25fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesDolby/8/Living_Room_1080p_20_96k_2997fps.mpd",
+          "name": "Multi Channel Audio, Dolby Audio AC-4, Live profile, Stereo, 29.97fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesDolby/9/Living_Room_1080p_51_192k_25fps.mpd",
+          "name": "Multi Channel Audio, Dolby Audio AC-4, Live profile, 5.1 channels, 25fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesDolby/10/Living_Room_1080p_51_192k_2997fps.mpd",
+          "name": "Multi Channel Audio, Dolby Audio AC-4, Live profile, 5.1 channels, 29.97fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesDolby/11/Living_Room_1080p_51_192k_320k_25fps.mpd",
+          "name": "Multi Channel Audio, Dolby Audio AC-4, Live profile, 5.1 channels, 25fps, Multiple Audio Representation",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesDolby/12/Living_Room_1080p_51_192k_320k_2997fps.mpd",
+          "name": "Multi Channel Audio, Dolby Audio AC-4, Live profile, 5.1 channels, 29.97fps, Multiple Audio Representation",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "DTS Single Multi-Channel Audio Track",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dts/1/Paint_dtsc_testA.mpd",
+          "name": "Multi Channel Audio, DTS Audio, DTSC, Single Audio Representation",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dts/1/Paint_dtse_testA.mpd",
+          "name": "Multi Channel Audio, DTS Audio, DTSE, Single Audio Representation",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dts/1/Paint_dtsh_testA.mpd",
+          "name": "Multi Channel Audio, DTS Audio, DTSH, Single Audio Representation",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dts/1/Paint_dtsl_testA.mpd",
+          "name": "Multi Channel Audio, DTS Audio, DTSL, Single Audio Representation",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "DTS Single Stereo Audio Track",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/1a/qualcomm/1/MultiRate.mpd",
+          "name": "Test Vector 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/1a/qualcomm/2/MultiRate.mpd",
+          "name": "Test Vector 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/1b/qualcomm/1/MultiRate.mpd",
+          "name": "Test Vector 3",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/1b/qualcomm/2/MultiRate.mpd",
+          "name": "Test Vector 4",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/1c/qualcomm/1/MultiRate.mpd",
+          "name": "Test Vector 5",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dts/2/Paint_dtsc_testB.mpd",
+          "name": "Multi Channel Audio, DTS Audio, Stereo DTSC, Single Audio Representation",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dts/2/Paint_dtse_testB.mpd",
+          "name": "Multi Channel Audio, DTS Audio, Stereo DTSE, Single Audio Representation",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dts/2/Paint_dtsl_testB.mpd",
+          "name": "Multi Channel Audio, DTS Audio, Stereo DTSL, Single Audio Representation",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "DTS Multiple Adaptation Sets",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dts/3/Paint_dtsc_testD.mpd",
+          "name": "Multi Channel Audio, DTS Audio, DTSC",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dts/3/Paint_dtse_testD.mpd",
+          "name": "Multi Channel Audio, DTS Audio, DTSE",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dts/3/Paint_dtsh_testD.mpd",
+          "name": "Multi Channel Audio, DTS Audio, DTSH",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dts/3/Paint_dtsl_testD.mpd",
+          "name": "Multi Channel Audio, DTS Audio, DTSL",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "HE-AACv2 Multichannel 6-Channel ID",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/fraunhofer/HE-AACv2_Multichannel/1/6chID/6chId_480p_single_adapt_heaac5_1_sidx.mpd",
+          "name": "Multi Channel Audio, HE-AACv2 Multichannel 6-Channel ID",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "HE-AACv2 Multichannel 8-Channel ID",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/fraunhofer/HE-AACv2_Multichannel/2/8chID/8ch_id_480p_single_adapt_heaac7_1_cf12_sidx.mpd",
+          "name": "Multi Channel Audio, HE-AACv2 Multichannel 8-Channel ID",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "HE-AACv2 Multiple Audio Representations",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/fraunhofer/HE-AACv2_Multichannel/3/ElephantsDream_6ch/elephants_dream_480p_heaac5_1_sidx.mpd",
+          "name": "Multi Channel Audio, HE-AACv2, Multiple Audio Representations, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/fraunhofer/HE-AACv2_Multichannel/3/Sintel_6ch/sintel_480p_heaac5_1_sidx.mpd",
+          "name": "Multi Channel Audio, HE-AACv2, Multiple Audio Representations, 2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/fraunhofer/HE-AACv2_Multichannel/3/Sintel_8ch/sintel_480p_heaac7_1_cf12_sidx.mpd",
+          "name": "Multi Channel Audio, HE-AACv2, Multiple Audio Representations, 3",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "MPEG Surround 6-Channel ID",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/fraunhofer/MPEG_Surround/1/6chID/6chId_480p_single_adapt_mps5_1_sidx.mpd",
+          "name": "Multi Channel Audio, MPEG Surround 6-Channel ID",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "MPEG Surround Multiple Audio Representations",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/fraunhofer/MPEG_Surround/2/ElephantsDream_6ch/elephants_dream_480p_mps5_1_sidx.mpd",
+          "name": "Multi Channel Audio, MPEG Surround, Multiple Audio Representations, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/fraunhofer/MPEG_Surround/2/Sintel_6ch/sintel_480p_mps5_1_sidx.mpd",
+          "name": "Multi Channel Audio, MPEG Surround, Multiple Audio Representations, 2",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Resolve to zero",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP33/resolveToZero/1/manifest.mpd",
+          "name": "Resolve to zero, multi-period, live profile",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "User cases for multiple periods",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP33/multiplePeriods/1/manifest_multiple_Periods_Add_Remove_Representation.mpd",
+          "name": "Add/Remove representation, Multi-Period",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP33/multiplePeriods/2/manifest_multiple_Periods_Add_Remove_AdaptationSet.mpd",
+          "name": "Add/Remove adaptation set, Multi-Period",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP33/multiplePeriods/3/manifest_multiple_Periods_Content_Offering_CDN.mpd",
+          "name": "Multiple CDN offering, Multi-Period",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP33/multiplePeriods/4/manifest_multiple_Periods_Different_SegmentDuration.mpd",
+          "name": "Different segment durations, Mutli-Period",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestAdvertising/CMS/Axinom-CMS_AVC_MultiRes_MultiRate_25fps.mpd",
+          "name": "Timecode Axinom CMS AVC, MultiRes, MultiRate 25fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestAdvertising/CMS/Axinom-CMS_AVC_MultiRes_MultiRate_2997fps.mpd",
+          "name": "Timecode Axinom CMS AVC, MultiRes, MultiRate 29.97fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestAdvertising/CMS/Axinom-CMS_HEVC_MultiRes_MultiRate_25fps.mpd",
+          "name": "Timecode Axinom CMS HEVC, MultiRes, MultiRate 25fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestAdvertising/CMS/Axinom-CMS_HEVC_MultiRes_MultiRate_2997fps.mpd",
+          "name": "Timecode Axinom CMS HEVC, MultiRes, MultiRate 29.97fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestAdvertising/CMS/Axinom-CMS_MultiCodec_MultiRes_MultiRate_25fps.mpd",
+          "name": "Timecode Axinom CMS MultiCodec, MultiRes, MultiRate 25fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestAdvertising/CMS/Axinom-CMS_MultiCodec_MultiRes_MultiRate_2997fps.mpd",
+          "name": "Timecode Axinom CMS MultiCodec, MultiRes, MultiRate 29.97fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestAdvertising/DRM/Axinom-DRM-in-disconnected-environments_AVC_MultiRes_MultiRate_25fps.mpd",
+          "name": "Timecode Axinom DRM AVC, MultiRes, MultiRate 25fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestAdvertising/DRM/Axinom-DRM-in-disconnected-environments_AVC_MultiRes_MultiRate_2997fps.mpd",
+          "name": "Timecode Axinom DRM AVC, MultiRes, MultiRate 29.97fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestAdvertising/DRM/Axinom-DRM-in-disconnected-environments_HEVC_MultiRes_MultiRate_25fps.mpd",
+          "name": "Timecode Axinom DRM HEVC, MultiRes, MultiRate 25fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestAdvertising/DRM/Axinom-DRM-in-disconnected-environments_HEVC_MultiRes_MultiRate_2997fps.mpd",
+          "name": "Timecode Axinom DRM HEVC, MultiRes, MultiRate 29.97fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestAdvertising/DRM/Axinom-DRM-in-disconnected-environments_MultiCodec_MultiRes_MultiRate_25fps.mpd",
+          "name": "Timecode Axinom DRM MultiCodec, MultiRes, MultiRate 25fps",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestAdvertising/DRM/Axinom-DRM-in-disconnected-environments_MultiCodec_MultiRes_MultiRate_2997fps.mpd",
+          "name": "Timecode Axinom DRM MultiCodec, MultiRes, MultiRate 29.97fps",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "UHD SDR",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesUHD/2a/11/MultiRate.mpd",
+          "name": "10-bit UHD SDR On-demand",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesUHD/2b/11/MultiRate.mpd",
+          "name": "10-bit UHD SDR Live profile",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesUHD/2a/5/MultiRate.mpd",
+          "name": "On Demand, Single (UHD) video resolution",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesUHD/2b/2/MultiRate.mpd",
+          "name": "Live (static) test vector, same video resolution",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesUHD/2b/3/MultiRate.mpd",
+          "name": "Live (static) test vector, same video resolution",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesUHD/2b/4/MultiRate.mpd",
+          "name": "Live (static) test vector, same video resolution",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "HEVC HDR",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHDR/3a/3/MultiRate.mpd",
+          "name": "HEVC HDR vector, on-demand profile",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHDR/3b/3/MultiRate.mpd",
+          "name": "HEVC HDR vector, live profile",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHEVC/1a/5/MultiRate.mpd",
+          "name": "HEVC 4K HDR Single video",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHEVC/1b/5/MultiRate.mpd",
+          "name": "HEVC HDR 4k Live Profile",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "MPD Chaining ",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP33/MPDChaining/regular_chain/1/manifest_regular_MPDChaining_live.mpd",
+          "name": "Regular chaining, Live",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP33/MPDChaining/fallback_chain/1/manifest_fallback_MPDChaining.mpd",
+          "name": "Fallback chaining, Broken URL",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP33/MPDChaining/fallback_chain/2/manifest_terminationEvent_fallback_MPDChaining.mpd",
+          "name": "Fallback on termination event",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP33/MPDChaining/regular_chain/2/manifest_regular_MPDChaining_OnDemand.mpd",
+          "name": "Regular MPD Chaining, On-Demand",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Adaptation set switching",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP33/adapatationSetSwitching/1/manifest.mpd",
+          "name": "Positive test case, Different video codecs",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP33/adapatationSetSwitching/2/manifest.mpd",
+          "name": "Negative test case, Different video codecs",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP33/adapatationSetSwitching/3/manifest.mpd",
+          "name": "Positive test case, Different audio codecs",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP33/adapatationSetSwitching/4/manifest.mpd",
+          "name": "Negative test case, Different audio codecs",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP33/adapatationSetSwitching/5/manifest.mpd",
+          "name": "Adaptation set switching set - switching element present",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "POSIX prefix",
+      "submenu": [
+        {
+          "url": "https://livesim.dashif.org/livesim/testpic_2s/Manifest.mpd#t=posix:1465406946",
+          "name": "Posix, playout at a specific time",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim/testpic_2s/Manifest.mpd#t=posix:now",
+          "name": "Posix, playout now",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Mpd call back event",
+      "submenu": [
+        {
+          "url": "https://livesim.dashif.org/livesim/periods_60/mpdcallback_30/testpic_2s/Manifest.mpd",
+          "name": "MPD Callback Event, Live dynamic profile",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "DRM protected content.",
+      "submenu": [
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-SingleKey/Manifest.mpd",
+          "name": "PlayReady and Widevine, MultiDRM, SingleKey, 4K",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-SingleKey/Manifest_1080p.mpd",
+          "name": "PlayReady and Widevine, MultiDRM, SingleKey, 1080p",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-SingleKey/Manifest_AudioOnly.mpd",
+          "name": "PlayReady and Widevine, MultiDRM, SingleKey, Audio-only",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-SingleKey/Manifest_ClearKey.mpd",
+          "name": "W3C Clear Key, MultiDRM, SingleKey, 4K",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-SingleKey/Manifest_1080p_ClearKey.mpd",
+          "name": "W3C Clear Key, MultiDRM, SingleKey, 1080p",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-SingleKey/Manifest_AudioOnly_ClearKey.mpd",
+          "name": "W3C Clear Key, MultiDRM, SingleKey, Audio-only",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey/Manifest.mpd",
+          "name": "PlayReady and Widevine, MultiDRM, MultiKey, 4K",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey/Manifest_1080p.mpd",
+          "name": "PlayReady and Widevine, MultiDRM, MultiKey, 1080p",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey/Manifest_AudioOnly.mpd",
+          "name": "PlayReady and Widevine, MultiDRM, MultiKey, Audio-only",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey/Manifest_ClearKey.mpd",
+          "name": "W3C Clear Key, MultiDRM, MultiKey, 4K",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey/Manifest_1080p_ClearKey.mpd",
+          "name": "W3C Clear Key, MultiDRM, MultiKey, 1080p",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey/Manifest_AudioOnly_ClearKey.mpd",
+          "name": "W3C Clear Key, MultiDRM, MultiKey, Audio-only",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey-MultiPeriod/Manifest.mpd",
+          "name": "PlayReady and Widevine, MultiDRM, MultiKey, MultiPeriod, 4K",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey-MultiPeriod/Manifest_1080p.mpd",
+          "name": "PlayReady and Widevine, MultiDRM, MultiKey, MultiPeriod, 1080p",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey-MultiPeriod/Manifest_AudioOnly.mpd",
+          "name": "PlayReady and Widevine, MultiDRM, MultiKey, MultiPeriod, Audio-only",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey-MultiPeriod/Manifest_ClearKey.mpd",
+          "name": "W3C Clear Key, MultiDRM, MultiKey, MultiPeriod, 4K",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey-MultiPeriod/Manifest_1080p_ClearKey.mpd",
+          "name": "W3C Clear Key, MultiDRM, MultiKey, MultiPeriod, 1080p",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey-MultiPeriod/Manifest_AudioOnly_ClearKey.mpd",
+          "name": "W3C Clear Key, MultiDRM, MultiKey, MultiPeriod, Audio-only",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "VP9 HD",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesVP9/vp9-hd/sintel-vp9-hd.mpd",
+          "name": "VP9 HD VOD",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "VP9 HD-HDR",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesVP9/vp9-hd-hdr/sintel-vp9-hd-hdr.mpd",
+          "name": "VP9 HD-HDR10 VOD",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "VP9 UHD",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesVP9/vp9-uhd/sintel-vp9-uhd.mpd",
+          "name": "VP9 UHD VOD",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "VP9 UHD-HDR",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesVP9/vp9-uhd-hdr/sintel-vp9-uhd-hdr.mpd",
+          "name": "VP9 UHD-HDR10 VOD",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "VP9 Adaptive",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesVP9/vp9-hd-adaptive/sintel-vp9-hd-adaptive.mpd",
+          "name": "VP9 2-stream, single resolution adaptive",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "VP9 Encryption",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesVP9/vp9-hd-encrypted/sintel-vp9-hd-encrypted.mpd",
+          "name": "VP9 HD-SDR encryption with Common PSSH",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "UTC Timing",
+      "submenu": [
+        {
+          "url": "https://livesim.dashif.org/livesim/utc_direct/testpic_2s/Manifest.mpd",
+          "name": "UTC Timing,\tUTC-Direct",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim/utc_head/testpic_2s/Manifest.mpd",
+          "name": "UTC Timing,\tUTC-HTTP-HEAD",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim/utc_ntp/testpic_2s/Manifest.mpd",
+          "name": "UTC Timing,\tUTC-HTTP-NTP",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim/utc_sntp/testpic_2s/Manifest.mpd",
+          "name": "UTC Timing,\tUTC-HTTP-SNTP",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Last-segment signalling",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP41/LastSegmentNumber/1/manifest_last_segment_num.mpd",
+          "name": "Last video segment removed-live profile ",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "MultiTrack Content Offering",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP41/MultiTrack/alternative_content/1/manifest_alternative_content_live.mpd",
+          "name": "Alternate content live profile",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP41/MultiTrack/alternative_content/2/manifest_alternative_content_ondemand.mpd",
+          "name": "Alternate content OnDemand profile",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP41/MultiTrack/associative_content/1/manifest_associated_content_live.mpd",
+          "name": "Associate contents live profile, alternate video with alternate audio ",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP41/MultiTrack/alternative_content/3/manifest_alternative_maxWidth_live.mpd",
+          "name": "Alternate content MaxWidth live",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP41/MultiTrack/alternative_content/4/manifest_alternative_Essentialproperty_live.mpd",
+          "name": "Alternate content EssentialProperty",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP41/MultiTrack/alternative_content/6/manifest_alternative_lang.mpd",
+          "name": "Alternate audio language with label",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP41/MultiTrack/alternative_content/5/manifest_alternative_ToS_Viewpoint.mpd",
+          "name": "Two versions of ToS video with Viewpoint descriptor",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP41/MultiTrack/alternative_content/7/360_VR_BavarianAlpsWimbachklamm-AlternativeContent-with-ViewPoint.mpd",
+          "name": "Alternate video signalling with Viewpoint, 360 VR alternate, 1080p main",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "UHD HDR",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dolby/6/DashIf-HDR10_UHD.mpd ",
+          "name": "Dolby Vision Dual-layer Test",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dolby/6/DashIf-SDR_UHD.mpd ",
+          "name": "Dolby Vision Dual-layer Test (SDR)",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "IMSC1",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/CTA/imsc1/IT1-20171027_dash.mpd",
+          "name": "IMSC1",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "CMAF",
+      "submenu": [
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-SingleKey/Manifest.mpd",
+          "name": "PlayReady and Widewine MultiDRM SingleKey 4K, AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution, HE-AACv2, WebVTT-IMSC Multi-Codec Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-SingleKey/Manifest_1080p.mpd",
+          "name": "PlayReady and Widewine MultiDRM SingleKey 1080p, AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution, HE-AACv2, WebVTT-IMSC Multi-Codec Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-SingleKey/Manifest_AudioOnly.mpd",
+          "name": "PlayReady and Widewine MultiDRM SingleKey Audio-only, HE-AACv2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-SingleKey/Manifest_ClearKey.mpd",
+          "name": "ClearKey 4K MultiDRM SingleKey AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution, HE-AACv2, WebVTT-IMSC Multi-Codec Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-SingleKey/Manifest_1080p_ClearKey.mpd",
+          "name": "ClearKey MultiDRM SingleKey 1080p, AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution, HE-AACv2, WebVTT-IMSC Multi-Codec Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-SingleKey/Manifest_AudioOnly_ClearKey.mpd",
+          "name": "ClearKey MultiDRM SingleKey 1080p Audio-only, HE-AACv2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey/Manifest.mpd",
+          "name": "PlayReady and Widewine MultiDRM MultiKey 4K, AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution, HE-AACv2, WebVTT-IMSC Multi-Codec Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey/Manifest_1080p.mpd",
+          "name": "PlayReady and Widewine MultiDRM MultiKey 1080p, AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution, HE-AACv2, WebVTT-IMSC Multi-Codec Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey/Manifest_AudioOnly.mpd",
+          "name": "PlayReady and Widewine MultiDRM MultiKey Audio-only, HE-AACv2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey/Manifest_ClearKey.mpd",
+          "name": "ClearKey MultiDRM MultiKey 4K, AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution, HE-AACv2, WebVTT-IMSC Multi-Codec Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey/Manifest_1080p_ClearKey.mpd",
+          "name": "ClearKey MultiDRM MultiKey 1080p, AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution, HE-AACv2, WebVTT-IMSC Multi-Codec Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey/Manifest_AudioOnly_ClearKey.mpd",
+          "name": "ClearKey MultiDRM MultiKey 1080p Audio-only, HE-AACv2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey-MultiPeriod/Manifest.mpd",
+          "name": "PlayReady and Widewine MultiDRM MultiKey MultiPeriod 4K, AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution, HE-AACv2, WebVTT-IMSC Multi-Codec Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey-MultiPeriod/Manifest_1080p.mpd",
+          "name": "PlayReady and Widewine MultiDRM MultiKey MultiPeriod 1080p, AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution, HE-AACv2, WebVTT-IMSC Multi-Codec Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey-MultiPeriod/Manifest_AudioOnly.mpd",
+          "name": "PlayReady and Widewine MultiDRM MultiKey MultiPeriod Audio-only, HE-AACv2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey-MultiPeriod/Manifest_ClearKey.mpd",
+          "name": "ClearKey MultiDRM MultiKey MultiPeriod 4K, AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution, HE-AACv2, WebVTT-IMSC Multi-Codec Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey-MultiPeriod/Manifest_1080p_ClearKey.mpd",
+          "name": "ClearKey MultiDRM MultiKey MultiPeriod 1080p, AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution, HE-AACv2, WebVTT-IMSC Multi-Codec Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey-MultiPeriod/Manifest_AudioOnly_ClearKey.mpd",
+          "name": "ClearKey MultiDRM MultiKey MultiPeriod 1080p Audio-only, HE-AACv2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-Clear/Manifest.mpd",
+          "name": "SinglePeriod 4K, AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution, HE-AACv2, WebVTT-IMSC Multi-Codec Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-Clear/Manifest_1080p.mpd",
+          "name": "SinglePeriod 1080p, AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution, HE-AACv2, WebVTT-IMSC Multi-Codec Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-Clear/Manifest_AudioOnly.mpd",
+          "name": "SinglePeriod Audio-only, HE-AACv2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-Clear/Manifest_MultiPeriod.mpd",
+          "name": "MultiPeriod 4K, AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution, HE-AACv2, WebVTT-IMSC Multi-Codec Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-Clear/Manifest_MultiPeriod_1080p.mpd",
+          "name": "MultiPeriod 1080p, AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution, HE-AACv2, WebVTT-IMSC Multi-Codec Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v7-Clear/Manifest_MultiPeriod_AudioOnly.mpd",
+          "name": "MultiPeriod Audio-only, HE-AACv2",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v8-MultiContent/Encrypted/Manifest.mpd",
+          "name": "PlayReady and Widevine MultiContent",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v8-MultiContent/Clear/Manifest.mpd",
+          "name": "Clear MultiContent",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://akamai-axtest.akamaized.net/routes/lapd-v1-acceptance/www_c4/Manifest.mpd",
+          "name": "Clear Live Stream, AVC, AAC-LC, WebVTT",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://akamai-axtest.akamaized.net/routes/lapd-v1-acceptance/www_c4/Manifest.m3u8",
+          "name": "Live Stream, AVC, AAC-LC, WebVTT",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v9-MultiFormat/Encrypted_Cenc/Manifest.mpd",
+          "name": "DASH PlayReady and Widewine MultiDRM CENC 4K, AVC Multi-Rate Multi-Resolution, AAC",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v9-MultiFormat/Encrypted_Cbcs/Manifest.mpd",
+          "name": "DASH PlayReady and Widewine MultiDRM CBCS 4K, AVC Multi-Rate Multi-Resolution, AAC",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v9-MultiFormat/Clear/Manifest.mpd",
+          "name": "DASH Clear 4K, AVC Multi-Rate Multi-Resolution, AAC",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v9-MultiFormat/Encrypted_Cenc/Manifest_1080p.mpd",
+          "name": "DASH PlayReady and Widewine MultiDRM CENC 1080p, AVC Multi-Rate Multi-Resolution, AAC",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v9-MultiFormat/Encrypted_Cbcs/Manifest_1080p.mpd",
+          "name": "DASHPlayReady and Widewine MultiDRM CBCS 1080p, AVC Multi-Rate Multi-Resolution, AAC",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v9-MultiFormat/Clear/Manifest_1080p.mpd",
+          "name": "DASH Clear 1080p, AVC Multi-Rate Multi-Resolution, AAC",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v9-MultiFormat/Encrypted_Cenc/Manifest.m3u8",
+          "name": "HLS PlayReady and Widewine MultiDRM CENC 4K, AVC Multi-Rate Multi-Resolution, AAC",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v9-MultiFormat/Encrypted_Cbcs/Manifest.m3u8",
+          "name": "HLS PlayReady and Widewine MultiDRM CBCS 4K, AVC Multi-Rate Multi-Resolution, AAC",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v9-MultiFormat/Clear/Manifest.m3u8",
+          "name": "HLS Clear 4K, AVC Multi-Rate Multi-Resolution, AAC",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v9-MultiFormat/Encrypted_Cenc/Manifest_1080p.m3u8",
+          "name": "HLS PlayReady and Widewine MultiDRM CENC 1080p, AVC Multi-Rate Multi-Resolution, AAC",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v9-MultiFormat/Encrypted_Cbcs/Manifest_1080p.m3u8",
+          "name": "HLS PlayReady and Widewine MultiDRM CBCS 1080p, AVC Multi-Rate Multi-Resolution, AAC",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://media.axprod.net/TestVectors/v9-MultiFormat/Clear/Manifest_1080p.m3u8",
+          "name": "HLS Clear 1080p, AVC Multi-Rate Multi-Resolution, AAC",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP41/CMAF/UnifiedStreaming/ToS_AVC_MultiRate_MultiRes_AAC_Eng_WebVTT.mpd",
+          "name": "AVC Multi-Rate Multi-Resolution, AAC Multi-Rate, WebVTT Multi-Language ",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP41/CMAF/UnifiedStreaming/ToS_HEVC_MultiRate_MultiRes_AAC_Eng_WebVTT.mpd",
+          "name": "HEVC Multi-Rate Multi-Resolution, AAC Multi-Rate, WebVTT Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP41/CMAF/UnifiedStreaming/ToS_HEVC_MultiRate_MultiRes_AAC_Eng_TTML.mpd",
+          "name": "HEVC Multi-Rate Multi-Resolution, AAC Multi-Rate, TTML Multi-Language",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP41/CMAF/UnifiedStreaming/ToS_AVC_HEVC_MutliRate_MultiRes_IFrame_AAC.m3u8",
+          "name": "AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution inc. I-Frame, AAC Multi-Rate",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP41/CMAF/UnifiedStreaming/ToS_HEVC_MultiRate_MultiRes_IFrame_AAC_WebVTT.m3u8",
+          "name": "HEVC Multi-Rate Multi-Resolution inc. I-Frame, AAC Multi-Rate, WebVTT Multi-Language ",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesIOP41/CMAF/UnifiedStreaming/ToS_Playready_AVC_HEVC_MultiRate_MultiRes_IFrame_AAC.m3u8",
+          "name": "CBCS AVC-HEVC Multi-Codec Multi-Rate Multi-Resolution inc. I-Frame, AAC Multi-Rate",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "xHE-AAC Stereo Audio",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/fraunhofer/xHE-AAC_Stereo/1/Sintel/sintel_audio_only_brs.mpd",
+          "name": "Audio with bitrate adaptation, xHE-AAC",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/fraunhofer/xHE-AAC_Stereo/2/Sintel/sintel_audio_video_brs.mpd",
+          "name": "Audio Video with bitrate adaptation, xHE-AAC ",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/fraunhofer/xHE-AAC_Stereo/3/Sintel/sintel_audio_only_64kbps.mpd",
+          "name": "Audio with single bitrate, xHE-AAC",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Low Latency Chunked",
+      "submenu": [
+        {
+          "url": "https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest300.mpd",
+          "name": "Low Latency Chunked Multi-Bitrate, AVC and AAC",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd",
+          "name": "Low Latency Chunked Single-Bitrate, AVC and AAC",
+          "moreInfo": ""
+        }
+      ]
+    }
+  ]
+}

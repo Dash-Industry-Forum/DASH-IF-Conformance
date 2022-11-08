@@ -9,5 +9,8 @@ sessions/*
 html-coverage
 .phpunit.cache
 html-reports
-html-reports-functional-tests
-xml-reports-functional-tests
+functional-test-results
+validation-test-results
+Conformance-Frontend/node_modules
+functional-tests/hbbtv/sources
+Utils/sessions
