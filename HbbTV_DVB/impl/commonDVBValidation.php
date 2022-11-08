@@ -9,7 +9,7 @@ $adaptation = $mpd_features['Period'][$current_period]['AdaptationSet'][$current
 $representation = $adaptation['Representation'][$current_representation];
 
 ## Report on any resolutions used that are not in the tables of resoultions in 10.3 of the DVB DASH specification
-$resolutionResult = resolutionCheck($adaptation, $representation);
+$resolutionResult = $this->resolutionCheck($adaptation, $representation);
 
 $logger->test(
     "HbbTV-DVB DASH Validation Requirements",

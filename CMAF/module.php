@@ -219,7 +219,7 @@ class ModuleCMAF extends ModuleInterface
         include 'impl/validateFileBrands.php';
     }
 
-    private function getIdx($node)
+    private function getIds($node)
     {
         return include 'impl/getIds.php';
     }
