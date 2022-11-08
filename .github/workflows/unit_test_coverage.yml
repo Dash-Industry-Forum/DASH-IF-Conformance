@@ -3,7 +3,7 @@ name: unit-test-coverage
 on:
   push:
     branches:
-      - 'development'
+      - 'fix/unit-test-coverage'
 
 jobs:
   unit-test:
@@ -31,7 +31,7 @@ jobs:
       - name: Deploy Results
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: html-reports
+          folder: unit-test-results
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
           target-folder: unit-tests
