@@ -17,7 +17,7 @@
       <directory>tests</directory>
     </testsuite>
     <testsuite name="CMAF CTAWAVE Unit">
-      <directory>CMAF/CTAWAVE/UnitTests</directory>
+      <directory>CTAWAVE/UnitTests</directory>
     </testsuite>
   </testsuites>
 
