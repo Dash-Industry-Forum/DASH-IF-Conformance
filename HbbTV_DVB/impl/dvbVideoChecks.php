@@ -1,5 +1,7 @@
 <?php
 
+global $logger;
+
 $contentType = $adaptation->getAttribute("contentType");
 
 ## Information from this part is used for Section 4.2.2 check about multiple Adaptation Sets with video as contentType

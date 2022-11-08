@@ -1,5 +1,6 @@
 <?php
 
+global $logger;
 $protectionCount = 0;
 $defaultKIDs = array();
 $contentProtection = $adapt->getElementsByTagName('ContentProtection');

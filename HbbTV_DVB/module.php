@@ -31,6 +31,16 @@ class ModuleHbbTVDVB extends ModuleInterface
         $this->hasJPGraph = include_once __DIR__ . '/../external/jpgraph/src/jpgraph.php';
         $this->hasJPBarGraph = include_once __DIR__ . '/../external/jpgraph/src/jpgraph_bar.php';
     }
+    public function isEnabled()
+    {
+        return $this->HbbTvEnabled || $this->DVBEnabled;
+    }
+
+    public function setEnabled($newVal)
+    {
+        $this->HbbTvEnabled = $newVal;
+        $this->DVBEnabled = $newVal;
+    }
 
     protected function addCLIArguments()
     {

@@ -1,6 +1,6 @@
 <?php
 
-global $mpd_url, $mpd_dom, $mpd_doc, $dvb_conformance;
+global $mpd_url, $mpd_dom, $mpd_doc;
 
 global $logger;
 

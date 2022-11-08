@@ -1,6 +1,6 @@
 <?php
 
-global $additional_flags, $mpd_features, $hbbtv_conformance, $dvb_conformance,
+global $additional_flags, $mpd_features,
         $current_period, $current_adaptation_set, $current_representation;
 
 $adaptation = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];

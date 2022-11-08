@@ -174,8 +174,7 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 
 function run_backend($configFile, $representationDirectory = "")
 {
-    global $session;
-    global $logger;
+    global $session, $logger;
 
     $sessionDirectory = $session->getDir();
 

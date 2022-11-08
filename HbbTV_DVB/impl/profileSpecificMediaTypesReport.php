@@ -1,6 +1,6 @@
 <?php
 
-global $mpd_dom, $dvb_conformance, $hbbtv_conformance;
+global $mpd_dom, $dvb_conformance ;
 
 
 global $logger;
@@ -19,9 +19,7 @@ if ($this->DVBEnabled) {
     }
 }
 
-if (
-    $hbbtv_conformance
-) {
+if ($this->HbbTvEnabled){
     if (!in_array('urn:hbbtv:dash:profile:isoff-live:2012', $profilesArray)) {
         $profilesArray[] = 'urn:hbbtv:dash:profile:isoff-live:2012';
     }

@@ -1,6 +1,6 @@
 <?php
 
-global $current_adaptation_set;
+global $current_adaptation_set, $logger;
 
 $this->compare($xml1, $xml2, $id1, $id2, $currentAdaptionDir, $index, $path);
 

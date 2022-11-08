@@ -2,7 +2,7 @@
 
 global $mpd_features, $current_period;
 global $current_adaptation_set, $current_representation;
-global $session;
+global $session, $logger;
 
 $period = $mpd_features['Period'][$current_period];
 $adaptationSet = $period['AdaptationSet'][$current_adaptation_set];

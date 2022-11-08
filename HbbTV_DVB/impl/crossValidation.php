@@ -1,6 +1,6 @@
 <?php
 
-global $hbbtv_conformance, $dvb_conformance, $mpd_features, $current_period, $session;
+global $mpd_features, $current_period, $session;
 
 $this->contentProtectionReport();
 $adaptations = $mpd_features['Period'][$current_period]['AdaptationSet'];
@@ -20,8 +20,8 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
             $xmlDom2 = get_DOM($files[$index2], 'atomlist');
 
             if ($xmlDom1 && $xmlDom2) {
-                if ($hbbtv_conformance) {
-                    $this->crossValidationHbbTVRepresentations(
+              if ($this->HbbTvEnabled){
+                    $this->crossValidationHbbTV(
                         $xmlDom1,
                         $xmlDom2,
                         $adaptationIndex,
@@ -29,8 +29,8 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
                         $index2
                     );
                 }
-                if ($dvb_conformance) {
-                    $this->crossValidationDVBRepresentations(
+                if ($this->DVBEnabled) {
+                    $this->crossValidationDVB(
                         $xmlDom1,
                         $xmlDom2,
                         $adaptationIndex,
@@ -42,8 +42,8 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
         }
     }
     $this->initializationSegmentCommonCheck($files);
-    if ($dvb_conformance) {
-        $this->DVBPeriodContinousAdapatationSetsCheck();
+    if ($this->DVBEnabled) {
+        $this->dvbPeriodContinousAdaptationSetsCheck();
     }
 
     $this->addOrRemoveImages('REMOVE');

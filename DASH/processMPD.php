@@ -26,6 +26,8 @@ function process_MPD($parseSegments = false)
 
     global $mpd_url;
 
+    global $mpdHandler;
+
 
     $logger->parseSegments = $parseSegments;
 
