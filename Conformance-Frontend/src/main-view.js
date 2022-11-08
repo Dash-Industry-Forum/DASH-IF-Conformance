@@ -4,22 +4,34 @@ function MainView() {
   const PAGE_FAQ = "faq";
 
   const locations = [
-    { id: "home", text: "Validator", icon: "fa-solid fa-gears", getView: () => new ToolView() },
-    { id: "about", text: "About", icon: "fa-solid fa-info-circle", getView: () => new AboutView() },
-    { id: "faq", text: "FAQ", icon: "fa-solid fa-question-circle", getView: () => new FaqView() },
+    { id: "home", text: "Validator", icon: "fa-solid fa-gears", view: ToolView },
+    { id: "about", text: "About", icon: "fa-solid fa-info-circle", view: AboutView },
+    { id: "faq", text: "FAQ", icon: "fa-solid fa-question-circle", view: FaqView },
   ];
 
   let _navigationBar = new NavigationBar();
   _navigationBar.setLocations(locations);
-  _navigationBar.setActiveLocation(locations[0].id);
-  let _activePage = PAGE_HOME;
+  let _activePage = getLocation();
+  _navigationBar.setActiveLocation(_activePage);
   let _rootElementId;
   let _contentElementId;
 
-  function handleLocationChange(location) {
-    if (location === _activePage) return;
-    _navigationBar.setActiveLocation(location);
-    _activePage = location;
+  function getLocation() {
+    let hash = location.hash;
+    console.log(hash);
+    let page = hash.substring(1, hash.length);
+    console.log(page);
+    if (page) return page;
+    location.hash = PAGE_HOME;
+    return PAGE_HOME;
+  }
+
+  function handleLocationChange(locationId) {
+    if (locationId === _activePage) return;
+    _navigationBar.setActiveLocation(locationId);
+    _activePage = locationId;
+    location.hash = locationId;
+    console.log(location.hash);
     _navigationBar.renderButtons();
     renderContent();
   }
@@ -64,7 +76,7 @@ function MainView() {
     _contentElementId = rootElementId = rootElementId || _contentElementId;
     UI.clearElement(rootElementId);
     let location = locations.find(location => location.id === _activePage)
-    let view = location.getView();
+    let view = new location.view();
     view.render(rootElementId);
   }
 

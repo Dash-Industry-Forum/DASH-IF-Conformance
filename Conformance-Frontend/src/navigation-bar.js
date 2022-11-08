@@ -92,7 +92,10 @@ function NavigationBar() {
             className:
               "nav-link" + (activeLocation === location.id ? " active" : ""),
             href: "#",
-            onclick: () => handleLocationChange(location.id),
+            onclick: (event) => {
+              handleLocationChange(location.id);
+              event.preventDefault();
+            },
             children: [
               location.icon
                 ? { element: "i", className: location.icon + " me-2" }
