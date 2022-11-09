@@ -77,6 +77,7 @@ function compute_URLs($representation, $adaptation_set_id, $representation_id, $
     
     $index = 0;
     $until = $segment_info[1];
+    $time1 = 0;
     if($mpd_features['type'] == 'dynamic'){
         list($index, $until, $time1) = dynamic_number($adaptation_set_id, $representation_id, $segment_access, $segment_info[0], $segment_info[1]);
     }
