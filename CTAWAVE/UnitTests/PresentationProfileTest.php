@@ -16,7 +16,7 @@
 declare(strict_types=1);
 require_once __DIR__.'/../CTAWAVE_SelectionSet.php';
 require_once __DIR__.'/../CTAWAVE_PresentationProfile.php';
-require_once __DIR__.'/../../../Utils/Load.php';
+require_once __DIR__.'/../../Utils/Load.php';
 
 use PHPUnit\Framework\TestCase;
 
@@ -28,7 +28,7 @@ final class PresentationProfileTest extends TestCase
         $adapts_count=1;
         //The given directory contains a SwSet of video with two tracks conforming to AVC-HD Media profile
         // and hence expected to conform to CMFHD presentation profile.
-        $session_dir="Presention_examples/CMFHD_video/";
+        $session_dir="./CTAWAVE/UnitTests/Presention_examples/CMFHD_video/";
         $adaptation_set_template='Adapt$AS$';
         $outfile=fopen("out.txt","w");
         $current_period=0;

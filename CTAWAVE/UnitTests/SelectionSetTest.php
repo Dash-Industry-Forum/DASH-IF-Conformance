@@ -15,7 +15,7 @@
 
 declare(strict_types=1);
 require_once __DIR__.'/../CTAWAVE_SelectionSet.php';
-require_once __DIR__.'/../../../Utils/Load.php';
+require_once __DIR__.'/../../Utils/Load.php';
 
 use PHPUnit\Framework\TestCase;
 
@@ -26,21 +26,21 @@ final class SelectionSetTest extends TestCase
     public function testNoWAVETracksInSelSet()
     { 
         $adapts_count=1;
-        $session_dir="Selection_set_examples/SelSetVideoNoWaveTracks";
+        $session_dir="./CTAWAVE/UnitTests/Selection_set_examples/SelSetVideoNoWaveTracks";
         $adaptation_set_template='Adapt$AS$';
         $outfile=fopen("out.txt","w");
         $current_period=0;
-        $this->assertContains("no Tracks found conforming to WAVE", CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$outfile,$current_period));
+        $this->assertStringContainsString("no Tracks found conforming to WAVE", CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$outfile,$current_period));
     }
     //Test that no WAVE SwSet found in the SelSet. SwSet contains one WAVE track and one non-WAVE track.
     public function testNoWAVESwSetInSelSet()
     { 
         $adapts_count=1;
-        $session_dir="Selection_set_examples/SelSetVideoNoWaveSwSet";
+        $session_dir="./CTAWAVE/UnitTests/Selection_set_examples/SelSetVideoNoWaveSwSet";
         $adaptation_set_template='Adapt$AS$';
         $outfile=fopen("out.txt","w");
         $current_period=0;
-        $this->assertContains("no Switching Set found conforming to WAVE", CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$outfile,$current_period));
+        $this->assertStringContainsString("no Switching Set found conforming to WAVE", CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$outfile,$current_period));
     }
     //
 
@@ -48,25 +48,25 @@ final class SelectionSetTest extends TestCase
     public function testWAVESwSetInSelSet()
     { 
         $adapts_count=1;
-        $session_dir="Selection_set_examples/SelSetVideoWaveSwSet";
+        $session_dir="./CTAWAVE/UnitTests/Selection_set_examples/SelSetVideoWaveSwSet";
         $adaptation_set_template='Adapt$AS$';
         $outfile=fopen("out.txt","w");
         $current_period=0;
-        $this->assertNotContains("no Switching Set found conforming to WAVE", CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$outfile,$current_period));
+        $this->assertStringNotContainsString("no Switching Set found conforming to WAVE", CTACheckSelectionSet($adapts_count,$session_dir,$adaptation_set_template,$outfile,$current_period));
     }
     
     public function testSingleInitSwSet()
     {
         $adapts_count=1;
-        $session_dir="Selection_set_examples/SwSetSingleInit";
+        $session_dir="./CTAWAVE/UnitTests/Selection_set_examples/SwSetSingleInit";
         $adaptation_set_template='Adapt$AS$';
-        $this->assertContains("reinitialization not req on Track switches', and found CMAF common header", CTACheckSingleInitSwSet($adapts_count,$session_dir,$adaptation_set_template));
+        $this->assertStringContainsString("reinitialization not req on Track switches', and found CMAF common header", CTACheckSingleInitSwSet($adapts_count,$session_dir,$adaptation_set_template));
     }
     public function testNoSingleInitSwSet()
     {
         $adapts_count=1;
-        $session_dir="Selection_set_examples/SelSetVideoWaveSwSet";
+        $session_dir="./CTAWAVE/UnitTests/Selection_set_examples/SelSetVideoWaveSwSet";
         $adaptation_set_template='Adapt$AS$';
-        $this->assertNotContains("reinitialization not req on Track switches', and found CMAF common header", CTACheckSingleInitSwSet($adapts_count,$session_dir,$adaptation_set_template));
+        $this->assertStringNotContainsString("reinitialization not req on Track switches', and found CMAF common header", CTACheckSingleInitSwSet($adapts_count,$session_dir,$adaptation_set_template));
     }
 }
