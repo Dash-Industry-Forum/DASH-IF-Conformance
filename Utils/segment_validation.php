@@ -99,6 +99,8 @@ function assemble($representationDirectory, $segment_urls, $sizearr)
 {
     global $segment_accesses,$current_adaptation_set, $current_representation, $hls_manifest, $hls_tag;
 
+
+
     $index = ($segment_accesses[$current_adaptation_set][$current_representation][0]['initialization']) ? 0 : 1;
 
     for ($i = 0; $i < sizeof($segment_urls); $i++) {

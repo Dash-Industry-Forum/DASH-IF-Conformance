@@ -81,7 +81,7 @@ for ($j = 0; $j < $moofBoxesCount; $j++) {
                     "HbbTV-DVB DASH Validation Requirements",
                     "Section 'Segments'",
                     "Timing SHALL be consistent with the MPD",
-                    abs(($segmentTime - $mpdTiming[$sidxIndex]) / $mpdTiming[$sidxIndex]) <= 0.00001,
+                    $mpdTiming[$sidxIndex] != 0 && abs(($segmentTime - $mpdTiming[$sidxIndex]) / $mpdTiming[$sidxIndex]) <= 0.00001,
                     "FAIL",
                     "Start time of segment $j is consistent with the MPD",
                     "Start time of segment $j is not consistent with the MPD"

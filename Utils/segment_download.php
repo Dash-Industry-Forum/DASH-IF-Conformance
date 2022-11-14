@@ -66,8 +66,10 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
     # Iterate over $array_file
     for ($index = 0; $index < $segment_count; $index++) {
         $filePath = $array_file[$index];
+        fwrite(STDERR, "Downloading $filePath\n");
         $filename = basename($filePath);
         $file_information = remote_file_size($filePath);
+        print_r($file_information);
         $file_exists = $file_information[0];
         $file_size = ($hls_manifest && $hls_byte_range_size) ? $hls_byte_range_size[$index] + $hls_byte_range_begin[$index] : $file_information[1];
 
@@ -354,6 +356,7 @@ function partial_download($url, &$ch, $begin = 0, $end = 0)
     # Check the downloaded content
     fclose($fp);
     $content = file_get_contents($temp_file);
+
 
     return $content;
 }

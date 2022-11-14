@@ -13,7 +13,7 @@ foreach ($segment_access as $seg_acc) {
     $pres_start = $period_timing_info[0] - $pto / $timescale;
 
     $segtimeline = $seg_acc['SegmentTimeline'];
-    if (sizeof($segtimeline) != 0) {
+    if ($segtimeline != null && sizeof($segtimeline) != 0) {
         $stags = $segtimeline[sizeof($segtimeline) - 1]['S'];
         for ($s = 0; $s < sizeof($stags); $s++) {
             $duration = (int)($stags[$s]['d']);

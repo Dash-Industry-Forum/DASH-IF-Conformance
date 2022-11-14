@@ -398,12 +398,12 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
 // Section 4.3 on on-demand profile periods containing sidx boxes
 if (
     strpos(
-        $profiles[$current_period][$current_period][$current_adaptation_set][$current_representation],
+        $profiles[$current_period][$current_adaptation_set][$current_representation],
         'urn:mpeg:dash:profile:isoff-on-demand:2011'
     ) !== false
     ||
     strpos(
-        $profiles[$current_adaptation_set][$current_representation],
+        $profiles[$current_period][$current_adaptation_set][$current_representation],
         'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014'
     ) !== false
 ) {

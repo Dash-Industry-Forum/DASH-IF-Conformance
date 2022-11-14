@@ -96,125 +96,119 @@ $logger->test(
 
 
 $this->periodCount = 0;
+
+
 foreach ($mpd_dom->childNodes as $node) {
-    if ($node - nodeName != 'Period') {
-        continue;
-    }
-    $this->periodCount++;
+    if ($node->nodeName == 'Period') {
+        $this->periodCount++;
 
+        $adaptationSets = $node->getElementsByTagName('AdaptationSet');
+        $adaptationCount = 0;
 
-    foreach ($mpd_dom->childNodes as $node) {
-        if ($node->nodeName == 'Period') {
-            $this->periodCount++;
+        $this->adaptationVideoCount = 0;
+        $this->adaptationAudioCount = 0;
+        $this->mainVideoFound = 0;
+        $this->mainAudioFound = 0;
 
-            $adaptationSets = $node->getElementsByTagName('AdaptationSet');
-            $adaptationCount = 0;
+        foreach ($adapationSets as $adaptationSet) {
+            $adaptationCount++;
+            $roles = $adaptation->getElementsByTagName('Role');
 
-            $this->adaptationVideoCount = 0;
-            $this->adaptationAudioCount = 0;
-            $this->mainVideoFound = 0;
-            $this->mainAudioFound = 0;
+            $schemeIdUri = '';
+            $roleValue = '';
 
-            foreach ($adapationSets as $adaptationSet) {
-                $adaptationCount++;
-                $roles = $adaptation->getElementsByTagName('Role');
-
-                $schemeIdUri = '';
-                $roleValue = '';
-
-                if ($roles->length > 0) {
-                     $schemeIdUri = $role->item(0)->getAttribute('schemeIdUri');
-                     $roleValue = $role->item(0)->getAttribute('value');
-                }
-
-                $representations = $adapationSet->getElementsByTagName("Representation");
-                $representationCount = $representations->length;
-                if (
-                    $adaptationSet->getAttribute('contentType') == 'video' ||
-                    $adaptationSet->getAttribute('mimeType') == 'video/mp4' ||
-                    (
-                    $representation->length > 0 &&
-                    $representations->item(0)->getAttribute('mimeType') == 'video/mp4'
-                    )
-                ) {
-                    $this->$adaptationVideoCount++;
-                    if (
-                        $role->length > 0 && (strpos($schemeIdUri, "urn:mpeg:dash:role:2011") !== false &&
-                        $roleValue == "main")
-                    ) {
-                        $this->mainVideoFound++;
-                    }
-                    $this->hbbVideoRepresentationChecks($adaptation, $adaptationCount, $this->periodCount);
-                }
-                if (
-                    $adaptationSet->getAttribute('contentType') == 'audio' ||
-                    $adaptationSet->getAttribute('mimeType') == 'audio/mp4' ||
-                    (
-                    $representation->length > 0 &&
-                    $representations->item(0)->getAttribute('mimeType') == 'audio/mp4'
-                    )
-                ) {
-                    $this->$adaptationAudioCount++;
-                    if (
-                        $role->length > 0 && (strpos($schemeIdUri, "urn:mpeg:dash:role:2011") !== false &&
-                        $roleValue == "main")
-                    ) {
-                        $this->mainAudioFound++;
-                    }
-                    $this->hbbAudioRepresentationChecks($adaptation, $adaptationCount, $this->periodCount);
-                }
+            if ($roles->length > 0) {
+                 $schemeIdUri = $role->item(0)->getAttribute('schemeIdUri');
+                 $roleValue = $role->item(0)->getAttribute('value');
             }
 
-            ///\RefactorTodo Reimplement at correct spot
-            /*
-            //Following has error reporting code if MPD element is not part of validating profile.
-            if ($rep_count > 16) {
-              fwrite($mpdreport, "###'HbbTV check violated: Section E.2.2 - There shall be no more than 16 ".
-                "Representations per Adaptatation Set  in an MPD', but found " . $rep_count .
-                " Represenations in Adaptation Set " . $adapt_count .
-                " in Period " . $period_count . " \n");
+            $representations = $adapationSet->getElementsByTagName("Representation");
+            $representationCount = $representations->length;
+            if (
+                $adaptationSet->getAttribute('contentType') == 'video' ||
+                $adaptationSet->getAttribute('mimeType') == 'video/mp4' ||
+                (
+                $representation->length > 0 &&
+                $representations->item(0)->getAttribute('mimeType') == 'video/mp4'
+                )
+            ) {
+                $this->$adaptationVideoCount++;
+                if (
+                    $role->length > 0 && (strpos($schemeIdUri, "urn:mpeg:dash:role:2011") !== false &&
+                    $roleValue == "main")
+                ) {
+                    $this->mainVideoFound++;
+                }
+                $this->hbbVideoRepresentationChecks($adaptation, $adaptationCount, $this->periodCount);
             }
-             */
+            if (
+                $adaptationSet->getAttribute('contentType') == 'audio' ||
+                $adaptationSet->getAttribute('mimeType') == 'audio/mp4' ||
+                (
+                $representation->length > 0 &&
+                $representations->item(0)->getAttribute('mimeType') == 'audio/mp4'
+                )
+            ) {
+                $this->$adaptationAudioCount++;
+                if (
+                    $role->length > 0 && (strpos($schemeIdUri, "urn:mpeg:dash:role:2011") !== false &&
+                    $roleValue == "main")
+                ) {
+                    $this->mainAudioFound++;
+                }
+                $this->hbbAudioRepresentationChecks($adaptation, $adaptationCount, $this->periodCount);
+            }
         }
 
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "HbbTV: Section E.2.2",
-            "The MPD has a maximum of 64 periods after xlink resolution",
-            $this->adaptationSetCount <= 64,
-            "FAIL",
-            "$this->adaptationSetCount adaptation sets found in period $this->periodCount",
-            "$this->adaptationSetCount adapation sets found in period $this->periodCount"
-        );
-
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "HbbTV: Section E.2.2",
-            "There shall be at least one video Adaptation Set per Period in an MPD",
-            $this->adaptationVideoCount,
-            "FAIL",
-            "$this->adaptationVideoCount video adaptation sets found in period $this->periodCount",
-            "No video adaptation sets found in period $this->periodCount"
-        );
-
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "HbbTV: Section E.2.2",
-            "If there is more than one video AdaptationSet, exactly one shall be labelled with Role@value 'main'",
-            $this->adaptationVideoCount <= 1 || $mainVideoFound == 1,
-            "FAIL",
-            "1 or less video adaptations found in period $this->periodCount, or exactly one is labeled 'main'",
-            "Invalid video adapatationset configruation found found in period $this->periodCount"
-        );
-
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "HbbTV: Section E.2.2",
-            "If there is more than one audio AdaptationSet, exactly one shall be labelled with Role@value 'main'",
-            $this->adaptationAudioCount <= 1 || $mainAudioFound == 1,
-            "FAIL",
-            "1 or less audio adaptations found in period $this->periodCount, or exactly one is labeled 'main'",
-            "Invalid audio adapatationset configruation found found in period $this->periodCount"
-        );
+        ///\RefactorTodo Reimplement at correct spot
+        /*
+        //Following has error reporting code if MPD element is not part of validating profile.
+        if ($rep_count > 16) {
+          fwrite($mpdreport, "###'HbbTV check violated: Section E.2.2 - There shall be no more than 16 ".
+            "Representations per Adaptatation Set  in an MPD', but found " . $rep_count .
+            " Represenations in Adaptation Set " . $adapt_count .
+            " in Period " . $period_count . " \n");
+        }
+         */
     }
+
+    $logger->test(
+        "HbbTV-DVB DASH Validation Requirements",
+        "HbbTV: Section E.2.2",
+        "The MPD has a maximum of 64 periods after xlink resolution",
+        $this->adaptationSetCount <= 64,
+        "FAIL",
+        "$this->adaptationSetCount adaptation sets found in period $this->periodCount",
+        "$this->adaptationSetCount adapation sets found in period $this->periodCount"
+    );
+
+    $logger->test(
+        "HbbTV-DVB DASH Validation Requirements",
+        "HbbTV: Section E.2.2",
+        "There shall be at least one video Adaptation Set per Period in an MPD",
+        $this->adaptationVideoCount,
+        "FAIL",
+        "$this->adaptationVideoCount video adaptation sets found in period $this->periodCount",
+        "No video adaptation sets found in period $this->periodCount"
+    );
+
+    $logger->test(
+        "HbbTV-DVB DASH Validation Requirements",
+        "HbbTV: Section E.2.2",
+        "If there is more than one video AdaptationSet, exactly one shall be labelled with Role@value 'main'",
+        $this->adaptationVideoCount <= 1 || $mainVideoFound == 1,
+        "FAIL",
+        "1 or less video adaptations found in period $this->periodCount, or exactly one is labeled 'main'",
+        "Invalid video adapatationset configruation found found in period $this->periodCount"
+    );
+
+    $logger->test(
+        "HbbTV-DVB DASH Validation Requirements",
+        "HbbTV: Section E.2.2",
+        "If there is more than one audio AdaptationSet, exactly one shall be labelled with Role@value 'main'",
+        $this->adaptationAudioCount <= 1 || $mainAudioFound == 1,
+        "FAIL",
+        "1 or less audio adaptations found in period $this->periodCount, or exactly one is labeled 'main'",
+        "Invalid audio adapatationset configruation found found in period $this->periodCount"
+    );
 }
