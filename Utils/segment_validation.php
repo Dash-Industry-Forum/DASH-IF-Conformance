@@ -166,11 +166,11 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
     }
 
     ///\DoubleCheck create proper atomInfo.txt
-    //rename_file($session__dir . '/' . $atominfo_file, "$representationDirectory/atomInfoCopy.xml");
+    //rename($session__dir . '/' . $atominfo_file, "$representationDirectory/atomInfoCopy.xml");
 
     ///\TodoRefactor Check when sampledata is generated, and create it in the correct directory
     //if (file_exists($session__dir . '/' . $sample_data . '.txt') && !$hls_manifest) {
-    //    rename_file($session__dir . '/' . $sample_data . '.txt', "$representationDirectory/sampleData.xml");
+    //    rename($session__dir . '/' . $sample_data . '.txt', "$representationDirectory/sampleData.xml");
     //}
 }
 
@@ -280,7 +280,7 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     global $session_dir, $config_file, $additional_flags, $suppressatomlevel, $reprsentation_mdat_template, $current_period, $current_adaptation_set, $current_representation, $hls_manifest, $hls_mdat_file;
 
     if (!$hls_manifest) {
-        $file = open_file("$representationDirectory/segmentValidatorConfig.txt", 'w');
+        $file = fopen("$representationDirectory/segmentValidatorConfig.txt", 'w');
         fwrite($file, "$representationDirectory/assembled.mp4 \n");
               ///\TodoRefactor -- Generate correct infofile
         /*
@@ -290,7 +290,7 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     } else {
               ///\TodoRefactor -- Also fix for hls
               /*
-        $file = open_file($session__dir . '/' . $config_file, 'w');
+        $file = fopen($session__dir . '/' . $config_file, 'w');
         fwrite($file, $session__dir . '/' . $rep_dir_name . '.mp4 ' . "\n");
         fwrite($file, "-infofile" . "\n");
         fwrite($file, $session__dir . '/' . $rep_dir_name . '.txt' . "\n");
@@ -385,7 +385,7 @@ function loadSegmentInfoFile($PresTimeOffset, $duration, $representationDirector
     $info = array();
 
     ///\DoubleCheck make sure this actually gets created
-    $segmentInfoFile = open_file("$representationDirectory/infofile.txt", 'rt');
+    $segmentInfoFile = fopen("$representationDirectory/infofile.txt", 'rt');
     if (!$segmentInfoFile) {
         return;
     }
@@ -410,7 +410,7 @@ function loadSegmentInfoFile($PresTimeOffset, $duration, $representationDirector
         }
     }
     checkSegmentDurationWithMPD($info['leafInfo'], $PresTimeOffset, $duration, $representationDirectory);
-    close_file($segmentInfoFile);
+    fclose($segmentInfoFile);
 }
 
 function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representationDirectory)
@@ -422,7 +422,7 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
     }
 
     ///\DoubleCheck make sure this actually gets created, used to be $reprsentation_error_log_template
-    $segmentInfoFile = open_file("$representationDirectory/errorLog.txt", 'rt');
+    $segmentInfoFile = fopen("$representationDirectory/errorLog.txt", 'rt');
     if (!$trackErrorFile) {
         return;
     }

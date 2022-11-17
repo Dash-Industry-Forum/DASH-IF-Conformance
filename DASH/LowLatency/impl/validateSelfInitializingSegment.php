@@ -4,7 +4,7 @@ global $session, $mpdHandler, $logger;
 
 $repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId);
 ///\RefactorTodo look where this file should come from
-if (!($representationInformationFile = open_file("$repDir/representation.txt", 'r'))) {
+if (!($representationInformationFile = fopen("$repDir/representation.txt", 'r'))) {
     return;
 }
 

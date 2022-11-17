@@ -95,80 +95,79 @@ $logger->test(
 
 $this->periodCount = 0;
 foreach ($mpdHandler->getDom()->childNodes as $node) {
-    if ($node - nodeName != 'Period') {
+    if ($node->nodeName != 'Period') {
         continue;
     }
     $this->periodCount++;
 
-        $adaptationSets = $node->getElementsByTagName('AdaptationSet');
-        $adaptationCount = 0;
+    $adaptationSets = $node->getElementsByTagName('AdaptationSet');
+    $adaptationCount = 0;
 
-        $this->adaptationVideoCount = 0;
-        $this->adaptationAudioCount = 0;
-        $this->mainVideoFound = 0;
-        $this->mainAudioFound = 0;
+    $this->adaptationVideoCount = 0;
+    $this->adaptationAudioCount = 0;
+    $this->mainVideoFound = 0;
+    $this->mainAudioFound = 0;
 
-        foreach ($adapationSets as $adaptationSet) {
-            $adaptationCount++;
-            $roles = $adaptation->getElementsByTagName('Role');
+    foreach ($adapationSets as $adaptationSet) {
+        $adaptationCount++;
+        $roles = $adaptation->getElementsByTagName('Role');
 
-            $schemeIdUri = '';
-            $roleValue = '';
+        $schemeIdUri = '';
+        $roleValue = '';
 
-            if ($roles->length > 0) {
-                 $schemeIdUri = $role->item(0)->getAttribute('schemeIdUri');
-                 $roleValue = $role->item(0)->getAttribute('value');
-            }
-
-            $representations = $adapationSet->getElementsByTagName("Representation");
-            $representationCount = $representations->length;
-            if (
-                $adaptationSet->getAttribute('contentType') == 'video' ||
-                $adaptationSet->getAttribute('mimeType') == 'video/mp4' ||
-                (
-                $representation->length > 0 &&
-                $representations->item(0)->getAttribute('mimeType') == 'video/mp4'
-                )
-            ) {
-                $this->$adaptationVideoCount++;
-                if (
-                    $role->length > 0 && (strpos($schemeIdUri, "urn:mpeg:dash:role:2011") !== false &&
-                    $roleValue == "main")
-                ) {
-                    $this->mainVideoFound++;
-                }
-                $this->hbbVideoRepresentationChecks($adaptation, $adaptationCount, $this->periodCount);
-            }
-            if (
-                $adaptationSet->getAttribute('contentType') == 'audio' ||
-                $adaptationSet->getAttribute('mimeType') == 'audio/mp4' ||
-                (
-                $representation->length > 0 &&
-                $representations->item(0)->getAttribute('mimeType') == 'audio/mp4'
-                )
-            ) {
-                $this->$adaptationAudioCount++;
-                if (
-                    $role->length > 0 && (strpos($schemeIdUri, "urn:mpeg:dash:role:2011") !== false &&
-                    $roleValue == "main")
-                ) {
-                    $this->mainAudioFound++;
-                }
-                $this->hbbAudioRepresentationChecks($adaptation, $adaptationCount, $this->periodCount);
-            }
+        if ($roles->length > 0) {
+             $schemeIdUri = $role->item(0)->getAttribute('schemeIdUri');
+             $roleValue = $role->item(0)->getAttribute('value');
         }
 
-        ///\RefactorTodo Reimplement at correct spot
-        /*
-        //Following has error reporting code if MPD element is not part of validating profile.
-        if ($rep_count > 16) {
-          fwrite($mpdreport, "###'HbbTV check violated: Section E.2.2 - There shall be no more than 16 ".
-            "Representations per Adaptatation Set  in an MPD', but found " . $rep_count .
-            " Represenations in Adaptation Set " . $adapt_count .
-            " in Period " . $period_count . " \n");
+        $representations = $adapationSet->getElementsByTagName("Representation");
+        $representationCount = $representations->length;
+        if (
+            $adaptationSet->getAttribute('contentType') == 'video' ||
+            $adaptationSet->getAttribute('mimeType') == 'video/mp4' ||
+            (
+            $representation->length > 0 &&
+            $representations->item(0)->getAttribute('mimeType') == 'video/mp4'
+            )
+        ) {
+            $this->$adaptationVideoCount++;
+            if (
+                $role->length > 0 && (strpos($schemeIdUri, "urn:mpeg:dash:role:2011") !== false &&
+                $roleValue == "main")
+            ) {
+                $this->mainVideoFound++;
+            }
+            $this->hbbVideoRepresentationChecks($adaptation, $adaptationCount, $this->periodCount);
         }
-         */
+        if (
+            $adaptationSet->getAttribute('contentType') == 'audio' ||
+            $adaptationSet->getAttribute('mimeType') == 'audio/mp4' ||
+            (
+            $representation->length > 0 &&
+            $representations->item(0)->getAttribute('mimeType') == 'audio/mp4'
+            )
+        ) {
+            $this->$adaptationAudioCount++;
+            if (
+                $role->length > 0 && (strpos($schemeIdUri, "urn:mpeg:dash:role:2011") !== false &&
+                $roleValue == "main")
+            ) {
+                $this->mainAudioFound++;
+            }
+            $this->hbbAudioRepresentationChecks($adaptation, $adaptationCount, $this->periodCount);
+        }
     }
+
+    ///\RefactorTodo Reimplement at correct spot
+    /*
+    //Following has error reporting code if MPD element is not part of validating profile.
+    if ($rep_count > 16) {
+      fwrite($mpdreport, "###'HbbTV check violated: Section E.2.2 - There shall be no more than 16 ".
+        "Representations per Adaptatation Set  in an MPD', but found " . $rep_count .
+        " Represenations in Adaptation Set " . $adapt_count .
+        " in Period " . $period_count . " \n");
+    }
+     */
 
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",

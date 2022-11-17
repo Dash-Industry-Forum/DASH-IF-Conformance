@@ -29,7 +29,7 @@ $repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $curr
 ///\RefactorTodo Check where this file should come from.
 $fileName = "$repDir/representation.txt";
 
-if (!($selfInitializingSegmentFile = open_file($fileName, 'r'))) {
+if (!($selfInitializingSegmentFile = fopen($fileName, 'r'))) {
     return;
 }
 

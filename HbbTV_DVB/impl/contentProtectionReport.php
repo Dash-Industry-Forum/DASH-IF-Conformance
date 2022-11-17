@@ -30,7 +30,7 @@ $adaptationIndex = 0;
 $keyRotationUsed = false;
 foreach ($mpdHandler->getDom()->getElementsByTagName('AdaptationSet') as $adaptationSetNode) {
     $adaptationId = $adaptationIndex + 1;
-    $adaptationReport = open_file(
+    $adaptationReport = fopen(
         $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $adaptationIndex) . '/hbbDvbCross.txt',
         'a+b'
     );

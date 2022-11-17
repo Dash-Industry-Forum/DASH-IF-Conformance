@@ -4,7 +4,7 @@ global $logger, $mpdHandler;
 
 
 if ($mpdHandler->getDom() && $this->DVBEnabled) {
-    $mpd_bytes = strlen($mpdHanlder->getMPD());
+    $mpd_bytes = strlen($mpdHandler->getMPD());
 
     $logger->test(
         "DVB",

@@ -29,16 +29,17 @@ function process_MPD($parseSegments = false)
     global $mpdHandler;
 
 
+    $mpdHandler = new DASHIF\MPDHandler($mpd_url);
+
     $logger->parseSegments = $parseSegments;
 
-    roreach ($modules as $module) {
+    foreach ($modules as $module) {
         if ($module->isEnabled()) {
             $module->hookBeforeMPD();
         }
     }
 
 
-    $mpdHandler = new DASHIF\MPDHandler($mpd_url);
 
     ## Get MPD features into an array
     ///\RefactorTodo Remove this global!!

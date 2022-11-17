@@ -129,6 +129,7 @@ class MPDHandler
     public function getUrl(){
       return $this->url;
     }
+
     public function getMPD(){
       return $this->mpd;
     }

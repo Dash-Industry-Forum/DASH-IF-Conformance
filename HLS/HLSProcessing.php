@@ -75,7 +75,7 @@ function processHLS(){
                 if($cmaf_conformance)
                     $return_seg_val[] = $cmaf_function_name($cmaf_when_to_call[1]);
                 
-                err_file_op(1);
+                //err_file_op(1);
                 $current_representation++;
             }
             
@@ -93,7 +93,7 @@ function processHLS(){
             $return_arr = $ctawave_function_name($ctawave_when_to_call[1]);
         
         $current_adaptation_set = 0;
-        err_file_op(2);
+        //err_file_op(2);
     }
     
     $progress_xml->allDownloadComplete = "true";
@@ -265,7 +265,7 @@ function segmentDownload($urlarray, $type, $is_dolby){
         $is_subtitle_rep = false; // this is not used in HLS always false
         $sizearray[] = download_data($tmpdir, ($type == $hls_iframe_file) ? $array : $segmentURLs, $is_subtitle_rep, $is_dolby);
         
-        rename_file($session_dir . '/' . $hls_mdat_file . '.txt', $session_dir . '/' . $type . '_' . $hls_current_index . '_' . $hls_mdat_file . '.txt');
+        rename($session_dir . '/' . $hls_mdat_file . '.txt', $session_dir . '/' . $type . '_' . $hls_current_index . '_' . $hls_mdat_file . '.txt');
         if($type == $hls_iframe_file){
             $hls_byte_range_begin = array();
             $hls_byte_range_size = array();
@@ -364,9 +364,9 @@ function groupPlaylists($file_location){
                 
                 $new_track_path = str_replace(array('$AS$', '$R$'), array($i, $j), $reprsentation_template);
                 
-                rename_file($track_path . '.xml', $period_dir . '/' . $new_sw_path . '/' . $new_track_path . '.xml');
-                rename_file($session_dir . '/' . $track .'log.txt' , $period_dir . '/' . $new_track_path . 'log.txt');
-                rename_file($track_path, $period_dir . '/' . $new_track_path);
+                rename($track_path . '.xml', $period_dir . '/' . $new_sw_path . '/' . $new_track_path . '.xml');
+                rename($session_dir . '/' . $track .'log.txt' , $period_dir . '/' . $new_track_path . 'log.txt');
+                rename($track_path, $period_dir . '/' . $new_track_path);
                 tabulateResults($period_dir . '/' . $new_track_path . 'log.txt', 'Segment');
                 
                 $j++;

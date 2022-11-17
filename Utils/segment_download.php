@@ -44,7 +44,7 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
     $mdat_file = (!$hls_manifest) ?
             'Period' . $current_period . '/' . str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_mdat_template) :
             $hls_mdat_file;
-    $sizefile = open_file($session->getDir() . '/' . $mdat_file . '.txt', 'a+b'); //create text file containing the original size of Mdat box that is ignored
+    $sizefile = fopen($session->getDir() . '/' . $mdat_file . '.txt', 'a+b'); //create text file containing the original size of Mdat box that is ignored
 
     $segment_count = sizeof($array_file);
     $initoffset = 0; // Set pointer to 0
@@ -75,8 +75,8 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
 
         if (!$file_exists) {
             $missing = (!$hls_manifest) ?
-                    open_file($session->getDir() . '/Period' . $current_period . '/' . $missinglink_file . '.txt', 'a+b') :
-                    open_file($session->getDir() . '/' . $missinglink_file . '.txt', 'a+b');
+                    fopen($session->getDir() . '/Period' . $current_period . '/' . $missinglink_file . '.txt', 'a+b') :
+                    fopen($session->getDir() . '/' . $missinglink_file . '.txt', 'a+b');
             fwrite($missing, $filePath . "\n");
             continue;
         }
@@ -93,7 +93,7 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
             $location = 1;
             $box_name = null;
             $box_size = 0;
-            $newfile = open_file($directory . "/" . $filename, 'a+b');
+            $newfile = fopen($directory . "/" . $filename, 'a+b');
 
             # Assure that the pointer doesn't exceed size of downloaded bytes
             $byte_array = unpack('C*', $content);
@@ -158,7 +158,7 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
                 $location = 1; // temporary pointer
                 $name = null; // box name
                 $box_size = 0; // box size
-                $newfile = open_file($directory . "/" . $filename, 'a+b'); // create an empty mp4 file to contain data needed from remote segment
+                $newfile = fopen($directory . "/" . $filename, 'a+b'); // create an empty mp4 file to contain data needed from remote segment
 
                 # Download the partial content and unpack
                 $content = partial_download($filePath, $ch, $sizepos, $sizepos + 1500);
@@ -330,7 +330,7 @@ function partial_download($url, &$ch, $begin = 0, $end = 0)
 
     # Temporary container for partial segments downloaded
     $temp_file = $session->getDir() . '//' . "getthefile.mp4";
-    if (!($fp = open_file($temp_file, "w+"))) {
+    if (!($fp = fopen($temp_file, "w+"))) {
         exit;
     }
 

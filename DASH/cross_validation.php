@@ -19,7 +19,7 @@ function loadLeafInfoFile($fileName, $PresTimeOffset)
     global $session_dir;
     $info = array();
 
-    $leafInfoFile = open_file($session_dir . '/' . $fileName, 'rt');
+    $leafInfoFile = fopen($session_dir . '/' . $fileName, 'rt');
     if (!$leafInfoFile) {
         return;
     }
@@ -46,7 +46,7 @@ function loadLeafInfoFile($fileName, $PresTimeOffset)
         }
     }
 
-    close_file($leafInfoFile);
+    fclose($leafInfoFile);
     return $info;
 }
 
@@ -118,7 +118,7 @@ function crossRepresentationProcess()
     $timescale = 1;
 
     $file_path = str_replace('$AS$', $current_adaptation_set, $adaptation_set_error_log_template) . '.txt';
-    $opfile = open_file($session_dir . '/Period' . $current_period . '/' . $file_path, 'w');
+    $opfile = fopen($session_dir . '/Period' . $current_period . '/' . $file_path, 'w');
 
     $segmentAlignment = ($adaptation_set['segmentAlignment']) ? $adaptation_set['segmentAlignment'] : 'false';
     $subsegmentAlignment = ($adaptation_set['subsegmentAlignment']) ? $adaptation_set['subsegmentAlignment'] : 'false';
@@ -164,14 +164,14 @@ function crossRepresentationProcess()
             }
         }
     }
-    close_file($opfile);
+    fclose($opfile);
 
     if (file_exists($session_dir . '/Period' . $current_period . '/' . $file_path . '.txt')) {
         $searchadapt = file_get_contents($session_dir . '/Period' . $current_period . '/' . $file_path . '.txt');
         if (strpos($searchadapt, "Error") == false && strpos($searchadapt, "violated") == false) {
             $file_error[] = "noerror";
         } else {
-            $file_error[] = relative_path($session_dir . '/Period' . $current_period . '/' . $file_path . '.html');
+            $file_error[] = $session_dir . '/Period' . $current_period . '/' . $file_path . '.html';
         }
     } else {
         $file_error[] = "noerror";

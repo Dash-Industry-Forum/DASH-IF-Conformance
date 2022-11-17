@@ -119,7 +119,7 @@ for ($j = 1; $j < $moofBoxesCount; $j++) {
     );
 }
 
-$mdatFile = open_file("$representationDirectory/mdatoffset.txt", 'r');
+$mdatFile = fopen("$representationDirectory/mdatoffset.txt", 'r');
 for ($j = 0; $j < $moofBoxesCount; $j++) {
     $currentTrunBox = $trunBoxes->item($j);
     if ($currentTrunBox->getAttribute('version') == 1) {
