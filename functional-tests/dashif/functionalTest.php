@@ -101,7 +101,7 @@ final class functionalTest extends TestCase
     public function streamProvider()
     {
         $i = 0;
-        $limit = 100;
+        $limit = 2;
         $startnumber = 0;
         $blacklist = [
             "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey/Manifest_1080p.mpd",

@@ -14,10 +14,12 @@
  */
 
 function construct_flags($period, $adaptation_set, $representation){
-    global $session_dir, $mpd_features, $dashif_conformance, $low_latency_dashif_conformance, $inband_event_stream_info, $current_period, $current_adaptation_set, $current_representation, $profiles;
+    global $session_dir, $dashif_conformance, $low_latency_dashif_conformance, $inband_event_stream_info, $current_adaptation_set, $current_representation, $mpdHandler, $profiles;
+
+    
     
     ## @minimumBufferTime 
-    $timeSeconds = (string) DASHIF\Utility\timeParsing($mpd_features['minBufferTime']);
+    $timeSeconds = (string) DASHIF\Utility\timeParsing($mpdHandler->getFeatures()['minBufferTime']);
     $processArguments = ' -minbuffertime ' . $timeSeconds;
 
     ## @bandwidth
@@ -42,7 +44,7 @@ function construct_flags($period, $adaptation_set, $representation){
     }
 
     ## dynamic @type
-    $dynamic = ($mpd_features['type'] == 'dynamic') ? ' -dynamic' : '';
+    $dynamic = ($mpdHandler->getFeatures()['type'] == 'dynamic') ? ' -dynamic' : '';
     $processArguments .= $dynamic;
 
     ## @startWithSAP
@@ -58,7 +60,7 @@ function construct_flags($period, $adaptation_set, $representation){
     $dashif_ondemand = array('http://dashif.org/guidelines/dash-if-ondemand');
     $dashif_mixed_ondemand = array('http://dashif.org/guidelines/dash-if-mixed');
     
-    $rep_profiles = explode(',', $profiles[$current_period][$current_adaptation_set][$current_representation]);
+    $rep_profiles = explode(',', $profiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation]);
     foreach($rep_profiles as $rep_profile){
         if(strpos($rep_profile, ' ') !== FALSE)
             $rep_profile = str_replace(' ', '', $rep_profile);
@@ -148,9 +150,9 @@ function construct_flags($period, $adaptation_set, $representation){
     ## Inband Event Stream for LL
     if($low_latency_dashif_conformance){
         $processArguments .= ' -dashifll';
-        if($inband_event_stream_info[$current_period] !== NULL &&
-           $inband_event_stream_info[$current_period][$current_adaptation_set] !== NULL &&
-           $inband_event_stream_info[$current_period][$current_adaptation_set][$current_representation] !== NULL) {
+        if($inband_event_stream_info[$mpdHandler->getSelectedPeriod()] !== NULL &&
+           $inband_event_stream_info[$mpdHandler->getSelectedPeriod()][$current_adaptation_set] !== NULL &&
+           $inband_event_stream_info[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation] !== NULL) {
             $processArguments .= ' -inbandeventstreamll';
         }
     }

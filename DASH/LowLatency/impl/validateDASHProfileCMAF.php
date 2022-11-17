@@ -12,7 +12,7 @@ foreach ($representations as $representationId => $representation) {
         continue;
     }
 
-    $xml = get_DOM($rep_xml, 'atomlist');
+    $xml = DASHIF\Utility\parseDOM($rep_xml, 'atomlist');
     if (!$xml) {
         continue;
     }

@@ -13,7 +13,7 @@ if (!file_exists($xmlRepresentation)) {
     fwrite(STDERR, "Can't open $xmlRepresentation\n");
     return;
 }
-$xml = get_DOM($xmlRepresentation, 'atomlist');
+$xml = DASHIF\Utility\parseDOM($xmlRepresentation, 'atomlist');
 
 if (!$xml) {
     fwrite(STDERR, "Invalid xml in $xmlRepresentation\n");

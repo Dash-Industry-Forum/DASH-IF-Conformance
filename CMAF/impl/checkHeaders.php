@@ -20,7 +20,7 @@ if (!$fileExists) {
 }
 
 $first = true;
-$xml = get_DOM($path, 'compInfo');
+$xml = DASHIF\Utility\parseDOM($path, 'compInfo');
 
 if ($xml) {
     //if any attribute in the xml file contains "No", then this will be considered as an error

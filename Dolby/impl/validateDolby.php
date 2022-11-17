@@ -18,7 +18,7 @@ if (!$mimeType){
 if ($isDolby && $mimeType == 'audio/mp4' )
 {
   $atomXml = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
-  $xml = get_DOM("$atomXml/atomInfo.xml", 'atomlist');
+  $xml = DASHIF\Utility\parseDOM("$atomXml/atomInfo.xml", 'atomlist');
   if ($xml){
   $this->compareTocWithDac4($xml);
   }

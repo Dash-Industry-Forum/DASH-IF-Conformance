@@ -65,7 +65,7 @@ foreach ($selectionSets as $selectionSet) {
 
         $longestTrackDuration = 0;
         for ($f = 0; $f < $filecount; $f++) {
-            $xml = get_DOM($files[$f], 'atomlist');
+            $xml = DASHIF\Utility\parseDOM($files[$f], 'atomlist');
             if ($xml) {
                 $timescale = $xml->getElementsByTagName('mdhd')->item(0)->getAttribute('timescale');
                 $mehdBoxes = $xml->getElementsByTagName('mehd');

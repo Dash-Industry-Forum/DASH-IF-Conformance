@@ -405,7 +405,7 @@ function determineMediaType($path, $tag){
     global $hls_media_types, $hls_iframe_file;
     
     if(file_exists($path)){
-        $xml = get_DOM($path, 'atomlist');
+        $xml = DASHIF\Utility\parseDOM($path, 'atomlist');
         if($xml){
             $hdlr = $xml->getElementsByTagName('hdlr')->item(0);
             $hdlr_type = $hdlr->getAttribute('handler_type');

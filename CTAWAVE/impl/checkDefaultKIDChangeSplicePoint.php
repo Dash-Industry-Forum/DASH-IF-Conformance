@@ -11,7 +11,7 @@ $errorMsg = "";
 for ($i = 0; $i < ($periodCount - 1); $i++) {
     for ($adapt = 0; $adapt < $adaptationCount; $adapt++) {
         $dir1 = $session->getRepresentationDir($i, $adapt, 0);
-        $xml1 = get_DOM($dir1 . '/atomInfo.xml', 'atomlist');
+        $xml1 = DASHIF\Utility\parseDOM($dir1 . '/atomInfo.xml', 'atomlist');
         if ($xml1) {
             $tenc = $xml1->getElementsByTagName("tenc");
             if ($tenc->length > 0) {
@@ -19,7 +19,7 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
             }
         }
         $dir2 = $session->getRepresentationDir($i + 1, $adapt, 0);
-        $xml2 = get_DOM($dir2 . '/atomInfo.xml', 'atomlist');
+        $xml2 = DASHIF\Utility\parseDOM($dir2 . '/atomInfo.xml', 'atomlist');
         if ($xml2) {
             $tenc = $xml2->getElementsByTagName("tenc");
             if ($tenc->length > 0) {

@@ -9,7 +9,7 @@ $repDir = $session->getRepresentationDir($current_representation, $current_adapt
 $errorFilePath = "$repDir/stderr.txt";
 
 ///\RefactorTodo Wrong directory, again..?
-$xmlRepresentation = get_DOM("$repDir/atomInfo.xml", 'atomlist');
+$xmlRepresentation = DASHIF\Utility\parseDOM("$repDir/atomInfo.xml", 'atomlist');
 if ($xmlRepresentation) {
     if ($this->DVBEnabled) {
         $mediaTypes = DASHIF\Utility\mediaTypes($mpdHandler->getDom()->getElementsByTagName('Period')->item($mpdHandler->getSelectedPeriod()));

@@ -36,7 +36,7 @@ for ($i = 0; $i < sizeof($presStarts); $i++) {
 $repXml = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId) . '/atomInfo.xml';
 
 if (file_exists($repXml)) {
-    $xml = get_DOM($repXml, 'atomlist');
+    $xml = DASHIF\Utility\parseDOM($repXml, 'atomlist');
 
     if (!$xml) {
         return;

@@ -48,7 +48,7 @@ for ($adaptationSetIndex = 0; $adaptationSetIndex < sizeof($adaptationSets); $ad
     if (file_exists($location)) {
         for ($i = 0; $i < $filecount; $i++) {
             $filename = $files[$i];
-            $xml = get_DOM($filename, 'atomlist');
+            $xml = DASHIF\Utility\parseDOM($filename, 'atomlist');
             $id = $adaptationSet['Representation'][$i]['id'];
 
             $cmfhdProfile = strpos(

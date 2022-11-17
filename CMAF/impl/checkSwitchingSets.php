@@ -18,11 +18,11 @@ $ind = 0;
 for ($i = 0; $i < $filecount - 1; $i++) { //iterate over files
     for ($j = $i + 1; $j < $filecount; $j++) { //iterate over remaining files
         $fileName1 = $files[$i]; //load file
-        $xml1 = get_DOM($fileName1, 'atomlist');
+        $xml1 = DASHIF\Utility\parseDOM($fileName1, 'atomlist');
         $id1 = $adaptation_set['Representation'][$i]['id'];
 
         $fileName2 = $files[$j]; //load file to be compared
-        $xml2 = get_DOM($fileName2, 'atomlist');
+        $xml2 = DASHIF\Utility\parseDOM($fileName2, 'atomlist');
         $id2 = $adaptation_set['Representation'][$j]['id'];
 
         create_folder_in_session($adaptationDirectory  . '/' . $comparison_folder);

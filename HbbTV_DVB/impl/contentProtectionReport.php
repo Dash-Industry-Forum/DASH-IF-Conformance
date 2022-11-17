@@ -162,7 +162,7 @@ foreach ($mpdHandler->getDom()->getElementsByTagName('AdaptationSet') as $adapta
         ///\RefactorTodo This was definitely pointing to a wrong directory. Probably not intentional.
         $xmlFilePath = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationIndex, $representationIndex) .
           '/atomInfo.xml';
-        $abs = get_DOM($xmlFilePath, 'atomlist'); // load mpd from url
+        $abs = DASHIF\Utility\parseDOM($xmlFilePath, 'atomlist'); // load mpd from url
 
         if (!$abs) {
             $representationIndex++;

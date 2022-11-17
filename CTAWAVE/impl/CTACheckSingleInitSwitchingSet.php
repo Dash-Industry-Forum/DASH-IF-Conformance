@@ -16,7 +16,7 @@ for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex
 
     $fileCount = count($files);
     for ($fileIndex = 0; $fileIndex < $fileCount; $fileIndex++) {
-        $xml = get_DOM($files[$fileIndex], 'atomlist');
+        $xml = DASHIF\Utility\parseDOM($files[$fileIndex], 'atomlist');
         if (!$xml) {
             continue;
         }

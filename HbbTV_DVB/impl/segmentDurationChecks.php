@@ -99,7 +99,7 @@ $logger->test(
 );
 
 $repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
-$abs = get_DOM("$repDir/atomInfo.xml", 'atomlist'); // load mpd from url
+$abs = DASHIF\Utility\parseDOM("$repDir/atomInfo.xml", 'atomlist'); // load mpd from url
 if ($abs) {
     if ($abs->getElementsByTagName('mehd')->length && $abs->getElementsByTagName('mvhd')->length) {
         $fragmentDuration = $abs->getElementsByTagName('mehd')->item(0)->getAttribute('fragmentDuration');

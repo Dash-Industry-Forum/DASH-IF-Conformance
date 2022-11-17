@@ -8,7 +8,7 @@ $errorMsg = "";
 for ($i = 0; $i < ($periodCount - 1); $i++) {
     for ($adaptation = 0; $adaptation < $adaptationCount; $adaptation++) {
         $dir1 = $session->getRepresentationDir($i, $adapt, 0);
-        $xml1 = get_DOM($dir1 . '/atomInfo.xml', 'atomlist');
+        $xml1 = DASHIF\Utility\parseDOM($dir1 . '/atomInfo.xml', 'atomlist');
         if ($xml1) {
             $hdlrBox1 = $xml1->getElementsByTagName('hdlr')->item(0);
             $hdlrType1 = $hdlrBox1->getAttribute("handler_type");
@@ -27,7 +27,7 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
             }
         }
         $dir2 = $session->getRepresentationDir($i + 1, $adapt, 0);
-        $xml2 = get_DOM($dir2 . '/atomInfo.xml', 'atomlist');
+        $xml2 = DASHIF\Utility\parseDOM($dir2 . '/atomInfo.xml', 'atomlist');
         if ($xml2) {
             $hdlrBox2 = $xml2->getElementsByTagName('hdlr')->item(0);
             $hdlrType2 = $hdlrBox2->getAttribute("handler_type");

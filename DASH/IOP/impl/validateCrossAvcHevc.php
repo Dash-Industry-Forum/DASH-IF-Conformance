@@ -22,7 +22,7 @@ foreach ($representations as $representationId => $representation) {
         return;
     }
 
-    $xml = get_DOM($rep_xml, 'atomlist');
+    $xml = DASHIF\Utility\parseDOM($rep_xml, 'atomlist');
     if (!$xml) {
         return;
     }

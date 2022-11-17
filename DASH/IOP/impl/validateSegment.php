@@ -9,7 +9,7 @@ if (!file_exists($rep_xml)) {
     return;
 }
 
-$xml = get_DOM($rep_xml, 'atomlist');
+$xml = DASHIF\Utility\parseDOM($rep_xml, 'atomlist');
 if (!$xml) {
     return;
 }

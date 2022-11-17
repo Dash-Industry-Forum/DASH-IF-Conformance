@@ -57,7 +57,7 @@ if (!file_exists($location1)) {
 }
 
 for ($i = 0; $i < $fileCount1; $i++) {
-    $xml = get_DOM($files1[$i], 'atomlist');
+    $xml = DASHIF\Utility\parseDOM($files1[$i], 'atomlist');
     $id = $adaptationSets[$indices[0] - 1]['Representation'][$i]['id'];
 
     if (!$xml) {
@@ -84,7 +84,7 @@ for ($i = 0; $i < $fileCount1; $i++) {
         return;
     }
     for ($j = 0; $j < $fileCount2; $j++) {
-        $xml2 = get_DOM($files2[$j], 'atomlist');
+        $xml2 = DASHIF\Utility\parseDOM($files2[$j], 'atomlist');
         $id2 = $adaptationSets[$indices[1] - 1]['Representation'][$j]['id'];
 
         if (!$xml2) {

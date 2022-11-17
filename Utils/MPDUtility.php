@@ -173,3 +173,46 @@ function formSegmentAccess($highLevel, $lowLevel)
         }
     }
 }
+
+function parseDoc($path)
+{
+    $return_val = false;
+
+    $contents  = file_get_contents($path);
+
+    $loaded = simplexml_load_file($path);
+    if (!$loaded) {
+        return $return_val;
+    }
+
+    $dom_sxe = dom_import_simplexml($loaded);
+    if (!$dom_sxe) {
+        return $return_val;
+    }
+
+    $dom_doc = new \DOMDocument('1.0');
+    $dom_sxe = $dom_doc->importNode($dom_sxe, true);
+    if (!$dom_sxe) {
+        return $return_val;
+    }
+
+    $dom_doc->appendChild($dom_sxe);
+    return $dom_doc;
+}
+
+function parseDOM($path, $main_element)
+{
+    $return_val = false;
+
+    $dom_doc = parseDoc($path);
+    if (!$dom_doc) {
+        return $return_val;
+    }
+
+    $main_element_nodes = $dom_doc->getElementsByTagName($main_element);
+    if ($main_element_nodes->length == 0) {
+        return $return_val;
+    }
+
+    return $main_element_nodes->item(0);
+}

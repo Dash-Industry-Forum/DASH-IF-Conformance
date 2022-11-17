@@ -221,7 +221,6 @@ function run_backend($configFile, $representationDirectory = "")
         "Atominfo for $representationDirectory missing"
     );
 
-
 $atomXmlString = file_get_contents("$sessionDirectory/atominfo.xml");
 $STYPBeginPos = strpos($atomXmlString, "<styp");
 if ($STYPBugPos !== false){
@@ -238,16 +237,16 @@ if ($STYPBugPos !== false){
 
 }
 
-    $xml = get_DOM("$sessionDirectory/atominfo.xml", 'atomlist');
-    $moveAtom &= $logger->test(
-        "Health Checks",
-        "Segment Validation",
-        "AtomInfo contains valid xml",
-        $xml !== false,
-        "FAIL",
-        "Atominfo for $representationDirectory has valid xml",
-        "Atominfo for $representationDirectory has invalid xml"
-    );
+$xml = DASHIF\Utility\parseDOM("$sessionDirectory/atominfo.xml", 'atomlist');
+$moveAtom &= $logger->test(
+    "Health Checks",
+    "Segment Validation",
+    "AtomInfo contains valid xml",
+    $xml !== false,
+    "FAIL",
+    "Atominfo for $representationDirectory has valid xml",
+    "Atominfo for $representationDirectory has invalid xml"
+);
 
     $moveAtom &= $logger->test(
         "Health Checks",

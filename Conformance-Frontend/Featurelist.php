@@ -352,7 +352,7 @@ function convertToHtml() {
     global $session_dir, $featurelist_log, $featurelist_log_html;
     
     $html_str = '<html><body><div>';
-    $feature_dom = get_DOM("$session_dir/$featurelist_log", 'MPD');
+    $feature_dom = DASHIF\Utility\parseDOM("$session_dir/$featurelist_log", 'MPD');
     $html_str = populateList($feature_dom, $html_str);
     $html_str .= '</div></body></html>';
     file_put_contents("$session_dir/$featurelist_log_html", $html_str);

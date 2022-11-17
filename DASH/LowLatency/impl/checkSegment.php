@@ -8,7 +8,7 @@ if (!file_exists($repXml)) {
     return null;
 }
 
-$xml = get_DOM($repXml, 'atomlist');
+$xml = DASHIF\Utility\parseDOM($repXml, 'atomlist');
 if (!$xml) {
     return null;
 }

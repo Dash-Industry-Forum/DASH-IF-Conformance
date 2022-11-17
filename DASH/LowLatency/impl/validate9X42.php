@@ -14,7 +14,7 @@ foreach ($representations as $representationId => $representation) {
     $rep_xml = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId) . '/atomInfo.xml';
 
     if (file_exists($rep_xml)) {
-        $xml = get_DOM($rep_xml, 'atomlist');
+        $xml = DASHIF\Utility\parseDOM($rep_xml, 'atomlist');
         if (!$xml) {
             continue;
         }
