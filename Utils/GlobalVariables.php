@@ -16,12 +16,9 @@
 # General variables
 $main_dir = dirname(__DIR__) . '/Conformance-Frontend/';
 $session_dir = (isset($_SESSION['locate'])) ? $_SESSION['locate'] : dirname(__DIR__) . '/Conformance-Frontend/temp';
-$mpd_doc;
 $mpd_url = '';
-$mpd_features;
 $mpd_validation_only = 0;
 $uploaded = false;
-$current_period = 0;
 $current_adaptation_set = 0;
 $current_representation = 0;
 $period_timing_info = array();

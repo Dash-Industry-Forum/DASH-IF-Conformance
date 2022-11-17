@@ -1,6 +1,6 @@
 <?php
 
-global $session, $current_period, $logger;
+global $session, $mpdHandler, $logger;
 
 $eventMessageStreamsPresent = false;
 $inbandEventMessageStreamsPresent = false;
@@ -11,7 +11,7 @@ foreach ($representations as $representationId => $representation) {
     $inbandEventStreams = ($representation['InbandEventStream']) ?
       $representation['InbandEventStream'] : $adaptationSet['InbandEventStream'];
 
-    $rep_xml = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId) . '/atomInfo.xml';
+    $rep_xml = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId) . '/atomInfo.xml';
 
     if (file_exists($rep_xml)) {
         $xml = get_DOM($rep_xml, 'atomlist');
@@ -36,8 +36,8 @@ $logger->test(
     "Low Latency Chunked Adaptation Set",
     $eventMessageStreamsPresent,
     "PASS",
-    "Found in Period " . ($current_period + 1) . ' Adaptation Set ' . ($adaptationSetId + 1),
-    "Not found in Period " . ($current_period + 1) . ' Adaptation Set ' . ($adaptationSetId + 1)
+    "Found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1),
+    "Not found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1)
 );
 if ($inbandEventMessageStreamsPresent) {
     $logger->test(
@@ -47,9 +47,9 @@ if ($inbandEventMessageStreamsPresent) {
         "Segment Adaptation Sets",
         $isLowLatency,
         "PASS",
-        "Found in Low Latency Period " . ($current_period + 1) . ' Adaptation Set ' .
+        "Found in Low Latency Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
         ($adaptationSetId + 1),
-        "Not found in non-Low Latency Period " . ($current_period + 1) . ' Adaptation Set '
+        "Not found in non-Low Latency Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set '
         . ($adaptationSetId + 1)
     );
 }

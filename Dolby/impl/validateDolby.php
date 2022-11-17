@@ -1,10 +1,9 @@
 <?php
 
-global $mpd_features, $current_period;
 global $current_adaptation_set, $current_representation;
-global $session, $logger;
+global $session, $logger, $mpdHandler;
 
-$period = $mpd_features['Period'][$current_period];
+$period = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()];
 $adaptationSet = $period['AdaptationSet'][$current_adaptation_set];
 $representation = $adaptationSet['Representation'][$current_representation];
 
@@ -18,7 +17,7 @@ if (!$mimeType){
 
 if ($isDolby && $mimeType == 'audio/mp4' )
 {
-  $atomXml = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
+  $atomXml = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
   $xml = get_DOM("$atomXml/atomInfo.xml", 'atomlist');
   if ($xml){
   $this->compareTocWithDac4($xml);

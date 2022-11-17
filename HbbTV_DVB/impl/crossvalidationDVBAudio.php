@@ -1,10 +1,8 @@
 <?php
 
-global $mpd_features, $current_period;
+global $mpdHandler, $logger;
 
-global $logger;
-
-$adaptation = $mpd_features['Period'][$current_period]['AdaptationSet'][$adaptationIndex];
+$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$adaptationIndex];
 $representation1 = $adaptation['Representation'][$xmlIndex1];
 $representation2 = $adaptation['Representation'][$xmlIndex2];
 

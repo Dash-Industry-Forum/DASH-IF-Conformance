@@ -1,8 +1,8 @@
 <?php
 
-global $mpd_features, $current_period;
+global $mpdHandler;
 
-$period = $mpd_features['Period'][$current_period];
+$period = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()];
 $adaptationSets = $period['AdaptationSet'];
 
 foreach ($adaptationSets as $id => $adaptationSet) {

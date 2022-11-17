@@ -1,8 +1,8 @@
 <?php
 
-global $current_period, $cmaf_mediaTypes, $adaptation_set_template, $selectionset_infofile;
+global $cmaf_mediaTypes;
 
-global $logger, $session;
+global $logger, $session, $mpdHandler;
 
 $selectionSets = $this->getSelectionSets();
 foreach ($selectionSets as $selectionSet) {
@@ -27,10 +27,10 @@ foreach ($selectionSets as $selectionSet) {
         $adaptationIndex = $selectionSet[$i];
 
         # Compare media types of CMAF switching sets within CMAF selection set
-        $mediaTypesInSet1 = $cmaf_mediaTypes[$current_period][$adaptationIndex];
+        $mediaTypesInSet1 = $cmaf_mediaTypes[$mpdHandler->getSelectedPeriod()][$adaptationIndex];
         for ($j = $i + 1; $j < $selectionSetLength; $j++) {
             $compareIndex = $selectionSet[$j];
-            $mediaTypesInSet2 = $cmaf_mediaTypes[$current_period][$compareIndex];
+            $mediaTypesInSet2 = $cmaf_mediaTypes[$mpdHandler->getSelectedPeriod()][$compareIndex];
 
             $logger->test(
                 "CMAF",
@@ -40,12 +40,12 @@ foreach ($selectionSets as $selectionSet) {
                 count(array_unique($mediaTypesInSet2)) === 1 &&
                 end($mediaTypesInSet1) == end($mediaTypesInSet2),
                 "FAIL",
-                "Media type matches between $adaptationIndex and $compareIndex in period $current_period",
-                "Media differs between $adaptationIndex and $compareIndex in period $current_period"
+                "Media type matches between $adaptationIndex and $compareIndex in period $mpdHandler->getSelectedPeriod()",
+                "Media differs between $adaptationIndex and $compareIndex in period $mpdHandler->getSelectedPeriod()"
             );
         }
 
-        $location = $session->getAdaptationDir($current_period, $adaptationIndex);
+        $location = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $adaptationIndex);
         $filecount = 0;
         $files = DASHIF\rglob("$location/*.xml");
         if ($files) {
@@ -118,8 +118,8 @@ foreach ($selectionSets as $selectionSet) {
                     abs($switchingSetDuration2 - $switchingSetDuration1) <= $longestFragmentDuration,
                     "FAIL",
                     "Files exist",
-                    "Matches between $adaptationIndex and $compareIndex in period $current_period",
-                    "Differs between $adaptationIndex and $compareIndex in period $current_period"
+                    "Matches between $adaptationIndex and $compareIndex in period $mpdHandler->getSelectedPeriod()",
+                    "Differs between $adaptationIndex and $compareIndex in period $mpdHandler->getSelectedPeriod()"
                 );
             }
         }

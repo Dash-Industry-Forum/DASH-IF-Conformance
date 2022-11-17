@@ -1,9 +1,9 @@
 <?php
 
-global $mpd_features, $profiles, $current_period, $current_adaptation_set, $current_representation, $logger;
+global $mpdHandler, $profiles, $current_adaptation_set, $current_representation, $logger;
 
 
-$period = $mpd_features['Period'][$current_period];
+$period = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()];
 $adaptation_set = $period['AdaptationSet'][$current_adaptation_set];
 $representation = $adaptation_set['Representation'][$current_representation];
 $codecs = ($representation['codecs']) ? $representation['codecs'] : $adaptation_set['codecs'];
@@ -28,9 +28,9 @@ if ($isAvc) {
         "SHALL be encoded using avc3",
         strpos($codecs, 'avc3') !== false,
         "FAIL",
-        "Valid encoding found  for Period $current_period Adaptation Set $current_adaptation_set " .
+        "Valid encoding found  for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
         "Representation $current_representation.",
-        "Invalid encoding found for Period $current_period Adaptation Set $current_adaptation_set " .
+        "Invalid encoding found for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
         "Representation $current_representation (codecs $codecs)."
     );
 
@@ -42,9 +42,9 @@ if ($isAvc) {
         "Initialitization Segment containing 'avcC' box",
         $codecBoxes->length > 0,
         "FAIL",
-        $codecBoxes->length . " 'avcC' boxes found for Period $current_period Adaptation Set $current_adaptation_set " .
+        $codecBoxes->length . " 'avcC' boxes found for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
         "Representation $current_representation.",
-        "No 'avcC' boxes found for Period $current_period Adaptation Set $current_adaptation_set " .
+        "No 'avcC' boxes found for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
         "Representation $current_representation."
     );
     if ($codecBoxes->length > 0) {
@@ -68,9 +68,9 @@ if ($isAvc) {
             "Record containing SPS and PPS NALs",
             $spsFound && $ppsFound,
             "FAIL",
-            "All units found for Period $current_period Adaptation Set $current_adaptation_set " .
+            "All units found for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
             "Representation $current_representation.",
-            "Not all units found for Period $current_period Adaptation Set $current_adaptation_set " .
+            "Not all units found for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
             "Representation $current_representation."
         );
     }
@@ -83,9 +83,9 @@ if ($isHevc) {
         "SHALL be encoded using hev1",
         strpos($codecs, 'hev1') !== false,
         "FAIL",
-        "Valid encoding found  for Period $current_period Adaptation Set $current_adaptation_set " .
+        "Valid encoding found  for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
         "Representation $current_representation.",
-        "Invalid encoding found for Period $current_period Adaptation Set $current_adaptation_set " .
+        "Invalid encoding found for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
         "Representation $current_representation (codecs $codecs)."
     );
 
@@ -97,9 +97,9 @@ if ($isHevc) {
         "Initialitization Segment containing 'hvcC' box",
         $codecBoxes->length > 0,
         "FAIL",
-        $codecBoxes->length . " 'hvcC' boxes found for Period $current_period Adaptation Set $current_adaptation_set " .
+        $codecBoxes->length . " 'hvcC' boxes found for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
         "Representation $current_representation.",
-        "No 'hvcC' boxes found for Period $current_period Adaptation Set $current_adaptation_set " .
+        "No 'hvcC' boxes found for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
         "Representation $current_representation."
     );
     if ($codecBoxes->length > 0) {
@@ -127,9 +127,9 @@ if ($isHevc) {
             "Record containing SPS, PPS and VPS NALs",
             $spsFound && $ppsFound && $vpsFound,
             "FAIL",
-            "All units found for Period $current_period Adaptation Set $current_adaptation_set " .
+            "All units found for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
             "Representation $current_representation.",
-            "Not all units found for Period $current_period Adaptation Set $current_adaptation_set " .
+            "Not all units found for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
             "Representation $current_representation."
         );
     }
@@ -137,7 +137,7 @@ if ($isHevc) {
 
 if ($isAvc || $isHevc) {
     $elstBoxes = $xml->getElementsByTagName('elst');
-    $representationProfiles = $profiles[$current_period][$current_adaptation_set][$current_representation];
+    $representationProfiles = $profiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation];
     if (
         !(strpos($representationProfiles, 'http://dashif.org/guidelines/dash-if-ondemand') !== false ||
         (strpos($representationProfiles, 'http://dashif.org/guidelines/dash') !== false &&
@@ -149,9 +149,9 @@ if ($isAvc || $isHevc) {
             "Edit lists SHALL NOT be present in video Adaptation Sets unless they are offered in On-Demand profile",
             $elstBoxes->length == 0,
             "FAIL",
-            "No edit lists found for Period $current_period Adaptation Set $current_adaptation_set " .
+            "No edit lists found for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
             "Representation $current_representation",
-            "Edit lists found for Period $current_period Adaptation Set $current_adaptation_set " .
+            "Edit lists found for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
             "Representation $current_representation"
         );
     }
@@ -174,9 +174,9 @@ if ($isAvc || $isHevc) {
         "time equal to the first decoded sample's decode time",
         $firstSampleCompTime != '' && $firstSampleCompTime == $firstSampleDecTime,
         "FAIL",
-        "Composition and decoded times equal for Period $current_period Adaptation Set " .
+        "Composition and decoded times equal for Period $mpdHandler->getSelectedPeriod() Adaptation Set " .
         "$current_adaptation_set Representation $current_representation",
-        "Composition and decoded times missing or different for Period $current_period " .
+        "Composition and decoded times missing or different for Period $mpdHandler->getSelectedPeriod() " .
         "Adaptation Set $current_adaptation_set Representation $current_representation",
     );
 }

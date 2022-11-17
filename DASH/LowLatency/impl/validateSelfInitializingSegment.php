@@ -1,8 +1,8 @@
 <?php
 
-global $session, $current_period, $logger;
+global $session, $mpdHandler, $logger;
 
-$repDir = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId);
+$repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId);
 ///\RefactorTodo look where this file should come from
 if (!($representationInformationFile = open_file("$repDir/representation.txt", 'r'))) {
     return;
@@ -42,9 +42,9 @@ $returnValue = $logger->test(
     "then exactly one sidx box SHALL be used",
     $sidxBoxes->length == 1,
     "PASS",
-    "One sidx box in Period " . ($current_period + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
+    "One sidx box in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
     ' Representation ' . ($representationId + 1),
-    "Multiple sidx boxes in Period " . ($current_period + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
+    "Multiple sidx boxes in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
     ' Representation ' . ($representationId + 1)
 ) && $returnValue;
 
@@ -63,9 +63,9 @@ $returnValue = $logger->test(
     "then sidx box SHALL be placed before any moof boxes",
     $sidxBox0->getAttribute('offset') <= $moofBox0->getAttribute('offset'),
     "PASS",
-    "sidx box before moof in Period " . ($current_period + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
+    "sidx box before moof in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
     ' Representation ' . ($representationId + 1),
-    "sidx box not before first moof in Period " . ($current_period + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
+    "sidx box not before first moof in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
     ' Representation ' . ($representationId + 1)
 ) && $returnValue;
 
@@ -79,9 +79,9 @@ $returnValue = $logger->test(
     "then sidx box reference_ID SHALL be the trackID of the CMAF track",
     $referenceID == $trackID,
     "PASS",
-    "sidx box reference ($referenceId) matches track id ($trackID) in Period " . ($current_period + 1) .
+    "sidx box reference ($referenceId) matches track id ($trackID) in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
     ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-    "sidx box reference ($referenceId) does not match track id ($trackID) in Period " . ($current_period + 1) .
+    "sidx box reference ($referenceId) does not match track id ($trackID) in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
     ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
 ) && $returnValue;
 
@@ -95,10 +95,10 @@ $returnValue = $logger->test(
     "then sidx box timescale SHALL be identical to the timescale of the mdhd box of the CMAF track",
     $sidxTimescale == $mdhdTimescale,
     "PASS",
-    "sidx box timescale ($sidxTimescale) matches mdhd timescale ($mdhdTimescale) in Period " . ($current_period + 1) .
+    "sidx box timescale ($sidxTimescale) matches mdhd timescale ($mdhdTimescale) in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
     ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
     "sidx box timescale ($sidxTimescale) does not match mdhd timescale ($mdhdTimescale) in Period " .
-    ($current_period + 1) .
+    ($mpdHandler->getSelectedPeriod() + 1) .
     ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
 ) && $returnValue;
 
@@ -109,9 +109,9 @@ $returnValue = $logger->test(
     "then sidx box reference_type SHALL be set to 0",
     $sidxBox0->getAttribute('reference_type_1') == '0',
     "PASS",
-    "sidx box reference type is 0 in Period " . ($current_period + 1) .
+    "sidx box reference type is 0 in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
     ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-    "sidx box reference type not 0 in Period " . ($current_period + 1) .
+    "sidx box reference type not 0 in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
     ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
 ) && $returnValue;
 
@@ -131,9 +131,9 @@ $returnValue = $logger->test(
     "then sidx box earliest_presentation_time SHALL be set to earliest presentation time of the first CMAF Fragment",
     $earliestPresentationTime == $presentationStartsFirst,
     "PASS",
-    "sidx box earliestPresentationTime matches in Period " . ($current_period + 1) .
+    "sidx box earliestPresentationTime matches in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
     ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-    "sidx box earliestPresentationTime does not match in Period " . ($current_period + 1) .
+    "sidx box earliestPresentationTime does not match in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
     ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
 ) && $returnValue;
 
@@ -146,9 +146,9 @@ $returnValue = $logger->test(
     "then sidx box reference_count SHALL be set to the number of CMAF Fragments in the CMAF Track",
     $sidxBox0->getAttribute('referenceCount') == $moofBoxes->length,
     "PASS",
-    "sidx box reference count correct in Period " . ($current_period + 1) .
+    "sidx box reference count correct in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
     ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-    "sidx box reference count not correct in Period " . ($current_period + 1) .
+    "sidx box reference count not correct in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
     ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
 ) && $returnValue;
 
@@ -168,9 +168,9 @@ for ($i = 0; $i < $subsegmentCount; $i++) {
         "then sidx box starts_with_SAP SHALL be set to 1",
         $subsegment->getAttribute('starts_with_SAP') == '1',
         "PASS",
-        "sidx box startsWithSAP equal to 0 in Period " . ($current_period + 1) .
+        "sidx box startsWithSAP equal to 0 in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
         ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "subsegment $i",
-        "sidx box startsWithSAP not equal to 0 in Period " . ($current_period + 1) .
+        "sidx box startsWithSAP not equal to 0 in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
         ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "subsegment $i",
     ) && $returnValue;
 
@@ -182,9 +182,9 @@ for ($i = 0; $i < $subsegmentCount; $i++) {
         "then sidx box SAP_type SHALL be set to 1 or 2",
         $sapType == 1 || $sapType == 2,
         "PASS",
-        "sidx box SAP_type valid in Period " . ($current_period + 1) .
+        "sidx box SAP_type valid in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
         ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "subsegment $i",
-        "sidx box SAP_type not valid in Period " . ($current_period + 1) .
+        "sidx box SAP_type not valid in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
         ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "subsegment $i",
     ) && $returnValue;
 
@@ -195,9 +195,9 @@ for ($i = 0; $i < $subsegmentCount; $i++) {
         "then sidx box SAP_delta_time SHALL be set to 0",
         $subsegment->getAttribute('SAP_delta_time') == '0',
         "PASS",
-        "sidx box SAP_delta_time set to 0 in Period " . ($current_period + 1) .
+        "sidx box SAP_delta_time set to 0 in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
         ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "subsegment $i",
-        "sidx box SAP_delta_time not set to 0 in Period " . ($current_period + 1) .
+        "sidx box SAP_delta_time not set to 0 in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
         ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "subsegment $i",
     ) && $returnValue;
 
@@ -214,9 +214,9 @@ for ($i = 0; $i < $subsegmentCount; $i++) {
         "subsegment_duration",
         $validDuration,
         "PASS",
-        "Durations matches in Period " . ($current_period + 1) .
+        "Durations matches in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
         ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "subsegment $i",
-        "Durations don't match, or unmapped fragments exist in Period " . ($current_period + 1) .
+        "Durations don't match, or unmapped fragments exist in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
         ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "subsegment $i",
     ) && $returnValue;
 }
@@ -229,9 +229,9 @@ $returnValue = $logger->test(
     sizeof($segmentIndexes) != 0 &&
     $xml->getElementsByTagName('tfdt')->item(0)->getAttribute('baseMediaDecodeTime') != '0',
     "PASS",
-    "Segment conforms to CMAF track file for Period " . ($current_period + 1) .
+    "Segment conforms to CMAF track file for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
     ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-    "Durations does not conform to CMAF track file for Period " . ($current_period + 1) .
+    "Durations does not conform to CMAF track file for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
     ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
 ) && $returnValue;
 
@@ -243,9 +243,9 @@ $returnValue = $logger->test(
     "then the Segment SHALL conform to the Indexed Self-Initializing Media Segment",
     strpos($xml->getElementsByTagName('ftyp')->item(0)->getAttribute('compatible_brands'), 'dash') !== false,
     "PASS",
-    "Segment conforms to Self-Initializing Media Segement for Period " . ($current_period + 1) .
+    "Segment conforms to Self-Initializing Media Segement for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
     ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-    "Segment does not conform to Self-Initializing Media Segement for Period " . ($current_period + 1) .
+    "Segment does not conform to Self-Initializing Media Segement for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
     ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
 ) && $returnValue;
 

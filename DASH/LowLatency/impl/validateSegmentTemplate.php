@@ -1,6 +1,6 @@
 <?php
 
-global $current_period, $logger;
+global $mpdHandler, $logger;
 
 
 $isSegmentStarts = $infoFileAdaptiation[$representationId]['isSegmentStart'];
@@ -28,9 +28,9 @@ for ($i = 1; $i < $segmentCount; $i++) {
         "exceed 50%",
         $diff >= $lowerBound && $diff <= $upperBound,
         "FAIL",
-        "Tolererance valid for Period " . ($current_period + 1) . ' Adaptation ' .
+        "Tolererance valid for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
-        "Tolererance exceeded for Period " . ($current_period + 1) . ' Adaptation ' .
+        "Tolererance exceeded for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
     );
 }

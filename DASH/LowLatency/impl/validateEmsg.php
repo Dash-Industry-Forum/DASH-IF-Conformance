@@ -1,6 +1,6 @@
 <?php
 
-global $session, $current_period, $logger;
+global $session, $mpdHandler, $logger;
 
 $returnValue = true;
 
@@ -10,7 +10,7 @@ $returnValue = true;
 //Every check is in essence a "FAIL" check, but there are two valid options in the outer scope.
 //Therefore, we store the combined result of all tests, and we return whether all succeeded.
 
-$repDir = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId);
+$repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId);
 $rep_xml = "$repDir/atomInfo.xml";
 
 ///Correctness this doesn't seem right....

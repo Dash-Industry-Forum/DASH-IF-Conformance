@@ -1,13 +1,13 @@
 <?php
 
 ## Here the implementation follows the DASH-IF IOP guideline for signaling the switchable adaptation sets
-global $session, $mpd_features, $current_period, $alignedswitching_infofile, $logger;
+global $session, $mpdHandler, $logger;
 
 $indices = array();
 
 //Todo:More generalized approach with many Aligned Sw Sets.
 //Here assumption is only two Sw Sets are aligned.
-$adaptationSets = $mpd_features['Period'][$current_period]['AdaptationSet'];
+$adaptationSets = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'];
 for ($z = 0; $z < count($adaptationSets); $z++) {
     $supplementalProperty = $adaptationSets[$z]['SupplementalProperty'];
     if ($supplementalProperty) {
@@ -35,7 +35,7 @@ if (count($indices) == 1) {
 }
 
 // For this naming there is no automation yet, since this implementation has an assumption on ids
-$location1 = $session->getAdaptationDir($current_period, $indices[0] - 1);
+$location1 = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $indices[0] - 1);
 $fileCount1 = 0;
 $files1 = DASHIF\rglob("$location1/*.xml");
 if ($files1) {
@@ -64,7 +64,7 @@ for ($i = 0; $i < $fileCount1; $i++) {
         return;
     }
     // For this naming there is no automation yet, since this implementation has an assumption on ids
-    $location2 = $session->getAdaptationDir($current_period, $indices[1] - 1);
+    $location2 = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $indices[1] - 1);
     $fileCount2 = 0;
     $files2 = DASHIF\rglob("$location2/*.xml");
     if ($files2) {

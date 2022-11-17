@@ -1,10 +1,10 @@
 <?php
 
-global $profiles, $current_period, $current_adaptation_set, $current_representation, $logger;
+global $profiles, $mpdHandler, $current_adaptation_set, $current_representation, $logger;
 
 if (
     strpos(
-        $profiles[$current_period][$current_adaptation_set][$current_representation],
+        $profiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation],
         'http://dashif.org/guidelines/dash-if-ondemand'
     ) === false
 ) {
@@ -19,13 +19,13 @@ $logger->test(
     "Only a single 'sidx' SHALL be present",
     $sidxBoxes->length == 1,
     "FAIL",
-    "Exactly one 'sidx' box found for Period $current_period Adaptation Set $current_adaptation_set " .
+    "Exactly one 'sidx' box found for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
     "Representation $current_representation",
-    $sidxBoxes->length . " 'sidx' boxes found for Period $current_period Adaptation Set $current_adaptation_set " .
+    $sidxBoxes->length . " 'sidx' boxes found for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
     "Representation $current_representation"
 );
 
-$repDir = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
+$repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
 ///\RefactorTodo Check where this file should come from.
 $fileName = "$repDir/representation.txt";
 

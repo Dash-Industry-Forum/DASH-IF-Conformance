@@ -1,20 +1,11 @@
 <?php
 
-global $mpd_features, $current_period, $current_adaptation_set, $current_representation,
-       $adaptation_set_template, $reprsentation_template, $reprsentation_error_log_template,
-       $reprsentation_mdat_template, $profiles, $cmaf_mediaTypes,
-       $progress_report, $progress_xml, $cmaf_mediaProfiles;
+global $current_adaptation_set, $current_representation,
+       $profiles, $cmaf_mediaTypes,$cmaf_mediaProfiles;
 
-global $session, $logger;
+global $session, $logger, $mpdHandler;
 
-$adaptationDirectory = str_replace('$AS$', $current_adaptation_set, $adaptation_set_template);
-$xmlRepresentationDirectory = str_replace(
-    array('$AS$', '$R$'),
-    array($current_adaptation_set, $current_representation),
-    $reprsentation_template
-);
-
-$representationDirectory = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
+$representationDirectory = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
 
 $xmlRepresentation = "$representationDirectory/atomInfo.xml";
 
@@ -38,10 +29,10 @@ $cmaf_cmf2 = $return_array[1];
 # Store media type for selection set checks later
 if($xml->getElementsByTagName('hdlr')->item(0)){
   $mediaType = $xml->getElementsByTagName('hdlr')->item(0)->getAttribute('handler_type');
-  $cmaf_mediaTypes[$current_period][$current_adaptation_set][$current_representation] = $mediaType;
+  $cmaf_mediaTypes[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation] = $mediaType;
 }
 
-$adaptationSet = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
+$adaptationSet = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
 
 $errorInTrack = 0;
 $id = $adaptationSet['Representation'][$current_representation]['id'];
@@ -55,7 +46,7 @@ $tfdtBoxes = $xml->getElementsByTagName('tfdt');
 $adaptationMimeType = $adaptationSet['mimeType'];
 $representationMimeType = $adaptationSet['Representation'][$current_representation]['mimeType'];
 if (strpos($representationMimeType, 'video') !== false || strpos($adaptationMimeType, 'video') !== false) {
-    $currentProfile = $profiles[$current_period][$current_adaptation_set][$current_representation];
+    $currentProfile = $profiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation];
     if (strpos($currentProfile, 'urn:mpeg:dash:profile:isoff-live:2011') !== false) {
         for ($j = 0; $j < $moofBoxesCount; $j++) {
             $trunVersion = $trunBoxes->item($j)->getAttribute('version');
@@ -423,7 +414,7 @@ if ($hdlrType == 'soun') {
 }
 
 $dash264 = strpos(
-    $profiles[$current_period][$current_adaptation_set][$current_representation],
+    $profiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation],
     "http://dashif.org/guidelines/dash264"
 ) !== false;
 
@@ -500,7 +491,7 @@ if ($sidxBoxes->length > 0) {
 }
 
 $cmafMediaProfilesResult = $this->determineCMAFMediaProfiles($xml);
-$cmaf_mediaProfiles[$current_period][$current_adaptation_set]
+$cmaf_mediaProfiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set]
                    [$current_representation]['cmafMediaProfile'] = $cmafMediaProfilesResult[0];
 
 

@@ -1,11 +1,11 @@
 <?php
 
-global $cmaf_mediaTypes, $current_period;
+global $cmaf_mediaTypes, $mpdHandler;
 
 # Selection set here currently is treated as group of DASH Adaptation Sets with same media type.
 # However, final alignment to MPEG WD is eventually needed (see CMAF issue #49).
 $selectionSets = array('video' => array(), 'audio' => array(), 'subtitle' => array());
-$cmafMediaTypesInPeriod = $cmaf_mediaTypes[$current_period];
+$cmafMediaTypesInPeriod = $cmaf_mediaTypes[$mpdHandler->getSelectedPeriod()];
 foreach ($cmafMediaTypesInPeriod as $adaptationIndex => $cmafMediaTypesInAdaptation) {
     if (count(array_unique($cmafMediaTypesInAdaptation)) === 1) {
         $type = end($cmafMediaTypesInAdaptation);

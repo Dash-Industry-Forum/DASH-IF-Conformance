@@ -1,11 +1,11 @@
 <?php
 
-global $mpd_features, $current_period, $session;
+global $mpdHandler, $session;
 
 $this->contentProtectionReport();
-$adaptations = $mpd_features['Period'][$current_period]['AdaptationSet'];
+$adaptations = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'];
 for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationIndex++) {
-    $loc = $session->getAdaptationDir($current_period, $adaptationIndex);
+    $loc = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $adaptationIndex);
     $fileCount = 0;
     $files = DASHIF\rglob("$loc/*.xml");
     if ($files) {

@@ -1,13 +1,14 @@
 <?php
 
-global $mpd_features, $current_period, $current_adaptation_set, $current_representation,
-$segment_duration_array, $logger, $session;
+global $mpdHandler, $session, $logger;
+
+global $current_adaptation_set, $current_representation,$segment_duration_array;
 
 if (!$this->hasJPGraph || !$this->hasJPBarGraph){
   return;
 }
 
-$period = $mpd_features['Period'][$current_period];
+$period = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()];
 $adaptationSet = $period['AdaptationSet'][$current_adaptation_set];
 $representation = $adaptationSet['Representation'][$current_representation];
 $adaptationSetId = $current_adaptation_set + 1;
@@ -97,7 +98,7 @@ $logger->test(
     "representation $representationId: $differenceMessage"
 );
 
-$repDir = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
+$repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
 $abs = get_DOM("$repDir/atomInfo.xml", 'atomlist'); // load mpd from url
 if ($abs) {
     if ($abs->getElementsByTagName('mehd')->length && $abs->getElementsByTagName('mvhd')->length) {

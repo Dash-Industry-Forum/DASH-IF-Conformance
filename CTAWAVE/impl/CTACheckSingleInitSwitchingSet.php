@@ -1,14 +1,12 @@
 <?php
 
-global $mpd_features, $current_period, $session;
+global $logger, $session, $mpdHandler;
 
-global $logger;
-
-$adaptations = $mpd_features['Period'][$current_period]['AdaptationSet'];
+$adaptations = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'];
 $adaptationCount = sizeof($adaptations);
 
 for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex++) {
-    $location = $session->getAdaptationDir($current_period, $adaptationIndex);
+    $location = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $adaptationIndex);
     $fileCount = 0;
     $files = DASHIF\rglob("$location/*.xml");
 

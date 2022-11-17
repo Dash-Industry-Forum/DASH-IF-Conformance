@@ -1,10 +1,10 @@
 <?php
 
-global $session, $mpd_features, $current_period, $current_adaptation_set, $current_representation,
+global $session, $mpdHandler, $current_adaptation_set, $current_representation,
 $sizearray, $segment_duration_array;
 
 
-$bandwidth = $mpd_features['Period'][$current_period]
+$bandwidth = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
                           ['AdaptationSet'][$current_adaptation_set]
                           ['Representation'][$current_representation]
                           ['bandwidth'];
@@ -71,7 +71,7 @@ if (!$bitrateInfo->len){
   $bitrateInfo[] = 0;
 }
 
-$location = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation) .
+$location = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation) .
   '/bitrateReport.png';
 
 $graph = new Graph();

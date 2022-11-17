@@ -1,6 +1,6 @@
 <?php
 
-global $mpd_features, $current_period, $utc_timing_info, $logger;
+global $mpdHandler, $utc_timing_info, $logger;
 
 
 $segmentAccessInfo = array();
@@ -56,7 +56,7 @@ foreach ($representations as $representationId => $representation) {
             continue;
         }
 
-        $availabilityStartTime = $mpd_features['availabilityStartTime'];
+        $availabilityStartTime = $mpdHandler->getFeatures()['availabilityStartTime'];
         if ($availabilityStartTime != null) {
             if (
                 (DASHIF\Utility\timeParsing($availabilityStartTime) - DASHIF\Utility\timeParsing($producerReferenceTime['wallClockTime'])) !=
@@ -93,9 +93,9 @@ foreach ($representations as $representationId => $representation) {
         "if present or 0 otherwise",
         $validProducerReferenceTime,
         "FAIL",
-        "Corresponding element found in Period " . ($current_period + 1) . ' Adaptation Set ' .
+        "Corresponding element found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
         ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1),
-        "No corresponding element found in Period " . ($current_period + 1) . ' Adaptation Set ' .
+        "No corresponding element found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
         ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
     );
 
@@ -110,9 +110,9 @@ foreach ($representations as $representationId => $representation) {
             "may be set to TRUE or FALSE",
             !$producerReferenceTimeInbandPresent,
             "WARN",
-            "Corresponding element found in Period " . ($current_period + 1) . ' Adaptation Set ' .
+            "Corresponding element found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
             ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1),
-            "No corresponding element found in Period " . ($current_period + 1) . ' Adaptation Set ' .
+            "No corresponding element found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
             ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
         );
     }
@@ -138,9 +138,9 @@ foreach ($representations as $representationId => $representation) {
         '$Number$ or SegmentTimeline and SegmentTemplate@media with $Number$ and $Time$',
         $validSegmentTemplate,
         "FAIL",
-        "Corresponding Template found in Period " . ($current_period + 1) . ' Adaptation Set ' .
+        "Corresponding Template found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
         ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1),
-        "No corresponding Template found in Period " . ($current_period + 1) . ' Adaptation Set ' .
+        "No corresponding Template found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
         ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
     );
 
@@ -159,9 +159,9 @@ foreach ($representations as $representationId => $representation) {
         "Inband Event Streams carrying MPD validity expiration events as defined in clause 4.5 SHOULD be present",
         $inbandEventStreams != null,
         "WARN",
-        "Inband Event Stream found in Period " . ($current_period + 1) . ' Adaptation Set ' .
+        "Inband Event Stream found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
         ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1),
-        "Inband event stream not found in Period " . ($current_period + 1) . ' Adaptation Set ' .
+        "Inband event stream not found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
         ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
     );
     if ($inbandEventStreams != null) {
@@ -175,9 +175,9 @@ foreach ($representations as $representationId => $representation) {
                     "is used, the @value SHALL be set to 1",
                     $inbandEventStream['value'] == 1,
                     "WARN",
-                    "Valid inband Event Stream found in Period " . ($current_period + 1) . ' Adaptation Set ' .
+                    "Valid inband Event Stream found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
                     ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1),
-                    "Valid inband event stream not found in Period " . ($current_period + 1) . ' Adaptation Set ' .
+                    "Valid inband event stream not found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
                     ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
                 );
                 if ($inbandEventStream['value'] == '1') {
@@ -193,9 +193,9 @@ foreach ($representations as $representationId => $representation) {
             "Inband Event Streams carrying MPD validity expiration events as defined in clause 4.5 SHOULD be present",
             $validInbandEventStreamPresent,
             "WARN",
-            "Inband Event Stream found in Period " . ($current_period + 1) . ' Adaptation Set ' .
+            "Inband Event Stream found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
             ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1),
-            "Inband event stream not found in Period " . ($current_period + 1) . ' Adaptation Set ' .
+            "Inband event stream not found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
             ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
         );
     }
@@ -225,9 +225,9 @@ $logger->test(
     Adaptation Set",
     $valid9X44 || $valid9X45,
     "FAIL",
-    "Valid for Period " . ($current_period + 1) . ' Adaptation Set ' .
+    "Valid for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
     ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1),
-    "Neither found in Period " . ($current_period + 1) . ' Adaptation Set ' .
+    "Neither found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
     ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
 );
 

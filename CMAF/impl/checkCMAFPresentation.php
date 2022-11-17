@@ -1,10 +1,8 @@
 <?php
 
-global  $mpd_features, $current_period, $profiles, $period_timing_info,
-        $cfhd_SwSetFound,$caac_SwSetFound, $encryptedSwSetFound,
-        $presentation_infofile, $adaptation_set_template;
+global  $profiles, $period_timing_info;
 
-global $logger, $session;
+global $logger, $session, $mpdHandler;
 
 //Assuming one of the CMAF profiles will be present.
 $videoFound = 0;
@@ -20,11 +18,11 @@ $longestFragmentDuration = 0;
 $videoFragDur = 0;
 
 $presentationDuration = $period_timing_info[1];
-$adaptationSets = $mpd_features['Period'][$current_period]['AdaptationSet'];
+$adaptationSets = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'];
 for ($adaptationSetIndex = 0; $adaptationSetIndex < sizeof($adaptationSets); $adaptationSetIndex++) {
     $adaptationSet = $adaptationSets[$adaptationSetIndex];
 
-    $location = $session->getAdaptationDir($current_period, $adaptationSetIndex);
+    $location = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $adaptationSetIndex);
     $filecount = 0;
     $files = DASHIF\rglob("$location/*.xml");
     if ($files) {
@@ -54,15 +52,15 @@ for ($adaptationSetIndex = 0; $adaptationSetIndex < sizeof($adaptationSets); $ad
             $id = $adaptationSet['Representation'][$i]['id'];
 
             $cmfhdProfile = strpos(
-                $profiles[$current_period][$adaptationSetIndex][$i],
+                $profiles[$mpdHandler->getSelectedPeriod()][$adaptationSetIndex][$i],
                 'urn:mpeg:cmaf:presentation_profile:cmfhd:2017'
             );
             $cmfhdcProfile = strpos(
-                $profiles[$current_period][$adaptationSetIndex][$i],
+                $profiles[$mpdHandler->getSelectedPeriod()][$adaptationSetIndex][$i],
                 'urn:mpeg:cmaf:presentation_profile:cmfhdc:2017'
             );
             $cmfhdsProfile = strpos(
-                $profiles[$current_period][$adaptationSetIndex][$i],
+                $profiles[$mpdHandler->getSelectedPeriod()][$adaptationSetIndex][$i],
                 'urn:mpeg:cmaf:presentation_profile:cmfhds:2017'
             );
 

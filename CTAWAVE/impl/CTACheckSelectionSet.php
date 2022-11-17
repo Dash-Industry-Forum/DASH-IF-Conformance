@@ -1,10 +1,10 @@
 <?php
 
-global $mpd_features, $current_period, $session, $MediaProfDatabase;
+global $MediaProfDatabase;
 
-global $logger;
+global $logger, $session, $mpdHandler;
 
-$adaptations = $mpd_features['Period'][$current_period]['AdaptationSet'];
+$adaptations = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'];
 $adaptationCount = sizeof($adaptations);
 
 $waveVideoTrackFound = 0;
@@ -24,7 +24,7 @@ $subtitlemediaProfileArray = array("TTML_IMSC1_Text", "TTML_IMSC1_Image");
 
 for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex++) {
     $switchingSetMediaProfile = array();
-    $location = $session->getAdaptationDir($current_period, $adaptationIndex);
+    $location = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $adaptationIndex);
     $fileCount = 0;
     $files = DASHIF\rglob("$location/*.xml");
     if ($files) {
@@ -55,7 +55,7 @@ for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex
         $mediaProfileTrack = $mediaProfileTrackResult[0];
 
         //Update the MP database for future checks
-        $MediaProfDatabase[$current_period][$adaptationIndex][$fileIndex] = $mediaProfileTrack;
+        $MediaProfDatabase[$mpdHandler->getSelectedPeriod()][$adaptationIndex][$fileIndex] = $mediaProfileTrack;
 
         if ($hdlrType == "vide") {
             $videoSelectionSetFound = 1;

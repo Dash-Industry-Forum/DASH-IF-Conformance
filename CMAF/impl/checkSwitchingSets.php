@@ -1,11 +1,12 @@
 <?php
 
-global $session, $mpd_features, $current_period, $current_adaptation_set, $string_info,
-        $adaptation_set_template, $comparison_folder, $compinfo_file, $progress_xml, $progress_report;
+global $session, $mpdHandler;
+
+global $current_adaptation_set, $comparison_folder;
 
 
-$adaptation_set = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
-$adaptationDirectory = $session->getAdaptationDir($current_period, $current_adaptation_set);
+$adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
+$adaptationDirectory = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set);
 
 $filecount = 0;
 $files = DASHIF\rglob("$adaptationDirectory/*.xml");

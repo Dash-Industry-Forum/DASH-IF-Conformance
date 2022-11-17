@@ -16,7 +16,7 @@
 
 function process_MPD($parseSegments = false)
 {
-    global $mpd_features, $mpd_validation_only, $current_period, $profiles;
+    global $mpd_validation_only, $profiles;
 
     global $session;
 
@@ -31,7 +31,7 @@ function process_MPD($parseSegments = false)
 
     $logger->parseSegments = $parseSegments;
 
-    foreach ($modules as $module) {
+    roreach ($modules as $module) {
         if ($module->isEnabled()) {
             $module->hookBeforeMPD();
         }
@@ -42,7 +42,6 @@ function process_MPD($parseSegments = false)
 
     ## Get MPD features into an array
     ///\RefactorTodo Remove this global!!
-    $mpd_features = $mpdHandler->getFeatures();
 
 
     ///\RefactorTodo Remove this global!!
@@ -76,9 +75,8 @@ function process_MPD($parseSegments = false)
     if ($mpdHandler->getDom()->getElementsByTagName('SegmentList')->length !== 0) {
       return;
     }
-    if ($mpd_features['type'] !== 'dynamic') {
+    if ($mpdHandler->getFeatures()['type'] !== 'dynamic') {
         $mpdHandler->selectPeriod(0);
-        $current_period = 0;
     }
     while ($mpdHandler->getSelectedPeriod() < sizeof($mpdHandler->getFeatures()['Period'])) {
         processAdaptationSetOfCurrentPeriod();
@@ -91,7 +89,6 @@ function process_MPD($parseSegments = false)
             break;
         }
 
-        $current_period++;
         $mpdHandler->selectNextPeriod();
     }
     if ($mpdHandler->getSelectedPeriod() >= 1) {
@@ -106,7 +103,7 @@ function process_MPD($parseSegments = false)
 function processAdaptationSetOfCurrentPeriod()
 {
     global  $current_adaptation_set, $adaptation_set_template,$current_representation,$reprsentation_template,
-            $additional_flags, $current_period;
+      $additional_flags;
 
     global $session, $logger;
 
@@ -125,7 +122,7 @@ function processAdaptationSetOfCurrentPeriod()
         $adaptation_set = $adaptation_sets[$current_adaptation_set];
         $representations = $adaptation_set['Representation'];
 
-        $adaptationDirectory = $session->getAdaptationDir($current_period, $current_adaptation_set);
+        $adaptationDirectory = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set);
 
 
         while ($current_representation < sizeof($representations)) {
@@ -135,7 +132,7 @@ function processAdaptationSetOfCurrentPeriod()
             $representation = $representations[$current_representation];
             $segment_url = $segment_urls[$current_adaptation_set][$current_representation];
 
-            $representationDirectory = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
+            $representationDirectory = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
 
 
             $additional_flags = '';

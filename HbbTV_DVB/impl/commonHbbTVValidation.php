@@ -1,8 +1,8 @@
 <?php
 
-global $session, $mpd_features, $current_period, $current_adaptation_set, $current_representation, $logger;
+global $session, $mpdHandler, $current_adaptation_set, $current_representation, $logger;
 
-$adaptation = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
+$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
 $representation = $adaptation['Representation'][$current_representation];
 
 ## Check on the support of the provided codec
@@ -361,7 +361,7 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
 }
 
 
-$repDir = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
+$repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
 ///\RefactorTodo This used to check a location for segments, not entirely sure if still correct check
 if ($mpd_features['type'] == 'dynamic') {
     $logger->test(

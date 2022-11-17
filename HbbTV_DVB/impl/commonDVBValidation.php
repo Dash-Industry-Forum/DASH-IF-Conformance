@@ -1,11 +1,10 @@
 <?php
 
-global $mpd_features, $current_period, $current_adaptation_set, $current_representation, $profiles,
-$sizearray;
+global $current_adaptation_set, $current_representation, $profiles, $sizearray;
 
-global $logger;
+global $logger, $mpdHandler;
 
-$adaptation = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
+$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
 $representation = $adaptation['Representation'][$current_representation];
 
 ## Report on any resolutions used that are not in the tables of resoultions in 10.3 of the DVB DASH specification
@@ -252,7 +251,7 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
         // EBU-TT-D
         $validEBUTTD = true;
         $subtitleTimings = array();
-        $repDir = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
+        $repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
         ///\RefactorTodo Make this reflect the correct location
         $files = glob("$repDir/Subtitles/*");
         natsort($files);
@@ -312,7 +311,7 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
         );
 
         // Segments
-        $type = $mpd_features['type'];
+        $type = $mpdHandler->getFeatures()['type'];
         $moofBoxCount = $xmlRepresentation->getElementsByTagName('moof')->length;
         $trunBoxes = $xmlRepresentation->getElementsByTagName('trun');
         $tfdtBoxes = $xmlRepresentation->getElementsByTagName('tfdt');
@@ -398,12 +397,12 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
 // Section 4.3 on on-demand profile periods containing sidx boxes
 if (
     strpos(
-        $profiles[$current_period][$current_adaptation_set][$current_representation],
+        $profiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation],
         'urn:mpeg:dash:profile:isoff-on-demand:2011'
     ) !== false
     ||
     strpos(
-        $profiles[$current_period][$current_adaptation_set][$current_representation],
+        $profiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation],
         'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014'
     ) !== false
 ) {

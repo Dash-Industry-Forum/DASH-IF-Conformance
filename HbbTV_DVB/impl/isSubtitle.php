@@ -1,9 +1,9 @@
 <?php
 
-global $mpd_features, $current_period, $current_adaptation_set, $current_representation;
+global $mpdHandler, $current_adaptation_set, $current_representation;
 
 $subtitleRepresentation = false;
-$adaptation = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
+$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
 $representation = $adaptation['Representation'][$current_representation];
 
 if (
@@ -26,7 +26,7 @@ if (
 }
 
 if ($subtitleRepresentation) {
-    $subtitle_dir = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation) .
+    $subtitle_dir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation) .
     '/Subtitles/';
     if (!file_exists($subtitle_dir)) {
         $oldmask = umask(0);

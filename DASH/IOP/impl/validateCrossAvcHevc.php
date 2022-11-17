@@ -1,8 +1,8 @@
 <?php
 
-global $mpd_features, $session, $current_period, $logger;
+global $mpdHandler, $session, $logger;
 
-$period = $mpd_features['Period'][$current_period];
+$period = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()];
 $representations = $adaptation_set['Representation'];
 $bitstreamSwitching = ($adaptation_set['bitstreamSwitching']) ?
   $adaptation_set['bitstreamSwitching'] : $period['bitstreamSwitching'];
@@ -16,7 +16,7 @@ $profiles = array();
 $levels = array();
 $elsts = array();
 foreach ($representations as $representationId => $representation) {
-    $rep_xml = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId) . '/atomInfo.xml';
+    $rep_xml = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId) . '/atomInfo.xml';
 
     if (!file_exists($rep_xml)) {
         return;
@@ -72,8 +72,8 @@ if ($adaptationSetCodecs != null) {
                 "attribute SHALL equal to the maximum profile and level of any Representation in the Adaptation Set",
                 (int) (substr($codecEntry, 5, 2)) == dechex($maxProfile),
                 "FAIL",
-                "Profile is set to maximum profile for Period $current_period Adaptation Set $adaptationSetId",
-                "Profile is not set to maximum profile for Period $current_period Adaptation Set $adaptationSetId"
+                "Profile is set to maximum profile for Period $mpdHandler->getSelectedPeriod() Adaptation Set $adaptationSetId",
+                "Profile is not set to maximum profile for Period $mpdHandler->getSelectedPeriod() Adaptation Set $adaptationSetId"
             );
             $logger->test(
                 "DASH-IF IOP 4.3",
@@ -82,8 +82,8 @@ if ($adaptationSetCodecs != null) {
                 "attribute SHALL equal to the maximum profile and level of any Representation in the Adaptation Set",
                 (int) (substr($codecEntry, 9, 2)) == dechex($maxLevel),
                 "FAIL",
-                "Level is set to maximum level for Period $current_period Adaptation Set $adaptationSetId ",
-                "Level is not set to maximum level for Period $current_period Adaptation Set $adaptationSetId"
+                "Level is set to maximum level for Period $mpdHandler->getSelectedPeriod() Adaptation Set $adaptationSetId ",
+                "Level is not set to maximum level for Period $mpdHandler->getSelectedPeriod() Adaptation Set $adaptationSetId"
             );
         }
         if ($entryIsHevc) {
@@ -95,8 +95,8 @@ if ($adaptationSetCodecs != null) {
                 "attribute SHALL equal to the maximum profile and level of any Representation in the Adaptation Set",
                 $entryParts[1] == $maxProfile,
                 "FAIL",
-                "Profile is set to maximum profile for Period $current_period Adaptation Set $adaptationSetId",
-                "Profile is not set to maximum profile for Period $current_period Adaptation Set $adaptationSetId"
+                "Profile is set to maximum profile for Period $mpdHandler->getSelectedPeriod() Adaptation Set $adaptationSetId",
+                "Profile is not set to maximum profile for Period $mpdHandler->getSelectedPeriod() Adaptation Set $adaptationSetId"
             );
             $logger->test(
                 "DASH-IF IOP 4.3",
@@ -105,8 +105,8 @@ if ($adaptationSetCodecs != null) {
                 "attribute SHALL equal to the maximum profile and level of any Representation in the Adaptation Set",
                 $entryParts[3] == $maxLevel,
                 "FAIL",
-                "Level is set to maximum level for Period $current_period Adaptation Set $adaptationSetId ",
-                "Level is not set to maximum level for Period $current_period Adaptation Set $adaptationSetId"
+                "Level is set to maximum level for Period $mpdHandler->getSelectedPeriod() Adaptation Set $adaptationSetId ",
+                "Level is not set to maximum level for Period $mpdHandler->getSelectedPeriod() Adaptation Set $adaptationSetId"
             );
         }
     }
@@ -121,8 +121,8 @@ if ($elstCount > 0) {
         "if present in any Representation in the  Adaptation Set, SHALL be identical in all Representations",
         $elstCount == sizeof($representations),
         "FAIL",
-        "Edit list found for all representations of Period $current_period Adaptation Set $adaptationSetId ",
-        "Edit list missing in some representations of Period $current_period Adaptation Set $adaptationSetId"
+        "Edit list found for all representations of Period $mpdHandler->getSelectedPeriod() Adaptation Set $adaptationSetId ",
+        "Edit list missing in some representations of Period $mpdHandler->getSelectedPeriod() Adaptation Set $adaptationSetId"
     );
     if ($elstCount == sizeof($representations)) {
         for ($i = 0; $i < $elstCount; $i++) {
@@ -134,8 +134,8 @@ if ($elstCount > 0) {
                     "present in any Representation in the  Adaptation Set, SHALL be identical in all Representations",
                     nodes_equal($elsts[$i], $elsts[$j]),
                     "FAIL",
-                    "Edit list $i and $j equal in Period $current_period Adaptation Set $adaptationSetId ",
-                    "Edit list $i and $j different in Period $current_period Adaptation Set $adaptationSetId "
+                    "Edit list $i and $j equal in Period $mpdHandler->getSelectedPeriod() Adaptation Set $adaptationSetId ",
+                    "Edit list $i and $j different in Period $mpdHandler->getSelectedPeriod() Adaptation Set $adaptationSetId "
                 );
             }
         }

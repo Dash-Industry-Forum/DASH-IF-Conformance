@@ -1,10 +1,8 @@
 <?php
 
-global $mpd_features,$session,$CTApresentation_infofile,$current_period, $string_info, $progress_xml, $progress_report;
+global $logger, $session, $mpdHandler;
 
-global $logger;
-
-$adaptationCount = sizeof($mpd_features['Period'][$current_period]['AdaptationSet']);
+$adaptationCount = sizeof($mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet']);
 
 $chfdSwitchingSetFound = 0;
 $videoSelectionSetFound = 0;
@@ -22,7 +20,7 @@ $presentationProfile = "";
 for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex++) {
     $switchingSetMediaProfiles = array();
     $encryptedTracks = array();
-    $location = $session->getAdaptationDir($current_period, $adaptationIndex);
+    $location = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $adaptationIndex);
     $fileCount = 0;
     $files = DASHIF\rglob("$location/*.xml");
     if ($files) {
