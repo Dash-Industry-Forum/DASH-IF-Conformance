@@ -1,7 +1,7 @@
 <?php
 
-global $mpd_dom,
-        $current_period, $current_adaptation_set, $current_representation,
+global $mpdHandler,
+        $current_adaptation_set, $current_representation,
         $period_timing_info, $logger, $session;
 
 
@@ -12,7 +12,7 @@ $errorFilePath = "$repDir/stderr.txt";
 $xmlRepresentation = get_DOM("$repDir/atomInfo.xml", 'atomlist');
 if ($xmlRepresentation) {
     if ($this->DVBEnabled) {
-        $mediaTypes = DASHIF\Utility\mediaTypes($mpd_dom->getElementsByTagName('Period')->item($current_period));
+        $mediaTypes = DASHIF\Utility\mediaTypes($mpdHandler->getDom()->getElementsByTagName('Period')->item($mpdHandler->getSelectedPeriod()));
         $this->commonDVBValidation($xmlRepresentation, $mediaTypes);
     }
     if ($this->HbbTvEnabled){

@@ -1,9 +1,9 @@
 <?php
 
-global $mpd_dom, $logger;
+global $mpdHandler, $logger;
 
 
-$profilesArray = explode(',', $mpd_dom->getAttribute('profiles'));
+$profilesArray = explode(',', $mpdHandler->getDom()->getAttribute('profiles'));
 
 $supported_profiles = array('urn:mpeg:dash:profile:isoff-on-demand:2011',
   'urn:mpeg:dash:profile:isoff-live:2011',

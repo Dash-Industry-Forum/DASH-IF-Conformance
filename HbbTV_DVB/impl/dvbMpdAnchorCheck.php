@@ -1,6 +1,6 @@
 <?php
 
-global $mpd_dom, $logger;
+global $mpdHandler, $logger;
 $allowedKeys = array('t', 'period', 'track', 'group');
 
 $anchors = explode('#', json_decode($_POST['urlcode'])[0]);
@@ -8,7 +8,7 @@ if (sizeof($anchors) <= 1) {
     return;
 }
 
-$periods = $mpd_dom->getElementsByTagName('Period');
+$periods = $mpdHandler->getDom()->getElementsByTagName('Period');
 $periodIds = array();
 foreach ($periods as $period) {
     $adaptations = $period->getElementsByTagName('AdaptationSet');
@@ -117,7 +117,7 @@ foreach ($anchorParts as $anchor) {
                 "HbbTV-DVB DASH Validation Requirements",
                 "DVB DASH Specifics",
                 "Anchors with key \"t\" and prefix posix should also have an MPD@availabilityStartTime",
-                $mpd_dom->getAttribute('availabilityStartTime') != '',
+                $mpdHandler->getDom()->getAttribute('availabilityStartTime') != '',
                 "WARN",
                 "availabilityStartTime attribute found",
                 "availabilityStartTime attribute does not exist"
@@ -157,7 +157,7 @@ $pDurations = $periodDurations[1];
 $coverage = false;
 
 if ($posixExits) {
-    $availabilityStartTime = strtotime($mpd_dom->getAttribute('availabilityStartTime'));
+    $availabilityStartTime = strtotime($mpdHandler->getDom()->getAttribute('availabilityStartTime'));
     if ($t[0] - $availabilityStartTime >= $pStarts[0]) {
         if ($t[1] == PHP_INT_MAX) {
             $coverage = true;

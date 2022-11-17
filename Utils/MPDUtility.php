@@ -41,8 +41,8 @@ function inStringAtLeastOne($options, $string)
 
 function mpdContainsProfile($profile)
 {
-    global $mpd_dom;
-    return profileListContainsProfile($mpd_dom->getAttribute('profiles'), $profile);
+    global $mpdHandler;
+    return profileListContainsProfile($mpdHandler->getDom()->getAttribute('profiles'), $profile);
 }
 
 function mpdProfilesContainsAll($profiles)
@@ -76,8 +76,8 @@ function profileListContainsAtLeastOne($list, $profiles)
 }
 function mpdProfilesContainsAtLeastOne($profiles)
 {
-    global $mpd_dom;
-    return profileListContainsAtLeastOne($mpd_dom->getAttribute('profiles'), $profile);
+    global $mpdHandler;
+    return profileListContainsAtLeastOne($mpdHandler->getDom()->getAttribute('profiles'), $profile);
 }
 
 function mediaTypes()

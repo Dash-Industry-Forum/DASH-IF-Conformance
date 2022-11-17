@@ -16,7 +16,7 @@
 
 function process_MPD($parseSegments = false)
 {
-    global $mpd_dom, $mpd_features, $mpd_validation_only, $current_period, $profiles;
+    global $mpd_features, $mpd_validation_only, $current_period, $profiles;
 
     global $session;
 
@@ -30,16 +30,6 @@ function process_MPD($parseSegments = false)
 
 
     $logger->parseSegments = $parseSegments;
-
-    $mpd_dom = mpd_load();
-    if (!$mpd_dom) {
-        ///\RefactorTodo Add global error message!
-        fwrite(STDERR, "Unable to load mpd dom\n");
-        //die("Error: Failed loading XML file\n");
-        return;
-    }
-
-
 
     foreach ($modules as $module) {
         if ($module->isEnabled()) {

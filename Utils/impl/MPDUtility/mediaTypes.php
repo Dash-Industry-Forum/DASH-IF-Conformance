@@ -1,11 +1,11 @@
 <?php
 
-global $mpd_dom;
+global $mpdHandler;
 $mediaTypes = array();
 
-$adapts = $mpd_dom->getElementsByTagName('AdaptationSet');
-$reps = $mpd_dom->getElementsByTagName('Representation');
-$subreps = $mpd_dom->getElementsByTagName('SubRepresentation');
+$adapts = $mpdHandler->getDom()->getElementsByTagName('AdaptationSet');
+$reps = $mpdHandler->getDom()->getElementsByTagName('Representation');
+$subreps = $mpdHandler->getDom()->getElementsByTagName('SubRepresentation');
 
 if ($adapts->length != 0) {
     for ($i = 0; $i < $adapts->length; $i++) {

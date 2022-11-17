@@ -1,8 +1,8 @@
 <?php
 
-global $mpd_dom, $logger;
+global $mpdHandler, $logger;
 
-$baseURLs = $mpd_dom->getElementsByTagName('BaseURL');
+$baseURLs = $mpdHandler->getDom()->getElementsByTagName('BaseURL');
 foreach ($baseURLs as $url) {
     $isRelative = !DASHIF\Utility\isAbsoluteURL($url->nodeValue);
     $isValidRelative = true;

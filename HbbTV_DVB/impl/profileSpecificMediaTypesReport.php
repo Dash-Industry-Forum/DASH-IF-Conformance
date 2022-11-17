@@ -1,13 +1,13 @@
 <?php
 
-global $mpd_dom, $dvb_conformance ;
+global $mpdHandler, $dvb_conformance ;
 
 
 global $logger;
 
-$mpd_profiles = $mpd_dom->getAttribute('profiles');
+$mpd_profiles = $mpdHandler->getDom()->getAttribute('profiles');
 
-$profilesArray = explode(',', $mpd_dom->getAttribute('profiles'));
+$profilesArray = explode(',', $mpdHandler->getDom()->getAttribute('profiles'));
 
 if ($this->DVBEnabled) {
     if (
@@ -30,17 +30,17 @@ $profile_specific_MPDs = array();
 foreach ($profilesArray as $profile) {
     $domDocument = new DOMDocument('1.0');
     $domElement = $domDocument->createElement('MPD');
-    $domElement = $mpd_dom->cloneNode();
+    $domElement = $mpdHandler->getDom()->cloneNode();
 
     $domElement->setAttribute('profiles', $profile);
-    $domElement = DASHIF\Utility\recursive_generate($mpd_dom, $domDocument, $domElement, $profile);
+    $domElement = DASHIF\Utility\recursive_generate($mpdHandler->getDom(), $domDocument, $domElement, $profile);
     $domDocument->appendChild($domDocument->importNode($domElement, true));
 
     $profile_specific_MPDs[] = $domDocument;
 }
 
 ## Compare each profile-specific MPD with the original MPD
-$mpd_media_types = DASHIF\Utility\mediaTypes($mpd_dom);
+$mpd_media_types = DASHIF\Utility\mediaTypes($mpdHandler->getDom());
 $ind = 0;
 
 foreach ($profile_specific_MPDs as $profile_specific_MPD) {

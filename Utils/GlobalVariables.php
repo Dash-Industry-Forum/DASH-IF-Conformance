@@ -16,7 +16,6 @@
 # General variables
 $main_dir = dirname(__DIR__) . '/Conformance-Frontend/';
 $session_dir = (isset($_SESSION['locate'])) ? $_SESSION['locate'] : dirname(__DIR__) . '/Conformance-Frontend/temp';
-$mpd_dom;
 $mpd_doc;
 $mpd_url = '';
 $mpd_features;
