@@ -6,12 +6,12 @@ if (!$this->url) {
 
 ///\Todo: Check if this works with http basic auth
 
-$mpdDocument = file_get_contents($this->url);
-if (!$mpdDocument) {
+$this->mpd = file_get_contents($this->url);
+if (!$this->mpd) {
     return;
 }
 
-$simpleXML = simplexml_load_string($mpdDocument);
+$simpleXML = simplexml_load_string($this->mpd);
 if (!$simpleXML) {
     return;
 }

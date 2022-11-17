@@ -1,14 +1,10 @@
 <?php
 
-global $mpd_url, $mpd_dom, $mpd_doc;
-
-global $logger;
+global $logger, $mpdHandler;
 
 
-if ($mpd_dom && $this->DVBEnabled) {
-    $mpd_doc = get_doc($mpd_url);
-    $mpd_string = $mpd_doc->saveXML();
-    $mpd_bytes = strlen($mpd_string);
+if ($mpdHandler->getDom() && $this->DVBEnabled) {
+    $mpd_bytes = strlen($mpdHanlder->getMPD());
 
     $logger->test(
         "DVB",
@@ -20,7 +16,7 @@ if ($mpd_dom && $this->DVBEnabled) {
         "MPD size of " . $mpd_bytes . " bytes is not within bounds",
     );
 
-    $period_count = $mpd_dom->getElementsByTagName('Period')->length;
+    $period_count = $mpdHandler->getDom()->getElementsByTagName('Period')->length;
 
     $logger->test(
         "DVB",

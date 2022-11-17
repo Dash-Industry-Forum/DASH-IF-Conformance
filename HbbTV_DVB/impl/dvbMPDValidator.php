@@ -1,10 +1,9 @@
 <?php
 
-global $adapt_video_count, $adapt_audio_count, $main_audio_found, $main_audios, $hoh_subtitle_lang, $period_count,
-            $audio_bw, $video_bw, $subtitle_bw, $supported_profiles, $mpd_dom, $mpd_url;
+global $main_audios, $hoh_subtitle_lang;
 global $onRequest_array, $xlink_not_valid_array;
 
-global $logger;
+global $logger, $mpdHandler;
 
 
 $onRequestValue = "";
@@ -51,10 +50,7 @@ $logger->test(
 
 $this->tlsBitrateCheck();
 
-
-$mpd_doc = get_doc($mpd_url);
-$mpd_string = $mpd_doc->saveXML();
-$mpd_bytes = strlen($mpd_string);
+$mpd_bytes = strlen($mpdHandler->getResolved());
 
 $logger->test(
     "DVB",
@@ -68,8 +64,8 @@ $logger->test(
 
 ## Warn on low values of MPD@minimumUpdatePeriod (for now the lowest possible value is assumed to be 1 second)
 $minimumUpdateWarning = false;
-if ($mpd_dom->getAttribute('minimumUpdatePeriod') != '') {
-    $mup = DASHIF\Utility\timeParsing($mpd_dom->getAttribute('minimumUpdatePeriod'));
+if ($mpdHandler->getDom()->getAttribute('minimumUpdatePeriod') != '') {
+    $mup = DASHIF\Utility\timeParsing($mpdHandler->getDom()->getAttribute('minimumUpdatePeriod'));
     if ($mup < 1) {
         $minimumUpdateWarning = true;
     }
@@ -127,11 +123,11 @@ $this->checkDVBValidRelative();
 ## Verifying the DVB Metric reporting mechanism according to Section 10.12.3
 $this->dvbMetricReporting();
 
-$type = $mpd_dom->getAttribute('type');
-$AST = $mpd_dom->getAttribute('availabilityStartTime');
+$type = $mpdHandler->getDom()->getAttribute('type');
+$AST = $mpdHandler->getDom()->getAttribute('availabilityStartTime');
 
 if ($type == 'dynamic' || $AST != '') {
-    $UTCTimings = $mpd_dom->getElementsByTagName('UTCTiming');
+    $UTCTimings = $mpdHandler->getDom()->getElementsByTagName('UTCTiming');
     $acceptedURIs = array('urn:mpeg:dash:utc:ntp:2014',
                           'urn:mpeg:dash:utc:http-head:2014',
                           'urn:mpeg:dash:utc:http-xsdate:2014',
@@ -162,9 +158,9 @@ $this->periodCount = 0;
 
 $hasVideoService = false;
 
-$cencAttribute = $mpd_dom->getAttribute("xmlns:cenc");
+$cencAttribute = $mpdHandler->getDom()->getAttribute("xmlns:cenc");
 
-foreach ($mpd_dom->childNodes as $node) {
+foreach ($mpdHandler->getDom()->childNodes as $node) {
     if ($node->nodeName != 'Period') {
         continue;
     }

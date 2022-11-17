@@ -6,6 +6,7 @@ class MPDHandler
 {
 
     private $url;
+    private $mpd;
     private $dom;
     private $features;
     private $profiles;
@@ -20,6 +21,7 @@ class MPDHandler
     public function __construct($url)
     {
         $this->url = $url;
+        $this->mpd = null;
         $this->dom = null;
         $this->features = null;
         $this->profiles = null;
@@ -124,9 +126,21 @@ class MPDHandler
         include 'impl/MPDHandler/load.php';
     }
 
+    public function getUrl(){
+      return $this->url;
+    }
+    public function getMPD(){
+      return $this->mpd;
+    }
+
+
     public function getDom()
     {
         return $this->dom;
+    }
+
+    public function getResolved(){
+      return $this->resolved;
     }
 
     public function getFeatures()

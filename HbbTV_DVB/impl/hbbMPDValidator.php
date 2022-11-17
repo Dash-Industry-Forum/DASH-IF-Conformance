@@ -1,8 +1,8 @@
 <?php
 
-global $onRequest_array, $xlink_not_valid_array, $mpd_dom, $mpd_url;
+global $onRequest_array, $xlink_not_valid_array;
 
-global $logger;
+global $logger, $mpdHandler;
 
 
 $onRequestValue = "";
@@ -50,9 +50,7 @@ $logger->test(
 $this->tlsBitrateCheck();
 
 
-$mpd_doc = get_doc($mpd_url);
-$mpd_string = $mpd_doc->saveXML();
-$mpd_bytes = strlen($mpd_string);
+$mpd_bytes = strlen($mpdHandler->getResolved());
 
 $logger->test(
     "HbbTV-DVB DASH Validation Requirements",
@@ -66,8 +64,8 @@ $logger->test(
 
 ## Warn on low values of MPD@minimumUpdatePeriod (for now the lowest possible value is assumed to be 1 second)
 $minimumUpdateWarning = false;
-if ($mpd_dom->getAttribute('minimumUpdatePeriod') != '') {
-    $mup = DASHIF\Utility\timeParsing($mpd_dom->getAttribute('minimumUpdatePeriod'));
+if ($mpdHandler->getDom()->getAttribute('minimumUpdatePeriod') != '') {
+    $mup = DASHIF\Utility\timeParsing($mpdHandler->getDom()->getAttribute('minimumUpdatePeriod'));
     if ($mup < 1) {
         $minimumUpdateWarning = true;
     }
@@ -83,7 +81,7 @@ $logger->test(
     "Check failed",
 );
 
-$docType = $mpd_dom->doctype;
+$docType = $mpdHandler->getDom()->doctype;
 $logger->test(
     "HbbTV-DVB DASH Validation Requirements",
     "HbbTV: Section 'MPD'",
@@ -96,11 +94,11 @@ $logger->test(
 
 
 $this->periodCount = 0;
-
-
-foreach ($mpd_dom->childNodes as $node) {
-    if ($node->nodeName == 'Period') {
-        $this->periodCount++;
+foreach ($mpdHandler->getDom()->childNodes as $node) {
+    if ($node - nodeName != 'Period') {
+        continue;
+    }
+    $this->periodCount++;
 
         $adaptationSets = $node->getElementsByTagName('AdaptationSet');
         $adaptationCount = 0;

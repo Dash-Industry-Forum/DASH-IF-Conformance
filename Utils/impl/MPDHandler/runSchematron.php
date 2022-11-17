@@ -20,6 +20,7 @@ $this->mpdValidatorOutput = syscall("java -cp \"saxon9he.jar:xercesImpl.jar:bin\
   explode('#', $this->url)[0] . "\" $sessionDir/resolved.xml " . 
   $this->schemaPath . " $sessionDir/mpdresult.xml");
 
+$this->resolved = file_get_contents("$sessionDir/resolved.xml");
 
 $javaRemoved = str_replace("[java]","", $this->mpdValidatorOutput);
 $xlinkOffset = strpos($javaRemoved, "Start XLink resolving");
