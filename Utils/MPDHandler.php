@@ -12,6 +12,10 @@ class MPDHandler
     private $resolved;
     private $selectedPeriod;
     private $periodTimingInformation;
+    private $schemaPath;
+    private $mpdValidatorOutput;
+    private $schematronOutput;
+    private $schematronIssuesReport;
 
     public function __construct($url)
     {
@@ -22,11 +26,16 @@ class MPDHandler
         $this->resolved = null;
         $this->selectedPeriod = 0;
         $this->periodTimingInformation = array();
+        $this->schemaPath = null;
+        $this->mpdValidatorOutput = null;
+        $this->schematronOutput = null;
+        $this->schematronIssuesReport = null;
 
         $this->load();
         $this->features = $this->recursiveExtractFeatures($this->dom);
         $this->extractProfiles();
-        $this->xlinkResolve();
+        $this->runSchematron();
+        $this->validateSchematron();
     }
 
     public function selectPeriod($period)
@@ -42,14 +51,20 @@ class MPDHandler
         return $this->selectedPeriod;
     }
 
-    private function xlinkResolve()
-    {
-        include 'impl/MPDHandler/xlinkResolve.php';
+    public function getSchematronOutput(){
+      return $this->schematronOutput;
     }
 
-    private function xlinkResolveRecursive($node)
-    {
-        return include 'impl/MPDHandler/xlinkResoleRecursive.php';
+    private function runSchematron(){
+      include 'impl/MPDHandler/runSchematron.php';
+    }
+
+    private function validateSchematron(){
+      include 'impl/MPDHandler/validateSchematron.php';
+    }
+
+    private function findOrDownloadSchema(){
+      include 'impl/MPDHandler/findOrDownloadSchema.php';
     }
 
     private function extractProfiles()
