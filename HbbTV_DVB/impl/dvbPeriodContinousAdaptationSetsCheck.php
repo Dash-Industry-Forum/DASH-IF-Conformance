@@ -1,8 +1,8 @@
 <?php
 
-global $session, $mpd_features, $associativity, $logger;
+global $session, $mpdHandler, $associativity, $logger;
 
-$periods = $mpd_features['Period'];
+$periods = $mpdHandler->getFeatures()['Period'];
 $periodCount = sizeof($periods);
 
 for ($i = 0; $i < $periodCount; $i++) {

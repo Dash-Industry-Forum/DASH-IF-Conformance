@@ -111,14 +111,15 @@ function checkAlignment($leafInfoA, $leafInfoB, $opfile, $segmentAlignment, $sub
 
 function crossRepresentationProcess()
 {
-    global $mpd_features, $current_period, $current_adaptation_set, $session_dir, $adaptation_set_error_log_template, $reprsentation_info_log_template, $string_info, $progress_report;
+    global $current_adaptation_set;
+    global $mpdHandler, $session;
 
-    $adaptation_set = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
+    $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
     $timeoffset = 0;
     $timescale = 1;
 
-    $file_path = str_replace('$AS$', $current_adaptation_set, $adaptation_set_error_log_template) . '.txt';
-    $opfile = fopen($session_dir . '/Period' . $current_period . '/' . $file_path, 'w');
+    $adaptationDir = $session->getAdaptionDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set);
+    $opfile = fopen($adaptationDir . "/CrossInfofile.txt", 'w');
 
     $segmentAlignment = ($adaptation_set['segmentAlignment']) ? $adaptation_set['segmentAlignment'] : 'false';
     $subsegmentAlignment = ($adaptation_set['subsegmentAlignment']) ? $adaptation_set['subsegmentAlignment'] : 'false';
@@ -154,7 +155,9 @@ function crossRepresentationProcess()
             }
 
             $offsetmod = $timeoffset / $timescale;
-            $leafInfo[$j] = loadLeafInfoFile('Period' . $current_period . '/' . str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $j), $reprsentation_info_log_template) . '.txt', $offsetmod);
+
+            $representationDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $j);
+            $leafInfo[$j] = loadLeafInfoFile($representationDir . "/infofile.txt");
             $leafInfo[$j]['id'] = $representation['id'];
         }
 
@@ -166,12 +169,12 @@ function crossRepresentationProcess()
     }
     fclose($opfile);
 
-    if (file_exists($session_dir . '/Period' . $current_period . '/' . $file_path . '.txt')) {
-        $searchadapt = file_get_contents($session_dir . '/Period' . $current_period . '/' . $file_path . '.txt');
+    if (file_exists($adaptationDir . "/CrossInfofile.txt")){
+        $searchadapt = file_get_contents($adaptationDir . "/CrossInfofile.txt");
         if (strpos($searchadapt, "Error") == false && strpos($searchadapt, "violated") == false) {
             $file_error[] = "noerror";
         } else {
-            $file_error[] = $session_dir . '/Period' . $current_period . '/' . $file_path . '.html';
+          $file_error[] =$adaptationDir . "/CrossInfofile.txt";
         }
     } else {
         $file_error[] = "noerror";

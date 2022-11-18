@@ -1,6 +1,6 @@
 <?php
 
-global $mpd_features, $logger;
+global $mpdHandler, $logger;
 
 $moofBoxesCount = $xmlRepresentation->getElementsByTagName('moof')->length;
 $trunBoxes = $xmlRepresentation->getElementsByTagName('trun');
@@ -11,7 +11,7 @@ $tfdtBoxes = $xmlRepresentation->getElementsByTagName('tfdt');
 $mpdTiming = $this->mpdTimingInfo();
 
 // Segment information
-$type = $mpd_features['type'];
+$type = $mpdHandler->getFeatures()['type'];
 
 $sidxBoxes = $xmlRepresentation->getElementsByTagName('sidx');
 $subsegmentSignaling = array();

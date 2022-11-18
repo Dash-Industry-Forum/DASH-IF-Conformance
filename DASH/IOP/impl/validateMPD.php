@@ -1,8 +1,8 @@
 <?php
 
-global $mpd_features;
+global $mpdHandler;
 
-$mpd_profiles = $mpd_features['profiles'];
+$mpd_profiles = $mpdHandler->getFeatures()['profiles'];
 if (strpos($mpd_profiles, 'http://dashif.org/guidelines/dash') !== false) {
     $this->validateMPDCommon();
 }

@@ -1,8 +1,8 @@
 <?php
 
-global $mpd_features, $service_description_info, $logger;
+global $mpdHandler, $service_description_info, $logger;
 
-$service_descriptions = $mpd_features['ServiceDescription'];
+$service_descriptions = $mpdHandler->getFeatures()['ServiceDescription'];
 $logger->test(
     "DASH-IF IOP CR Low Latency Live",
     "Section 9.X.4.2",
@@ -13,7 +13,7 @@ $logger->test(
     "ServiceDescription not found in MPD"
 );
 
-$periods = $mpd_features['Period'];
+$periods = $mpdHandler->getFeatures()['Period'];
 foreach ($periods as $period_id => $period) {
     $valid_service_description_present = false;
 

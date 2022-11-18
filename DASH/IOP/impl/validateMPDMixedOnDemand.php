@@ -1,8 +1,8 @@
 <?php
 
-global $mpd_features, $logger;
+global $mpdHandler, $logger;
 
-foreach ($mpd_features['Period'] as $periodIndex => $period) {
+foreach ($mpdHandler->getFeatures()['Period'] as $periodIndex => $period) {
     $logger->test(
         "DASH-IF IOP 4.3",
         "Section 3.10.4",

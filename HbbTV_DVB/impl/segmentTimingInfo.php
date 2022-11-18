@@ -1,8 +1,8 @@
 <?php
 
-global $mpd_features;
+global $mpdHandler;
 
-$type = $mpd_features['type'];
+$type = $mpdHandler->getFeatures()['type'];
 $moofBoxesCount = $xmlRepresentation->getElementsByTagName('moof')->length;
 $trunBoxes = $xmlRepresentation->getElementsByTagName('trun');
 $tfdtBoxes = $xmlRepresentation->getElementsByTagName('tfdt');

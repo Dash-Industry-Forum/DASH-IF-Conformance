@@ -1,10 +1,10 @@
 <?php
 
-global $mpd_features, $utc_timing_info, $logger;
+global $mpdHandler, $utc_timing_info, $logger;
 
 
 $valid_utc_timing_present = false;
-$utc_timings = $mpd_features['UTCTiming'];
+$utc_timings = $mpdHandler->getFeatures()['UTCTiming'];
 foreach ($utc_timings as $utc_timing) {
     $accepted_uris = array('urn:mpeg:dash:utc:http-xsdate:2014',
                            'urn:mpeg:dash:utc:http-iso:2014',

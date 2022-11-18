@@ -1,8 +1,8 @@
 <?php
 
-global $mpd_features, $profiles, $logger;
+global $mpdHandler, $profiles, $logger;
 
-$periods = $mpd_features['Period'];
+$periods = $mpdHandler->getFeatures()['Period'];
 foreach ($periods as $periodIndex => $period) {
     $adaptationSets = $period['AdaptationSet'];
     foreach ($adaptationSets as $adaptationSetIndex => $adaptationSet) {

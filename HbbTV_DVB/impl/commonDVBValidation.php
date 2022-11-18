@@ -1,6 +1,6 @@
 <?php
 
-global $current_adaptation_set, $current_representation, $profiles, $sizearray;
+global $current_adaptation_set, $current_representation, $sizearray;
 
 global $logger, $mpdHandler;
 
@@ -397,12 +397,12 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
 // Section 4.3 on on-demand profile periods containing sidx boxes
 if (
     strpos(
-        $profiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation],
+        $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation],
         'urn:mpeg:dash:profile:isoff-on-demand:2011'
     ) !== false
     ||
     strpos(
-        $profiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation],
+        $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation],
         'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014'
     ) !== false
 ) {

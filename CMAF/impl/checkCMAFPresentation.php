@@ -1,6 +1,6 @@
 <?php
 
-global  $profiles, $period_timing_info;
+global  $period_timing_info;
 
 global $logger, $session, $mpdHandler;
 
@@ -52,15 +52,15 @@ for ($adaptationSetIndex = 0; $adaptationSetIndex < sizeof($adaptationSets); $ad
             $id = $adaptationSet['Representation'][$i]['id'];
 
             $cmfhdProfile = strpos(
-                $profiles[$mpdHandler->getSelectedPeriod()][$adaptationSetIndex][$i],
+                $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()][$adaptationSetIndex][$i],
                 'urn:mpeg:cmaf:presentation_profile:cmfhd:2017'
             );
             $cmfhdcProfile = strpos(
-                $profiles[$mpdHandler->getSelectedPeriod()][$adaptationSetIndex][$i],
+                $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()][$adaptationSetIndex][$i],
                 'urn:mpeg:cmaf:presentation_profile:cmfhdc:2017'
             );
             $cmfhdsProfile = strpos(
-                $profiles[$mpdHandler->getSelectedPeriod()][$adaptationSetIndex][$i],
+                $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()][$adaptationSetIndex][$i],
                 'urn:mpeg:cmaf:presentation_profile:cmfhds:2017'
             );
 

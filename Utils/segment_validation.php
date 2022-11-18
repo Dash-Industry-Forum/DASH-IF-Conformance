@@ -122,11 +122,11 @@ function assemble($representationDirectory, $segment_urls, $sizearr)
 
 function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 {
-    global $mpd_features, $stderr_file, $leafinfo_file, $reprsentation_info_log_template, $reprsentation_error_log_template,
-            $string_info, $progress_report, $current_period, $current_adaptation_set, $current_representation, $atominfo_file, $sample_data,
+    global $mpdHandler, $stderr_file, $leafinfo_file, $reprsentation_info_log_template, $reprsentation_error_log_template,
+            $string_info, $progress_report, $current_adaptation_set, $current_representation, $atominfo_file, $sample_data,
             $hls_manifest, $hls_tag, $hls_error_file, $hls_info_file;
 
-    $adaptation_set = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
+    $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
     $representation = $adaptation_set['Representation'][$current_representation];
     ///\todo refactor "Make these into proper logger messages
     if ($returncode != 0) {
@@ -276,7 +276,7 @@ $moveAtom &= $logger->test(
 
 function config_file_for_backend($period, $adaptation_set, $representation, $representationDirectory, $is_dolby)
 {
-    global $session_dir, $config_file, $additional_flags, $suppressatomlevel, $reprsentation_mdat_template, $current_period, $current_adaptation_set, $current_representation, $hls_manifest, $hls_mdat_file;
+    global $session_dir, $config_file, $additional_flags, $suppressatomlevel, $reprsentation_mdat_template, $current_adaptation_set, $current_representation, $hls_manifest, $hls_mdat_file;
 
     if (!$hls_manifest) {
         $file = fopen("$representationDirectory/segmentValidatorConfig.txt", 'w');
@@ -325,10 +325,10 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
 
 function loadAndCheckSegmentDuration()
 {
-    global $mpd_features, $current_period,$current_adaptation_set,$current_representation;
+    global $mpdHandler, $current_adaptation_set,$current_representation;
     global $session;
 
-    $adaptation_set = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
+    $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
     $timeoffset = 0;
     $timescale = 1;
     $segmentAlignment = ($adaptation_set['segmentAlignment']) ? $adaptation_set['segmentAlignment'] : 'false';
@@ -374,7 +374,7 @@ function loadAndCheckSegmentDuration()
         $offsetmod = (float)$timeoffset / $timescale;
         $duration = (float)$duration / $timescale;
         if ((($adaptation_set['SegmentTemplate'] && sizeof($adaptation_set['SegmentTemplate']) > 0) || ($representation['SegmentTemplate'] && sizeof($representation['SegmentTemplate']) > 0)) && $duration != 0) {
-            $representationDirectory = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
+            $representationDirectory = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
             loadSegmentInfoFile($offsetmod, $duration, $representationDirectory);
         }
     }
@@ -414,9 +414,9 @@ function loadSegmentInfoFile($PresTimeOffset, $duration, $representationDirector
 
 function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representationDirectory)
 {
-    global $session_dir, $mpd_features,$reprsentation_error_log_template,$period_timing_info, $current_period;
+  global $session_dir, $mpdHandler,$reprsentation_error_log_template,$period_timing_info;
 
-    if ($mpd_features['type'] == 'dynamic') {
+    if ($mpdHandler->getFeatures()['type'] == 'dynamic') {
         return;
     }
 
@@ -427,7 +427,7 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
     }
     $segmentDur = array();
     $num_segments = sizeof($segmentsTime[0]);
-    if ($current_period == 0) {
+    if ($mpdHandler->getSelectedPeriod() == 0) {
         $pres_start = $period_timing_info[0] + $PTO;
     } else {
         $pres_start = $PTO;

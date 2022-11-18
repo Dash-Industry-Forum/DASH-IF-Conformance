@@ -38,11 +38,11 @@
  */
 function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
 {
-    global $session, $progress_report, $current_period, $reprsentation_mdat_template, $missinglink_file, $current_adaptation_set, $current_representation,
+    global $session, $progress_report, $mpdHandler, $reprsentation_mdat_template, $missinglink_file, $current_adaptation_set, $current_representation,
            $hls_byte_range_begin, $hls_byte_range_size, $hls_manifest, $hls_mdat_file, $low_latency_dashif_conformance, $availability_times;
 
     $mdat_file = (!$hls_manifest) ?
-            'Period' . $current_period . '/' . str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_mdat_template) :
+            'Period' . $mpdHandler->getSelectedPeriod() . '/' . str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_mdat_template) :
             $hls_mdat_file;
     $sizefile = fopen($session->getDir() . '/' . $mdat_file . '.txt', 'a+b'); //create text file containing the original size of Mdat box that is ignored
 
@@ -75,7 +75,7 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
 
         if (!$file_exists) {
             $missing = (!$hls_manifest) ?
-                    fopen($session->getDir() . '/Period' . $current_period . '/' . $missinglink_file . '.txt', 'a+b') :
+                    fopen($session->getDir() . '/Period' . $mpdHandler->getSelectedPeriod() . '/' . $missinglink_file . '.txt', 'a+b') :
                     fopen($session->getDir() . '/' . $missinglink_file . '.txt', 'a+b');
             fwrite($missing, $filePath . "\n");
             continue;

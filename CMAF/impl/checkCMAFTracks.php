@@ -1,7 +1,7 @@
 <?php
 
 global $current_adaptation_set, $current_representation,
-       $profiles, $cmaf_mediaTypes,$cmaf_mediaProfiles;
+       $cmaf_mediaTypes,$cmaf_mediaProfiles;
 
 global $session, $logger, $mpdHandler;
 
@@ -46,7 +46,7 @@ $tfdtBoxes = $xml->getElementsByTagName('tfdt');
 $adaptationMimeType = $adaptationSet['mimeType'];
 $representationMimeType = $adaptationSet['Representation'][$current_representation]['mimeType'];
 if (strpos($representationMimeType, 'video') !== false || strpos($adaptationMimeType, 'video') !== false) {
-    $currentProfile = $profiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation];
+    $currentProfile = $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation];
     if (strpos($currentProfile, 'urn:mpeg:dash:profile:isoff-live:2011') !== false) {
         for ($j = 0; $j < $moofBoxesCount; $j++) {
             $trunVersion = $trunBoxes->item($j)->getAttribute('version');
@@ -414,7 +414,7 @@ if ($hdlrType == 'soun') {
 }
 
 $dash264 = strpos(
-    $profiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation],
+    $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation],
     "http://dashif.org/guidelines/dash264"
 ) !== false;
 
