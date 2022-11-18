@@ -69,6 +69,13 @@ class ModuleLogger
         $this->currentHook = '';
     }
 
+    public function getModuleVerdict($moduleName){
+        if (!array_key_exists($moduleName, $this->entries)) {
+          return "PASS";
+        }
+        return $this->entries[$moduleName]['verdict'];
+    }
+
     public function setHook($hookName)
     {
         $this->currentHook = $hookName;
@@ -243,7 +250,7 @@ class ModuleLogger
         return false;
     }
 
-    private function write()
+    public function write()
     {
         $this->entries['Stats']['LastWritten'] = date("Y-m-d h:i:s");
         file_put_contents($this->logfile, \json_encode($this->asArray()));
