@@ -21,7 +21,12 @@ function ToolView() {
   async function handleProcessingFinished({ result, duration }) {
     _state.result = result;
     _state.duration = duration;
-    _state.detailSelect = { module: null, part: null, section: null, test: null },
+    _state.detailSelect = {
+      module: null,
+      part: null,
+      section: null,
+      test: null,
+    };
     renderResults();
   }
   _validator.onProcessingFinished(handleProcessingFinished);
@@ -128,6 +133,15 @@ function ToolView() {
 
   function renderResultSummary(elementId) {
     _resultSummaryId = elementId = elementId || _resultSummaryId;
+    let moduleNames = Object.keys(_state.result.entries).filter(
+      (key) => key !== "Stats" && key !== "verdict"
+    );
+    let modules = moduleNames.map((name) => {
+      let module = _state.result.entries[name];
+      module.name = name;
+      return module;
+    });
+
     let resultSummary = UI.createElement({
       id: elementId,
       className: "border-end w-50 d-flex flex-column",
@@ -139,55 +153,56 @@ function ToolView() {
         {
           id: elementId + "-scroll",
           className: "flex-grow-1 overflow-auto",
-          children: Object.keys(_state.result.entries)
-            .filter((key) => key !== "Stats" && key !== "verdict")
-            .map((module, index) => ({
-              className: "p-3 border-bottom",
-              children: [
-                {
-                  className: "fs-5 mb-2",
-                  children: [
-                    {
-                      element: "i",
-                      className: getVerdictIcon(
-                        _state.result.entries[module].verdict
-                      ),
-                    },
-                    { element: "span", className: "ms-2", text: module },
-                  ],
-                },
-                {
-                  children: Object.keys(_state.result.entries[module])
-                    .filter((key) => key !== "verdict")
-                    .map((part) => ({
-                      children: [
-                        {
-                          className: "my-3 fw-semibold",
-                          children: [
-                            {
-                              element: "i",
-                              className: getVerdictIcon(
-                                _state.result.entries[module][part].verdict
-                              ),
-                              style: "width: 1.5em",
-                            },
-                            { element: "span", text: part },
-                          ],
-                        },
-                        {
-                          className: "list-group",
-                          children: _state.result.entries[module][
-                            part
-                          ].test.map(({ section, test, state }) => ({
+          children: modules.map((module, index) => ({
+            className: "p-3 border-bottom",
+            children: [
+              {
+                className: "fs-5 mb-2",
+                children: [
+                  {
+                    element: "i",
+                    className: getVerdictIcon(module.verdict),
+                  },
+                  { element: "span", className: "ms-2", text: module.name },
+                ],
+              },
+              {
+                children: Object.keys(module)
+                  .filter(
+                    (key) =>
+                      typeof module[key] === "object" && "test" in module[key]
+                  )
+                  .map((part) => ({
+                    children: [
+                      {
+                        className: "my-3 fw-semibold",
+                        children: [
+                          {
+                            element: "i",
+                            className: getVerdictIcon(module[part].verdict),
+                            style: "width: 1.5em",
+                          },
+                          { element: "span", text: part },
+                        ],
+                      },
+                      {
+                        className: "list-group",
+                        children: module[part].test.map(
+                          ({ section, test, state }) => ({
                             element: "a",
                             className:
                               "list-group-item list-group-item-action" +
-                              (isSelected({ module, part, section, test })
+                              (isSelected({
+                                module: module.name,
+                                part,
+                                section,
+                                test,
+                              })
                                 ? " fw-semibold bg-light"
                                 : ""),
                             href: "#",
                             onClick: isSelected({
-                              module,
+                              module: module.name,
                               part,
                               section,
                               test,
@@ -195,7 +210,7 @@ function ToolView() {
                               ? () => {}
                               : () => {
                                   _state.detailSelect = {
-                                    module,
+                                    module: module.name,
                                     part,
                                     section,
                                     test,
@@ -221,13 +236,14 @@ function ToolView() {
                                 text: test,
                               },
                             ],
-                          })),
-                        },
-                      ],
-                    })),
-                },
-              ],
-            })),
+                          })
+                        ),
+                      },
+                    ],
+                  })),
+              },
+            ],
+          })),
         },
       ],
     });
