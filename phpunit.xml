@@ -13,11 +13,8 @@
          failOnWarning="true"
          verbose="true">
   <testsuites>
-    <testsuite name="default">
-      <directory>tests</directory>
-    </testsuite>
     <testsuite name="CMAF CTAWAVE Unit">
-      <directory>CMAF/CTAWAVE/UnitTests</directory>
+      <directory>CTAWAVE/UnitTests</directory>
     </testsuite>
   </testsuites>
 
@@ -30,7 +27,7 @@
       <directory suffix=".php">vendor</directory>
     </exclude>
     <report>
-      <html outputDirectory="html-reports" lowUpperBound="50" highLowerBound="90"/>
+      <html outputDirectory="unit-test-results" lowUpperBound="50" highLowerBound="90"/>
     </report>
   </coverage>
 </phpunit>
