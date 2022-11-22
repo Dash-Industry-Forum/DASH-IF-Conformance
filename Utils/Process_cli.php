@@ -28,7 +28,6 @@ $argumentParser = new DASHIF\ArgumentsParser();
 include __DIR__ . '/sessionHandler.php';
 require __DIR__ . '/moduleInterface.php';
 include __DIR__ . '/moduleLogger.php';
-include __DIR__ . '/MPDHandler.php';
 
 include __DIR__ . '/Session.php';         //#Session Functions, No Direct Executable Code
 //#Document loading functions, mostly xml. Some assertion options and error initialization

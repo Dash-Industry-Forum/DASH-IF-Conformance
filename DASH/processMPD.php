@@ -74,7 +74,6 @@ function process_MPD($parseSegments = false)
       return;
     }
     if ($mpd_features['type'] !== 'dynamic') {
-        $mpdHandler->selectPeriod(0);
         $current_period = 0;
     }
     while ($current_period < sizeof($mpd_features['Period'])) {
