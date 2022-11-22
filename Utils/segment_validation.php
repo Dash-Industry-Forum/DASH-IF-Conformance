@@ -331,11 +331,11 @@ function loadAndCheckSegmentDuration()
     $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
     $timeoffset = 0;
     $timescale = 1;
-    $segmentAlignment = ($adaptation_set['segmentAlignment']) ? $adaptation_set['segmentAlignment'] : 'false';
-    $subsegmentAlignment = ($adaptation_set['subsegmentAlignment']) ? $adaptation_set['subsegmentAlignment'] : 'false';
-    $bitstreamSwitching = ($adaptation_set['bitstreamSwitching']) ? $adaptation_set['bitstreamSwitching'] : 'false';
+    $segmentAlignment = ($adaptation_set['segmentAlignment']) ? ($adaptation_set['segmentAlignment'] == "true") : false;
+    $subsegmentAlignment = ($adaptation_set['subsegmentAlignment']) ? ($adaptation_set['subsegmentAlignment'] == "true") : false;
+    $bitstreamSwitching = ($adaptation_set['bitstreamSwitching']) ? ($adaptation_set['bitstreamSwitching'] == "true") : false;
 
-    if ($segmentAlignment == "true" || $subsegmentAlignment == "true" || $bitstreamSwitching == "true") {
+    if ($segmentAlignment || $subsegmentAlignment || $bitstreamSwitching) {
         $leafInfo = array();
 
         $representation = $adaptation_set['Representation'][$current_representation];

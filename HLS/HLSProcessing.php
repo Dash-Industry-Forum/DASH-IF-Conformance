@@ -96,8 +96,8 @@ function processHLS(){
         //err_file_op(2);
     }
     
-    $progress_xml->allDownloadComplete = "true";
-    $progress_xml->completed = "true";
+    $progress_xml->allDownloadComplete = true;
+    $progress_xml->completed = true;
     $progress_xml->completed->addAttribute('time', time());
     $progress_xml->asXml(trim($session_dir . '/' . $progress_report));
     exit;

@@ -246,7 +246,7 @@ foreach ($representations as $representationId => $representation) {
         );
         if (
             !(sizeof(array_unique($availabilityTimeComplete_rep)) == 1 &&
-            $availabilityTimeComplete_rep[0] == 'false')
+            !$availabilityTimeComplete_rep[0])
         ) {
             $chunkedAdaptationPoints[$representationId]--;
         }

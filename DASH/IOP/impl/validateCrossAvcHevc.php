@@ -8,7 +8,7 @@ $bitstreamSwitching = ($adaptation_set['bitstreamSwitching']) ?
   $adaptation_set['bitstreamSwitching'] : $period['bitstreamSwitching'];
 $mimeType = ($representations[0]['mimeType']) ? $representations[0]['mimeType'] : $adaptation_set['mimeType'];
 
-if ($bitstreamSwitching != 'true' || strpos($mimeType, 'video') === false) {
+if (!$bitstreamSwitching || strpos($mimeType, 'video') === false) {
     return;
 }
 
