@@ -175,6 +175,7 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 function run_backend($configFile, $representationDirectory = "")
 {
     global $session;
+    global $logger;
 
     $sessionDirectory = $session->getDir();
 
@@ -199,46 +200,46 @@ function run_backend($configFile, $representationDirectory = "")
 
     $moveAtom = true;
 
-$moveAtom &= $logger->test(
-    "Health Checks",
-    "Segment Validation",
-    "ISOSegmentValidator runs successful",
-    $returncode == 0,
-    "FAIL",
-    "Ran succesful on $configFile; took ". ($et - $t) . "seconds",
-    "Issues with $configFile; Returncode $returncode; took " . ($et - $t) . " seconds"
-);
+    $moveAtom &= $logger->test(
+        "Health Checks",
+        "Segment Validation",
+        "ISOSegmentValidator runs successful",
+        $returncode == 0,
+        "FAIL",
+        "Ran succesful on $configFile; took ". ($et - $t) . "seconds",
+        "Issues with $configFile; Returncode $returncode; took " . ($et - $t) . " seconds"
+    );
 
-$moveAtom &= $logger->test(
-    "Health Checks",
-    "Segment Validation",
-    "AtomInfo written",
-    file_exists("$sessionDirectory/atominfo.xml"),
-    "FAIL",
-    "Atominfo for $representationDirectory exists",
-    "Atominfo for $representationDirectory missing"
-);
+    $moveAtom &= $logger->test(
+        "Health Checks",
+        "Segment Validation",
+        "AtomInfo written",
+        file_exists("$sessionDirectory/atominfo.xml"),
+        "FAIL",
+        "Atominfo for $representationDirectory exists",
+        "Atominfo for $representationDirectory missing"
+    );
 
-$xml = get_DOM("$sessionDirectory/atominfo.xml", 'atomlist');
-$moveAtom &= $logger->test(
-    "Health Checks",
-    "Segment Validation",
-    "AtomInfo contains valid xml",
-    $xml !== false,
-    "FAIL",
-    "Atominfo for $representationDirectory has valid xml",
-    "Atominfo for $representationDirectory has invalid xml"
-);
+    $xml = get_DOM("$sessionDirectory/atominfo.xml", 'atomlist');
+    $moveAtom &= $logger->test(
+        "Health Checks",
+        "Segment Validation",
+        "AtomInfo contains valid xml",
+        $xml !== false,
+        "FAIL",
+        "Atominfo for $representationDirectory has valid xml",
+        "Atominfo for $representationDirectory has invalid xml"
+    );
 
-$moveAtom &= $logger->test(
-    "Health Checks",
-    "Segment Validation",
-    "AtomInfo < 100Mb",
-    filesize("$sessionDirectory/atominfo.xml") < (100 * 1024 * 1024),
-    "FAIL",
-    "Atominfo for $representationDirectory < 100Mb",
-    "Atominfo for $representationDirectory is ". filesize("$sessionDirectory/atominfo.xml")
-);
+    $moveAtom &= $logger->test(
+        "Health Checks",
+        "Segment Validation",
+        "AtomInfo < 100Mb",
+        filesize("$sessionDirectory/atominfo.xml") < (100 * 1024 * 1024),
+        "FAIL",
+        "Atominfo for $representationDirectory < 100Mb",
+        "Atominfo for $representationDirectory is ". filesize("$sessionDirectory/atominfo.xml")
+    );
 
 
     if (!$moveAtom){

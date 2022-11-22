@@ -108,6 +108,7 @@ function processAdaptationSetOfCurrentPeriod($period, $ResultXML, $segment_urls)
 
     global $modules;
 
+    global $logger;
 
     $adaptation_sets = $period['AdaptationSet'];
     while ($current_adaptation_set < sizeof($adaptation_sets)) {
