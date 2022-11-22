@@ -12,7 +12,7 @@ if ($bitstreamSwitching != 'true' || strpos($mimeType, 'video') === false) {
     return;
 }
 
-$profiles = array();
+$foundProfiles = array();
 $levels = array();
 $elsts = array();
 foreach ($representations as $representationId => $representation) {
@@ -34,7 +34,7 @@ foreach ($representations as $representationId => $representation) {
         $codec_box = $xml->getElementsByTagName('avcC');
         if ($codec_box->length > 0) {
             $codec = $codec_box->item(0);
-            $profiles[] = $codec->getAttribute('profile');
+            $foundProfiles[] = $codec->getAttribute('profile');
             $levels[] = $codec->getElementsByTagName('Comment')->item(0)->getAttribute('level');
         }
     }
@@ -42,7 +42,7 @@ foreach ($representations as $representationId => $representation) {
         $codec_box = $xml->getElementsByTagName('hvcC');
         if ($codec_box->length > 0) {
             $codec = $codec_box->item(0);
-            $profiles[] = $codec->getAttribute('profile_idc');
+            $foundProfiles[] = $codec->getAttribute('profile_idc');
             $levels[] = $codec->getAttribute('level_idc');
         }
     }
@@ -55,7 +55,7 @@ foreach ($representations as $representationId => $representation) {
     }
 }
 
-$maxProfile = (int)max($profiles);
+$maxProfile = (int)max($foundProfiles);
 $maxLevel = (int)max($levels);
 
 $adaptationSetCodecs = $adaptationSet['codecs'];

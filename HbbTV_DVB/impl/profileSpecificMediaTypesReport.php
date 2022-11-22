@@ -5,29 +5,29 @@ global $mpdHandler, $dvb_conformance ;
 
 global $logger;
 
-$mpd_profiles = $mpdHandler->getDom()->getAttribute('profiles');
+$mpdProfiles = $mpdHandler->getDom()->getAttribute('profiles');
 
-$profilesArray = explode(',', $mpdHandler->getDom()->getAttribute('profiles'));
+$mpdProfilesList = explode(',', $mpdProfiles);
 
 if ($this->DVBEnabled) {
     if (
-        !in_array('urn:dvb:dash:profile:dvb-dash:2014', $profilesArray) &&
-        !in_array('urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014', $profilesArray) &&
-        !in_array('urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014', $profilesArray)
+        !in_array('urn:dvb:dash:profile:dvb-dash:2014', $mpdProfilesList) &&
+        !in_array('urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014', $mpdProfilesList) &&
+        !in_array('urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014', $mpdProfilesList)
     ) {
-        $profilesArray[] = 'urn:dvb:dash:profile:dvb-dash:2014';
+        $mpdProfilesList[] = 'urn:dvb:dash:profile:dvb-dash:2014';
     }
 }
 
 if ($this->HbbTvEnabled){
-    if (!in_array('urn:hbbtv:dash:profile:isoff-live:2012', $profilesArray)) {
-        $profilesArray[] = 'urn:hbbtv:dash:profile:isoff-live:2012';
+    if (!in_array('urn:hbbtv:dash:profile:isoff-live:2012', $mpdProfilesList)) {
+        $mpdProfilesList[] = 'urn:hbbtv:dash:profile:isoff-live:2012';
     }
 }
 
 $profile_specific_MPDs = array();
 
-foreach ($profilesArray as $profile) {
+foreach ($mpdProfilesList as $profile) {
     $domDocument = new DOMDocument('1.0');
     $domElement = $domDocument->createElement('MPD');
     $domElement = $mpdHandler->getDom()->cloneNode();
@@ -59,8 +59,8 @@ foreach ($profile_specific_MPDs as $profile_specific_MPD) {
         "??",
         $str == '',
         "FAIL",
-        "All entries found for profile " . $profilesArray[$ind],
-        $str . " not found for profile " . $profilesArray[$ind]
+        "All entries found for profile " . $mpdProfilesList[$ind],
+        $str . " not found for profile " . $mpdProfilesList[$ind]
     );
     $ind++;
 }

@@ -1,6 +1,6 @@
 <?php
 
-global $mpdHandler, $profiles, $current_adaptation_set, $current_representation, $logger;
+global $mpdHandler, $current_adaptation_set, $current_representation, $logger;
 
 
 $period = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()];
@@ -137,7 +137,7 @@ if ($isHevc) {
 
 if ($isAvc || $isHevc) {
     $elstBoxes = $xml->getElementsByTagName('elst');
-    $representationProfiles = $profiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation];
+    $representationProfiles = $mpdHandler->getProfiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation];
     if (
         !(strpos($representationProfiles, 'http://dashif.org/guidelines/dash-if-ondemand') !== false ||
         (strpos($representationProfiles, 'http://dashif.org/guidelines/dash') !== false &&

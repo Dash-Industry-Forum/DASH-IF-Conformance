@@ -23,7 +23,6 @@ $current_adaptation_set = 0;
 $current_representation = 0;
 $period_timing_info = array();
 $segment_accesses = array();
-$profiles = array();
 $sizearray = array();
 $additional_flags = '';
 $error_message = 1;

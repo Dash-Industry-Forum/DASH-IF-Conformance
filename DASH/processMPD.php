@@ -16,7 +16,8 @@
 
 function process_MPD($parseSegments = false)
 {
-    global $mpd_validation_only, $profiles;
+    global $mpd_validation_only;
+    global $mpd_url;
 
     global $session;
 
@@ -24,14 +25,21 @@ function process_MPD($parseSegments = false)
 
     global $logger;
 
-    global $mpd_url;
 
     global $mpdHandler;
 
+    $logger->parseSegments = $parseSegments;
 
+    //------------------------------------------------------------------------//
+    ## Perform MPD Validation
+    ## Write to MPD report
+    ## If only MPD validation is requested or inferred, stop
+    ## If any error is found in the MPD validation process, stop
+    ## If no error is found, then proceed with segment validation below
     $mpdHandler = new DASHIF\MPDHandler($mpd_url);
 
-    $logger->parseSegments = $parseSegments;
+
+
 
     foreach ($modules as $module) {
         if ($module->isEnabled()) {
@@ -40,23 +48,6 @@ function process_MPD($parseSegments = false)
     }
 
 
-
-    ## Get MPD features into an array
-    ///\RefactorTodo Remove this global!!
-
-
-    ///\RefactorTodo Remove this global!!
-    $profiles = $mpdHandler->getProfiles();
-
-
-
-    //------------------------------------------------------------------------//
-    ## Perform MPD Validation
-    ## Write to MPD report
-    ## If only MPD validation is requested or inferred, stop
-    ## If any error is found in the MPD validation process, stop
-    ## If no error is found, then proceed with segment validation below
-//    $valid_mpd = validate_MPD();
 
 
 

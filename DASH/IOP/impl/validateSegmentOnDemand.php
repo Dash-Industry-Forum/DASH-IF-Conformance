@@ -1,10 +1,10 @@
 <?php
 
-global $profiles, $mpdHandler, $current_adaptation_set, $current_representation, $logger;
+global $mpdHandler, $current_adaptation_set, $current_representation, $logger;
 
 if (
     strpos(
-        $profiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation],
+        $mpdHandler->getProfiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation],
         'http://dashif.org/guidelines/dash-if-ondemand'
     ) === false
 ) {
