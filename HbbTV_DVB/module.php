@@ -35,6 +35,9 @@ class ModuleHbbTVDVB extends ModuleInterface
     {
         return $this->HbbTvEnabled || $this->DVBEnabled;
     }
+    public function isDVBEnabled(){
+      return $this->DVBEnabled;
+    }
 
     public function setEnabled($newVal)
     {

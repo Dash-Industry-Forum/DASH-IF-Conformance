@@ -1,31 +1,48 @@
 <?php
 
-global $schema_url, $dvb_conformance, $dvb_conformance_2018, $dvb_conformance_2019,
-$low_latency_dashif_conformance;
+global $schema_url, $dvb_conformance_2018, $dvb_conformance_2019;
 global $session;
 
 
-$sessionDir = $session->getDir();
+global $modules;
 
-$default_schema_loc = 'schemas/DASH-MPD.xsd';
+$llEnabled = false;
+$dvbEnabled = false;
 
-if ($dvb_conformance && $dvb_conformance_2018) {
-    $default_schema_loc = 'schemas/DASH-MPD-2nd.xsd';
-} elseif ($dvb_conformance && $dvb_conformance_2019) {
-    $default_schema_loc = 'schemas/DASH-MPD-4th-amd1.xsd';
-} elseif ($low_latency_dashif_conformance) {
-    $default_schema_loc = 'schemas/DASH-MPD-4th-amd1.xsd';
+foreach ($modules as $module) {
+   if ($module->isEnabled()) {
+     if ($module->name == "HbbTVDVB"){//RefactorTodo Fix after split
+       $dvbEnabled = $module->isDVBEnabled();
+     }
+     if ($module->name == "DASH-IF Low Latency"){
+       $llEnabled = $module->isEnabled();
+     }
+   }
+}
+
+
+$schemaLocation = 'schemas/DASH-MPD.xsd';
+
+if ($dvbEnabled){
+ // if($dvb_conformance_2018) {
+    $schemaLocation = 'schemas/DASH-MPD-2nd.xsd';
+ //elseif ($dvb_conformance_2019) {
+ //   $schemaLocation = 'schemas/DASH-MPD-4th-amd1.xsd';
+ //}
+} elseif ($llEnabled) {
+    $schemaLocation = 'schemas/DASH-MPD-4th-amd1.xsd';
 }
 
 if ($schema_url == '') {
-  $this->schemaPath = $default_schema_loc;
+  $this->schemaPath = $schemaLocation;
   return;
 }
 if (pathinfo($schema_url, PATHINFO_EXTENSION) != 'xsd') {
-  $this->schemaPath = $default_schema_loc;
+  $this->schemaPath = $schemaLocation;
   return;
 }
 
+$sessionDir = $session->getDir();
 $saveTo = "$sessionDir/schema.xsd";
 $fp = fopen($saveTo, 'w+');
 if ($fp === false) {
@@ -48,7 +65,7 @@ curl_close($ch);
 fclose($fp);
 
 if ($statusCode != 200) {
-  $this->schemaPath = $default_schema_loc;
+  $this->schemaPath = $schemaLocation;
   return;
 }
 
