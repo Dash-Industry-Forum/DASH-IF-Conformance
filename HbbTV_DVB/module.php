@@ -38,6 +38,21 @@ class ModuleHbbTVDVB extends ModuleInterface
     public function isDVBEnabled(){
       return $this->DVBEnabled;
     }
+    public function detectFromManifest(){
+      global $mpdHandler;
+      $mpdProfiles = $mpdHandler->getDOM()->getAttribute('profiles'):
+      if(strpos($mpdProfiles, 'urn:hbbtv:dash:profile:isoff-live:2012') !== FALSE){
+        $this->HbbTvEnabled = true;
+        $this->detected = true;
+      }
+      if(strpos($mpdProfiles, 'urn:dvb:dash:profile:dvb-dash:2014') !== FALSE || 
+        strpos($mpdProfiles, 'urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014')!== FALSE ||
+        strpos($mpdProfiles, 'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014') !== FALSE)
+      {
+        $this->DVBEnabled = true;
+        $this->detected = true;
+      }
+    }
 
     public function setEnabled($newVal)
     {

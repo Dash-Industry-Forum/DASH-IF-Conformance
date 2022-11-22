@@ -8,6 +8,7 @@ namespace DASHIF;
 class ModuleInterface
 {
     public $name;
+    public $detected;
     protected $enabled;
     protected $messages;
     protected $warnings;
@@ -20,6 +21,7 @@ class ModuleInterface
         $this->messages = array();
         $this->warnings = array();
         $this->errors = array();
+        $this->detected = false;
 
         $this->addCLIArguments();
     }
@@ -29,6 +31,9 @@ class ModuleInterface
 
     public function handleArguments()
     {
+    }
+
+    public function detectFromManifest(){
     }
 
 
