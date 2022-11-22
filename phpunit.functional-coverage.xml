@@ -10,7 +10,7 @@
          beStrictAboutTodoAnnotatedTests="true"
          convertDeprecationsToExceptions="true"
          failOnRisky="true"
-         backupGlobals="false"
+         backupGlobals="true"
          failOnWarning="false"
          enforceTimeLimit="false"
          timeoutForLargeTests="360"
@@ -20,9 +20,7 @@
             <directory>functional-tests/dashif</directory>
         </testsuite>
     </testsuites>
-
-    <coverage cacheDirectory=".phpunit.cache/code-coverage"
-              processUncoveredFiles="false" includeUncoveredFiles="false" pathCoverage="true">
+  <coverage cacheDirectory=".phpunit.cache/code-coverage" processUncoveredFiles="false" includeUncoveredFiles="true" pathCoverage="true">
         <include>
             <directory suffix=".php">.</directory>
         </include>

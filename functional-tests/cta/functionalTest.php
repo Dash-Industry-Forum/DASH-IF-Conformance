@@ -13,6 +13,8 @@ require_once 'Utils/ArgumentsParser.php';
 global $argumentParser;
 $argumentParser = new DASHIF\ArgumentsParser();
 
+include 'Utils/functions.php';
+include 'Utils/MPDHandler.php';
 include 'Utils/sessionHandler.php';
 require 'Utils/moduleInterface.php';
 include 'Utils/moduleLogger.php';
@@ -23,11 +25,9 @@ include 'Utils/Session.php';         //#Session Functions, No Direct Executable 
 //#Document loading functions, mostly xml. Some assertion options and error initialization
 include 'Utils/Load.php';
 include 'Utils/FileOperations.php';  //#Filesystem and XML checking functions. No Direct Executable Code.
-include 'Utils/VisitorCounter.php';  //#Various Session-based functions. No Direct Executable Code.
 //#Global variables. Direct evaluation of post/session vars to define conditionals,
 //#conditional extra includes for module initialization
 include 'Utils/GlobalVariables.php';
-include 'Utils/PrettyPrint.php';     //#Pretty printing functions for terminal output. No Direct Executable Code.
 include 'Utils/segment_download.php'; //#Very large function for downloading data. No Direct Executable Code.
 include 'Utils/segment_validation.php'; //#Segment validation functions. No Direct Executable Code.
 //#Dolby validation functions. Attempt at use of objects. No Direct Executable Code.
@@ -73,7 +73,8 @@ final class functionalTest extends TestCase
     public function testThis($stream): void
     {
         $GLOBALS['mpd_url'] = $stream;
-        $enabledModules = ["MPEG-DASH Common", "CTA-WAVE", "CMAF"];
+        //$enabledModules = ["MPEG-DASH Common", "CTA-WAVE", "CMAF"];
+        $enabledModules = ["MPEG-DASH Common", "DASH-IF IOP Conformance", "CMAF", "CTA-WAVE", "HbbTV_DVB", "Dolby", "DASH-IF Low Latency"];
         $id = null;
 
         $GLOBALS['logger']->reset($id);

@@ -1,0 +1,34 @@
+{
+  "items": [
+    {
+      "name": "Single Resolution Multi-Rate",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCases/1a/netflix/exMPD_BIP_TC1.mpd",
+          "name": "AVC, Single-Resolution Multi-Rate, On Demand profile, 1",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesHD/MultiPeriod_OnDemand/ThreePeriods/ThreePeriod_OnDemand2.mpd",
+          "name": "Three period OnDemand ",
+          "moreInfo": ""
+        }
+      ]
+    },
+    {
+      "name": "Dolby Multiple Adaptation Sets",
+      "submenu": [
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesMCA/dolby/2/1/ChID_voices_71_768_ddp.mpd",
+          "name": "Multi Channel Audio, Dolby Audio EC-3, On Demand profile, Single Audio Representation",
+          "moreInfo": ""
+        },
+        {
+          "url": "https://dash.akamaized.net/dash264/TestCasesDolby/6/Living_Room_1080p_51_192k_320k_2997fps.mpd",
+          "name": "Multi Channel Audio, Dolby Audio AC-4, On Demand profile, 5.1 channels, 25fps, Multiple Audio Representation",
+          "moreInfo": ""
+        }
+      ]
+    }
+  ]
+}

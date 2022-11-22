@@ -105,6 +105,5 @@ if (!$argumentParser->getOption("silent")) {
     echo($logger->asJSON($compactOutput) . "\n");
 }
 
-
 global $session;
 //$session->clearDirectory();

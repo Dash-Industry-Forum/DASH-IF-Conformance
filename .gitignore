@@ -17,3 +17,4 @@ Utils/sessions
 unit-test-results
 
 external/*
+Utils/sessions/*
