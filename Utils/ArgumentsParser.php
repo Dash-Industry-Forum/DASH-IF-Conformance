@@ -112,7 +112,11 @@ class ArgumentsParser
         $helptext = "Usage: " . $argv[0] . " [options] URL\n";
         foreach ($this->allOptions as $option) {
             $helptext .= "  ";
-            $helptext .= "-" . $option->short[0] . ", ";
+            if ($option->short != ""){
+              $helptext .= "-" . $option->short[0] . ", ";
+            }else{
+              $helptext .= "    ";
+            }
             $helptext .= "--" . $option->long;
             $helptext .= "\t\t" . $option->desc;
             $helptext .= "\n";

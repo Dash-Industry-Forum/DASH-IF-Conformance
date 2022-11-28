@@ -8,27 +8,37 @@ global $modules;
 
 $llEnabled = false;
 $dvbEnabled = false;
+$dvbVersion = '';
+$useLatestXSD = false;
 
 foreach ($modules as $module) {
    if ($module->isEnabled()) {
      if ($module->name == "HbbTV_DVB"){
        $dvbEnabled = $module->isDVBEnabled();
+       $dvbVersion = $module->DVBVersion;
      }
      if ($module->name == "DASH-IF Low Latency"){
        $llEnabled = $module->isEnabled();
+     }
+     if ($module->name == "MPEG-DASH Common"){
+       $useLatestXSD = $module->useLatestXSD;
      }
    }
 }
 
 
 $schemaLocation = 'schemas/DASH-MPD.xsd';
+if ($useLatestXSD){
+  $schema_url = 'https://raw.githubusercontent.com/MPEGGroup/DASHSchema/5th-Ed/DASH-MPD.xsd';
+}
 
-if ($dvbEnabled){
- // if($dvb_conformance_2018) {
+if ($dvbEnabled){ 
+  if ($dvbVersion == "2019"){
+    $schemaLocation = 'schemas/DASH-MPD-4th-amd1.xsd';
+  }else{
+    //Default to 2018 xsd
     $schemaLocation = 'schemas/DASH-MPD-2nd.xsd';
- //elseif ($dvb_conformance_2019) {
- //   $schemaLocation = 'schemas/DASH-MPD-4th-amd1.xsd';
- //}
+  }
 } elseif ($llEnabled) {
     $schemaLocation = 'schemas/DASH-MPD-4th-amd1.xsd';
 }

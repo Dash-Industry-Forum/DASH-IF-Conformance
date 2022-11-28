@@ -4,6 +4,7 @@ namespace DASHIF;
 
 class ModuleHbbTVDVB extends ModuleInterface
 {
+    public $DVBVersion;
     private $periodCount;
     private $hohSubtitleLanguages;
     private $videoBandwidth;
@@ -51,6 +52,9 @@ class ModuleHbbTVDVB extends ModuleInterface
       {
         $this->DVBEnabled = true;
         $this->detected = true;
+        if (!$this->DVBVersion){
+           $this->DVBVersion = "2018";
+        }
       }
     }
 
@@ -64,7 +68,8 @@ class ModuleHbbTVDVB extends ModuleInterface
     {
         global $argumentParser;
         $argumentParser->addOption("hbbtv", "H", "hbbtv", "Enable HBBTV checking");
-        $argumentParser->addOption("dvb", "D", "dvb", "Enable DVB checking");
+        $argumentParser->addOption("dvb", "D", "dvb", "Enable DVB checking (2018 xsd)");
+        $argumentParser->addOption("dvb2019", "", "dvb_2019", "Enable DVB checking (2019 xsd)");
     }
 
     public function handleArguments()
@@ -77,6 +82,12 @@ class ModuleHbbTVDVB extends ModuleInterface
         if ($argumentParser->getOption("dvb")) {
             $this->enabled = true;
             $this->DVBEnabled = true;
+            $this->DVBVersion = "2018";
+        }
+        if ($argumentParser->getOption("dvb2019")) {
+            $this->enabled = true;
+            $this->DVBEnabled = true;
+            $this->DVBVersion = "2019";
         }
     }
 
