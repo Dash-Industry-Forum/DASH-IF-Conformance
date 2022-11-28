@@ -59,7 +59,6 @@ $availability_times = array();
 $cmaf_conformance = false;
 $cmaf_mediaTypes;
 $cmaf_mediaProfiles;
-$infofile_template = '';
 $compinfo_file = '';
 $comparison_folder = '';
 $presentation_infofile = '';
@@ -207,16 +206,6 @@ $mpd_xml_string = '<mpdresult><xlink>No Result</xlink><schema>No Result</schema>
 $mpd_xml = '';
 $mpd_xml_report = 'mpdresult.xml';
 
-$adaptation_set_template = 'Adapt$AS$';
-$adaptation_set_error_log_template = $adaptation_set_template . '_CrossInfofile';
-
-$reprsentation_template = 'Adapt$AS$rep$R$';
-$reprsentation_xml_template = $reprsentation_template;
-$reprsentation_error_log_template = $reprsentation_template . 'log';
-$reprsentation_info_log_template = $reprsentation_template . '_infofile';
-$reprsentation_index_template = $reprsentation_template . '.txt';
-$reprsentation_mdat_template = $reprsentation_template . 'mdatoffset';
-
 $string_info = '<!doctype html> 
 <html lang="en">
 <head>
@@ -236,20 +225,3 @@ $string_info = '<!doctype html>
 </html>';
 
 $modules = array();
-
-# Initialize DASH-IF IOP, Low Latency DASH, CMAF, HbbTV_DVB, CTA WAVE modules only when it is requested
-if($dashif_conformance){
-    include '../DASH/IOP/IOP_Initialization.php';
-}
-if($low_latency_dashif_conformance){
-    include '../DASH/LowLatency/LowLatency_Initialization.php';
-}
-if($cmaf_conformance){
-    include '../CMAF/CMAFInitialization.php';
-}
-if($hbbtv_conformance || $dvb_conformance){
-    include '../HbbTV_DVB/HbbTV_DVB_Initialization.php';
-}
-if($ctawave_conformance){
-    include '../CMAF/CTAWAVE/CTAWAVE_Initialization.php';
-}

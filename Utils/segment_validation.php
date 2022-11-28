@@ -122,7 +122,7 @@ function assemble($representationDirectory, $segment_urls, $sizearr)
 
 function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 {
-    global $mpdHandler, $stderr_file, $leafinfo_file, $reprsentation_info_log_template, $reprsentation_error_log_template,
+    global $mpdHandler, $stderr_file, $leafinfo_file, 
             $string_info, $progress_report, $current_adaptation_set, $current_representation, $atominfo_file, $sample_data,
             $hls_manifest, $hls_tag, $hls_error_file, $hls_info_file;
 
@@ -276,7 +276,7 @@ $moveAtom &= $logger->test(
 
 function config_file_for_backend($period, $adaptation_set, $representation, $representationDirectory, $is_dolby)
 {
-    global $session_dir, $config_file, $additional_flags, $suppressatomlevel, $reprsentation_mdat_template, $current_adaptation_set, $current_representation, $hls_manifest, $hls_mdat_file;
+    global $session_dir, $config_file, $additional_flags, $suppressatomlevel, $current_adaptation_set, $current_representation, $hls_manifest, $hls_mdat_file;
 
     if (!$hls_manifest) {
         $file = fopen("$representationDirectory/segmentValidatorConfig.txt", 'w');
@@ -414,14 +414,14 @@ function loadSegmentInfoFile($PresTimeOffset, $duration, $representationDirector
 
 function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representationDirectory)
 {
-  global $session_dir, $mpdHandler,$reprsentation_error_log_template,$period_timing_info;
+  global $session_dir, $mpdHandler, $period_timing_info;
 
     if ($mpdHandler->getFeatures()['type'] == 'dynamic') {
         return;
     }
 
-    ///\DoubleCheck make sure this actually gets created, used to be $reprsentation_error_log_template
-    $segmentInfoFile = fopen("$representationDirectory/errorLog.txt", 'rt');
+    ///\RefactorTodo make sure this actually gets created.
+    $trackErrorFile = fopen("$representationDirectory/errorLog.txt", 'rt');
     if (!$trackErrorFile) {
         return;
     }

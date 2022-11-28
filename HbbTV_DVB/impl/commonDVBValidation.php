@@ -416,11 +416,6 @@ if (
         "" . $xmlRepresentation->getElementsByTagName('sidx')->length . " sidx boxes found"
     );
 
-    $segmentLocation = str_replace(
-        array('$AS$', '$R$'),
-        array($current_adaptation_set, $current_representation),
-        $representationrsentation_template
-    );
     $segmentCount = count(glob("$repDir/*")) - count(glob("$repDir/*", GLOB_ONLYDIR));
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",

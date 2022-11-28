@@ -1,6 +1,6 @@
 <?php
 
-global $MediaProfDatabase, $session, $adaptation_set_template, $CTAspliceConstraitsLog;
+global $MediaProfDatabase, $session, $CTAspliceConstraitsLog;
 
 //Check for CMFHD presentation profile for all periods/presentations
 //and then check WAVE Baseline constraints . If both are satisfied, then CMFHD Baseline Constraints are satisfied.

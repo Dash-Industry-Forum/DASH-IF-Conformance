@@ -38,12 +38,11 @@
  */
 function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
 {
-    global $session, $progress_report, $mpdHandler, $reprsentation_mdat_template, $missinglink_file, $current_adaptation_set, $current_representation,
+    global $session, $progress_report, $mpdHandler, $missinglink_file, $current_adaptation_set, $current_representation,
            $hls_byte_range_begin, $hls_byte_range_size, $hls_manifest, $hls_mdat_file, $low_latency_dashif_conformance, $availability_times;
 
     $mdat_file = (!$hls_manifest) ?
-            'Period' . $mpdHandler->getSelectedPeriod() . '/' . str_replace(array('$AS$', '$R$'), array($current_adaptation_set, $current_representation), $reprsentation_mdat_template) :
-            $hls_mdat_file;
+      $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation) . "mdatoffset") : $hls_mdat_file;
     $sizefile = fopen($session->getDir() . '/' . $mdat_file . '.txt', 'a+b'); //create text file containing the original size of Mdat box that is ignored
 
     $segment_count = sizeof($array_file);

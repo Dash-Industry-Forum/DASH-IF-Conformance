@@ -99,7 +99,7 @@ function process_MPD($parseSegments = false)
 
 function processAdaptationSetOfCurrentPeriod()
 {
-    global  $current_adaptation_set, $adaptation_set_template,$current_representation,$reprsentation_template,
+  global  $current_adaptation_set, $current_representation,
       $additional_flags;
 
     global $session, $logger;

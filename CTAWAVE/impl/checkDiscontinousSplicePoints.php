@@ -1,6 +1,6 @@
 <?php
 
-global $session, $MediaProfDatabase, $adaptation_set_template, $reprsentation_template;
+global $session, $MediaProfDatabase;
 
 $errorMsg = "";
 $periodCount = sizeof($MediaProfDatabase);
