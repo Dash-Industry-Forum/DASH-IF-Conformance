@@ -1,7 +1,7 @@
 <?php
 
 ///\Todo Bring this file up to naming specs
-global $period_timing_info, $low_latency_dashif_conformance, $availability_times;
+global $period_timing_info, $modules, $availability_times;
 
 $bufferduration = ($this->features['timeShiftBufferDepth'] != null) ? DASHIF\Utility\timeParsing($this->features['timeShiftBufferDepth']) : INF;
 $AST = $this->features['availabilityStartTime'];
@@ -51,7 +51,9 @@ $ind = array_search($LST * $timescale, $new_array);
 
 $SST = ($ind - 1 - $buffercapacity * $percent < 0) ? 0 : $ind - 1 - $buffercapacity * $percent;
 
-if ($low_latency_dashif_conformance) {
+foreach ($modules as $module){
+  if ($module->name == "DASH-IF Low Latency"){
+    if ($module->enabled){
     $ASAST = array();
     $NSAST = array();
     $count = $LSN - intval($earliestsegment);
@@ -61,6 +63,9 @@ if ($low_latency_dashif_conformance) {
     }
     $availability_times[$adaptationSetId][$representationId]['ASAST'] = $ASAST;
     $availability_times[$adaptationSetId][$representationId]['NSAST'] = $NSAST;
+    }
+    break;
+  }
 }
 
 return [intval($earliestsegment), $LSN, $SST];

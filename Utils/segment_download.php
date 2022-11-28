@@ -39,7 +39,7 @@
 function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
 {
     global $session, $progress_report, $mpdHandler, $missinglink_file, $current_adaptation_set, $current_representation,
-           $hls_byte_range_begin, $hls_byte_range_size, $hls_manifest, $hls_mdat_file, $low_latency_dashif_conformance, $availability_times;
+           $hls_byte_range_begin, $hls_byte_range_size, $hls_manifest, $hls_mdat_file, $availability_times, $modules;
 
     $mdat_file = (!$hls_manifest) ?
       $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation) . "mdatoffset") : $hls_mdat_file;
@@ -56,10 +56,15 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
     $byte_range_array = array();
     $ch = curl_init();
 
-    if ($low_latency_dashif_conformance) {
-        $count = sizeof($availability_times[$current_adaptation_set][$current_representation]['ASAST']);
-        $media_segment_index = ($count == sizeof($array_file)) ? 0 : 1;
-        $start_index = 0;
+    foreach ($modules as $module){
+      if ($module->name == "DASH-IF Low Latency"){
+        if ($module->enabled){
+          $count = sizeof($availability_times[$current_adaptation_set][$current_representation]['ASAST']);
+          $media_segment_index = ($count == sizeof($array_file)) ? 0 : 1;
+          $start_index = 0;
+        }
+        break;
+      }
     }
 
     # Iterate over $array_file

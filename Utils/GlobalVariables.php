@@ -45,10 +45,8 @@ $hls_current_index = 0;
 $hls_media_types = array('video' => array(), 'iframe' => array(), 'audio' => array(), 'subtitle' => array(), 'unknown' => array());
 
 # DASH-IF IOP variables
-$dashif_conformance = false;
 
 # DASH-IF IOP LL variables
-$low_latency_dashif_conformance = false;
 $low_latency_cross_validation_file = '';
 $inband_event_stream_info = array();
 $utc_timing_info = array();
@@ -56,7 +54,6 @@ $service_description_info = array();
 $availability_times = array();
 
 # CMAF variables
-$cmaf_conformance = false;
 $cmaf_mediaTypes;
 $cmaf_mediaProfiles;
 $compinfo_file = '';
@@ -66,17 +63,12 @@ $selectionset_infofile = '';
 $alignedswitching_infofile= '';
 
 # HbbTV_DVB variables
-$hbbtv_conformance = false;
-$dvb_conformance = false;
-$dvb_conformance_2018 = false;
-$dvb_conformance_2019 = false;
 $bitrate_script = '';
 $segment_duration_script = '';
 $subtitle_segments_location = '';
 $hbbtv_dvb_crossvalidation_logfile = '';
 
 # CTA WAVE variables
-$ctawave_conformance = false;
 $CTApresentation_infofile = '';
 $CTAselectionset_infofile = '';
 $CTAspliceConstraitsLog = '';
@@ -90,14 +82,6 @@ if (isset($_POST['urlcode'])){
     $_SESSION['url'] = $mpd_url;
     
     $mpd_validation_only = $url_array[1];
-    $cmaf_conformance = $url_array[2];
-    $dvb_conformance_2019 = $url_array[3];
-    $dvb_conformance_2018 = $url_array[4];
-    $dvb_conformance = ($dvb_conformance_2018 || $dvb_conformance_2019) ? 1 : 0;
-    $hbbtv_conformance = $url_array[5];
-    $dashif_conformance=$url_array[6];
-    $ctawave_conformance=$url_array[7];
-    $low_latency_dashif_conformance = $url_array[8];
     $schema_url = $url_array[9];
 }
 if (isset($_POST['urlcodehls'])){
@@ -105,8 +89,6 @@ if (isset($_POST['urlcodehls'])){
     $mpd_url = $url_array[0];
     $_SESSION['url'] = $mpd_url;
     
-    $cmaf_conformance = $url_array[1];
-    $ctawave_conformance=$url_array[2];
     
     $hls_manifest = 1;
     $main_dir = dirname(__DIR__) . '/Conformance-Frontend-HLS/';
@@ -133,38 +115,6 @@ if(isset($_POST['mpdonly'])){
         echo "\n\n\033[".'0;34'."m"."The option 'mpdonly' can only be used for DASH manifests, ignoring for this test..."."\033[0m"."\n\n";
     else
         $mpd_validation_only = 1;
-}
-if(isset($_POST['cmaf'])){
-    $cmaf_conformance = 1;
-}
-if(isset($_POST['dvb'])){
-    if($hls_manifest)
-        echo "\n\n\033[".'0;34'."m"."The option 'dvb' can only be used for DASH manifests, ignoring for this test..."."\033[0m"."\n\n";
-    else {
-        $dvb_conformance = 1;
-        $dvb_conformance_2018 = 1;
-    }
-}
-if(isset($_POST['hbbtv'])){
-    if($hls_manifest)
-        echo "\n\n\033[".'0;34'."m"."The option 'hbbtv' can only be used for DASH manifests, ignoring for this test..."."\033[0m"."\n\n";
-    else
-        $hbbtv_conformance = 1;
-}
-if(isset($_POST['dashif'])){
-    if($hls_manifest)
-        echo "\n\n\033[".'0;34'."m"."The option 'dashif' can only be used for DASH manifests, ignoring for this test..."."\033[0m"."\n\n";
-    else
-        $dashif_conformance = 1;
-}
-if(isset($_POST['lldashif'])){
-    if($hls_manifest)
-        echo "\n\n\033[".'0;34'."m"."The option 'dashif' can only be used for DASH manifests, ignoring for this test..."."\033[0m"."\n\n";
-    else
-        $low_latency_dashif_conformance = 1;
-}
-if(isset($_POST['ctawave'])){
-    $ctawave_conformance = 1;
 }
 if(isset($_POST['schema'])){
     $schema_url = json_decode($_POST['schema']);

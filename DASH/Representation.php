@@ -14,7 +14,8 @@
  */
 
 function construct_flags($period, $adaptation_set, $representation){
-    global $session_dir, $dashif_conformance, $low_latency_dashif_conformance, $inband_event_stream_info, $current_adaptation_set, $current_representation, $mpdHandler, $profiles;
+    global $session_dir, $inband_event_stream_info, $current_adaptation_set, $current_representation, $mpdHandler, $profiles;
+    global $modules;
 
     
     
@@ -71,12 +72,20 @@ function construct_flags($period, $adaptation_set, $representation){
             $processArguments .= ' -isolive';
         if(in_array($rep_profile, $main))
             $processArguments .= ' -isomain';
-        if(in_array($rep_profile, $dash264) !== FALSE || $dashif_conformance)
+        if(in_array($rep_profile, $dash264) !== FALSE)
             $processArguments .= ' -dash264base';
         if(in_array($rep_profile, $dashif_ondemand) !== FALSE)
             $processArguments .= ' -dashifondemand';
         if(in_array($rep_profile, $dashif_mixed_ondemand) !== FALSE)
             $processArguments .= ' -dashifmixed';
+        foreach ($modules as $module){
+          if ($module->name == "DASH-IF Common"){
+            if ($module->enabled){
+                $processArguments .= ' -dash264base';
+            }
+            break;
+          }
+        }
     }
 
     ## ContentProtection
@@ -147,13 +156,18 @@ function construct_flags($period, $adaptation_set, $representation){
     }
     
     ## Inband Event Stream for LL
-    if($low_latency_dashif_conformance){
+    foreach ($modules as $module){
+      if ($module->name == "DASH-IF Low Latency"){
+        if ($module->enabled){
         $processArguments .= ' -dashifll';
         if($inband_event_stream_info[$mpdHandler->getSelectedPeriod()] !== NULL &&
            $inband_event_stream_info[$mpdHandler->getSelectedPeriod()][$current_adaptation_set] !== NULL &&
            $inband_event_stream_info[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation] !== NULL) {
             $processArguments .= ' -inbandeventstreamll';
         }
+        }
+        break;
+      }
     }
 
     return $processArguments;

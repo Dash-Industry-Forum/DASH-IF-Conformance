@@ -1,6 +1,6 @@
 <?php
 
-global $mpdHandler, $dvb_conformance ;
+global $mpdHandler;
 
 
 global $logger;

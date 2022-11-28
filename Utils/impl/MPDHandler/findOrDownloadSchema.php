@@ -1,6 +1,6 @@
 <?php
 
-global $schema_url, $dvb_conformance_2018, $dvb_conformance_2019;
+global $schema_url;
 global $session;
 
 
