@@ -122,7 +122,7 @@ function crossRepresentationProcess()
     $opfile = fopen($adaptationDir . "/CrossInfofile.txt", 'w');
 
     $segmentAlignment = ($adaptation_set['segmentAlignment']) ? ($adaptation_set['segmentAlignment'] == "true") : false;
-    $subsegmentAlignment = ($adaptation_set['subsegmentAlignment']) ? $adaptation_set['subsegmentAlignment'] == "true") : false;
+    $subsegmentAlignment = ($adaptation_set['subsegmentAlignment']) ? ($adaptation_set['subsegmentAlignment'] == "true") : false;
     $bitstreamSwitching = ($adaptation_set['bitstreamSwitching']) ? ($adaptation_set['bitstreamSwitching']  == "true"):false;
 
     if ($segmentAlignment || $subsegmentAlignment || $bitstreamSwitching ) {

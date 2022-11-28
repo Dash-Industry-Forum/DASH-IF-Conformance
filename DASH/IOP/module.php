@@ -25,7 +25,7 @@ class ModuleDASHInteroperability extends ModuleInterface
     }
     public function detectFromManifest(){
       global $mpdHandler;
-      $mpdProfiles = $mpdHandler->getDOM()->getAttribute('profiles'):
+      $mpdProfiles = $mpdHandler->getDOM()->getAttribute('profiles');
         if(strpos($mpdProfiles, 'http://dashif.org/guidelines/dash') !== FALSE){
           $this->enabled = true;
           $this->detected = true;

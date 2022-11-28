@@ -33,7 +33,7 @@ class ModuleDASHLowLatency extends ModuleInterface
 
     public function detectFromManifest(){
       global $mpdHandler;
-      $mpdProfiles = $mpdHandler->getDOM()->getAttribute('profiles'):
+      $mpdProfiles = $mpdHandler->getDOM()->getAttribute('profiles');
       if(strpos($mpdProfiles, 'http://www.dashif.org/guidelines/low-latency-live-v5') !== FALSE){
         $this->enabled = true;
         $this->detected = true;

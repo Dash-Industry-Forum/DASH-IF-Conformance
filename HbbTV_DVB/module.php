@@ -40,7 +40,7 @@ class ModuleHbbTVDVB extends ModuleInterface
     }
     public function detectFromManifest(){
       global $mpdHandler;
-      $mpdProfiles = $mpdHandler->getDOM()->getAttribute('profiles'):
+      $mpdProfiles = $mpdHandler->getDOM()->getAttribute('profiles');
       if(strpos($mpdProfiles, 'urn:hbbtv:dash:profile:isoff-live:2012') !== FALSE){
         $this->HbbTvEnabled = true;
         $this->detected = true;

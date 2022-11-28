@@ -71,7 +71,6 @@ function construct_flags($period, $adaptation_set, $representation){
             $processArguments .= ' -isolive';
         if(in_array($rep_profile, $main))
             $processArguments .= ' -isomain';
-        ///\RefactorTodo changed from strpos!!
         if(in_array($rep_profile, $dash264) !== FALSE || $dashif_conformance)
             $processArguments .= ' -dash264base';
         if(in_array($rep_profile, $dashif_ondemand) !== FALSE)

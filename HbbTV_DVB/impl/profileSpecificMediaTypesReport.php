@@ -52,7 +52,6 @@ foreach ($profile_specific_MPDs as $profile_specific_MPD) {
             $str = $str . " $mpd_media_type";
         }
     }
-    ///\Correctness A check is being done here, but no reference to any spec was found during refactoring
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
         "MPD",

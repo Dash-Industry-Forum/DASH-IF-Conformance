@@ -11,7 +11,7 @@ $dvbEnabled = false;
 
 foreach ($modules as $module) {
    if ($module->isEnabled()) {
-     if ($module->name == "HbbTVDVB"){//RefactorTodo Fix after split
+     if ($module->name == "HbbTV_DVB"){
        $dvbEnabled = $module->isDVBEnabled();
      }
      if ($module->name == "DASH-IF Low Latency"){

@@ -52,7 +52,6 @@ for ($i = 0; $i < $periodCount; $i++) {
                     $EPT1 = array();
                     $representations1 = $adaptation1['Representation'];
                     for ($thisRep = 0; $thisRep < sizeof($representations1); $thisRep++) {
-                      ///\RefactorTodo This was also pointing to the wrong directory....
                         $xmlRepresentation = DASHIF\Utility\parseDOM(
                             $session->getRepresentationDir($i, $a1, $thisRep) . '/atomInfo.xml',
                             'atomlist'

@@ -362,7 +362,6 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
 
 
 $repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
-///\RefactorTodo This used to check a location for segments, not entirely sure if still correct check
 if ($mpdHandler->getFeatures()['type'] == 'dynamic') {
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",

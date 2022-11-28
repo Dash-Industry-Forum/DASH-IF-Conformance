@@ -158,16 +158,6 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         }
     }
 
-    ///\RefactorTodo Reimplement at correct spot
-    /*
-    //Following has error reporting code if MPD element is not part of validating profile.
-    if ($rep_count > 16) {
-      fwrite($mpdreport, "###'HbbTV check violated: Section E.2.2 - There shall be no more than 16 ".
-        "Representations per Adaptatation Set  in an MPD', but found " . $rep_count .
-        " Represenations in Adaptation Set " . $adapt_count .
-        " in Period " . $period_count . " \n");
-    }
-     */
 
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
@@ -209,3 +199,14 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         "Invalid audio adapatationset configruation found found in period $this->periodCount"
     );
 }
+
+$logger->test(
+    "HbbTV-DVB DASH Validation Requirements",
+    "HbbTV: Section E.2.2",
+    "There shall be no more than 16 Representations per Adaptatation Set  in an MPD",
+    $this->periodCount <= 16,
+    "FAIL",
+    "Found $this->periodCount representations",
+    "Found $this->periodCount representations"
+);
+

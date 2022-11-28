@@ -8,7 +8,6 @@ global $mpdHandler,
 $repDir = $session->getRepresentationDir($current_representation, $current_adaptation_set, $current_representation);
 $errorFilePath = "$repDir/stderr.txt";
 
-///\RefactorTodo Wrong directory, again..?
 $xmlRepresentation = DASHIF\Utility\parseDOM("$repDir/atomInfo.xml", 'atomlist');
 if ($xmlRepresentation) {
     if ($this->DVBEnabled) {
