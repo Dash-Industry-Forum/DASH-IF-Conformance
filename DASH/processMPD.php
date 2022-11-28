@@ -16,7 +16,6 @@
 
 function process_MPD($parseSegments = false)
 {
-    global $mpd_validation_only;
     global $mpd_url;
 
     global $session;

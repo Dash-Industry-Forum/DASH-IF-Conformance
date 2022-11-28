@@ -17,7 +17,6 @@
 $main_dir = dirname(__DIR__) . '/Conformance-Frontend/';
 $session_dir = (isset($_SESSION['locate'])) ? $_SESSION['locate'] : dirname(__DIR__) . '/Conformance-Frontend/temp';
 $mpd_url = '';
-$mpd_validation_only = 0;
 $uploaded = false;
 $current_adaptation_set = 0;
 $current_representation = 0;
@@ -25,9 +24,6 @@ $period_timing_info = array();
 $segment_accesses = array();
 $sizearray = array();
 $additional_flags = '';
-$error_message = 1;
-$warning_message = 1;
-$info_message = 1;
 $suppressatomlevel = 0;
 $profileCommandLine=array();
 
@@ -62,27 +58,17 @@ $presentation_infofile = '';
 $selectionset_infofile = '';
 $alignedswitching_infofile= '';
 
-# HbbTV_DVB variables
-$bitrate_script = '';
-$segment_duration_script = '';
-$subtitle_segments_location = '';
-$hbbtv_dvb_crossvalidation_logfile = '';
 
 # CTA WAVE variables
 $CTApresentation_infofile = '';
 $CTAselectionset_infofile = '';
 $CTAspliceConstraitsLog = '';
 
-# DASH schema version
-$schema_url = '';
-
 if (isset($_POST['urlcode'])){
     $url_array = json_decode($_POST['urlcode']);
     $mpd_url = $url_array[0];
     $_SESSION['url'] = $mpd_url;
     
-    $mpd_validation_only = $url_array[1];
-    $schema_url = $url_array[9];
 }
 if (isset($_POST['urlcodehls'])){
     $url_array = json_decode($_POST['urlcodehls']);
@@ -110,48 +96,15 @@ if(isset($_POST['url'])){
         $hls_manifest = 1;
     }
 }
-if(isset($_POST['mpdonly'])){
-    if($hls_manifest)
-        echo "\n\n\033[".'0;34'."m"."The option 'mpdonly' can only be used for DASH manifests, ignoring for this test..."."\033[0m"."\n\n";
-    else
-        $mpd_validation_only = 1;
-}
-if(isset($_POST['schema'])){
-    $schema_url = json_decode($_POST['schema']);
-}
-if (isset($_POST['noerror'])){
-    $error_message = 0;
-}
-if (isset($_POST['nowarning'])){
-    $warning_message = 0;
-}
-if (isset($_POST['noinfo'])){
-    $info_message = 0;
-}
 if (isset($_POST['suppressatomlevel'])){
     $suppressatomlevel = 1;
 }
 if(isset($_POST['profile'])){
     $profileCommandLine = (array)json_decode($_POST['profile'],true);
 }
-# Important for Backend block
-$command_file = 'command.txt';
-$config_file = 'config_file.txt';
-$stderr_file = 'stderr.txt';
-$leafinfo_file = 'leafinfo.txt';
-$atominfo_file = 'atominfo.xml';
-$sample_data = 'sample_data';
-
 # Important for reporting
-$counter_file = '';
-$counter_dir = $main_dir . 'visitorLogs';
-$counter_write = TRUE;
-$mpd_log = 'mpdreport';
 $featurelist_log = 'featuresList.xml';
 $featurelist_log_html = 'featuretable.html';
-$progress_report = 'progress.xml';
-$progress_xml = '';
-$missinglink_file = 'missinglink';
 
 $string_info = '<!doctype html> 
 <html lang="en">

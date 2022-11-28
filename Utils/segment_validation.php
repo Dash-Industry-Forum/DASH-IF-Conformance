@@ -50,7 +50,7 @@ function validate_segment($adaptationDirectory, $representationDirectory, $perio
 
 function validate_segment_hls($URL_array, $CodecArray)
 {
-    global $session__dir, $hls_stream_inf_file, $hls_x_media_file, $hls_iframe_file, $hls_tag, $progress_report;
+    global $session__dir, $hls_stream_inf_file, $hls_x_media_file, $hls_iframe_file, $hls_tag;
 
     $is_dolby = false;
     for ($i = 0; $i < sizeof($CodecArray); $i++) {
@@ -122,8 +122,8 @@ function assemble($representationDirectory, $segment_urls, $sizearr)
 
 function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 {
-    global $mpdHandler, $stderr_file, $leafinfo_file, 
-            $string_info, $progress_report, $current_adaptation_set, $current_representation, $atominfo_file, $sample_data,
+    global $mpdHandler,
+            $string_info, $current_adaptation_set, $current_representation, 
             $hls_manifest, $hls_tag, $hls_error_file, $hls_info_file;
 
     $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
@@ -165,12 +165,9 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
         $error_log = str_replace('$hls_tag$', $hls_tag, $hls_error_file);
     }
 
-    ///\DoubleCheck create proper atomInfo.txt
-    //rename($session__dir . '/' . $atominfo_file, "$representationDirectory/atomInfoCopy.xml");
-
     ///\TodoRefactor Check when sampledata is generated, and create it in the correct directory
-    //if (file_exists($session__dir . '/' . $sample_data . '.txt') && !$hls_manifest) {
-    //    rename($session__dir . '/' . $sample_data . '.txt', "$representationDirectory/sampleData.xml");
+    //if (file_exists($session__dir . '/sample_data.txt') && !$hls_manifest) {
+    //    rename($session__dir . '/sample_data.txt', "$representationDirectory/sampleData.xml");
     //}
 }
 
@@ -276,7 +273,7 @@ $moveAtom &= $logger->test(
 
 function config_file_for_backend($period, $adaptation_set, $representation, $representationDirectory, $is_dolby)
 {
-    global $session_dir, $config_file, $additional_flags, $suppressatomlevel, $current_adaptation_set, $current_representation, $hls_manifest, $hls_mdat_file;
+    global $session_dir, $additional_flags, $suppressatomlevel, $current_adaptation_set, $current_representation, $hls_manifest, $hls_mdat_file;
 
     if (!$hls_manifest) {
         $file = fopen("$representationDirectory/segmentValidatorConfig.txt", 'w');
@@ -289,7 +286,7 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     } else {
               ///\TodoRefactor -- Also fix for hls
               /*
-        $file = fopen($session__dir . '/' . $config_file, 'w');
+        $file = fopen($session__dir . '/config_file.txt', 'w');
         fwrite($file, $session__dir . '/' . $rep_dir_name . '.mp4 ' . "\n");
         fwrite($file, "-infofile" . "\n");
         fwrite($file, $session__dir . '/' . $rep_dir_name . '.txt' . "\n");
@@ -320,7 +317,7 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
         return "$representationDirectory/segmentValidatorConfig.txt";
     }
               ///\TodoRefactor -- Also fix for hls
-    //return $session__dir . '/' . $config_file;
+    //return $session__dir . '/config_file.txt';
 }
 
 function loadAndCheckSegmentDuration()

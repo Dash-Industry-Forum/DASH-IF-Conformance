@@ -95,7 +95,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     public function hookBeforeMPD()
     {
         parent::hookBeforeMPD();
-        $this->moveScripts();
         include_once 'impl/beforeMPD.php';
     }
 
@@ -280,18 +279,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     {
         parent::hookAdaptationSet();
         $this->crossValidation();
-    }
-
-    private function moveScripts()
-    {
-      /*
-        global $session_dir, $bitrate_script, $segment_duration_script;
-
-        copy(dirname(__FILE__) . "/$bitrate_script", "$session_dir/$bitrate_script");
-        chmod("$session_dir/$bitrate_script", 0777);
-        copy(dirname(__FILE__) . "/$segment_duration_script", "$session_dir/$segment_duration_script");
-        chmod("$session_dir/$segment_duration_script", 0777);
-       */
     }
 
     private function representationValidation()

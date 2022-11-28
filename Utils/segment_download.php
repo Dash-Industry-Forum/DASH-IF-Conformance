@@ -38,7 +38,7 @@
  */
 function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
 {
-    global $session, $progress_report, $mpdHandler, $missinglink_file, $current_adaptation_set, $current_representation,
+    global $session, $mpdHandler, $current_adaptation_set, $current_representation,
            $hls_byte_range_begin, $hls_byte_range_size, $hls_manifest, $hls_mdat_file, $availability_times, $modules;
 
     $mdat_file = (!$hls_manifest) ?
@@ -79,8 +79,8 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
 
         if (!$file_exists) {
             $missing = (!$hls_manifest) ?
-                    fopen($session->getDir() . '/Period' . $mpdHandler->getSelectedPeriod() . '/' . $missinglink_file . '.txt', 'a+b') :
-                    fopen($session->getDir() . '/' . $missinglink_file . '.txt', 'a+b');
+              fopen($session->getPeriodDir($mpdHandler->getSelectedPeriod()) . '/missinglink.txt', 'a+b') :
+                    fopen($session->getDir() . '/missinglink.txt', 'a+b');
             fwrite($missing, $filePath . "\n");
             continue;
         }

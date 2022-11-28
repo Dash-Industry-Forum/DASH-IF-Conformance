@@ -1,10 +1,11 @@
 <?php
 
-global $schema_url;
 global $session;
 
 
 global $modules;
+
+$schemaUrl = '';
 
 $llEnabled = false;
 $dvbEnabled = false;
@@ -29,7 +30,7 @@ foreach ($modules as $module) {
 
 $schemaLocation = 'schemas/DASH-MPD.xsd';
 if ($useLatestXSD){
-  $schema_url = 'https://raw.githubusercontent.com/MPEGGroup/DASHSchema/5th-Ed/DASH-MPD.xsd';
+  $schemaUrl = 'https://raw.githubusercontent.com/MPEGGroup/DASHSchema/5th-Ed/DASH-MPD.xsd';
 }
 
 if ($dvbEnabled){ 
@@ -43,11 +44,11 @@ if ($dvbEnabled){
     $schemaLocation = 'schemas/DASH-MPD-4th-amd1.xsd';
 }
 
-if ($schema_url == '') {
+if ($schemaUrl == '') {
   $this->schemaPath = $schemaLocation;
   return;
 }
-if (pathinfo($schema_url, PATHINFO_EXTENSION) != 'xsd') {
+if (pathinfo($schemaUrl, PATHINFO_EXTENSION) != 'xsd') {
   $this->schemaPath = $schemaLocation;
   return;
 }
@@ -59,7 +60,7 @@ if ($fp === false) {
     return null;
 }
 
-$ch = curl_init($schema_url);
+$ch = curl_init($schemaUrl);
 curl_setopt($ch, CURLOPT_FILE, $fp);
 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($ch, CURLOPT_TIMEOUT, 20);
