@@ -6,9 +6,8 @@ global $logger, $session;
 $sessionDir = $session->getDir();
 
 
-global $mpd_xml_string;
 
-$mpdXml = simplexml_load_string($mpd_xml_string);
+$mpdXml = simplexml_load_string('<mpdresult><xlink>No Result</xlink><schema>No Result</schema><schematron>No Result</schematron></mpdresult>');
 $mpdXml->asXML("$sessionDir/mpdresult.xml");
 
 $currentDir = getcwd();

@@ -202,9 +202,6 @@ $featurelist_log_html = 'featuretable.html';
 $progress_report = 'progress.xml';
 $progress_xml = '';
 $missinglink_file = 'missinglink';
-$mpd_xml_string = '<mpdresult><xlink>No Result</xlink><schema>No Result</schema><schematron>No Result</schematron></mpdresult>';
-$mpd_xml = '';
-$mpd_xml_report = 'mpdresult.xml';
 
 $string_info = '<!doctype html> 
 <html lang="en">
