@@ -1,9 +1,8 @@
 <?php
 
-global $session, $mpdHandler, $current_adaptation_set, $current_representation;
+global $session;
 
-$rep_xml = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation) .
-  '/atomInfo.xml';
+$rep_xml = $session->getSelectedRepresentationDir() .  '/atomInfo.xml';
 
 if (!file_exists($rep_xml)) {
     return;

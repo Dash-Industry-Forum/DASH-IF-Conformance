@@ -1,10 +1,14 @@
 <?php
 
-global $mpdHandler, $current_adaptation_set, $current_representation, $logger;
+global $mpdHandler, $logger;
+
+$selectedPeriod = $mpdHandler->getSelectedPeriod();
+$selectedAdaptation = $mpdHandler->getSelectedAdaptationSet();
+$selectedRepresentation = $mpdHandler->getSelectedRepresentation();
 
 if (
     strpos(
-        $mpdHandler->getProfiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation],
+        $mpdHandler->getProfiles[$selectedPeriod][$selectedAdaptation][$selectedRepresentation],
         'http://dashif.org/guidelines/dash-if-ondemand'
     ) === false
 ) {
@@ -19,13 +23,13 @@ $logger->test(
     "Only a single 'sidx' SHALL be present",
     $sidxBoxes->length == 1,
     "FAIL",
-    "Exactly one 'sidx' box found for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
-    "Representation $current_representation",
-    $sidxBoxes->length . " 'sidx' boxes found for Period $mpdHandler->getSelectedPeriod() Adaptation Set $current_adaptation_set " .
-    "Representation $current_representation"
+    "Exactly one 'sidx' box found for Period $selectedPeriod Adaptation Set $selectedAdaptation " .
+    "Representation $selectedRepresentation",
+    $sidxBoxes->length . " 'sidx' boxes found for Period $selectedPeriod Adaptation Set $selectedAdaptation " .
+    "Representation $selectedRepresentation"
 );
 
-$repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
+$repDir = $session->getSelectedRepresentationDir();
 ///\RefactorTodo Check where this file should come from.
 $fileName = "$repDir/representation.txt";
 

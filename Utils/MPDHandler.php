@@ -11,12 +11,15 @@ class MPDHandler
     private $features;
     private $profiles;
     private $resolved;
-    private $selectedPeriod;
     private $periodTimingInformation;
     private $schemaPath;
     private $mpdValidatorOutput;
     private $schematronOutput;
     private $schematronIssuesReport;
+
+    private $selectedPeriod;
+    private $selectedAdapationSet;
+    private $selectedRepresentation;
 
     public function __construct($url)
     {
@@ -27,6 +30,8 @@ class MPDHandler
         $this->profiles = null;
         $this->resolved = null;
         $this->selectedPeriod = 0;
+        $this->selectedAdaptationSet = 0;
+        $this->selectedRepresentation = 0;
         $this->periodTimingInformation = array();
         $this->schemaPath = null;
         $this->mpdValidatorOutput = null;
@@ -51,6 +56,32 @@ class MPDHandler
     public function getSelectedPeriod()
     {
         return $this->selectedPeriod;
+    }
+
+    public function selectAdaptationSet($adaptationSet)
+    {
+        $this->selectedAdaptationSet = $adaptationSet;
+    }
+    public function selectNextAdaptationSet()
+    {
+        $this->selectedAdaptationSet++;
+    }
+    public function getSelectedAdaptationSet()
+    {
+        return $this->selectedAdaptationSet;
+    }
+
+    public function selectRepresentation($representation)
+    {
+        $this->selectedRepresentation = $representation;
+    }
+    public function selectNextRepresentation()
+    {
+        $this->selectedRepresentation++;
+    }
+    public function getSelectedRepresentation()
+    {
+        return $this->selectedRepresentation;
     }
 
     public function getSchematronOutput(){

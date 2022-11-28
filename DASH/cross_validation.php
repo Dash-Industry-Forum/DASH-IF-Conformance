@@ -148,14 +148,13 @@ function checkAlignment($leafInfoA, $leafInfoB, $segmentAlignment, $subsegmentAl
 
 function crossRepresentationProcess()
 {
-    global $current_adaptation_set;
     global $mpdHandler, $session;
 
-    $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
+    $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
     $timeoffset = 0;
     $timescale = 1;
 
-    $adaptationDir = $session->getAdaptionDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set);
+    $adaptationDir = $session->getSelectedAdaptionDir();
 
     $segmentAlignment = ($adaptation_set['segmentAlignment']) ? ($adaptation_set['segmentAlignment'] == "true") : false;
     $subsegmentAlignment = ($adaptation_set['subsegmentAlignment']) ? ($adaptation_set['subsegmentAlignment'] == "true") : false;
@@ -192,7 +191,7 @@ function crossRepresentationProcess()
 
             $offsetmod = $timeoffset / $timescale;
 
-            $representationDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $j);
+            $representationDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $mpdHandler->getSelectedAdaptationSet(), $j);
             $leafInfo[$j] = loadLeafInfoFile($representationDir . "/infofile.txt");
             $leafInfo[$j]['id'] = $representation['id'];
         }

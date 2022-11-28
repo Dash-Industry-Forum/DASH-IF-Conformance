@@ -111,24 +111,24 @@ function processAdaptationSetOfCurrentPeriod()
     global $logger;
 
     $adaptation_sets = $period['AdaptationSet'];
-    while ($current_adaptation_set < sizeof($adaptation_sets)) {
+    while ($mpdHandler->getSelectedAdaptationSet() < sizeof($adaptation_sets)) {
         if ($logger->getModuleVerdict("HEALTH") == "FAIL") {
             break;
         }
-        $adaptation_set = $adaptation_sets[$current_adaptation_set];
+        $adaptation_set = $adaptation_sets[$mpdHandler->getSelectedAdaptationSet()];
         $representations = $adaptation_set['Representation'];
 
-        $adaptationDirectory = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set);
+        $adaptationDirectory = $session->getSelectedAdaptationDir();
 
 
-        while ($current_representation < sizeof($representations)) {
+        while ($mpdHandler->getSelectedRepresentation() < sizeof($representations)) {
             if ($logger->getModuleVerdict("HEALTH") == "FAIL") {
                 break;
             }
-            $representation = $representations[$current_representation];
-            $segment_url = $segment_urls[$current_adaptation_set][$current_representation];
+            $representation = $representations[$mpdHandler->getSelectedRepresentation()];
+            $segment_url = $segment_urls[$mpdHandler->getSelectedAdaptationSet()][$mpdHandler->getSelectedRepresentation()];
 
-            $representationDirectory = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
+            $representationDirectory = $session->getSelectedRepresentationDir();
 
 
             $additional_flags = '';
@@ -155,6 +155,7 @@ function processAdaptationSetOfCurrentPeriod()
                 }
             }
 
+            $mpdHandler->selectNextRepresentation();
             $current_representation++;
         }
         if ($logger->getModuleVerdict("HEALTH") == "FAIL") {
@@ -175,6 +176,9 @@ function processAdaptationSetOfCurrentPeriod()
 
         $current_representation = 0;
         $current_adaptation_set++;
+
+        $mpdHandler->selectRepresentation(0);
+        $mpdHandler->selectNextAdaptationSet();
     }
 
     if ($logger->getModuleVerdict("HEALTH") != "FAIL") {
@@ -187,4 +191,5 @@ function processAdaptationSetOfCurrentPeriod()
     }
     //err_file_op(2);
     $current_adaptation_set = 0;
+    $mpdHandler->selectAdaptationSet(0);
 }

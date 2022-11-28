@@ -14,7 +14,7 @@
  */
 
 function construct_flags($period, $adaptation_set, $representation){
-    global $session, $current_adaptation_set, $current_representation, $mpdHandler, $profiles;
+    global $session, $mpdHandler, $profiles;
     global $modules;
 
     
@@ -61,7 +61,7 @@ function construct_flags($period, $adaptation_set, $representation){
     $dashif_ondemand = array('http://dashif.org/guidelines/dash-if-ondemand');
     $dashif_mixed_ondemand = array('http://dashif.org/guidelines/dash-if-mixed');
     
-    $rep_profiles = explode(',', $profiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation]);
+    $rep_profiles = explode(',', $profiles[$mpdHandler->getSelectedPeriod()][$mpdHandler->getSelectedAdaptationSet()][$mpdHandler->getSelectedRepresentation()]);
     foreach($rep_profiles as $rep_profile){
         if(strpos($rep_profile, ' ') !== FALSE)
             $rep_profile = str_replace(' ', '', $rep_profile);
