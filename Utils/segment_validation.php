@@ -50,7 +50,7 @@ function validate_segment($adaptationDirectory, $representationDirectory, $perio
 
 function validate_segment_hls($URL_array, $CodecArray)
 {
-    global $session__dir, $hls_stream_inf_file, $hls_x_media_file, $hls_iframe_file, $hls_tag;
+    global $session, $hls_tag;
 
     $is_dolby = false;
     for ($i = 0; $i < sizeof($CodecArray); $i++) {
@@ -63,7 +63,7 @@ function validate_segment_hls($URL_array, $CodecArray)
         }
     }
 
-    $tag_array = array($hls_stream_inf_file, $hls_iframe_file, $hls_x_media_file);
+    $tag_array = array('StreamINF', 'IFrameByteRange', 'XMedia');
     for ($i = 0; $i < sizeof($URL_array); $i++) {
         list($segmentURL, $sizeArray) = segmentDownload($URL_array[$i], $tag_array[$i], $is_dolby);
 
@@ -72,7 +72,7 @@ function validate_segment_hls($URL_array, $CodecArray)
                 $hls_tag = $tag_array[$i] . '_' . $j;
 
                 ## Put segments in one file
-                assemble($session__dir . '/' . $tag_array[$i] . '/' . $j . '/', $segmentURL[$j], $sizeArray[$j]);
+                assemble($session->getDir() . '/' . $tag_array[$i] . '/' . $j . '/', $segmentURL[$j], $sizeArray[$j]);
 
                 ## Create config file with the flags for segment validation
                 $config_file_loc = config_file_for_backend(null, null, null, $hls_tag, $is_dolby);
@@ -81,10 +81,10 @@ function validate_segment_hls($URL_array, $CodecArray)
                 $returncode = run_backend($config_file_loc);
 
                 ## Analyse the results and report them
-                $file_location[] = analyze_results($returncode, $session__dir . '/' . $tag_array[$i], $j);
+                $file_location[] = analyze_results($returncode, $session->getDir() . '/' . $tag_array[$i], $j);
 
                 ## Determine media type based on atomxml information
-                determineMediaType($session__dir . '/' . $tag_array[$i] . '/' . $j . '.xml', $hls_tag);
+                determineMediaType($session->getDir() . '/' . $tag_array[$i] . '/' . $j . '.xml', $hls_tag);
             } else {
                 ## Save to progress report that the representation does not exist
                 $file_location[] = 'notexist';
@@ -97,7 +97,7 @@ function validate_segment_hls($URL_array, $CodecArray)
 
 function assemble($representationDirectory, $segment_urls, $sizearr)
 {
-    global $segment_accesses,$current_adaptation_set, $current_representation, $hls_manifest, $hls_tag;
+  global $segment_accesses,$current_adaptation_set, $current_representation, $hls_manifest;
 
 
 
@@ -124,7 +124,7 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 {
     global $mpdHandler,
             $string_info, $current_adaptation_set, $current_representation, 
-            $hls_manifest, $hls_tag, $hls_error_file, $hls_info_file;
+            $hls_manifest, $hls_tag, $hls_info_file;
 
     $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
     $representation = $adaptation_set['Representation'][$current_representation];
@@ -144,11 +144,11 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
               ///\TodoRefactor -- Also fix for hls
               /*
                 $tag_array = explode('_', $hls_tag);
-                $files = array_diff(scandir($session__dir . '/' . $tag_array[0] . '/' . $tag_array[1] . "/"), array('.', '..'));
+                $files = array_diff(scandir($session->getDir() . '/' . $tag_array[0] . '/' . $tag_array[1] . "/"), array('.', '..'));
                 if (strpos($files[2], 'webvtt') !== false || strpos($files[2], 'xml') !== false || strpos($files[2], 'html') !== false) {
-                    file_put_contents($session__dir . '/' . 'stderr.txt', "### error:  \n###        Failed to process " . $tag_array[0] . ' with index ' . $tag_array[1] . ', as the file type is ' . explode('.', $files[2])[1] . '!');
+                    file_put_contents($session->getDir() . '/' . 'stderr.txt', "### error:  \n###        Failed to process " . $tag_array[0] . ' with index ' . $tag_array[1] . ', as the file type is ' . explode('.', $files[2])[1] . '!');
                 } else {
-                    file_put_contents($session__dir . '/' . 'stderr.txt', "### error:  \n###        Failed to process " . $tag_array[0] . ' with index ' . $tag_array[1] . '!');
+                    file_put_contents($session->getDir() . '/' . 'stderr.txt', "### error:  \n###        Failed to process " . $tag_array[0] . ' with index ' . $tag_array[1] . '!');
                 }
                */
             }
@@ -161,13 +161,11 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
     if (!$hls_manifest) {
         ## Check segment duration and start times against MPD times.
         loadAndCheckSegmentDuration();
-    } else {
-        $error_log = str_replace('$hls_tag$', $hls_tag, $hls_error_file);
     }
 
     ///\TodoRefactor Check when sampledata is generated, and create it in the correct directory
-    //if (file_exists($session__dir . '/sample_data.txt') && !$hls_manifest) {
-    //    rename($session__dir . '/sample_data.txt', "$representationDirectory/sampleData.xml");
+    //if (file_exists($session->getDir() . '/sample_data.txt') && !$hls_manifest) {
+    //    rename($session->getDir() . '/sample_data.txt', "$representationDirectory/sampleData.xml");
     //}
 }
 
@@ -273,7 +271,7 @@ $moveAtom &= $logger->test(
 
 function config_file_for_backend($period, $adaptation_set, $representation, $representationDirectory, $is_dolby)
 {
-    global $additional_flags, $suppressatomlevel, $current_adaptation_set, $current_representation, $hls_manifest, $hls_mdat_file;
+  global $additional_flags, $suppressatomlevel, $current_adaptation_set, $current_representation, $hls_manifest;
 
     if (!$hls_manifest) {
         $file = fopen("$representationDirectory/segmentValidatorConfig.txt", 'w');
@@ -286,10 +284,10 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     } else {
               ///\TodoRefactor -- Also fix for hls
               /*
-        $file = fopen($session__dir . '/config_file.txt', 'w');
-        fwrite($file, $session__dir . '/' . $rep_dir_name . '.mp4 ' . "\n");
+        $file = fopen($session->getDir() . '/config_file.txt', 'w');
+        fwrite($file, $session->getDir() . '/' . $rep_dir_name . '.mp4 ' . "\n");
         fwrite($file, "-infofile" . "\n");
-        fwrite($file, $session__dir . '/' . $rep_dir_name . '.txt' . "\n");
+        fwrite($file, $session->getDir() . '/' . $rep_dir_name . '.txt' . "\n");
                */
     }
 
@@ -317,7 +315,7 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
         return "$representationDirectory/segmentValidatorConfig.txt";
     }
               ///\TodoRefactor -- Also fix for hls
-    //return $session__dir . '/config_file.txt';
+    //return $session->getDir() . '/config_file.txt';
 }
 
 function loadAndCheckSegmentDuration()

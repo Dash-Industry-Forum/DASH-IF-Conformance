@@ -39,10 +39,10 @@
 function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
 {
     global $session, $mpdHandler, $current_adaptation_set, $current_representation,
-           $hls_byte_range_begin, $hls_byte_range_size, $hls_manifest, $hls_mdat_file, $availability_times, $modules;
+           $hls_byte_range_begin, $hls_byte_range_size, $hls_manifest, $availability_times, $modules;
 
     $mdat_file = (!$hls_manifest) ?
-      $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation) . "mdatoffset") : $hls_mdat_file;
+      $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation) . "mdatoffset") : 'mdatoffset';
     $sizefile = fopen($session->getDir() . '/' . $mdat_file . '.txt', 'a+b'); //create text file containing the original size of Mdat box that is ignored
 
     $segment_count = sizeof($array_file);

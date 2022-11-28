@@ -29,12 +29,7 @@ $profileCommandLine=array();
 # HLS variable
 $hls_manifest = 0;
 $hls_manifest_type = "";
-$hls_stream_inf_file = 'StreamINF';
-$hls_x_media_file = 'XMedia';
-$hls_iframe_file = 'IFrameByteRange';
 $hls_tag = '';
-$hls_error_file = '$hls_tag$log';
-$hls_mdat_file = 'mdatoffset';
 $hls_current_index = 0;
 $hls_media_types = array('video' => array(), 'iframe' => array(), 'audio' => array(), 'subtitle' => array(), 'unknown' => array());
 

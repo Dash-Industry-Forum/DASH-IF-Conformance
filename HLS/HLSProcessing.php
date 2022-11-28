@@ -230,7 +230,7 @@ function segmentURLs($url){
  * inputs are the url to the playlist and the type of the playlist
  */
 function segmentDownload($urlarray, $type, $is_dolby){
-    global $session_dir, $hls_iframe_file, $hls_mdat_file, $hls_current_index, $hls_byte_range_begin, $hls_byte_range_size, $progress_xml, $progress_report;
+    global $session_dir, $hls_current_index, $hls_byte_range_begin, $hls_byte_range_size, $progress_xml, $progress_report;
     
     $segment_urls = array();
     $sizearray=array();
@@ -253,7 +253,7 @@ function segmentDownload($urlarray, $type, $is_dolby){
         
         // extract the url of the segments of a playlist
         $segmentURLs = segmentURLs($url);
-        if($type == $hls_iframe_file){
+        if($type == 'IFrameByteRange'){
             $tmparray = playlistToArray($url);
             $array = segURLs($tmparray, $segmentURLs);
             if(!$array)
@@ -263,10 +263,10 @@ function segmentDownload($urlarray, $type, $is_dolby){
         // download data of the playlist into the folder and return size of the downloaded content 
         $segment_urls[] = $segmentURLs;
         $is_subtitle_rep = false; // this is not used in HLS always false
-        $sizearray[] = download_data($tmpdir, ($type == $hls_iframe_file) ? $array : $segmentURLs, $is_subtitle_rep, $is_dolby);
+        $sizearray[] = download_data($tmpdir, ($type == 'IFrameByteRange') ? $array : $segmentURLs, $is_subtitle_rep, $is_dolby);
         
-        rename($session_dir . '/' . $hls_mdat_file . '.txt', $session_dir . '/' . $type . '_' . $hls_current_index . '_' . $hls_mdat_file . '.txt');
-        if($type == $hls_iframe_file){
+        rename($session_dir . '/mdatoffset.txt', $session_dir . '/' . $type . '_' . $hls_current_index . '_mdatoffset.txt');
+        if($type == 'IFrameByteRange'){
             $hls_byte_range_begin = array();
             $hls_byte_range_size = array();
         }
@@ -402,7 +402,7 @@ function formMpdFeatures(){
 }
 
 function determineMediaType($path, $tag){
-    global $hls_media_types, $hls_iframe_file;
+  global $hls_media_types;
     
     if(file_exists($path)){
         $xml = DASHIF\Utility\parseDOM($path, 'atomlist');
@@ -413,7 +413,7 @@ function determineMediaType($path, $tag){
 
             switch($hdlr_type){
                 case 'vide':
-                    if(strpos($tag, $hls_iframe_file) === FALSE)
+                    if(strpos($tag, 'IFrameByteRange') === FALSE)
                         $hls_media_types['video'][$sdType][] = $tag;
                     else
                         $hls_media_types['iframe'][$sdType][] = $tag;
