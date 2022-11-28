@@ -15,7 +15,6 @@
 
 # General variables
 $main_dir = dirname(__DIR__) . '/Conformance-Frontend/';
-$session_dir = (isset($_SESSION['locate'])) ? $_SESSION['locate'] : dirname(__DIR__) . '/Conformance-Frontend/temp';
 $mpd_url = '';
 $uploaded = false;
 $current_adaptation_set = 0;
@@ -35,34 +34,13 @@ $hls_x_media_file = 'XMedia';
 $hls_iframe_file = 'IFrameByteRange';
 $hls_tag = '';
 $hls_error_file = '$hls_tag$log';
-$hls_info_file = '$hls_tag$_infofile';
 $hls_mdat_file = 'mdatoffset';
 $hls_current_index = 0;
 $hls_media_types = array('video' => array(), 'iframe' => array(), 'audio' => array(), 'subtitle' => array(), 'unknown' => array());
 
-# DASH-IF IOP variables
 
 # DASH-IF IOP LL variables
-$low_latency_cross_validation_file = '';
-$inband_event_stream_info = array();
-$utc_timing_info = array();
-$service_description_info = array();
 $availability_times = array();
-
-# CMAF variables
-$cmaf_mediaTypes;
-$cmaf_mediaProfiles;
-$compinfo_file = '';
-$comparison_folder = '';
-$presentation_infofile = '';
-$selectionset_infofile = '';
-$alignedswitching_infofile= '';
-
-
-# CTA WAVE variables
-$CTApresentation_infofile = '';
-$CTAselectionset_infofile = '';
-$CTAspliceConstraitsLog = '';
 
 if (isset($_POST['urlcode'])){
     $url_array = json_decode($_POST['urlcode']);
@@ -78,7 +56,6 @@ if (isset($_POST['urlcodehls'])){
     
     $hls_manifest = 1;
     $main_dir = dirname(__DIR__) . '/Conformance-Frontend-HLS/';
-    $session_dir = (isset($_SESSION['locate'])) ? $_SESSION['locate'] : dirname(__DIR__) . '/Conformance-Frontend-HLS/temp';
 }
 if (isset($_SESSION['url']))
     $mpd_url = $_SESSION['url'];
@@ -102,9 +79,6 @@ if (isset($_POST['suppressatomlevel'])){
 if(isset($_POST['profile'])){
     $profileCommandLine = (array)json_decode($_POST['profile'],true);
 }
-# Important for reporting
-$featurelist_log = 'featuresList.xml';
-$featurelist_log_html = 'featuretable.html';
 
 $string_info = '<!doctype html> 
 <html lang="en">

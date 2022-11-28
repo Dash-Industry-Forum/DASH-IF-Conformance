@@ -1,6 +1,6 @@
 <?php
 
-global $mpdHandler, $utc_timing_info, $logger;
+global $mpdHandler, $logger;
 
 
 $valid_utc_timing_present = false;
@@ -12,7 +12,7 @@ foreach ($utc_timings as $utc_timing) {
     $schemeIdUri = $utc_timing['schemeIdUri'];
     if (in_array($schemeIdUri, $accepted_uris) === true) {
         $valid_utc_timing_present = true;
-        $utc_timing_info[] = $utc_timing;
+        $this->utcTimingInfo[] = $utc_timing;
     }
 }
 

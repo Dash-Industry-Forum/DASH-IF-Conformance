@@ -1,6 +1,6 @@
 <?php
 
-global $mpdHandler, $service_description_info, $logger;
+global $mpdHandler, $logger;
 
 // Bullet 2
 $dashSegCmafFrag = true;
@@ -96,10 +96,10 @@ foreach ($representations as $representationId => $representation) {
     );
 
     // Bullet 5
-    if ($service_description_info == null) {
+    if ($this->serviceDescriptionInfo == null) {
         $chunkedAdaptationPoints[$representationId]--;
     } else {
-        $serviceDescription = $service_description_info[0];
+        $serviceDescription = $serviceDescriptionInfo[0];
         $target = $serviceDescription['Latency'][0]['target'];
         $availabilityTimeOffset = $segmentAccessInfo[$representationId][0]['availabilityTimeOffset'];
         $logger->test(

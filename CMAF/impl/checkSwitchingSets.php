@@ -2,7 +2,7 @@
 
 global $session, $mpdHandler;
 
-global $current_adaptation_set, $comparison_folder;
+global $current_adaptation_set;
 
 
 $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
@@ -25,10 +25,10 @@ for ($i = 0; $i < $filecount - 1; $i++) { //iterate over files
         $xml2 = DASHIF\Utility\parseDOM($fileName2, 'atomlist');
         $id2 = $adaptation_set['Representation'][$j]['id'];
 
-        create_folder_in_session($adaptationDirectory  . '/' . $comparison_folder);
+        create_folder_in_session($adaptationDirectory  . '/');
         $namePart1 = explode('.', basename($fileName1))[0];
         $namePart2 = explode('.', basename($fileName2))[0];
-        $path = $adaptationDirectory  . '/' . $comparison_folder . $namePart1 . "_vs_" . $namePart2 . ".xml";
+        $path = $adaptationDirectory  . '/' . $namePart1 . "_vs_" . $namePart2 . ".xml";
 
         if ($xml1 && $xml2) {
             $this->checkHeaders($xml1, $xml2, $id1, $id2, $adaptationDirectory, $ind, $path); //start comparing

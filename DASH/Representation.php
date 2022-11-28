@@ -14,7 +14,7 @@
  */
 
 function construct_flags($period, $adaptation_set, $representation){
-    global $session_dir, $inband_event_stream_info, $current_adaptation_set, $current_representation, $mpdHandler, $profiles;
+    global $session, $current_adaptation_set, $current_representation, $mpdHandler, $profiles;
     global $modules;
 
     
@@ -146,7 +146,7 @@ function construct_flags($period, $adaptation_set, $representation){
             for($i=0; $i< $psshCount ; $i++){
                 $psshBox= $psshBox[$i];
                 $processArguments = $processArguments . " -psshbox ";
-                $pssh_file_loc=$session_dir."/psshBox".$i.".txt";
+                $pssh_file_loc=$session->getDir()."/psshBox".$i.".txt";
                 $pssh_file=fopen($pssh_file_loc, "w");
                 fwrite($pssh_file, $psshBox);
                 fclose($pssh_file);
@@ -159,12 +159,7 @@ function construct_flags($period, $adaptation_set, $representation){
     foreach ($modules as $module){
       if ($module->name == "DASH-IF Low Latency"){
         if ($module->enabled){
-        $processArguments .= ' -dashifll';
-        if($inband_event_stream_info[$mpdHandler->getSelectedPeriod()] !== NULL &&
-           $inband_event_stream_info[$mpdHandler->getSelectedPeriod()][$current_adaptation_set] !== NULL &&
-           $inband_event_stream_info[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation] !== NULL) {
-            $processArguments .= ' -inbandeventstreamll';
-        }
+            $processArguments .= ' -dashifll';
         }
         break;
       }

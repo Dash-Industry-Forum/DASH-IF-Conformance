@@ -7,6 +7,8 @@ class ModuleDASHLowLatency extends ModuleInterface
     private $maxSegmentDurations;
     private $firstOption;
     private $secondOption;
+    private $utcTimingInfo;
+    private $serviceDescriptionInfo;
 
     public function __construct()
     {
@@ -15,6 +17,8 @@ class ModuleDASHLowLatency extends ModuleInterface
         $this->maxSegmentDurations = array();
         $this->firstOption = array();
         $this->secondOption = array();
+        $this->utcTimingInfo = array();
+        $this->serviceDescriptionInfo = array();
     }
 
     protected function addCLIArguments()

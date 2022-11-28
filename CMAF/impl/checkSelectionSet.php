@@ -1,7 +1,5 @@
 <?php
 
-global $cmaf_mediaTypes;
-
 global $logger, $session, $mpdHandler;
 
 $selectionSets = $this->getSelectionSets();
@@ -27,10 +25,10 @@ foreach ($selectionSets as $selectionSet) {
         $adaptationIndex = $selectionSet[$i];
 
         # Compare media types of CMAF switching sets within CMAF selection set
-        $mediaTypesInSet1 = $cmaf_mediaTypes[$mpdHandler->getSelectedPeriod()][$adaptationIndex];
+        $mediaTypesInSet1 = $this->mediaTypes[$mpdHandler->getSelectedPeriod()][$adaptationIndex];
         for ($j = $i + 1; $j < $selectionSetLength; $j++) {
             $compareIndex = $selectionSet[$j];
-            $mediaTypesInSet2 = $cmaf_mediaTypes[$mpdHandler->getSelectedPeriod()][$compareIndex];
+            $mediaTypesInSet2 = $this->mediaTypes[$mpdHandler->getSelectedPeriod()][$compareIndex];
 
             $logger->test(
                 "CMAF",

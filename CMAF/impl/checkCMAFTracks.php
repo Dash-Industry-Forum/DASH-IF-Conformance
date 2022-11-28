@@ -1,7 +1,6 @@
 <?php
 
-global $current_adaptation_set, $current_representation,
-       $cmaf_mediaTypes,$cmaf_mediaProfiles;
+global $current_adaptation_set, $current_representation;
 
 global $session, $logger, $mpdHandler;
 
@@ -29,7 +28,7 @@ $cmaf_cmf2 = $return_array[1];
 # Store media type for selection set checks later
 if($xml->getElementsByTagName('hdlr')->item(0)){
   $mediaType = $xml->getElementsByTagName('hdlr')->item(0)->getAttribute('handler_type');
-  $cmaf_mediaTypes[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation] = $mediaType;
+  $this->mediaTypes[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation] = $mediaType;
 }
 
 $adaptationSet = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
@@ -491,7 +490,7 @@ if ($sidxBoxes->length > 0) {
 }
 
 $cmafMediaProfilesResult = $this->determineCMAFMediaProfiles($xml);
-$cmaf_mediaProfiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set]
+$this->mediaProfiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set]
                    [$current_representation]['cmafMediaProfile'] = $cmafMediaProfilesResult[0];
 
 

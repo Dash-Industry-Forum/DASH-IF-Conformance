@@ -37,7 +37,6 @@ class PathBuildActionTypes {
   \return nothing.
  */
 function createMpdFeatureList($mpdfile, $schematronIssuesReport){
-    global $session_dir, $featurelist_log;
     global $session;
 
     //Create MPDlist element in new XML File for feature list:
@@ -122,7 +121,7 @@ function createMpdFeatureList($mpdfile, $schematronIssuesReport){
             }
         }
     }
-    $xml->save($session->getDir() . '/' . $featurelist_log);
+    $xml->save($session->getDir() . '/featureList.xml');
 }
 
 /* ! \fn formCurrentXmlPath(&$path,$nodeName, $actionType)   
@@ -349,13 +348,13 @@ function getDataBetweenTokens($string, $initChar, $endChar){
 }
 
 function convertToHtml() {
-    global $session_dir, $featurelist_log, $featurelist_log_html;
+  global $session;
     
     $html_str = '<html><body><div>';
-    $feature_dom = DASHIF\Utility\parseDOM("$session_dir/$featurelist_log", 'MPD');
+    $feature_dom = DASHIF\Utility\parseDOM($session->getDir()."/featureList.xml", 'MPD');
     $html_str = populateList($feature_dom, $html_str);
     $html_str .= '</div></body></html>';
-    file_put_contents("$session_dir/$featurelist_log_html", $html_str);
+    file_put_contents($session->getDir()"/featuretable.html", $html_str);
 }
 
 function populateList($xml, $html_str) {

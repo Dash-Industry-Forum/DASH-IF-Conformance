@@ -273,7 +273,7 @@ $moveAtom &= $logger->test(
 
 function config_file_for_backend($period, $adaptation_set, $representation, $representationDirectory, $is_dolby)
 {
-    global $session_dir, $additional_flags, $suppressatomlevel, $current_adaptation_set, $current_representation, $hls_manifest, $hls_mdat_file;
+    global $additional_flags, $suppressatomlevel, $current_adaptation_set, $current_representation, $hls_manifest, $hls_mdat_file;
 
     if (!$hls_manifest) {
         $file = fopen("$representationDirectory/segmentValidatorConfig.txt", 'w');
@@ -411,7 +411,7 @@ function loadSegmentInfoFile($PresTimeOffset, $duration, $representationDirector
 
 function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representationDirectory)
 {
-  global $session_dir, $mpdHandler, $period_timing_info;
+  global $mpdHandler, $period_timing_info;
 
     if ($mpdHandler->getFeatures()['type'] == 'dynamic') {
         return;

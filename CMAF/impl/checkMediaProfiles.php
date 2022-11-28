@@ -1,10 +1,10 @@
 <?php
 
-global $cmaf_mediaProfiles, $current_adaptation_set;
+global $current_adaptation_set;
 global $logger, $mpdHandler;
 
-$profile1 = $cmaf_mediaProfiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$representation1]['cmafMediaProfile'];
-$profile2 = $cmaf_mediaProfiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$representation2]['cmafMediaProfile'];
+$profile1 = $this_>mediaProfiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$representation1]['cmafMediaProfile'];
+$profile2 = $this->mediaProfiles[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$representation2]['cmafMediaProfile'];
 
 $validProfile = true;
 if ($profile1 != $profile2) {

@@ -1,6 +1,6 @@
 <?php
 
-global $mpdHandler, $service_description_info, $logger;
+global $mpdHandler, $logger;
 
 $service_descriptions = $mpdHandler->getFeatures()['ServiceDescription'];
 $logger->test(
@@ -106,7 +106,7 @@ foreach ($periods as $period_id => $period) {
     );
 
     if ($valid_service_description_present) {
-        $service_description_info[] = $service_description;
+        $this->serviceDescriptionInfo[] = $service_description;
         $logger->test(
             "DASH-IF IOP CR Low Latency Live",
             "Section 9.X.4.2",

@@ -16,10 +16,9 @@
 
 function loadLeafInfoFile($fileName, $PresTimeOffset)
 {
-    global $session_dir;
     $info = array();
 
-    $leafInfoFile = fopen($session_dir . '/' . $fileName, 'rt');
+    $leafInfoFile = fopen($session->getDir() . '/' . $fileName, 'rt');
     if (!$leafInfoFile) {
         return;
     }

@@ -1,6 +1,6 @@
 <?php
 
-global $mpdHandler, $utc_timing_info, $logger;
+global $mpdHandler, $logger;
 
 
 $segmentAccessInfo = array();
@@ -36,7 +36,7 @@ foreach ($representations as $representationId => $representation) {
 
         $utcTimingValid = false;
         $utcTiming = $producerReferenceTime['UTCTiming'];
-        foreach ($utcTimingInfo as $utcTimingMPD) {
+        foreach ($this->utcTimingInfo as $utcTimingMPD) {
             if ($utcTiming != null) {
                 if (nodes_equal($utcTiming[0], $utcTimingMPD)) {
                     $utcTimingValid = true;

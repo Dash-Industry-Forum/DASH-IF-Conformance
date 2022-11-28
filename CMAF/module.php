@@ -11,9 +11,12 @@ class ModuleCMAF extends ModuleInterface
     private $careAboutElst;
     private $careAboutMdhd;
     private $boxList;
-       private $cfhdSwitchingSetFound;
-       private $caadSwitchingSetFound;
-       private $encryptedSwitchingSetFound;
+    private $cfhdSwitchingSetFound;
+    private $caadSwitchingSetFound;
+    private $encryptedSwitchingSetFound;
+
+    private $mediaTypes;
+    private $mediaProfiles;
 
     public function __construct()
     {
