@@ -53,7 +53,7 @@ function process_MPD($parseSegments = false)
     ## If only MPD validation is requested or inferred, stop
     ## If any error is found in the MPD validation process, stop
     ## If no error is found, then proceed with segment validation below
-    //$valid_mpd = validate_MPD();
+//    $valid_mpd = validate_MPD();
 
 
 
@@ -64,14 +64,14 @@ function process_MPD($parseSegments = false)
     }
 
     if (!$parseSegments) {
-        fwrite(STDERR,($parseSegments ? "DO " : "DO NOT ") . "parse segments\n");
+        fwrite(STDERR, ($parseSegments ? "DO " : "DO NOT ") . "parse segments\n");
         return;
     }
 
     //------------------------------------------------------------------------//
     ## Perform Segment Validation for each representation in each adaptation set within the current period
     if (!checkBeforeSegmentValidation()) {
-        return;
+      return;
     }
     if ($mpd_features['type'] !== 'dynamic') {
         $current_period = 0;
@@ -108,9 +108,13 @@ function processAdaptationSetOfCurrentPeriod($period, $ResultXML, $segment_urls)
 
     global $modules;
 
+    global $logger;
 
     $adaptation_sets = $period['AdaptationSet'];
     while ($current_adaptation_set < sizeof($adaptation_sets)) {
+        if ($logger->getModuleVerdict("HEALTH") == "FAIL") {
+            break;
+        }
         $adaptation_set = $adaptation_sets[$current_adaptation_set];
         $representations = $adaptation_set['Representation'];
 
@@ -118,6 +122,9 @@ function processAdaptationSetOfCurrentPeriod($period, $ResultXML, $segment_urls)
 
 
         while ($current_representation < sizeof($representations)) {
+            if ($logger->getModuleVerdict("HEALTH") == "FAIL") {
+                break;
+            }
             $representation = $representations[$current_representation];
             $segment_url = $segment_urls[$current_adaptation_set][$current_representation];
 
@@ -131,7 +138,12 @@ function processAdaptationSetOfCurrentPeriod($period, $ResultXML, $segment_urls)
                 }
             }
 
+            $logger->setModule("HEALTH");
             validate_segment($adaptationDirectory, $representationDirectory, $period, $adaptation_set, $representation, $segment_url, $is_subtitle_rep);
+            $logger->write();
+            if ($logger->getModuleVerdict("HEALTH") == "FAIL") {
+                break;
+            }
 
             foreach ($modules as $module) {
                 if ($module->isEnabled()) {
@@ -140,6 +152,9 @@ function processAdaptationSetOfCurrentPeriod($period, $ResultXML, $segment_urls)
             }
 
             $current_representation++;
+        }
+        if ($logger->getModuleVerdict("HEALTH") == "FAIL") {
+            break;
         }
 
         ## Representations in current Adaptation Set finished
@@ -155,10 +170,12 @@ function processAdaptationSetOfCurrentPeriod($period, $ResultXML, $segment_urls)
         $current_adaptation_set++;
     }
 
+    if ($logger->getModuleVerdict("HEALTH") != "FAIL") {
     ## Adaptation Sets in current Period finished
-    foreach ($modules as $module) {
-        if ($module->isEnabled()) {
-            $module->hookAdaptationSet();
+        foreach ($modules as $module) {
+            if ($module->isEnabled()) {
+                $module->hookAdaptationSet();
+            }
         }
     }
     //err_file_op(2);

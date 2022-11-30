@@ -25,7 +25,7 @@ if (!file_exists($xmlRepresentation)) {
 $xml = get_DOM($xmlRepresentation, 'atomlist');
 
 if (!$xml) {
-    fwrite(STDERR, "NO xml in $xmlRepresentation\n");
+    fwrite(STDERR, "Invalid xml in $xmlRepresentation\n");
     return;
 }
 

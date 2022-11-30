@@ -116,7 +116,7 @@ final class validationTest extends TestCase
             "https://dash.akamaized.net/WAVE/vectors/avc_sets/15_30_60/t3/2022-01-17/stream.mpd"
         ];
         $content = file_get_contents(
-            "validations-tests/cta/wave.json");
+            "validation-tests/cta/wave.json");
         $dbJson = json_decode($content);
         $streamsToTest = array();
         foreach ($dbJson as $item) {

@@ -176,12 +176,10 @@ if (in_array("", $presentationProfileArray)) {
     $presentationProfile = "";
 }
 
-$logger->test(
-    "CTAWAVE",
-    "Informative",
-    "Wave set conformance to CMAF Presentation Profile",
-    $presentationProfile != "",
-    "PASS",
-    "Conformance to $presentationProfile",
-    "No conformance found"
-);
+
+if ($presentationProfile != ""){
+
+}
+
+$logger->message("Stream found to conform to a CMAF Presentation Profile: $presentationProfile");
+
