@@ -2,11 +2,10 @@
 
 global $session, $mpdHandler;
 
-global $current_adaptation_set;
 
 
-$adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
-$adaptationDirectory = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set);
+$adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+$adaptationDirectory = $session->getSelectedAdaptationDir();
 
 $filecount = 0;
 $files = DASHIF\rglob("$adaptationDirectory/*.xml");

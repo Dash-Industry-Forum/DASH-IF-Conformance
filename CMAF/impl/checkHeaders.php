@@ -1,6 +1,6 @@
 <?php
 
-global $current_adaptation_set, $logger;
+global $mpdHandler, $logger;
 
 $this->compare($xml1, $xml2, $id1, $id2, $currentAdaptionDir, $index, $path);
 
@@ -48,9 +48,9 @@ if ($xml) {
                 !in_array("No", explode(" ", $attribute->nodeValue)),
                 "FAIL",
                 "Attribute $attribute->nodeName in box $childName equal between representations " .
-                "$ids[0] and $ids[1] in Switching set $current_adaptation_set",
+                "$ids[0] and $ids[1] in Switching set " . $mpdHandler->getSelectedAdaptationSet(),
                 "Attribute $attribute->nodeName in box $childName not equal between representations " .
-                "$ids[0] and $ids[1] in Switching set $current_adaptation_set",
+                "$ids[0] and $ids[1] in Switching set " . $mpdHandler->getSelectedAdaptationSet()
             );
         }
     }
