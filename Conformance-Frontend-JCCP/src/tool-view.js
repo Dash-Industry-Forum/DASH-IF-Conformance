@@ -6,8 +6,8 @@ function ToolView() {
   let modules = ConformanceService.modules;
 
   let _state = {
-    result: Mock.testResults[0],
-    //result: null,
+    //result: Mock.testResults[0],
+    result: null,
     detailSelect: { module: null, part: null, section: null, test: null },
   };
 
