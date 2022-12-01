@@ -1,12 +1,11 @@
 <?php
 
-global $session, $mpdHandler, $current_adaptation_set, $current_representation,
-$sizearray, $segment_duration_array;
+global $session, $mpdHandler, $sizearray, $segment_duration_array;
 
 
 $bandwidth = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
-                          ['AdaptationSet'][$current_adaptation_set]
-                          ['Representation'][$current_representation]
+                          ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()]
+                          ['Representation'][$mpdHandler->getSelectedRepresentation()]
                           ['bandwidth'];
 
 $sidxBoxes = $xmlRepresentation->getElementsByTagName('sidx');
@@ -71,8 +70,7 @@ if (!$bitrateInfo->len){
   $bitrateInfo[] = 0;
 }
 
-$location = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation) .
-  '/bitrateReport.png';
+$location = $session->getSelectedRepresentationDir() . '/bitrateReport.png';
 
 $graph = new Graph();
 $graph->title->set("Bitrate report");

@@ -2,17 +2,17 @@
 
 global $mpdHandler, $session, $logger;
 
-global $current_adaptation_set, $current_representation,$segment_duration_array;
+global $segment_duration_array;
 
 if (!$this->hasJPGraph || !$this->hasJPBarGraph){
   return;
 }
 
 $period = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()];
-$adaptationSet = $period['AdaptationSet'][$current_adaptation_set];
-$representation = $adaptationSet['Representation'][$current_representation];
-$adaptationSetId = $current_adaptation_set + 1;
-$representationId = ($representation['id'] != null) ? $representation['id'] : $current_representation + 1;
+$adaptationSet = $period['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+$representation = $adaptationSet['Representation'][$mpdHandler->getSelectedRepresentation()];
+$adaptationSetId = $mpdHandler->getSelectedAdaptationSet() + 1;
+$representationId = ($representation['id'] != null) ? $representation['id'] : $mpdHandler->getSelectedRepresentation() + 1;
 
 //only if there is a segment template in the representation get the timescale and duration
 if (sizeof($representation['SegmentTemplate']) != 0) {
@@ -98,7 +98,7 @@ $logger->test(
     "representation $representationId: $differenceMessage"
 );
 
-$repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
+$repDir = $session->getSelectedRepresentationDir();
 $abs = DASHIF\Utility\parseDOM("$repDir/atomInfo.xml", 'atomlist'); // load mpd from url
 if ($abs) {
     if ($abs->getElementsByTagName('mehd')->length && $abs->getElementsByTagName('mvhd')->length) {

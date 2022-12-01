@@ -1,10 +1,10 @@
 <?php
-global $current_adaptation_set, $current_representation, $segment_accesses, $period_timing_info;
+global $segment_accesses, $period_timing_info;
 
 $mpd_timing = array();
 
 // Calculate segment timing information
-$segment_access = $segment_accesses[$current_adaptation_set][$current_representation];
+$segment_access = $segment_accesses[$mpdHandler->getSelectedAdaptationSet()][$mpdHandler->getSelectedRepresentation()];
 foreach ($segment_access as $seg_acc) {
     $pto = ($seg_acc['presentationTimeOffset'] != '') ? (int)($seg_acc['presentationTimeOffset']) : 0;
     $duration = ($seg_acc['duration'] != '') ? (int)($seg_acc['duration']) : 0;

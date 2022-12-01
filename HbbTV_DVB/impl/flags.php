@@ -1,9 +1,9 @@
 <?php
 
-global $additional_flags, $mpdHandler, $current_adaptation_set, $current_representation;
+global $additional_flags, $mpdHandler;
 
-$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
-$representation = $adaptation['Representation'][$current_representation];
+$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+$representation = $adaptation['Representation'][$mpdHandler->getSelectedRepresentation()];
 
 ## General
 if ($this->HbbTvEnabled) {

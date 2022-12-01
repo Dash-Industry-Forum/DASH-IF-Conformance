@@ -1,11 +1,9 @@
 <?php
 
-global $mpdHandler,
-        $current_adaptation_set, $current_representation,
-        $period_timing_info, $logger, $session;
+global $mpdHandler, $period_timing_info, $logger, $session;
 
 
-$repDir = $session->getRepresentationDir($current_representation, $current_adaptation_set, $current_representation);
+$repDir = $session->geSlectedRepresentationDir();
 $errorFilePath = "$repDir/stderr.txt";
 
 $xmlRepresentation = DASHIF\Utility\parseDOM("$repDir/atomInfo.xml", 'atomlist');

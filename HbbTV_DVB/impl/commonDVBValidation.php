@@ -1,11 +1,11 @@
 <?php
 
-global $current_adaptation_set, $current_representation, $sizearray;
+global $sizearray;
 
 global $logger, $mpdHandler;
 
-$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
-$representation = $adaptation['Representation'][$current_representation];
+$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+$representation = $adaptation['Representation'][$mpdHandler->getSelectedRepresentation()];
 
 ## Report on any resolutions used that are not in the tables of resoultions in 10.3 of the DVB DASH specification
 $resolutionResult = $this->resolutionCheck($adaptation, $representation);
@@ -251,7 +251,7 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
         // EBU-TT-D
         $validEBUTTD = true;
         $subtitleTimings = array();
-        $repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
+        $repDir = $session->getSelectedRepresentationDir();
         ///\RefactorTodo Make this reflect the correct location
         $files = glob("$repDir/Subtitles/*");
         natsort($files);
@@ -395,14 +395,16 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
 
 ## Segment checks
 // Section 4.3 on on-demand profile periods containing sidx boxes
+//
+$representationProfiles = $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()][$mpdHandler->getSelectedAdaptationSet()][$mpdHandler->getSelectedRepresentation()];
 if (
     strpos(
-        $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation],
+      $representationProfiles,
         'urn:mpeg:dash:profile:isoff-on-demand:2011'
     ) !== false
     ||
     strpos(
-        $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()][$current_adaptation_set][$current_representation],
+      $representationProfiles,
         'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014'
     ) !== false
 ) {

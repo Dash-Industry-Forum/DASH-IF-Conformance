@@ -1,9 +1,9 @@
 <?php
 
-global $session, $mpdHandler, $current_adaptation_set, $current_representation, $logger;
+global $session, $mpdHandler, $logger;
 
-$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
-$representation = $adaptation['Representation'][$current_representation];
+$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+$representation = $adaptation['Representation'][$mpdHandler->getSelectedRepresentation()];
 
 ## Check on the support of the provided codec
 // MPD part
@@ -361,7 +361,7 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
 }
 
 
-$repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
+$repDir = $session->getSelectedRepresentationDir();
 if ($mpdHandler->getFeatures()['type'] == 'dynamic') {
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
