@@ -7,13 +7,13 @@ const ConformanceService = (function () {
       text: "Segment Validation",
       queryParam: "segments",
     },
-    { id: "dash-if", text: "Dash-IF", queryParam: "dash" },
+    { id: "dash-if", text: "DASH-IF", queryParam: "dash" },
     { id: "cmaf", text: "CMAF", queryParam: "cmaf" },
     { id: "cta-wave", text: "CTA-WAVE", queryParam: "ctawave" },
     { id: "hbbtv", text: "HbbTV", queryParam: "hbbtv" },
     { id: "dvb", text: "DVB", queryParam: "dvb" },
-    { id: "dash-if-ll", text: "Dash-IF IOP Low Latency", queryParam: "lowlatency" },
-    { id: "dash-if-iop", text: "Dash-IF interoperability", queryParam: "iop" },
+    { id: "dash-if-ll", text: "DASH-IF IOP Low Latency", queryParam: "lowlatency" },
+    { id: "dash-if-iop", text: "DASH-IF Interoperability", queryParam: "iop" },
     { id: "dolby", text: "Dolby", queryParam: "dolby" },
   ];
 
