@@ -18,9 +18,7 @@ function MainView() {
 
   function getLocation() {
     let hash = location.hash;
-    console.log(hash);
     let page = hash.substring(1, hash.length);
-    console.log(page);
     if (page) return page;
     location.hash = PAGE_HOME;
     return PAGE_HOME;
@@ -31,7 +29,6 @@ function MainView() {
     _navigationBar.setActiveLocation(locationId);
     _activePage = locationId;
     location.hash = locationId;
-    console.log(location.hash);
     _navigationBar.renderButtons();
     renderContent();
   }

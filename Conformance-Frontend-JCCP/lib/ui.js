@@ -108,13 +108,11 @@ const UI = (function () {
 
   function saveScrollPosition(elementId) {
     let scrollElement = UI.getElement(elementId);
-    console.log(scrollElement);
     if (!scrollElement) return;
     scrollPositions[elementId] = {
       scrollLeft: scrollElement.scrollLeft,
       scrollTop: scrollElement.scrollTop,
     };
-    console.log(scrollPositions[elementId])
   }
 
   function loadScrollPosition(elementId) {

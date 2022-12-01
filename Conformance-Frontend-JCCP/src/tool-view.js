@@ -6,8 +6,8 @@ function ToolView() {
   let modules = ConformanceService.modules;
 
   let _state = {
-    //result: Mock.testResults[0],
-    result: null,
+    result: Mock.testResults[0],
+    //result: null,
     detailSelect: { module: null, part: null, section: null, test: null },
   };
 
@@ -153,210 +153,332 @@ function ToolView() {
         {
           id: elementId + "-scroll",
           className: "flex-grow-1 overflow-auto",
-          children: modules.map((module, index) => ({
-            className: "p-3 border-bottom",
-            children: [
-              {
-                className: "fs-5 mb-2",
-                children: [
-                  {
-                    element: "i",
-                    className: getVerdictIcon(module.verdict),
-                  },
-                  { element: "span", className: "ms-2", text: module.name },
-                ],
-              },
-              {
-                children: Object.keys(module)
-                  .filter(
-                    (key) =>
-                      typeof module[key] === "object" && "test" in module[key]
-                  )
-                  .map((part) => ({
-                    children: [
-                      {
-                        className: "my-3 fw-semibold",
-                        children: [
-                          {
-                            element: "i",
-                            className: getVerdictIcon(module[part].verdict),
-                            style: "width: 1.5em",
-                          },
-                          { element: "span", text: part },
-                        ],
-                      },
-                      {
-                        className: "list-group",
-                        children: module[part].test.map(
-                          ({ section, test, state }) => ({
-                            element: "a",
-                            className:
-                              "list-group-item list-group-item-action" +
-                              (isSelected({
-                                module: module.name,
-                                part,
-                                section,
-                                test,
-                              })
-                                ? " fw-semibold bg-light"
-                                : ""),
-                            href: "#",
-                            onClick: isSelected({
-                              module: module.name,
-                              part,
-                              section,
-                              test,
-                            })
-                              ? () => {}
-                              : () => {
-                                  _state.detailSelect = {
-                                    module: module.name,
-                                    part,
-                                    section,
-                                    test,
-                                  };
-                                  UI.saveScrollPosition(elementId + "-scroll");
-                                  renderResultSummary();
-                                  renderResultDetails();
-                                },
-                            children: [
-                              {
-                                element: "i",
-                                className: getVerdictIcon(state),
-                                style: "width: 1.5em",
-                              },
-                              { element: "span", text: section },
-                              {
-                                element: "i",
-                                className: "fa-solid fa-circle mx-2",
-                                style: "font-size: 0.3em; vertical-align: 1em",
-                              },
-                              {
-                                element: "span",
-                                text: test,
-                              },
-                            ],
-                          })
-                        ),
-                      },
-                    ],
-                  })),
-              },
-            ],
-          })),
+          children: modules.map((module) => createModuleElement(module)),
         },
       ],
     });
     UI.replaceElement(_resultSummaryId, resultSummary);
-    UI.loadScrollPosition(elementId + "-scroll");
+    UI.loadScrollPosition(_resultSummaryId + "-scroll");
+  }
+
+  function createModuleElement(module) {
+    let partNames = Object.keys(module).filter(
+      (key) => typeof module[key] === "object" && "test" in module[key]
+    );
+    let parts = partNames.map((partName) => {
+      let part = module[partName];
+      part.name = partName;
+      return part;
+    });
+    let moduleElement = UI.createElement({
+      className: "p-3 border-bottom",
+      children: [
+        {
+          className: "fs-5 mb-2",
+          children: [
+            {
+              element: "i",
+              className: getVerdictIcon(module.verdict),
+            },
+            { element: "span", className: "ms-2", text: module.name },
+          ],
+        },
+        {
+          children: parts.map((part) => createModulePartElement(part, module)),
+        },
+      ],
+    });
+    return moduleElement;
+  }
+
+  function createModulePartElement(part, module) {
+    let testResults = part.test;
+    let moduleInfoId = {
+      module: module.name,
+      part: part.name,
+      type: "info",
+    };
+    let isModuleInfoSelected = isSelected(moduleInfoId);
+
+    let modulePartElement = UI.createElement({
+      children: [
+        {
+          className: "mt-3 fw-semibold",
+          children: [
+            {
+              element: "i",
+              className: getVerdictIcon(part.verdict),
+              style: "width: 1.5em",
+            },
+            { element: "span", text: part.name },
+          ],
+        },
+      ]
+        .concat(
+          (() => {
+            if (!part.info) return;
+            return [
+              {
+                element: "h6",
+                className: "mt-3 ms-3",
+                text: "Info:",
+              },
+              {
+                element: "a",
+                className: "ms-3" + (isModuleInfoSelected ? " fw-semibold" : ""),
+                href: "#",
+                text: part.info.length + " log message" + (part.info.length > 1 ? "s" : ""),
+                onClick: (event) => {
+                  if (isModuleInfoSelected) return;
+                  _state.detailSelect = moduleInfoId;
+                  UI.saveScrollPosition(_resultSummaryId + "-scroll");
+                  renderResultSummary();
+                  renderResultDetails();
+                },
+              },
+            ];
+          })()
+        )
+        .concat([
+          {
+            element: "h6",
+            className: "mt-3 ms-3",
+            text: "Test Results:",
+          },
+          {
+            className: "list-group",
+            children: testResults.map((testResult) =>
+              createModulePartTestElement(testResult, part, module)
+            ),
+          },
+        ]),
+    });
+
+    return modulePartElement;
+  }
+
+  function createModulePartTestElement(testResult, part, module) {
+    let { section, test, state } = testResult;
+    let testId = {
+      module: module.name,
+      part: part.name,
+      section,
+      test,
+    };
+    let isPartSelected = isSelected(testId);
+
+    let modulePartTestElement = UI.createElement({
+      element: "a",
+      className:
+        "list-group-item list-group-item-action" +
+        (isPartSelected ? " fw-semibold bg-light" : ""),
+      href: "#",
+      onClick: () => {
+        if (isPartSelected) return;
+        _state.detailSelect = testId;
+        UI.saveScrollPosition(_resultSummaryId + "-scroll");
+        renderResultSummary();
+        renderResultDetails();
+      },
+      children: [
+        {
+          element: "i",
+          className: getVerdictIcon(state),
+          style: "width: 1.5em",
+        },
+        { element: "span", text: section },
+        {
+          element: "i",
+          className: "fa-solid fa-circle mx-2",
+          style: "font-size: 0.3em; vertical-align: 1em",
+        },
+        {
+          element: "span",
+          text: test,
+        },
+      ],
+    });
+    return modulePartTestElement;
   }
 
   function renderResultDetails(elementId) {
     _resultDetailsId = elementId = elementId || _resultDetailsId;
-    let { module, part, section, test } = _state.detailSelect;
-    if (!module || !part || !section || !test) {
-      let instructions = UI.createElement({
-        id: elementId,
-        className: "bg-light w-50",
-        children: {
-          className:
-            "container-fluid text-center text-secondary h-100 d-flex flex-column justify-content-center",
-          style: { maxHeight: "40vh" },
-          children: [
-            {
-              element: "i",
-              className: "fa-solid fa-circle-info mb-3",
-              style: "font-size: 5em",
-            },
-            {
-              text: "Select a test to see details",
-            },
-          ],
-        },
-      });
-      UI.replaceElement(elementId, instructions);
-      return;
+    let { module, part, section, test, type } = _state.detailSelect;
+    let resultDetails = null;
+
+    if (module && part && section && test) {
+      resultDetails = createTestResultDetailsElement(elementId);
     }
+
+    if (module && part && type) {
+      if (type === "info")
+        resultDetails = createInfoLogsDetailsElement(elementId);
+    }
+
+    if (!resultDetails) {
+      resultDetails = createResultDetailsInstructions(elementId);
+    }
+
+    UI.replaceElement(elementId, resultDetails);
+  }
+
+  function createResultDetailsInstructions(elementId) {
+    let instructions = UI.createElement({
+      id: elementId,
+      className: "bg-light w-50",
+      children: {
+        className:
+          "container-fluid text-center text-secondary h-100 d-flex flex-column justify-content-center",
+        style: { maxHeight: "40vh" },
+        children: [
+          {
+            element: "i",
+            className: "fa-solid fa-circle-info mb-3",
+            style: "font-size: 5em",
+          },
+          {
+            text: "Select a test to see details",
+          },
+        ],
+      },
+    });
+    return instructions;
+  }
+
+  function createTestResultDetailsElement(elementId) {
+    let { module, part, section, test } = _state.detailSelect;
     let { state, messages } = _state.result.entries[module][part].test.find(
       (element) => element.test === test && element.section === section
     );
     let resultDetails = UI.createElement({
       id: elementId,
-      className: "w-50",
+      className: "w-50 d-flex flex-column",
       children: [
         {
           text: "Details",
           className: "fs-5 fw-semibold bg-light border-bottom py-2 px-3",
         },
         {
-          element: "table",
-          className: "table",
+          className: "flex-fill overflow-auto",
           children: {
-            element: "tbody",
-            children: [
-              {
-                element: "tr",
-                children: [
-                  { element: "td", text: "Section" },
-                  { element: "td", text: section },
-                ],
-              },
-              {
-                element: "tr",
-                children: [
-                  { element: "td", text: "Test" },
-                  { element: "td", text: test },
-                ],
-              },
-              {
-                element: "tr",
-                children: [
-                  { element: "td", text: "State" },
-                  {
-                    element: "td",
-                    children: [
-                      { element: "i", className: getVerdictIcon(state) },
-                      { element: "span", text: state, className: "ms-1" },
-                    ],
-                  },
-                ],
-              },
-              {
-                element: "tr",
-                children: [
-                  { element: "td", text: "Module" },
-                  { element: "td", text: module },
-                ],
-              },
-              {
-                element: "tr",
-                children: [
-                  { element: "td", text: "Messages" },
-                  {
-                    element: "td",
-                    children: {
-                      className:
-                        "font-monospace overflow-auto border rounded bg-light p-2",
-                      style: "max-height: 30em",
-                      children: messages.map((message) => ({ text: message })),
+            element: "table",
+            className: "table",
+            children: {
+              element: "tbody",
+              children: [
+                {
+                  element: "tr",
+                  children: [
+                    { element: "td", text: "Section" },
+                    { element: "td", text: section },
+                  ],
+                },
+                {
+                  element: "tr",
+                  children: [
+                    { element: "td", text: "Test" },
+                    { element: "td", text: test },
+                  ],
+                },
+                {
+                  element: "tr",
+                  children: [
+                    { element: "td", text: "State" },
+                    {
+                      element: "td",
+                      children: [
+                        { element: "i", className: getVerdictIcon(state) },
+                        { element: "span", text: state, className: "ms-1" },
+                      ],
                     },
-                  },
-                ],
-              },
-            ],
+                  ],
+                },
+                {
+                  element: "tr",
+                  children: [
+                    { element: "td", text: "Module" },
+                    { element: "td", text: module },
+                  ],
+                },
+                {
+                  element: "tr",
+                  children: [
+                    { element: "td", text: "Messages" },
+                    {
+                      element: "td",
+                      children: {
+                        className:
+                          "font-monospace overflow-auto border rounded bg-light p-2",
+                        style: "max-height: 30em",
+                        children: messages.map((message) => ({
+                          text: message,
+                        })),
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
           },
         },
       ],
     });
-    UI.replaceElement(elementId, resultDetails);
+    return resultDetails;
   }
 
-  function isSelected({ module, part, section, test }) {
+  function createInfoLogsDetailsElement(elementId) {
+    let { module, part, type } = _state.detailSelect;
+    let info = _state.result.entries[module][part].info;
+    let resultDetails = UI.createElement({
+      id: elementId,
+      className: "w-50 d-flex flex-column",
+      children: [
+        {
+          text: "Details",
+          className: "fs-5 fw-semibold bg-light border-bottom py-2 px-3",
+        },
+        {
+          className: "p-3 flex-fill overflow-auto",
+          children: [
+            {
+              element: "h5",
+              className: "mb-3",
+              text: `${module} ${part} Log Messages`,
+            },
+          ].concat(
+            info.map((message, index) => ({
+              children: [
+                {
+                  element: "h6",
+                  text: "Message #" + (index + 1),
+                },
+                {
+                  className:
+                    "font-monospace overflow-auto text-nowrap border rounded bg-light p-2",
+                  style: "max-height: 30em",
+                  children: message.split("\n").map((line) => ({ text: line })),
+                },
+              ],
+            }))
+          ),
+        },
+      ],
+    });
+    return resultDetails;
+  }
+
+  function isSelected({ module, part, section, test, type }) {
     let isSelected = true;
-    isSelected = isSelected && module === _state.detailSelect.module;
-    isSelected = isSelected && part === _state.detailSelect.part;
-    isSelected = isSelected && section === _state.detailSelect.section;
-    isSelected = isSelected && test === _state.detailSelect.test;
+    if (_state.detailSelect.section && _state.detailSelect.test) {
+      isSelected = isSelected && module === _state.detailSelect.module;
+      isSelected = isSelected && part === _state.detailSelect.part;
+      isSelected = isSelected && section === _state.detailSelect.section;
+      isSelected = isSelected && test === _state.detailSelect.test;
+    } else {
+      isSelected = isSelected && module === _state.detailSelect.module;
+      isSelected = isSelected && part === _state.detailSelect.part;
+      isSelected = isSelected && type === _state.detailSelect.type;
+    }
     return isSelected;
   }
 

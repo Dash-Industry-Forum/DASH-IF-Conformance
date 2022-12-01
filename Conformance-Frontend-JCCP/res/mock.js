@@ -1995,6 +1995,85 @@ let Mock = (function () {
         },
       ],
     },
+    {
+      parse_segments: true,
+      source: "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd",
+      entries: {
+        "MPEG-DASH Common": {
+          verdict: "FAIL",
+          BeforeMPD: { verdict: "PASS" },
+          MPD: {
+            verdict: "FAIL",
+            info: [
+              "Schematron output: 0XLink resolving successful\n\n\nMPD validation successful - DASH is valid!\n\n\n<svrl:failed-assert test=\"if((contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or (not(@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) and (@subsegmentAlignment = 'true')) then false() else true()\"\n                       location=\"/*:MPD[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][1]/*:Period[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][1]/*:AdaptationSet[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][1]\">\n      <svrl:text>HbbTV-DVB DASH Validation Requirements check violated for HbbTV: Section 'MPD' - The MPD contains an attribute that is not part of the HbbTV profile', i.e., found 'subsegmentAlignment' as true</svrl:text>\n   </svrl:failed-assert>\n<svrl:failed-assert test=\"if((contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or (not(@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) and (@subsegmentStartsWithSAP = '1' or @subsegmentStartsWithSAP = '2')) then false() else true()\"\n                       location=\"/*:MPD[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][1]/*:Period[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][1]/*:AdaptationSet[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][1]\">\n      <svrl:text>HbbTV-DVB DASH Validation Requirements check violated for HbbTV: Section 'MPD' - The MPD contains an attribute that is not part of the HbbTV profile', i.e., found 'subsegmentStartsWithSAP' as 1 or 2</svrl:text>\n   </svrl:failed-assert>\n<svrl:failed-assert test=\"if((contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or (not(@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) and (@subsegmentAlignment = 'true')) then false() else true()\"\n                       location=\"/*:MPD[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][1]/*:Period[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][1]/*:AdaptationSet[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][2]\">\n      <svrl:text>HbbTV-DVB DASH Validation Requirements check violated for HbbTV: Section 'MPD' - The MPD contains an attribute that is not part of the HbbTV profile', i.e., found 'subsegmentAlignment' as true</svrl:text>\n   </svrl:failed-assert>\n<svrl:failed-assert test=\"if((contains(@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012') or (not(@profiles) and contains(ancestor::dash:MPD/@profiles, 'urn:hbbtv:dash:profile:isoff-live:2012'))) and (@subsegmentStartsWithSAP = '1' or @subsegmentStartsWithSAP = '2')) then false() else true()\"\n                       location=\"/*:MPD[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][1]/*:Period[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][1]/*:AdaptationSet[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][2]\">\n      <svrl:text>HbbTV-DVB DASH Validation Requirements check violated for HbbTV: Section 'MPD' - The MPD contains an attribute that is not part of the HbbTV profile', i.e., found 'subsegmentStartsWithSAP' as 1 or 2</svrl:text>\n   </svrl:failed-assert>\nSchematron validation not successful - DASH is not valid!\n\n\n",
+            ],
+            test: [
+              {
+                spec: "MPEG-DASH",
+                section: "Commmon",
+                test: "Schematron Validation",
+                messages: [
+                  "XLink resolving succesful",
+                  "MPD validation succesful",
+                  "Schematron validation failed",
+                ],
+                state: "FAIL",
+              },
+            ],
+          },
+          BeforeRepresentation: { verdict: "PASS" },
+          Period: { verdict: "PASS" },
+        },
+        Stats: { LastWritten: "2022-12-01 02:19:08" },
+        verdict: "FAIL",
+        HEALTH: {
+          "": {
+            test: [
+              {
+                spec: "Health Checks",
+                section: "Segment Validation",
+                test: "ISOSegmentValidator runs successful",
+                messages: [
+                  "Issues with /var/www/html/Utils/sessions/1669904323/Period0/Adaptation0/Representation0/segmentValidatorConfig.txt; Returncode 1; took 0 seconds",
+                ],
+                state: "FAIL",
+              },
+              {
+                spec: "Health Checks",
+                section: "Segment Validation",
+                test: "AtomInfo written",
+                messages: [
+                  "Atominfo for /var/www/html/Utils/sessions/1669904323/Period0/Adaptation0/Representation0 exists",
+                ],
+                state: "PASS",
+              },
+              {
+                spec: "Health Checks",
+                section: "Segment Validation",
+                test: "AtomInfo contains valid xml",
+                messages: [
+                  "Atominfo for /var/www/html/Utils/sessions/1669904323/Period0/Adaptation0/Representation0 has valid xml",
+                ],
+                state: "PASS",
+              },
+              {
+                spec: "Health Checks",
+                section: "Segment Validation",
+                test: "AtomInfo < 100Mb",
+                messages: [
+                  "Atominfo for /var/www/html/Utils/sessions/1669904323/Period0/Adaptation0/Representation0 < 100Mb",
+                ],
+                state: "PASS",
+              },
+            ],
+            verdict: "FAIL",
+          },
+          verdict: "FAIL",
+        },
+      },
+      verdict: "FAIL",
+      enabled_modules: [{ name: "MPEG-DASH Common" }],
+    },
   ];
   let instance = {
     testResults,
