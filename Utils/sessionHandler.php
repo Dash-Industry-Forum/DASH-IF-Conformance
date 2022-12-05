@@ -22,7 +22,6 @@ class SessionHandler
 
     public function setId($id)
     {
-        fwrite(STDERR, "Setting session id to $id \n ");
         $this->sessionId = $id;
     }
 

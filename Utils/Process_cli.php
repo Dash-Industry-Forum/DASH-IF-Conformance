@@ -55,6 +55,7 @@ include __DIR__ . '/../Dolby/module.php';
 
 $argumentParser->addOption("segments", "s", "segments", "Enable segment validation");
 $argumentParser->addOption("compact", "C", "compact", "Make JSON output compact");
+$argumentParser->addOption("silent", "S", "silent", "Do not output JSON to stdout");
 
 $argumentParser->parseAll();
 
@@ -97,7 +98,9 @@ if (!$hls_manifest) {
     processHLS();
 }
 
-echo($logger->asJSON($compactOutput) . "\n");
+if (!$argumentParser->getOption("silent")){
+  echo($logger->asJSON($compactOutput) . "\n");
+}
 
 
 global $session;
