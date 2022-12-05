@@ -219,6 +219,23 @@ function run_backend($configFile, $representationDirectory = "")
         "Atominfo for $representationDirectory missing"
     );
 
+
+$atomXmlString = file_get_contents("$sessionDirectory/atominfo.xml");
+$STYPBeginPos = strpos($atomXmlString, "<styp");
+if ($STYPBugPos !== false){
+  //try with newline for prettyprinted
+  $emptyCompatBrands = strpos($atomXmlString, "compatible_brands='[\n  </styp>", $STYPBeginPos);
+  if ($emptyCompatBrands === false){
+    //Also try without newline just to be sure
+    $emptyCompatBrands = strpos($atomXmlString, "compatible_brands='[</styp>", $STYPBeginPos);
+  }
+  if ($emptyCompatBrands !== false){
+    $fixedAtom= substr_replace($atomXmlString, "]'>", $emptyCompatBrands+20, 0);
+    file_put_contents("$sessionDirectory/atominfo.xml", $fixedAtom);
+  }
+
+}
+
     $xml = get_DOM("$sessionDirectory/atominfo.xml", 'atomlist');
     $moveAtom &= $logger->test(
         "Health Checks",
@@ -243,7 +260,9 @@ function run_backend($configFile, $representationDirectory = "")
 
     if (!$moveAtom){
       fwrite(STDERR, "Ignoring atomfile for $representationDirectory\n");
-      unlink("$sessionDirectory/atominfo.xml");
+      if ($representationDirectory != "") {
+          rename("$sessionDirectory/atominfo.xml", "$representationDirectory/errorAtomInfo.xml");
+      }
     }else{
       fwrite(STDERR, "Using atomfile for $representationDirectory\n");
       if ($representationDirectory != "") {
