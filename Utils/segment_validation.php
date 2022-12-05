@@ -16,7 +16,7 @@
 
 function validate_segment($adaptationDirectory, $representationDirectory, $period, $adaptation_set, $representation, $segment_url, $is_subtitle_rep)
 {
-    global $sizearray, $current_adaptation_set, $current_representation;
+  global $sizearray;
 
 
     $sizearray = array();
@@ -97,11 +97,11 @@ function validate_segment_hls($URL_array, $CodecArray)
 
 function assemble($representationDirectory, $segment_urls, $sizearr)
 {
-  global $segment_accesses,$current_adaptation_set, $current_representation, $hls_manifest;
+  global $segment_accesses, $hls_manifest, $mpdHandler;
 
 
 
-    $index = ($segment_accesses[$current_adaptation_set][$current_representation][0]['initialization']) ? 0 : 1;
+    $index = ($segment_accesses[$mpdHandler->getSelectedAdaptationSet()][$mpdHandler->getSelectedRepresentation()][0]['initialization']) ? 0 : 1;
 
     for ($i = 0; $i < sizeof($segment_urls); $i++) {
         $fp1 = fopen("$representationDirectory/assembled.mp4", 'a+');
@@ -123,22 +123,25 @@ function assemble($representationDirectory, $segment_urls, $sizearr)
 function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 {
     global $mpdHandler,
-            $string_info, $current_adaptation_set, $current_representation, 
+            $string_info,
             $hls_manifest, $hls_tag, $hls_info_file;
 
-    $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
-    $representation = $adaptation_set['Representation'][$current_representation];
+    $selectedPeriod = $mpdHandler->getSelectedPeriod();
+    $selectedAdaptation = $mpdHandler->getSelectedAdaptationSet();
+    $selectedRepresentation = $mpdHandler->getSelectedRepresentation();
+
+    $adaptation_set = $mpdHandler->getFeatures()['Period'][$selectedPeriod]['AdaptationSet'][$selectedAdaptation];
+    $representation = $adaptation_set['Representation'][$selectedRepresentation];
     ///\todo refactor "Make these into proper logger messages
     if ($returncode != 0) {
-        #error_log('Processing AdaptationSet ' . $current_adaptation_set . ' Representation ' . $current_representation . ' returns: ' . $returncode);
         if (filesize("$representationDirectory/stderr.txt") == 0) {
             if (!$hls_manifest) {
                 if ($adaptation_set['mimeType'] == 'application/ttml+xml' || $adaptation_set['mimeType'] == 'image/jpeg') {
-                    file_put_contents($representationDirectory . '/stderr.txt', "### error:  \n###        Failed to process Adaptation Set " . $current_adaptation_set . ', Representation ' . $current_representation . "!, as mimeType= '" . $adaptation_set['mimeType'] . "' is not supported");
+                    file_put_contents($representationDirectory . '/stderr.txt', "### error:  \n###        Failed to process Adaptation Set " . $selectedAdaptation . ', Representation ' . $selectedRepresentation . "!, as mimeType= '" . $adaptation_set['mimeType'] . "' is not supported");
                 } elseif ($representation['mimeType'] == "application/ttml+xml" || $representation['mimeType'] == "image/jpeg") {
-                    file_put_contents($representationDirectory . '/stderr.txt', "### error:  \n###        Failed to process Adaptation Set " . $current_adaptation_set . ', Representation ' . $current_representation . "!, as mimeType= '" . $representation['mimeType'] . "' is not supported");
+                    file_put_contents($representationDirectory . '/stderr.txt', "### error:  \n###        Failed to process Adaptation Set " . $selectedAdaptation . ', Representation ' . $selectedRepresentation . "!, as mimeType= '" . $representation['mimeType'] . "' is not supported");
                 } else {
-                    file_put_contents($representationDirectory . '/stderr.txt', "### error:  \n###        Failed to process Adaptation Set " . $current_adaptation_set . ', Representation ' . $current_representation . '!');
+                    file_put_contents($representationDirectory . '/stderr.txt', "### error:  \n###        Failed to process Adaptation Set " . $selectedAdaptation . ', Representation ' . $selectedRepresentation . '!');
                 }
             } else {
               ///\TodoRefactor -- Also fix for hls
@@ -271,7 +274,7 @@ $moveAtom &= $logger->test(
 
 function config_file_for_backend($period, $adaptation_set, $representation, $representationDirectory, $is_dolby)
 {
-  global $additional_flags, $suppressatomlevel, $current_adaptation_set, $current_representation, $hls_manifest;
+  global $additional_flags, $suppressatomlevel, $hls_manifest;
 
     if (!$hls_manifest) {
         $file = fopen("$representationDirectory/segmentValidatorConfig.txt", 'w');
@@ -320,10 +323,10 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
 
 function loadAndCheckSegmentDuration()
 {
-    global $mpdHandler, $current_adaptation_set,$current_representation;
+  global $mpdHandler;
     global $session;
 
-    $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$current_adaptation_set];
+    $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
     $timeoffset = 0;
     $timescale = 1;
     $segmentAlignment = ($adaptation_set['segmentAlignment']) ? ($adaptation_set['segmentAlignment'] == "true") : false;
@@ -333,7 +336,7 @@ function loadAndCheckSegmentDuration()
     if ($segmentAlignment || $subsegmentAlignment || $bitstreamSwitching) {
         $leafInfo = array();
 
-        $representation = $adaptation_set['Representation'][$current_representation];
+        $representation = $adaptation_set['Representation'][$mpdHandler->getSelectedRepresentation()];
         $timeoffset = 0;
         $timescale = 1;
         $duration = 0;
@@ -369,8 +372,8 @@ function loadAndCheckSegmentDuration()
         $offsetmod = (float)$timeoffset / $timescale;
         $duration = (float)$duration / $timescale;
         if ((($adaptation_set['SegmentTemplate'] && sizeof($adaptation_set['SegmentTemplate']) > 0) || ($representation['SegmentTemplate'] && sizeof($representation['SegmentTemplate']) > 0)) && $duration != 0) {
-            $representationDirectory = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation);
-            loadSegmentInfoFile($offsetmod, $duration, $representationDirectory);
+          $representationDirectory = $session->getSelectedRepresentationDir();
+          loadSegmentInfoFile($offsetmod, $duration, $representationDirectory);
         }
     }
 }

@@ -17,8 +17,6 @@
 $main_dir = dirname(__DIR__) . '/Conformance-Frontend/';
 $mpd_url = '';
 $uploaded = false;
-$current_adaptation_set = 0;
-$current_representation = 0;
 $period_timing_info = array();
 $segment_accesses = array();
 $sizearray = array();

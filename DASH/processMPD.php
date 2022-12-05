@@ -98,8 +98,7 @@ function process_MPD($parseSegments = false)
 
 function processAdaptationSetOfCurrentPeriod()
 {
-  global  $current_adaptation_set, $current_representation,
-      $additional_flags;
+  global  $additional_flags;
 
     global $session, $logger;
 
@@ -156,7 +155,6 @@ function processAdaptationSetOfCurrentPeriod()
             }
 
             $mpdHandler->selectNextRepresentation();
-            $current_representation++;
         }
         if ($logger->getModuleVerdict("HEALTH") == "FAIL") {
             break;
@@ -174,8 +172,6 @@ function processAdaptationSetOfCurrentPeriod()
             }
         }
 
-        $current_representation = 0;
-        $current_adaptation_set++;
 
         $mpdHandler->selectRepresentation(0);
         $mpdHandler->selectNextAdaptationSet();
@@ -190,6 +186,5 @@ function processAdaptationSetOfCurrentPeriod()
         }
     }
     //err_file_op(2);
-    $current_adaptation_set = 0;
     $mpdHandler->selectAdaptationSet(0);
 }
