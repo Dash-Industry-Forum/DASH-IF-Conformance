@@ -148,9 +148,7 @@ function processAdaptationSetOfCurrentPeriod()
 
             foreach ($modules as $module) {
                 if ($module->isEnabled()) {
-        fwrite(STDERR, "Going to run hookRepresentation module " . $module->name . "\n");
                     $module->hookRepresentation();
-        fwrite(STDERR, "Done running hookRepresentation module " . $module->name . "\n");
                 }
             }
 
@@ -160,14 +158,12 @@ function processAdaptationSetOfCurrentPeriod()
             break;
         }
 
-        fwrite(STDERR, "Going to run crossValidation\n");
 
         ## Representations in current Adaptation Set finished
         crossRepresentationProcess();
 
         foreach ($modules as $module) {
             if ($module->isEnabled()) {
-        fwrite(STDERR, "Going to run crossValidation module " . $module->name . "\n");
                 $module->hookBeforeAdaptationSet();
             }
         }

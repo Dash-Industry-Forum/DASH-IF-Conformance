@@ -263,7 +263,6 @@ $moveAtom &= $logger->test(
           rename("$sessionDirectory/atominfo.xml", "$representationDirectory/errorAtomInfo.xml");
       }
     }else{
-      fwrite(STDERR, "Using atomfile for $representationDirectory\n");
       if ($representationDirectory != "") {
           rename("$sessionDirectory/atominfo.xml", "$representationDirectory/atomInfo.xml");
       }
