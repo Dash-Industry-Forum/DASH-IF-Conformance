@@ -80,7 +80,7 @@ function construct_flags($period, $adaptation_set, $representation){
             $processArguments .= ' -dashifmixed';
         foreach ($modules as $module){
           if ($module->name == "DASH-IF Common"){
-            if ($module->enabled){
+            if ($module->isEnabled()){
                 $processArguments .= ' -dash264base';
             }
             break;
@@ -158,7 +158,7 @@ function construct_flags($period, $adaptation_set, $representation){
     ## Inband Event Stream for LL
     foreach ($modules as $module){
       if ($module->name == "DASH-IF Low Latency"){
-        if ($module->enabled){
+        if ($module->isEnabled()){
             $processArguments .= ' -dashifll';
         }
         break;

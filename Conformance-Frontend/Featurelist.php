@@ -354,7 +354,7 @@ function convertToHtml() {
     $feature_dom = DASHIF\Utility\parseDOM($session->getDir()."/featureList.xml", 'MPD');
     $html_str = populateList($feature_dom, $html_str);
     $html_str .= '</div></body></html>';
-    file_put_contents($session->getDir()"/featuretable.html", $html_str);
+    file_put_contents($session->getDir()."/featuretable.html", $html_str);
 }
 
 function populateList($xml, $html_str) {

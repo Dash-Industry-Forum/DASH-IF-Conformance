@@ -171,7 +171,7 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 
 function run_backend($configFile, $representationDirectory = "")
 {
-    global $session, $logger;
+    global $session, $logger, $mpdHandler;
 
     $sessionDirectory = $session->getDir();
 
@@ -226,10 +226,10 @@ if ($STYPBugPos !== false){
     $emptyCompatBrands = strpos($atomXmlString, "compatible_brands='[</styp>", $STYPBeginPos);
   }
   if ($emptyCompatBrands !== false){
+    $logger->message("Fixed empty styp xml bug for period " . $mpdHandler->getSelectedPeriod() . " adaptation " . $mpdHandler->getSelectedAdaptationSet() . " representation " . $mpdHandler->getSelectedRepresentation());
     $fixedAtom= substr_replace($atomXmlString, "]'>", $emptyCompatBrands+20, 0);
     file_put_contents("$sessionDirectory/atominfo.xml", $fixedAtom);
   }
-
 }
 
 $xml = DASHIF\Utility\parseDOM("$sessionDirectory/atominfo.xml", 'atomlist');

@@ -53,7 +53,7 @@ $SST = ($ind - 1 - $buffercapacity * $percent < 0) ? 0 : $ind - 1 - $buffercapac
 
 foreach ($modules as $module){
   if ($module->name == "DASH-IF Low Latency"){
-    if ($module->enabled){
+    if ($module->isEnabled()){
     $ASAST = array();
     $NSAST = array();
     $count = $LSN - intval($earliestsegment);

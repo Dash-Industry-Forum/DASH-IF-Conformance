@@ -3,7 +3,7 @@
 global $mpdHandler, $period_timing_info, $logger, $session;
 
 
-$repDir = $session->geSlectedRepresentationDir();
+$repDir = $session->getSelectedRepresentationDir();
 $errorFilePath = "$repDir/stderr.txt";
 
 $xmlRepresentation = DASHIF\Utility\parseDOM("$repDir/atomInfo.xml", 'atomlist');

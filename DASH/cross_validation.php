@@ -16,6 +16,9 @@
 
 function loadLeafInfoFile($fileName, $PresTimeOffset)
 {
+
+  global $session;
+
     $info = array();
 
     $leafInfoFile = fopen($session->getDir() . '/' . $fileName, 'rt');
@@ -154,7 +157,7 @@ function crossRepresentationProcess()
     $timeoffset = 0;
     $timescale = 1;
 
-    $adaptationDir = $session->getSelectedAdaptionDir();
+    $adaptationDir = $session->getSelectedAdaptationDir();
 
     $segmentAlignment = ($adaptation_set['segmentAlignment']) ? ($adaptation_set['segmentAlignment'] == "true") : false;
     $subsegmentAlignment = ($adaptation_set['subsegmentAlignment']) ? ($adaptation_set['subsegmentAlignment'] == "true") : false;
@@ -192,7 +195,7 @@ function crossRepresentationProcess()
             $offsetmod = $timeoffset / $timescale;
 
             $representationDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $mpdHandler->getSelectedAdaptationSet(), $j);
-            $leafInfo[$j] = loadLeafInfoFile($representationDir . "/infofile.txt");
+            $leafInfo[$j] = loadLeafInfoFile($representationDir . "/infofile.txt", $offsetmod);
             $leafInfo[$j]['id'] = $representation['id'];
         }
 

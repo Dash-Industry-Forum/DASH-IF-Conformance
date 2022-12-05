@@ -42,7 +42,7 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
            $hls_byte_range_begin, $hls_byte_range_size, $hls_manifest, $availability_times, $modules;
 
     $mdat_file = (!$hls_manifest) ?
-      $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation) . "mdatoffset") : 'mdatoffset';
+      ($session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $current_adaptation_set, $current_representation) . "mdatoffset") : 'mdatoffset';
     $sizefile = fopen($session->getDir() . '/' . $mdat_file . '.txt', 'a+b'); //create text file containing the original size of Mdat box that is ignored
 
     $segment_count = sizeof($array_file);
@@ -58,7 +58,7 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
 
     foreach ($modules as $module){
       if ($module->name == "DASH-IF Low Latency"){
-        if ($module->enabled){
+        if ($module->isEnabled()){
           $count = sizeof($availability_times[$current_adaptation_set][$current_representation]['ASAST']);
           $media_segment_index = ($count == sizeof($array_file)) ? 0 : 1;
           $start_index = 0;
