@@ -1,6 +1,6 @@
 <?php
 
-global $mpdHandler;
+global $mpdHandler, $session;
 
 $subtitleRepresentation = false;
 $adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
