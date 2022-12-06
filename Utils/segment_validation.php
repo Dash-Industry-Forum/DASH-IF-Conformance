@@ -204,8 +204,7 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
         }
     }
 
-    ///\RefactorTodo create leafinfo.txt
-    //rename($ession__dir . "/leafinfo.txt", "$representationDirectory/leafInfo.txt");
+    rename($ession->getDir() . "/leafinfo.txt", "$representationDirectory/leafInfo.txt");
 
     if (!$hls_manifest) {
         ## Check segment duration and start times against MPD times.
