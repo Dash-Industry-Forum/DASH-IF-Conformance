@@ -18,17 +18,19 @@ class ModuleLogger
     private $features;
     private $parseArguments;
 
-    public function __construct()
+    public function __construct($id = null)
     {
-        $this->reset();
+        $this->reset($id);
     }
 
     public function reset($id = null)
     {
         global $session;
-        $session->reset($id);
 
-        $this->logfile = $session->getDir() . '/logger.txt';
+        if( $id !== ''){
+          $session->reset($id);
+          $this->logfile = $session->getDir() . '/logger.txt';
+        }
         $this->entries = array();
         $this->features = array();
         $this->currentModule = '';
@@ -37,6 +39,34 @@ class ModuleLogger
         $this->streamSource = '';
         $this->currentTest = null;
         $this->parseSegments = false;
+    }
+
+    public function selectVerdict($verdictList){
+      $result = "PASS";
+      foreach($verdictList as $i=>$verdict){
+        if ($verdict == "FAIL"){
+          return $verdict;
+        }
+        if ($verdict == "WARN"){
+          $result = "WARN";
+        }
+      }
+      return $result;
+    }
+
+    public function merge($l){
+      $this->entries = array_merge_recursive($this->entries, $l->entries);
+
+      $this->verdict = $this->selectVerdict($this->verdict);
+      $this->entries['verdict'] = $this->selectVerdict($this->entries['verdict']);
+      foreach ($this->entries as $module => &$moduleValues){
+        if ($module == 'verdict'){continue;}
+        $moduleValues['verdict'] = $this->selectVerdict($moduleValues['verdict']);
+        foreach($moduleValues as $hook => &$hookValues){
+          if ($hook == 'verdict'){continue;}
+          $hookValues['verdict'] = $this->selectVerdict($hookValues['verdict']);
+        }
+      }
     }
 
     public function setParseSegments($parseSegments)
@@ -79,6 +109,10 @@ class ModuleLogger
     public function setHook($hookName)
     {
         $this->currentHook = $hookName;
+    }
+    public function getHook()
+    {
+      return $this->currentHook;
     }
 
     public function test($spec, $section, $test, $check, $fail_type, $msg_succ, $msg_fail)
@@ -252,8 +286,10 @@ class ModuleLogger
 
     public function write()
     {
+      if ($this->logfile){
         $this->entries['Stats']['LastWritten'] = date("Y-m-d h:i:s");
         file_put_contents($this->logfile, \json_encode($this->asArray()));
+      }
     }
 
     public function asJSON($compact = false)
