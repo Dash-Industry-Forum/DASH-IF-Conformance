@@ -179,7 +179,7 @@ foreach ($representations as $representationId => $representation) {
                     "WARN",
                     "Valid inband Event Stream found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
                     ' Adaptation Set ' . ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1),
-                    "Valid inband event stream not found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . i
+                    "Valid inband event stream not found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
                     ' Adaptation Set ' . ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
                 );
                 if ($inbandEventStream['value'] == '1') {

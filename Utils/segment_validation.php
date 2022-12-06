@@ -204,18 +204,13 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
         }
     }
 
-    ///\DoubleCheck create leafinfo.txt
+    ///\RefactorTodo create leafinfo.txt
     //rename($ession__dir . "/leafinfo.txt", "$representationDirectory/leafInfo.txt");
 
     if (!$hls_manifest) {
         ## Check segment duration and start times against MPD times.
         loadAndCheckSegmentDuration();
     }
-
-    ///\TodoRefactor Check when sampledata is generated, and create it in the correct directory
-    //if (file_exists($session->getDir() . '/sample_data.txt') && !$hls_manifest) {
-    //    rename($session->getDir() . '/sample_data.txt', "$representationDirectory/sampleData.xml");
-    //}
 }
 
 function run_backend($configFile, $representationDirectory = "")
@@ -340,11 +335,8 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     }
 
     if (!$is_dolby) {
-              ///\TodoRefactor -- Generate correct offsetfile
-      /*
         fwrite($file, "-offsetinfo" . "\n");
-        fwrite($file, "$representationDirectory/offsetInfo.txt \n");
-        */
+        fwrite($file, "$representationDirectory/mdatoffset \n");
     }
 
     $flags = (!$hls_manifest) ? construct_flags(
@@ -445,7 +437,7 @@ function loadSegmentInfoFile($PresTimeOffset, $duration, $representationDirector
 {
     $info = array();
 
-    ///\DoubleCheck make sure this actually gets created
+    ///\RefactorTodo make sure this actually gets created
     $segmentInfoFile = fopen("$representationDirectory/infofile.txt", 'rt');
     if (!$segmentInfoFile) {
         return;

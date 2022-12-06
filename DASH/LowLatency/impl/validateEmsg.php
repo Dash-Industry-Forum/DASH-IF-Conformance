@@ -8,7 +8,6 @@ $returnValue = true;
 $repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId);
 $rep_xml = "$repDir/atomInfo.xml";
 
-///Correctness this doesn't seem right....
 if (!file_exists($rep_xml)) {
     return true;
 }
@@ -22,8 +21,7 @@ $isSegmentStarts = $infoFileAdapt[$representationId]['isSegmentStart'];
 
 $segmentIndexes = array_keys($isSegmentStarts, '1');
 
-///\RefactorTodo Look where this file should come from
-$mdatFile = "$repDir/mdatInfo.xml";
+$mdatFile = "$repDir/mdatoffset";
 $mdatInfo = explode("\n", file_get_contents($mdatFile));
 
 $moofBoxes = $xml->getElementsByTagName('moof');

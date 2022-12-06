@@ -41,11 +41,9 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
     global $session, $mpdHandler,
            $hls_byte_range_begin, $hls_byte_range_size, $hls_manifest, $availability_times, $modules;
 
-    $mdat_file = (!$hls_manifest) ?
-      ($session->getSelectedRepresentationDir() . "mdatoffset") : 'mdatoffset';
 
     //create text file containing the original size of Mdat box that is ignored
-    $sizefile = fopen($session->getDir() . '/' . $mdat_file . '.txt', 'a+b');
+    $sizefile = fopen($session->getSelectedRepresentationDir() . '/mdatoffset', 'a+b');
 
     $segment_count = sizeof($array_file);
     $initoffset = 0; // Set pointer to 0
