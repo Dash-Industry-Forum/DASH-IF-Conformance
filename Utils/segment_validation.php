@@ -440,8 +440,7 @@ function loadSegmentInfoFile($PresTimeOffset, $duration, $representationDirector
 {
     $info = array();
 
-    ///\RefactorTodo make sure this actually gets created
-    $segmentInfoFile = fopen("$representationDirectory/infofile.txt", 'rt');
+    $segmentInfoFile = fopen("$representationDirectory/leafInfo.txt", 'r');
     if (!$segmentInfoFile) {
         return;
     }
@@ -488,8 +487,8 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
         return;
     }
 
-    ///\RefactorTodo make sure this actually gets created.
-    $trackErrorFile = fopen("$representationDirectory/errorLog.txt", 'rt');
+    ///\RefactorTodo Transfer to actual logger messages
+    $trackErrorFile = fopen("$representationDirectory/errorLog.txt", 'a+');
     if (!$trackErrorFile) {
         return;
     }
