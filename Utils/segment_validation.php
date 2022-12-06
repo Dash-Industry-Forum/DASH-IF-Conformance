@@ -210,6 +210,10 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
         ## Check segment duration and start times against MPD times.
         loadAndCheckSegmentDuration();
     }
+
+    if (file_exists($session->getDir() . '/sample_data.txt') && !$hls_manifest) {
+        rename($session->getDir() . '/sample_data.txt', "$representationDirectory/sampleData.xml");
+    }
 }
 
 function run_backend($configFile, $representationDirectory = "")
