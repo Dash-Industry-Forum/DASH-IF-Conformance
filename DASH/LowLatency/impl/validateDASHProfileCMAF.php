@@ -1,6 +1,6 @@
 <?php
 
-global $session, $mpdHandler, $logger;
+global $session, $mpdHandler;
 
 $dashConformsToCmafFrag = array();
 $representations = $adaptationSet['Representation'];
@@ -215,14 +215,16 @@ foreach ($representations as $representationId => $representation) {
             $representation,
             $representationId,
             $segmentAccessRepresentation,
-            $infoFileAdapt
+            $infoFileAdapt,
+            $logger
         );
     } else {
         $this->validateSegmentTemplate(
             $adaptationSetId,
             $representationId,
             $segmentAccessRepresentation,
-            $infoFileAdapt
+            $infoFileAdapt,
+            $logger
         );
     }
 
@@ -245,7 +247,8 @@ foreach ($representations as $representationId => $representation) {
         $representationId,
         $segmentAccessRepresentation,
         $infoFileAdapt,
-        $xml
+        $xml,
+        $logger
     );
 
     $validCMAFSegment = true;

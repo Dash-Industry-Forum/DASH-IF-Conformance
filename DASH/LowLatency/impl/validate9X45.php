@@ -1,11 +1,11 @@
 <?php
 
-global $mpdHandler, $logger;
+global $mpdHandler;
 
 // Bullet 2
 $dashSegCmafFrag = true;
 
-$cmafDash = $this->validateDASHProfileCMAF($adaptationSet, $adaptationSetId, $segmentAccessInfo, $infoFileAdapt);
+$cmafDash = $this->validateDASHProfileCMAF($adaptationSet, $adaptationSetId, $segmentAccessInfo, $infoFileAdapt, $logger);
 
 $logger->test(
     "DASH-IF IOP CR Low Latency Live",
@@ -78,7 +78,8 @@ foreach ($representations as $representationId => $representation) {
         $adaptationSet,
         $adaptationSetId,
         $representationId,
-        $infoFileAdapt
+        $infoFileAdapt,
+        $logger
     );
 
     // Bullet 4
@@ -286,7 +287,7 @@ foreach ($representations as $representationId => $representation) {
 
     // Bullet 8
 if (sizeof($representations) > 1) {
-    $extendedChecks = $this->validate9X45Extended($adaptationSet, $adaptationSetId);
+    $extendedChecks = $this->validate9X45Extended($adaptationSet, $adaptationSetId, $logger);
     $logger->test(
         "DASH-IF IOP CR Low Latency Live",
         "Section 9.X.4.5",

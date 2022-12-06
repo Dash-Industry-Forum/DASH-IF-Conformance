@@ -101,7 +101,8 @@ class ModuleDASHLowLatency extends ModuleInterface
         $adaptationSetId,
         $isLowLatency,
         $segmentAccessInfo,
-        $infoFileAdaptation
+        $infoFileAdaptation,
+        $logger
     ) {
         return include 'impl/validate9X44.php';
     }
@@ -111,12 +112,13 @@ class ModuleDASHLowLatency extends ModuleInterface
         $adaptationSetId,
         $isLowLatency,
         $segmentAccessInfo,
-        $infoFileAdaptation
+        $infoFileAdaptation,
+        $logger
     ) {
         return include 'impl/validate9X45.php';
     }
 
-    private function validate9X45Extended($adaptation_set, $adaptationSetId)
+    private function validate9X45Extended($adaptation_set, $adaptationSetId, $logger)
     {
         return include 'impl/validate9X45Extended.php';
     }
@@ -125,7 +127,8 @@ class ModuleDASHLowLatency extends ModuleInterface
         $adaptationSet,
         $adaptationSetId,
         $segmentAccessInfo,
-        $infoFileAdaptation
+        $infoFileAdaptation,
+        $logger
     ) {
         return include 'impl/validateDASHProfileCMAF.php';
     }
@@ -134,7 +137,8 @@ class ModuleDASHLowLatency extends ModuleInterface
         $adaptationSetId,
         $representationId,
         $segmentAccessRepresentation,
-        $infoFileAdaptation
+        $infoFileAdaptation,
+        $logger
     ) {
         include 'impl/validateSegmentTemplate.php';
     }
@@ -153,7 +157,8 @@ class ModuleDASHLowLatency extends ModuleInterface
         $representationId,
         $segmentAccessRepresentation,
         $infoFileAdaptation,
-        $xml
+        $xml,
+        $logger
     ) {
         include 'impl/validateSelfInitializingSegment.php';
     }
@@ -164,7 +169,8 @@ class ModuleDASHLowLatency extends ModuleInterface
         $representation,
         $representationId,
         $segmentAccessRepresentation,
-        $infoFileAdaptation
+        $infoFileAdaptation,
+        $logger
     ) {
         include 'impl/validateSegmentTimeline.php';
     }
@@ -173,7 +179,8 @@ class ModuleDASHLowLatency extends ModuleInterface
         $adaptationSet,
         $adaptationSetId,
         $representationId,
-        $infoFileAdaptation
+        $infoFileAdaptation,
+        $logger
     ) {
         include 'impl/validateTimingsWithinRepresentation.php';
     }

@@ -203,20 +203,37 @@ foreach ($representations as $representationId => $representation) {
 
 $isLowLatencyAdaptation =  (sizeof(array_unique($validRepPoints)) == 1 && $validRepPoints[0] == true);
 
+//The check below has two options, so we run both with a separate non-session-backed logger.
+//Then, depending on the validity, we merge the correct logs into the session version
+//NOTE: This does mean that if one option is valid, failing checks for the other will not get merged
+
+
+$x44Logger = new ModuleLogger('');
+$x45Logger = new ModuleLogger('');
+
 $valid9X44 = $this->validate9X44(
     $adaptationSet,
     $adaptationSetId,
     $isLowLatencyAdaptation,
     $segmentAccessInfo,
-    $infoFileAdapt
+    $infoFileAdapt,
+    $x44Logger
 );
 $valid9X45 = $this->validate9X45(
     $adaptationSet,
     $adaptationSetId,
     $isLowLatencyAdaptation,
     $segmentAccessInfo,
-    $infoFileAdapt
+    $infoFileAdapt,
+    $x45Logger
 );
+
+if ($valid9X44 || !$valid9X45){
+  $logger->merge($x44Logger);
+}
+if ($valid9X45 || !$valid9X44){
+  $logger->merge($x45Logger);
+}
 
 $logger->test(
     "DASH-IF IOP CR Low Latency Live",

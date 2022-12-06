@@ -1,6 +1,6 @@
 <?php
 
-global $session, $mpdHandler, $logger;
+global $session, $mpdHandler;
 
 $repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId);
 ///\RefactorTodo look where this file should come from

@@ -1,6 +1,6 @@
 <?php
 
-global $mpdHandler, $period_timing_info, $logger;
+global $mpdHandler, $period_timing_info;
 
 $isSegmentStarts = $infoFileAdapt[$representation_id]['isSegmentStart'];
 $presentationStarts = $infoFileAdapt[$representation_id]['PresStart'];

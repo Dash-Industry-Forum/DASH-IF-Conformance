@@ -1,6 +1,6 @@
 <?php
 
-global $mpdHandler, $logger;
+global $mpdHandler;
 
 
 $isSegmentStarts = $infoFileAdaptiation[$representationId]['isSegmentStart'];

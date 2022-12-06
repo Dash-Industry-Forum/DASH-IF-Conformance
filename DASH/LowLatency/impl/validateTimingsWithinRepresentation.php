@@ -1,6 +1,6 @@
 <?php
 
-global $session, $mpdHandler, $presentation_times, $decode_times, $logger;
+global $session, $mpdHandler, $presentation_times, $decode_times;
 
 $representations = $adaptationSet['Representation'];
 

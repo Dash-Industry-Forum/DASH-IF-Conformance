@@ -1,6 +1,5 @@
 <?php
 
-///\RefactorTodo Create Separate Logger Instance
 $this->checkSequentialSwitchingSetMediaProfile();
 $this->checkDiscontinuousSplicePoints();
 $this->checkEncryptionChangeSplicePoint();

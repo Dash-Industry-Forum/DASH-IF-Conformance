@@ -1,6 +1,6 @@
 <?php
 
-global $session, $mpdHandler, $maxSegmentDurations, $logger;
+global $session, $mpdHandler, $maxSegmentDurations;
 
 
 $representations = $adaptationSet['Representation'];

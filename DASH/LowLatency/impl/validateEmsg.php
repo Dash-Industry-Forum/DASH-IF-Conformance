@@ -4,11 +4,6 @@ global $session, $mpdHandler, $logger;
 
 $returnValue = true;
 
-///\RefactorTodo Make this work with a separate logger instance?
-
-//This entire function has only "PASS" checks, as validation is done based on the return value.
-//Every check is in essence a "FAIL" check, but there are two valid options in the outer scope.
-//Therefore, we store the combined result of all tests, and we return whether all succeeded.
 
 $repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId);
 $rep_xml = "$repDir/atomInfo.xml";
