@@ -5,7 +5,13 @@ global $mpdHandler;
 // Bullet 2
 $dashSegCmafFrag = true;
 
-$cmafDash = $this->validateDASHProfileCMAF($adaptationSet, $adaptationSetId, $segmentAccessInfo, $infoFileAdapt, $logger);
+$cmafDash = $this->validateDASHProfileCMAF(
+    $adaptationSet,
+    $adaptationSetId,
+    $segmentAccessInfo,
+    $infoFileAdapt,
+    $logger
+);
 
 $logger->test(
     "DASH-IF IOP CR Low Latency Live",
@@ -13,8 +19,10 @@ $logger->test(
     "Each Segment SHALL conform to a CMAF Fragment",
     sizeof(array_unique($cmafDash)) == 1 && $cmafDash[0] == true,
     "FAIL",
-    "All segments conform in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1),
-    "Not all segments conform in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1)
+    "All segments conform in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+    ' Adaptation ' . ($adaptationSetId + 1),
+    "Not all segments conform in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+    ' Adaptation ' . ($adaptationSetId + 1)
 );
 
 if (!(sizeof(array_unique($cmafDash)) == 1 && $cmafDash[0] == true)) {
@@ -129,10 +137,12 @@ foreach ($representations as $representationId => $representation) {
                 "The SegmentBase@availabilityTimeOffset SHALL be greater than zero",
                 $check1,
                 "FAIL",
-                "Correct time offset of $availabilityTimeOffset found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-                ' Adaptation ' . ($adaptationSetId + 1) . ' or Representation ' . ($representationId + 1),
-                "Negative or zero time offset of $availabilityTimeOffset found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-                ' Adaptation ' . ($adaptationSetId + 1) . ' or Representation ' . ($representationId + 1)
+                "Correct time offset of $availabilityTimeOffset found in Period " .
+                ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1) .
+                ' or Representation ' . ($representationId + 1),
+                "Negative or zero time offset of $availabilityTimeOffset found in Period " .
+                ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1) .
+                ' or Representation ' . ($representationId + 1)
             );
             $logger->test(
                 "DASH-IF IOP CR Low Latency Live",
@@ -141,10 +151,12 @@ foreach ($representations as $representationId => $representation) {
                 "this Representation",
                 $check2,
                 "FAIL",
-                "Conforming time offset of $availabilityTimeOffset found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-                ' Adaptation ' . ($adaptationSetId + 1) . ' or Representation ' . ($representationId + 1),
-                "Too large time offset of $availabilityTimeOffset found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-                ' Adaptation ' . ($adaptationSetId + 1) . ' or Representation ' . ($representationId + 1) .
+                "Conforming time offset of $availabilityTimeOffset found in Period " .
+                ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1) .
+                ' or Representation ' . ($representationId + 1),
+                "Too large time offset of $availabilityTimeOffset found in Period " .
+                ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1) .
+                ' or Representation ' . ($representationId + 1) .
                 ', maximum is ' . $this->maxSegmentDurations[$representationId]
             );
             $logger->test(
@@ -155,11 +167,13 @@ foreach ($representations as $representationId => $representation) {
                 "than the target latency",
                 $check3,
                 "FAIL",
-                "Conforming time offset of $availabilityTimeOffset found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-                ' Adaptation ' . ($adaptationSetId + 1) . ' or Representation ' . ($representationId + 1),
-                "Too large time offset of $availabilityTimeOffset found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-                ' Adaptation ' . ($adaptationSetId + 1) . ' or Representation ' . ($representationId + 1) .
-                ', maximum is ' . $this->maxSegmentDurations[$representationId] . ', target is ' . $target
+                "Conforming time offset of $availabilityTimeOffset found in Period " .
+                ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1) .
+                ' or Representation ' . ($representationId + 1),
+                "Too large time offset of $availabilityTimeOffset found in Period " .
+                ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1) .
+                ' or Representation ' . ($representationId + 1) . ', maximum is ' .
+                $this->maxSegmentDurations[$representationId] . ', target is ' . $target
             );
 
             ///\Correctness this check used to be different
@@ -175,8 +189,10 @@ foreach ($representations as $representationId => $representation) {
                 "The @availabilityTimeOffset SHOULD be present on Adaptation Set level",
                 $availabilityTimeOffsetOnSegmentTemplate,
                 "WARN",
-                "Present in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1),
-                "Not present in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1),
+                "Present in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
+                ($adaptationSetId + 1),
+                "Not present in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
+                ($adaptationSetId + 1),
             );
             if (!$availabilityTimeOffsetOnSegmentTemplate) {
                 foreach ($segmentAccessInfo as $segmentAccessInfoRep) {
@@ -190,10 +206,10 @@ foreach ($representations as $representationId => $representation) {
                     sizeof(array_unique($availabilityTimeOffsetRep)) == 1 &&
                     $availabilityTimeOffsetRep[0] == false,
                     "FAIL",
-                    "All and equal values found Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
-                    ($adaptationSetId + 1),
-                    "Not all or differing values found Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
-                    ($adaptationSetId + 1),
+                    "All and equal values found Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+                    ' Adaptation ' . ($adaptationSetId + 1),
+                    "Not all or differing values found Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+                    ' Adaptation ' . ($adaptationSetId + 1),
                 );
                 if (
                     !(sizeof(array_unique($availabilityTimeOffsetRep)) == 1 &&

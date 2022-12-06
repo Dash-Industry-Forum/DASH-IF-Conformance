@@ -22,9 +22,8 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
                     "Sample entries in Sequential Switching Sets Shall not change sample type at Splice points",
                     $sdType1 == $sdType2,
                     "FAIL",
-                    "Correct for Sw set $adapt between presentations $i and " . ($i+1),
-                    "Invalid for Sw set $adapt between presentations $i and " . ($i+1),
+                    "Correct for Sw set $adapt between presentations $i and " . ($i + 1),
+                    "Invalid for Sw set $adapt between presentations $i and " . ($i + 1),
                 );
     }
 }
-

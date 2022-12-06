@@ -44,8 +44,8 @@ $returnValue = $logger->test(
     "PASS",
     "One sidx box in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
     ' Representation ' . ($representationId + 1),
-    "Multiple sidx boxes in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
-    ' Representation ' . ($representationId + 1)
+    "Multiple sidx boxes in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
+    ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
 ) && $returnValue;
 
 if ($sidx_boxes->length == 0) {
@@ -63,10 +63,10 @@ $returnValue = $logger->test(
     "then sidx box SHALL be placed before any moof boxes",
     $sidxBox0->getAttribute('offset') <= $moofBox0->getAttribute('offset'),
     "PASS",
-    "sidx box before moof in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
-    ' Representation ' . ($representationId + 1),
-    "sidx box not before first moof in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
-    ' Representation ' . ($representationId + 1)
+    "sidx box before moof in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
+    ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
+    "sidx box not before first moof in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
+    ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
 ) && $returnValue;
 
 $referenceID = $sidxBox0->getAttribute('referenceID');
@@ -79,10 +79,12 @@ $returnValue = $logger->test(
     "then sidx box reference_ID SHALL be the trackID of the CMAF track",
     $referenceID == $trackID,
     "PASS",
-    "sidx box reference ($referenceId) matches track id ($trackID) in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-    ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-    "sidx box reference ($referenceId) does not match track id ($trackID) in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-    ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
+    "sidx box reference ($referenceId) matches track id ($trackID) in Period " .
+    ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
+    ' Representation ' . ($representationId + 1),
+    "sidx box reference ($referenceId) does not match track id ($trackID) in Period " .
+    ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
+    ' Representation ' . ($representationId + 1),
 ) && $returnValue;
 
 $sidxTimescale = $sidxBox0->getAttribute('timeScale');
@@ -95,11 +97,12 @@ $returnValue = $logger->test(
     "then sidx box timescale SHALL be identical to the timescale of the mdhd box of the CMAF track",
     $sidxTimescale == $mdhdTimescale,
     "PASS",
-    "sidx box timescale ($sidxTimescale) matches mdhd timescale ($mdhdTimescale) in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-    ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
+    "sidx box timescale ($sidxTimescale) matches mdhd timescale ($mdhdTimescale) in Period " .
+    ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
+    ' Representation ' . ($representationId + 1),
     "sidx box timescale ($sidxTimescale) does not match mdhd timescale ($mdhdTimescale) in Period " .
-    ($mpdHandler->getSelectedPeriod() + 1) .
-    ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
+    ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
+    ' Representation ' . ($representationId + 1),
 ) && $returnValue;
 
 $returnValue = $logger->test(
@@ -243,10 +246,12 @@ $returnValue = $logger->test(
     "then the Segment SHALL conform to the Indexed Self-Initializing Media Segment",
     strpos($xml->getElementsByTagName('ftyp')->item(0)->getAttribute('compatible_brands'), 'dash') !== false,
     "PASS",
-    "Segment conforms to Self-Initializing Media Segement for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-    ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-    "Segment does not conform to Self-Initializing Media Segement for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-    ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
+    "Segment conforms to Self-Initializing Media Segement for Period " .
+    ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
+    ' Representation ' . ($representationId + 1),
+    "Segment does not conform to Self-Initializing Media Segement for Period " .
+    ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
+    ' Representation ' . ($representationId + 1)
 ) && $returnValue;
 
 return $returnValue;

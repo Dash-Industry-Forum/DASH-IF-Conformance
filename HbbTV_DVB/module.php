@@ -36,26 +36,29 @@ class ModuleHbbTVDVB extends ModuleInterface
     {
         return $this->HbbTvEnabled || $this->DVBEnabled;
     }
-    public function isDVBEnabled(){
-      return $this->DVBEnabled;
+    public function isDVBEnabled()
+    {
+        return $this->DVBEnabled;
     }
-    public function detectFromManifest(){
-      global $mpdHandler;
-      $mpdProfiles = $mpdHandler->getDOM()->getAttribute('profiles');
-      if(strpos($mpdProfiles, 'urn:hbbtv:dash:profile:isoff-live:2012') !== FALSE){
-        $this->HbbTvEnabled = true;
-        $this->detected = true;
-      }
-      if(strpos($mpdProfiles, 'urn:dvb:dash:profile:dvb-dash:2014') !== FALSE || 
-        strpos($mpdProfiles, 'urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014')!== FALSE ||
-        strpos($mpdProfiles, 'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014') !== FALSE)
-      {
-        $this->DVBEnabled = true;
-        $this->detected = true;
-        if (!$this->DVBVersion){
-           $this->DVBVersion = "2018";
+    public function detectFromManifest()
+    {
+        global $mpdHandler;
+        $mpdProfiles = $mpdHandler->getDOM()->getAttribute('profiles');
+        if (strpos($mpdProfiles, 'urn:hbbtv:dash:profile:isoff-live:2012') !== false) {
+            $this->HbbTvEnabled = true;
+            $this->detected = true;
         }
-      }
+        if (
+            strpos($mpdProfiles, 'urn:dvb:dash:profile:dvb-dash:2014') !== false ||
+            strpos($mpdProfiles, 'urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014') !== false ||
+            strpos($mpdProfiles, 'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014') !== false
+        ) {
+            $this->DVBEnabled = true;
+            $this->detected = true;
+            if (!$this->DVBVersion) {
+                $this->DVBVersion = "2018";
+            }
+        }
     }
 
     public function setEnabled($newVal)
@@ -144,8 +147,9 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/dvbAudioChecks.php';
     }
 
-    private function mpdTimingInfo(){
-      return include 'impl/mpdTimingInfo.php';
+    private function mpdTimingInfo()
+    {
+        return include 'impl/mpdTimingInfo.php';
     }
 
     private function dvbSubtitleChecks($adaptation, $representations, $i)

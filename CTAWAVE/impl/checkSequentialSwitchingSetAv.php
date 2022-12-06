@@ -50,13 +50,14 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
                 $logger->test(
                     "WAVE Content Spec 2018Ed",
                     "Section 6.1",
-                    "For a WAVE Program with more than one CMAF Presentation, all audio and video Shall be contained in Sequential Sw Sets",
+                    "For a WAVE Program with more than one CMAF Presentation, all audio and video Shall be " .
+                    "contained in Sequential Sw Sets",
                     $remainder == 0,
-          (($earliestCompositionTime1 + $mediaTime1 + $sumSampleDur) / $timeScale1) ==
-            ($presentationTime2 / $timeScale2),
+                    (($earliestCompositionTime1 + $mediaTime1 + $sumSampleDur) / $timeScale1) ==
+                    ($presentationTime2 / $timeScale2),
                     "FAIL",
-                    "No overlap/gap found for Sw set $adaptation between presentations $i and " . ($i+1),
-                    "Overlap/gap found for Sw set $adaptation between presentations $i and " . ($i+1)
+                    "No overlap/gap found for Sw set $adaptation between presentations $i and " . ($i + 1),
+                    "Overlap/gap found for Sw set $adaptation between presentations $i and " . ($i + 1)
                 );
         }
     }

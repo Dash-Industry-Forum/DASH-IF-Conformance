@@ -8,16 +8,16 @@ class SessionHandler
 
     public function __construct()
     {
-      $this->sessionId = null;
-      $this->reset();
+        $this->sessionId = null;
+        $this->reset();
     }
 
     public function reset($id = null, $clearPrevious = true, $keepOutput = true)
     {
-      if ($clearPrevious){
-        $this->clearDirectory($keepOutput);
-      }
-      $this->setId($id);
+        if ($clearPrevious) {
+            $this->clearDirectory($keepOutput);
+        }
+        $this->setId($id);
     }
 
     public function setId($id)
@@ -34,16 +34,17 @@ class SessionHandler
         return $this->sessionId;
     }
 
-    public function clearDirectory($keepOutput = true){
-      $dir = $this->getDir();
-      $directoryContents = `ls $dir`;
-      if ($directoryContents == '' || !$keepOutput){
-        `rm -r $dir`;
-        return;
-      }
-      `mv $dir/logger.txt $dir/.logger.txt`;
-      `rm -r $dir/*`;
-      `mv $dir/.logger.txt $dir/logger.txt`;
+    public function clearDirectory($keepOutput = true)
+    {
+        $dir = $this->getDir();
+        $directoryContents = `ls $dir`;
+        if ($directoryContents == '' || !$keepOutput) {
+            `rm -r $dir`;
+            return;
+        }
+        `mv $dir/logger.txt $dir/.logger.txt`;
+        `rm -r $dir/*`;
+        `mv $dir/.logger.txt $dir/logger.txt`;
     }
 
     public function getDir()
@@ -62,9 +63,10 @@ class SessionHandler
         return $periodDir;
     }
 
-    public function getSelectedPeriodDir(){
-      global $mpdHandler;
-      return $this->getPeriodDir($mpdHandler->getSelectedPeriod());
+    public function getSelectedPeriodDir()
+    {
+        global $mpdHandler;
+        return $this->getPeriodDir($mpdHandler->getSelectedPeriod());
     }
 
     public function getAdaptationDir($period, $adaptation)
@@ -74,9 +76,10 @@ class SessionHandler
         return $adaptationDir;
     }
 
-    public function getSelectedAdaptationDir(){
-      global $mpdHandler;
-      return $this->getAdaptationDir($mpdHandler->getSelectedPeriod(), $mpdHandler->getSelectedAdaptationSet());
+    public function getSelectedAdaptationDir()
+    {
+        global $mpdHandler;
+        return $this->getAdaptationDir($mpdHandler->getSelectedPeriod(), $mpdHandler->getSelectedAdaptationSet());
     }
 
     public function getRepresentationDir($period, $adaptation, $representation)
@@ -86,9 +89,14 @@ class SessionHandler
         return $representationDir;
     }
 
-    public function getSelectedRepresentationDir(){
-      global $mpdHandler;
-      return $this->getRepresentationDir($mpdHandler->getSelectedPeriod(), $mpdHandler->getSelectedAdaptationSet(), $mpdHandler->getSelectedRepresentation());
+    public function getSelectedRepresentationDir()
+    {
+        global $mpdHandler;
+        return $this->getRepresentationDir(
+            $mpdHandler->getSelectedPeriod(),
+            $mpdHandler->getSelectedAdaptationSet(),
+            $mpdHandler->getSelectedRepresentation()
+        );
     }
 
     private function createFolderIfNotExists($folder, $type)

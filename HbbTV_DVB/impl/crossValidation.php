@@ -20,7 +20,7 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
             $xmlDom2 = DASHIF\Utility\parseDOM($files[$index2], 'atomlist');
 
             if ($xmlDom1 && $xmlDom2) {
-              if ($this->HbbTvEnabled){
+                if ($this->HbbTvEnabled) {
                     $this->crossValidationHbbTV(
                         $xmlDom1,
                         $xmlDom2,

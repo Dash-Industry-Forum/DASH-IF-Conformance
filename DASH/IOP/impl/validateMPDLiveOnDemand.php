@@ -8,7 +8,8 @@ foreach ($periods as $periodIndex => $period) {
     foreach ($adaptationSets as $adaptationSetIndex => $adaptationSet) {
         $representations = $adaptationSet['Representation'];
         foreach ($representations as $representationIndex => $representation) {
-            $representationProfiles = $mpdHandler->getProfiles()[$periodIndex][$adaptationSetIndex][$representationIndex];
+            $mpdProfiles = $mpdHandler->getProfiles();
+            $representationProfiles = $mpdProfiles[$periodIndex][$adaptationSetIndex][$representationIndex];
             if (strpos($representationProfiles, 'http://dashif.org/guidelines/dash-if-ondemand') !== false) {
                 $segmentTemplate = DASHIF\Utility\getSegmentAccess(
                     $segmentTemplate,

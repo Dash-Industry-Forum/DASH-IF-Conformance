@@ -14,9 +14,16 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function validate_segment($adaptationDirectory, $representationDirectory, $period, $adaptation_set, $representation, $segment_url, $is_subtitle_rep)
-{
-  global $sizearray;
+function validate_segment(
+    $adaptationDirectory,
+    $representationDirectory,
+    $period,
+    $adaptation_set,
+    $representation,
+    $segment_url,
+    $is_subtitle_rep
+) {
+    global $sizearray;
 
 
     $sizearray = array();
@@ -31,7 +38,13 @@ function validate_segment($adaptationDirectory, $representationDirectory, $perio
         assemble($representationDirectory, $segment_url, $sizearray);
 
         ## Create config file with the flags for segment validation
-        $config_file_loc = config_file_for_backend($period, $adaptation_set, $representation, $representationDirectory, $is_dolby);
+        $config_file_loc = config_file_for_backend(
+            $period,
+            $adaptation_set,
+            $representation,
+            $representationDirectory,
+            $is_dolby
+        );
 
         ## Run the backend
         $returncode = run_backend($config_file_loc, $representationDirectory);
@@ -97,11 +110,13 @@ function validate_segment_hls($URL_array, $CodecArray)
 
 function assemble($representationDirectory, $segment_urls, $sizearr)
 {
-  global $segment_accesses, $hls_manifest, $mpdHandler;
+    global $segment_accesses, $hls_manifest, $mpdHandler;
 
 
 
-    $index = ($segment_accesses[$mpdHandler->getSelectedAdaptationSet()][$mpdHandler->getSelectedRepresentation()][0]['initialization']) ? 0 : 1;
+    $index = ($segment_accesses[$mpdHandler->getSelectedAdaptationSet()]
+                               [$mpdHandler->getSelectedRepresentation()][0]
+                               ['initialization']) ? 0 : 1;
 
     for ($i = 0; $i < sizeof($segment_urls); $i++) {
         $fp1 = fopen("$representationDirectory/assembled.mp4", 'a+');
@@ -113,7 +128,11 @@ function assemble($representationDirectory, $segment_urls, $sizearr)
 
             fwrite($fp1, $file2); // dump it in the container file
             fclose($fp1);
-            file_put_contents("$representationDirectory/sizes.txt", $index . " " . $size . "\n", FILE_APPEND); // add size to a text file to be passed to conformance software
+            file_put_contents(
+                "$representationDirectory/sizes.txt",
+                $index . " " . $size . "\n",
+                FILE_APPEND
+            ); // add size to a text file to be passed to conformance software
 
             $index++; // iterate over all segments within the segments folder
         }
@@ -136,22 +155,49 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
     if ($returncode != 0) {
         if (filesize("$representationDirectory/stderr.txt") == 0) {
             if (!$hls_manifest) {
-                if ($adaptation_set['mimeType'] == 'application/ttml+xml' || $adaptation_set['mimeType'] == 'image/jpeg') {
-                    file_put_contents($representationDirectory . '/stderr.txt', "### error:  \n###        Failed to process Adaptation Set " . $selectedAdaptation . ', Representation ' . $selectedRepresentation . "!, as mimeType= '" . $adaptation_set['mimeType'] . "' is not supported");
-                } elseif ($representation['mimeType'] == "application/ttml+xml" || $representation['mimeType'] == "image/jpeg") {
-                    file_put_contents($representationDirectory . '/stderr.txt', "### error:  \n###        Failed to process Adaptation Set " . $selectedAdaptation . ', Representation ' . $selectedRepresentation . "!, as mimeType= '" . $representation['mimeType'] . "' is not supported");
+                if (
+                    $adaptation_set['mimeType'] == 'application/ttml+xml' ||
+                    $adaptation_set['mimeType'] == 'image/jpeg'
+                ) {
+                    file_put_contents(
+                        $representationDirectory . '/stderr.txt',
+                        "### error:  \n###        Failed to process Adaptation Set " .
+                        $selectedAdaptation . ', Representation ' . $selectedRepresentation .
+                        "!, as mimeType= '" . $adaptation_set['mimeType'] . "' is not supported"
+                    );
+                } elseif (
+                    $representation['mimeType'] == "application/ttml+xml" ||
+                    $representation['mimeType'] == "image/jpeg"
+                ) {
+                    file_put_contents(
+                        $representationDirectory . '/stderr.txt',
+                        "### error:  \n###        Failed to process Adaptation Set " .
+                        $selectedAdaptation . ', Representation ' . $selectedRepresentation .
+                        "!, as mimeType= '" . $representation['mimeType'] . "' is not supported"
+                    );
                 } else {
-                    file_put_contents($representationDirectory . '/stderr.txt', "### error:  \n###        Failed to process Adaptation Set " . $selectedAdaptation . ', Representation ' . $selectedRepresentation . '!');
+                    file_put_contents(
+                        $representationDirectory . '/stderr.txt',
+                        "### error:  \n###        Failed to process Adaptation Set "
+                        . $selectedAdaptation . ', Representation ' . $selectedRepresentation . '!'
+                    );
                 }
             } else {
               ///\TodoRefactor -- Also fix for hls
               /*
                 $tag_array = explode('_', $hls_tag);
-                $files = array_diff(scandir($session->getDir() . '/' . $tag_array[0] . '/' . $tag_array[1] . "/"), array('.', '..'));
-                if (strpos($files[2], 'webvtt') !== false || strpos($files[2], 'xml') !== false || strpos($files[2], 'html') !== false) {
-                    file_put_contents($session->getDir() . '/' . 'stderr.txt', "### error:  \n###        Failed to process " . $tag_array[0] . ' with index ' . $tag_array[1] . ', as the file type is ' . explode('.', $files[2])[1] . '!');
+              $files = array_diff(scandir($session->getDir() . '/' .
+                $tag_array[0] . '/' . $tag_array[1] . "/"), array('.', '..'));
+              if (strpos($files[2], 'webvtt') !== false || strpos($files[2], 'xml') !== false ||
+                strpos($files[2], 'html') !== false) {
+                file_put_contents($session->getDir() . '/' . 'stderr.txt',
+                  "### error:  \n###        Failed to process " .
+                  $tag_array[0] . ' with index ' . $tag_array[1] . ', as the file type is ' .
+                  explode('.', $files[2])[1] . '!');
                 } else {
-                    file_put_contents($session->getDir() . '/' . 'stderr.txt', "### error:  \n###        Failed to process " . $tag_array[0] . ' with index ' . $tag_array[1] . '!');
+                  file_put_contents($session->getDir() . '/' . 'stderr.txt',
+                    "### error:  \n###        Failed to process " .
+                    $tag_array[0] . ' with index ' . $tag_array[1] . '!');
                 }
                */
             }
@@ -219,32 +265,35 @@ function run_backend($configFile, $representationDirectory = "")
         "Atominfo for $representationDirectory missing"
     );
 
-$atomXmlString = file_get_contents("$sessionDirectory/atominfo.xml");
-$STYPBeginPos = strpos($atomXmlString, "<styp");
-if ($STYPBugPos !== false){
-  //try with newline for prettyprinted
-  $emptyCompatBrands = strpos($atomXmlString, "compatible_brands='[\n  </styp>", $STYPBeginPos);
-  if ($emptyCompatBrands === false){
-    //Also try without newline just to be sure
-    $emptyCompatBrands = strpos($atomXmlString, "compatible_brands='[</styp>", $STYPBeginPos);
-  }
-  if ($emptyCompatBrands !== false){
-    $logger->message("Fixed empty styp xml bug for period " . $mpdHandler->getSelectedPeriod() . " adaptation " . $mpdHandler->getSelectedAdaptationSet() . " representation " . $mpdHandler->getSelectedRepresentation());
-    $fixedAtom= substr_replace($atomXmlString, "]'>", $emptyCompatBrands+20, 0);
-    file_put_contents("$sessionDirectory/atominfo.xml", $fixedAtom);
-  }
-}
+    $atomXmlString = file_get_contents("$sessionDirectory/atominfo.xml");
+    $STYPBeginPos = strpos($atomXmlString, "<styp");
+    if ($STYPBugPos !== false) {
+      //try with newline for prettyprinted
+        $emptyCompatBrands = strpos($atomXmlString, "compatible_brands='[\n  </styp>", $STYPBeginPos);
+        if ($emptyCompatBrands === false) {
+        //Also try without newline just to be sure
+            $emptyCompatBrands = strpos($atomXmlString, "compatible_brands='[</styp>", $STYPBeginPos);
+        }
+        if ($emptyCompatBrands !== false) {
+            $logger->message(
+                "Fixed empty styp xml bug for period " . $mpdHandler->getSelectedPeriod() . " adaptation " .
+                $mpdHandler->getSelectedAdaptationSet() . " representation " . $mpdHandler->getSelectedRepresentation()
+            );
+            $fixedAtom = substr_replace($atomXmlString, "]'>", $emptyCompatBrands + 20, 0);
+            file_put_contents("$sessionDirectory/atominfo.xml", $fixedAtom);
+        }
+    }
 
-$xml = DASHIF\Utility\parseDOM("$sessionDirectory/atominfo.xml", 'atomlist');
-$moveAtom &= $logger->test(
-    "Health Checks",
-    "Segment Validation",
-    "AtomInfo contains valid xml",
-    $xml !== false,
-    "FAIL",
-    "Atominfo for $representationDirectory has valid xml",
-    "Atominfo for $representationDirectory has invalid xml"
-);
+    $xml = DASHIF\Utility\parseDOM("$sessionDirectory/atominfo.xml", 'atomlist');
+    $moveAtom &= $logger->test(
+        "Health Checks",
+        "Segment Validation",
+        "AtomInfo contains valid xml",
+        $xml !== false,
+        "FAIL",
+        "Atominfo for $representationDirectory has valid xml",
+        "Atominfo for $representationDirectory has invalid xml"
+    );
 
     $moveAtom &= $logger->test(
         "Health Checks",
@@ -257,15 +306,15 @@ $moveAtom &= $logger->test(
     );
 
 
-    if (!$moveAtom){
-      fwrite(STDERR, "Ignoring atomfile for $representationDirectory\n");
-      if ($representationDirectory != "") {
-          rename("$sessionDirectory/atominfo.xml", "$representationDirectory/errorAtomInfo.xml");
-      }
-    }else{
-      if ($representationDirectory != "") {
-          rename("$sessionDirectory/atominfo.xml", "$representationDirectory/atomInfo.xml");
-      }
+    if (!$moveAtom) {
+        fwrite(STDERR, "Ignoring atomfile for $representationDirectory\n");
+        if ($representationDirectory != "") {
+            rename("$sessionDirectory/atominfo.xml", "$representationDirectory/errorAtomInfo.xml");
+        }
+    } else {
+        if ($representationDirectory != "") {
+            rename("$sessionDirectory/atominfo.xml", "$representationDirectory/atomInfo.xml");
+        }
     }
 
     return $returncode;
@@ -273,7 +322,7 @@ $moveAtom &= $logger->test(
 
 function config_file_for_backend($period, $adaptation_set, $representation, $representationDirectory, $is_dolby)
 {
-  global $additional_flags, $suppressatomlevel, $hls_manifest;
+    global $additional_flags, $suppressatomlevel, $hls_manifest;
 
     if (!$hls_manifest) {
         $file = fopen("$representationDirectory/segmentValidatorConfig.txt", 'w');
@@ -301,7 +350,11 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
         */
     }
 
-    $flags = (!$hls_manifest) ? construct_flags($period, $adaptation_set, $representation) . $additional_flags : $additional_flags;
+    $flags = (!$hls_manifest) ? construct_flags(
+        $period,
+        $adaptation_set,
+        $representation
+    ) . $additional_flags : $additional_flags;
     $piece = explode(" ", $flags);
     foreach ($piece as $pie) {
         if ($pie !== "") {
@@ -322,15 +375,25 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
 
 function loadAndCheckSegmentDuration()
 {
-  global $mpdHandler;
+    global $mpdHandler;
     global $session;
 
-    $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+    $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
+                                                ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
     $timeoffset = 0;
     $timescale = 1;
-    $segmentAlignment = ($adaptation_set['segmentAlignment']) ? ($adaptation_set['segmentAlignment'] == "true") : false;
-    $subsegmentAlignment = ($adaptation_set['subsegmentAlignment']) ? ($adaptation_set['subsegmentAlignment'] == "true") : false;
-    $bitstreamSwitching = ($adaptation_set['bitstreamSwitching']) ? ($adaptation_set['bitstreamSwitching'] == "true") : false;
+    $segmentAlignment = false;
+    if ($adaptation_set['segmentAlignment']) {
+        $segmentAlignment = ($adaptation_set['segmentAlignment'] == "true");
+    }
+    $subsegmentAlignment = false;
+    if ($adaptation_set['subsegmentAlignment']) {
+        $subsegmentAlignment = ($adaptation_set['subsegmentAlignment'] == "true");
+    }
+    $bitstreamSwitching = false;
+    if ($adaptation_set['bitstreamSwitching']) {
+        $bitstreamSwitching = ($adaptation_set['bitstreamSwitching'] == "true");
+    }
 
     if ($segmentAlignment || $subsegmentAlignment || $bitstreamSwitching) {
         $leafInfo = array();
@@ -370,9 +433,14 @@ function loadAndCheckSegmentDuration()
 
         $offsetmod = (float)$timeoffset / $timescale;
         $duration = (float)$duration / $timescale;
-        if ((($adaptation_set['SegmentTemplate'] && sizeof($adaptation_set['SegmentTemplate']) > 0) || ($representation['SegmentTemplate'] && sizeof($representation['SegmentTemplate']) > 0)) && $duration != 0) {
-          $representationDirectory = $session->getSelectedRepresentationDir();
-          loadSegmentInfoFile($offsetmod, $duration, $representationDirectory);
+        if (
+            (
+              ($adaptation_set['SegmentTemplate'] && sizeof($adaptation_set['SegmentTemplate']) > 0) ||
+              ($representation['SegmentTemplate'] && sizeof($representation['SegmentTemplate']) > 0)
+            ) && $duration != 0
+        ) {
+            $representationDirectory = $session->getSelectedRepresentationDir();
+            loadSegmentInfoFile($offsetmod, $duration, $representationDirectory);
         }
     }
 }
@@ -394,7 +462,12 @@ function loadSegmentInfoFile($PresTimeOffset, $duration, $representationDirector
     $info['trackTypeInfo'] = array();
 
     for ($i = 0; $i < $info['numTracks']; $i++) {
-        fscanf($segmentInfoFile, "%lu %lu\n", $info['trackTypeInfo'][$i]['track_ID'], $info['trackTypeInfo'][$i]['componentSubType']);
+        fscanf(
+            $segmentInfoFile,
+            "%lu %lu\n",
+            $info['trackTypeInfo'][$i]['track_ID'],
+            $info['trackTypeInfo'][$i]['componentSubType']
+        );
     }
 
     for ($i = 0; $i < $info['numTracks']; $i++) {
@@ -402,7 +475,13 @@ function loadSegmentInfoFile($PresTimeOffset, $duration, $representationDirector
         $info['leafInfo'][$i] = array();
 
         for ($j = 0; $j < $info['numLeafs'][$i]; $j++) {
-            fscanf($segmentInfoFile, "%d %f %f\n", $info['leafInfo'][$i][$j]['firstInSegment'], $info['leafInfo'][$i][$j]['earliestPresentationTime'], $info['leafInfo'][$i][$j]['lastPresentationTime']);
+            fscanf(
+                $segmentInfoFile,
+                "%d %f %f\n",
+                $info['leafInfo'][$i][$j]['firstInSegment'],
+                $info['leafInfo'][$i][$j]['earliestPresentationTime'],
+                $info['leafInfo'][$i][$j]['lastPresentationTime']
+            );
         }
     }
     checkSegmentDurationWithMPD($info['leafInfo'], $PresTimeOffset, $duration, $representationDirectory);
@@ -411,7 +490,7 @@ function loadSegmentInfoFile($PresTimeOffset, $duration, $representationDirector
 
 function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representationDirectory)
 {
-  global $mpdHandler, $period_timing_info;
+    global $mpdHandler, $period_timing_info;
 
     if ($mpdHandler->getFeatures()['type'] == 'dynamic') {
         return;
@@ -432,18 +511,45 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
 
     $segmentDurMPD = $duration;
     for ($i = 0; $i < $num_segments; $i++) {
-        $segmentDur[$i] = $segmentsTime[0][$i]['lastPresentationTime'] - $segmentsTime[0][$i]['earliestPresentationTime'];
-        if (($i !== ($num_segments - 1)) && !($segmentDurMPD * 0.5 <= $segmentDur[$i]  && $segmentDur[$i] <= $segmentDurMPD * 1.5)) {
-            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1, 7.2.1: 'The maximum tolerance of segment duration shall be +/-50% of the signaled segment duration (@duration)',violated for segment " . ($i + 1) . ", with duration " . $segmentDur[$i] . " while signaled @duration is " . $segmentDurMPD . "\n");
+        $segmentDur[$i] =
+            $segmentsTime[0][$i]['lastPresentationTime'] - $segmentsTime[0][$i]['earliestPresentationTime'];
+
+        if (
+            ($i !== ($num_segments - 1)) &&
+            !($segmentDurMPD * 0.5 <= $segmentDur[$i]  && $segmentDur[$i] <= $segmentDurMPD * 1.5)
+        ) {
+            fwrite(
+                $trackErrorFile,
+                "###error- DASH ISO/IEC 23009-1, 7.2.1: 'The maximum tolerance of segment duration shall be +/-50% " .
+                "of the signaled segment duration (@duration)',violated for segment " . ($i + 1) . ", with duration " .
+                $segmentDur[$i] . " while signaled @duration is " . $segmentDurMPD . "\n"
+            );
         }
         //The lower threshold tolerance does not apply to the last segment, it can be smaller.
         if (($i == ($num_segments - 1)) && $segmentDur[$i] > $segmentDurMPD * 1.5) {
-            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1, 7.2.1: 'The maximum tolerance of segment duration shall be +/-50% of the signaled segment duration (@duration)',violated for segment " . ($i + 1) . ", with duration " . $segmentDur[$i] . " while signaled @duration is " . $segmentDurMPD . "\n");
+            fwrite(
+                $trackErrorFile,
+                "###error- DASH ISO/IEC 23009-1, 7.2.1: 'The maximum tolerance of segment duration shall be +/-50% " .
+                "of the signaled segment duration (@duration)',violated for segment " . ($i + 1) . ", with duration " .
+                $segmentDur[$i] . " while signaled @duration is " . $segmentDurMPD . "\n"
+            );
         }
 
         $MPDSegmentStartTime = $pres_start + $i * $segmentDurMPD;
-        if (!($MPDSegmentStartTime - (0.5 * $segmentDurMPD) <= $segmentsTime[0][$i]['earliestPresentationTime']  && $segmentsTime[0][$i]['earliestPresentationTime'] <= $MPDSegmentStartTime + (0.5 * $segmentDurMPD))) {
-            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1:2019, 7.2.1: 'The difference between MPD start time and presentation time shall not exceed +/-50% of value of @duration divided by the value of the @timescale attribute.',violated for segment " . ($i + 1) . ", with earliest presentation time " . $segmentsTime[0][$i]['earliestPresentationTime'] . " while signaled MPD start time is " . $MPDSegmentStartTime . " and @duration is " . $segmentDurMPD . "\n");
+        if (
+            !(
+              $MPDSegmentStartTime - (0.5 * $segmentDurMPD) <= $segmentsTime[0][$i]['earliestPresentationTime']  &&
+              $segmentsTime[0][$i]['earliestPresentationTime'] <= $MPDSegmentStartTime + (0.5 * $segmentDurMPD)
+            )
+        ) {
+            fwrite(
+                $trackErrorFile,
+                "###error- DASH ISO/IEC 23009-1:2019, 7.2.1: 'The difference between MPD start time and presentation " .
+                "time shall not exceed +/-50% of value of @duration divided by the value of the @timescale " .
+                "attribute.', violated for segment " . ($i + 1) . ", with earliest presentation time " .
+                $segmentsTime[0][$i]['earliestPresentationTime'] . " while signaled MPD start time is " .
+                $MPDSegmentStartTime . " and @duration is " . $segmentDurMPD . "\n"
+            );
         }
     }
 

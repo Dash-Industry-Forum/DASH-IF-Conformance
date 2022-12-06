@@ -1,4 +1,5 @@
 <?php
+
 global $segment_accesses, $period_timing_info, $mpdHandler;
 
 $mpd_timing = array();

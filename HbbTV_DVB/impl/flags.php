@@ -2,7 +2,8 @@
 
 global $additional_flags, $mpdHandler;
 
-$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
+                                        ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
 $representation = $adaptation['Representation'][$mpdHandler->getSelectedRepresentation()];
 
 ## General

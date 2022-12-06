@@ -209,4 +209,3 @@ $logger->test(
     "Found $this->periodCount representations",
     "Found $this->periodCount representations"
 );
-

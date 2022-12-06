@@ -12,8 +12,8 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
             $hdlr = $xml1->getElementsByTagName("hdlr")->item(0)->getAttribute("handler_type");
             if ($hdlr == "soun") {
                 $decoderSpecInfo = $xml1->getElementsByTagName("DecoderSpecificInfo")->item(0);
-                if ($decoderSpecInfo){
-                  $channels_p1 = $decoderSpecInfo->getAttribute("channelConfig");
+                if ($decoderSpecInfo) {
+                    $channels_p1 = $decoderSpecInfo->getAttribute("channelConfig");
                 }
             }
         }
@@ -23,18 +23,19 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
             $hdlr = $xml2->getElementsByTagName("hdlr")->item(0)->getAttribute("handler_type");
             if ($hdlr == "soun") {
                 $decoderSpecInfo = $xml2->getElementsByTagName("DecoderSpecificInfo")->item(0);
-                if ($decoderSpecInfo){
-                  $channels_p2 = $decoderSpecInfo->getAttribute("channelConfig");
+                if ($decoderSpecInfo) {
+                    $channels_p2 = $decoderSpecInfo->getAttribute("channelConfig");
                 }
 
                 $logger->test(
                     "WAVE Content Spec 2018Ed",
                     "Section 7.2.2",
-                    "Audio channel configuration Should allow the same stereo or multichannel config between Sequential Sw Sets at the Splice point",
+                    "Audio channel configuration Should allow the same stereo or multichannel config between " .
+                    "Sequential Sw Sets at the Splice point",
                     $channels_p1 == $channels_p2,
                     "WARN",
-                    "Valid for switching set $adapt between presentations $i and " . ($i+1),
-                    "Violated for switching set $adapt between presentations $i and " . ($i+1)
+                    "Valid for switching set $adapt between presentations $i and " . ($i + 1),
+                    "Violated for switching set $adapt between presentations $i and " . ($i + 1)
                 );
             }
         }

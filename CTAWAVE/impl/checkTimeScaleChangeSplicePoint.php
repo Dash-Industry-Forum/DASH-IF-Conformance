@@ -32,4 +32,3 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
         }
     }
 }
-

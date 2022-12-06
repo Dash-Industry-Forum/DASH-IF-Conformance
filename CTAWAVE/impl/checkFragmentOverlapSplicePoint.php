@@ -39,24 +39,23 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
                 $presTime_p2 = $earlyCompTime_p2 + $mediaTime_p2;
             }
         }
-      $logger->test(
-          "WAVE Content Spec 2018Ed",
-          "Section 7.2.2",
-          "CMAF Fragments Shall not overlap the same WAVE Program presentation time at the Splice point",
-          ($earlyCompTime_p1 + $mediaTime_p1 + $sumSampleDur) <= $presTime_p2,
-          "FAIL",
-          "No overlap found for switching set $adapt between presentations $i and " . ($i + 1),
-          "Overlap found for switching set $adapt between presentations $i and " . ($i + 1)
-      );
-      $logger->test(
-          "WAVE Content Spec 2018Ed",
-          "Section 7.2.2",
-          "CMAF Fragments Shall have gaps in WAVE Program presentation time at the Splice point",
-          ($earlyCompTime_p1 + $mediaTime_p1 + $sumSampleDur) >= $presTime_p2,
-          "FAIL",
-          "No gap found for switching set $adapt between presentations $i and " . ($i + 1),
-          "Gap found for switching set $adapt between presentations $i and " . ($i + 1)
-      );
+        $logger->test(
+            "WAVE Content Spec 2018Ed",
+            "Section 7.2.2",
+            "CMAF Fragments Shall not overlap the same WAVE Program presentation time at the Splice point",
+            ($earlyCompTime_p1 + $mediaTime_p1 + $sumSampleDur) <= $presTime_p2,
+            "FAIL",
+            "No overlap found for switching set $adapt between presentations $i and " . ($i + 1),
+            "Overlap found for switching set $adapt between presentations $i and " . ($i + 1)
+        );
+        $logger->test(
+            "WAVE Content Spec 2018Ed",
+            "Section 7.2.2",
+            "CMAF Fragments Shall have gaps in WAVE Program presentation time at the Splice point",
+            ($earlyCompTime_p1 + $mediaTime_p1 + $sumSampleDur) >= $presTime_p2,
+            "FAIL",
+            "No gap found for switching set $adapt between presentations $i and " . ($i + 1),
+            "Gap found for switching set $adapt between presentations $i and " . ($i + 1)
+        );
     }
 }
-

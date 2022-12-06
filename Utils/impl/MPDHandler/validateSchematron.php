@@ -1,6 +1,5 @@
 <?php
 
-
 global $logger;
 
 $logger->setModule("Schematron");

@@ -33,10 +33,10 @@ foreach ($representations as $representationId => $representation) {
         "smaller than the signaled target latency",
         $maxSegmentDuration < $target,
         "INFO",
-        "Maximum segment duration smaller than target for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
-        ($adaptationSetId + 1) . " Representation $representationId",
-        "Maximum segment duration not smaller than target for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
-        ($adaptationSetId + 1) . " Representation $representationId",
+        "Maximum segment duration smaller than target for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+        ' Adaptation ' . ($adaptationSetId + 1) . " Representation $representationId",
+        "Maximum segment duration not smaller than target for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+        ' Adaptation ' . ($adaptationSetId + 1) . " Representation $representationId",
     );
     if (!$durationLessThanTarget) {
         $firstOptionPoints[$representationId]--;
@@ -48,10 +48,10 @@ foreach ($representations as $representationId => $representation) {
         "smaller than half of the signaled target latency",
         $maxSegmentDuration < ($target * 0.5),
         "INFO",
-        "Maximum segment duration smaller than half of target for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
-        ($adaptationSetId + 1) . " Representation $representationId",
-        "Maximum segment duration larger than half of target for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
-        ($adaptationSetId + 1) . " Representation $representationId",
+        "Maximum segment duration smaller than half of target for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+        ' Adaptation ' . ($adaptationSetId + 1) . " Representation $representationId",
+        "Maximum segment duration larger than half of target for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+        ' Adaptation ' . ($adaptationSetId + 1) . " Representation $representationId",
     );
 }
 
@@ -199,58 +199,58 @@ foreach ($representations as $representationId => $representation) {
 for ($i = 0; $i < sizeof($representations); $i++) {
     $allRepresentationPoints[$i] = 1;
 
-if ($chunkOverlapWithinRep != '') {
-    $allRepresentationPoints[$i]--;
-    if (
-        !$logger->test(
-            "DASH-IF IOP CR Low Latency Live",
-            "Section 9.X.4.5",
-            "chunkOverlapWithinRep shall be empty",
-            $second_option['chunkOverlapWithinRep'][$i] == '',
-            "INFO",
-            "Empty in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
-            ($adaptationSetId + 1) . " Representation $i",
-            "Not empty in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
-            ($adaptationSetId + 1) . " Representation $i",
-        )
-    ) {
+    if ($chunkOverlapWithinRep != '') {
         $allRepresentationPoints[$i]--;
-    }
+        if (
+            !$logger->test(
+                "DASH-IF IOP CR Low Latency Live",
+                "Section 9.X.4.5",
+                "chunkOverlapWithinRep shall be empty",
+                $second_option['chunkOverlapWithinRep'][$i] == '',
+                "INFO",
+                "Empty in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
+                ($adaptationSetId + 1) . " Representation $i",
+                "Not empty in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
+                ($adaptationSetId + 1) . " Representation $i",
+            )
+        ) {
+            $allRepresentationPoints[$i]--;
+        }
 
-    $presentationTime1 = $presentation_times[$mpdHandler->getSelectedPeriod()][$adaptationSetId][$i];
-    $decodeTime1 = $decode_times[$mpdHandler->getSelectedPeriod()][$adaptationSetId][$i];
-    $allRepresentationCrossChecks = true;
-    for ($j = 1; $j < sizeof($representations); $j++) {
-        $presentationTime2 = $presentation_times[$mpdHandler->getSelectedPeriod()][$adaptationSetId][$j];
-        $decodeTime2 = $decode_times[$mpdHandler->getSelectedPeriod()][$adaptationSetId][$j];
+        $presentationTime1 = $presentation_times[$mpdHandler->getSelectedPeriod()][$adaptationSetId][$i];
+        $decodeTime1 = $decode_times[$mpdHandler->getSelectedPeriod()][$adaptationSetId][$i];
+        $allRepresentationCrossChecks = true;
+        for ($j = 1; $j < sizeof($representations); $j++) {
+            $presentationTime2 = $presentation_times[$mpdHandler->getSelectedPeriod()][$adaptationSetId][$j];
+            $decodeTime2 = $decode_times[$mpdHandler->getSelectedPeriod()][$adaptationSetId][$j];
 
-        $allRepresentationCrossChecks = $logger->test(
-            "DASH-IF IOP CR Low Latency Live",
-            "Section 9.X.4.5",
-            "CMAF chunks SHALL be aligned in presentation time across all Representations",
-            empty(array_diff($presentationTime1, $presentationTime2)),
-            "INFO",
-            "Presentation times aligned between representation $i and $j in Period " .
-            ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1),
-            "Presentation times not aligned between representation $i and $j in Period " .
-            ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1)
-        ) && $allRepresentationCrossChecks;
-        $allRepresentationCrossChecks = $logger->test(
-            "DASH-IF IOP CR Low Latency Live",
-            "Section 9.X.4.5",
-            "CMAF chunks SHALL be aligned in decode time across all Representations",
-            empty(array_diff($decodeTime1, $decodeTime2)),
-            "INFO",
-            "Decode times aligned between representation $i and $j in Period " .
-            ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1),
-            "Decode times not aligned between representation $i and $j in Period " .
-            ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1)
-        ) && $allRepresentationCrossChecks;
+            $allRepresentationCrossChecks = $logger->test(
+                "DASH-IF IOP CR Low Latency Live",
+                "Section 9.X.4.5",
+                "CMAF chunks SHALL be aligned in presentation time across all Representations",
+                empty(array_diff($presentationTime1, $presentationTime2)),
+                "INFO",
+                "Presentation times aligned between representation $i and $j in Period " .
+                ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1),
+                "Presentation times not aligned between representation $i and $j in Period " .
+                ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1)
+            ) && $allRepresentationCrossChecks;
+            $allRepresentationCrossChecks = $logger->test(
+                "DASH-IF IOP CR Low Latency Live",
+                "Section 9.X.4.5",
+                "CMAF chunks SHALL be aligned in decode time across all Representations",
+                empty(array_diff($decodeTime1, $decodeTime2)),
+                "INFO",
+                "Decode times aligned between representation $i and $j in Period " .
+                ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1),
+                "Decode times not aligned between representation $i and $j in Period " .
+                ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' . ($adaptationSetId + 1)
+            ) && $allRepresentationCrossChecks;
+        }
+        if (!$allRepresentationCrossChecks) {
+            $allRepresentationPoints[$i]--;
+        }
     }
-    if (!$allRepresentationCrossChecks) {
-        $allRepresentationPoints[$i]--;
-    }
-}
 }
 
 $validAllRepresentationsFound = false;

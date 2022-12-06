@@ -37,9 +37,9 @@ function process_MPD($parseSegments = false)
     ## If no error is found, then proceed with segment validation below
     $mpdHandler = new DASHIF\MPDHandler($mpd_url);
 
-    if($mpdHandler->getDOM() == null){
-      fwrite(STDERR, "Unable to parse mpd @ $mpd_url\n");
-      return;
+    if ($mpdHandler->getDOM() == null) {
+        fwrite(STDERR, "Unable to parse mpd @ $mpd_url\n");
+        return;
     }
 
     fwrite(STDERR, "Going to parse $mpd_url\n");
@@ -76,7 +76,7 @@ function process_MPD($parseSegments = false)
     //------------------------------------------------------------------------//
     ## Perform Segment Validation for each representation in each adaptation set within the current period
     if ($mpdHandler->getDom()->getElementsByTagName('SegmentList')->length !== 0) {
-      return;
+        return;
     }
     if ($mpdHandler->getFeatures()['type'] !== 'dynamic') {
         $mpdHandler->selectPeriod(0);
@@ -105,7 +105,7 @@ function process_MPD($parseSegments = false)
 
 function processAdaptationSetOfCurrentPeriod()
 {
-  global  $additional_flags;
+    global  $additional_flags;
 
     global $session, $logger;
 
@@ -132,7 +132,8 @@ function processAdaptationSetOfCurrentPeriod()
                 break;
             }
             $representation = $representations[$mpdHandler->getSelectedRepresentation()];
-            $segment_url = $segment_urls[$mpdHandler->getSelectedAdaptationSet()][$mpdHandler->getSelectedRepresentation()];
+            $segment_url = $segment_urls[$mpdHandler->getSelectedAdaptationSet()]
+                                        [$mpdHandler->getSelectedRepresentation()];
 
             $representationDirectory = $session->getSelectedRepresentationDir();
 
@@ -144,10 +145,17 @@ function processAdaptationSetOfCurrentPeriod()
                 }
             }
 
-            print_r($segment_url,true);
 
             $logger->setModule("HEALTH");
-            validate_segment($adaptationDirectory, $representationDirectory, $period, $adaptation_set, $representation, $segment_url, $is_subtitle_rep);
+            validate_segment(
+                $adaptationDirectory,
+                $representationDirectory,
+                $period,
+                $adaptation_set,
+                $representation,
+                $segment_url,
+                $is_subtitle_rep
+            );
             $logger->write();
             if ($logger->getModuleVerdict("HEALTH") == "FAIL") {
                 break;

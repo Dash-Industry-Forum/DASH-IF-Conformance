@@ -23,10 +23,12 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
             $encryptionScheme2 = getEncrytionScheme($xml2);
         }
         if ($encryptionScheme1 != $encryptionScheme2 && ($encryptionScheme1 === 0 || $encryptionScheme2 === 0)) {
-            $logger->message("Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can change " .
-              "between unencrypted/encrypted at Splice points, it is observed for Sw set " . $adaptation . " between " .
-              "CMAF Presentations " . $i . " and  " . ($i + 1) . " with enc scheme " . $encryptionScheme1 . " and " .
-              $encryptionScheme2 . " respectively");
+            $logger->message(
+                "Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can change " .
+                "between unencrypted/encrypted at Splice points, it is observed for Sw set " . $adaptation .
+                " between CMAF Presentations " . $i . " and  " . ($i + 1) . " with enc scheme " . $encryptionScheme1 .
+                " and " . $encryptionScheme2 . " respectively"
+            );
         }
     }
     if (count($encryptionSchemeAdaptation) == 0) {
@@ -49,4 +51,3 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
         " contains " . $encryptionSchemePeriod[$i] . " and " . $encryptionSchemePeriod[$i + 1] . " respectively.\n";
     );
 }
-

@@ -11,7 +11,11 @@ foreach ($representations as $representationId => $representation) {
     $inbandEventStreams = ($representation['InbandEventStream']) ?
       $representation['InbandEventStream'] : $adaptationSet['InbandEventStream'];
 
-    $rep_xml = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId) . '/atomInfo.xml';
+    $rep_xml = $session->getRepresentationDir(
+        $mpdHandler->getSelectedPeriod(),
+        $adaptationSetId,
+        $representationId
+    ) . '/atomInfo.xml';
 
     if (file_exists($rep_xml)) {
         $xml = DASHIF\Utility\parseDOM($rep_xml, 'atomlist');

@@ -98,11 +98,10 @@ if (!$hls_manifest) {
     processHLS();
 }
 
-if (!$argumentParser->getOption("silent")){
-  echo($logger->asJSON($compactOutput) . "\n");
+if (!$argumentParser->getOption("silent")) {
+    echo($logger->asJSON($compactOutput) . "\n");
 }
 
 
 global $session;
 //$session->clearDirectory();
-?>

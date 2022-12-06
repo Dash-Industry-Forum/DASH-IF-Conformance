@@ -4,7 +4,8 @@ global $session, $mpdHandler;
 
 
 
-$adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+$adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
+                                            ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
 $adaptationDirectory = $session->getSelectedAdaptationDir();
 
 $filecount = 0;

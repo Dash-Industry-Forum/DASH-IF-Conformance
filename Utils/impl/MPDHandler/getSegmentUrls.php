@@ -15,8 +15,14 @@ $adaptationSets = $period['AdaptationSet'];
 $adaptationSegmentUrls = array();
 
 foreach ($adaptationSets as $adaptationIndex => $adaptationSet) {
-    $segmentTemplateAdaptation = DASHIF\Utility\mergeSegmentAccess($period['SegmentTemplate'], $adaptationSet['SegmentTemplate']);
-    $segmentBaseAdaptation = DASHIF\Utility\mergeSegmentAccess($period['SegmentBase'], $adaptationSet['SegmentBase']);
+    $segmentTemplateAdaptation = DASHIF\Utility\mergeSegmentAccess(
+        $period['SegmentTemplate'],
+        $adaptationSet['SegmentTemplate']
+    );
+    $segmentBaseAdaptation = DASHIF\Utility\mergeSegmentAccess(
+        $period['SegmentBase'],
+        $adaptationSet['SegmentBase']
+    );
 
 
 
@@ -24,13 +30,26 @@ foreach ($adaptationSets as $adaptationIndex => $adaptationSet) {
     $segmentAccess = array();
     $segmentUrls = array();
     foreach ($representations as $representationIndex => $representation) {
-        $segmentTemplate = DASHIF\Utility\mergeSegmentAccess($segmentTemplateAdaptation, $representation['SegmentTemplate']);
-        $segmentBase = DASHIF\Utility\mergeSegmentAccess($segmentBaseAdaptation, $representation['SegmentBase']);
+        $segmentTemplate = DASHIF\Utility\mergeSegmentAccess(
+            $segmentTemplateAdaptation,
+            $representation['SegmentTemplate']
+        );
+        $segmentBase = DASHIF\Utility\mergeSegmentAccess(
+            $segmentBaseAdaptation,
+            $representation['SegmentBase']
+        );
 
         if ($segmentTemplate) {
             $segmentAccess[] = $segmentTemplate;
             $segmentInfo = $this->computeTiming($periodTimingInfo['duration'], $segmentTemplate[0], 'SegmentTemplate');
-            $segmentUrls[] = $this->computeUrls($representation, $adaptationIndex, $representationIndex, $segmentTemplate[0], $segmentInfo, $baseUrls[$adaptationIndex][$representationIndex]);
+            $segmentUrls[] = $this->computeUrls(
+                $representation,
+                $adaptationIndex,
+                $representationIndex,
+                $segmentTemplate[0],
+                $segmentInfo,
+                $baseUrls[$adaptationIndex][$representationIndex]
+            );
             continue;
         }
         if ($segmentBase) {

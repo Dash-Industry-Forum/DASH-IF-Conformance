@@ -82,7 +82,7 @@ function mpdProfilesContainsAtLeastOne($profiles)
 
 function mediaTypes()
 {
-   return include 'impl/MPDUtility/mediaTypes.php';
+    return include 'impl/MPDUtility/mediaTypes.php';
 }
 
 function recursive_generate($node, &$domDocument, &$domElement, $profile)
@@ -116,10 +116,10 @@ function nextElementSibling($node)
     return $node;
 }
 
-   function timeParsing($var)
-    {
-        return include 'impl/MPDUtility/timeParsing.php';
-    }
+function timeParsing($var)
+{
+     return include 'impl/MPDUtility/timeParsing.php';
+}
 
 
 function checkYearMonth($str)

@@ -17,7 +17,7 @@
 function loadLeafInfoFile($fileName, $PresTimeOffset)
 {
 
-  global $session;
+    global $session;
 
     $info = array();
 
@@ -34,7 +34,12 @@ function loadLeafInfoFile($fileName, $PresTimeOffset)
     $info['trackTypeInfo'] = array();
 
     for ($i = 0; $i < $info['numTracks']; $i++) {
-        fscanf($leafInfoFile, "%lu %lu\n", $info['trackTypeInfo'][$i]['track_ID'], $info['trackTypeInfo'][$i]['componentSubType']);
+        fscanf(
+            $leafInfoFile,
+            "%lu %lu\n",
+            $info['trackTypeInfo'][$i]['track_ID'],
+            $info['trackTypeInfo'][$i]['componentSubType']
+        );
     }
 
     for ($i = 0; $i < $info['numTracks']; $i++) {
@@ -42,9 +47,15 @@ function loadLeafInfoFile($fileName, $PresTimeOffset)
         $info['leafInfo'][$i] = array();
 
         for ($j = 0; $j < $info['numLeafs'][$i]; $j++) {
-            fscanf($leafInfoFile, "%d %f %f\n", $info['leafInfo'][$i][$j]['firstInSegment'], $info['leafInfo'][$i][$j]['earliestPresentationTime'], $info['leafInfo'][$i][$j]['lastPresentationTime']);
-            $info['leafInfo'][$i][$j]['earliestPresentationTime'] = $info['leafInfo'][$i][$j]['earliestPresentationTime'] - $PresTimeOffset;
-            $info['leafInfo'][$i][$j]['lastPresentationTime'] = $info['leafInfo'][$i][$j]['lastPresentationTime'] - $PresTimeOffset;
+            fscanf(
+                $leafInfoFile,
+                "%d %f %f\n",
+                $info['leafInfo'][$i][$j]['firstInSegment'],
+                $info['leafInfo'][$i][$j]['earliestPresentationTime'],
+                $info['leafInfo'][$i][$j]['lastPresentationTime']
+            );
+            $info['leafInfo'][$i][$j]['earliestPresentationTime'] -= $PresTimeOffset;
+            $info['leafInfo'][$i][$j]['lastPresentationTime'] -= $PresTimeOffset;
         }
     }
 
@@ -63,12 +74,16 @@ function checkAlignment($leafInfoA, $leafInfoB, $segmentAlignment, $subsegmentAl
         $leafInfoA['numTracks'] == $leafInfoB['numTracks'],
         "FAIL",
         "Track count equal for tracks " . $leafInfoA['id'] . " and " . $leafInfoB['id'],
-        "Track count not equal for tracks " . $leafInfoA['id'] . " and " . $leafInfoB['id'] . ($bitstreamSwitching ? ", bitstream switching not possible" : "")
+        "Track count not equal for tracks " . $leafInfoA['id'] . " and " . $leafInfoB['id'] .
+        ($bitstreamSwitching ? ", bitstream switching not possible" : "")
     );
 
     if (!$equalTrackCount) {
         return;
     }
+
+    $trackTypeInfoA = $leafInfoA['trackTypeInfo'];
+    $trackTypeInfoB = $leafInfoB['trackTypeInfo'];
 
     if ($bitstreamSwitching) {
         for ($i = 0; $i < $leafInfoA['numTracks']; $i++) {
@@ -76,8 +91,8 @@ function checkAlignment($leafInfoA, $leafInfoB, $segmentAlignment, $subsegmentAl
 
             for ($j = 0; $j < $leafInfoB['numTracks']; $j++) {
                 if (
-                    $leafInfoA['trackTypeInfo'][$i]['track_ID'] == $leafInfoB['trackTypeInfo'][$j]['track_ID'] &&
-                    $leafInfoA['trackTypeInfo'][$i]['componentSubType'] == $leafInfoB['trackTypeInfo'][$j]['componentSubType']
+                    $trackTypeInfoA[$i]['track_ID'] == $trackTypeInfoB[$j]['track_ID'] &&
+                    $trackTypeInfoA[$i]['componentSubType'] == $trackTypeInfoB[$j]['componentSubType']
                 ) {
                     $correspondingTrackFound = true;
                     break;
@@ -88,11 +103,14 @@ function checkAlignment($leafInfoA, $leafInfoB, $segmentAlignment, $subsegmentAl
             $logger->test(
                 "ISO/IEC 23009-1:2012(E)",
                 "Section 7.3.3.2",
-                "The track IDs for the same media content component are identical for each Representation in each Adaptation Set",
+                "The track IDs for the same media content component are identical for each Representation " .
+                "in each Adaptation Set",
                 $correspondingTrackFound,
                 "FAIL",
-                "Corresponding track found for representation id " . $leafInfoA['id'] . " track " . $leafInfoA['trackTypeInfo'][$i]['track_ID'] . " with type " . $leafInfoA['trackTypeInfo'][$i]['componentSubType'],
-                "No corresponding track found for representation id " . $leafInfoA['id'] . " track " . $leafInfoA['trackTypeInfo'][$i]['track_ID'] . " with type " . $leafInfoA['trackTypeInfo'][$i]['componentSubType']
+                "Corresponding track found for representation id " . $leafInfoA['id'] . " track " .
+                $trackTypeInfoA[$i]['track_ID'] . " with type " . $trackTypeInfoA[$i]['componentSubType'],
+                "No corresponding track found for representation id " . $leafInfoA['id'] . " track " .
+                $trackTypeInfoA[$i]['track_ID'] . " with type " . $trackTypeInfoA[$i]['componentSubType']
             );
         }
     }
@@ -101,6 +119,9 @@ function checkAlignment($leafInfoA, $leafInfoB, $segmentAlignment, $subsegmentAl
         return;
     }
 
+    $leafIdA = $leafInfoA['id'];
+    $leafIdB = $leafInfoB['id'];
+
     for ($i = 0; $i < $leafInfoA['numTracks']; $i++) {
         $equalLeafCount = $logger->test(
             "CrossValidation",
@@ -108,18 +129,22 @@ function checkAlignment($leafInfoA, $leafInfoB, $segmentAlignment, $subsegmentAl
             "The number of leafs between representations should be equal",
             $leafInfoA['numLeafs'] == $leafInfoB['numLeafs'],
             "FAIL",
-            "Leaf count equal for tracks " . $leafInfoA['id'] . " and " . $leafInfoB['id'],
-            "Leaf count not equal for tracks " . $leafInfoA['id'] . " and " . $leafInfoB['id']
+            "Leaf count equal for tracks $leafIdA and $leafIdB",
+            "Leaf count not equal for tracks $leafIdA and $leafIdB"
         );
 
         if (!$equalLeafCount) {
             continue;
         }
 
+        $leafAInfo = $leafInfoA['leafInfo'];
+        $leafBInfo = $leafInfoB['leafInfo'];
+
         for ($j = 0; $j < ($leafInfoA['numLeafs'][$i] - 1); $j++) {
-            if ($subsegmentAlignment || ($leafInfoA['leafInfo'][$i][$j + 1]['firstInSegment'] > 0)) {
-                $overlapLeafA = $leafInfoA['leafInfo'][$i][$j + 1]['earliestPresentationTime'] <= $leafInfoB['leafInfo'][$i][$j]['lastPresentationTime'];
-                $isSegmentLeafA = $leafInfoA['leafInfo'][$i][$j + 1]['firstInSegment'] > 0;
+            if ($subsegmentAlignment || ($leafAInfo[$i][$j + 1]['firstInSegment'] > 0)) {
+                $overlapLeafA = $leafAInfo[$i][$j + 1]['earliestPresentationTime'] <=
+                                $leafBInfo[$i][$j]['lastPresentationTime'];
+                $isSegmentLeafA = $leafAInfo[$i][$j + 1]['firstInSegment'] > 0;
 
                 $logger->test(
                     "Cross validation",
@@ -127,13 +152,17 @@ function checkAlignment($leafInfoA, $leafInfoB, $segmentAlignment, $subsegmentAl
                     "Leafs should not overlap",
                     !$overlapLeafA,
                     "FAIL",
-                    "EPT for Leaf number " . $j + 2 . " in representation " . $leafInfoA['id'] . " is > the latest presentation time for corresponding leaf in representation " . $leafInfoB['id'],
-                    "Overlapping " . ($isSegmentLeafA ? "segment" : "subsegment") . ": EPT for Leaf number " . $j + 2 . " in representation " . $leafInfoA['id'] . " is <= the latest presentation time for corresponding leaf in representation " . $leafInfoB['id']
+                    "EPT for Leaf number " . $j + 2 . " in representation $leafIdA is > the latest presentation " .
+                    "time for corresponding leaf in representation $leafIdB",
+                    "Overlapping " . ($isSegmentLeafA ? "segment" : "subsegment") . ": EPT for Leaf number " .
+                    $j + 2 . " in representation $leafIdA is <= the latest presentation time for corresponding " .
+                    "leaf in representation i$leafIdB"
                 );
 
 
-                $overlapLeafB = $leafInfoB['leafInfo'][$i][$j + 1]['earliestPresentationTime'] <= $leafInfoA['leafInfo'][$i][$j]['lastPresentationTime'];
-                $isSegmentLeafB = $leafInfoA['leafInfo'][$i][$j + 1]['firstInSegment'] > 0;
+                $overlapLeafB = $leafBInfo[$i][$j + 1]['earliestPresentationTime'] <=
+                                $leafAInfo[$i][$j]['lastPresentationTime'];
+                $isSegmentLeafB = $leafBInfo[$i][$j + 1]['firstInSegment'] > 0;
 
                 $logger->test(
                     "Cross validation",
@@ -141,8 +170,11 @@ function checkAlignment($leafInfoA, $leafInfoB, $segmentAlignment, $subsegmentAl
                     "Leafs should not overlap",
                     !$overlapLeafB,
                     "FAIL",
-                    "EPT for Leaf number " . $j + 2 . " in representation " . $leafInfoB['id'] . " is > the latest presentation time for corresponding leaf in representation " . $leafInfoA['id'],
-                    "Overlapping " . ($isSegmentLeafB ? "segment" : "subsegment") . ": EPT for Leaf number " . $j + 2 . " in representation " . $leafInfoB['id'] . " is <= the latest presentation time for corresponding leaf in representation " . $leafInfoA['id']
+                    "EPT for Leaf number " . $j + 2 . " in representation $leafIdB is > the latest presentation " .
+                    "time for corresponding leaf in representation $leafIdA",
+                    "Overlapping " . ($isSegmentLeafB ? "segment" : "subsegment") . ": EPT for Leaf number " .
+                    $j + 2 . " in representation $leafIdB is <= the latest presentation time for corresponding " .
+                    "leaf in representation $leafIdA"
                 );
             }
         }
@@ -153,15 +185,25 @@ function crossRepresentationProcess()
 {
     global $mpdHandler, $session;
 
-    $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+    $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
+                                                ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
     $timeoffset = 0;
     $timescale = 1;
 
     $adaptationDir = $session->getSelectedAdaptationDir();
 
-    $segmentAlignment = ($adaptation_set['segmentAlignment']) ? ($adaptation_set['segmentAlignment'] == "true") : false;
-    $subsegmentAlignment = ($adaptation_set['subsegmentAlignment']) ? ($adaptation_set['subsegmentAlignment'] == "true") : false;
-    $bitstreamSwitching = ($adaptation_set['bitstreamSwitching']) ? ($adaptation_set['bitstreamSwitching']  == "true") : false;
+    $segmentAlignment = false;
+    if ($adaptation_set['segmentAlignment']) {
+        $segmentAlignment = ($adaptation_set['segmentAlignment'] == "true");
+    }
+    $subsegmentAlignment = false;
+    if ($adaptation_set['subsegmentAlignment']) {
+        $subsegmentAlignment = ($adaptation_set['subsegmentAlignment'] == "true");
+    }
+    $bitstreamSwitching = false;
+    if ($adaptation_set['bitstreamSwitching']) {
+        $bitstreamSwitching = ($adaptation_set['bitstreamSwitching']  == "true");
+    }
 
     if ($segmentAlignment || $subsegmentAlignment || $bitstreamSwitching) {
         $leafInfo = array();
@@ -194,14 +236,24 @@ function crossRepresentationProcess()
 
             $offsetmod = $timeoffset / $timescale;
 
-            $representationDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $mpdHandler->getSelectedAdaptationSet(), $j);
+            $representationDir = $session->getRepresentationDir(
+                $mpdHandler->getSelectedPeriod(),
+                $mpdHandler->getSelectedAdaptationSet(),
+                $j
+            );
             $leafInfo[$j] = loadLeafInfoFile($representationDir . "/infofile.txt", $offsetmod);
             $leafInfo[$j]['id'] = $representation['id'];
         }
 
         for ($j = 0; $j < sizeof($representations) - 1; $j++) {
             for ($k = $j + 1; $k < sizeof($representations); $k++) {
-                checkAlignment($leafInfo[$j], $leafInfo[$k], $segmentAlignment, $subsegmentAlignment, $bitstreamSwitching);
+                checkAlignment(
+                    $leafInfo[$j],
+                    $leafInfo[$k],
+                    $segmentAlignment,
+                    $subsegmentAlignment,
+                    $bitstreamSwitching
+                );
             }
         }
     }

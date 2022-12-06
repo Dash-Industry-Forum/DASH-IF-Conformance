@@ -19,7 +19,7 @@ if ($this->DVBEnabled) {
     }
 }
 
-if ($this->HbbTvEnabled){
+if ($this->HbbTvEnabled) {
     if (!in_array('urn:hbbtv:dash:profile:isoff-live:2012', $mpdProfilesList)) {
         $mpdProfilesList[] = 'urn:hbbtv:dash:profile:isoff-live:2012';
     }

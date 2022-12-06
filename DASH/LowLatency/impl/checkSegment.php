@@ -2,7 +2,11 @@
 
 global $session, $mpdHandler;
 
-$repXml = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId) . '/atomInfo.xml';
+$repXml = $session->getRepresentationDir(
+    $mpdHandler->getSelectedPeriod(),
+    $adaptationSetId,
+    $representationId
+) . '/atomInfo.xml';
 
 if (!file_exists($repXml)) {
     return null;

@@ -43,7 +43,9 @@ if ($type != 'dynamic') {
                 $EPT[] = $startTime;
             }
 
-            $cumulativeSubsegmentDuration += (($trunBoxes->item($j)->getAttribute('cummulatedSampleDuration')) / $timescale);
+            $cumulativeSubsegmentDuration +=
+              ($trunBoxes->item($j)->getAttribute('cummulatedSampleDuration')) / $timescale;
+
             $subsegment_signaling[$sidxIndex] = $referenceCount - 1;
             if ($subsegment_signaling[$sidxIndex] == 0) {
                 $sidxIndex++;

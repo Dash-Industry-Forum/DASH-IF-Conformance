@@ -4,7 +4,7 @@ namespace DASHIF;
 
 class ModuleDASH extends ModuleInterface
 {
-  public $useLatestXSD;
+    public $useLatestXSD;
 
     public function __construct()
     {

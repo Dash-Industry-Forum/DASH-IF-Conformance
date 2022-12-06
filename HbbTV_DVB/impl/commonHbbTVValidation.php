@@ -2,7 +2,8 @@
 
 global $session, $mpdHandler, $logger;
 
-$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
+                                        ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
 $representation = $adaptation['Representation'][$mpdHandler->getSelectedRepresentation()];
 
 ## Check on the support of the provided codec
@@ -184,9 +185,9 @@ if ($hdlrType == 'vide') {
     $soundSampleDescription = $xmlRepresentation->getElementsByTagName('soundSampleDescriptiondescription');
     $sdType = null;
     $samplingRate = null;
-    if ($soundSampleDescription->item(0)){
-     $sdType = $soundSampleDescription->item(0)->getAttribute('sdType');
-      $samplingRate = $soundSampleDescription->item(0)->getAttribute('sampleRate');
+    if ($soundSampleDescription->item(0)) {
+        $sdType = $soundSampleDescription->item(0)->getAttribute('sdType');
+        $samplingRate = $soundSampleDescription->item(0)->getAttribute('sampleRate');
     }
     $audioDecoderSpecificInfo = $xmlRepresentation->getElementsByTagName('DecoderSpecificInfo');
     if ($audioDecoderSpecificInfo->length > 0) {

@@ -61,13 +61,13 @@ if (empty($subsegmentSignaling)) {
     }
 }
 
-if (!$this->hasJPGraph || !$this->hasJPBarGraph){
-  return;
+if (!$this->hasJPGraph || !$this->hasJPBarGraph) {
+    return;
 }
 
 
-if (!$bitrateInfo->len){
-  $bitrateInfo[] = 0;
+if (!$bitrateInfo->len) {
+    $bitrateInfo[] = 0;
 }
 
 $location = $session->getSelectedRepresentationDir() . '/bitrateReport.png';

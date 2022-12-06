@@ -59,8 +59,10 @@ foreach ($representations as $representationId => $representation) {
         $availabilityStartTime = $mpdHandler->getFeatures()['availabilityStartTime'];
         if ($availabilityStartTime != null) {
             if (
-                (DASHIF\Utility\timeParsing($availabilityStartTime) - DASHIF\Utility\timeParsing($producerReferenceTime['wallClockTime'])) !=
-                (int) ($producerReferenceTime['presentationTime'])
+                (
+                  DASHIF\Utility\timeParsing($availabilityStartTime) -
+                  DASHIF\Utility\timeParsing($producerReferenceTime['wallClockTime'])
+                ) != (int) ($producerReferenceTime['presentationTime'])
             ) {
                 continue;
             }
@@ -175,10 +177,10 @@ foreach ($representations as $representationId => $representation) {
                     "is used, the @value SHALL be set to 1",
                     $inbandEventStream['value'] == 1,
                     "WARN",
-                    "Valid inband Event Stream found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-                    ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1),
-                    "Valid inband event stream not found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-                    ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
+                    "Valid inband Event Stream found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+                    ' Adaptation Set ' . ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1),
+                    "Valid inband event stream not found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . i
+                    ' Adaptation Set ' . ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
                 );
                 if ($inbandEventStream['value'] == '1') {
                     $validInbandEventStreamPresent = true;
@@ -228,11 +230,11 @@ $valid9X45 = $this->validate9X45(
     $x45Logger
 );
 
-if ($valid9X44 || !$valid9X45){
-  $logger->merge($x44Logger);
+if ($valid9X44 || !$valid9X45) {
+    $logger->merge($x44Logger);
 }
-if ($valid9X45 || !$valid9X44){
-  $logger->merge($x45Logger);
+if ($valid9X45 || !$valid9X44) {
+    $logger->merge($x45Logger);
 }
 
 $logger->test(

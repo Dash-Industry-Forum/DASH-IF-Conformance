@@ -4,7 +4,6 @@ namespace DASHIF;
 
 class MPDHandler
 {
-
     private $url;
     private $mpd;
     private $dom;
@@ -84,20 +83,24 @@ class MPDHandler
         return $this->selectedRepresentation;
     }
 
-    public function getSchematronOutput(){
-      return $this->schematronOutput;
+    public function getSchematronOutput()
+    {
+        return $this->schematronOutput;
     }
 
-    private function runSchematron(){
-      include 'impl/MPDHandler/runSchematron.php';
+    private function runSchematron()
+    {
+        include 'impl/MPDHandler/runSchematron.php';
     }
 
-    private function validateSchematron(){
-      include 'impl/MPDHandler/validateSchematron.php';
+    private function validateSchematron()
+    {
+        include 'impl/MPDHandler/validateSchematron.php';
     }
 
-    private function findOrDownloadSchema(){
-      include 'impl/MPDHandler/findOrDownloadSchema.php';
+    private function findOrDownloadSchema()
+    {
+        include 'impl/MPDHandler/findOrDownloadSchema.php';
     }
 
     private function extractProfiles()
@@ -136,19 +139,32 @@ class MPDHandler
         return include 'impl/MPDHandler/getSegmentUrls.php';
     }
 
-    private function computeTiming($presentationDuration, $segmentAccess, $segmentAccessType)
-    {
+    private function computeTiming(
+        $presentationDuration,
+        $segmentAccess,
+        $segmentAccessType
+    ) {
         return include 'impl/MPDHandler/computeTiming.php';
     }
 
-    private function computeDynamicIntervals($adapatationSetId, $segmentAccess, $segmentTimings, $segmentCount)
-    {
+    private function computeDynamicIntervals(
+        $adapatationSetId,
+        $segmentAccess,
+        $segmentTimings,
+        $segmentCount
+    ) {
         return include 'impl/MPDHandler/computeDynamicIntervals.php';
     }
 
 
-    private function computeUrls($representation, $adaptationSetId, $representationId, $segmentAccess, $segmentInfo, $baseUrl)
-    {
+    private function computeUrls(
+        $representation,
+        $adaptationSetId,
+        $representationId,
+        $segmentAccess,
+        $segmentInfo,
+        $baseUrl
+    ) {
         return include 'impl/MPDHandler/computeUrls.php';
     }
 
@@ -157,12 +173,14 @@ class MPDHandler
         include 'impl/MPDHandler/load.php';
     }
 
-    public function getUrl(){
-      return $this->url;
+    public function getUrl()
+    {
+        return $this->url;
     }
 
-    public function getMPD(){
-      return $this->mpd;
+    public function getMPD()
+    {
+        return $this->mpd;
     }
 
 
@@ -171,8 +189,9 @@ class MPDHandler
         return $this->dom;
     }
 
-    public function getResolved(){
-      return $this->resolved;
+    public function getResolved()
+    {
+        return $this->resolved;
     }
 
     public function getFeatures()
@@ -185,11 +204,13 @@ class MPDHandler
         return $this->profiles;
     }
 
-    public function getAllPeriodFeatures(){
-      return $this->features['Period'];
+    public function getAllPeriodFeatures()
+    {
+        return $this->features['Period'];
     }
 
-    public function getCurrentPeriodFeatures(){
-      return $this->features['Period'][$this->selectedPeriod];
+    public function getCurrentPeriodFeatures()
+    {
+        return $this->features['Period'][$this->selectedPeriod];
     }
 }

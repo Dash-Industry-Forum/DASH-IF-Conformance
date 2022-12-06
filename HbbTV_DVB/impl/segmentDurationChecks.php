@@ -4,15 +4,16 @@ global $mpdHandler, $session, $logger;
 
 global $segment_duration_array;
 
-if (!$this->hasJPGraph || !$this->hasJPBarGraph){
-  return;
+if (!$this->hasJPGraph || !$this->hasJPBarGraph) {
+    return;
 }
 
 $period = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()];
 $adaptationSet = $period['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
 $representation = $adaptationSet['Representation'][$mpdHandler->getSelectedRepresentation()];
 $adaptationSetId = $mpdHandler->getSelectedAdaptationSet() + 1;
-$representationId = ($representation['id'] != null) ? $representation['id'] : $mpdHandler->getSelectedRepresentation() + 1;
+$representationId = ($representation['id'] != null) ?
+  $representation['id'] : $mpdHandler->getSelectedRepresentation() + 1;
 
 //only if there is a segment template in the representation get the timescale and duration
 if (sizeof($representation['SegmentTemplate']) != 0) {
@@ -135,21 +136,21 @@ $durationArrayString = implode(',', $segment_duration_array);
 
 
 
-if($this->hasJPGraph && $this->hasJPBarGraph){
-  $segmentDuration = $segment_duration_array;
-  if (!$segmentDuration->len){
-    $segmentDuration[] = 0;
-  }
-  $location = "$repDir/segmentDurations.png";
+if ($this->hasJPGraph && $this->hasJPBarGraph) {
+    $segmentDuration = $segment_duration_array;
+    if (!$segmentDuration->len) {
+        $segmentDuration[] = 0;
+    }
+    $location = "$repDir/segmentDurations.png";
 
-  $graph = new Graph();
-  $graph->title->set("Segment duration report");
-  $graph->SetScale("textlin");
+    $graph = new Graph();
+    $graph->title->set("Segment duration report");
+    $graph->SetScale("textlin");
 
-  $p1 = new BarPlot($segmentDuration);
-  $graph->Add($p1);
+    $p1 = new BarPlot($segmentDuration);
+    $graph->Add($p1);
 
-  $graph->Stroke($location);
+    $graph->Stroke($location);
 }
 
 

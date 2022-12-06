@@ -24,12 +24,15 @@ $cmaf_cmfc = $return_array[0];
 $cmaf_cmf2 = $return_array[1];
 
 # Store media type for selection set checks later
-if($xml->getElementsByTagName('hdlr')->item(0)){
-  $mediaType = $xml->getElementsByTagName('hdlr')->item(0)->getAttribute('handler_type');
-  $this->mediaTypes[$mpdHandler->getSelectedPeriod()][$mpdHandler->getSelectedAdaptationSet()][$mpdHandler->getSelectedRepresentation()] = $mediaType;
+if ($xml->getElementsByTagName('hdlr')->item(0)) {
+    $mediaType = $xml->getElementsByTagName('hdlr')->item(0)->getAttribute('handler_type');
+    $this->mediaTypes[$mpdHandler->getSelectedPeriod()]
+                     [$mpdHandler->getSelectedAdaptationSet()]
+                     [$mpdHandler->getSelectedRepresentation()] = $mediaType;
 }
 
-$adaptationSet = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+$adaptationSet = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
+                                           ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
 
 $errorInTrack = 0;
 $id = $adaptationSet['Representation'][$mpdHandler->getSelectedAdaptationSet()]['id'];
@@ -43,7 +46,9 @@ $tfdtBoxes = $xml->getElementsByTagName('tfdt');
 $adaptationMimeType = $adaptationSet['mimeType'];
 $representationMimeType = $adaptationSet['Representation'][$mpdHandler->getSelectedAdaptationSet()]['mimeType'];
 if (strpos($representationMimeType, 'video') !== false || strpos($adaptationMimeType, 'video') !== false) {
-    $currentProfile = $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()][$mpdHandler->getSelectedAdaptationSet()][$mpdHandler->getSelectedRepresentation()];
+    $currentProfile = $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()]
+                                                [$mpdHandler->getSelectedAdaptationSet()]
+                                                [$mpdHandler->getSelectedRepresentation()];
     if (strpos($currentProfile, 'urn:mpeg:dash:profile:isoff-live:2011') !== false) {
         for ($j = 0; $j < $moofBoxesCount; $j++) {
             $trunVersion = $trunBoxes->item($j)->getAttribute('version');
@@ -164,8 +169,8 @@ for ($j = 0; $j < $moofBoxesCount; $j++) {
         "Representation $id, chunk $j not valid"
     );
 }
-if ($mdatFile !== null){
-  fclose($mdatFile);
+if ($mdatFile !== null) {
+    fclose($mdatFile);
 }
 
 $logger->test(
@@ -411,19 +416,23 @@ if ($hdlrType == 'soun') {
 }
 
 $dash264 = strpos(
-    $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()][$mpdHandler->getSelectedAdaptationSet()][$mpdHandler->getSelectedRepresentation()],
+    $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()]
+                              [$mpdHandler->getSelectedAdaptationSet()]
+                              [$mpdHandler->getSelectedRepresentation()],
     "http://dashif.org/guidelines/dash264"
 ) !== false;
 
 $contentProtectionLength = 0;
-if($adaptationSet['ContentProtection']){
-  $contentProtectionLength = sizeof($adaptationSet['ContentProtection']);
-}else if (
-$adaptationSet['Representation'] &&
-$adaptationSet['Representation'][$mpdHandler->getSelectedRepresentation()] &&
-$adaptationSet['Representation'][$mpdHandler->getSelectedRepresentation()]['ContentProtection']
-){
-  $contentProtectionLength = sizeof($adaptationSet['Representation'][$mpdHandler->getSelectedRepresentation()]['ContentProtection']);
+if ($adaptationSet['ContentProtection']) {
+    $contentProtectionLength = sizeof($adaptationSet['ContentProtection']);
+} elseif (
+    $adaptationSet['Representation'] &&
+    $adaptationSet['Representation'][$mpdHandler->getSelectedRepresentation()] &&
+    $adaptationSet['Representation'][$mpdHandler->getSelectedRepresentation()]['ContentProtection']
+) {
+    $contentProtectionLength = sizeof(
+        $adaptationSet['Representation'][$mpdHandler->getSelectedRepresentation()]['ContentProtection']
+    );
 }
 
 

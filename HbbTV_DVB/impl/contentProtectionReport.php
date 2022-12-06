@@ -159,8 +159,12 @@ foreach ($mpdHandler->getDom()->getElementsByTagName('AdaptationSet') as $adapta
 
 
         //first rep of the adapt set will have the same pssh as the rest
-        $xmlFilePath = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationIndex, $representationIndex) .
-          '/atomInfo.xml';
+        $xmlFilePath = $session->getRepresentationDir(
+            $mpdHandler->getSelectedPeriod(),
+            $adaptationIndex,
+            $representationIndex
+        ) . '/atomInfo.xml';
+
         $abs = DASHIF\Utility\parseDOM($xmlFilePath, 'atomlist'); // load mpd from url
 
         if (!$abs) {

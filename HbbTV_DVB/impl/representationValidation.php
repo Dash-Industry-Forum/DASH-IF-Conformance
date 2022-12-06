@@ -9,10 +9,12 @@ $errorFilePath = "$repDir/stderr.txt";
 $xmlRepresentation = DASHIF\Utility\parseDOM("$repDir/atomInfo.xml", 'atomlist');
 if ($xmlRepresentation) {
     if ($this->DVBEnabled) {
-        $mediaTypes = DASHIF\Utility\mediaTypes($mpdHandler->getDom()->getElementsByTagName('Period')->item($mpdHandler->getSelectedPeriod()));
+        $mediaTypes = DASHIF\Utility\mediaTypes(
+            $mpdHandler->getDom()->getElementsByTagName('Period')->item($mpdHandler->getSelectedPeriod())
+        );
         $this->commonDVBValidation($xmlRepresentation, $mediaTypes);
     }
-    if ($this->HbbTvEnabled){
+    if ($this->HbbTvEnabled) {
         $this->commonHbbTVValidation($xmlRepresentation);
     }
 

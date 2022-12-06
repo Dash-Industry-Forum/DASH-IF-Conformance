@@ -3,7 +3,8 @@
 global $mpdHandler, $session;
 
 $subtitleRepresentation = false;
-$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
+                                        ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
 $representation = $adaptation['Representation'][$mpdHandler->getSelectedRepresentation()];
 
 if (

@@ -11,7 +11,11 @@ foreach ($representations as $representationId => $representation) {
     $targetExceeds50Segment = false;
     $targetExceeds30Segment = false;
 
-    $rep_xml = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId) . '/atomInfo.xml';
+    $rep_xml = $session->getRepresentationDir(
+        $mpdHandler->getSelectedPeriod(),
+        $adaptationSetId,
+        $representationId
+    ) . '/atomInfo.xml';
 
     if (!file_exists($rep_xml)) {
         continue;
@@ -96,8 +100,8 @@ foreach ($representations as $representationId => $representation) {
                 "WARN",
                 "Exactly 1 \"moof\" found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
                 ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-                "Zero or more than 1 \"moof\" found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-                ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
+                "Zero or more than 1 \"moof\" found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+                ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
             );
 
             if ($moofsInSegments[$i] > 1) {
@@ -111,8 +115,8 @@ foreach ($representations as $representationId => $representation) {
                 "PASS",
                 "\"smds\" found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
                 ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-                "\"smds\" not found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-                ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
+                "\"smds\" not found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+                ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
             );
             if (!$isSMDSInSegment) {
                 continue;
@@ -125,10 +129,10 @@ foreach ($representations as $representationId => $representation) {
                 "If Segments include only a single 'moof', then Segment MAY carry a 'smds' brand",
                 $isSMDSInSegmentProfiles[$i],
                 "FAIL",
-                "Corresponding segmentProfile found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-                ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-                "Corresponding segmentProfile not found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-                ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
+                "Corresponding segmentProfile found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+                ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
+                "Corresponding segmentProfile not found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+                ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
             );
             if (!$isSMDSInSegmentProfiles[$i]) {
                 $lowLatencySegmentPoints[$representationId]--;
@@ -159,8 +163,8 @@ foreach ($representations as $representationId => $representation) {
         "FAIL",
         "Segment within 50% boundary in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-        "Segment not within 50% boundary found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-        ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
+        "Segment not within 50% boundary found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+        ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
     );
     if ($targetExceeds50Segment) {
         $lowLatencySegmentPoints[$representationId]--;
@@ -173,8 +177,8 @@ foreach ($representations as $representationId => $representation) {
         "FAIL",
         "Segment within 30% boundary in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-        "Segment not within 30% boundary found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-        ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
+        "Segment not within 30% boundary found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+        ' Adaptation Set ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
     );
 }
 

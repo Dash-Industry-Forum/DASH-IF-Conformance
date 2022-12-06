@@ -26,18 +26,17 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
                   ($framerate_p1 % $framerate_p2) :
                   ($framerate_p2 % $framerate_p1));
 
-                
+
                 $logger->test(
                     "WAVE Content Spec 2018Ed",
                     "Section 7.2.2",
                     "Frame rate Should be the same between Sequential Sw Sets at the Splice point",
                     $remainder == 0,
                     "WARN",
-                    "Correct for Sw set $adapt between presentations $i and " . ($i+1),
-                    "Invalid for Sw set $adapt between presentations $i and " . ($i+1),
+                    "Correct for Sw set $adapt between presentations $i and " . ($i + 1),
+                    "Invalid for Sw set $adapt between presentations $i and " . ($i + 1),
                 );
             }
         }
     }
 }
-

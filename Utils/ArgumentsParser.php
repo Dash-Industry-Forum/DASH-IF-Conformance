@@ -86,36 +86,37 @@ class ArgumentsParser
         return null;
     }
 
-    public function helpAPI(){
-      $helpObject = array(
-        description => "API Help for the DASH IF Conformance checker. All options can be passed in as either GET or POST parameters",
+    public function helpAPI()
+    {
+        $helpObject = array(
+          description => "API Help for the DASH IF Conformance checker. " .
+                         "All options can be passed in as either GET or POST parameters",
         options => array(
           url => "An url-encoded url to a DASH Manifest"
         )
-      );
+        );
         foreach ($this->allOptions as $option) {
-          $helpObject['options'][$option->long] = $option->desc;
+            $helpObject['options'][$option->long] = $option->desc;
         }
 
-      return \json_encode($helpObject);
-
+        return \json_encode($helpObject);
     }
 
     public function help()
     {
-       
-      if (http_response_code() !== FALSE){
-        return $this->helpAPI();
-      }
+
+        if (http_response_code() !== false) {
+            return $this->helpAPI();
+        }
 
         global $argv;
         $helptext = "Usage: " . $argv[0] . " [options] URL\n";
         foreach ($this->allOptions as $option) {
             $helptext .= "  ";
-            if ($option->short != ""){
-              $helptext .= "-" . $option->short[0] . ", ";
-            }else{
-              $helptext .= "    ";
+            if ($option->short != "") {
+                $helptext .= "-" . $option->short[0] . ", ";
+            } else {
+                $helptext .= "    ";
             }
             $helptext .= "--" . $option->long;
             $helptext .= "\t\t" . $option->desc;

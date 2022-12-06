@@ -33,7 +33,8 @@ class ModuleInterface
     {
     }
 
-    public function detectFromManifest(){
+    public function detectFromManifest()
+    {
     }
 
 

@@ -7,7 +7,10 @@ $adaptationCount = sizeof($MediaProfDatabase[0]);
 for ($i = 0; $i < ($periodCount - 1); $i++) {
     for ($adaptation = 0; $adaptation < $adaptationCount; $adaptation++) {
         $representationDirectory = $session->getRepresentationDir($i, $adaptation, 0);
-        $xml1 = DASHIF\Utility\parseDOM($session->getRepresentationDir($i, $adaptation, 0) + "/atomInfo.xml", 'atomlist');
+        $xml1 = DASHIF\Utility\parseDOM(
+            $session->getRepresentationDir($i, $adaptation, 0) + "/atomInfo.xml",
+            'atomlist'
+        );
 
         if ($xml1) {
             $moofCount1 = $xml1->getElementsByTagName("moof")->length;
@@ -20,7 +23,10 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
                 $timeScale1 = $mdhd->getAttribute("timescale");
             }
         }
-        $xml2 = DASHIF\Utility\parseDOM($session->getRepresentationDir($i + 1, $adaptation, 0) + "/atomInfo.xml", 'atomlist');
+        $xml2 = DASHIF\Utility\parseDOM(
+            $session->getRepresentationDir($i + 1, $adaptation, 0) + "/atomInfo.xml",
+            'atomlist'
+        );
         if ($xml2) {
             $moofCount2 = $xml2->getElementsByTagName("moof")->length;
             if ($moofCount2 > 0) {
@@ -33,12 +39,13 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
                 ($baseMediaDecodeTime_p2 / $timeScale2) !=
                 (($baseMediaDecodeTime1 + $cumulativeDuration1) / $timeScale1)
             ) {
-          $logger->message(
-                "Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can " .
-                "be discontinuous, and it is observed for Sw set " . $adaptation . " between CMAF Presentations " .
-                $i . " and  " . ($i + 1) . " with baseMediaDecodeTime- " .
-                (($baseMediaDecodeTime1 + $cumulativeDuration1) / $timeScale1) . " and " .
-                ($baseMediaDecodeTime_p2 / $timeScale2) . " respectively");
+                $logger->message(
+                    "Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can " .
+                    "be discontinuous, and it is observed for Sw set " . $adaptation . " between CMAF Presentations " .
+                    $i . " and  " . ($i + 1) . " with baseMediaDecodeTime- " .
+                    (($baseMediaDecodeTime1 + $cumulativeDuration1) / $timeScale1) . " and " .
+                    ($baseMediaDecodeTime_p2 / $timeScale2) . " respectively"
+                );
             }
         }
     }

@@ -35,13 +35,14 @@ class ModuleDASHLowLatency extends ModuleInterface
         }
     }
 
-    public function detectFromManifest(){
-      global $mpdHandler;
-      $mpdProfiles = $mpdHandler->getDOM()->getAttribute('profiles');
-      if(strpos($mpdProfiles, 'http://www.dashif.org/guidelines/low-latency-live-v5') !== FALSE){
-        $this->enabled = true;
-        $this->detected = true;
-      }
+    public function detectFromManifest()
+    {
+        global $mpdHandler;
+        $mpdProfiles = $mpdHandler->getDOM()->getAttribute('profiles');
+        if (strpos($mpdProfiles, 'http://www.dashif.org/guidelines/low-latency-live-v5') !== false) {
+            $this->enabled = true;
+            $this->detected = true;
+        }
     }
 
 
@@ -54,7 +55,6 @@ class ModuleDASHLowLatency extends ModuleInterface
         $this->validateServiceDescription();
         $this->validateUTCTiming();
         $this->validateLeapSecondInformation();
-
     }
 
     public function hookAdaptationSet()
@@ -67,7 +67,7 @@ class ModuleDASHLowLatency extends ModuleInterface
     $presentation_times = array();
     $decode_times = array();
          */
-        
+
         $this->validateCross();
     }
 

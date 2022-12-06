@@ -3,7 +3,9 @@
 ///\Todo Bring this file up to naming specs
 global $period_timing_info, $modules, $availability_times;
 
-$bufferduration = ($this->features['timeShiftBufferDepth'] != null) ? DASHIF\Utility\timeParsing($this->features['timeShiftBufferDepth']) : INF;
+$bufferduration = ($this->features['timeShiftBufferDepth'] != null) ?
+  DASHIF\Utility\timeParsing($this->features['timeShiftBufferDepth']) : INF;
+
 $AST = $this->features['availabilityStartTime'];
 if ($segmentAccess['SegmentTimeline'] != null) {
     $segmentduration = ($segmentTimings[$segmentCount - 1] - $segmentTimings[0]) / ((float)($segmentCount - 1));
@@ -11,8 +13,11 @@ if ($segmentAccess['SegmentTimeline'] != null) {
     $segmentduration = ($segmentAccess['duration'] != null) ? $segmentAccess['duration'] : 0;
 }
 $timescale = ($segmentAccess['timescale'] != null) ? $segmentAccess['timescale'] : 1;
-$availabilityTimeOffset = ($segmentAccess['availabilityTimeOffset'] != null && $segmentAccess['availabilityTimeOffset'] != 'INF') ? $segmentAccess['availabilityTimeOffset'] : 0;
-$pto = ($segmentAccess['presentationTimeOffset'] != '') ? (int)($segmentAccess['presentationTimeOffset']) / $timescale : 0;
+$availabilityTimeOffset = ($segmentAccess['availabilityTimeOffset'] != null &&
+  $segmentAccess['availabilityTimeOffset'] != 'INF') ? $segmentAccess['availabilityTimeOffset'] : 0;
+
+$pto = ($segmentAccess['presentationTimeOffset'] != '') ?
+  (int)($segmentAccess['presentationTimeOffset']) / $timescale : 0;
 
 if ($segmentduration != 0) {
     $segmentduration /= $timescale;
@@ -51,21 +56,21 @@ $ind = array_search($LST * $timescale, $new_array);
 
 $SST = ($ind - 1 - $buffercapacity * $percent < 0) ? 0 : $ind - 1 - $buffercapacity * $percent;
 
-foreach ($modules as $module){
-  if ($module->name == "DASH-IF Low Latency"){
-    if ($module->isEnabled()){
-    $ASAST = array();
-    $NSAST = array();
-    $count = $LSN - intval($earliestsegment);
-    for ($i = $count; $i > 0; $i--) {
-        $ASAST[] = $now - $LST - $bufferduration * $i;
-        $NSAST[] = $now - ($LST - $bufferduration * $i + $availabilityTimeOffset);
+foreach ($modules as $module) {
+    if ($module->name == "DASH-IF Low Latency") {
+        if ($module->isEnabled()) {
+            $ASAST = array();
+            $NSAST = array();
+            $count = $LSN - intval($earliestsegment);
+            for ($i = $count; $i > 0; $i--) {
+                  $ASAST[] = $now - $LST - $bufferduration * $i;
+                  $NSAST[] = $now - ($LST - $bufferduration * $i + $availabilityTimeOffset);
+            }
+            $availability_times[$adaptationSetId][$representationId]['ASAST'] = $ASAST;
+            $availability_times[$adaptationSetId][$representationId]['NSAST'] = $NSAST;
+        }
+        break;
     }
-    $availability_times[$adaptationSetId][$representationId]['ASAST'] = $ASAST;
-    $availability_times[$adaptationSetId][$representationId]['NSAST'] = $NSAST;
-    }
-    break;
-  }
 }
 
 return [intval($earliestsegment), $LSN, $SST];

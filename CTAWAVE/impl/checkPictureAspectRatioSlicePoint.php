@@ -30,11 +30,10 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
                     "Picture Aspect Ratio (PAR) Should be the same between Sequential Sw Sets at the Splice point",
                     $par_p1 == $par_p2,
                     "WARN",
-                    "Correct for Sw set $adapt between presentations $i and " . ($i+1),
-                    "Invalid for Sw set $adapt between presentations $i and " . ($i+1),
+                    "Correct for Sw set $adapt between presentations $i and " . ($i + 1),
+                    "Invalid for Sw set $adapt between presentations $i and " . ($i + 1),
                 );
             }
         }
     }
 }
-

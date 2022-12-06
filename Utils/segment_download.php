@@ -38,12 +38,14 @@
  */
 function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
 {
-    global $session, $mpdHandler, 
+    global $session, $mpdHandler,
            $hls_byte_range_begin, $hls_byte_range_size, $hls_manifest, $availability_times, $modules;
 
     $mdat_file = (!$hls_manifest) ?
       ($session->getSelectedRepresentationDir() . "mdatoffset") : 'mdatoffset';
-    $sizefile = fopen($session->getDir() . '/' . $mdat_file . '.txt', 'a+b'); //create text file containing the original size of Mdat box that is ignored
+
+    //create text file containing the original size of Mdat box that is ignored
+    $sizefile = fopen($session->getDir() . '/' . $mdat_file . '.txt', 'a+b');
 
     $segment_count = sizeof($array_file);
     $initoffset = 0; // Set pointer to 0
@@ -56,15 +58,16 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
     $byte_range_array = array();
     $ch = curl_init();
 
-    foreach ($modules as $module){
-      if ($module->name == "DASH-IF Low Latency"){
-        if ($module->isEnabled()){
-          $count = sizeof($availability_times[$mpdHandler->getSelectedAdaptationSet()][$mpdHandler->getSelectedRepresentation()]['ASAST']);
-          $media_segment_index = ($count == sizeof($array_file)) ? 0 : 1;
-          $start_index = 0;
+    foreach ($modules as $module) {
+        if ($module->name == "DASH-IF Low Latency") {
+            if ($module->isEnabled()) {
+                $count = sizeof($availability_times[$mpdHandler->getSelectedAdaptationSet()]
+                                                   [$mpdHandler->getSelectedRepresentation()]['ASAST']);
+                $media_segment_index = ($count == sizeof($array_file)) ? 0 : 1;
+                $start_index = 0;
+            }
+            break;
         }
-        break;
-      }
     }
 
     # Iterate over $array_file
@@ -73,7 +76,8 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
         $filename = basename($filePath);
         $file_information = remote_file_size($filePath);
         $file_exists = $file_information[0];
-        $file_size = ($hls_manifest && $hls_byte_range_size) ? $hls_byte_range_size[$index] + $hls_byte_range_begin[$index] : $file_information[1];
+        $file_size = ($hls_manifest && $hls_byte_range_size) ?
+          $hls_byte_range_size[$index] + $hls_byte_range_begin[$index] : $file_information[1];
 
         if (!$file_exists) {
             $missing = (!$hls_manifest) ?
@@ -105,7 +109,10 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
                     break;
                 }
 
-                $box_size = $byte_array[$location] * 16777216 + $byte_array[$location + 1] * 65536 + $byte_array[$location + 2] * 256 + $byte_array[$location + 3];
+                $box_size = $byte_array[$location] * 16777216 +
+                            $byte_array[$location + 1] * 65536 +
+                            $byte_array[$location + 2] * 256 +
+                            $byte_array[$location + 3];
                 $box_name = substr($content, $location + 3, 4);
                 if ($downloadAll || $box_name != 'mdat') {
                     fwrite($newfile, substr($content, $location - 1, $box_size));
@@ -137,7 +144,11 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
                             $text = substr($text, strpos($text, '<tt'));
                             $subtitle_xml_string .= $text;
 
-                            $subtitle_xml_string = substr($subtitle_xml_string, 0, strrpos($subtitle_xml_string, '>') + 1);
+                            $subtitle_xml_string = substr(
+                                $subtitle_xml_string,
+                                0,
+                                strrpos($subtitle_xml_string, '>') + 1
+                            );
                             $subtitle_xml_string .= '</subtitle>';
                             $mdat_data = simplexml_load_string($subtitle_xml_string);
                             $mdat_data->asXML($mdat_file);
@@ -160,7 +171,9 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
                 $location = 1; // temporary pointer
                 $name = null; // box name
                 $box_size = 0; // box size
-                $newfile = fopen($directory . "/" . $filename, 'a+b'); // create an empty mp4 file to contain data needed from remote segment
+
+                // create an empty mp4 file to contain data needed from remote segment
+                $newfile = fopen($directory . "/" . $filename, 'a+b');
 
                 # Download the partial content and unpack
                 $content = partial_download($filePath, $ch, $sizepos, $sizepos + 1500);
@@ -176,7 +189,10 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
                         //$prev_data = array_slice($byte_array, $location, $diff);
                         break;
                     } else {
-                        $box_size = $byte_array[$location] * 16777216 + $byte_array[$location + 1] * 65536 + $byte_array[$location + 2] * 256 + $byte_array[$location + 3];
+                        $box_size = $byte_array[$location] * 16777216 +
+                                  $byte_array[$location + 1] * 65536 +
+                                  $byte_array[$location + 2] * 256 +
+                                  $byte_array[$location + 3];
                     }
 
                     $size_copy = $box_size; // keep a copy of size to add to $location when it is replaced by remaining
@@ -185,13 +201,15 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
                     }
 
                     if ($segment_count === 1) { // if presentation contain only single segment
-                        $totaldownloaded += (!$hls_byte_range_begin) ? $box_size : $size_copy;   // total data being processed
+                        // total data being processed
+                        $totaldownloaded += (!$hls_byte_range_begin) ? $box_size : $size_copy;
                         $percent = (int) (100 * $totaldownloaded / $file_size); //get percent over the whole file size
                     } else {
                         $percent = (int) (100 * $index / (sizeof($array_file) - 1)); // percent of remaining segments
                     }
 
-                    $name = substr($content, $location + 3, 4); //get box name exist in the next 4 bytes from the bytes containing the size
+                    //get box name exist in the next 4 bytes from the bytes containing the size
+                    $name = substr($content, $location + 3, 4);
                     if ($downloadAll || $name != 'mdat') {
                         # If it is not mdat box download it
                         # The total size being downloaded is location + size
@@ -202,10 +220,19 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
                         #   Copy the rest to the file
                         $total = $location + ((!$hls_byte_range_begin) ? $box_size : $size_copy);
                         if ($total < sizeof($byte_array)) {
-                            fwrite($newfile, substr($content, $location - 1, ((!$hls_byte_range_begin) ? $box_size : $size_copy)));
+                            fwrite($newfile, substr(
+                                $content,
+                                $location - 1,
+                                ((!$hls_byte_range_begin) ? $box_size : $size_copy)
+                            ));
                         } else {
-                            $rest = partial_download($filePath, $ch, $sizepos, $sizepos + ((!$hls_byte_range_begin) ? $box_size : $size_copy) - 1);
-                            $totalDataDownloaded = $totalDataDownloaded + ((!$hls_byte_range_begin) ? $box_size : $size_copy) - 1;
+                            $rest = partial_download(
+                                $filePath,
+                                $ch,
+                                $sizepos,
+                                $sizepos + ((!$hls_byte_range_begin) ? $box_size : $size_copy) - 1
+                            );
+                            $totalDataDownloaded += ((!$hls_byte_range_begin) ? $box_size : $size_copy) - 1;
                             fwrite($newfile, $rest);
                         }
                     } else {
@@ -218,9 +245,17 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
                         if ($downloadMdat) {
                             fwrite($sizefile, ($initoffset + $sizepos + 8) . " " . 0 . "\n");
                             fwrite($newfile, substr($content, $location - 1, 8));
-                            fwrite($newfile, str_pad("0", ((!$hls_byte_range_begin) ? $box_size : $size_copy) - 8, "0"));
+                            fwrite($newfile, str_pad(
+                                "0",
+                                ((!$hls_byte_range_begin) ? $box_size : $size_copy) - 8,
+                                "0"
+                            ));
                         } else {
-                            fwrite($sizefile, ($initoffset + $sizepos + 8) . " " . (((!$hls_byte_range_begin) ? $box_size : $size_copy) - 8) . "\n");
+                            fwrite(
+                                $sizefile,
+                                ($initoffset + $sizepos + 8) . " " .
+                                (((!$hls_byte_range_begin) ? $box_size : $size_copy) - 8) . "\n"
+                            );
                             fwrite($newfile, substr($content, $location - 1, 8));
 
                             ## For DVB subtitle checks related to mdat content
@@ -236,15 +271,23 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
                                     $text = substr($content, ($initoffset + $location + 7), ($box_size - 7));
                                     $text = substr($text, strpos($text, '<tt'));
                                     $subtitle_xml_string .= $text;
-                                    //fwrite($mdat_file, substr($content, ($initoffset + $sizepos + 8), ($box_size - 1)));
                                 } else {
-                                    $rest = partial_download($filePath, $ch, $sizepos + 8, $sizepos + $box_size - 1);
+                                    $rest = partial_download(
+                                        $filePath,
+                                        $ch,
+                                        $sizepos + 8,
+                                        $sizepos + $box_size - 1
+                                    );
                                     $text = $rest;
                                     $text = substr($text, strpos($text, '<tt'));
                                     $subtitle_xml_string .= $text;
                                     //fwrite($mdat_file, $rest);
                                 }
-                                $subtitle_xml_string = substr($subtitle_xml_string, 0, strrpos($subtitle_xml_string, '>') + 1);
+                                $subtitle_xml_string = substr(
+                                    $subtitle_xml_string,
+                                    0,
+                                    strrpos($subtitle_xml_string, '>') + 1
+                                );
                                 $subtitle_xml_string .= '</subtitle>';
                                 $mdat_data = simplexml_load_string($subtitle_xml_string);
                                 $mdat_data->asXML($mdat_file);

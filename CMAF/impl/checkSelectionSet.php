@@ -38,8 +38,10 @@ foreach ($selectionSets as $selectionSet) {
                 count(array_unique($mediaTypesInSet2)) === 1 &&
                 end($mediaTypesInSet1) == end($mediaTypesInSet2),
                 "FAIL",
-                "Media type matches between $adaptationIndex and $compareIndex in period $mpdHandler->getSelectedPeriod()",
-                "Media differs between $adaptationIndex and $compareIndex in period $mpdHandler->getSelectedPeriod()"
+                "Media type matches between $adaptationIndex and $compareIndex in period " .
+                $mpdHandler->getSelectedPeriod(),
+                "Media differs between $adaptationIndex and $compareIndex in period " .
+                $mpdHandler->getSelectedPeriod()
             );
         }
 

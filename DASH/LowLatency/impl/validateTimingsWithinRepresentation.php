@@ -30,10 +30,16 @@ for ($i = 0; $i < sizeof($presStarts); $i++) {
     $previousEarliestPresentationTime = $earliestPresentationTime;
     $previousLatestPresentationTime = $latestPresentationTime;
 
-    $presentation_times[$mpdHandler->getSelectedPeriod()][$adaptationSetId][$representationId][] = $earliestPresentationTime;
+    $presentation_times[$mpdHandler->getSelectedPeriod()]
+                       [$adaptationSetId]
+                       [$representationId][] = $earliestPresentationTime;
 }
 
-$repXml = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId) . '/atomInfo.xml';
+$repXml = $session->getRepresentationDir(
+    $mpdHandler->getSelectedPeriod(),
+    $adaptationSetId,
+    $representationId
+) . '/atomInfo.xml';
 
 if (file_exists($repXml)) {
     $xml = DASHIF\Utility\parseDOM($repXml, 'atomlist');

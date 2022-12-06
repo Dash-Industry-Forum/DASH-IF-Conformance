@@ -2,8 +2,12 @@
 
 global $logger, $mpdHandler;
 
-$profile1 = $this_>mediaProfiles[$mpdHandler->getSelectedPeriod()][$mpdHandler->getSelectedAdaptationSet()][$representation1]['cmafMediaProfile'];
-$profile2 = $this->mediaProfiles[$mpdHandler->getSelectedPeriod()][$mpdHandler->getSelectedAdaptationSet()][$representation2]['cmafMediaProfile'];
+$profile1 = $this->mediaProfiles[$mpdHandler->getSelectedPeriod()]
+                                [$mpdHandler->getSelectedAdaptationSet()]
+                                [$representation1]['cmafMediaProfile'];
+$profile2 = $this->mediaProfiles[$mpdHandler->getSelectedPeriod()]
+                                [$mpdHandler->getSelectedAdaptationSet()]
+                                [$representation2]['cmafMediaProfile'];
 
 $validProfile = true;
 if ($profile1 != $profile2) {
