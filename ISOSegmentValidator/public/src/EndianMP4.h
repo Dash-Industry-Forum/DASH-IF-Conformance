@@ -60,7 +60,7 @@ extern "C" {
     
     For example, to convert a Big Endian 32-bit unsigned integer to the current native format use:
         
-        long i = EndianU32_BtoN(data);
+        SInt32 i = EndianU32_BtoN(data);
         
     This file is set up so that the function macro to nothing when the target runtime already
     is the desired format (e.g. on Big Endian machines, EndianU32_BtoN() macros away).
@@ -321,7 +321,7 @@ typedef OSType                          BigEndianOSType;
 
 
 /*
-    Implement ÅLtoB and ÅBtoL
+    Implement ï¿½LtoB and ï¿½BtoL
 */
 #define EndianS16_LtoB(value)              ((SInt16)Endian16_Swap(value))
 #define EndianS16_BtoL(value)                ((SInt16)Endian16_Swap(value))
@@ -339,7 +339,7 @@ typedef OSType                          BigEndianOSType;
 
 
 /*
-    Implement low level Å_Swap functions.
+    Implement low level ï¿½_Swap functions.
   
        extern UInt16 Endian16_Swap(UInt16 value);
      extern UInt32 Endian32_Swap(UInt32 value);

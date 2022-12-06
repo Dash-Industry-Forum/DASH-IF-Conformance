@@ -32,26 +32,26 @@ class AudioVisualRollRecoveryEntry
 
 OSErr postprocessFragmentInfo(MovieInfoRec *mir);
 void verifyLeafDurations(MovieInfoRec *mir);
-void initializeLeafInfo(MovieInfoRec *mir, long numMediaSegments);
+void initializeLeafInfo(MovieInfoRec *mir, SInt32 numMediaSegments);
 void checkNonIndexedSamples(MovieInfoRec *mir);
 void verifyAlignment(MovieInfoRec *mir);
 void verifyBSS(MovieInfoRec *mir);
 void processSAP34(MovieInfoRec *mir);
 OSErr processIndexingInfo(MovieInfoRec *mir);
-void checkDASHBoxOrder(long cnt, atomOffsetEntry *list, long segmentInfoSize, bool initializationSegment, UInt64 *segmentSizes, MovieInfoRec *mir);
+void checkDASHBoxOrder(SInt32 cnt, atomOffsetEntry *list, SInt32 segmentInfoSize, bool initializationSegment, UInt64 *segmentSizes, MovieInfoRec *mir);
 void checkSegmentStartWithSAP(int startWithSAP, MovieInfoRec *mir);
 void estimatePresentationTimes(MovieInfoRec*mir);
-void processBuffering(long cnt, atomOffsetEntry *list, MovieInfoRec *mir);
+void processBuffering(SInt32 cnt, atomOffsetEntry *list, MovieInfoRec *mir);
 //CMAF box order checks' function definitions.
-void checkCMAFBoxOrder(long cnt, atomOffsetEntry *list, long segmentInfoSize, bool CMAFHeader, UInt64 *segmentSizes);
-void checkCMAFBoxOrder_moov(long cnt,atomOffsetEntry *list);
-void checkCMAFBoxOrder_trak(long cnt,atomOffsetEntry *list);
-void checkCMAFBoxOrder_mdia(long cnt,atomOffsetEntry *list);
-void checkCMAFBoxOrder_minf(long cnt,atomOffsetEntry *list);
-void checkCMAFBoxOrder_stbl(long cnt,atomOffsetEntry *list);
-void checkCMAFBoxOrder_sinf(long cnt,atomOffsetEntry *list);
-void checkCMAFBoxOrder_moof(long cnt,atomOffsetEntry *list);
-void checkCMAFBoxOrder_traf(long cnt,atomOffsetEntry *list);
+void checkCMAFBoxOrder(SInt32 cnt, atomOffsetEntry *list, SInt32 segmentInfoSize, bool CMAFHeader, UInt64 *segmentSizes);
+void checkCMAFBoxOrder_moov(SInt32 cnt,atomOffsetEntry *list);
+void checkCMAFBoxOrder_trak(SInt32 cnt,atomOffsetEntry *list);
+void checkCMAFBoxOrder_mdia(SInt32 cnt,atomOffsetEntry *list);
+void checkCMAFBoxOrder_minf(SInt32 cnt,atomOffsetEntry *list);
+void checkCMAFBoxOrder_stbl(SInt32 cnt,atomOffsetEntry *list);
+void checkCMAFBoxOrder_sinf(SInt32 cnt,atomOffsetEntry *list);
+void checkCMAFBoxOrder_moof(SInt32 cnt,atomOffsetEntry *list);
+void checkCMAFBoxOrder_traf(SInt32 cnt,atomOffsetEntry *list);
 
 
 #endif //#define _SRC_POST_PROCESS_DATA_H_

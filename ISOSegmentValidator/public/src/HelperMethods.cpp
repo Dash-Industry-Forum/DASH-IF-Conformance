@@ -25,19 +25,19 @@ limitations under the License.
 //==========================================================================================
 
 int FindAtomOffsets( atomOffsetEntry *aoe, UInt64 minOffset, UInt64 maxOffset, 
-			long *atomCountOut, atomOffsetEntry **atomOffsetsOut )
+			SInt32 *atomCountOut, atomOffsetEntry **atomOffsetsOut )
 {
 	int err = noErr;
-	long cnt = 0;
+	SInt32 cnt = 0;
 	atomOffsetEntry *atomOffsets = nil;
-	long max = 20;
+	SInt32 max = 20;
 	startAtomType startAtom;
 	UInt64 largeSize;
 	uuidType uuid;
 	UInt64 curOffset = minOffset;
-	long minAtomSize;
+	SInt32 minAtomSize;
 	
-	printf ("<%s> : min %08llX max %08llX\n", __FUNCTION__, minOffset, maxOffset);
+	printf ("<%s> : min %08lX max %08lX\n", __FUNCTION__, minOffset, maxOffset);
 
 	BAILIFNULL( atomOffsets = (atomOffsetEntry *)calloc( max, sizeof(atomOffsetEntry)), allocFailedErr );
 	
@@ -61,7 +61,7 @@ int FindAtomOffsets( atomOffsetEntry *aoe, UInt64 minOffset, UInt64 maxOffset,
 		atom_name[1] = ((char*)(&startAtom.type))[2];
 		atom_name[2] = ((char*)(&startAtom.type))[1];
 		atom_name[3] = ((char*)(&startAtom.type))[0];
-		printf ("atom_name <%s> offset %08llX\n",atom_name, curOffset - sizeof(startAtom.type));
+		printf ("atom_name <%s> offset %08lX\n",atom_name, curOffset - sizeof(startAtom.type));
 		
 		if (startAtom.type == 'uuid') {
 			BAILIFERR( GetFileData( aoe, &uuid, curOffset, sizeof(uuid), &curOffset ) );
@@ -206,12 +206,12 @@ void logtempInfo(MovieInfoRec *mir)
 		return;
 	}
 
-	fprintf(leafInfoFile,"%ld\n",mir->numTIRs);
+	fprintf(leafInfoFile,"%u\n",mir->numTIRs);
 
 	for(int i = 0 ; i < mir->numTIRs ; i++)
 	{
 		TrackInfoRec *tir = &(mir->tirList[i]);
-		fprintf(leafInfoFile,"%lu\n",tir->mediaTimeScale);
+		fprintf(leafInfoFile,"%u\n",tir->mediaTimeScale);
 	}
 
 
@@ -229,7 +229,7 @@ void logtempInfo(MovieInfoRec *mir)
 
 		for(UInt32 j = 0 ; j < tir->numLeafs ; j++)
 			if(tir->leafInfo[j].hasFragments)
-				fprintf(leafInfoFile,"%d, %llu, %llu\n",tir->leafInfo[j].firstInSegment,(UInt64)roundl(tir->leafInfo[j].earliestPresentationTime*(long double)tir->mediaTimeScale),tir->leafInfo[j].offset);
+				fprintf(leafInfoFile,"%d, %lu, %lu\n",tir->leafInfo[j].firstInSegment,(UInt64)roundl(tir->leafInfo[j].earliestPresentationTime*(long double)tir->mediaTimeScale),tir->leafInfo[j].offset);
 	}
 
 	fclose(leafInfoFile);
@@ -247,15 +247,15 @@ void logLeafInfo(MovieInfoRec *mir)
 		return;
 	}
 
-	fprintf(leafInfoFile,"%lu\n",vg.accessUnitDurationNonIndexedTrack);
+	fprintf(leafInfoFile,"%u\n",vg.accessUnitDurationNonIndexedTrack);
 
-	fprintf(leafInfoFile,"%ld\n",mir->numTIRs);
+	fprintf(leafInfoFile,"%u\n",mir->numTIRs);
 
 
 	for(int i = 0 ; i < mir->numTIRs ; i++)
 	{
 		TrackInfoRec *tir = &(mir->tirList[i]);
-		fprintf(leafInfoFile,"%lu %lu\n",tir->trackID,tir->hdlrInfo->componentSubType);
+		fprintf(leafInfoFile,"%u %u\n",tir->trackID,tir->hdlrInfo->componentSubType);
 	}
 
 
@@ -320,12 +320,12 @@ UInt64 GetVariableLengthData(BitBuffer *bb, UInt32 wordLength, OSErr *errout)
 		data64 <<= wordLength;
 		dataTemp = GetBits(bb, wordLength + 1, &err); if (err) GOTOBAIL; 
 		data64 |= (dataTemp & ~testMask);
-		printf ("dataTemp %llu data64 %llu testMask %llu\n", dataTemp, data64, testMask);
+		printf ("dataTemp %lu data64 %lu testMask %lu\n", dataTemp, data64, testMask);
 	}
 	while ((dataTemp & testMask) != 0);
 
 	bail:
-	printf ("return %llu\n", data64);
+	printf ("return %lu\n", data64);
 	*errout = err;
 	return data64;
 }

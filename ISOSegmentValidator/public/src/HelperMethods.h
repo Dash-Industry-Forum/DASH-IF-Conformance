@@ -26,7 +26,7 @@ limitations under the License.
 #define ABS(a) (((a) < 0) ? -(a) : (a));
 
 int FindAtomOffsets( atomOffsetEntry *aoe, UInt64 minOffset, UInt64 maxOffset, 
-			long *atomCountOut, atomOffsetEntry **atomOffsetsOut );
+			SInt32 *atomCountOut, atomOffsetEntry **atomOffsetsOut );
 TrackInfoRec * check_track( UInt32 theID );
 UInt32 getTrakIndexByID(UInt32 track_ID);
 UInt32 getMoofIndexByOffset(MoofInfoRec *moofInfo, UInt32 numFragments, UInt64 offset);

@@ -245,7 +245,7 @@ int main(void)
 	vg.dvb=false;
 	vg.hbbtv=false;
 	vg.ctawave=false;
-	//vg.indexRange='\0';
+	memset(&vg.indexRange, 0, sizeof(vg.indexRange));
 	vg.pssh_count = 0;
 	vg.sencFound=false;
 	vg.suppressAtomLevel=false;
@@ -443,8 +443,12 @@ int main(void)
 	free(arrayArgc);
 
 
-	if (vg.indexRange != nullptr)
-	  sscanf (vg.indexRange,"%d-%d",&vg.lowerindexRange,&vg.higherindexRange);
+	if (vg.indexRange[0] != 0)
+	  if (2 != sscanf(vg.indexRange,"%d-%d",&vg.lowerindexRange,&vg.higherindexRange))
+	  {
+		fprintf(stderr, "Error parsing range \"%d-%d\" from \"%s\"!\n", vg.lowerindexRange, vg.higherindexRange, vg.indexRange);
+		vg.lowerindexRange = vg.higherindexRange = -1; //reset
+	  }
 
 
 	//=====================
@@ -600,7 +604,7 @@ int main(void)
 			{
 				int temp1;
 				UInt64 temp2;
-				int ret = fscanf(segmentOffsetInfoFile,"%d %lld\n",&temp1,&temp2);
+				int ret = fscanf(segmentOffsetInfoFile,"%d %ld\n",&temp1,&temp2);
 				if(ret < 2)
 					break;
 
@@ -769,7 +773,7 @@ void loadLeafInfo(char *leafInfoFileName)
 		return;
 	}
 
-	fscanf(leafInfoFile,"%lu\n",&vg.accessUnitDurationNonIndexedTrack);
+	fscanf(leafInfoFile,"%u\n",&vg.accessUnitDurationNonIndexedTrack);
 
 	fscanf(leafInfoFile,"%u\n",&vg.numControlTracks);
 
@@ -779,7 +783,7 @@ void loadLeafInfo(char *leafInfoFileName)
 
 	for(unsigned int i = 0 ; i < vg.numControlTracks ; i++)
 	{
-		fscanf(leafInfoFile,"%lu %lu\n",&vg.trackTypeInfo[i].track_ID,&vg.trackTypeInfo[i].componentSubType);
+		fscanf(leafInfoFile,"%u %u\n",&vg.trackTypeInfo[i].track_ID,&vg.trackTypeInfo[i].componentSubType);
 	}
 
 	for(unsigned int i = 0 ; i < vg.numControlTracks ; i++)
@@ -810,7 +814,7 @@ void loadOffsetInfo(char *offsetsFileName)
 
 	while(1)
 	{
-		int ret = fscanf(offsetsFile,"%llu %llu\n",&dummy1,&dummy2);
+		int ret = fscanf(offsetsFile,"%lu %lu\n",&dummy1,&dummy2);
 		if(ret > 2)
 		{
 			printf("%d entries found on entry number %d, improper offset info file, exiting!\n",ret,numEntries+1);
@@ -839,7 +843,7 @@ void loadOffsetInfo(char *offsetsFileName)
 
 	for(unsigned int index = 0 ; index < vg.numOffsetEntries ; index ++)
 	{
-		fscanf(offsetsFile,"%llu %llu\n",&vg.offsetEntries[index].offset,&vg.offsetEntries[index].sizeRemoved);
+		fscanf(offsetsFile,"%lu %lu\n",&vg.offsetEntries[index].offset,&vg.offsetEntries[index].sizeRemoved);
 		index = index;
 	}
 
@@ -941,7 +945,7 @@ void atomprint(const char *formatStr, ...)
 
 	if (vg.printatom) {
 		printf ("vg.printatom\n");
-		long tabcnt = vg.tabcnt;
+		SInt32 tabcnt = vg.tabcnt;
 		while (tabcnt-- > 0) {
 			fprintf(_stdout,myTAB);
 		}
@@ -949,7 +953,7 @@ void atomprint(const char *formatStr, ...)
 	}
 
 	if(vg.atomxml){
-		long tabcnt = vg.tabcnt;
+		SInt32 tabcnt = vg.tabcnt;
  		while (tabcnt-- > 0) {
  			fprintf(f,myTAB);
  		}
@@ -995,7 +999,7 @@ void atomprintdetailed(const char *formatStr, ...)
 	va_start(ap, formatStr);
 
 	if (vg.printatom && vg.print_fulltable) {
-		long tabcnt = vg.tabcnt;
+		SInt32 tabcnt = vg.tabcnt;
 		while (tabcnt-- > 0) {
 			fprintf(_stdout,myTAB);
 		}
@@ -1011,7 +1015,7 @@ void sampleprint(const char *formatStr, ...)
 	va_start(ap, formatStr);
 
 	if (vg.printsample) {
-		long tabcnt = vg.tabcnt;
+		SInt32 tabcnt = vg.tabcnt;
 		while (tabcnt-- > 0) {
 			fprintf(_stdout,myTAB);
 		}
@@ -1243,15 +1247,15 @@ char *ostypetostr_r(UInt32 num, char * buffer)
 //	for cases where you need it more than once in the same print statment, use int64toxstr_r() instead
 char *int64toxstr(UInt64 num)
 {
-	static char str[20];
+	static char str[32];
 	UInt32 hi,lo;
 
 	hi = num>>32;
 	lo = num&(0xffffffff);
 	if (hi) {
-		sprintf(str,"0x%lx%8.8lx",hi,lo);
+		sprintf(str,"0x%u%8.8u",hi,lo);
 	} else {
-		sprintf(str,"0x%lx",lo);
+		sprintf(str,"0x%u",lo);
 	}
 	return str;
 }
@@ -1263,9 +1267,9 @@ char *int64toxstr_r(UInt64 num, char * str)
 	hi = num>>32;
 	lo = num&(0xffffffff);
 	if (hi) {
-		sprintf(str,"0x%lx%8.8lx",hi,lo);
+		sprintf(str,"0x%u%8.8u",hi,lo);
 	} else {
-		sprintf(str,"0x%lx",lo);
+		sprintf(str,"0x%u",lo);
 	}
 	return str;
 }
@@ -1281,9 +1285,9 @@ char *int64todstr(UInt64 num)
 	lo = num&(0xffffffff);
 
 	if (hi)
-		sprintf(str,"%ld%8.8ld",hi,lo);
+		sprintf(str,"%u%8.8u",hi,lo);
 	else
-		sprintf(str,"%ld",lo);
+		sprintf(str,"%u",lo);
 	return str;
 }
 
@@ -1296,9 +1300,9 @@ char *int64todstr_r(UInt64 num, char * str)
 	lo = num&(0xffffffff);
 
 	if (hi)
-		sprintf(str,"%ld%8.8ld",hi,lo);
+		sprintf(str,"%u%8.8u",hi,lo);
 	else
-		sprintf(str,"%ld",lo);
+		sprintf(str,"%u",lo);
 	return str;
 }
 
@@ -1531,7 +1535,7 @@ void addEscapedChar( char *str, char c )
 	strcat(str, addc);
 }
 
-void addAtomToPath( atompathType workingpath, OSType atomId, long atomIndex, atompathType curpath )
+void addAtomToPath( atompathType workingpath, OSType atomId, SInt32 atomIndex, atompathType curpath )
 {
 	strcpy( curpath, workingpath );
 	if (workingpath[0])
@@ -1541,7 +1545,7 @@ void addAtomToPath( atompathType workingpath, OSType atomId, long atomIndex, ato
 	addEscapedChar(workingpath, (atomId>> 8) & 0xff);
 	addEscapedChar(workingpath, (atomId>> 0) & 0xff);
 	strcat( workingpath, "-");
-	sprintf(&workingpath[strlen(workingpath)],"%ld",atomIndex);
+	sprintf(&workingpath[strlen(workingpath)],"%u", atomIndex);
 }
 
 void restoreAtomPath( atompathType workingpath, atompathType curpath )
