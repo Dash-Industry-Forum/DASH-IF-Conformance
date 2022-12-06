@@ -3,8 +3,7 @@
 global $session, $mpdHandler;
 
 $repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId);
-///\RefactorTodo look where this file should come from
-if (!($representationInformationFile = fopen("$repDir/representation.txt", 'r'))) {
+if (!($representationInformationFile = fopen("$repDir/assemblerInfo.txt", 'r'))) {
     return;
 }
 

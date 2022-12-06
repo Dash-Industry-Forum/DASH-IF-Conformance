@@ -253,7 +253,6 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
         $validEBUTTD = true;
         $subtitleTimings = array();
         $repDir = $session->getSelectedRepresentationDir();
-        ///\RefactorTodo Make this reflect the correct location
         $files = glob("$repDir/Subtitles/*");
         natsort($files);
 

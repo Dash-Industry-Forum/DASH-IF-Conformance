@@ -129,7 +129,7 @@ function assemble($representationDirectory, $segment_urls, $sizearr)
             fwrite($fp1, $file2); // dump it in the container file
             fclose($fp1);
             file_put_contents(
-                "$representationDirectory/sizes.txt",
+                "$representationDirectory/assemblerInfo.txt",
                 $index . " " . $size . "\n",
                 FILE_APPEND
             ); // add size to a text file to be passed to conformance software
@@ -327,11 +327,8 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     if (!$hls_manifest) {
         $file = fopen("$representationDirectory/segmentValidatorConfig.txt", 'w');
         fwrite($file, "$representationDirectory/assembled.mp4 \n");
-              ///\TodoRefactor -- Generate correct infofile
-        /*
         fwrite($file, "-infofile" . "\n");
-        fwrite($file, "$representationDirectory/infoFile.txt \n");
-         */
+        fwrite($file, "$representationDirectory/assemblerInfo.txt \n");
     } else {
               ///\TodoRefactor -- Also fix for hls
               /*

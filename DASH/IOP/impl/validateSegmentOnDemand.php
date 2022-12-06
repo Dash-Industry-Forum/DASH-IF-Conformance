@@ -30,8 +30,7 @@ $logger->test(
 );
 
 $repDir = $session->getSelectedRepresentationDir();
-///\RefactorTodo Check where this file should come from.
-$fileName = "$repDir/representation.txt";
+$fileName = "$repDir/assemblerInfo.txt";
 
 if (!($selfInitializingSegmentFile = fopen($fileName, 'r'))) {
     return;
