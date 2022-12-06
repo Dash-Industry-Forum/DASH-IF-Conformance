@@ -48,6 +48,6 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
         "FAIL",
         "One CENC Scheme found",
         "Violated between CMAF Presentations " . $i . " and  " . ($i + 1) .
-        " contains " . $encryptionSchemePeriod[$i] . " and " . $encryptionSchemePeriod[$i + 1] . " respectively.\n";
+        " contains " . $encryptionSchemePeriod[$i] . " and " . $encryptionSchemePeriod[$i + 1] . " respectively."
     );
 }

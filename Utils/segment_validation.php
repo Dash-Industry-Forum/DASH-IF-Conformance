@@ -141,7 +141,7 @@ function assemble($representationDirectory, $segment_urls, $sizearr)
 
 function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 {
-    global $mpdHandler,
+    global $mpdHandler, $session,
             $string_info,
             $hls_manifest, $hls_tag, $hls_info_file;
 
@@ -204,7 +204,7 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
         }
     }
 
-    rename($ession->getDir() . "/leafinfo.txt", "$representationDirectory/leafInfo.txt");
+    rename($session->getDir() . "/leafinfo.txt", "$representationDirectory/leafInfo.txt");
 
     if (!$hls_manifest) {
         ## Check segment duration and start times against MPD times.
