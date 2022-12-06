@@ -28,6 +28,7 @@ limitations under the License.
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdint.h>
 #include <string.h>
 
 #if defined(__GNUC__) && ( defined(__APPLE_CPP__) || defined(__APPLE_CC__) || defined(__MACOS_CLASSIC__) )
@@ -56,7 +57,7 @@ limitations under the License.
 #endif
 
 typedef char *Ptr;
-typedef unsigned long OSType;
+typedef uint32_t OSType;
 typedef unsigned char Boolean;
 typedef short OSErr;
 
@@ -71,23 +72,19 @@ enum {
 	kSkipUnknownAtoms = 1L<<0
 };
 
-typedef unsigned char UInt8;
-typedef char SInt8;
-typedef long SInt32;
-typedef unsigned long UInt32;
-typedef long Int32;
-typedef short SInt16;
-typedef unsigned short UInt16;
+typedef uint8_t UInt8;
+typedef int8_t SInt8;
+typedef int32_t SInt32;
+typedef uint32_t UInt32;
+typedef int32_t Int32;
+typedef int16_t SInt16;
+typedef uint16_t UInt16;
 typedef UInt32 UnsignedFixed;
 
 typedef unsigned char uuidType[16];		// 128-bit uuid (guid)
-#ifdef  _MSC_VER
-typedef unsigned __int64 UInt64;
-typedef __int64 SInt64;
-#else
-typedef unsigned long long UInt64;
-typedef long long SInt64;
-#endif
+
+typedef uint64_t UInt64;
+typedef int64_t SInt64;
 typedef UInt32 TimeValue;
 typedef UInt32 PriorityType;
 typedef SInt32 Fixed;
@@ -120,7 +117,7 @@ typedef struct atomOffsetEntry {
 	UInt32		atomStartSize;	// size of id & size info, so it is easy to skip
 
 	UInt32 		aoeflags;			// used for processing
-	UInt32 		refconOverride;		// used for processing
+	void* 		refconOverride;		// used for processing
 } atomOffsetEntry;
 
 enum {
@@ -207,7 +204,7 @@ enum {
 typedef char atompathType[100];
 typedef char argstr[1000];
 
-void addAtomToPath( atompathType workingpath, OSType atomId, long atomIndex, atompathType curpath );
+void addAtomToPath( atompathType workingpath, OSType atomId, SInt32 atomIndex, atompathType curpath );
 void restoreAtomPath( atompathType workingpath, atompathType curpath );
 
 
@@ -521,7 +518,7 @@ typedef struct {
     UInt64  fragment_duration;
 	UInt32  mvhd_timescale;
 
-	long			numTIRs;
+	SInt32			numTIRs;
 	TrackInfoRec	tirList[1];
     MoofInfoRec     *moofInfo;
 
@@ -568,13 +565,13 @@ typedef struct{
 // Validate Globals
 typedef struct {
 	FILE *inFile;
-	long inOffset;
-	long inMaxOffset;
+	SInt32 inOffset;
+	SInt32 inMaxOffset;
 
 	atompathType curatompath;
 	Boolean printatom;
 	Boolean printsample;
-	long tabcnt;
+	SInt32 tabcnt;
 
 	atomOffsetEntry *fileaoe;		// used when you need to read file & size from the file
 
@@ -589,8 +586,8 @@ typedef struct {
 	bool *psshFoundInSegment;
 	bool *tencFoundInSegment;
     bool   *dsms;
-    long    segmentInfoSize;
-    long    processedStypes;
+    SInt32    segmentInfoSize;
+    SInt32    processedStypes;
     UInt32  accessUnitDurationNonIndexedTrack;
     bool    initializationSegment;
     bool    checkSegAlignment;
@@ -650,11 +647,11 @@ typedef struct {
 	argstr	printtypestr;
 	argstr	segmentOffsetInfo;
 
-	long	filetype;
-	long	checklevel;
-	long	samplenumber;
+	SInt32	filetype;
+	SInt32	checklevel;
+	SInt32	samplenumber;
 
-	long	majorBrand;
+	SInt32	majorBrand;
 	Boolean	dashSegment;
     Boolean dashInFtyp;
     Boolean msixInFtyp;
@@ -682,7 +679,7 @@ typedef struct {
 extern ValidateGlobals vg;
 
 typedef struct AtomSizeType {
-	unsigned long atomSize;
+	UInt32 atomSize;
 	OSType atomType;
 } AtomSizeType;
 
@@ -691,7 +688,7 @@ typedef struct AtomStartRecord {
 	UInt32 versFlags;
 } AtomStartRecord;
 
-typedef OSErr (*ValidateAtomProcPtr)(OSType atomId, unsigned long atomSize, void *atomRec);
+typedef OSErr (*ValidateAtomProcPtr)(OSType atomId, UInt32 atomSize, void *atomRec);
 #define CallValidateAtomProc(userRoutine, atomId, atomSize, atomRec)		\
 		(*(userRoutine))((atomId), (atomSize), (atomRec))
 
@@ -976,11 +973,11 @@ enum {
 OSErr PeekDescriptorTag(BitBuffer *bb, UInt32 *tag, UInt32 *size);
 OSErr GetDescriptorTagAndSize(BitBuffer *bb, UInt32 *tag, UInt32 *size);
 
-OSErr Validate_iods_OD_Bits( Ptr dataP, unsigned long dataSize, Boolean fileForm );
+OSErr Validate_iods_OD_Bits( Ptr dataP, UInt32 dataSize, Boolean fileForm );
 
 
 int FindAtomOffsets( atomOffsetEntry *aoe, UInt64 startOffset, UInt64 maxOffset,
-			long *atomCountOut, atomOffsetEntry **atomOffsetsOut );
+			SInt32 *atomCountOut, atomOffsetEntry **atomOffsetsOut );
 UInt64 getAdjustedFileOffset(UInt64 offset64);
 UInt64 inflateOffset(UInt64 offset64);
 int GetFileDataN64( atomOffsetEntry *aoe, void *dataP, UInt64 offset64, UInt64 *newoffset64 );
@@ -1147,8 +1144,8 @@ typedef OSErr (*ValidateAtomTypeProcPtr)( atomOffsetEntry *aoe, void *refcon );
 #define CallValidateAtomTypeProc(userRoutine, aoe, refcon)		\
 		(*(userRoutine))((aoe),(refcon))
 
-OSErr ValidateAtomOfType( OSType theType, long flags, ValidateAtomTypeProcPtr validateProc,
-		long cnt, atomOffsetEntry *list, void *refcon );
+OSErr ValidateAtomOfType( OSType theType, SInt32 flags, ValidateAtomTypeProcPtr validateProc,
+		SInt32 cnt, atomOffsetEntry *list, void *refcon );
 
 #define FieldMustBe( num, value, errstr ) \
 do { if ((num) != (value)) { err = badAtomErr; warnprint("Warning for ISO/IEC 14496-12 " errstr "\n", (value), num); } } while (false)

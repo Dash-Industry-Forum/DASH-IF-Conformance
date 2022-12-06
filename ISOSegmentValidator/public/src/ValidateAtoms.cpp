@@ -76,7 +76,7 @@ OSErr Validate_iods_Atom( atomOffsetEntry *aoe, void *refcon )
 	UInt32 flags;
 	UInt64 offset;
 	Ptr odDataP = nil;
-	unsigned long odSize;
+	UInt32 odSize;
 
 	// Get version/flags
 	BAILIFERR( GetFullAtomVersionFlags( aoe, &version, &flags, &offset ) );
@@ -106,8 +106,8 @@ typedef struct MovieHeaderCommonRecord {
 	SInt16						  preferredVolume;		   	// must be 1.0 for mp4
 	short						   reserved1;					// must be 0
 
-	long							preferredLong1;				// must be 0 for mp4
-	long							preferredLong2;				// must be 0 for mp4
+	SInt32							preferredLong1;				// must be 0 for mp4
+	SInt32							preferredLong2;				// must be 0 for mp4
 
 	MatrixRecord					matrix;						// must be identity for mp4
 
@@ -120,7 +120,7 @@ typedef struct MovieHeaderCommonRecord {
 	TimeValue					   selectionDuration;  		// must be 0 for mp4
 	TimeValue					   currentTime;		  		// must be 0 for mp4
 
-	long							nextTrackID;
+	SInt32							nextTrackID;
 } MovieHeaderCommonRecord;
 
 typedef struct MovieHeaderVers0Record {
@@ -356,7 +356,7 @@ OSErr Validate_tkhd_Atom( atomOffsetEntry *aoe, void *refcon )
 
 	if(vg.cmaf){
 		if(tkhdHead.duration != 0){
-			errprint("CMAF check violated: Section 7.5.4. \"The value of the duration field SHALL be set to a value of zero\", found %llu\n",tkhdHead.duration);
+			errprint("CMAF check violated: Section 7.5.4. \"The value of the duration field SHALL be set to a value of zero\", found %lu\n",tkhdHead.duration);
 		}
 
 		if((tkhdHeadCommon.matrix[0][0] != 0 && tkhdHeadCommon.matrix[1][1] != 0 && tkhdHeadCommon.matrix[2][2] != 0x40000000) || (tkhdHeadCommon.matrix[0][0] != 0x00010000 && tkhdHeadCommon.matrix[1][1] != 0x00010000 && tkhdHeadCommon.matrix[2][2] != 0x40000000)){
@@ -1009,7 +1009,7 @@ OSErr Validate_dref_Atom( atomOffsetEntry *aoe, void *refcon )
 	{
 		UInt64 minOffset, maxOffset;
 		atomOffsetEntry *entry;
-		long cnt;
+		SInt32 cnt;
 		atomOffsetEntry *list;
 		int i;
 
@@ -1148,7 +1148,7 @@ bail:
 
 
 typedef struct CompositionTimeToSampleNum {
-	long			 sampleCount;
+	SInt32			 sampleCount;
 	TimeValue		sampleOffset;
 } CompositionTimeToSampleNum;
 
@@ -2117,7 +2117,7 @@ OSErr Validate_stsd_Atom( atomOffsetEntry *aoe, void *refcon )
 	{
 		UInt64 minOffset, maxOffset;
 		atomOffsetEntry *entry;
-		long cnt;
+		SInt32 cnt;
 		atomOffsetEntry *list;
 		int i;
 
@@ -2315,7 +2315,7 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 		{
 			UInt64 minOffset, maxOffset;
 			atomOffsetEntry *entry;
-			long cnt;
+			SInt32 cnt;
 			atomOffsetEntry *list;
 			int i;
 			int is_protected = 0;
@@ -2499,7 +2499,7 @@ OSErr Validate_mehd_Atom( atomOffsetEntry *aoe, void *refcon )
 	}
 
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-	atomprint("fragmentDuration=\"%lld\"\n", (mir->fragment_duration));
+	atomprint("fragmentDuration=\"%ld\"\n", (mir->fragment_duration));
 	atomprint(">\n");
 
 		if(vg.cmaf && mir->fragment_duration <=0)
@@ -2534,7 +2534,7 @@ OSErr Validate_trep_Atom( atomOffsetEntry *aoe, void *refcon )
 		BAILIFERR( GetFileDataN32( aoe, &track_id, offset, &offset ) );
 
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-	atomprint("track_id=\"%lld\"\n", track_id);
+	atomprint("track_id=\"%ld\"\n", track_id);
 	atomprint(">\n");
 
 	// All done
@@ -2817,9 +2817,9 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
 
 	sampleprint("trafInfo->default_base_is_moof %d\n",  trafInfo->default_base_is_moof );
 	sampleprint("trunInfo->data_offset_present %d\n",  trunInfo->data_offset_present );
-	sampleprint("trunInfo->data_offset %08lluX\n",  trunInfo->data_offset );
-	sampleprint("moofInfo->offset %lld  %08lluX\n",   moofInfo->offset, moofInfo->offset );
-	fprintf(stdout, "moofInfo->offset %lld  %08lluX\n",   moofInfo->offset, moofInfo->offset );
+	sampleprint("trunInfo->data_offset %08uX\n",  trunInfo->data_offset );
+	sampleprint("moofInfo->offset %ld  %08luX\n",   moofInfo->offset, moofInfo->offset );
+	fprintf(stdout, "moofInfo->offset %ld  %08luX\n",   moofInfo->offset, moofInfo->offset );
 
 	if (trafInfo->default_base_is_moof && trunInfo->data_offset_present)
 	{
@@ -2859,7 +2859,7 @@ OSErr Validate_trun_Atom( atomOffsetEntry *aoe, void *refcon )
 
 	trafInfo->processedTrun++;
 
-	atomprint("cummulatedSampleDuration=\"%lld\"\n", trunInfo->cummulatedSampleDuration);
+	atomprint("cummulatedSampleDuration=\"%ld\"\n", trunInfo->cummulatedSampleDuration);
 	atomprint("earliestCompositionTime=\"%ld\"\n", trafInfo->earliestCompositionTimeInTrackFragment);
 	atomprint("data_offset=\"%ld\"\n", trunInfo->data_offset);
 	if(vg.cmaf) {
@@ -2963,6 +2963,8 @@ OSErr Validate_sgpd_Atom( atomOffsetEntry *aoe, void *refcon )
 		{
 			if(sgpdInfo->default_length == 0)
 				BAILIFERR( GetFileDataN32( aoe, &sgpdInfo->description_length[i], offset, &offset ));
+			else
+				sgpdInfo->description_length[i] = sgpdInfo->default_length;
 
 			sgpdInfo->SampleGroupDescriptionEntry[i] = (UInt32 *)malloc((sgpdInfo->default_length == 0 ? sgpdInfo->description_length[i] : sgpdInfo->default_length)*sizeof(UInt32));
 		}
@@ -2979,8 +2981,8 @@ OSErr Validate_sgpd_Atom( atomOffsetEntry *aoe, void *refcon )
 	vg.tabcnt++;
 
 	for(UInt32 i=0; i<sgpdInfo->entry_count; i++){
-	sampleprint("<sgpdEntry descriptionLength=\"%ld\"", EndianU32_BtoN(sgpdInfo->description_length[i]));
-	sampleprintnotab(" sampleGroupDescriptionEntry=\"%ld\"/>\n", EndianU32_BtoN(sgpdInfo->SampleGroupDescriptionEntry[i]));
+	sampleprint("<sgpdEntry descriptionLength=\"%u\"", EndianU32_BtoN(sgpdInfo->description_length[i]));
+	sampleprintnotab(" sampleGroupDescriptionEntry=\"%u\"/>\n", EndianU64_BtoN(sgpdInfo->SampleGroupDescriptionEntry[i]));
 	}
 
 	--vg.tabcnt;
@@ -3143,7 +3145,7 @@ OSErr Validate_tfdt_Atom( atomOffsetEntry *aoe, void *refcon )
 	trafInfo->tfdtFound = true;
 
 	atomprintnotab("\tversion=\"%d\" flags=\"%d\"\n", version, flags);
-	atomprint("baseMediaDecodeTime=\"%lld\"\n", (trafInfo->baseMediaDecodeTime));//EndianU64_BtoN
+	atomprint("baseMediaDecodeTime=\"%ld\"\n", (trafInfo->baseMediaDecodeTime));//EndianU64_BtoN
 	atomprint(">\n");
 
 	// All done
@@ -3196,7 +3198,7 @@ OSErr Validate_pssh_Atom( atomOffsetEntry *aoe, void *refcon )
 	pssh_contents = new char[DataSize*2];
 	if(vg.pssh_count > 0)
 	{
-	  sprintf(pssh_contents, "%lu %lu %s %lu %s",version, flags, SystemID, DataSize, Data);
+	  sprintf(pssh_contents, "%u %u %s %u %s",version, flags, SystemID, DataSize, Data);
 
 	  //Get pssh mentioned in MPD from a saved file
 	  char *pssh_file_contents;
@@ -3232,7 +3234,7 @@ OSErr Validate_pssh_Atom( atomOffsetEntry *aoe, void *refcon )
 
 	  }
 	}
-	delete pssh_contents;
+	delete[] pssh_contents;
 	free(Data);
 
 	// All done
@@ -3324,8 +3326,8 @@ OSErr Validate_sidx_Atom( atomOffsetEntry *aoe, void *refcon )
 		BAILIFERR( GetFileDataN64( aoe, &sidxInfo->first_offset, offset, &offset ) );
 	}
 
-	atomprint("earliestPresentationTime=\"%lld\"\n",sidxInfo->earliest_presentation_time); //int64todstr(EndianU64_BtoN(sidxInfo->earliest_presentation_time)));
-	atomprint("firstOffset=\"%lld\"\n", (EndianU64_BtoN(sidxInfo->first_offset)));
+	atomprint("earliestPresentationTime=\"%ld\"\n",sidxInfo->earliest_presentation_time); //int64todstr(EndianU64_BtoN(sidxInfo->earliest_presentation_time)));
+	atomprint("firstOffset=\"%ld\"\n", (EndianU64_BtoN(sidxInfo->first_offset)));
 
 	BAILIFERR( GetFileDataN32( aoe, &temp, offset, &offset ) );
 	sidxInfo->reference_count = (UInt16)(temp & 0xFFFF);
@@ -3493,7 +3495,7 @@ OSErr Validate_soun_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 		UInt64 minOffset;
 		UInt64 maxOffset;
 		atomOffsetEntry *entry;
-		long cnt;
+		SInt32 cnt;
 		atomOffsetEntry *list;
 		int i;
 		int sinfFound=0;
@@ -3646,7 +3648,7 @@ OSErr Validate_subt_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 		UInt64 minOffset, maxOffset;
 		atomOffsetEntry *entry;
 		atomOffsetEntry *list;
-		long cnt;
+		SInt32 cnt;
 		int i;
 
 		minOffset = offset;
@@ -3697,7 +3699,7 @@ OSErr Validate_text_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 		UInt64 minOffset, maxOffset;
 		atomOffsetEntry *entry;
 		atomOffsetEntry *list;
-		long cnt;
+		SInt32 cnt;
 		int i;
 		
 		minOffset = offset;
@@ -3754,7 +3756,7 @@ OSErr Validate_mp4_SD_Entry( atomOffsetEntry *aoe, void *refcon, ValidateBitstre
 	{
 		UInt64 minOffset, maxOffset;
 		atomOffsetEntry *entry;
-		long cnt;
+		SInt32 cnt;
 		atomOffsetEntry *list;
 		int i;
 
@@ -3862,7 +3864,7 @@ OSErr Validate_ESDAtom( atomOffsetEntry *aoe, void *refcon, ValidateBitstreamPro
 	UInt32 flags;
 	UInt64 offset;
 	Ptr esDataP = nil;
-	unsigned long esSize;
+	UInt32 esSize;
 	BitBuffer bb;
 
 	atomprint("<ESD"); vg.tabcnt++;
@@ -4085,7 +4087,7 @@ OSErr Validate_m4ds_Atom( atomOffsetEntry *aoe, void *refcon, char *esName )
 	OSErr err = noErr;
 	UInt64 offset;
 	Ptr esDataP = nil;
-	unsigned long esSize;
+	UInt32 esSize;
 	BitBuffer bb;
 
 	atomprint("<m4ds>\n"); vg.tabcnt++;
@@ -4122,7 +4124,7 @@ OSErr Validate_stpp_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
 	char *auxiliary_mime_types;
 	UInt64 minOffset, maxOffset;
 	atomOffsetEntry *entry;
-	long cnt;
+	SInt32 cnt;
 	atomOffsetEntry *list;
 	int i;
 
@@ -4197,7 +4199,7 @@ OSErr Validate_wvtt_Atom( atomOffsetEntry *aoe, void *refcon, char *esname )
 	UInt64 minOffset, maxOffset;
 	atomOffsetEntry *entry;
 	atomOffsetEntry *list;
-	long cnt;
+	SInt32 cnt;
 	int i;
 	
 	atomprint("<%s", esname); vg.tabcnt++;
@@ -4528,7 +4530,7 @@ OSErr Validate_schm_Atom( atomOffsetEntry *aoe, void *refcon )
 
 	// Get version/flags
 	offset = aoe->offset;
-	BAILIFERR( GetFileData( aoe, &ahdr, offset, sizeof( AtomStartRecord ), &offset ) );
+	BAILIFERR( GetFileData( aoe, &ahdr, offset, sizeof( AtomSizeType ), &offset ) );
 	ahdr.atomSize = EndianU32_BtoN( ahdr.atomSize );
 	ahdr.atomType = EndianU32_BtoN( ahdr.atomType );
 
@@ -4566,9 +4568,9 @@ bail:
 OSErr Validate_schi_Atom( atomOffsetEntry *aoe, void *refcon )
 {
 	OSErr err = noErr;
-	long cnt;
+	SInt32 cnt;
 	atomOffsetEntry *list;
-	long i;
+	SInt32 i;
 	OSErr atomerr = noErr;
 	atomOffsetEntry *entry;
 	UInt64 minOffset, maxOffset;
@@ -4912,7 +4914,7 @@ OSErr Validate_ipro_Atom( atomOffsetEntry *aoe, void *refcon )
 		UInt64 minOffset;
 		UInt64 maxOffset;
 		atomOffsetEntry *entry;
-		long cnt;
+		SInt32 cnt;
 		atomOffsetEntry *list;
 		int i;
 
@@ -5018,7 +5020,7 @@ OSErr Validate_iinf_Atom( atomOffsetEntry *aoe, void *refcon )
 		UInt64 minOffset;
 		UInt64 maxOffset;
 		atomOffsetEntry *entry;
-		long cnt;
+		SInt32 cnt;
 		atomOffsetEntry *list;
 		int i;
 
