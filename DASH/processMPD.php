@@ -37,6 +37,11 @@ function process_MPD($parseSegments = false)
     ## If no error is found, then proceed with segment validation below
     $mpdHandler = new DASHIF\MPDHandler($mpd_url);
 
+    if($mpdHandler->getDOM() == null){
+      fwrite(STDERR, "Unable to parse mpd @ $mpd_url\n");
+      return;
+    }
+
     fwrite(STDERR, "Going to parse $mpd_url\n");
 
     foreach ($modules as $module) {
