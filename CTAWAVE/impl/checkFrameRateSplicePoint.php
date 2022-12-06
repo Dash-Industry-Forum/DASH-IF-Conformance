@@ -1,10 +1,9 @@
 <?php
 
-global $session, $MediaProfDatabase;
+global $session, $MediaProfDatabase, $logger;
 
 $periodCount = sizeof($MediaProfDatabase);
 $adaptationCount = sizeof($MediaProfDatabase[0]);
-$errorMsg = "";
 for ($i = 0; $i < ($periodCount - 1); $i++) {
     for ($adapt = 0; $adapt < $adaptationCount; $adapt++) {
         $dir1 = $session->getRepresentationDir($i, $adapt, 0);
@@ -26,16 +25,19 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
                 $remainder = ($framerate_p1 > $framerate_p2 ?
                   ($framerate_p1 % $framerate_p2) :
                   ($framerate_p2 % $framerate_p1));
-                if ($remainder != 0) {
-                    $errorMsg = "###Warning: WAVE Content Spec 2018Ed-Section 7.2.2: 'Frame rate Should " .
-                    "be the same family of multiples between Sequential Sw Sets at the Splice point', " .
-                    "violated for Sw set " . $adapt . " between CMAF Presentations " . $i . " and  " .
-                    ($i + 1) . " with framerates of " . $framerate_p1 . " and " . $framerate_p2 .
-                    " respectively.\n";
-                }
+
+                
+                $logger->test(
+                    "WAVE Content Spec 2018Ed",
+                    "Section 7.2.2",
+                    "Frame rate Should be the same between Sequential Sw Sets at the Splice point",
+                    $remainder == 0,
+                    "WARN",
+                    "Correct for Sw set $adapt between presentations $i and " . ($i+1),
+                    "Invalid for Sw set $adapt between presentations $i and " . ($i+1),
+                );
             }
         }
     }
 }
 
-return $errorMsg;

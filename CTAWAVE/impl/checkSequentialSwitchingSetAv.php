@@ -4,7 +4,6 @@ global $MediaProfDatabase, $session;
 
 $periodCount = sizeof($MediaProfDatabase);
 $adaptationCount = sizeof($MediaProfDatabase[0]);
-$errorMsg = "";
 for ($i = 0; $i < ($periodCount - 1); $i++) {
     for ($adaptation = 0; $adaptation < $adaptationCount; $adaptation++) {
         $dir1 = $session->getRepresentationDir($i, $adapt, 0);
@@ -47,20 +46,18 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
                 $presentationTime2 = $earliestCompositionTime2 + $mediaTime2;
             }
         }
-        ///\RefactorTodo Fix this optioncheck
-        /*
         if ($hdlrType1 == $hdlrType2 && ($hdlrType1 == "vide" || $hdlrType1 == "soun")) {
-          if ((($earliestCompositionTime1 + $mediaTime1 + $sumSampleDur) / $timeScale1) !=
-            ($presentationTime2 / $timeScale2)) {
-            $errorMsg = "###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 6.1: 'For a WAVE Program
-              with more than one CMAF Presentation, all audio and video Shall be contained in Sequential Sw Sets',
-              overlap/gap in presenation time (non-sequential) is observed for Sw set " . $adaptation . " between
-              CMAF Presentations " . $i . " (" . ($earliestCompositionTime1 + $mediaTime1 + $sumSampleDur) /
-              $timeScale1 . ") and  " . ($i + 1) . " (" . ($presentationTime2 / $timeScale2) . ") for media type-
-              " . $hdlrType1 . " .\n";
-            }
+                $logger->test(
+                    "WAVE Content Spec 2018Ed",
+                    "Section 6.1",
+                    "For a WAVE Program with more than one CMAF Presentation, all audio and video Shall be contained in Sequential Sw Sets",
+                    $remainder == 0,
+          (($earliestCompositionTime1 + $mediaTime1 + $sumSampleDur) / $timeScale1) ==
+            ($presentationTime2 / $timeScale2),
+                    "FAIL",
+                    "No overlap/gap found for Sw set $adaptation between presentations $i and " . ($i+1),
+                    "Overlap/gap found for Sw set $adaptation between presentations $i and " . ($i+1)
+                );
         }
-        */
     }
 }
-return $errorMsg;

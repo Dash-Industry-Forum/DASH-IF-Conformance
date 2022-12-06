@@ -11,7 +11,6 @@ $audioSelectionSetFound = 0;
 $im1tSwitchingSetFound = 0;
 $subtitleSelectionSetFound = 0;
 $hdlrType = "";
-$errorMsg = "";
 $encryptedTrackFound = 0;
 $cencSwSetFound = 0;
 $cbcsSwSetFound = 0;

@@ -1,10 +1,9 @@
 <?php
 
-global $session, $MediaProfDatabase;
+global $session, $MediaProfDatabase, $logger;
 
 $periodCount = sizeof($MediaProfDatabase);
 $adaptationCount = sizeof($MediaProfDatabase[0]);
-$errorMsg = "";
 for ($i = 0; $i < ($periodCount - 1); $i++) {
     for ($adapt = 0; $adapt < $adaptationCount; $adapt++) {
         $dir1 = $session->getRepresentationDir($i, $adapt, 0);
@@ -25,15 +24,17 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
                 $par_p2 = $tkhd->getAttribute("width") / ($tkhd->getAttribute("height"));
 
 
-                if ($par_p1 != $par_p2) {
-                    $errorMsg = "###Warning: WAVE Content Spec 2018Ed-Section 7.2.2: 'Picture Aspect Ratio (PAR) " .
-                    "Should be the same between Sequential Sw Sets at the Splice point', violated for Sw set " .
-                    $adapt . " between CMAF Presentations " . $i . " and  " . ($i + 1) . " with - PAR " .
-                    $par_p1 . " and " . $par_p2 . ".\n";
-                }
+                $logger->test(
+                    "WAVE Content Spec 2018Ed",
+                    "Section 7.2.2",
+                    "Picture Aspect Ratio (PAR) Should be the same between Sequential Sw Sets at the Splice point",
+                    $par_p1 == $par_p2,
+                    "WARN",
+                    "Correct for Sw set $adapt between presentations $i and " . ($i+1),
+                    "Invalid for Sw set $adapt between presentations $i and " . ($i+1),
+                );
             }
         }
     }
 }
 
-return $errorMsg;

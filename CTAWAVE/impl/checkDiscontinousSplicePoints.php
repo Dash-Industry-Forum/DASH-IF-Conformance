@@ -1,8 +1,7 @@
 <?php
 
-global $session, $MediaProfDatabase;
+global $session, $MediaProfDatabase, $logger;
 
-$errorMsg = "";
 $periodCount = sizeof($MediaProfDatabase);
 $adaptationCount = sizeof($MediaProfDatabase[0]);
 for ($i = 0; $i < ($periodCount - 1); $i++) {
@@ -34,13 +33,13 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
                 ($baseMediaDecodeTime_p2 / $timeScale2) !=
                 (($baseMediaDecodeTime1 + $cumulativeDuration1) / $timeScale1)
             ) {
-                $errorMsg = "Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can " .
+          $logger->message(
+                "Information: WAVE Content Spec 2018Ed-Section 7.2.2: Sequential Switching Sets can " .
                 "be discontinuous, and it is observed for Sw set " . $adaptation . " between CMAF Presentations " .
                 $i . " and  " . ($i + 1) . " with baseMediaDecodeTime- " .
                 (($baseMediaDecodeTime1 + $cumulativeDuration1) / $timeScale1) . " and " .
-                ($baseMediaDecodeTime_p2 / $timeScale2) . " respectively.\n";
+                ($baseMediaDecodeTime_p2 / $timeScale2) . " respectively");
             }
         }
     }
 }
-return $errorMsg;
