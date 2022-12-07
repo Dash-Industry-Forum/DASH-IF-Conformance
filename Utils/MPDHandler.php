@@ -20,6 +20,10 @@ class MPDHandler
     private $selectedAdapationSet;
     private $selectedRepresentation;
 
+    private $hls;
+    private $hlsPlaylistArray;
+    private $hlsManifestType;
+
     public function __construct($url)
     {
         $this->url = $url;
@@ -37,11 +41,13 @@ class MPDHandler
         $this->schematronOutput = null;
         $this->schematronIssuesReport = null;
 
-        $this->load();
-        $this->features = $this->recursiveExtractFeatures($this->dom);
-        $this->extractProfiles();
-        $this->runSchematron();
-        $this->validateSchematron();
+        if ($this->url != '') {
+            $this->load();
+            $this->features = $this->recursiveExtractFeatures($this->dom);
+            $this->extractProfiles();
+            $this->runSchematron();
+            $this->validateSchematron();
+        }
     }
 
     public function selectPeriod($period)

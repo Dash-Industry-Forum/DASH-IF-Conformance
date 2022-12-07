@@ -5,7 +5,6 @@ if (!$this->url) {
 }
 
 ///\Todo: Check if this works with http basic auth
-
 $this->mpd = file_get_contents($this->url);
 if (!$this->mpd) {
     return;

@@ -92,10 +92,10 @@ ini_set("error_log", "myphp-error.log");
 $parseSegments = $argumentParser->getOption("segments");
 $compactOutput = $argumentParser->getOption("compact");
 
-if (!$hls_manifest) {
-    process_MPD($parseSegments);
-} else {
+if (substr($mpd_url, -5) == ".m3u8") {
     processHLS();
+} else {
+    process_MPD($parseSegments);
 }
 
 if (!$argumentParser->getOption("silent")) {
