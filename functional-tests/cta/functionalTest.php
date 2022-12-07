@@ -17,6 +17,7 @@ include 'Utils/sessionHandler.php';
 require 'Utils/moduleInterface.php';
 include 'Utils/moduleLogger.php';
 include 'Utils/MPDHandler.php';
+include 'Utils/functions.php';
 
 include 'Utils/Session.php';         //#Session Functions, No Direct Executable Code
 //#Document loading functions, mostly xml. Some assertion options and error initialization
