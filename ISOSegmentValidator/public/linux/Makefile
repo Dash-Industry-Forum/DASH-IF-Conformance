@@ -16,7 +16,7 @@ COV=
 FLAGS+=-Wall -Wextra -Werror
 
 ## TODO: remove these
-FLAGS+=-Wno-unused-but-set-variable -Wno-unused-variable -Wno-unused-label -Wno-unused-parameter -Wno-int-to-pointer-cast -Wno-sequence-point -Wno-stringop-truncation
+FLAGS+=-Wno-unused-result -Wno-unused-but-set-variable -Wno-unused-variable -Wno-unused-label -Wno-unused-parameter -Wno-int-to-pointer-cast -Wno-sequence-point -Wno-stringop-truncation
 
 #compatibility=-static-libstdc++
 
@@ -36,7 +36,6 @@ ifdef COV
 OBJDIR=$(BINDIR)
 LIBS= -lgcov
 FLAGS+=--coverage -fno-inline -fno-elide-constructors -fprofile-generate -fprofile-arcs -ftest-coverage -Wl,-lgcov
-LDFLAGS+="--coverage -lgcov --coverage -WL -lgcov"
 endif
 
 ifdef SAN
