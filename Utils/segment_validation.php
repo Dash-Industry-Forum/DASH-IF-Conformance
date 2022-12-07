@@ -141,8 +141,7 @@ function assemble($representationDirectory, $segment_urls, $sizearr)
 
 function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 {
-    global $mpdHandler, $session,
-            $string_info,
+    global $mpdHandler, $session, $logger;
             $hls_manifest, $hls_tag, $hls_info_file;
 
     $selectedPeriod = $mpdHandler->getSelectedPeriod();
@@ -152,55 +151,53 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
     $adaptation_set = $mpdHandler->getFeatures()['Period'][$selectedPeriod]['AdaptationSet'][$selectedAdaptation];
     $representation = $adaptation_set['Representation'][$selectedRepresentation];
     ///\todo refactor "Make these into proper logger messages
-    if ($returncode != 0) {
-        if (filesize("$representationDirectory/stderr.txt") == 0) {
-            if (!$hls_manifest) {
-                if (
-                    $adaptation_set['mimeType'] == 'application/ttml+xml' ||
-                    $adaptation_set['mimeType'] == 'image/jpeg'
-                ) {
-                    file_put_contents(
-                        $representationDirectory . '/stderr.txt',
-                        "### error:  \n###        Failed to process Adaptation Set " .
-                        $selectedAdaptation . ', Representation ' . $selectedRepresentation .
-                        "!, as mimeType= '" . $adaptation_set['mimeType'] . "' is not supported"
-                    );
-                } elseif (
-                    $representation['mimeType'] == "application/ttml+xml" ||
-                    $representation['mimeType'] == "image/jpeg"
-                ) {
-                    file_put_contents(
-                        $representationDirectory . '/stderr.txt',
-                        "### error:  \n###        Failed to process Adaptation Set " .
-                        $selectedAdaptation . ', Representation ' . $selectedRepresentation .
-                        "!, as mimeType= '" . $representation['mimeType'] . "' is not supported"
-                    );
-                } else {
-                    file_put_contents(
-                        $representationDirectory . '/stderr.txt',
-                        "### error:  \n###        Failed to process Adaptation Set "
-                        . $selectedAdaptation . ', Representation ' . $selectedRepresentation . '!'
-                    );
-                }
+    if (filesize("$representationDirectory/stderr.txt") == 0) {
+        if (!$hls_manifest) {
+            if (
+                $adaptation_set['mimeType'] == 'application/ttml+xml' ||
+                $adaptation_set['mimeType'] == 'image/jpeg'
+            ) {
+                file_put_contents(
+                    $representationDirectory . '/stderr.txt',
+                    "### error:  \n###        Failed to process Adaptation Set " .
+                    $selectedAdaptation . ', Representation ' . $selectedRepresentation .
+                    "!, as mimeType= '" . $adaptation_set['mimeType'] . "' is not supported"
+                );
+            } elseif (
+                $representation['mimeType'] == "application/ttml+xml" ||
+                $representation['mimeType'] == "image/jpeg"
+            ) {
+                file_put_contents(
+                    $representationDirectory . '/stderr.txt',
+                    "### error:  \n###        Failed to process Adaptation Set " .
+                    $selectedAdaptation . ', Representation ' . $selectedRepresentation .
+                    "!, as mimeType= '" . $representation['mimeType'] . "' is not supported"
+                );
             } else {
-              ///\TodoRefactor -- Also fix for hls
-              /*
-                $tag_array = explode('_', $hls_tag);
-              $files = array_diff(scandir($session->getDir() . '/' .
-                $tag_array[0] . '/' . $tag_array[1] . "/"), array('.', '..'));
-              if (strpos($files[2], 'webvtt') !== false || strpos($files[2], 'xml') !== false ||
-                strpos($files[2], 'html') !== false) {
-                file_put_contents($session->getDir() . '/' . 'stderr.txt',
-                  "### error:  \n###        Failed to process " .
-                  $tag_array[0] . ' with index ' . $tag_array[1] . ', as the file type is ' .
-                  explode('.', $files[2])[1] . '!');
-                } else {
-                  file_put_contents($session->getDir() . '/' . 'stderr.txt',
-                    "### error:  \n###        Failed to process " .
-                    $tag_array[0] . ' with index ' . $tag_array[1] . '!');
-                }
-               */
+                file_put_contents(
+                    $representationDirectory . '/stderr.txt',
+                    "### error:  \n###        Failed to process Adaptation Set "
+                    . $selectedAdaptation . ', Representation ' . $selectedRepresentation . '!'
+                );
             }
+        } else {
+          ///\TodoRefactor -- Also fix for hls
+          /*
+            $tag_array = explode('_', $hls_tag);
+          $files = array_diff(scandir($session->getDir() . '/' .
+            $tag_array[0] . '/' . $tag_array[1] . "/"), array('.', '..'));
+          if (strpos($files[2], 'webvtt') !== false || strpos($files[2], 'xml') !== false ||
+            strpos($files[2], 'html') !== false) {
+            file_put_contents($session->getDir() . '/' . 'stderr.txt',
+              "### error:  \n###        Failed to process " .
+              $tag_array[0] . ' with index ' . $tag_array[1] . ', as the file type is ' .
+              explode('.', $files[2])[1] . '!');
+            } else {
+              file_put_contents($session->getDir() . '/' . 'stderr.txt',
+                "### error:  \n###        Failed to process " .
+                $tag_array[0] . ' with index ' . $tag_array[1] . '!');
+            }
+           */
         }
     }
 
@@ -481,17 +478,12 @@ function loadSegmentInfoFile($PresTimeOffset, $duration, $representationDirector
 
 function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representationDirectory)
 {
-    global $mpdHandler, $period_timing_info;
+    global $mpdHandler, $logger, $period_timing_info;
 
     if ($mpdHandler->getFeatures()['type'] == 'dynamic') {
         return;
     }
 
-    ///\RefactorTodo Transfer to actual logger messages
-    $trackErrorFile = fopen("$representationDirectory/errorLog.txt", 'a+');
-    if (!$trackErrorFile) {
-        return;
-    }
     $segmentDur = array();
     $num_segments = sizeof($segmentsTime[0]);
     if ($mpdHandler->getSelectedPeriod() == 0) {
@@ -505,44 +497,29 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
         $segmentDur[$i] =
             $segmentsTime[0][$i]['lastPresentationTime'] - $segmentsTime[0][$i]['earliestPresentationTime'];
 
-        if (
-            ($i !== ($num_segments - 1)) &&
-            !($segmentDurMPD * 0.5 <= $segmentDur[$i]  && $segmentDur[$i] <= $segmentDurMPD * 1.5)
-        ) {
-            fwrite(
-                $trackErrorFile,
-                "###error- DASH ISO/IEC 23009-1, 7.2.1: 'The maximum tolerance of segment duration shall be +/-50% " .
-                "of the signaled segment duration (@duration)',violated for segment " . ($i + 1) . ", with duration " .
-                $segmentDur[$i] . " while signaled @duration is " . $segmentDurMPD . "\n"
-            );
-        }
-        //The lower threshold tolerance does not apply to the last segment, it can be smaller.
-        if (($i == ($num_segments - 1)) && $segmentDur[$i] > $segmentDurMPD * 1.5) {
-            fwrite(
-                $trackErrorFile,
-                "###error- DASH ISO/IEC 23009-1, 7.2.1: 'The maximum tolerance of segment duration shall be +/-50% " .
-                "of the signaled segment duration (@duration)',violated for segment " . ($i + 1) . ", with duration " .
-                $segmentDur[$i] . " while signaled @duration is " . $segmentDurMPD . "\n"
-            );
-        }
+        $logger->test(
+            "DASH ISO/IEC 23009-1",
+            "Section 7.2.1",
+            "The maximum tolerance of segment duration shall be +/-50% of the signaled segment duration",
+            ($i != ($num_segments - 1) && $segmentDurMPD * 0.5 > $segmentDur[$i] ) &&
+             $segmentDur[$i] <= $segmentDurMPD * 1.5,
+            "FAIL",
+            "Segment $i with duration " . $segmentDur[$i] . " is within bounds of signaled " . $segmentDurMPD,
+            "Segment $i with duration " . $segmentDur[$i] . " violates bounds of signaled " . $segmentDurMPD
+        );
 
         $MPDSegmentStartTime = $pres_start + $i * $segmentDurMPD;
-        if (
-            !(
-              $MPDSegmentStartTime - (0.5 * $segmentDurMPD) <= $segmentsTime[0][$i]['earliestPresentationTime']  &&
-              $segmentsTime[0][$i]['earliestPresentationTime'] <= $MPDSegmentStartTime + (0.5 * $segmentDurMPD)
-            )
-        ) {
-            fwrite(
-                $trackErrorFile,
-                "###error- DASH ISO/IEC 23009-1:2019, 7.2.1: 'The difference between MPD start time and presentation " .
-                "time shall not exceed +/-50% of value of @duration divided by the value of the @timescale " .
-                "attribute.', violated for segment " . ($i + 1) . ", with earliest presentation time " .
-                $segmentsTime[0][$i]['earliestPresentationTime'] . " while signaled MPD start time is " .
-                $MPDSegmentStartTime . " and @duration is " . $segmentDurMPD . "\n"
-            );
-        }
-    }
 
-    fclose($trackErrorFile);
+        $logger->test(
+            "DASH ISO/IEC 23009-1:2019",
+            "Section 7.2.1",
+            "The difference between MPD start time and presentation time shall not exceed +/-50% of value of " .
+            "@duration divided by the value of the @timescale attribute",
+            $MPDSegmentStartTime - (0.5 * $segmentDurMPD) <= $segmentsTime[0][$i]['earliestPresentationTime']  &&
+            $segmentsTime[0][$i]['earliestPresentationTime'] <= $MPDSegmentStartTime + (0.5 * $segmentDurMPD)
+            "FAIL",
+            "Correct for segment $i with duration " . $segmentsTime[0][$i]['earliestPresentationTime'],
+            "Incorrect for segment $i with duration " . $segmentsTime[0][$i]['earliestPresentationTime']
+        );
+    }
 }
