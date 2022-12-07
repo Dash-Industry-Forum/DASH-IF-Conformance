@@ -65,7 +65,6 @@ function validate_segment_hls($URL_array, $CodecArray)
 {
     global $session, $hls_tag;
 
-    fwrite(STDERR, "Going to validate hls segments\n");
 
     $is_dolby = false;
     for ($i = 0; $i < sizeof($CodecArray); $i++) {
@@ -80,13 +79,11 @@ function validate_segment_hls($URL_array, $CodecArray)
 
     $tag_array = array('StreamINF', 'IFrameByteRange', 'XMedia');
     for ($i = 0; $i < sizeof($URL_array); $i++) {
-        fwrite(STDERR, "Going to download segment $i: " . $URL_array[$i] . " with tag " . $tag_array[$i] . "\n");
         list($segmentURL, $sizeArray) = segmentDownload($URL_array[$i], $tag_array[$i], $is_dolby);
 
 
         for ($j = 0; $j < sizeof($segmentURL); $j++) {
             if ($sizeArray[$j] != 0) {
-                fwrite(STDERR, "Size not 0 for entry $j\n");
                 $hls_tag = $tag_array[$i] . '_' . $j;
 
                 ## Put segments in one file
@@ -96,18 +93,20 @@ function validate_segment_hls($URL_array, $CodecArray)
                 ## Create config file with the flags for segment validation
                 $config_file_loc = config_file_for_backend(null, null, null, $representationDir, $is_dolby);
 
-                fwrite(STDERR, "Config file loc: $config_file_loc\n");
 
                 ## Run the backend
                 $returncode = run_backend($config_file_loc);
 
                 ## Analyse the results and report them
-                $file_location[] = analyze_results($returncode, $session->getDir() . '/' . $tag_array[$i], $representationDir);
+                $file_location[] = analyze_results(
+                    $returncode,
+                    $session->getDir() . '/' . $tag_array[$i],
+                    $representationDir
+                );
 
                 ## Determine media type based on atomxml information
                 determineMediaType($session->getDir() . '/' . $tag_array[$i] . '/' . $j . '.xml', $hls_tag);
             } else {
-                fwrite(STDERR, "No size for entry $j\n");
                 ## Save to progress report that the representation does not exist
                 $file_location[] = 'notexist';
             }
@@ -159,36 +158,30 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 
     $adaptation_set = $mpdHandler->getFeatures()['Period'][$selectedPeriod]['AdaptationSet'][$selectedAdaptation];
     $representation = $adaptation_set['Representation'][$selectedRepresentation];
-    ///\todo refactor "Make these into proper logger messages
+    if (!$hls_manifest) {
+        $logger->test(
+            "Segment Validations",
+            "analyze_results()",
+            "stderr filled??",
+            filesize("$representationDirectory/stderr.txt") !== 0,
+            "FAIL",
+            "Contents in stderr.txt found",
+            "Failed to process adaptationset $selectedAdaptation, " .
+            "representation $selectedRepresentation, mimetype" . $adaptation_set['mimeType']
+        );
+    } else {
+        $logger->test(
+            "Segment Validations",
+            "analyze_results()",
+            "stderr filled??",
+            filesize("$representationDirectory/stderr.txt") !== 0,
+            "FAIL",
+            "Contents in stderr.txt found",
+            "Failed to process HLS $tag_array[0] index $tag_array[1]"
+        );
+    }
     if (filesize("$representationDirectory/stderr.txt") == 0) {
         if (!$hls_manifest) {
-            if (
-                $adaptation_set['mimeType'] == 'application/ttml+xml' ||
-                $adaptation_set['mimeType'] == 'image/jpeg'
-            ) {
-                file_put_contents(
-                    $representationDirectory . '/stderr.txt',
-                    "### error:  \n###        Failed to process Adaptation Set " .
-                    $selectedAdaptation . ', Representation ' . $selectedRepresentation .
-                    "!, as mimeType= '" . $adaptation_set['mimeType'] . "' is not supported"
-                );
-            } elseif (
-                $representation['mimeType'] == "application/ttml+xml" ||
-                $representation['mimeType'] == "image/jpeg"
-            ) {
-                file_put_contents(
-                    $representationDirectory . '/stderr.txt',
-                    "### error:  \n###        Failed to process Adaptation Set " .
-                    $selectedAdaptation . ', Representation ' . $selectedRepresentation .
-                    "!, as mimeType= '" . $representation['mimeType'] . "' is not supported"
-                );
-            } else {
-                file_put_contents(
-                    $representationDirectory . '/stderr.txt',
-                    "### error:  \n###        Failed to process Adaptation Set "
-                    . $selectedAdaptation . ', Representation ' . $selectedRepresentation . '!'
-                );
-            }
         } else {
             $tag_array = explode('_', $hls_tag);
             $files = array_diff(scandir($session->getDir() . '/' .
@@ -331,7 +324,6 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
 {
     global $additional_flags, $suppressatomlevel, $hls_manifest;
 
-    fwrite(STDERR, "Going to open " . "$representationDirectory/segmentValidatorConfig.txt\n");
 
     $file = fopen("$representationDirectory/segmentValidatorConfig.txt", 'w');
     fwrite($file, "$representationDirectory/assembled.mp4 \n");
