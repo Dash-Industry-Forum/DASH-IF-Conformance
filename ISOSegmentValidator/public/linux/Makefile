@@ -4,8 +4,6 @@
 ###             generated for UNIX/LINUX environments
 ###
 
-
-
 NAME=  ValidateMP4
 
 ### include debug information: 1=yes, 'empty'=no (don't set to 0)
@@ -34,8 +32,8 @@ FLAGS+=-std=c++11 -ffloat-store -Wall -I$(INCDIR) -DLITTLEENDIAN -Wno-multichar 
 
 ifdef COV
 OBJDIR=$(BINDIR)
-LIBS= -lgcov
-FLAGS+=--coverage -fno-inline -fno-elide-constructors -fprofile-generate -fprofile-arcs -ftest-coverage -Wl,-lgcov
+LIBS+=--coverage
+FLAGS+=--coverage -fno-inline -fno-elide-constructors
 endif
 
 ifdef SAN
@@ -46,15 +44,13 @@ endif
 
 ifdef DBG
 SUFFIX= #.dbg
-FLAGS+= -g
+FLAGS+= -g3
+LDFLAGS+=-g
 else
 SUFFIX=
 FLAGS+= -Os -DGCC
 endif
 
-ifdef COV
-FLAGS+=-ftest-coverage -fprofile-arcs
-endif
 
 OBJSUF= .o$(SUFFIX)
 
@@ -108,5 +104,4 @@ $(OBJDIR)/%.o$(SUFFIX): $(ADDSRCDIR)/%.c
 	@$(CC) $(compatibility) -c -o $@ $(FLAGS) $<
 
 include $(DEPEND)
-
 
