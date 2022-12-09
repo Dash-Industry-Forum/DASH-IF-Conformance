@@ -1,11 +1,19 @@
 <?php
 
-if (!$this->url) {
-    return;
+global $session;
+
+ if (move_uploaded_file($_FILES['mpd']['name'], $session->getDir() . '/Manifest.mpd');
+  $this->url = $session->getDir() . '/Manifest.mpd';
 }
 
+if ($this->url && $this->url != '') {
+  $this->mpd = file_get_contents($this->url);
+}else if (isset($_REQUEST['mpd'])){
+  $this->mpd = $_REQUEST['mpd']];
+}
+
+
 ///\Todo: Check if this works with http basic auth
-$this->mpd = file_get_contents($this->url);
 if (!$this->mpd) {
     return;
 }

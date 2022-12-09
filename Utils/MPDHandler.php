@@ -41,8 +41,8 @@ class MPDHandler
         $this->schematronOutput = null;
         $this->schematronIssuesReport = null;
 
-        if ($this->url != '') {
-            $this->load();
+        $this->load();
+        if ($this->mpd){
             $this->features = $this->recursiveExtractFeatures($this->dom);
             $this->extractProfiles();
             $this->runSchematron();
