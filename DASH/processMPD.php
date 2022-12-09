@@ -14,7 +14,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function process_MPD($parseSegments = false)
+function process_MPD($parseSegments = false, $autoDetect = false)
 {
     global $mpd_url;
 
@@ -44,9 +44,12 @@ function process_MPD($parseSegments = false)
 
     fwrite(STDERR, "Going to parse $mpd_url\n");
 
-    foreach ($modules as $module) {
-        if ($module->isEnabled()) {
-            $module->detectFromManifest();
+
+    if ($autoDetect){
+        foreach ($modules as $module) {
+            if ($module->isEnabled()) {
+                $module->detectFromManifest();
+            }
         }
     }
 
