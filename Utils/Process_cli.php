@@ -41,6 +41,7 @@ include __DIR__ . '/segment_download.php'; //#Very large function for downloadin
 include __DIR__ . '/segment_validation.php'; //#Segment validation functions. No Direct Executable Code.
 
 include __DIR__ . '/MPDUtility.php';
+include __DIR__ . '/MPDHandler.php';
 
 
 include __DIR__ . '/../DASH/module.php';
