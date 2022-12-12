@@ -90,7 +90,7 @@ const ConformanceService = (function () {
             let testResult = {
               spec: module.name,
               section: part.name,
-              test: `Error #${index + 1} ` + xmlTestResult.getAttribute("test"),
+              test: `Error #${index + 1} ` + messages[0],
               messages: messages,
               state: "FAIL",
             };
