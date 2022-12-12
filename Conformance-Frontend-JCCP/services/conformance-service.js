@@ -100,7 +100,7 @@ const ConformanceService = (function () {
         });
       });
     });
-    return result;
+    return new ValidationResult(result);
   }
 
   let instance = {

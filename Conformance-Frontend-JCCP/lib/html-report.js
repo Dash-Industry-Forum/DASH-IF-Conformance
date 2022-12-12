@@ -53,7 +53,7 @@ const HtmlReport = (() => {
                 element: "tr",
                 children: [
                   { element: "td", text: "Source" },
-                  { element: "td", text: result.source },
+                  { element: "td", text: result.getSource() },
                 ],
               },
               {
@@ -62,7 +62,7 @@ const HtmlReport = (() => {
                   { element: "td", text: "Parse segments" },
                   {
                     element: "td",
-                    text: result.parse_segments ? "True" : "False",
+                    text: result.isParseSegments ? "True" : "False",
                   },
                 ],
               },
@@ -75,11 +75,11 @@ const HtmlReport = (() => {
                     children: [
                       {
                         element: "span",
-                        text: getVerdictIcon(result.verdict),
+                        text: getVerdictIcon(result.getVerdict()),
                       },
                       {
                         element: "span",
-                        text: result.verdict,
+                        text: result.getVerdict(),
                         className: "ms-1",
                       },
                     ],
@@ -92,9 +92,11 @@ const HtmlReport = (() => {
                   { element: "td", text: "Enabled modules" },
                   {
                     element: "td",
-                    children: result.enabled_modules.map((module) => ({
-                      text: module.name,
-                    })),
+                    children: result
+                      .getRawResult()
+                      .enabled_modules.map((module) => ({
+                        text: module.name,
+                      })),
                   },
                 ],
               },
@@ -106,10 +108,6 @@ const HtmlReport = (() => {
   }
 
   function generateSummary(result) {
-    let { entries: modules } = result;
-    let moduleNames = Object.keys(modules).filter(
-      (name) => name !== "verdict" && name !== "Stats"
-    );
     return {
       children: [
         {
@@ -118,76 +116,71 @@ const HtmlReport = (() => {
         },
         {
           className: "list-group",
-          children: moduleNames.reduce((elements, moduleName) => {
-            let { verdict } = modules[moduleName];
-            let parts = modules[moduleName];
-            let partNames = Object.keys(modules[moduleName]).filter(
-              (part) => part !== "verdict" && part !== "name"
-            );
-
+          children: result.getModules().reduce((elements, module) => {
             elements.push({
               className: "list-group-item list-group-item-action",
               element: "a",
-              href: "#" + toHandle(moduleName),
+              href: "#" + toHandle(module.getName()),
               children: [
                 {
                   element: "span",
-                  text: getVerdictIcon(verdict),
+                  text: getVerdictIcon(module.getVerdict()),
                   style: "width: 1.5em; display: inline-block",
                 },
                 {
                   element: "span",
-                  text: moduleName,
+                  text: module.getName(),
                 },
               ],
             });
 
-            partNames.forEach((partName) => {
-              let { verdict } = parts[partName];
-              let tests = parts[partName].test;
-
+            module.getParts().forEach((part) => {
               elements.push({
                 className: "list-group-item list-group-item-action",
                 style: "padding-left: 1em",
                 element: "a",
-                href: "#" + toHandle(moduleName + "-" + partName),
+                href: "#" + toHandle(module.getName() + "-" + part.getName()),
                 children: {
                   style: "padding-left: 1em",
                   children: [
                     {
                       element: "span",
-                      text: getVerdictIcon(verdict),
+                      text: getVerdictIcon(part.getVerdict()),
                       style: "width: 1.5em; display: inline-block",
                     },
                     {
                       element: "span",
-                      text: partName,
+                      text: part.getName(),
                     },
                   ],
                 },
               });
 
-              tests.forEach((test) => {
+              part.getTestResults().forEach((testResult) => {
                 elements.push({
                   className: "list-group-item list-group-item-action",
                   element: "a",
-                  href: "#" + toHandle(test.section + "-" + test.test),
+                  href:
+                    "#" +
+                    toHandle(
+                      testResult.getSection() + "-" + testResult.getTest()
+                    ),
                   children: {
                     style: "padding-left: 2em",
                     children: [
                       {
                         element: "span",
-                        text: getVerdictIcon(test.state),
+                        text: getVerdictIcon(testResult.getState()),
                         style: "width: 1.5em; display: inline-block",
                       },
                       {
                         element: "span",
-                        text: test.section,
+                        text: testResult.getSection(),
                         className: "me-2",
                       },
                       {
                         element: "span",
-                        text: test.test,
+                        text: testResult.getTest(),
                       },
                     ],
                   },
@@ -202,51 +195,35 @@ const HtmlReport = (() => {
   }
 
   function generateDetails(results) {
-    let moduleNames = Object.keys(results.entries).filter(
-      (name) => name !== "verdict" && name !== "Stats"
-    );
-    let modules = moduleNames.map((name) => {
-      let module = results.entries[name];
-      module.name = name;
-      return module;
-    });
     return {
       children: [
         { className: "fs-4 mt-5 mb-3 fw-semibold", text: "Details" },
         {
-          children: modules.map(generateModuleDetails),
+          children: results.getModules().map(generateModuleDetails),
         },
       ],
     };
   }
 
   function generateModuleDetails(module) {
-    let partNames = Object.keys(module).filter(
-      (name) => name !== "verdict" && name !== "name"
-    );
-    let parts = partNames.map((name) => {
-      let part = module[name];
-      part.name = name;
-      return part;
-    });
     return {
       className: "mb-4 card",
       children: [
         {
-          id: toHandle(module.name),
+          id: toHandle(module.getName()),
           className: "card-header",
           children: [
             {
               element: "span",
-              text: getVerdictIcon(module.verdict),
+              text: getVerdictIcon(module.getVerdict()),
             },
-            { element: "span", className: "ms-2", text: module.name },
+            { element: "span", className: "ms-2", text: module.getName() },
           ],
         },
         {
           className: "card-body",
-          children: parts.map((part) => ({
-            id: toHandle(module.name + "-" + part.name),
+          children: module.getParts().map((part) => ({
+            id: toHandle(module.getName() + "-" + part.getName()),
             children: [
               {
                 element: "h5",
@@ -254,9 +231,9 @@ const HtmlReport = (() => {
                 children: [
                   {
                     element: "span",
-                    text: getVerdictIcon(part.verdict),
+                    text: getVerdictIcon(part.getVerdict()),
                   },
-                  { element: "span", className: "ms-2", text: part.name },
+                  { element: "span", className: "ms-2", text: part.getName() },
                 ],
               },
               {
@@ -277,16 +254,16 @@ const HtmlReport = (() => {
                   },
                   {
                     element: "tbody",
-                    children: part.test.map((test) => ({
-                      id: toHandle(test.section + "-" + test.test),
+                    children: part.getTestResults().map((testResult) => ({
+                      id: toHandle(testResult.getSection() + "-" + testResult.getTest()),
                       element: "tr",
                       children: [
-                        { element: "td", text: test.section },
-                        { element: "td", text: test.test },
+                        { element: "td", text: testResult.getSection() },
+                        { element: "td", text: testResult.getTest() },
                         {
                           element: "td",
                           className: "font-monospace",
-                          children: test.messages.map((message) => ({
+                          children: testResult.getMessages().map((message) => ({
                             text: message,
                           })),
                         },
@@ -296,11 +273,11 @@ const HtmlReport = (() => {
                           children: [
                             {
                               element: "span",
-                              text: getVerdictIcon(test.state),
+                              text: getVerdictIcon(testResult.getState()),
                             },
                             {
                               element: "span",
-                              text: test.state,
+                              text: testResult.getState(),
                               className: "ms-1",
                             },
                           ],
@@ -328,7 +305,7 @@ const HtmlReport = (() => {
       case "FAIL":
         return "❌";
       default:
-        return "fa-solid fa-question";
+        return "?";
     }
   }
 

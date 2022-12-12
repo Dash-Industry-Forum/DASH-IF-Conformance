@@ -133,14 +133,6 @@ function ToolView() {
 
   function renderResultSummary(elementId) {
     _resultSummaryId = elementId = elementId || _resultSummaryId;
-    let moduleNames = Object.keys(_state.result.entries).filter(
-      (key) => key !== "Stats" && key !== "verdict"
-    );
-    let modules = moduleNames.map((name) => {
-      let module = _state.result.entries[name];
-      module.name = name;
-      return module;
-    });
 
     let resultSummary = UI.createElement({
       id: elementId,
@@ -153,7 +145,9 @@ function ToolView() {
         {
           id: elementId + "-scroll",
           className: "flex-grow-1 overflow-auto",
-          children: modules.map((module) => createModuleElement(module)),
+          children: _state.result
+            .getModules()
+            .map((module) => createModuleElement(module)),
         },
       ],
     });
@@ -162,14 +156,6 @@ function ToolView() {
   }
 
   function createModuleElement(module) {
-    let partNames = Object.keys(module).filter(
-      (key) => typeof module[key] === "object" && "test" in module[key]
-    );
-    let parts = partNames.map((partName) => {
-      let part = module[partName];
-      part.name = partName;
-      return part;
-    });
     let moduleElement = UI.createElement({
       className: "p-3 border-bottom",
       children: [
@@ -178,22 +164,22 @@ function ToolView() {
           children: [
             {
               element: "i",
-              className: getVerdictIcon(module.verdict),
+              className: getVerdictIcon(module.getVerdict()),
             },
-            { element: "span", className: "ms-2", text: module.name },
+            { element: "span", className: "ms-2", text: module.getName() },
           ],
         },
         {
-          children: parts.map((part) => createModulePartElement(part, module)),
+          children: module
+            .getParts()
+            .map((part) => createModulePartElement(part)),
         },
       ],
     });
     return moduleElement;
   }
 
-  function createModulePartElement(part, module) {
-    let testResults = part.test;
-
+  function createModulePartElement(part) {
     let modulePartElement = UI.createElement({
       children: [
         {
@@ -201,17 +187,17 @@ function ToolView() {
           children: [
             {
               element: "i",
-              className: getVerdictIcon(part.verdict),
+              className: getVerdictIcon(part.getVerdict()),
               style: "width: 1.5em",
             },
-            { element: "span", text: part.name },
+            { element: "span", text: part.getName() },
           ],
         },
         {
           className: "list-group",
-          children: testResults.map((testResult) =>
-            createModulePartTestElement(testResult, part, module)
-          ),
+          children: part
+            .getTestResults()
+            .map((testResult) => createModulePartTestElement(testResult)),
         },
       ],
     });
@@ -219,14 +205,11 @@ function ToolView() {
     return modulePartElement;
   }
 
-  function createModulePartTestElement(testResult, part, module) {
-    let { section, test, state } = testResult;
-    let testId = {
-      module: module.name,
-      part: part.name,
-      section,
-      test,
-    };
+  function createModulePartTestElement(testResult) {
+    let section = testResult.getSection();
+    let test = testResult.getTest();
+    let state = testResult.getState();
+    let testId = testResult.getTestId();
     let isPartSelected = isSelected(testId);
 
     let modulePartTestElement = UI.createElement({
@@ -303,10 +286,11 @@ function ToolView() {
   }
 
   function createTestResultDetailsElement(elementId) {
-    let { module, part, section, test } = _state.detailSelect;
-    let { state, messages } = _state.result.entries[module][part].test.find(
-      (element) => element.test === test && element.section === section
-    );
+    let testId = _state.detailSelect;
+    let testResult = _state.result.getTestResult(testId);
+    let part = testResult.getPart();
+    let module = part.getModule();
+
     let resultDetails = UI.createElement({
       id: elementId,
       className: "w-50 d-flex flex-column",
@@ -327,14 +311,14 @@ function ToolView() {
                   element: "tr",
                   children: [
                     { element: "td", text: "Section" },
-                    { element: "td", text: section },
+                    { element: "td", text: testResult.getSection() },
                   ],
                 },
                 {
                   element: "tr",
                   children: [
                     { element: "td", text: "Test" },
-                    { element: "td", text: test },
+                    { element: "td", text: testResult.getTest() },
                   ],
                 },
                 {
@@ -344,8 +328,15 @@ function ToolView() {
                     {
                       element: "td",
                       children: [
-                        { element: "i", className: getVerdictIcon(state) },
-                        { element: "span", text: state, className: "ms-1" },
+                        {
+                          element: "i",
+                          className: getVerdictIcon(testResult.getState()),
+                        },
+                        {
+                          element: "span",
+                          text: testResult.getState(),
+                          className: "ms-1",
+                        },
                       ],
                     },
                   ],
@@ -354,7 +345,7 @@ function ToolView() {
                   element: "tr",
                   children: [
                     { element: "td", text: "Module" },
-                    { element: "td", text: module },
+                    { element: "td", text: module.getName() },
                   ],
                 },
                 {
@@ -367,7 +358,7 @@ function ToolView() {
                         className:
                           "font-monospace overflow-auto border rounded bg-light p-2",
                         style: "max-height: 30em",
-                        children: messages.map((message) => ({
+                        children: testResult.getMessages().map((message) => ({
                           style: { minHeight: "1em", minWidth: "1em" },
                           text: message,
                         })),
