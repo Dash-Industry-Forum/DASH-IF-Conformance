@@ -53,6 +53,15 @@ include __DIR__ . '/../DASH/LowLatency/module.php';
 include __DIR__ . '/../DASH/IOP/module.php';
 include __DIR__ . '/../Dolby/module.php';
 
+include __DIR__ . '/validatorAdapter.php';
+include __DIR__ . '/MP4ValidatorAdapter.php';
+
+global $validatorAdapters;
+$validatorAdapters = array(
+  new DASHIF\MP4ValidatorAdapter(),
+  new DASHIF\MP4ValidatorAdapter()
+);
+
 
 
 $argumentParser->addOption("segments", "s", "segments", "Enable segment validation");
