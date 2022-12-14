@@ -1,15 +1,15 @@
 <?php
 
-global $mpd_features, $current_period, $current_adaptation_set, $current_representation, $profiles,
-$sizearray;
+global $sizearray;
 
-global $logger;
+global $logger, $mpdHandler;
 
-$adaptation = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
-$representation = $adaptation['Representation'][$current_representation];
+$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
+                                        ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+$representation = $adaptation['Representation'][$mpdHandler->getSelectedRepresentation()];
 
 ## Report on any resolutions used that are not in the tables of resoultions in 10.3 of the DVB DASH specification
-$resolutionResult = resolutionCheck($adaptation, $representation);
+$resolutionResult = $this->resolutionCheck($adaptation, $representation);
 
 $logger->test(
     "HbbTV-DVB DASH Validation Requirements",
@@ -252,8 +252,7 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
         // EBU-TT-D
         $validEBUTTD = true;
         $subtitleTimings = array();
-        $repDir = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
-        ///\RefactorTodo Make this reflect the correct location
+        $repDir = $session->getSelectedRepresentationDir();
         $files = glob("$repDir/Subtitles/*");
         natsort($files);
 
@@ -312,7 +311,7 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
         );
 
         // Segments
-        $type = $mpd_features['type'];
+        $type = $mpdHandler->getFeatures()['type'];
         $moofBoxCount = $xmlRepresentation->getElementsByTagName('moof')->length;
         $trunBoxes = $xmlRepresentation->getElementsByTagName('trun');
         $tfdtBoxes = $xmlRepresentation->getElementsByTagName('tfdt');
@@ -349,7 +348,7 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
                         $logger->test(
                             "HbbTV-DVB DASH Validation Requirements",
                             "DVB: Section 'Subtitles'",
-                            "Subtitle segments SHALL contain ISO-BMFF packaged EBU-TT-D".
+                            "Subtitle segments SHALL contain ISO-BMFF packaged EBU-TT-D" .
                             "For subtitle media, timing of all subtitles should conform to the segment time period",
                             $subtitleBegin[$be] <= $cumulativeSubsegmentDuration,
                             "WARN",
@@ -396,14 +395,18 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
 
 ## Segment checks
 // Section 4.3 on on-demand profile periods containing sidx boxes
+//
+$representationProfiles = $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()]
+                                                    [$mpdHandler->getSelectedAdaptationSet()]
+                                                    [$mpdHandler->getSelectedRepresentation()];
 if (
     strpos(
-        $profiles[$current_period][$current_period][$current_adaptation_set][$current_representation],
+        $representationProfiles,
         'urn:mpeg:dash:profile:isoff-on-demand:2011'
     ) !== false
     ||
     strpos(
-        $profiles[$current_adaptation_set][$current_representation],
+        $representationProfiles,
         'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014'
     ) !== false
 ) {
@@ -417,11 +420,6 @@ if (
         "" . $xmlRepresentation->getElementsByTagName('sidx')->length . " sidx boxes found"
     );
 
-    $segmentLocation = str_replace(
-        array('$AS$', '$R$'),
-        array($current_adaptation_set, $current_representation),
-        $representationrsentation_template
-    );
     $segmentCount = count(glob("$repDir/*")) - count(glob("$repDir/*", GLOB_ONLYDIR));
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",

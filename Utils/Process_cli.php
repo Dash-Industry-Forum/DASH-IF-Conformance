@@ -25,6 +25,7 @@ require_once 'ArgumentsParser.php';
 
 $argumentParser = new DASHIF\ArgumentsParser();
 
+include __DIR__ . '/functions.php';
 include __DIR__ . '/sessionHandler.php';
 require __DIR__ . '/moduleInterface.php';
 include __DIR__ . '/moduleLogger.php';
@@ -33,15 +34,14 @@ include __DIR__ . '/Session.php';         //#Session Functions, No Direct Execut
 //#Document loading functions, mostly xml. Some assertion options and error initialization
 include __DIR__ . '/Load.php';
 include __DIR__ . '/FileOperations.php';  //#Filesystem and XML checking functions. No Direct Executable Code.
-include __DIR__ . '/VisitorCounter.php';  //#Various Session-based functions. No Direct Executable Code.
 //#Global variables. Direct evaluation of post/session vars to define conditionals,
 //#conditional extra includes for module initialization
 include __DIR__ . '/GlobalVariables.php';
-include __DIR__ . '/PrettyPrint.php';     //#Pretty printing functions for terminal output. No Direct Executable Code.
 include __DIR__ . '/segment_download.php'; //#Very large function for downloading data. No Direct Executable Code.
 include __DIR__ . '/segment_validation.php'; //#Segment validation functions. No Direct Executable Code.
 
 include __DIR__ . '/MPDUtility.php';
+include __DIR__ . '/MPDHandler.php';
 
 
 include __DIR__ . '/../DASH/module.php';
@@ -56,6 +56,8 @@ include __DIR__ . '/../Dolby/module.php';
 
 $argumentParser->addOption("segments", "s", "segments", "Enable segment validation");
 $argumentParser->addOption("compact", "C", "compact", "Make JSON output compact");
+$argumentParser->addOption("silent", "S", "silent", "Do not output JSON to stdout");
+$argumentParser->addOption("autodetect", "A", "autodetect", "Try to automatically detect profiles");
 
 $argumentParser->parseAll();
 
@@ -88,16 +90,21 @@ ini_set("error_log", "myphp-error.log");
 
 #session_create();
 
-//update_visitor_counter();
 
 $parseSegments = $argumentParser->getOption("segments");
 $compactOutput = $argumentParser->getOption("compact");
+$autoDetect = $argumentParser->getOption("autodetect");
 
-if (!$hls_manifest) {
-    process_MPD($parseSegments);
-} else {
+if (substr($mpd_url, -5) == ".m3u8") {
     processHLS();
+} else {
+    process_MPD($parseSegments, $autoDetect);
 }
 
-  echo($logger->asJSON($compactOutput) . "\n");
-?>
+if (!$argumentParser->getOption("silent")) {
+    echo($logger->asJSON($compactOutput) . "\n");
+}
+
+
+global $session;
+//$session->clearDirectory();

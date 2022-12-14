@@ -1,10 +1,10 @@
 <?php
 
-global $mpd_features, $utc_timing_info, $logger;
+global $mpdHandler, $logger;
 
 
 $valid_utc_timing_present = false;
-$utc_timings = $mpd_features['UTCTiming'];
+$utc_timings = $mpdHandler->getFeatures()['UTCTiming'];
 foreach ($utc_timings as $utc_timing) {
     $accepted_uris = array('urn:mpeg:dash:utc:http-xsdate:2014',
                            'urn:mpeg:dash:utc:http-iso:2014',
@@ -12,7 +12,7 @@ foreach ($utc_timings as $utc_timing) {
     $schemeIdUri = $utc_timing['schemeIdUri'];
     if (in_array($schemeIdUri, $accepted_uris) === true) {
         $valid_utc_timing_present = true;
-        $utc_timing_info[] = $utc_timing;
+        $this->utcTimingInfo[] = $utc_timing;
     }
 }
 

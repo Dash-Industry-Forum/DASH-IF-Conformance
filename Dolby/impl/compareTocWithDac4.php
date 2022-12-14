@@ -9,8 +9,7 @@ $dac4 = $dac4Array[0];
 
 $tocIndex = 0;
 
-foreach ($tocArray as $toc)
-{
+foreach ($tocArray as $toc) {
     $logger->test(
         "Dolby",
         "ETSI_TS_103_190-2_V1.2.1 E.6.3 [14197]",
@@ -63,4 +62,3 @@ foreach ($tocArray as $toc)
 
     $tocIndex++;
 }
-

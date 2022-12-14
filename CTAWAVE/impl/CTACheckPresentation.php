@@ -1,10 +1,8 @@
 <?php
 
-global $mpd_features,$session,$CTApresentation_infofile,$current_period, $string_info, $progress_xml, $progress_report;
+global $logger, $session, $mpdHandler;
 
-global $logger;
-
-$adaptationCount = sizeof($mpd_features['Period'][$current_period]['AdaptationSet']);
+$adaptationCount = sizeof($mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet']);
 
 $chfdSwitchingSetFound = 0;
 $videoSelectionSetFound = 0;
@@ -13,7 +11,6 @@ $audioSelectionSetFound = 0;
 $im1tSwitchingSetFound = 0;
 $subtitleSelectionSetFound = 0;
 $hdlrType = "";
-$errorMsg = "";
 $encryptedTrackFound = 0;
 $cencSwSetFound = 0;
 $cbcsSwSetFound = 0;
@@ -22,9 +19,9 @@ $presentationProfile = "";
 for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex++) {
     $switchingSetMediaProfiles = array();
     $encryptedTracks = array();
-    $location = $session->getAdaptationDir($current_period, $adaptationIndex);
+    $location = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $adaptationIndex);
     $fileCount = 0;
-    $files = glob($location . "/*.xml");
+    $files = DASHIF\rglob("$location/*.xml");
     if ($files) {
         $fileCount = count($files);
     }
@@ -43,16 +40,16 @@ for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex
         continue;
     }
     for ($fileIndex = 0; $fileIndex < $fileCount; $fileIndex++) {
-        $xml = get_DOM($files[$fileIndex], 'atomlist');
+        $xml = DASHIF\Utility\parseDOM($files[$fileIndex], 'atomlist');
         if (!$xml) {
             continue;
         }
 
-        $hdlrBox = $xml->getElementsByTagName("hdlrBox")->item(0);
+        $hdlrBox = $xml->getElementsByTagName("hdlr")->item(0);
         if (!$hdlrBox) {
             continue;
         }
-        $hdlrType = $hdlrBox->getAttribute("hdlrType");
+        $hdlrType = $hdlrBox->getAttribute("handler_type");
 
         $mediaProfileResult = $this->getMediaProfile($xml, $hdlrType, $fileIndex, $adaptationIndex);
         array_push($switchingSetMediaProfiles, $mediaProfileResult[0]);

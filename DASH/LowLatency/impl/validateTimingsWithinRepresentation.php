@@ -1,6 +1,6 @@
 <?php
 
-global $session, $current_period, $presentation_times, $decode_times, $logger;
+global $session, $mpdHandler, $presentation_times, $decode_times;
 
 $representations = $adaptationSet['Representation'];
 
@@ -30,13 +30,19 @@ for ($i = 0; $i < sizeof($presStarts); $i++) {
     $previousEarliestPresentationTime = $earliestPresentationTime;
     $previousLatestPresentationTime = $latestPresentationTime;
 
-    $presentation_times[$current_period][$adaptationSetId][$representationId][] = $earliestPresentationTime;
+    $presentation_times[$mpdHandler->getSelectedPeriod()]
+                       [$adaptationSetId]
+                       [$representationId][] = $earliestPresentationTime;
 }
 
-$repXml = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId) . '/atomInfo.xml';
+$repXml = $session->getRepresentationDir(
+    $mpdHandler->getSelectedPeriod(),
+    $adaptationSetId,
+    $representationId
+) . '/atomInfo.xml';
 
 if (file_exists($repXml)) {
-    $xml = get_DOM($repXml, 'atomlist');
+    $xml = DASHIF\Utility\parseDOM($repXml, 'atomlist');
 
     if (!$xml) {
         return;
@@ -45,7 +51,7 @@ if (file_exists($repXml)) {
     $timescale = $xml->getElementsByTagName('mdhd')->item(0)->getAttribute('timescale');
     $tfdtBoxes = $xml->getElementsByTagName('tfdt');
     foreach ($tfdtBoxes as $tfdt) {
-        $decode_times[$current_period][$adaptationSetId][$representationId][] =
+        $decode_times[$mpdHandler->getSelectedPeriod()][$adaptationSetId][$representationId][] =
         $tfdt->getAttribute('baseMediaDecodeTime') / $timescale;
     }
 }

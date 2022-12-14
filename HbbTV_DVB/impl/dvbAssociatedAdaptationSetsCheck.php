@@ -1,8 +1,9 @@
 <?php
 
-    global $mpd_dom;
-    $periods = $mpd_dom->getElementsByTagName('Period');
-    $len = $periods->length;
+global $mpdHandler;
+
+$periods = $mpdHandler->getDom()->getElementsByTagName('Period');
+$len = $periods->length;
 
 for ($i = 0; $i < $len; $i++) {
     $assets1 = $periods->item($i)->getElementsByTagName('AssetIdentifier');

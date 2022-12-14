@@ -1,7 +1,7 @@
 <?php
 
-global $mpd_dom;
-$periods = $mpd_dom->getElementsByTagName('Period');
+global $mpdHandler;
+$periods = $mpdHandler->getDom()->getElementsByTagName('Period');
 $adaptations1 = $periods->item($periodId1);
 $adaptations2 = $periods->item($periodId2);
 

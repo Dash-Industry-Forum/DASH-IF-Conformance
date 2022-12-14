@@ -1,14 +1,13 @@
 <?php
 
-global $session, $MediaProfDatabase;
+global $session, $MediaProfDatabase, $logger;
 
 $periodCount = sizeof($MediaProfDatabase);
 $adaptationCount = sizeof($MediaProfDatabase[0]);
-$errorMsg = "";
 for ($i = 0; $i < ($periodCount - 1); $i++) {
     for ($adapt = 0; $adapt < $adaptationCount; $adapt++) {
         $dir1 = $session->getRepresentationDir($i, $adapt, 0);
-        $xml1 = get_DOM($dir1 . '/atomInfo.xml', 'atomlist');
+        $xml1 = DASHIF\Utility\parseDOM($dir1 . '/atomInfo.xml', 'atomlist');
         if ($xml1) {
             $trun = $xml1->getElementsByTagName('trun')->item(0);
             $earlyCompTime_p1 = $trun->getAttribute('earliestCompositionTime');
@@ -24,7 +23,7 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
             }
         }
         $dir2 = $session->getRepresentationDir($i + 1, $adapt, 0);
-        $xml2 = get_DOM($dir2 . '/atomInfo.xml', 'atomlist');
+        $xml2 = DASHIF\Utility\parseDOM($dir2 . '/atomInfo.xml', 'atomlist');
         if ($xml2) {
             $sidx = $xml2->getElementsByTagName('sidx');
             if ($sidx->length > 0) {
@@ -40,18 +39,23 @@ for ($i = 0; $i < ($periodCount - 1); $i++) {
                 $presTime_p2 = $earlyCompTime_p2 + $mediaTime_p2;
             }
         }
-        if (($earlyCompTime_p1 + $mediaTime_p1 + $sumSampleDur) > $presTime_p2) {
-            $errorMsg = "###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: 'CMAF Fragments " .
-            "Shall not overlap the same WAVE Program presentation time at the Splice point', overlap is observed " .
-            "for Sw set " . $adapt . " between CMAF Presentations " . $i . " (" .
-            ($earlyCompTime_p1 + $mediaTime_p1 + $sumSampleDur) . ") and  " . ($i + 1) . " (" . $presTime_p2 . ").";
-        } elseif (($earlyCompTime_p1 + $mediaTime_p1 + $sumSampleDur) < $presTime_p2) {
-            $errorMsg .= "###CTA WAVE check violated: WAVE Content Spec 2018Ed-Section 7.2.2: 'CMAF Fragments " .
-            "Shall not have gaps in WAVE Program presentation time at the Splice point', gap is observed " .
-            "for Sw set " . $adapt . " between CMAF Presentations " . $i . " (" .
-            ($earlyCompTime_p1 + $mediaTime_p1 + $sumSampleDur) . ") and  " . ($i + 1) . " (" . $presTime_p2 . ").";
-        }
+        $logger->test(
+            "WAVE Content Spec 2018Ed",
+            "Section 7.2.2",
+            "CMAF Fragments Shall not overlap the same WAVE Program presentation time at the Splice point",
+            ($earlyCompTime_p1 + $mediaTime_p1 + $sumSampleDur) <= $presTime_p2,
+            "FAIL",
+            "No overlap found for switching set $adapt between presentations $i and " . ($i + 1),
+            "Overlap found for switching set $adapt between presentations $i and " . ($i + 1)
+        );
+        $logger->test(
+            "WAVE Content Spec 2018Ed",
+            "Section 7.2.2",
+            "CMAF Fragments Shall have gaps in WAVE Program presentation time at the Splice point",
+            ($earlyCompTime_p1 + $mediaTime_p1 + $sumSampleDur) >= $presTime_p2,
+            "FAIL",
+            "No gap found for switching set $adapt between presentations $i and " . ($i + 1),
+            "Gap found for switching set $adapt between presentations $i and " . ($i + 1)
+        );
     }
 }
-
-return $errorMsg;

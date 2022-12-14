@@ -1,24 +1,22 @@
 <?php
 
-global $mpd_dom, $locate, $logger;
+global $mpdHandler, $logger;
 
+$baseUrl = '';
 //test link https://media.axprod.net/TestVectors/v7-MultiDRM-SingleKey/Manifest.mpd
-if ($mpd_dom->getElementsByTagName('BaseURL')->length != 0) {
-    $base_url = $mpd_dom->getElementsByTagName('BaseURL')->item(0)->textContent;
-} else {
-    $base_url = '';
+if ($mpdHandler->getDom()->getElementsByTagName('BaseURL')->length != 0) {
+    $baseUrl = $mpdHandler->getDom()->getElementsByTagName('BaseURL')->item(0)->textContent;
 }
 
-$MPD_url = $GLOBALS["url"];
+$usesTLS = false;
+
 //check if TLS is used
-if (strpos($base_url, 'https') !== false) {
+if (strpos($baseUrl, 'https') !== false) {
     $usesTLS = true;
-} elseif (strpos($base_url, 'http') !== false) {
+} elseif (strpos($baseUrl, 'http') !== false) {
     $usesTLS = false;
-} elseif (strpos($MPD_url, 'https') !== false) {
+} elseif (strpos($mpdHandler->getUrl(), 'https') !== false) {
     $usesTLS = true;
-} else {
-    $usesTLS = false;
 }
 
 //If TLS is not used, skip the remainder of this function
@@ -30,7 +28,7 @@ if (!$usesTLS) {
 
 //Check if any combination excedes the constraint
 $period_id = 1;
-foreach ($mpd_dom->getElementsByTagName('Period') as $period) {
+foreach ($mpdHandler->getDom()->getElementsByTagName('Period') as $period) {
     $videoBandwidths = array();
     $audioBandwidths = array();
     $subtitleBandwidths = array();

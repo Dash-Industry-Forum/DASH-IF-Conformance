@@ -1,29 +1,27 @@
 <?php
 
-global $mpd_features, $current_period, $session;
+global $logger, $session, $mpdHandler;
 
-global $logger;
-
-$adaptations = $mpd_features['Period'][$current_period]['AdaptationSet'];
+$adaptations = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'];
 $adaptationCount = sizeof($adaptations);
 
 for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex++) {
-    $location = $session->getAdaptationDir($current_period, $adaptationIndex);
+    $location = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $adaptationIndex);
     $fileCount = 0;
-    ///\RefactorTodo This pattern is used in multiple locations, but won't work anymore
-    $files = glob($location . "/*.xml");
+    $files = DASHIF\rglob("$location/*.xml");
+
     if (!$files) {
         continue;
     }
 
     $fileCount = count($files);
     for ($fileIndex = 0; $fileIndex < $fileCount; $fileIndex++) {
-        $xml = get_DOM($files[$fileIndex], 'atomlist');
+        $xml = DASHIF\Utility\parseDOM($files[$fileIndex], 'atomlist');
         if (!$xml) {
             continue;
         }
         $hdlrBox = $xml->getElementsByTagName("hdlrBox")->item(0);
-        if ($hdlrBox->getAttribute("hdlrType") != "vide") {
+        if ($hdlrBox == null || $hdlrBox->getAttribute("handler_type") != "vide") {
             continue;
         }
 

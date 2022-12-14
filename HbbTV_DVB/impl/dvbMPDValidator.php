@@ -1,10 +1,9 @@
 <?php
 
-global $adapt_video_count, $adapt_audio_count, $main_audio_found, $main_audios, $hoh_subtitle_lang, $period_count,
-            $audio_bw, $video_bw, $subtitle_bw, $supported_profiles, $mpd_dom, $mpd_url;
+global $main_audios, $hoh_subtitle_lang;
 global $onRequest_array, $xlink_not_valid_array;
 
-global $logger;
+global $logger, $mpdHandler;
 
 
 $onRequestValue = "";
@@ -51,10 +50,7 @@ $logger->test(
 
 $this->tlsBitrateCheck();
 
-
-$mpd_doc = get_doc($mpd_url);
-$mpd_string = $mpd_doc->saveXML();
-$mpd_bytes = strlen($mpd_string);
+$mpd_bytes = strlen($mpdHandler->getResolved());
 
 $logger->test(
     "DVB",
@@ -68,8 +64,8 @@ $logger->test(
 
 ## Warn on low values of MPD@minimumUpdatePeriod (for now the lowest possible value is assumed to be 1 second)
 $minimumUpdateWarning = false;
-if ($mpd_dom->getAttribute('minimumUpdatePeriod') != '') {
-    $mup = time_parsing($mpd_dom->getAttribute('minimumUpdatePeriod'));
+if ($mpdHandler->getDom()->getAttribute('minimumUpdatePeriod') != '') {
+    $mup = DASHIF\Utility\timeParsing($mpdHandler->getDom()->getAttribute('minimumUpdatePeriod'));
     if ($mup < 1) {
         $minimumUpdateWarning = true;
     }
@@ -127,11 +123,11 @@ $this->checkDVBValidRelative();
 ## Verifying the DVB Metric reporting mechanism according to Section 10.12.3
 $this->dvbMetricReporting();
 
-$type = $mpd_dom->getAttribute('type');
-$AST = $mpd_dom->getAttribute('availabilityStartTime');
+$type = $mpdHandler->getDom()->getAttribute('type');
+$AST = $mpdHandler->getDom()->getAttribute('availabilityStartTime');
 
 if ($type == 'dynamic' || $AST != '') {
-    $UTCTimings = $mpd_dom->getElementsByTagName('UTCTiming');
+    $UTCTimings = $mpdHandler->getDom()->getElementsByTagName('UTCTiming');
     $acceptedURIs = array('urn:mpeg:dash:utc:ntp:2014',
                           'urn:mpeg:dash:utc:http-head:2014',
                           'urn:mpeg:dash:utc:http-xsdate:2014',
@@ -162,10 +158,10 @@ $this->periodCount = 0;
 
 $hasVideoService = false;
 
-$cencAttribute = $mpd_dom->getAttribute("xmlns:cenc");
+$cencAttribute = $mpdHandler->getDom()->getAttribute("xmlns:cenc");
 
-foreach ($mpd_dom->childNodes as $node) {
-    if ($node - nodeName != 'Period') {
+foreach ($mpdHandler->getDom()->childNodes as $node) {
+    if ($node->nodeName != 'Period') {
         continue;
     }
     $this->periodCount++;
@@ -274,14 +270,16 @@ foreach ($mpd_dom->childNodes as $node) {
         $videoComponentFound = false;
         $audioComponentFound = false;
 
-        $contentComponents = $ch->getElementsByTagName("ContentComponent");
-        foreach ($contentComponents as $component) {
-            $contentType = $component->getAttribute("contentType");
-            if ($contentType == "video") {
-                $videoComponentFound = true;
-            }
-            if ($contentType == "audio") {
-                $audioComponentFound = true;
+        if ($ch) {
+            $contentComponents = $ch->getElementsByTagName("ContentComponent");
+            foreach ($contentComponents as $component) {
+                $contentType = $component->getAttribute("contentType");
+                if ($contentType == "video") {
+                    $videoComponentFound = true;
+                }
+                if ($contentType == "audio") {
+                    $audioComponentFound = true;
+                }
             }
         }
 
@@ -366,21 +364,21 @@ foreach ($mpd_dom->childNodes as $node) {
             $videoFound || strpos($adaptationMimeType, 'video') !== false
         ) {
             $hasVideoService = true;
-            $this->dvbVideoChecks($adaptation, $representations, $i, $videoComponentFound);
+            $this->dvbVideoChecks($adaptationSet, $representations, $i, $videoComponentFound);
             if ($audioComponentFound) {
-                $this->dvbAudioChecks($adaptation, $representations, $i, $audioComponentFound);
+                $this->dvbAudioChecks($adaptationSet, $representations, $i, $audioComponentFound);
             }
         } elseif (
             $adaptationContentType == 'audio' || $audioComponentFound ||
             $audioFound || strpos($adaptationMimeType, 'audio') !== false
         ) {
-            $this->dvbAudioChecks($adaptation, $representations, $i, $audioComponentFound);
+            $this->dvbAudioChecks($adaptationSet, $representations, $i, $audioComponentFound);
             if ($videoComponentFound) {
-                $this->dvbVideoChecks($adaptation, $representations, $i, $videoComponentFound);
+                $this->dvbVideoChecks($adaptationSet, $representations, $i, $videoComponentFound);
             }
             $audioAdaptations[] = $adaptationSet;
         } else {
-            $this->dvbSubtitleChecks($adaptation, $representations, $i);
+            $this->dvbSubtitleChecks($adaptationSet, $representations, $i);
         }
 
         $logger->test(
@@ -395,11 +393,11 @@ foreach ($mpd_dom->childNodes as $node) {
             "$this->adaptationVideoCount adaptations found, none labeled as main for period $this->periodCount"
         );
 
-        $this->dvbContentProtection($adaptation, $representations, $i, $cenc);
+        $this->dvbContentProtection($adaptationSet, $representations, $i, $cenc);
     }
 
     if ($hasVideoService) {
-        $this->streamBandwithCheck();
+        $this->streamBandwidthCheck();
     }
 
     if ($audioAdaptations->length > 1) {

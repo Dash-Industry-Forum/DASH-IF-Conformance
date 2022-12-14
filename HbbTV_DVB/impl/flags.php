@@ -1,10 +1,10 @@
 <?php
 
-global $additional_flags, $mpd_features, $hbbtv_conformance, $dvb_conformance,
-        $current_period, $current_adaptation_set, $current_representation;
+global $additional_flags, $mpdHandler;
 
-$adaptation = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
-$representation = $adaptation['Representation'][$current_representation];
+$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
+                                        ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+$representation = $adaptation['Representation'][$mpdHandler->getSelectedRepresentation()];
 
 ## General
 if ($this->HbbTvEnabled) {

@@ -24263,3 +24263,82 @@ Stack trace:
 #1 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Utils/Process_cli.php(94): process_MPD()
 #2 {main}
   thrown in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/validateMPD.php on line 50
+[03-Oct-2022 12:17:35 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "INSERT_NEW_CHILD" in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php:62
+Stack trace:
+#0 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/validateMPD.php(74): createMpdFeatureList()
+#1 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/processMPD.php(55): validate_MPD()
+#2 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Utils/Process_cli.php(97): process_MPD()
+#3 {main}
+  thrown in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php on line 62
+[03-Oct-2022 12:22:51 UTC] PHP Fatal error:  Uncaught Error: Attempt to assign property "text" on null in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php:172
+Stack trace:
+#0 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php(236): isElementWithSchemaIssues()
+#1 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php(63): setFeatureListEntry()
+#2 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/validateMPD.php(74): createMpdFeatureList()
+#3 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/processMPD.php(55): validate_MPD()
+#4 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Utils/Process_cli.php(97): process_MPD()
+#5 {main}
+  thrown in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php on line 172
+[03-Oct-2022 12:26:57 UTC] PHP Fatal error:  Uncaught TypeError: sizeof(): Argument #1 ($value) must be of type Countable|array, null given in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php:187
+Stack trace:
+#0 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php(248): isElementWithSchemaIssues()
+#1 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php(63): setFeatureListEntry()
+#2 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/validateMPD.php(74): createMpdFeatureList()
+#3 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/processMPD.php(55): validate_MPD()
+#4 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Utils/Process_cli.php(97): process_MPD()
+#5 {main}
+  thrown in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php on line 187
+[03-Oct-2022 12:27:29 UTC] PHP Fatal error:  Uncaught TypeError: sizeof(): Argument #1 ($value) must be of type Countable|array, null given in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php:214
+Stack trace:
+#0 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php(263): isAttributeWithSchemaIssues()
+#1 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php(63): setFeatureListEntry()
+#2 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/validateMPD.php(74): createMpdFeatureList()
+#3 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/processMPD.php(55): validate_MPD()
+#4 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Utils/Process_cli.php(97): process_MPD()
+#5 {main}
+  thrown in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php on line 214
+[12-Oct-2022 07:06:15 UTC] PHP Fatal error:  Uncaught Error: Attempt to assign property "text" on null in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php:182
+Stack trace:
+#0 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php(246): isElementWithSchemaIssues()
+#1 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php(63): setFeatureListEntry()
+#2 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/validateMPD.php(74): createMpdFeatureList()
+#3 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/processMPD.php(55): validate_MPD()
+#4 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Utils/Process_cli.php(97): process_MPD()
+#5 {main}
+  thrown in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php on line 182
+[12-Oct-2022 07:29:59 UTC] PHP Fatal error:  Uncaught TypeError: sizeof(): Argument #1 ($value) must be of type Countable|array, null given in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php:185
+Stack trace:
+#0 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php(246): isElementWithSchemaIssues()
+#1 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php(64): setFeatureListEntry()
+#2 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/validateMPD.php(74): createMpdFeatureList()
+#3 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/processMPD.php(55): validate_MPD()
+#4 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Utils/Process_cli.php(97): process_MPD()
+#5 {main}
+  thrown in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php on line 185
+[12-Oct-2022 07:30:38 UTC] PHP Fatal error:  Uncaught TypeError: sizeof(): Argument #1 ($value) must be of type Countable|array, null given in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php:211
+Stack trace:
+#0 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php(260): isAttributeWithSchemaIssues()
+#1 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php(64): setFeatureListEntry()
+#2 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/validateMPD.php(74): createMpdFeatureList()
+#3 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/processMPD.php(55): validate_MPD()
+#4 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Utils/Process_cli.php(97): process_MPD()
+#5 {main}
+  thrown in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php on line 211
+[12-Oct-2022 07:31:01 UTC] PHP Fatal error:  Uncaught TypeError: sizeof(): Argument #1 ($value) must be of type Countable|array, null given in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php:212
+Stack trace:
+#0 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php(262): isAttributeWithSchemaIssues()
+#1 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php(64): setFeatureListEntry()
+#2 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/validateMPD.php(74): createMpdFeatureList()
+#3 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/processMPD.php(55): validate_MPD()
+#4 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Utils/Process_cli.php(97): process_MPD()
+#5 {main}
+  thrown in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php on line 212
+[12-Oct-2022 07:31:49 UTC] PHP Fatal error:  Uncaught TypeError: sizeof(): Argument #1 ($value) must be of type Countable|array, null given in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php:212
+Stack trace:
+#0 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php(262): isAttributeWithSchemaIssues()
+#1 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php(64): setFeatureListEntry()
+#2 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/validateMPD.php(74): createMpdFeatureList()
+#3 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/DASH/processMPD.php(55): validate_MPD()
+#4 /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Utils/Process_cli.php(97): process_MPD()
+#5 {main}
+  thrown in /home/phencys/Phencys/zzp/DashIf/ConformanceDocker/DASH-IF-Conformance/Conformance-Frontend/Featurelist.php on line 212

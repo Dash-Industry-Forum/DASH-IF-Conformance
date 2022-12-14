@@ -1,5 +1,7 @@
 <?php
 
+global $logger;
+
 $subtitle = false;
 
 $adaptationCodecs = $adaptation->getAttribute('codecs');

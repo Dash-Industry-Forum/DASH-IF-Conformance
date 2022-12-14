@@ -1,7 +1,5 @@
 <?php
 
-global $mpd_features, $current_period;
-
 global $logger;
 
 ## Section 4.3 checks for sample entry type and track_ID

@@ -8,11 +8,15 @@ class SessionHandler
 
     public function __construct()
     {
+        $this->sessionId = null;
         $this->reset();
     }
 
-    public function reset($id = null)
+    public function reset($id = null, $clearPrevious = true, $keepOutput = true)
     {
+        if ($clearPrevious) {
+            $this->clearDirectory($keepOutput);
+        }
         $this->setId($id);
     }
 
@@ -30,19 +34,17 @@ class SessionHandler
         return $this->sessionId;
     }
 
-    public function clearDirectory(){
-      $dir = $this->getDir();
-      $files = new RecursiveIteratorIterator(
-    new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
-    RecursiveIteratorIterator::CHILD_FIRST
-);
-
-foreach ($files as $fileinfo) {
-    $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
-    $todo($fileinfo->getRealPath());
-}
-
-rmdir($dir);
+    public function clearDirectory($keepOutput = true)
+    {
+        $dir = $this->getDir();
+        $directoryContents = `ls $dir`;
+        if ($directoryContents == '' || !$keepOutput) {
+            `rm -r $dir`;
+            return;
+        }
+        `mv $dir/logger.txt $dir/.logger.txt`;
+        `rm -r $dir/*`;
+        `mv $dir/.logger.txt $dir/logger.txt`;
     }
 
     public function getDir()
@@ -61,6 +63,12 @@ rmdir($dir);
         return $periodDir;
     }
 
+    public function getSelectedPeriodDir()
+    {
+        global $mpdHandler;
+        return $this->getPeriodDir($mpdHandler->getSelectedPeriod());
+    }
+
     public function getAdaptationDir($period, $adaptation)
     {
         $adaptationDir = $this->getPeriodDir($period) . '/Adaptation' . $adaptation;
@@ -68,11 +76,27 @@ rmdir($dir);
         return $adaptationDir;
     }
 
+    public function getSelectedAdaptationDir()
+    {
+        global $mpdHandler;
+        return $this->getAdaptationDir($mpdHandler->getSelectedPeriod(), $mpdHandler->getSelectedAdaptationSet());
+    }
+
     public function getRepresentationDir($period, $adaptation, $representation)
     {
         $representationDir = $this->getAdaptationDir($period, $adaptation) . '/Representation' . $representation;
         $this->createFolderIfNotExists($representationDir, "representation");
         return $representationDir;
+    }
+
+    public function getSelectedRepresentationDir()
+    {
+        global $mpdHandler;
+        return $this->getRepresentationDir(
+            $mpdHandler->getSelectedPeriod(),
+            $mpdHandler->getSelectedAdaptationSet(),
+            $mpdHandler->getSelectedRepresentation()
+        );
     }
 
     private function createFolderIfNotExists($folder, $type)

@@ -11,9 +11,12 @@ class ModuleCMAF extends ModuleInterface
     private $careAboutElst;
     private $careAboutMdhd;
     private $boxList;
-       private $cfhdSwitchingSetFound;
-       private $caadSwitchingSetFound;
-       private $encryptedSwitchingSetFound;
+    private $cfhdSwitchingSetFound;
+    private $caadSwitchingSetFound;
+    private $encryptedSwitchingSetFound;
+
+    private $mediaTypes;
+    private $mediaProfiles;
 
     public function __construct()
     {
@@ -77,7 +80,8 @@ class ModuleCMAF extends ModuleInterface
           "stco" => array("version", "flags", "entryCount"),
           "sgpd" => array("version", "flags", "groupingType", "entryCount"),
           "mehd" => array("version", "flags", "fragmentDuration"),
-          "trex" => array("version", "flags", "trackID", "sampleDescriptionIndex", "sampleDuration", "sampleSize", "sampleFlags"),
+          "trex" => array("version", "flags", "trackID", "sampleDescriptionIndex", "sampleDuration",
+                          "sampleSize", "sampleFlags"),
           "pssh" => array("version", "flags", "systemID", "dataSize"),
           "tenc" => array("version", "flags", "default_IsEncrypted", "default_IV_size", "default_KID"),
           "cprt" => array("version", "flags", "language", "notice"),
@@ -219,7 +223,7 @@ class ModuleCMAF extends ModuleInterface
         include 'impl/validateFileBrands.php';
     }
 
-    private function getIdx($node)
+    private function getIds($node)
     {
         return include 'impl/getIds.php';
     }

@@ -14,9 +14,16 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function validate_segment($adaptationDirectory, $representationDirectory, $period, $adaptation_set, $representation, $segment_url, $is_subtitle_rep)
-{
-    global $sizearray, $current_adaptation_set, $current_representation;
+function validate_segment(
+    $adaptationDirectory,
+    $representationDirectory,
+    $period,
+    $adaptation_set,
+    $representation,
+    $segment_url,
+    $is_subtitle_rep
+) {
+    global $sizearray;
 
 
     $sizearray = array();
@@ -31,7 +38,13 @@ function validate_segment($adaptationDirectory, $representationDirectory, $perio
         assemble($representationDirectory, $segment_url, $sizearray);
 
         ## Create config file with the flags for segment validation
-        $config_file_loc = config_file_for_backend($period, $adaptation_set, $representation, $representationDirectory, $is_dolby);
+        $config_file_loc = config_file_for_backend(
+            $period,
+            $adaptation_set,
+            $representation,
+            $representationDirectory,
+            $is_dolby
+        );
 
         ## Run the backend
         $returncode = run_backend($config_file_loc, $representationDirectory);
@@ -50,7 +63,8 @@ function validate_segment($adaptationDirectory, $representationDirectory, $perio
 
 function validate_segment_hls($URL_array, $CodecArray)
 {
-    global $session__dir, $hls_stream_inf_file, $hls_x_media_file, $hls_iframe_file, $hls_tag, $progress_report;
+    global $session, $hls_tag;
+
 
     $is_dolby = false;
     for ($i = 0; $i < sizeof($CodecArray); $i++) {
@@ -63,28 +77,35 @@ function validate_segment_hls($URL_array, $CodecArray)
         }
     }
 
-    $tag_array = array($hls_stream_inf_file, $hls_iframe_file, $hls_x_media_file);
+    $tag_array = array('StreamINF', 'IFrameByteRange', 'XMedia');
     for ($i = 0; $i < sizeof($URL_array); $i++) {
         list($segmentURL, $sizeArray) = segmentDownload($URL_array[$i], $tag_array[$i], $is_dolby);
+
 
         for ($j = 0; $j < sizeof($segmentURL); $j++) {
             if ($sizeArray[$j] != 0) {
                 $hls_tag = $tag_array[$i] . '_' . $j;
 
                 ## Put segments in one file
-                assemble($session__dir . '/' . $tag_array[$i] . '/' . $j . '/', $segmentURL[$j], $sizeArray[$j]);
+                $representationDir = $session->getDir() . '/' . $tag_array[$i] . '/' . $j;
+                assemble($representationDir, $segmentURL[$j], $sizeArray[$j]);
 
                 ## Create config file with the flags for segment validation
-                $config_file_loc = config_file_for_backend(null, null, null, $hls_tag, $is_dolby);
+                $config_file_loc = config_file_for_backend(null, null, null, $representationDir, $is_dolby);
+
 
                 ## Run the backend
                 $returncode = run_backend($config_file_loc);
 
                 ## Analyse the results and report them
-                $file_location[] = analyze_results($returncode, $session__dir . '/' . $tag_array[$i], $j);
+                $file_location[] = analyze_results(
+                    $returncode,
+                    $session->getDir() . '/' . $tag_array[$i],
+                    $representationDir
+                );
 
                 ## Determine media type based on atomxml information
-                determineMediaType($session__dir . '/' . $tag_array[$i] . '/' . $j . '.xml', $hls_tag);
+                determineMediaType($session->getDir() . '/' . $tag_array[$i] . '/' . $j . '.xml', $hls_tag);
             } else {
                 ## Save to progress report that the representation does not exist
                 $file_location[] = 'notexist';
@@ -97,9 +118,13 @@ function validate_segment_hls($URL_array, $CodecArray)
 
 function assemble($representationDirectory, $segment_urls, $sizearr)
 {
-    global $segment_accesses,$current_adaptation_set, $current_representation, $hls_manifest, $hls_tag;
+    global $segment_accesses, $hls_manifest, $mpdHandler;
 
-    $index = ($segment_accesses[$current_adaptation_set][$current_representation][0]['initialization']) ? 0 : 1;
+
+
+    $index = ($segment_accesses[$mpdHandler->getSelectedAdaptationSet()]
+                               [$mpdHandler->getSelectedRepresentation()][0]
+                               ['initialization']) ? 0 : 1;
 
     for ($i = 0; $i < sizeof($segment_urls); $i++) {
         $fp1 = fopen("$representationDirectory/assembled.mp4", 'a+');
@@ -111,7 +136,11 @@ function assemble($representationDirectory, $segment_urls, $sizearr)
 
             fwrite($fp1, $file2); // dump it in the container file
             fclose($fp1);
-            file_put_contents("$representationDirectory/sizes.txt", $index . " " . $size . "\n", FILE_APPEND); // add size to a text file to be passed to conformance software
+            file_put_contents(
+                "$representationDirectory/assemblerInfo.txt",
+                $index . " " . $size . "\n",
+                FILE_APPEND
+            ); // add size to a text file to be passed to conformance software
 
             $index++; // iterate over all segments within the segments folder
         }
@@ -120,62 +149,78 @@ function assemble($representationDirectory, $segment_urls, $sizearr)
 
 function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 {
-    global $mpd_features, $stderr_file, $leafinfo_file, $reprsentation_info_log_template, $reprsentation_error_log_template,
-            $string_info, $progress_report, $current_period, $current_adaptation_set, $current_representation, $atominfo_file, $sample_data,
-            $hls_manifest, $hls_tag, $hls_error_file, $hls_info_file;
+    global $mpdHandler, $session, $logger,
+            $hls_manifest, $hls_tag, $hls_info_file;
 
-    $adaptation_set = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
-    $representation = $adaptation_set['Representation'][$current_representation];
-    ///\todo refactor "Make these into proper logger messages
-    if ($returncode != 0) {
-        #error_log('Processing AdaptationSet ' . $current_adaptation_set . ' Representation ' . $current_representation . ' returns: ' . $returncode);
-        if (filesize("$representationDirectory/stderr.txt") == 0) {
-            if (!$hls_manifest) {
-                if ($adaptation_set['mimeType'] == 'application/ttml+xml' || $adaptation_set['mimeType'] == 'image/jpeg') {
-                    file_put_contents($representationDirectory . '/stderr.txt', "### error:  \n###        Failed to process Adaptation Set " . $current_adaptation_set . ', Representation ' . $current_representation . "!, as mimeType= '" . $adaptation_set['mimeType'] . "' is not supported");
-                } elseif ($representation['mimeType'] == "application/ttml+xml" || $representation['mimeType'] == "image/jpeg") {
-                    file_put_contents($representationDirectory . '/stderr.txt', "### error:  \n###        Failed to process Adaptation Set " . $current_adaptation_set . ', Representation ' . $current_representation . "!, as mimeType= '" . $representation['mimeType'] . "' is not supported");
-                } else {
-                    file_put_contents($representationDirectory . '/stderr.txt', "### error:  \n###        Failed to process Adaptation Set " . $current_adaptation_set . ', Representation ' . $current_representation . '!');
-                }
+    $selectedPeriod = $mpdHandler->getSelectedPeriod();
+    $selectedAdaptation = $mpdHandler->getSelectedAdaptationSet();
+    $selectedRepresentation = $mpdHandler->getSelectedRepresentation();
+
+    $adaptation_set = $mpdHandler->getFeatures()['Period'][$selectedPeriod]['AdaptationSet'][$selectedAdaptation];
+    $representation = $adaptation_set['Representation'][$selectedRepresentation];
+    if (!$hls_manifest) {
+        $logger->test(
+            "Segment Validations",
+            "analyze_results()",
+            "stderr filled??",
+            filesize("$representationDirectory/stderr.txt") !== 0,
+            "FAIL",
+            "Contents in stderr.txt found",
+            "Failed to process adaptationset $selectedAdaptation, " .
+            "representation $selectedRepresentation, mimetype" . $adaptation_set['mimeType']
+        );
+    } else {
+        $logger->test(
+            "Segment Validations",
+            "analyze_results()",
+            "stderr filled??",
+            filesize("$representationDirectory/stderr.txt") !== 0,
+            "FAIL",
+            "Contents in stderr.txt found",
+            "Failed to process HLS $tag_array[0] index $tag_array[1]"
+        );
+    }
+    if (filesize("$representationDirectory/stderr.txt") == 0) {
+        if (!$hls_manifest) {
+        } else {
+            $tag_array = explode('_', $hls_tag);
+            $files = array_diff(scandir($session->getDir() . '/' .
+            $tag_array[0] . '/' . $tag_array[1] . "/"), array('.', '..'));
+            if (
+                strpos($files[2], 'webvtt') !== false || strpos($files[2], 'xml') !== false ||
+                strpos($files[2], 'html') !== false
+            ) {
+                file_put_contents(
+                    $session->getDir() . '/' . 'stderr.txt',
+                    "### error:  \n###        Failed to process " .
+                    $tag_array[0] . ' with index ' . $tag_array[1] . ', as the file type is ' .
+                    explode('.', $files[2])[1] . '!'
+                );
             } else {
-              ///\TodoRefactor -- Also fix for hls
-              /*
-                $tag_array = explode('_', $hls_tag);
-                $files = array_diff(scandir($session__dir . '/' . $tag_array[0] . '/' . $tag_array[1] . "/"), array('.', '..'));
-                if (strpos($files[2], 'webvtt') !== false || strpos($files[2], 'xml') !== false || strpos($files[2], 'html') !== false) {
-                    file_put_contents($session__dir . '/' . 'stderr.txt', "### error:  \n###        Failed to process " . $tag_array[0] . ' with index ' . $tag_array[1] . ', as the file type is ' . explode('.', $files[2])[1] . '!');
-                } else {
-                    file_put_contents($session__dir . '/' . 'stderr.txt', "### error:  \n###        Failed to process " . $tag_array[0] . ' with index ' . $tag_array[1] . '!');
-                }
-               */
+                file_put_contents(
+                    $session->getDir() . '/' . 'stderr.txt',
+                    "### error:  \n###        Failed to process " .
+                    $tag_array[0] . ' with index ' . $tag_array[1] . '!'
+                );
             }
         }
     }
 
-    ///\DoubleCheck create leafinfo.txt
-    //rename($ession__dir . "/leafinfo.txt", "$representationDirectory/leafInfo.txt");
+    rename($session->getDir() . "/leafinfo.txt", "$representationDirectory/leafInfo.txt");
 
     if (!$hls_manifest) {
         ## Check segment duration and start times against MPD times.
         loadAndCheckSegmentDuration();
-    } else {
-        $error_log = str_replace('$hls_tag$', $hls_tag, $hls_error_file);
     }
 
-    ///\DoubleCheck create proper atomInfo.txt
-    //rename_file($session__dir . '/' . $atominfo_file, "$representationDirectory/atomInfoCopy.xml");
-
-    ///\TodoRefactor Check when sampledata is generated, and create it in the correct directory
-    //if (file_exists($session__dir . '/' . $sample_data . '.txt') && !$hls_manifest) {
-    //    rename_file($session__dir . '/' . $sample_data . '.txt', "$representationDirectory/sampleData.xml");
-    //}
+    if (file_exists($session->getDir() . '/sample_data.txt') && !$hls_manifest) {
+        rename($session->getDir() . '/sample_data.txt', "$representationDirectory/sampleData.xml");
+    }
 }
 
 function run_backend($configFile, $representationDirectory = "")
 {
-    global $session;
-    global $logger;
+    global $session, $logger, $mpdHandler;
 
     $sessionDirectory = $session->getDir();
 
@@ -220,7 +265,26 @@ function run_backend($configFile, $representationDirectory = "")
         "Atominfo for $representationDirectory missing"
     );
 
-    $xml = get_DOM("$sessionDirectory/atominfo.xml", 'atomlist');
+    $atomXmlString = file_get_contents("$sessionDirectory/atominfo.xml");
+    $STYPBeginPos = strpos($atomXmlString, "<styp");
+    if ($STYPBugPos !== false) {
+      //try with newline for prettyprinted
+        $emptyCompatBrands = strpos($atomXmlString, "compatible_brands='[\n  </styp>", $STYPBeginPos);
+        if ($emptyCompatBrands === false) {
+        //Also try without newline just to be sure
+            $emptyCompatBrands = strpos($atomXmlString, "compatible_brands='[</styp>", $STYPBeginPos);
+        }
+        if ($emptyCompatBrands !== false) {
+            $logger->message(
+                "Fixed empty styp xml bug for period " . $mpdHandler->getSelectedPeriod() . " adaptation " .
+                $mpdHandler->getSelectedAdaptationSet() . " representation " . $mpdHandler->getSelectedRepresentation()
+            );
+            $fixedAtom = substr_replace($atomXmlString, "]'>", $emptyCompatBrands + 20, 0);
+            file_put_contents("$sessionDirectory/atominfo.xml", $fixedAtom);
+        }
+    }
+
+    $xml = DASHIF\Utility\parseDOM("$sessionDirectory/atominfo.xml", 'atomlist');
     $moveAtom &= $logger->test(
         "Health Checks",
         "Segment Validation",
@@ -242,14 +306,15 @@ function run_backend($configFile, $representationDirectory = "")
     );
 
 
-    if (!$moveAtom){
-      fwrite(STDERR, "Ignoring atomfile for $representationDirectory\n");
-      unlink("$sessionDirectory/atominfo.xml");
-    }else{
-      fwrite(STDERR, "Using atomfile for $representationDirectory\n");
-      if ($representationDirectory != "") {
-          rename("$sessionDirectory/atominfo.xml", "$representationDirectory/atomInfo.xml");
-      }
+    if (!$moveAtom) {
+        fwrite(STDERR, "Ignoring atomfile for $representationDirectory\n");
+        if ($representationDirectory != "") {
+            rename("$sessionDirectory/atominfo.xml", "$representationDirectory/errorAtomInfo.xml");
+        }
+    } else {
+        if ($representationDirectory != "") {
+            rename("$sessionDirectory/atominfo.xml", "$representationDirectory/atomInfo.xml");
+        }
     }
 
     return $returncode;
@@ -257,35 +322,24 @@ function run_backend($configFile, $representationDirectory = "")
 
 function config_file_for_backend($period, $adaptation_set, $representation, $representationDirectory, $is_dolby)
 {
-    global $session_dir, $config_file, $additional_flags, $suppressatomlevel, $reprsentation_mdat_template, $current_period, $current_adaptation_set, $current_representation, $hls_manifest, $hls_mdat_file;
+    global $additional_flags, $suppressatomlevel, $hls_manifest;
 
-    if (!$hls_manifest) {
-        $file = open_file("$representationDirectory/segmentValidatorConfig.txt", 'w');
-        fwrite($file, "$representationDirectory/assembled.mp4 \n");
-              ///\TodoRefactor -- Generate correct infofile
-        /*
-        fwrite($file, "-infofile" . "\n");
-        fwrite($file, "$representationDirectory/infoFile.txt \n");
-         */
-    } else {
-              ///\TodoRefactor -- Also fix for hls
-              /*
-        $file = open_file($session__dir . '/' . $config_file, 'w');
-        fwrite($file, $session__dir . '/' . $rep_dir_name . '.mp4 ' . "\n");
-        fwrite($file, "-infofile" . "\n");
-        fwrite($file, $session__dir . '/' . $rep_dir_name . '.txt' . "\n");
-               */
-    }
+
+    $file = fopen("$representationDirectory/segmentValidatorConfig.txt", 'w');
+    fwrite($file, "$representationDirectory/assembled.mp4 \n");
+    fwrite($file, "-infofile" . "\n");
+    fwrite($file, "$representationDirectory/assemblerInfo.txt \n");
 
     if (!$is_dolby) {
-              ///\TodoRefactor -- Generate correct offsetfile
-      /*
         fwrite($file, "-offsetinfo" . "\n");
-        fwrite($file, "$representationDirectory/offsetInfo.txt \n");
-        */
+        fwrite($file, "$representationDirectory/mdatoffset \n");
     }
 
-    $flags = (!$hls_manifest) ? construct_flags($period, $adaptation_set, $representation) . $additional_flags : $additional_flags;
+    $flags = (!$hls_manifest) ? construct_flags(
+        $period,
+        $adaptation_set,
+        $representation
+    ) . $additional_flags : $additional_flags;
     $piece = explode(" ", $flags);
     foreach ($piece as $pie) {
         if ($pie !== "") {
@@ -297,29 +351,35 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     }
 
     fclose($file);
-    if (!$hls_manifest) {
-        return "$representationDirectory/segmentValidatorConfig.txt";
-    }
-              ///\TodoRefactor -- Also fix for hls
-    //return $session__dir . '/' . $config_file;
+    return "$representationDirectory/segmentValidatorConfig.txt";
 }
 
 function loadAndCheckSegmentDuration()
 {
-    global $mpd_features, $current_period,$current_adaptation_set,$current_representation;
+    global $mpdHandler;
     global $session;
 
-    $adaptation_set = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
+    $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
+                                                ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
     $timeoffset = 0;
     $timescale = 1;
-    $segmentAlignment = ($adaptation_set['segmentAlignment']) ? $adaptation_set['segmentAlignment'] : 'false';
-    $subsegmentAlignment = ($adaptation_set['subsegmentAlignment']) ? $adaptation_set['subsegmentAlignment'] : 'false';
-    $bitstreamSwitching = ($adaptation_set['bitstreamSwitching']) ? $adaptation_set['bitstreamSwitching'] : 'false';
+    $segmentAlignment = false;
+    if ($adaptation_set['segmentAlignment']) {
+        $segmentAlignment = ($adaptation_set['segmentAlignment'] == "true");
+    }
+    $subsegmentAlignment = false;
+    if ($adaptation_set['subsegmentAlignment']) {
+        $subsegmentAlignment = ($adaptation_set['subsegmentAlignment'] == "true");
+    }
+    $bitstreamSwitching = false;
+    if ($adaptation_set['bitstreamSwitching']) {
+        $bitstreamSwitching = ($adaptation_set['bitstreamSwitching'] == "true");
+    }
 
-    if ($segmentAlignment == "true" || $subsegmentAlignment == "true" || $bitstreamSwitching == "true") {
+    if ($segmentAlignment || $subsegmentAlignment || $bitstreamSwitching) {
         $leafInfo = array();
 
-        $representation = $adaptation_set['Representation'][$current_representation];
+        $representation = $adaptation_set['Representation'][$mpdHandler->getSelectedRepresentation()];
         $timeoffset = 0;
         $timescale = 1;
         $duration = 0;
@@ -354,8 +414,13 @@ function loadAndCheckSegmentDuration()
 
         $offsetmod = (float)$timeoffset / $timescale;
         $duration = (float)$duration / $timescale;
-        if ((sizeof($adaptation_set['SegmentTemplate']) > 0 || sizeof($representation['SegmentTemplate']) > 0) && $duration != 0) {
-            $representationDirectory = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
+        if (
+            (
+              ($adaptation_set['SegmentTemplate'] && sizeof($adaptation_set['SegmentTemplate']) > 0) ||
+              ($representation['SegmentTemplate'] && sizeof($representation['SegmentTemplate']) > 0)
+            ) && $duration != 0
+        ) {
+            $representationDirectory = $session->getSelectedRepresentationDir();
             loadSegmentInfoFile($offsetmod, $duration, $representationDirectory);
         }
     }
@@ -364,8 +429,7 @@ function loadSegmentInfoFile($PresTimeOffset, $duration, $representationDirector
 {
     $info = array();
 
-    ///\DoubleCheck make sure this actually gets created
-    $segmentInfoFile = open_file("$representationDirectory/infofile.txt", 'rt');
+    $segmentInfoFile = fopen("$representationDirectory/leafInfo.txt", 'r');
     if (!$segmentInfoFile) {
         return;
     }
@@ -378,7 +442,12 @@ function loadSegmentInfoFile($PresTimeOffset, $duration, $representationDirector
     $info['trackTypeInfo'] = array();
 
     for ($i = 0; $i < $info['numTracks']; $i++) {
-        fscanf($segmentInfoFile, "%lu %lu\n", $info['trackTypeInfo'][$i]['track_ID'], $info['trackTypeInfo'][$i]['componentSubType']);
+        fscanf(
+            $segmentInfoFile,
+            "%lu %lu\n",
+            $info['trackTypeInfo'][$i]['track_ID'],
+            $info['trackTypeInfo'][$i]['componentSubType']
+        );
     }
 
     for ($i = 0; $i < $info['numTracks']; $i++) {
@@ -386,29 +455,30 @@ function loadSegmentInfoFile($PresTimeOffset, $duration, $representationDirector
         $info['leafInfo'][$i] = array();
 
         for ($j = 0; $j < $info['numLeafs'][$i]; $j++) {
-            fscanf($segmentInfoFile, "%d %f %f\n", $info['leafInfo'][$i][$j]['firstInSegment'], $info['leafInfo'][$i][$j]['earliestPresentationTime'], $info['leafInfo'][$i][$j]['lastPresentationTime']);
+            fscanf(
+                $segmentInfoFile,
+                "%d %f %f\n",
+                $info['leafInfo'][$i][$j]['firstInSegment'],
+                $info['leafInfo'][$i][$j]['earliestPresentationTime'],
+                $info['leafInfo'][$i][$j]['lastPresentationTime']
+            );
         }
     }
     checkSegmentDurationWithMPD($info['leafInfo'], $PresTimeOffset, $duration, $representationDirectory);
-    close_file($segmentInfoFile);
+    fclose($segmentInfoFile);
 }
 
 function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representationDirectory)
 {
-    global $session_dir, $mpd_features,$reprsentation_error_log_template,$period_timing_info, $current_period;
+    global $mpdHandler, $logger, $period_timing_info;
 
-    if ($mpd_features['type'] == 'dynamic') {
+    if ($mpdHandler->getFeatures()['type'] == 'dynamic') {
         return;
     }
 
-    ///\DoubleCheck make sure this actually gets created, used to be $reprsentation_error_log_template
-    $segmentInfoFile = open_file("$representationDirectory/errorLog.txt", 'rt');
-    if (!$trackErrorFile) {
-        return;
-    }
     $segmentDur = array();
     $num_segments = sizeof($segmentsTime[0]);
-    if ($current_period == 0) {
+    if ($mpdHandler->getSelectedPeriod() == 0) {
         $pres_start = $period_timing_info[0] + $PTO;
     } else {
         $pres_start = $PTO;
@@ -416,20 +486,32 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
 
     $segmentDurMPD = $duration;
     for ($i = 0; $i < $num_segments; $i++) {
-        $segmentDur[$i] = $segmentsTime[0][$i]['lastPresentationTime'] - $segmentsTime[0][$i]['earliestPresentationTime'];
-        if (($i !== ($num_segments - 1)) && !($segmentDurMPD * 0.5 <= $segmentDur[$i]  && $segmentDur[$i] <= $segmentDurMPD * 1.5)) {
-            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1, 7.2.1: 'The maximum tolerance of segment duration shall be +/-50% of the signaled segment duration (@duration)',violated for segment " . ($i + 1) . ", with duration " . $segmentDur[$i] . " while signaled @duration is " . $segmentDurMPD . "\n");
-        }
-        //The lower threshold tolerance does not apply to the last segment, it can be smaller.
-        if (($i == ($num_segments - 1)) && $segmentDur[$i] > $segmentDurMPD * 1.5) {
-            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1, 7.2.1: 'The maximum tolerance of segment duration shall be +/-50% of the signaled segment duration (@duration)',violated for segment " . ($i + 1) . ", with duration " . $segmentDur[$i] . " while signaled @duration is " . $segmentDurMPD . "\n");
-        }
+        $segmentDur[$i] =
+            $segmentsTime[0][$i]['lastPresentationTime'] - $segmentsTime[0][$i]['earliestPresentationTime'];
+
+        $logger->test(
+            "DASH ISO/IEC 23009-1",
+            "Section 7.2.1",
+            "The maximum tolerance of segment duration shall be +/-50% of the signaled segment duration",
+            ($i != ($num_segments - 1) && $segmentDurMPD * 0.5 > $segmentDur[$i] ) &&
+             $segmentDur[$i] <= $segmentDurMPD * 1.5,
+            "FAIL",
+            "Segment $i with duration " . $segmentDur[$i] . " is within bounds of signaled " . $segmentDurMPD,
+            "Segment $i with duration " . $segmentDur[$i] . " violates bounds of signaled " . $segmentDurMPD
+        );
 
         $MPDSegmentStartTime = $pres_start + $i * $segmentDurMPD;
-        if (!($MPDSegmentStartTime - (0.5 * $segmentDurMPD) <= $segmentsTime[0][$i]['earliestPresentationTime']  && $segmentsTime[0][$i]['earliestPresentationTime'] <= $MPDSegmentStartTime + (0.5 * $segmentDurMPD))) {
-            fwrite($trackErrorFile, "###error- DASH ISO/IEC 23009-1:2019, 7.2.1: 'The difference between MPD start time and presentation time shall not exceed +/-50% of value of @duration divided by the value of the @timescale attribute.',violated for segment " . ($i + 1) . ", with earliest presentation time " . $segmentsTime[0][$i]['earliestPresentationTime'] . " while signaled MPD start time is " . $MPDSegmentStartTime . " and @duration is " . $segmentDurMPD . "\n");
-        }
-    }
 
-    fclose($trackErrorFile);
+        $logger->test(
+            "DASH ISO/IEC 23009-1:2019",
+            "Section 7.2.1",
+            "The difference between MPD start time and presentation time shall not exceed +/-50% of value of " .
+            "@duration divided by the value of the @timescale attribute",
+            $MPDSegmentStartTime - (0.5 * $segmentDurMPD) <= $segmentsTime[0][$i]['earliestPresentationTime']  &&
+            $segmentsTime[0][$i]['earliestPresentationTime'] <= $MPDSegmentStartTime + (0.5 * $segmentDurMPD),
+            "FAIL",
+            "Correct for segment $i with duration " . $segmentsTime[0][$i]['earliestPresentationTime'],
+            "Incorrect for segment $i with duration " . $segmentsTime[0][$i]['earliestPresentationTime']
+        );
+    }
 }

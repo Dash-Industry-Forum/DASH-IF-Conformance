@@ -83,12 +83,12 @@ class ModuleCTAWAVE extends ModuleInterface
 
     private function checkCMFHDBaselineConstraints()
     {
-        return include 'impl/checkCMFHDBaselineConstraints.php';
+        include 'impl/checkCMFHDBaselineConstraints.php';
     }
 
     private function checkSequentialSwitchingSetAV()
     {
-        return include 'impl/checkSequentialSwitchingSetAv.php';
+        include 'impl/checkSequentialSwitchingSetAv.php';
     }
 
     private function CTABaselineSpliceChecks()
@@ -98,17 +98,17 @@ class ModuleCTAWAVE extends ModuleInterface
 
     private function checkSequentialSwitchingSetMediaProfile()
     {
-        return include 'impl/checkSequentialSwitchingSetMediaProfile.php';
+        include 'impl/checkSequentialSwitchingSetMediaProfile.php';
     }
 
     private function checkDiscontinuousSplicePoints()
     {
-        return include 'impl/checkDiscontinousSplicePoints.php';
+        include 'impl/checkDiscontinousSplicePoints.php';
     }
 
     private function checkEncryptionChangeSplicePoint()
     {
-        return include 'impl/checkEncryptionChangeSplicePoint.php';
+        include 'impl/checkEncryptionChangeSplicePoint.php';
     }
 
     private function getEncrytionScheme($xml)
@@ -118,7 +118,7 @@ class ModuleCTAWAVE extends ModuleInterface
 
     private function checkSampleEntryChangeSplicePoint()
     {
-        return include 'impl/checkSampleEntryChangeSplicePoint.php';
+        include 'impl/checkSampleEntryChangeSplicePoint.php';
     }
 
     private function getSdType($xml)
@@ -128,32 +128,32 @@ class ModuleCTAWAVE extends ModuleInterface
 
     private function checkDefaultKIDChangeSplicePoint()
     {
-        return include 'impl/checkDefaultKIDChangeSplicePoint.php';
+        include 'impl/checkDefaultKIDChangeSplicePoint.php';
     }
 
     private function checkTrackIDChangeSplicePoint()
     {
-        return include 'impl/checkTrackIDChangeSplicePoint.php';
+        include 'impl/checkTrackIDChangeSplicePoint.php';
     }
 
     private function checkTimeScaleChangeSplicePoint()
     {
-        return include 'impl/checkTimeScaleChangeSplicePoint.php';
+        include 'impl/checkTimeScaleChangeSplicePoint.php';
     }
 
     private function checkFragmentOverlapSplicePoint()
     {
-        return include 'impl/checkFragmentOverlapSplicePoint.php';
+        include 'impl/checkFragmentOverlapSplicePoint.php';
     }
 
     private function checkPictureAspectRatioSplicePoint()
     {
-        return include 'impl/checkPictureAspectRatioSlicePoint.php';
+        include 'impl/checkPictureAspectRatioSlicePoint.php';
     }
 
     private function checkFrameRateSplicePoint()
     {
-        return include 'impl/checkFrameRateSplicePoint.php';
+        include 'impl/checkFrameRateSplicePoint.php';
     }
 
     private function getFrameRate($xml)

@@ -1,10 +1,9 @@
 <?php
 
-global $MediaProfDatabase, $session, $adaptation_set_template, $CTAspliceConstraitsLog;
+global $MediaProfDatabase, $session, $logger;
 
 //Check for CMFHD presentation profile for all periods/presentations
 //and then check WAVE Baseline constraints . If both are satisfied, then CMFHD Baseline Constraints are satisfied.
-$errorMsg = "";
 $periodCount = sizeof($MediaProfDatabase);
 $presentationProfileArray = array();
 for ($i = 0; $i < $periodCount; $i++) {
@@ -13,24 +12,13 @@ for ($i = 0; $i < $periodCount; $i++) {
     array_push($presentationProfileArray, $presentationProfile);
 }
 
-///\RefactorTodo Fix this
-/*
-  if (!(count(array_unique($presentationProfileArray)) === 1 &&
-    array_unique($presentationProfileArray)[0] == "CMFHD")) {
-    $errorMsg .= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 6.2: 'WAVE CMFHD Baseline Program Shall
-      contain a sequence of one or more CMAF Presentations conforming to CMAF CMFHD profile', violated as not all CMAF
-      presentations conforms to CMFHD. \n";
-}
-
-//WAVE Baseline constraints are already checked, open the log file and check if contains errors and print related
-//error message.
-$searchfiles = file_get_contents($session->getDir() . '/' . $CTAspliceConstraitsLog . '.txt');
-if (strpos($searchfiles, "###CTAWAVE check violated") !== false) {
-  $errorMsg .= "###CTAWAVE check violated: WAVE Content Spec 2018Ed-Section 6.2: 'WAVE CMFHD Baseline Program's
-    Sequential Sw Sets Shall only contain splices conforming to WAVE Baseline Splice profile (section 7.2)', but
-    violation observed in WAVE Baseline Splice constraints. \n";
-}
- */
-
-
-return $errorMsg;
+$logger->test(
+    "WAVE Content Spec 2018Ed",
+    "Section 6.2",
+    "WAVE CMFHD Baseline Program Shall contain a sequence of one or more CMAF Presentations conforming to CMAF " .
+    "CMFHD profile",
+    count(array_unique($presentationProfileArray)) === 1 && array_unique($presentationProfileArray)[0] == "CMFHD",
+    "FAIL",
+    "All CMAF Swithcing sets are CMFHD conformant",
+    "Not all CMAF Swithcing sets are CMFHD conformant"
+);

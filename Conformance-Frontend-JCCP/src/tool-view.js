@@ -193,17 +193,11 @@ function ToolView() {
 
   function createModulePartElement(part, module) {
     let testResults = part.test;
-    let moduleInfoId = {
-      module: module.name,
-      part: part.name,
-      type: "info",
-    };
-    let isModuleInfoSelected = isSelected(moduleInfoId);
 
     let modulePartElement = UI.createElement({
       children: [
         {
-          className: "mt-3 fw-semibold",
+          className: "my-3 fw-semibold",
           children: [
             {
               element: "i",
@@ -213,45 +207,13 @@ function ToolView() {
             { element: "span", text: part.name },
           ],
         },
-      ]
-        .concat(
-          (() => {
-            if (!part.info) return;
-            return [
-              {
-                element: "h6",
-                className: "mt-3 ms-3",
-                text: "Info:",
-              },
-              {
-                element: "a",
-                className: "ms-3" + (isModuleInfoSelected ? " fw-semibold" : ""),
-                href: "#",
-                text: part.info.length + " log message" + (part.info.length > 1 ? "s" : ""),
-                onClick: (event) => {
-                  if (isModuleInfoSelected) return;
-                  _state.detailSelect = moduleInfoId;
-                  UI.saveScrollPosition(_resultSummaryId + "-scroll");
-                  renderResultSummary();
-                  renderResultDetails();
-                },
-              },
-            ];
-          })()
-        )
-        .concat([
-          {
-            element: "h6",
-            className: "mt-3 ms-3",
-            text: "Test Results:",
-          },
-          {
-            className: "list-group",
-            children: testResults.map((testResult) =>
-              createModulePartTestElement(testResult, part, module)
-            ),
-          },
-        ]),
+        {
+          className: "list-group",
+          children: testResults.map((testResult) =>
+            createModulePartTestElement(testResult, part, module)
+          ),
+        },
+      ],
     });
 
     return modulePartElement;
@@ -308,11 +270,6 @@ function ToolView() {
 
     if (module && part && section && test) {
       resultDetails = createTestResultDetailsElement(elementId);
-    }
-
-    if (module && part && type) {
-      if (type === "info")
-        resultDetails = createInfoLogsDetailsElement(elementId);
     }
 
     if (!resultDetails) {
@@ -411,6 +368,7 @@ function ToolView() {
                           "font-monospace overflow-auto border rounded bg-light p-2",
                         style: "max-height: 30em",
                         children: messages.map((message) => ({
+                          style: { minHeight: "1em", minWidth: "1em" },
                           text: message,
                         })),
                       },
@@ -420,47 +378,6 @@ function ToolView() {
               ],
             },
           },
-        },
-      ],
-    });
-    return resultDetails;
-  }
-
-  function createInfoLogsDetailsElement(elementId) {
-    let { module, part, type } = _state.detailSelect;
-    let info = _state.result.entries[module][part].info;
-    let resultDetails = UI.createElement({
-      id: elementId,
-      className: "w-50 d-flex flex-column",
-      children: [
-        {
-          text: "Details",
-          className: "fs-5 fw-semibold bg-light border-bottom py-2 px-3",
-        },
-        {
-          className: "p-3 flex-fill overflow-auto",
-          children: [
-            {
-              element: "h5",
-              className: "mb-3",
-              text: `${module} ${part} Log Messages`,
-            },
-          ].concat(
-            info.map((message, index) => ({
-              children: [
-                {
-                  element: "h6",
-                  text: "Message #" + (index + 1),
-                },
-                {
-                  className:
-                    "font-monospace overflow-auto text-nowrap border rounded bg-light p-2",
-                  style: "max-height: 30em",
-                  children: message.split("\n").map((line) => ({ text: line })),
-                },
-              ],
-            }))
-          ),
         },
       ],
     });

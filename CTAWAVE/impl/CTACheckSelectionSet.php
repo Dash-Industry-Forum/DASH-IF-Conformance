@@ -1,10 +1,10 @@
 <?php
 
-global $mpd_features, $current_period, $session, $MediaProfDatabase;
+global $MediaProfDatabase;
 
-global $logger;
+global $logger, $session, $mpdHandler;
 
-$adaptations = $mpd_features['Period'][$current_period]['AdaptationSet'];
+$adaptations = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'];
 $adaptationCount = sizeof($adaptations);
 
 $waveVideoTrackFound = 0;
@@ -22,11 +22,11 @@ $audiomediaProfileArray = array("AAC_Core", "Adaptive_AAC_Core", "AAC_Multichann
                       "Enhanced_AC-3","AC-4_SingleStream","MPEG-H_SingleStream");
 $subtitlemediaProfileArray = array("TTML_IMSC1_Text", "TTML_IMSC1_Image");
 
-for ($adaptationIndex = 0; $adaptationIndex < $adapts_count; $adaptationIndex++) {
+for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex++) {
     $switchingSetMediaProfile = array();
-    $location = $session->getAdaptationDir($current_period, $adaptationIndex);
+    $location = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $adaptationIndex);
     $fileCount = 0;
-    $files = glob($location . "/*.xml");
+    $files = DASHIF\rglob("$location/*.xml");
     if ($files) {
         $fileCount = count($files);
     }
@@ -45,17 +45,17 @@ for ($adaptationIndex = 0; $adaptationIndex < $adapts_count; $adaptationIndex++)
     }
 
     for ($fileIndex = 0; $fileIndex < $fileCount; $fileIndex++) {
-        $xml = get_DOM($files[$fileIndex], 'atomlist');
+        $xml = DASHIF\Utility\parseDOM($files[$fileIndex], 'atomlist');
         if (!$xml) {
             continue;
         }
         $hdlrBox = $xml->getElementsByTagName("hdlr")->item(0);
-        $hdlrType = $hdlrBox->getAttribute("hdlrType");
+        $hdlrType = $hdlrBox->getAttribute("handler_type");
         $mediaProfileTrackResult = $this->getMediaProfile($xml, $hdlrType, $fileIndex, $adaptationIndex);
         $mediaProfileTrack = $mediaProfileTrackResult[0];
 
         //Update the MP database for future checks
-        $MediaProfDatabase[$current_period][$adaptationIndex][$fileIndex] = $mediaProfileTrack;
+        $MediaProfDatabase[$mpdHandler->getSelectedPeriod()][$adaptationIndex][$fileIndex] = $mediaProfileTrack;
 
         if ($hdlrType == "vide") {
             $videoSelectionSetFound = 1;

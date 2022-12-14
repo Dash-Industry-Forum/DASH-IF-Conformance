@@ -1,18 +1,22 @@
 <?php
 
-global $session, $current_period, $logger;
+global $session, $mpdHandler;
 
 $dashConformsToCmafFrag = array();
 $representations = $adaptationSet['Representation'];
 
 foreach ($representations as $representationId => $representation) {
-    $rep_xml = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId) . '/atomInfo.xml';
+    $rep_xml = $session->getRepresentationDir(
+        $mpdHandler->getSelectedPeriod(),
+        $adaptationSetId,
+        $representationId
+    ) . '/atomInfo.xml';
 
     if (!file_exists($rep_xml)) {
         continue;
     }
 
-    $xml = get_DOM($rep_xml, 'atomlist');
+    $xml = DASHIF\Utility\parseDOM($rep_xml, 'atomlist');
     if (!$xml) {
         continue;
     }
@@ -38,10 +42,10 @@ foreach ($representations as $representationId => $representation) {
             "CMAF Master Header of the Switching Set",
             $validContentType,
             "FAIL",
-            "ContentType and Hdlr type match in Period " . ($current_period + 1) . ' Adaptation ' .
-            ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-            "ContentType and Hdlr type do not match in Period " . ($current_period + 1) . ' Adaptation ' .
-            ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
+            "ContentType and Hdlr type match in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+            ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
+            "ContentType and Hdlr type do not match in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+            ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
         );
 
         $validMimeType = true;
@@ -69,9 +73,9 @@ foreach ($representations as $representationId => $representation) {
             "The @mimeType SHALL be compatible \"<@contentType>/mp4\" or \"<@contentType>/mp4, profiles='cmfc'\"",
             $validContentType,
             "FAIL",
-            "Mimetype matches in Period " . ($current_period + 1) . ' Adaptation ' .
+            "Mimetype matches in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
             ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-            "Mimetype does not match in Period " . ($current_period + 1) . ' Adaptation ' .
+            "Mimetype does not match in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
             ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
         );
 
@@ -88,9 +92,9 @@ foreach ($representations as $representationId => $representation) {
                 "of the CMAF Master Header",
                 $maxWidth == $width,
                 "WARN",
-                "Width matches in Period " . ($current_period + 1) . ' Adaptation ' .
+                "Width matches in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
                 ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-                "Width does not match in Period " . ($current_period + 1) . ' Adaptation ' .
+                "Width does not match in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
                 ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
             );
             $logger->test(
@@ -100,9 +104,9 @@ foreach ($representations as $representationId => $representation) {
                 "of the CMAF Master Header",
                 $maxHeight == $height,
                 "WARN",
-                "Height matches in Period " . ($current_period + 1) . ' Adaptation ' .
+                "Height matches in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
                 ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-                "Height does not match in Period " . ($current_period + 1) . ' Adaptation ' .
+                "Height does not match in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
                 ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
             );
         }
@@ -115,13 +119,13 @@ foreach ($representations as $representationId => $representation) {
         $sample_description = $hdlr_type . '_sampledescription';
         $stsdBoxes = $xml->getElementsByTagName('stsd');
         $sdType = '';
-        if (!empty($stsdBoxes)){
-          $sampleDescriptions = $stsdBoxes->item(0)->getElementsByTagName($sample_description);
-          if (!empty($sampleDescriptions)){
-            if ( $sampleDescriptions->item(0) !== null){
-              $sdType = $sampleDescriptions->item(0)->getAttribute('sdType');
+        if (!empty($stsdBoxes)) {
+            $sampleDescriptions = $stsdBoxes->item(0)->getElementsByTagName($sample_description);
+            if (!empty($sampleDescriptions)) {
+                if ($sampleDescriptions->item(0) !== null) {
+                    $sdType = $sampleDescriptions->item(0)->getAttribute('sdType');
+                }
             }
-          }
         }
         if (strpos($codecs, $sdType) === false) {
             $validCodecs = false;
@@ -134,9 +138,9 @@ foreach ($representations as $representationId => $representation) {
         "of the CMAF Master Header",
         $validCodecs,
         "FAIL",
-        "Codecs set to valid value in Period " . ($current_period + 1) . ' Adaptation ' .
+        "Codecs set to valid value in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-        "Codecs either not set, or invalid in Period " . ($current_period + 1) . ' Adaptation ' .
+        "Codecs either not set, or invalid in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
     );
 
@@ -185,10 +189,10 @@ foreach ($representations as $representationId => $representation) {
             "If the content is protected a ContentProtection element SHALL be present and set appropriately",
             $validContentProtection,
             "FAIL",
-            "Content protection set and valid in Period " . ($current_period + 1) . ' Adaptation ' .
+            "Content protection set and valid in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
             ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-            "Content protection either not set or not valid in Period " . ($current_period + 1) . ' Adaptation ' .
-            ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
+            "Content protection either not set or not valid in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+            ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
         );
     }
 
@@ -202,9 +206,9 @@ foreach ($representations as $representationId => $representation) {
         "The @timescale in Representation SHALL be set to the timescale of Media Header Box ('mdhd') of the CMAF Track",
         $timescaleMPD == null || $timescaleMPD == $timescaleHeader,
         "FAIL",
-        "MPD and Header timescales are equal in Period " . ($current_period + 1) . ' Adaptation ' .
+        "MPD and Header timescales are equal in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-        "MPD and Header timescales are not equal in Period " . ($current_period + 1) . ' Adaptation ' .
+        "MPD and Header timescales are not equal in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
     );
 
@@ -215,14 +219,16 @@ foreach ($representations as $representationId => $representation) {
             $representation,
             $representationId,
             $segmentAccessRepresentation,
-            $infoFileAdapt
+            $infoFileAdapt,
+            $logger
         );
     } else {
         $this->validateSegmentTemplate(
             $adaptationSetId,
             $representationId,
             $segmentAccessRepresentation,
-            $infoFileAdapt
+            $infoFileAdapt,
+            $logger
         );
     }
 
@@ -232,9 +238,9 @@ foreach ($representations as $representationId => $representation) {
         "Event Message Streams MAY be signaled with InbandEventStream elements",
         $representation['InbandEventStream'] != null || $adaptationSet['InbandEventStream'] != null,
         "PASS",
-        "InbandEventSteam found for Period " . ($current_period + 1) . ' Adaptation ' .
+        "InbandEventSteam found for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-        "InbandEventSteam not found for Period " . ($current_period + 1) . ' Adaptation ' .
+        "InbandEventSteam not found for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
     );
 
@@ -245,7 +251,8 @@ foreach ($representations as $representationId => $representation) {
         $representationId,
         $segmentAccessRepresentation,
         $infoFileAdapt,
-        $xml
+        $xml,
+        $logger
     );
 
     $validCMAFSegment = true;
@@ -264,10 +271,10 @@ foreach ($representations as $representationId => $representation) {
         "Each CMAF Segment SHALL contain one or more complete and consecutive CMAF Fragments in decode order",
         $validCMAFSegment,
         "INFO",
-        "All fragments in decode order for Period " . ($current_period + 1) . ' Adaptation ' .
+        "All fragments in decode order for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-        "CMAF Fragments out of decode order found for Period " . ($current_period + 1) . ' Adaptation ' .
-        ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
+        "CMAF Fragments out of decode order found for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+        ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
     );
 
     $logger->test(
@@ -276,15 +283,19 @@ foreach ($representations as $representationId => $representation) {
         "Each Media Segment SHALL conform to a CMAF Addressable Media Object as defined in CMAF 7.3.3",
         $validCMAFSegment || $validSelfInitializingSegment,
         "FAIL",
-        "All segments valid for Period " . ($current_period + 1) . ' Adaptation ' .
+        "All segments valid for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-        "Not all segments valid for Period " . ($current_period + 1) . ' Adaptation ' .
+        "Not all segments valid for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
     );
 
 
     $errors = file_get_contents(
-        $session->getRepresentationDir($current_period, $adaptationSetId, $representationId) . '/stderr.txt'
+        $session->getRepresentationDir(
+            $mpdHandler->getSelectedPeriod(),
+            $adaptationSetId,
+            $representationId
+        ) . '/stderr.txt'
     );
 
     $logger->test(
@@ -293,9 +304,11 @@ foreach ($representations as $representationId => $representation) {
         "Each Media Segment SHALL conform to a Delivery Unit Media Segment as defined in 6.3.4.2",
         strpos($errors, 'ISO/IEC 23009-1:2012(E), 6.3.4.2') === false,
         "FAIL",
-        "All segments conform to Delivery Unit Media Segment found in Period " . ($current_period + 1) .
+        "All segments conform to Delivery Unit Media Segment found in Period " .
+        ($mpdHandler->getSelectedPeriod() + 1) .
         ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-        "Segment non-conforming to Delivery Unit Media Segment found for Period " . ($current_period + 1) .
+        "Segment non-conforming to Delivery Unit Media Segment found for Period " .
+        ($mpdHandler->getSelectedPeriod() + 1) .
         ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
     );
     $logger->test(
@@ -304,10 +317,10 @@ foreach ($representations as $representationId => $representation) {
         "Each Initialization Segment, if present, SHALL conform to a CMAF Header as defined in CMAF 7.3.2.1",
         strpos($errors, 'CMAF checks violated: Section 7.3.2.1') === false,
         "FAIL",
-        "All segments conform to CMAF Header in Period " . ($current_period + 1) . ' Adaptation ' .
-        ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-        "Segment non-conforming to CMAF Header found for Period " . ($current_period + 1) . ' Adaptation ' .
-        ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
+        "All segments conform to CMAF Header in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+        ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
+        "Segment non-conforming to CMAF Header found for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+        ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
     );
     $logger->test(
         "DASH-IF IOP CR Low Latency Live",
@@ -315,10 +328,10 @@ foreach ($representations as $representationId => $representation) {
         "Each Initialization Segment, if present, SHALL conform to an Initialization Segment as defined in 6.3.3",
         strpos($errors, 'ISO/IEC 23009-1:2012(E), 6.3.3') === false,
         "FAIL",
-        "All segments conform to CMAF Initialization in Period " . ($current_period + 1) . ' Adaptation ' .
-        ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-        "Segment non-conforming to CMAF Initialization found for Period " . ($current_period + 1) . ' Adaptation ' .
-        ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
+        "All segments conform to CMAF Initialization in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+        ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
+        "Segment non-conforming to CMAF Initialization found for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+        ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
     );
 
     $moofBoxes = $xml->getElementsByTagName('moof');
@@ -339,9 +352,9 @@ foreach ($representations as $representationId => $representation) {
         "The Representation SHALL conform to a CMAF Track as defined in CMAF 7.3.2.2",
         !$errorInTrack,
         "FAIL",
-        "Valid representation: Period " . ($current_period + 1) . ' Adaptation ' .
+        "Valid representation: Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-        "Invalid representation: Period " . ($current_period + 1) . ' Adaptation ' .
+        "Invalid representation: Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
     );
 
@@ -358,10 +371,10 @@ foreach ($representations as $representationId => $representation) {
             "it SHALL be set to value 1 or 2",
             $startWithSAP == null || $startWithSAP == '1' || $startWithSAP == '2',
             "FAIL",
-            "Start sap has a valid value of $startWithSAP in Period " . ($current_period + 1) . ' Adaptation ' .
-            ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-            "Start sap has an invalid value of $startWithSAP in Period " . ($current_period + 1) . ' Adaptation ' .
-            ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
+            "Start sap has a valid value of $startWithSAP in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+            ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
+            "Start sap has an invalid value of $startWithSAP in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+            ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
         );
     }
 }
@@ -372,9 +385,9 @@ $logger->test(
     "Either segmentAlignment or subsegmentAlignment SHALL be set",
     $adaptationSet['segmentAlignment'] != null || $adaptationSet['subsegmentAlignment'] != null,
     "FAIL",
-    "Valid for Period " . ($current_period + 1) . ' Adaptation ' .
+    "Valid for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
     ($adaptationSetId + 1),
-    "Neither found for Period " . ($current_period + 1) . ' Adaptation ' .
+    "Neither found for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
     ($adaptationSetId + 1)
 );
 

@@ -1,14 +1,18 @@
 <?php
 
-global $session, $current_period;
+global $session, $mpdHandler;
 
-$repXml = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId) . '/atomInfo.xml';
+$repXml = $session->getRepresentationDir(
+    $mpdHandler->getSelectedPeriod(),
+    $adaptationSetId,
+    $representationId
+) . '/atomInfo.xml';
 
 if (!file_exists($repXml)) {
     return null;
 }
 
-$xml = get_DOM($repXml, 'atomlist');
+$xml = DASHIF\Utility\parseDOM($repXml, 'atomlist');
 if (!$xml) {
     return null;
 }

@@ -37,7 +37,7 @@ class PathBuildActionTypes {
   \return nothing.
  */
 function createMpdFeatureList($mpdfile, $schematronIssuesReport){
-    global $session_dir, $featurelist_log;
+    global $session;
 
     //Create MPDlist element in new XML File for feature list:
     $xml = new DOMDocument();
@@ -59,7 +59,7 @@ function createMpdFeatureList($mpdfile, $schematronIssuesReport){
 
                 if ((strpos($myName, "#") === false) and ! empty($myName)){
                     $SubNode = $ChildNode;
-                    formCurrentXmlPath($pathOfElement, $myName, INSERT_NEW_CHILD);
+                    formCurrentXmlPath($pathOfElement, $myName, PathBuildActionTypes::INSERT_NEW_CHILD);
                     setFeatureListEntry($SubNode, $pathOfElement, $schematronIssuesReport);
                     break;
                 }
@@ -76,7 +76,7 @@ function createMpdFeatureList($mpdfile, $schematronIssuesReport){
                 $SubNode = $SubNode->nextSibling;
                 $myName = $SubNode->nodeName;
                 if ((strpos($myName, "#") === false) and ! empty($myName)){
-                    formCurrentXmlPath($pathOfElement, $myName, SWITCH_TO_SIBLING);
+                    formCurrentXmlPath($pathOfElement, $myName, PathBuildActionTypes::SWITCH_TO_SIBLING);
                     setFeatureListEntry($SubNode, $pathOfElement, $schematronIssuesReport);
                 }
             }
@@ -87,7 +87,7 @@ function createMpdFeatureList($mpdfile, $schematronIssuesReport){
                         $SubNode = $SubNode->parentNode;
                         $myName = $SubNode->nodeName;
 
-                        formCurrentXmlPath($pathOfElement, $myName, CHANGE_PARENT);
+                        formCurrentXmlPath($pathOfElement, $myName, PathBuildActionTypes::CHANGE_PARENT);
 
                         if ($SubNode->nextSibling){
                             $j = 0;
@@ -97,7 +97,7 @@ function createMpdFeatureList($mpdfile, $schematronIssuesReport){
 
                                 if ((strpos($myName, "#") === false) and ! empty($myName)){
                                     $SubNode = $SublingNode;
-                                    formCurrentXmlPath($pathOfElement, $myName, SWITCH_TO_SIBLING);
+                                    formCurrentXmlPath($pathOfElement, $myName, PathBuildActionTypes::SWITCH_TO_SIBLING);
                                     setFeatureListEntry($SubNode, $pathOfElement, $schematronIssuesReport);
                                     $foundNextSibling = true;
                                     break;
@@ -121,7 +121,7 @@ function createMpdFeatureList($mpdfile, $schematronIssuesReport){
             }
         }
     }
-    $xml->save($session_dir . '/' . $featurelist_log);
+    $xml->save($session->getDir() . '/featureList.xml');
 }
 
 /* ! \fn formCurrentXmlPath(&$path,$nodeName, $actionType)   
@@ -131,13 +131,6 @@ function createMpdFeatureList($mpdfile, $schematronIssuesReport){
   \param $path is the input string to which a new element will be appended/modified/deleted to form the current path
   \param $actionType determines the action to be performed to the current path ($path):
 
-  class PathBuildActionTypes {
-  const INSERT_NEW_CHILD = 1; //the new element name ($nodeName) will be concatenated at the end of $path
-  const SWITCH_TO_SIBLING = 2; //The current last element of $path will be replaced
-  //with the one in $nodeName. If it is a sibling of the same name, increases
-  //the index of the element (MPD[1]/Period[1]/AdaptationSet[2] is converted to MPD[1]/Period[1]/AdaptationSet[3])
-  const CHANGE_PARENT = 3;     //deletes the current node, to go up in the XML level.
-  }
   \return nothing.
 
  */
@@ -146,10 +139,10 @@ function formCurrentXmlPath(&$path, $nodeName, $actionType){
     //By default, the string [1] is attached to all node names
     //if there are more siblings, this number is incremented, if not, remains the same:
     switch ($actionType){
-        case INSERT_NEW_CHILD:
+      case PathBuildActionTypes::INSERT_NEW_CHILD:
             $path = $path . "/" . $nodeName . "[1]";
             break;
-        case SWITCH_TO_SIBLING:
+      case PathBuildActionTypes::SWITCH_TO_SIBLING:
             $pos = strrpos($path, "/");
             $posEnd = strrpos($path, "[");
             $currentSiblingName = substr($path, $pos + 1, $posEnd - $pos - 1);
@@ -165,7 +158,7 @@ function formCurrentXmlPath(&$path, $nodeName, $actionType){
                 $path = $path . "/" . $nodeName . "[1]";
             }
             break;
-        case CHANGE_PARENT:
+      case PathBuildActionTypes::CHANGE_PARENT:
             $pos = strrpos($path, "/");
             $path = substr($path, 0, $pos);
 
@@ -186,9 +179,9 @@ function formCurrentXmlPath(&$path, $nodeName, $actionType){
 function isElementWithSchemaIssues($currenElementPath, &$schematronReport){
     //Examine all Schematron Issues to check if the current element
     //have any issue:
-    $schemaIssues->text = "false";
-    $schemaIssues->attributes = 0;
+    $schemaIssues = array("text" => "false", "attributes" => 0);
 
+    if ($schematronReport){
     for ($i = 0; $i < sizeof($schematronReport); $i++){
         //If the current element have an Schematron Issues
         if ($schematronReport[$i]->location === $currenElementPath){
@@ -199,6 +192,7 @@ function isElementWithSchemaIssues($currenElementPath, &$schematronReport){
             unset($schematronReport[$i]);
             return $schemaIssues;
         }
+    }
     }
 
     return $schemaIssues;
@@ -213,6 +207,7 @@ function isElementWithSchemaIssues($currenElementPath, &$schematronReport){
  *  
  */
 function isAttributeWithSchemaIssues($name, &$schemaIssues){
+  if ($schemaIssues && $schemaIssues->attributes){
     for ($i = 0; $i < sizeof($schemaIssues->attributes); $i++){
         //If the current element have an Schematron Issues
         if ($schemaIssues->attributes[$i] === $name){
@@ -221,6 +216,7 @@ function isAttributeWithSchemaIssues($name, &$schemaIssues){
             return true;
         }
     }
+  }
 
     return false;
 }
@@ -352,13 +348,13 @@ function getDataBetweenTokens($string, $initChar, $endChar){
 }
 
 function convertToHtml() {
-    global $session_dir, $featurelist_log, $featurelist_log_html;
+  global $session;
     
     $html_str = '<html><body><div>';
-    $feature_dom = get_DOM("$session_dir/$featurelist_log", 'MPD');
+    $feature_dom = DASHIF\Utility\parseDOM($session->getDir()."/featureList.xml", 'MPD');
     $html_str = populateList($feature_dom, $html_str);
     $html_str .= '</div></body></html>';
-    file_put_contents("$session_dir/$featurelist_log_html", $html_str);
+    file_put_contents($session->getDir()."/featuretable.html", $html_str);
 }
 
 function populateList($xml, $html_str) {

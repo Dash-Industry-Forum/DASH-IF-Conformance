@@ -1,6 +1,6 @@
 <?php
 
-global $mpd_features, $logger;
+global $mpdHandler, $logger;
 
 $moofBoxesCount = $xmlRepresentation->getElementsByTagName('moof')->length;
 $trunBoxes = $xmlRepresentation->getElementsByTagName('trun');
@@ -8,10 +8,10 @@ $tfdtBoxes = $xmlRepresentation->getElementsByTagName('tfdt');
 
 ## Consistency check of the start times within the segments with the timing indicated by the MPD
 // MPD information
-$mpdTiming = mdp_timing_info();
+$mpdTiming = $this->mpdTimingInfo();
 
 // Segment information
-$type = $mpd_features['type'];
+$type = $mpdHandler->getFeatures()['type'];
 
 $sidxBoxes = $xmlRepresentation->getElementsByTagName('sidx');
 $subsegmentSignaling = array();
@@ -81,6 +81,7 @@ for ($j = 0; $j < $moofBoxesCount; $j++) {
                     "HbbTV-DVB DASH Validation Requirements",
                     "Section 'Segments'",
                     "Timing SHALL be consistent with the MPD",
+                    $mpdTiming[$sidxIndex] != 0 &&
                     abs(($segmentTime - $mpdTiming[$sidxIndex]) / $mpdTiming[$sidxIndex]) <= 0.00001,
                     "FAIL",
                     "Start time of segment $j is consistent with the MPD",

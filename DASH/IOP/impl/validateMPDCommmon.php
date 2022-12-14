@@ -1,6 +1,6 @@
 <?php
 
-global $mpd_dom, $logger;
+global $mpdHandler, $logger;
 
 $validateYearMonth = function ($property, $location) {
     $logger->test(
@@ -14,15 +14,36 @@ $validateYearMonth = function ($property, $location) {
     );
 };
 
-$validateYearMonth($mpd_dom->getAttribute('mediaPresentationDuration'), "@mediaPresentationDuration in MPD");
-$validateYearMonth($mpd_dom->getAttribute('minimumUpdatePeriod'), "@minimumUpdatePeriod in MPD");
-$validateYearMonth($mpd_dom->getAttribute('minBufferTime'), "@minBufferTime in MPD");
-$validateYearMonth($mpd_dom->getAttribute('timeShiftBufferDepth'), "@timeShiftBufferDepth in MPD");
-$validateYearMonth($mpd_dom->getAttribute('suggestedPresentationDelay'), "@suggestedPresentationDelay in MPD");
-$validateYearMonth($mpd_dom->getAttribute('maxSegmentDuration'), "@maxSegmentDuration in MPD");
-$validateYearMonth($mpd_dom->getAttribute('maxSubSegmentDuration'), "@maxSubSegmentDuration in MPD");
+$validateYearMonth(
+    $mpdHandler->getDom()->getAttribute('mediaPresentationDuration'),
+    "@mediaPresentationDuration in MPD"
+);
+$validateYearMonth(
+    $mpdHandler->getDom()->getAttribute('minimumUpdatePeriod'),
+    "@minimumUpdatePeriod in MPD"
+);
+$validateYearMonth(
+    $mpdHandler->getDom()->getAttribute('minBufferTime'),
+    "@minBufferTime in MPD"
+);
+$validateYearMonth(
+    $mpdHandler->getDom()->getAttribute('timeShiftBufferDepth'),
+    "@timeShiftBufferDepth in MPD"
+);
+$validateYearMonth(
+    $mpdHandler->getDom()->getAttribute('suggestedPresentationDelay'),
+    "@suggestedPresentationDelay in MPD"
+);
+$validateYearMonth(
+    $mpdHandler->getDom()->getAttribute('maxSegmentDuration'),
+    "@maxSegmentDuration in MPD"
+);
+$validateYearMonth(
+    $mpdHandler->getDom()->getAttribute('maxSubSegmentDuration'),
+    "@maxSubSegmentDuration in MPD"
+);
 
-foreach ($mpd_dom->getElementsByTagName('Period') as $period) {
+foreach ($mpdHandler->getDom()->getElementsByTagName('Period') as $period) {
     $validateYearMonth(
         $period->getAttribute('start'),
         "@start for " . $period->getNodePath()
@@ -33,26 +54,26 @@ foreach ($mpd_dom->getElementsByTagName('Period') as $period) {
     );
 }
 
-foreach ($mpd_dom->getElementsByTagName('RandomAccess') as $access) {
+foreach ($mpdHandler->getDom()->getElementsByTagName('RandomAccess') as $access) {
     $validateYearMonth(
         $access->getAttribute('minBufferTime'),
         "@minBufferTime for " . $access->getNodePath()
     );
 }
 
-foreach ($mpd_dom->getElementsByTagName('SegmentTemplate') as $template) {
+foreach ($mpdHandler->getDom()->getElementsByTagName('SegmentTemplate') as $template) {
     $validateYearMonth(
         $template->getAttribute('timeShiftBufferDepth'),
         "@timeShiftBufferDepth for " . $template->getNodePath()
     );
 }
-foreach ($mpd_dom->getElementsByTagName('SegmentBase') as $base) {
+foreach ($mpdHandler->getDom()->getElementsByTagName('SegmentBase') as $base) {
     $validateYearMonth(
         $base->getAttribute('timeShiftBufferDepth'),
         "@timeShiftBufferDepth for " . $base->getNodePath()
     );
 }
-foreach ($mpd_dom->getElementsByTagName('SegmentList') as $list) {
+foreach ($mpdHandler->getDom()->getElementsByTagName('SegmentList') as $list) {
     $validateYearMonth(
         $list->getAttribute('timeShiftBufferDepth'),
         "@timeShiftBufferDepth for " . $list->getNodePath()
@@ -60,7 +81,7 @@ foreach ($mpd_dom->getElementsByTagName('SegmentList') as $list) {
 }
 
 
-foreach ($mpd_dom->getElementsByTagName('Range') as $range) {
+foreach ($mpdHandler->getDom()->getElementsByTagName('Range') as $range) {
     $validateYearMonth($range->getAttribute('time'), "@time for " . $range->getNodePath());
     $validateYearMonth($range->getAttribute('duration'), "@duration for " . $range->getNodePath());
 }

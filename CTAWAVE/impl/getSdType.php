@@ -3,7 +3,7 @@
 $sdType = 0;
 $SampleDescr = "";
 $hdlr = $xml->getElementsByTagName("hdlr")->item(0);
-$hdlrType = $hdlr->getAttribute("hdlrType");
+$hdlrType = $hdlr->getAttribute("handler_type");
 if ($hdlrType == "vide") {
     $SampleDescr = $xml->getElementsByTagName("vide_sampledescription")->item(0);
 } elseif ($hdlrType == "soun") {

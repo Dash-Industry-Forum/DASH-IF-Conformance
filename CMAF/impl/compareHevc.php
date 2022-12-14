@@ -15,8 +15,8 @@ $attributeNamesSEI = array('length', 'zero-bit', 'nuh_layer_id', 'nuh_temporal_i
 $hvcCBox1 = $xml1->getElementsByTagName('hvcC')->item(0);
 $hvcCBox2 = $xml2->getElementsByTagName('hvcC')->item(0);
 
-$spsArray1 = getNALArray($hvcCBox1, '33');
-$spsArray2 = getNALArray($hvcCBox2, '33');
+$spsArray1 = $this->getNALArray($hvcCBox1, '33');
+$spsArray2 = $this->getNALArray($hvcCBox2, '33');
 
 $logger->test(
     "CMAF",
@@ -31,8 +31,8 @@ $logger->test(
 );
 
 if ($spsArray1 != null && $spsArray2 != null) {
-    $spsUnit1 = getNALUnit($spsArray1);
-    $spsUnit2 = getNALUnit($spsArray2);
+    $spsUnit1 = $this->getNALUnit($spsArray1);
+    $spsUnit2 = $this->getNALUnit($spsArray2);
 
     foreach ($attributeNamesSPS as $attributeName) {
         $nalUnitAttribute1 = $spsUnit1->getAttribute($attributeName);
@@ -52,8 +52,8 @@ if ($spsArray1 != null && $spsArray2 != null) {
     }
 }
 
-$prefixSeiArray1 = getNALArray($hvcCBox1, '39');
-$prefixSeiArray2 = getNALArray($hvcCBox2, '39');
+$prefixSeiArray1 = $this->getNALArray($hvcCBox1, '39');
+$prefixSeiArray2 = $this->getNALArray($hvcCBox2, '39');
 
 $logger->test(
     "CMAF",
@@ -67,8 +67,8 @@ $logger->test(
 );
 
 if ($prefixSeiArray1 != null && $prefixSeiArray2 != null) {
-    $prefixSeiUnit1 = getNALUnit($prefixSeiArray1);
-    $prefixSeiUnit2 = getNALUnit($prefixSeiArray2);
+    $prefixSeiUnit1 = $this->getNALUnit($prefixSeiArray1);
+    $prefixSeiUnit2 = $this->getNALUnit($prefixSeiArray2);
 
     foreach ($attributeNamesSEI as $attributeName) {
         $nalUnitAttribute1 = $prefixSeiUnit1->getAttribute($attributeName);
@@ -88,8 +88,8 @@ if ($prefixSeiArray1 != null && $prefixSeiArray2 != null) {
     }
 }
 
-$suffixSeiArray1 = getNALArray($hvcCBox1, '40');
-$suffixSeiArray2 = getNALArray($hvcCBox2, '40');
+$suffixSeiArray1 = $this->getNALArray($hvcCBox1, '40');
+$suffixSeiArray2 = $this->getNALArray($hvcCBox2, '40');
 
 $logger->test(
     "CMAF",
@@ -102,8 +102,8 @@ $logger->test(
     "Presence of suffix SEI NAL not identical $id1 and $id2"
 );
 if ($suffixSeiArray1 != null && $suffixSeiArray2 != null) {
-    $sufSeiUnit1 = getNALUnit($suffixSeiArray1);
-    $sufSeiUnit2 = getNALUnit($suffixSeiArray2);
+    $sufSeiUnit1 = $this->getNALUnit($suffixSeiArray1);
+    $sufSeiUnit2 = $this->getNALUnit($suffixSeiArray2);
 
     foreach ($attributeNamesSEI as $attributeName) {
         $nalUnitAttribute1 = $sufSeiUnit1->getAttribute($attributeName);

@@ -7,6 +7,8 @@ class ModuleDASHLowLatency extends ModuleInterface
     private $maxSegmentDurations;
     private $firstOption;
     private $secondOption;
+    private $utcTimingInfo;
+    private $serviceDescriptionInfo;
 
     public function __construct()
     {
@@ -15,6 +17,8 @@ class ModuleDASHLowLatency extends ModuleInterface
         $this->maxSegmentDurations = array();
         $this->firstOption = array();
         $this->secondOption = array();
+        $this->utcTimingInfo = array();
+        $this->serviceDescriptionInfo = array();
     }
 
     protected function addCLIArguments()
@@ -31,6 +35,16 @@ class ModuleDASHLowLatency extends ModuleInterface
         }
     }
 
+    public function detectFromManifest()
+    {
+        global $mpdHandler;
+        $mpdProfiles = $mpdHandler->getDOM()->getAttribute('profiles');
+        if (strpos($mpdProfiles, 'http://www.dashif.org/guidelines/low-latency-live-v5') !== false) {
+            $this->enabled = true;
+            $this->detected = true;
+        }
+    }
+
 
     public function hookMPD()
     {
@@ -41,7 +55,6 @@ class ModuleDASHLowLatency extends ModuleInterface
         $this->validateServiceDescription();
         $this->validateUTCTiming();
         $this->validateLeapSecondInformation();
-
     }
 
     public function hookAdaptationSet()
@@ -54,7 +67,7 @@ class ModuleDASHLowLatency extends ModuleInterface
     $presentation_times = array();
     $decode_times = array();
          */
-        
+
         $this->validateCross();
     }
 
@@ -88,7 +101,8 @@ class ModuleDASHLowLatency extends ModuleInterface
         $adaptationSetId,
         $isLowLatency,
         $segmentAccessInfo,
-        $infoFileAdaptation
+        $infoFileAdaptation,
+        $logger
     ) {
         return include 'impl/validate9X44.php';
     }
@@ -98,12 +112,13 @@ class ModuleDASHLowLatency extends ModuleInterface
         $adaptationSetId,
         $isLowLatency,
         $segmentAccessInfo,
-        $infoFileAdaptation
+        $infoFileAdaptation,
+        $logger
     ) {
         return include 'impl/validate9X45.php';
     }
 
-    private function validate9X45Extended($adaptation_set, $adaptationSetId)
+    private function validate9X45Extended($adaptation_set, $adaptationSetId, $logger)
     {
         return include 'impl/validate9X45Extended.php';
     }
@@ -112,7 +127,8 @@ class ModuleDASHLowLatency extends ModuleInterface
         $adaptationSet,
         $adaptationSetId,
         $segmentAccessInfo,
-        $infoFileAdaptation
+        $infoFileAdaptation,
+        $logger
     ) {
         return include 'impl/validateDASHProfileCMAF.php';
     }
@@ -121,7 +137,8 @@ class ModuleDASHLowLatency extends ModuleInterface
         $adaptationSetId,
         $representationId,
         $segmentAccessRepresentation,
-        $infoFileAdaptation
+        $infoFileAdaptation,
+        $logger
     ) {
         include 'impl/validateSegmentTemplate.php';
     }
@@ -140,7 +157,8 @@ class ModuleDASHLowLatency extends ModuleInterface
         $representationId,
         $segmentAccessRepresentation,
         $infoFileAdaptation,
-        $xml
+        $xml,
+        $logger
     ) {
         include 'impl/validateSelfInitializingSegment.php';
     }
@@ -151,7 +169,8 @@ class ModuleDASHLowLatency extends ModuleInterface
         $representation,
         $representationId,
         $segmentAccessRepresentation,
-        $infoFileAdaptation
+        $infoFileAdaptation,
+        $logger
     ) {
         include 'impl/validateSegmentTimeline.php';
     }
@@ -160,7 +179,8 @@ class ModuleDASHLowLatency extends ModuleInterface
         $adaptationSet,
         $adaptationSetId,
         $representationId,
-        $infoFileAdaptation
+        $infoFileAdaptation,
+        $logger
     ) {
         include 'impl/validateTimingsWithinRepresentation.php';
     }

@@ -1,22 +1,21 @@
 <?php
 
-global $hbbtv_conformance, $dvb_conformance,  $mpd_dom,
-        $current_period, $current_adaptation_set, $current_representation,
-        $period_timing_info, $logger, $session;
+global $mpdHandler, $period_timing_info, $logger, $session;
 
 
-$repDir = $session->getRepresentationDir($current_representation, $current_adaptation_set, $current_representation);
+$repDir = $session->getSelectedRepresentationDir();
 $errorFilePath = "$repDir/stderr.txt";
 
-///\RefactorTodo Wrong directory, again..?
-$xmlRepresentation = get_DOM("$repDir/atomInfo.xml", 'atomlist');
+$xmlRepresentation = DASHIF\Utility\parseDOM("$repDir/atomInfo.xml", 'atomlist');
 if ($xmlRepresentation) {
-    if ($dvb_conformance) {
-        $media_types = media_types($mpd_dom->getElementsByTagName('Period')->item($current_period));
-        $this->commonValidationDVB($xmlRepresentation, $media_types);
+    if ($this->DVBEnabled) {
+        $mediaTypes = DASHIF\Utility\mediaTypes(
+            $mpdHandler->getDom()->getElementsByTagName('Period')->item($mpdHandler->getSelectedPeriod())
+        );
+        $this->commonDVBValidation($xmlRepresentation, $mediaTypes);
     }
-    if ($hbbtv_conformance) {
-        $this->commonValidationHbbTV($xmlRepresentation);
+    if ($this->HbbTvEnabled) {
+        $this->commonHbbTVValidation($xmlRepresentation);
     }
 
     $this->segmentTimingCommon($xmlRepresentation);

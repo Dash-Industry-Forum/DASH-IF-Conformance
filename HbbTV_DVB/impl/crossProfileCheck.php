@@ -1,9 +1,9 @@
 <?php
 
-global $mpd_dom, $logger;
+global $mpdHandler, $logger;
 
 
-$profilesArray = explode(',', $mpd_dom->getAttribute('profiles'));
+$mpdProfiles = explode(',', $mpdHandler->getDom()->getAttribute('profiles'));
 
 $supported_profiles = array('urn:mpeg:dash:profile:isoff-on-demand:2011',
   'urn:mpeg:dash:profile:isoff-live:2011',
@@ -14,7 +14,7 @@ $supported_profiles = array('urn:mpeg:dash:profile:isoff-on-demand:2011',
   'urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014',
   'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014');
 
-foreach ($profilesArray as $profile) {
+foreach ($mpdProfiles as $profile) {
     $profile_found = false;
     foreach ($supported_profiles as $supported_profile) {
         if (strpos($profile, $supported_profile) !== false) {

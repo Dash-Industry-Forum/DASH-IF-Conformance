@@ -17,5 +17,8 @@ for ($j = 0; $j < $moofBoxCount; $j++) {
 
 $periodDuration = (float)$period_timing_info[1];
 
-$drift = abs((round($totalSegmentDuration, 2) - round($periodDuration, 2)) / round($periodDuration, 2));
+$drift = 0;
+if (round($periodDuration, 2) != 0) {
+    $drift = abs((round($totalSegmentDuration, 2) - round($periodDuration, 2)) / round($periodDuration, 2));
+}
 return [$drift <= 0.00001, round($totalSegmentDuration, 2), round($periodDuration, 2)];
