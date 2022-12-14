@@ -1,15 +1,14 @@
 <?php
 
-global $session, $current_period, $current_adaptation_set, $current_representation;
+global $session;
 
-$rep_xml = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation) .
-  '/atomInfo.xml';
+$rep_xml = $session->getSelectedRepresentationDir() .  '/atomInfo.xml';
 
 if (!file_exists($rep_xml)) {
     return;
 }
 
-$xml = get_DOM($rep_xml, 'atomlist');
+$xml = DASHIF\Utility\parseDOM($rep_xml, 'atomlist');
 if (!$xml) {
     return;
 }

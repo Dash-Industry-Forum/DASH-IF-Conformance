@@ -16,7 +16,7 @@ $logger->test(
 );
 
 for ($i = 0; $i < $representationCount; $i++) {
-    $xml = get_DOM($files[$i], 'atomlist');
+    $xml = DASHIF\Utility\parseDOM($files[$i], 'atomlist');
     if ($xml) {
         $avcCCount = $xml->getElementsByTagName('avcC')->length;
         $logger->test(

@@ -1,8 +1,8 @@
 <?php
 
-global $mpd_features, $current_period, $logger;
+global $mpdHandler, $logger;
 
-$period =  $mpd_features['Period'][$current_period];
+$period =  $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()];
 $adaptationSets = $period['AdaptationSet'];
 
 // At least one low latency adaptation set for each media type

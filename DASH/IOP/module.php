@@ -23,6 +23,15 @@ class ModuleDASHInteroperability extends ModuleInterface
             $this->enabled = true;
         }
     }
+    public function detectFromManifest()
+    {
+        global $mpdHandler;
+        $mpdProfiles = $mpdHandler->getDOM()->getAttribute('profiles');
+        if (strpos($mpdProfiles, 'http://dashif.org/guidelines/dash') !== false) {
+            $this->enabled = true;
+            $this->detected = true;
+        }
+    }
 
     public function hookMPD()
     {

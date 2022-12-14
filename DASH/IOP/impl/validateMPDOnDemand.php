@@ -1,14 +1,15 @@
 <?php
 
-global $mpd_features, $profiles, $logger;
+global $mpdHandler, $logger;
 
-$periods = $mpd_features['Period'];
+$periods = $mpdHandler->getFeatures()['Period'];
 foreach ($periods as $periodIndex => $period) {
     $adaptationSets = $period['AdaptationSet'];
     foreach ($adaptationSets as $adaptationSetIndex => $adaptationSet) {
         $representations = $adaptationSet['Representation'];
         foreach ($representations as $representationIndex => $representation) {
-            $representationProfiles = $profiles[$periodIndex][$adaptationSetIndex][$representationIndex];
+            $mpdProfiles = $mpdHandler->getProfiles();
+            $representationProfiles = $mpdProfiles[$periodIndex][$adaptationSetIndex][$representationIndex];
             if (strpos($representationProfiles, 'http://dashif.org/guidelines/dash-if-ondemand') !== false) {
                 $segmentTemplate = DASHIF\Utility\getSegmentAccess(
                     $segmentTemplate,

@@ -1,8 +1,10 @@
 <?php
 
+global $logger;
+
 $protectionCount = 0;
 $defaultKIDs = array();
-$contentProtection = $adapt->getElementsByTagName('ContentProtection');
+$contentProtection = $adaptation->getElementsByTagName('ContentProtection');
 foreach ($contentProtection as $protection) {
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
@@ -26,8 +28,8 @@ $logger->test(
     "descriptor with @schemeIdUri=\"urn:mped:dash:mp4protection:2011\" and @value=\"cenc\"",
     empty($contentProtection) || $protectionCount > 0,
     "FAIL",
-    "Found at least one element in $this->periodCount, adaptation " . $i + i,
-    "Not found in $this->periodCount, adaptation " . $i + i
+    "Found at least one element in $this->periodCount, adaptation $i",
+    "Not found in $this->periodCount, adaptation $i"
 );
 if (!empty($contentProtection) && $protectionCount == 0) {
     $logger->test(
@@ -37,7 +39,7 @@ if (!empty($contentProtection) && $protectionCount == 0) {
         "clause 11.2",
         $cenc != '' && !empty($defaultKIDs),
         "WARN",
-        "Found at least one element in $this->periodCount, adaptation " . $i + i,
-        "Not found in $this->periodCount, adaptation " . $i + i
+        "Found at least one element in $this->periodCount, adaptation $i",
+        "Not found in $this->periodCount, adaptation $i"
     );
 }

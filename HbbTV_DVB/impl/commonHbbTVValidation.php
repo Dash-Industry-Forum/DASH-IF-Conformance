@@ -1,9 +1,10 @@
 <?php
 
-global $session, $mpd_features, $current_period, $current_adaptation_set, $current_representation, $logger;
+global $session, $mpdHandler, $logger;
 
-$adaptation = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
-$representation = $adaptation['Representation'][$current_representation];
+$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
+                                        ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+$representation = $adaptation['Representation'][$mpdHandler->getSelectedRepresentation()];
 
 ## Check on the support of the provided codec
 // MPD part
@@ -182,8 +183,12 @@ if ($hdlrType == 'vide') {
     }
 } elseif ($hdlrType == 'soun') {
     $soundSampleDescription = $xmlRepresentation->getElementsByTagName('soundSampleDescriptiondescription');
-    $sdType = $soundSampleDescription->item(0)->getAttribute('sdType');
-    $samplingRate = $soundSampleDescription->item(0)->getAttribute('sampleRate');
+    $sdType = null;
+    $samplingRate = null;
+    if ($soundSampleDescription->item(0)) {
+        $sdType = $soundSampleDescription->item(0)->getAttribute('sdType');
+        $samplingRate = $soundSampleDescription->item(0)->getAttribute('sampleRate');
+    }
     $audioDecoderSpecificInfo = $xmlRepresentation->getElementsByTagName('DecoderSpecificInfo');
     if ($audioDecoderSpecificInfo->length > 0) {
         $channelConfig = $audioDecoderSpecificInfo->item(0)->getAttribute('channelConfig');
@@ -221,7 +226,7 @@ if ($hdlrType == 'vide') {
 $sidxBoxes = $xmlRepresentation->getElementsByTagName('sidx');
 $subsegmentSignaling = array();
 if ($sidxBoxes->length != 0) {
-    foreach ($sidxBoxes as $sidx_box) {
+    foreach ($sidxBoxes as $sidxBox) {
         $subsegmentSignaling[] = (int)($sidxBox->getAttribute('referenceCount'));
     }
 }
@@ -357,9 +362,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
 }
 
 
-$repDir = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
-///\RefactorTodo This used to check a location for segments, not entirely sure if still correct check
-if ($mpd_features['type'] == 'dynamic') {
+$repDir = $session->getSelectedRepresentationDir();
+if ($mpdHandler->getFeatures()['type'] == 'dynamic') {
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
         "HbbTV: Section 'segments'",

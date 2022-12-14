@@ -1,8 +1,8 @@
 <?php
 
-global $session, $mpd_features, $associativity, $logger;
+global $session, $mpdHandler, $associativity, $logger;
 
-$periods = $mpd_features['Period'];
+$periods = $mpdHandler->getFeatures()['Period'];
 $periodCount = sizeof($periods);
 
 for ($i = 0; $i < $periodCount; $i++) {
@@ -52,8 +52,7 @@ for ($i = 0; $i < $periodCount; $i++) {
                     $EPT1 = array();
                     $representations1 = $adaptation1['Representation'];
                     for ($thisRep = 0; $thisRep < sizeof($representations1); $thisRep++) {
-                      ///\RefactorTodo This was also pointing to the wrong directory....
-                        $xmlRepresentation = get_DOM(
+                        $xmlRepresentation = DASHIF\Utility\parseDOM(
                             $session->getRepresentationDir($i, $a1, $thisRep) . '/atomInfo.xml',
                             'atomlist'
                         );

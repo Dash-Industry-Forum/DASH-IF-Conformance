@@ -1,6 +1,6 @@
 <?php
 
-global $current_period, $period_timing_info, $logger;
+global $mpdHandler, $period_timing_info;
 
 $isSegmentStarts = $infoFileAdapt[$representation_id]['isSegmentStart'];
 $presentationStarts = $infoFileAdapt[$representation_id]['PresStart'];
@@ -33,9 +33,9 @@ foreach ($segementElements as $sIndex => $s) {
             "corresponding CMAF Fragment",
             $numberOfChunks <= 1 || ($k == null && $k = $numberOfChunks),
             "FAIL",
-            "Valid value of 'k' for Period " . ($current_period + 1) . ' Adaptation ' .
+            "Valid value of 'k' for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
             ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
-            "Invalid value of 'k' for Period " . ($current_period + 1) . ' Adaptation ' .
+            "Invalid value of 'k' for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
             ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
         );
     }
@@ -51,9 +51,11 @@ foreach ($segementElements as $sIndex => $s) {
                 "SHALL be present with @t as set to earliest presentation time",
                 $t / $timescale == $presentationStarts[$segmentIndex],
                 "FAIL",
-                "@t of $t is equal to earliest presentation time for Period " . ($current_period + 1) .
+                "@t of $t is equal to earliest presentation time for Period " .
+                ($mpdHandler->getSelectedPeriod() + 1) .
                 ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
-                "@t of $t is not equal to earliest presentation time for Period " . ($current_period + 1) .
+                "@t of $t is not equal to earliest presentation time for Period " .
+                ($mpdHandler->getSelectedPeriod() + 1) .
                 ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
             );
             $logger->test(
@@ -63,10 +65,10 @@ foreach ($segementElements as $sIndex => $s) {
                 "SHALL be present with @d as set to CMAF Fragment duration",
                 $d / $timescale == $presentationEnds[$segmentIndex] - $presentationStarts[$segmentIndex],
                 "FAIL",
-                "@d of $d is equal to fragment duration for Period " . ($current_period + 1) . ' Adaptation ' .
-                ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
-                "@d of $d is not equal to fragment duration for Period " . ($current_period + 1) . ' Adaptation ' .
-                ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
+                "@d of $d is equal to fragment duration for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+                ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
+                "@d of $d is not equal to fragment duration for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+                ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
             );
             $t += $d;
             $segmentIndex++;
@@ -80,9 +82,11 @@ foreach ($segementElements as $sIndex => $s) {
                 "SHALL be present with @t as set to earliest presentation time",
                 $t / $timescale == $presentationStarts[$segmentIndex],
                 "FAIL",
-                "@t of $t is equal to earliest presentation time for Period " . ($current_period + 1) .
+                "@t of $t is equal to earliest presentation time for Period " .
+                ($mpdHandler->getSelectedPeriod() + 1) .
                 ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
-                "@t of $t is not equal to earliest presentation time for Period " . ($current_period + 1) .
+                "@t of $t is not equal to earliest presentation time for Period " .
+                ($mpdHandler->getSelectedPeriod() + 1) .
                 ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
             );
             $logger->test(
@@ -92,10 +96,10 @@ foreach ($segementElements as $sIndex => $s) {
                 "SHALL be present with @d as set to CMAF Fragment duration",
                 $d / $timescale == $presentationEnds[$segmentIndex] - $presentationStarts[$segmentIndex],
                 "FAIL",
-                "@d of $d is equal to fragment duration for Period " . ($current_period + 1) . ' Adaptation ' .
-                ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
-                "@d of $d is not equal to fragment duration for Period " . ($current_period + 1) . ' Adaptation ' .
-                ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
+                "@d of $d is equal to fragment duration for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+                ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
+                "@d of $d is not equal to fragment duration for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
+                ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
             );
             $t += $d;
             $segmentIndex++;
@@ -111,9 +115,11 @@ foreach ($segementElements as $sIndex => $s) {
             "then their corresponding S element SHOULD be combined to a single S element",
             $s_prev['d'] != $d,
             "WARN",
-            "Segments $sIndex duration differs from its predecessor for Period " . ($current_period + 1) .
+            "Segments $sIndex duration differs from its predecessor for Period " .
+            ($mpdHandler->getSelectedPeriod() + 1) .
             ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
-            "Segments $sIndex duration is equal to its predecessor for Period " . ($current_period + 1) .
+            "Segments $sIndex duration is equal to its predecessor for Period " .
+            ($mpdHandler->getSelectedPeriod() + 1) .
             ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1) . "Segment $i",
         );
     }

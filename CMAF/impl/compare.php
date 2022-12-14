@@ -1,8 +1,6 @@
 <?php
 
-global $infofile_template;
-
-$str = createString(); //load the comparison result xml structure
+$str = $this->createString(); //load the comparison result xml structure
 $compareResultXml = simplexml_load_string($str);
 $compareResultXml->addAttribute('comparedIds', "[rep=" . $id1 . " rep=" . $id2 . "]");
 

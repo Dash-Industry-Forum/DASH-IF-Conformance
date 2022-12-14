@@ -1,5 +1,6 @@
 <?php
 
+namespace DASHIF;
 
 class DAC4
 {
@@ -8,14 +9,12 @@ class DAC4
     public $frame_rate_index;
     public $short_program_id;
     public $n_presentations;
-};
-
+}
 
 $result = array();
 
-$doms  = $xml->getElementsByTagName('ac4_dsi_v1');
-foreach ($doms as $dom)
-{
+$doms  = $atomInfo->getElementsByTagName('ac4_dsi_v1');
+foreach ($doms as $dom) {
     $dac4 = new DAC4();
     $dac4->fs_index = $dom->getAttribute('fs_index');
     $dac4->frame_rate_index = $dom->getAttribute('frame_rate_index');

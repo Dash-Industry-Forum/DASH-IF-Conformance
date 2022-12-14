@@ -33,21 +33,23 @@ class ModuleDolby extends ModuleInterface
 
     private function validateDolby()
     {
-      include 'impl/validateDolby.php';
+        include 'impl/validateDolby.php';
     }
 
-    private function compareTocWithDac4($atomInfo){
-      include 'impl/compareTocWithDac4.php';
+    private function compareTocWithDac4($atomInfo)
+    {
+        include 'impl/compareTocWithDac4.php';
     }
 
-    private function getDac4($atomInfo){
-      return include 'impl/getDac4.php';
+    private function getDac4($atomInfo)
+    {
+        return include 'impl/getDac4.php';
     }
 
-    private function getToc($atomInfo){
-      return include 'impl/getToc.php';
+    private function getToc($atomInfo)
+    {
+        return include 'impl/getToc.php';
     }
-
 }
 
 $modules[] = new ModuleDolby();

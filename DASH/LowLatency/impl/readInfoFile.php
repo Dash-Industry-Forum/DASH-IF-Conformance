@@ -1,14 +1,13 @@
 <?php
 
-global $session, $current_period;
+global $session, $mpdHandler;
 
 $infoFileInfoAdaptationSet = array();
 $representations = $adaptationSet['Representation'];
 
 foreach ($representations as $representationId => $representation) {
-    $repDir = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId);
-    ///\RefactorTodo look where this file should come from
-    if (!($representationInformationFile = open_file("$repDir/representation.txt", 'r'))) {
+    $repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId);
+    if (!($representationInformationFile = fopen("$repDir/assemblerInfo.txt", 'r'))) {
         return;
     }
 

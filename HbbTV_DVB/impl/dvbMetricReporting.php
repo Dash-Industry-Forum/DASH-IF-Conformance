@@ -1,8 +1,8 @@
 <?php
 
-global $mpd_dom, $logger;
+global $mpdHandler, $logger;
 
-$metrics = $mpd_dom->getElementsByTagName('Metrics');
+$metrics = $mpdHandler->getDom()->getElementsByTagName('Metrics');
 foreach ($metrics as $metric) {
     $reportings = $metric->getElementsByTagName('Reporting');
     $reporting_idx = 0;

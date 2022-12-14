@@ -1,6 +1,6 @@
 <?php
 
-global $current_adaptation_set;
+global $mpdHandler, $logger;
 
 $this->compare($xml1, $xml2, $id1, $id2, $currentAdaptionDir, $index, $path);
 
@@ -20,7 +20,7 @@ if (!$fileExists) {
 }
 
 $first = true;
-$xml = get_DOM($path, 'compInfo');
+$xml = DASHIF\Utility\parseDOM($path, 'compInfo');
 
 if ($xml) {
     //if any attribute in the xml file contains "No", then this will be considered as an error
@@ -48,9 +48,9 @@ if ($xml) {
                 !in_array("No", explode(" ", $attribute->nodeValue)),
                 "FAIL",
                 "Attribute $attribute->nodeName in box $childName equal between representations " .
-                "$ids[0] and $ids[1] in Switching set $current_adaptation_set",
+                "$ids[0] and $ids[1] in Switching set " . $mpdHandler->getSelectedAdaptationSet(),
                 "Attribute $attribute->nodeName in box $childName not equal between representations " .
-                "$ids[0] and $ids[1] in Switching set $current_adaptation_set",
+                "$ids[0] and $ids[1] in Switching set " . $mpdHandler->getSelectedAdaptationSet()
             );
         }
     }

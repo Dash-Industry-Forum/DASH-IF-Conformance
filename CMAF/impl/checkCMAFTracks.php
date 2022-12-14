@@ -1,20 +1,8 @@
 <?php
 
-global $mpd_features, $current_period, $current_adaptation_set, $current_representation,
-       $adaptation_set_template, $reprsentation_template, $reprsentation_error_log_template,
-       $reprsentation_mdat_template, $profiles, $cmaf_mediaTypes,
-       $progress_report, $progress_xml, $cmaf_mediaProfiles;
+global $session, $logger, $mpdHandler;
 
-global $session, $logger;
-
-$adaptationDirectory = str_replace('$AS$', $current_adaptation_set, $adaptation_set_template);
-$xmlRepresentationDirectory = str_replace(
-    array('$AS$', '$R$'),
-    array($current_adaptation_set, $current_representation),
-    $reprsentation_template
-);
-
-$representationDirectory = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation);
+$representationDirectory = $session->getSelectedRepresentationDir();
 
 $xmlRepresentation = "$representationDirectory/atomInfo.xml";
 
@@ -22,7 +10,7 @@ if (!file_exists($xmlRepresentation)) {
     fwrite(STDERR, "Can't open $xmlRepresentation\n");
     return;
 }
-$xml = get_DOM($xmlRepresentation, 'atomlist');
+$xml = DASHIF\Utility\parseDOM($xmlRepresentation, 'atomlist');
 
 if (!$xml) {
     fwrite(STDERR, "Invalid xml in $xmlRepresentation\n");
@@ -36,15 +24,18 @@ $cmaf_cmfc = $return_array[0];
 $cmaf_cmf2 = $return_array[1];
 
 # Store media type for selection set checks later
-if($xml->getElementsByTagName('hdlr')->item(0)){
-  $mediaType = $xml->getElementsByTagName('hdlr')->item(0)->getAttribute('handler_type');
-  $cmaf_mediaTypes[$current_period][$current_adaptation_set][$current_representation] = $mediaType;
+if ($xml->getElementsByTagName('hdlr')->item(0)) {
+    $mediaType = $xml->getElementsByTagName('hdlr')->item(0)->getAttribute('handler_type');
+    $this->mediaTypes[$mpdHandler->getSelectedPeriod()]
+                     [$mpdHandler->getSelectedAdaptationSet()]
+                     [$mpdHandler->getSelectedRepresentation()] = $mediaType;
 }
 
-$adaptationSet = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
+$adaptationSet = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
+                                           ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
 
 $errorInTrack = 0;
-$id = $adaptationSet['Representation'][$current_representation]['id'];
+$id = $adaptationSet['Representation'][$mpdHandler->getSelectedAdaptationSet()]['id'];
 $moofBoxes = $xml->getElementsByTagName('moof');
 $moofBoxesCount = $moofBoxes->length;
 $thfdBoxes = $xml->getElementsByTagName('tfhd');
@@ -53,9 +44,11 @@ $tfdtBoxes = $xml->getElementsByTagName('tfdt');
 
 // 'trun' version check for CMAF video tracks
 $adaptationMimeType = $adaptationSet['mimeType'];
-$representationMimeType = $adaptationSet['Representation'][$current_representation]['mimeType'];
+$representationMimeType = $adaptationSet['Representation'][$mpdHandler->getSelectedAdaptationSet()]['mimeType'];
 if (strpos($representationMimeType, 'video') !== false || strpos($adaptationMimeType, 'video') !== false) {
-    $currentProfile = $profiles[$current_period][$current_adaptation_set][$current_representation];
+    $currentProfile = $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()]
+                                                [$mpdHandler->getSelectedAdaptationSet()]
+                                                [$mpdHandler->getSelectedRepresentation()];
     if (strpos($currentProfile, 'urn:mpeg:dash:profile:isoff-live:2011') !== false) {
         for ($j = 0; $j < $moofBoxesCount; $j++) {
             $trunVersion = $trunBoxes->item($j)->getAttribute('version');
@@ -84,7 +77,7 @@ if (strpos($representationMimeType, 'video') !== false || strpos($adaptationMime
 }
 
 // 'subs' presence check for TTML image subtitle track with media profile 'im1i'
-$representationCodecs = $adaptationSet['Representation'][$current_representation]['codec'];
+$representationCodecs = $adaptationSet['Representation'][$mpdHandler->getSelectedRepresentation()]['codec'];
 if (strpos($representationCodecs, 'im1i') !== false) {
     for ($j = 0; $j < $moofBoxesCount; $j++) {
         $moofBox = $moofBoxes[$j];
@@ -128,7 +121,7 @@ for ($j = 1; $j < $moofBoxesCount; $j++) {
     );
 }
 
-$mdatFile = open_file("$representationDirectory/mdatoffset.txt", 'r');
+$mdatFile = fopen("$representationDirectory/mdatoffset.txt", 'r');
 for ($j = 0; $j < $moofBoxesCount; $j++) {
     $currentTrunBox = $trunBoxes->item($j);
     if ($currentTrunBox->getAttribute('version') == 1) {
@@ -176,7 +169,9 @@ for ($j = 0; $j < $moofBoxesCount; $j++) {
         "Representation $id, chunk $j not valid"
     );
 }
-fclose($mdatFile);
+if ($mdatFile !== null) {
+    fclose($mdatFile);
+}
 
 $logger->test(
     "CMAF",
@@ -421,13 +416,25 @@ if ($hdlrType == 'soun') {
 }
 
 $dash264 = strpos(
-    $profiles[$current_period][$current_adaptation_set][$current_representation],
+    $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()]
+                              [$mpdHandler->getSelectedAdaptationSet()]
+                              [$mpdHandler->getSelectedRepresentation()],
     "http://dashif.org/guidelines/dash264"
 ) !== false;
 
-$contentProtectionLength = (!$adaptationSet['ContentProtection']) ?
-  sizeof($adaptationSet['Representation'][$current_representation]['ContentProtection']) :
-  sizeof($adaptationSet['ContentProtection']);
+$contentProtectionLength = 0;
+if ($adaptationSet['ContentProtection']) {
+    $contentProtectionLength = sizeof($adaptationSet['ContentProtection']);
+} elseif (
+    $adaptationSet['Representation'] &&
+    $adaptationSet['Representation'][$mpdHandler->getSelectedRepresentation()] &&
+    $adaptationSet['Representation'][$mpdHandler->getSelectedRepresentation()]['ContentProtection']
+) {
+    $contentProtectionLength = sizeof(
+        $adaptationSet['Representation'][$mpdHandler->getSelectedRepresentation()]['ContentProtection']
+    );
+}
+
 
 if ($contentProtectionLength > 0 && $dash264 == true) {
     $decryptionPossible = true;
@@ -490,8 +497,8 @@ if ($sidxBoxes->length > 0) {
 }
 
 $cmafMediaProfilesResult = $this->determineCMAFMediaProfiles($xml);
-$cmaf_mediaProfiles[$current_period][$current_adaptation_set]
-                   [$current_representation]['cmafMediaProfile'] = $cmafMediaProfilesResult[0];
+$this->mediaProfiles[$mpdHandler->getSelectedPeriod()][$mpdHandler->getSelectedAdaptationSet()]
+                   [$mpdHandler->getSelectedRepresentation()]['cmafMediaProfile'] = $cmafMediaProfilesResult[0];
 
 
 $logger->test(

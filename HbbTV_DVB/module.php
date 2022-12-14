@@ -4,6 +4,7 @@ namespace DASHIF;
 
 class ModuleHbbTVDVB extends ModuleInterface
 {
+    public $DVBVersion;
     private $periodCount;
     private $hohSubtitleLanguages;
     private $videoBandwidth;
@@ -31,12 +32,47 @@ class ModuleHbbTVDVB extends ModuleInterface
         $this->hasJPGraph = include_once __DIR__ . '/../external/jpgraph/src/jpgraph.php';
         $this->hasJPBarGraph = include_once __DIR__ . '/../external/jpgraph/src/jpgraph_bar.php';
     }
+    public function isEnabled()
+    {
+        return $this->HbbTvEnabled || $this->DVBEnabled;
+    }
+    public function isDVBEnabled()
+    {
+        return $this->DVBEnabled;
+    }
+    public function detectFromManifest()
+    {
+        global $mpdHandler;
+        $mpdProfiles = $mpdHandler->getDOM()->getAttribute('profiles');
+        if (strpos($mpdProfiles, 'urn:hbbtv:dash:profile:isoff-live:2012') !== false) {
+            $this->HbbTvEnabled = true;
+            $this->detected = true;
+        }
+        if (
+            strpos($mpdProfiles, 'urn:dvb:dash:profile:dvb-dash:2014') !== false ||
+            strpos($mpdProfiles, 'urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014') !== false ||
+            strpos($mpdProfiles, 'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014') !== false
+        ) {
+            $this->DVBEnabled = true;
+            $this->detected = true;
+            if (!$this->DVBVersion) {
+                $this->DVBVersion = "2018";
+            }
+        }
+    }
+
+    public function setEnabled($newVal)
+    {
+        $this->HbbTvEnabled = $newVal;
+        $this->DVBEnabled = $newVal;
+    }
 
     protected function addCLIArguments()
     {
         global $argumentParser;
         $argumentParser->addOption("hbbtv", "H", "hbbtv", "Enable HBBTV checking");
-        $argumentParser->addOption("dvb", "D", "dvb", "Enable DVB checking");
+        $argumentParser->addOption("dvb", "D", "dvb", "Enable DVB checking (2018 xsd)");
+        $argumentParser->addOption("dvb2019", "", "dvb_2019", "Enable DVB checking (2019 xsd)");
     }
 
     public function handleArguments()
@@ -49,13 +85,19 @@ class ModuleHbbTVDVB extends ModuleInterface
         if ($argumentParser->getOption("dvb")) {
             $this->enabled = true;
             $this->DVBEnabled = true;
+            $this->DVBVersion = "2018";
+        }
+        if ($argumentParser->getOption("dvb2019")) {
+            $this->enabled = true;
+            $this->DVBEnabled = true;
+            $this->DVBVersion = "2019";
         }
     }
+
 
     public function hookBeforeMPD()
     {
         parent::hookBeforeMPD();
-        $this->moveScripts();
         include_once 'impl/beforeMPD.php';
     }
 
@@ -105,6 +147,11 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/dvbAudioChecks.php';
     }
 
+    private function mpdTimingInfo()
+    {
+        return include 'impl/mpdTimingInfo.php';
+    }
+
     private function dvbSubtitleChecks($adaptation, $representations, $i)
     {
         include 'impl/dvbSubtitleChecks.php';
@@ -113,6 +160,11 @@ class ModuleHbbTVDVB extends ModuleInterface
     private function dvbMpdAnchorCheck()
     {
         include 'impl/dvbMpdAnchorCheck.php';
+    }
+
+    private function computeTimerange($timeRange)
+    {
+        return include 'impl/MPDUtility/computeTimerange.php';
     }
 
     private function dvbContentProtection($adaptation, $representations, $i, $cenc)
@@ -231,18 +283,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     {
         parent::hookAdaptationSet();
         $this->crossValidation();
-    }
-
-    private function moveScripts()
-    {
-      /*
-        global $session_dir, $bitrate_script, $segment_duration_script;
-
-        copy(dirname(__FILE__) . "/$bitrate_script", "$session_dir/$bitrate_script");
-        chmod("$session_dir/$bitrate_script", 0777);
-        copy(dirname(__FILE__) . "/$segment_duration_script", "$session_dir/$segment_duration_script");
-        chmod("$session_dir/$segment_duration_script", 0777);
-       */
     }
 
     private function representationValidation()

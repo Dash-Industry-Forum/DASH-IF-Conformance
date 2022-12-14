@@ -5,7 +5,7 @@ global $CMAFMediaProfileAttributesVideo, $CMAFMediaProfileAttributesAudio, $CMAF
 global $logger;
 
 $compatibleBrands = $xml->getElementsByTagName("ftyp")->item(0)->getAttribute("compatibleBrands");
-$hdlrType = $xml->getElementsByTagName("hdlr")->item(0)->getAttribute("hdlrType");
+$hdlrType = $xml->getElementsByTagName("hdlr")->item(0)->getAttribute("handler_type");
 
 if ($hdlrType == 'vide') {
     $mediaProfileParameters = $CMAFMediaProfileAttributesVideo;
@@ -80,10 +80,10 @@ if ($hdlrType == 'vide') {
             }
 
             //Tier=0 is the main-tier.
-            $mediaProfileParameters['tier'] = $hvcC->getAttribute("tier_flag");
+            $mediaProfileParameters['tier'] = $hvcCBox->getAttribute("tier_flag");
             $mediaProfileParameters['profile'] = $profile;
             //HEVC std defines level_idc is 30 times of actual level number.
-            $mediaProfileParameters['level'] = (float)($hvcC->getAttribute("level_idc")) / 30;
+            $mediaProfileParameters['level'] = (float)($hvcCBox->getAttribute("level_idc")) / 30;
         }
 
         $mediaProfileParameters['width'] = $videoSampleDescription->getAttribute("width");

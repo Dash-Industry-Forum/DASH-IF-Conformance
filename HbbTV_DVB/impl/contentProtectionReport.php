@@ -1,6 +1,6 @@
 <?php
 
-global $mpd_dom, $current_period, $logger, $session;
+global $mpdHandler, $logger, $session;
 
 $UUIDToDRMSystem = array ('urn:mpeg:dash:mp4protection:2011' => 'Generic Identifier 1',
                          'urn:mpeg:dash:13818:1:CA_descriptor:2011' => 'Generic Identifier 2',
@@ -28,10 +28,10 @@ $UUIDToDRMSystem = array ('urn:mpeg:dash:mp4protection:2011' => 'Generic Identif
 
 $adaptationIndex = 0;
 $keyRotationUsed = false;
-foreach ($mpd_dom->getElementsByTagName('AdaptationSet') as $adaptationSetNode) {
+foreach ($mpdHandler->getDom()->getElementsByTagName('AdaptationSet') as $adaptationSetNode) {
     $adaptationId = $adaptationIndex + 1;
-    $adaptationReport = open_file(
-        $session->getAdaptationDir($current_period, $adaptationIndex) . '/hbbDvbCross.txt',
+    $adaptationReport = fopen(
+        $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $adaptationIndex) . '/hbbDvbCross.txt',
         'a+b'
     );
     if ($adaptationReport === false) {
@@ -159,10 +159,13 @@ foreach ($mpd_dom->getElementsByTagName('AdaptationSet') as $adaptationSetNode) 
 
 
         //first rep of the adapt set will have the same pssh as the rest
-        ///\RefactorTodo This was definitely pointing to a wrong directory. Probably not intentional.
-        $xmlFilePath = $session->getRepresentationDir($current_period, $adaptationIndex, $representationIndex) .
-          '/atomInfo.xml';
-        $abs = get_DOM($xmlFilePath, 'atomlist'); // load mpd from url
+        $xmlFilePath = $session->getRepresentationDir(
+            $mpdHandler->getSelectedPeriod(),
+            $adaptationIndex,
+            $representationIndex
+        ) . '/atomInfo.xml';
+
+        $abs = DASHIF\Utility\parseDOM($xmlFilePath, 'atomlist'); // load mpd from url
 
         if (!$abs) {
             $representationIndex++;

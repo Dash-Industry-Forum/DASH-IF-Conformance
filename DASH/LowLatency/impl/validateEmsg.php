@@ -1,24 +1,18 @@
 <?php
 
-global $session, $current_period, $logger;
+global $session, $mpdHandler, $logger;
 
 $returnValue = true;
 
-///\RefactorTodo Make this work with a separate logger instance?
 
-//This entire function has only "PASS" checks, as validation is done based on the return value.
-//Every check is in essence a "FAIL" check, but there are two valid options in the outer scope.
-//Therefore, we store the combined result of all tests, and we return whether all succeeded.
-
-$repDir = $session->getRepresentationDir($current_period, $adaptationSetId, $representationId);
+$repDir = $session->getRepresentationDir($mpdHandler->getSelectedPeriod(), $adaptationSetId, $representationId);
 $rep_xml = "$repDir/atomInfo.xml";
 
-///Correctness this doesn't seem right....
 if (!file_exists($rep_xml)) {
     return true;
 }
 
-$xml = get_DOM($rep_xml, 'atomlist');
+$xml = DASHIF\Utility\parseDOM($rep_xml, 'atomlist');
 if (!$xml) {
     return true;
 }
@@ -27,8 +21,7 @@ $isSegmentStarts = $infoFileAdapt[$representationId]['isSegmentStart'];
 
 $segmentIndexes = array_keys($isSegmentStarts, '1');
 
-///\RefactorTodo Look where this file should come from
-$mdatFile = "$repDir/mdatInfo.xml";
+$mdatFile = "$repDir/mdatoffset";
 $mdatInfo = explode("\n", file_get_contents($mdatFile));
 
 $moofBoxes = $xml->getElementsByTagName('moof');

@@ -1,10 +1,11 @@
 <?php
 
-global $mpd_features, $current_period, $current_adaptation_set, $current_representation;
+global $mpdHandler, $session;
 
 $subtitleRepresentation = false;
-$adaptation = $mpd_features['Period'][$current_period]['AdaptationSet'][$current_adaptation_set];
-$representation = $adaptation['Representation'][$current_representation];
+$adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
+                                        ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+$representation = $adaptation['Representation'][$mpdHandler->getSelectedRepresentation()];
 
 if (
         ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] == 'application/mp4') &&
@@ -26,7 +27,7 @@ if (
 }
 
 if ($subtitleRepresentation) {
-    $subtitle_dir = $session->getRepresentationDir($current_period, $current_adaptation_set, $current_representation) .
+    $subtitle_dir = $session->getSelectedRepresentationDir() .
     '/Subtitles/';
     if (!file_exists($subtitle_dir)) {
         $oldmask = umask(0);
