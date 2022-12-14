@@ -60,7 +60,7 @@ OBJ=    $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o$(SUFFIX))
 BIN=    $(BINDIR)/$(NAME)$(SUFFIX).exe
 
 
-default: depend $(BINDIR) $(OBJDIR) binaries tags
+default: depend $(BINDIR) $(OBJDIR) binaries
 
 dependencies:
 	@echo "" >dependencies
