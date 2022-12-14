@@ -34,7 +34,7 @@ UInt64 getAdjustedFileOffset(UInt64 offset64)
 		if (index > 0)
 			if (offset64 <= (vg.offsetEntries[index - 1].offset + vg.offsetEntries[index - 1].sizeRemoved-1))
 			{
-			fprintf(stderr, "Program error! Requested infomration is at offset %llu, which is in a removed region at index %d (offset: %llu, removed size: %llu), exiting!", offset64, index, vg.offsetEntries[index - 1].offset, vg.offsetEntries[index - 1].sizeRemoved);
+			fprintf(stderr, "Program error! Requested information is at offset %lu, which is in a removed region at index %d (offset: %lu, removed size: %lu), exiting!", offset64, index, vg.offsetEntries[index - 1].offset, vg.offsetEntries[index - 1].sizeRemoved);
 			exit(-1);
 			}
 	}
@@ -91,7 +91,7 @@ int GetFileData( atomOffsetEntry *aoe, void *dataP, UInt64 offset64, UInt64 size
 {
 #pragma unused(aoe)
 	int err = 0;
-	long amtRead = 0;
+	SInt32 amtRead = 0;
 	UInt64 size = size64;
 	
 	if (offset64 > 0x7FFFFFFFL) {
@@ -110,42 +110,6 @@ int GetFileData( atomOffsetEntry *aoe, void *dataP, UInt64 offset64, UInt64 size
 	}
 
 	if (newoffset64) *newoffset64 = offset64 + size;
-
-	/*{
-		static int first = 1, count = 0;
-		static FILE* dbg;
-
-		if(count < 2048)
-		{
-			if(first)
-			{
-				dbg = fopen("debug.bin","wb");
-				if(!dbg)
-					fprintf(stderr,"Could not open debug.bin!\n");
-			}
-			else
-			{
-				dbg = fopen("debug.bin","a");
-				if(!dbg)
-					fprintf(stderr,"Could not open debug.bin for appending!\n");
-			}
-
-			if(dbg)
-			{
-				for(int index = 0 ; index < size ; index ++)
-				{
-					fwrite (&(((unsigned char *)dataP)[index]),1,1,dbg);
-					if(count < 100);
-						//printf("%c ",(((unsigned char *)dataP)[index]));
-				}
-					
-				count += size;
-			}
-
-		fclose(dbg);
-		}
-		first = 0;
-	}*/
 
 bail:
 	return err;
@@ -307,7 +271,7 @@ int GetSampleOffsetSize( TrackInfoRec *tir, UInt32 sampleNum, UInt64 *offsetOut,
 	UInt32 size = 0;
 	UInt32 chunkNum;
 	UInt32 sampleDelta;
-	UInt64 offset;
+	UInt64 offset = 0;
 	UInt32 sampleDescriptionIndex = 0;
 	
 	if (sampleNum > tir->sampleSizeEntryCnt) {
@@ -361,7 +325,7 @@ int GetChunkOffsetSize( TrackInfoRec *tir, UInt32 chunkNum, UInt64 *offsetOut, U
 	UInt32 sampleCnt = 1;
 	UInt32 samplesPerChunk;
 	UInt32 size = 0;
-	UInt64 offset;
+	UInt64 offset = 0;
 	UInt32 sampleDescriptionIndex = 0;
 	
 	if (chunkNum > tir->chunkOffsetEntryCnt) {

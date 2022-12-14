@@ -311,7 +311,7 @@ OSErr Validate_ac4_dsi_v1( BitBuffer *bb, void *refcon)
 				UInt16 program_uuid[8];
 				for(i=0;i<8;i++) {
 					program_uuid[i] = GetBits(bb, 16, &err); if (err) GOTOBAIL;
-					atomprint("program_uuid_%lld=\"%d\"\n",i,program_uuid[i]);
+					atomprint("program_uuid_%ld=\"%d\"\n",i,program_uuid[i]);
 				}
 				bits_counter+=(16*8);
 			}
@@ -325,16 +325,16 @@ OSErr Validate_ac4_dsi_v1( BitBuffer *bb, void *refcon)
 
 	for(i=0;i<n_presentations;i++) {
 		UInt8 presentation_version; presentation_version=GetBits(bb, 8, &err); if (err) GOTOBAIL;
-		atomprint("presentation_version_%lld=\"%d\"\n", i, presentation_version);
+		atomprint("presentation_version_%ld=\"%d\"\n", i, presentation_version);
 
 		UInt32 pres_bytes; pres_bytes=GetBits(bb, 8, &err); if (err) GOTOBAIL;
-		atomprint("pres_bytes_%lld=\"%d\"\n", i, pres_bytes);
+		atomprint("pres_bytes_%ld=\"%d\"\n", i, pres_bytes);
 
 		UInt8 presentation_bytes; presentation_bytes = 0;
 
 		if(pres_bytes==255)  {
 			UInt16 add_pres_bytes; add_pres_bytes=GetBits(bb, 16, &err); if (err) GOTOBAIL;
-			atomprint("add_pres_bytes_%lld=\"%d\"\n", i, add_pres_bytes);
+			atomprint("add_pres_bytes_%ld=\"%d\"\n", i, add_pres_bytes);
 
 			pres_bytes+=add_pres_bytes;
 		}
@@ -349,7 +349,7 @@ OSErr Validate_ac4_dsi_v1( BitBuffer *bb, void *refcon)
 				presentation_bytes=0;
 			}
 		}
-		atomprint("presentation_bytes_%lld=\"%d\"\n", i, presentation_bytes);
+		atomprint("presentation_bytes_%ld=\"%d\"\n", i, presentation_bytes);
 
 		UInt16 skip_bytes; skip_bytes= pres_bytes - presentation_bytes;
 
@@ -396,7 +396,7 @@ OSErr Validate_ac4_presentation_v0_dsi( BitBuffer *bb, void *refcon, UInt8* pres
 	UInt8 presentation_config,b_add_emdf_substreams;
 	bits_counter = 0;
 	presentation_config = GetBits(bb, 5, &err); if (err) GOTOBAIL;
-	atomprint("presentation_config_%lld=\"%d\"\n", count, presentation_config);
+	atomprint("presentation_config_%ld=\"%d\"\n", count, presentation_config);
 	bits_counter += 5;
 	if (presentation_config == 6)
 	{
@@ -405,29 +405,29 @@ OSErr Validate_ac4_presentation_v0_dsi( BitBuffer *bb, void *refcon, UInt8* pres
 	else
 	{
 		UInt8 mdcompat; mdcompat = GetBits(bb, 3, &err); if (err) GOTOBAIL;
-		atomprint("mdcompat_%lld=\"%d\"\n", count, mdcompat);
+		atomprint("mdcompat_%ld=\"%d\"\n", count, mdcompat);
 
 		UInt8 b_presentation_id; b_presentation_id = GetBits(bb, 1, &err); if (err) GOTOBAIL;
-		atomprint("b_presentation_id_%lld=\"%d\"\n", count, b_presentation_id);
+		atomprint("b_presentation_id_%ld=\"%d\"\n", count, b_presentation_id);
 
 		bits_counter+=4;
 		if(b_presentation_id){
 			UInt8 presentation_id; presentation_id = GetBits(bb, 5, &err); if (err) GOTOBAIL;
-			atomprint("presentation_id_%lld=\"%d\"\n", count, presentation_id);
+			atomprint("presentation_id_%ld=\"%d\"\n", count, presentation_id);
 			bits_counter+=5;
 		}
 
 		UInt8 dsi_frame_rate_multiply_info = GetBits(bb, 2, &err); if (err) GOTOBAIL;
-		atomprint("dsi_frame_rate_multiply_info_%lld=\"%d\"\n", count,dsi_frame_rate_multiply_info);
+		atomprint("dsi_frame_rate_multiply_info_%ld=\"%d\"\n", count,dsi_frame_rate_multiply_info);
 
 		UInt8 presentation_emdf_version = GetBits(bb, 5, &err); if (err) GOTOBAIL;
-		atomprint("presentation_emdf_version_%lld=\"%d\"\n", count, presentation_emdf_version);
+		atomprint("presentation_emdf_version_%ld=\"%d\"\n", count, presentation_emdf_version);
 
 		UInt16 presentation_key_id = GetBits(bb, 10, &err); if (err) GOTOBAIL;
-		atomprint("presentation_key_id_%lld=\"%d\"\n", count, presentation_key_id);
+		atomprint("presentation_key_id_%ld=\"%d\"\n", count, presentation_key_id);
 
 		UInt32 presentation_channel_mask = GetBits(bb, 24, &err); if (err) GOTOBAIL;
-		atomprint("presentation_channel_mask_%lld=\"%d\"\n", count, presentation_channel_mask);
+		atomprint("presentation_channel_mask_%ld=\"%d\"\n", count, presentation_channel_mask);
 		if (presentation_channel_mask & (1<<23))
 		{
 			errprint("ETSI TS 103 190-2 v1.2.1 Annex E Line 14438: Bit 23 (the most significant bit) shall be set to false,but it is true\n" );
@@ -441,7 +441,7 @@ OSErr Validate_ac4_presentation_v0_dsi( BitBuffer *bb, void *refcon, UInt8* pres
 		else
 		{
 			UInt8 b_hsf_ext = GetBits(bb, 1, &err); if (err) GOTOBAIL;
-			atomprint("b_hsf_ext_%lld=\"%d\"\n", count, b_hsf_ext);
+			atomprint("b_hsf_ext_%ld=\"%d\"\n", count, b_hsf_ext);
 
 			bits_counter += 1;
 			if(presentation_config == 0 || presentation_config == 1 || presentation_config ==2)
@@ -461,7 +461,7 @@ OSErr Validate_ac4_presentation_v0_dsi( BitBuffer *bb, void *refcon, UInt8* pres
 			if(presentation_config > 5)
 			{
 				UInt8 n_skip_bytes = GetBits(bb, 7, &err); if (err) GOTOBAIL;
-				atomprint("n_skip_bytes_%lld=\"%d\"\n", count, n_skip_bytes);
+				atomprint("n_skip_bytes_%ld=\"%d\"\n", count, n_skip_bytes);
 
 				bits_counter += 7;
 				for(i = 0;i < n_skip_bytes; i++)
@@ -472,26 +472,26 @@ OSErr Validate_ac4_presentation_v0_dsi( BitBuffer *bb, void *refcon, UInt8* pres
 			}
 		}
 		UInt8 b_pre_virtualized = GetBits(bb, 1, &err); if (err) GOTOBAIL;
-		atomprint("b_pre_virtualized_%lld=\"%d\"\n", count, b_pre_virtualized);
+		atomprint("b_pre_virtualized_%ld=\"%d\"\n", count, b_pre_virtualized);
 
 		b_add_emdf_substreams=GetBits(bb, 1, &err); if (err) GOTOBAIL;
-		atomprint("b_add_emdf_substreams_%lld=\"%d\"\n", count, b_add_emdf_substreams);
+		atomprint("b_add_emdf_substreams_%ld=\"%d\"\n", count, b_add_emdf_substreams);
 		bits_counter+=2;
 	}
 
 	if(b_add_emdf_substreams)
 	{
 		UInt8 n_add_emdf_substreams=GetBits(bb, 7, &err); if (err) GOTOBAIL;
-		atomprint("n_add_emdf_substreams_%lld=\"%d\"\n", count, n_add_emdf_substreams);
+		atomprint("n_add_emdf_substreams_%ld=\"%d\"\n", count, n_add_emdf_substreams);
 		bits_counter+=7;
 
 		for(j = 0;j < n_add_emdf_substreams;j++)
 		{
 			UInt8 substream_emdf_version = GetBits(bb, 5, &err); if (err) GOTOBAIL;
-			atomprint("substream_emdf_version_%lld_%lld=\"%d\"\n", count, j, substream_emdf_version);
+			atomprint("substream_emdf_version_%lld_%ld=\"%d\"\n", count, j, substream_emdf_version);
 
 			UInt16 substream_key_id = GetBits(bb, 10, &err); if (err) GOTOBAIL;
-			atomprint("substream_key_id_%lld_%lld=\"%d\"\n", count, j, substream_key_id);
+			atomprint("substream_key_id_%lld_%ld=\"%d\"\n", count, j, substream_key_id);
 
 			bits_counter += 15;
 		}
@@ -515,18 +515,18 @@ OSErr Validate_ac4_substream_dsi( BitBuffer *bb, void *refcon, UInt64* bits_coun
 	UInt64 i;
 
 	UInt8 channel_mode; channel_mode=GetBits(bb, 5, &err); if (err) GOTOBAIL;
-	atomprint("channel_mode_%lld=\"%d\"\n",count, channel_mode);
+	atomprint("channel_mode_%ld=\"%d\"\n",count, channel_mode);
 
 	UInt8 dsi_sf_multiplier; dsi_sf_multiplier = GetBits(bb, 2, &err); if (err) GOTOBAIL;
-	atomprint("dsi_sf_multiplier_%lld=\"%d\"\n",count, dsi_sf_multiplier);
+	atomprint("dsi_sf_multiplier_%ld=\"%d\"\n",count, dsi_sf_multiplier);
 
 	UInt8 b_substream_bitrate_indicator; b_substream_bitrate_indicator=GetBits(bb, 1, &err); if (err) GOTOBAIL;
-	atomprint("b_substream_bitrate_indicator_%lld=\"%d\"\n",count,  b_substream_bitrate_indicator);
+	atomprint("b_substream_bitrate_indicator_%ld=\"%d\"\n",count,  b_substream_bitrate_indicator);
 
 	*bits_counter+=8;
 	if(b_substream_bitrate_indicator){
 		UInt8 substream_bitrate_indicator; substream_bitrate_indicator = GetBits(bb, 5, &err); if (err) GOTOBAIL;
-		atomprint("substream_bitrate_indicator_%lld=\"%d\"\n",count, substream_bitrate_indicator);
+		atomprint("substream_bitrate_indicator_%ld=\"%d\"\n",count, substream_bitrate_indicator);
 		*bits_counter+=5;
 	}
 
@@ -536,33 +536,33 @@ OSErr Validate_ac4_substream_dsi( BitBuffer *bb, void *refcon, UInt64* bits_coun
 	if((channel_mode >= 7) && (channel_mode <= 10))
 	{
 		UInt8 add_ch_base; add_ch_base = GetBits(bb, 1, &err); if (err) GOTOBAIL;
-		atomprint("add_ch_base_%lld=\"%d\"\n",count, add_ch_base);
+		atomprint("add_ch_base_%ld=\"%d\"\n",count, add_ch_base);
 
 		*bits_counter+=1;
 	}
 	UInt8 b_content_type; b_content_type = GetBits(bb, 1, &err); if (err) GOTOBAIL;
-	atomprint("b_content_type_%lld=\"%d\"\n",count, b_content_type);
+	atomprint("b_content_type_%ld=\"%d\"\n",count, b_content_type);
 
 	*bits_counter+=1;
 	if(b_content_type)
 	{
 		UInt8 content_classifier; content_classifier = GetBits(bb, 3, &err); if (err) GOTOBAIL;
-		atomprint("content_classifier_%lld=\"%d\"\n",count, content_classifier);
+		atomprint("content_classifier_%ld=\"%d\"\n",count, content_classifier);
 
 		UInt8 b_language_indicator; b_language_indicator = GetBits(bb, 1, &err); if (err) GOTOBAIL;
-		atomprint("b_language_indicator_%lld=\"%d\"\n",count, b_language_indicator);
+		atomprint("b_language_indicator_%ld=\"%d\"\n",count, b_language_indicator);
 
 		*bits_counter+=4;
 
 		if(b_language_indicator)
 		{
 			UInt8 n_language_tag_bytes; n_language_tag_bytes = GetBits(bb, 6, &err); if (err) GOTOBAIL;
-			atomprint("n_language_tag_bytes_%lld=\"%d\"\n",count, n_language_tag_bytes);
+			atomprint("n_language_tag_bytes_%ld=\"%d\"\n",count, n_language_tag_bytes);
 
 			*bits_counter+=6;
 			for(i=0;i<n_language_tag_bytes;i++){
 				UInt8 language_tag_bytes; language_tag_bytes = GetBits(bb, 8, &err); if (err) GOTOBAIL;
-				atomprint("language_tag_bytes_%lld=\"%d\"\n",count, language_tag_bytes);
+				atomprint("language_tag_bytes_%ld=\"%d\"\n",count, language_tag_bytes);
 
 				*bits_counter+=8;
 			}
@@ -596,79 +596,79 @@ OSErr Validate_ac4_presentation_v1_dsi( BitBuffer *bb, void *refcon, UInt8 pres_
 
 	bits_counter=0;
 	presentation_config=GetBits(bb, 5, &err); if (err) GOTOBAIL;
-	atomprint("presentation_config_%lld=\"%d\"\n", count, presentation_config);
+	atomprint("presentation_config_%ld=\"%d\"\n", count, presentation_config);
 	bits_counter+=5;
 	if(presentation_config == 0x06){
 		b_add_emdf_substreams=1;
 	}
 	else {
 		mdcompat=GetBits(bb, 3, &err); if (err) GOTOBAIL;
-		atomprint("mdcompat_%lld=\"%d\"\n",count, mdcompat);
+		atomprint("mdcompat_%ld=\"%d\"\n",count, mdcompat);
 		b_presentation_id = GetBits(bb, 1, &err); if (err) GOTOBAIL;
-		atomprint("b_presentation_id_%lld=\"%d\"\n",count, b_presentation_id);
+		atomprint("b_presentation_id_%ld=\"%d\"\n",count, b_presentation_id);
 		bits_counter+=4;
 		if(b_presentation_id){
 			presentation_id=GetBits(bb, 5, &err); if (err) GOTOBAIL;
-			atomprint("presentation_id_%lld=\"%d\"\n",count, presentation_id);
+			atomprint("presentation_id_%ld=\"%d\"\n",count, presentation_id);
 			bits_counter+=5;
 		}
 
 		dsi_frame_rate_multiply_info = GetBits(bb, 2, &err); if (err) GOTOBAIL;
-		atomprint("dsi_frame_rate_multiply_info_%lld=\"%d\"\n",count, dsi_frame_rate_multiply_info);
+		atomprint("dsi_frame_rate_multiply_info_%ld=\"%d\"\n",count, dsi_frame_rate_multiply_info);
 
 		dsi_frame_rate_fraction_info = GetBits(bb, 2, &err); if (err) GOTOBAIL;
-		atomprint("dsi_frame_rate_fraction_info_%lld=\"%d\"\n",count, dsi_frame_rate_fraction_info);
+		atomprint("dsi_frame_rate_fraction_info_%ld=\"%d\"\n",count, dsi_frame_rate_fraction_info);
 
 		presentation_emdf_version = GetBits(bb, 5, &err); if (err) GOTOBAIL;
-		atomprint("presentation_emdf_version_%lld=\"%d\"\n",count, presentation_emdf_version);
+		atomprint("presentation_emdf_version_%ld=\"%d\"\n",count, presentation_emdf_version);
 
 		presentation_key_id = GetBits(bb, 10, &err); if (err) GOTOBAIL;
-		atomprint("presentation_key_id_%lld=\"%d\"\n",count, presentation_key_id);
+		atomprint("presentation_key_id_%ld=\"%d\"\n",count, presentation_key_id);
 
 		b_presentation_channel_coded=GetBits(bb, 1, &err); if (err) GOTOBAIL;
-		atomprint("b_presentation_channel_coded_%lld=\"%d\"\n",count, b_presentation_channel_coded);
+		atomprint("b_presentation_channel_coded_%ld=\"%d\"\n",count, b_presentation_channel_coded);
 
 		bits_counter+=20;
 
 		if(b_presentation_channel_coded){
 			dsi_presentation_ch_mode=GetBits(bb, 5, &err); if (err) GOTOBAIL;
-			atomprint("dsi_presentation_ch_mode_%lld=\"%d\"\n",count, dsi_presentation_ch_mode);
+			atomprint("dsi_presentation_ch_mode_%ld=\"%d\"\n",count, dsi_presentation_ch_mode);
 			bits_counter+=5;
 			if(dsi_presentation_ch_mode == 11 || dsi_presentation_ch_mode == 12 ||
 				dsi_presentation_ch_mode == 13 || dsi_presentation_ch_mode==14 )
 			{
 				pres_b_4_back_channels_present = GetBits(bb, 1, &err); if (err) GOTOBAIL;
-				atomprint("pres_b_4_back_channels_present_%lld=\"%d\"\n",count, pres_b_4_back_channels_present);
+				atomprint("pres_b_4_back_channels_present_%ld=\"%d\"\n",count, pres_b_4_back_channels_present);
 				pres_top_channel_pairs = GetBits(bb, 2, &err); if (err) GOTOBAIL;
-				atomprint("pres_top_channel_pairs_%lld=\"%d\"\n",count, pres_top_channel_pairs);
+				atomprint("pres_top_channel_pairs_%ld=\"%d\"\n",count, pres_top_channel_pairs);
 				bits_counter+=3;
 			}
 			presentation_channel_mask_v1 = GetBits(bb, 24, &err); if (err) GOTOBAIL;
-			atomprint("presentation_channel_mask_v1_%lld=\"%d\"\n",count, presentation_channel_mask_v1);
+			atomprint("presentation_channel_mask_v1_%ld=\"%d\"\n",count, presentation_channel_mask_v1);
 			bits_counter+=24;
 		}
 		b_presentation_core_differs=GetBits(bb, 1, &err); if (err) GOTOBAIL;
-		atomprint("b_presentation_core_differs_%lld=\"%d\"\n",count, b_presentation_core_differs);
+		atomprint("b_presentation_core_differs_%ld=\"%d\"\n",count, b_presentation_core_differs);
 		bits_counter+=1;
 		if(b_presentation_core_differs)
 		{
 			b_presentation_core_channel_coded=GetBits(bb, 1, &err); if (err) GOTOBAIL;
-			atomprint("b_presentation_core_channel_coded_%lld=\"%d\"\n",count, b_presentation_core_channel_coded);
+			atomprint("b_presentation_core_channel_coded_%ld=\"%d\"\n",count, b_presentation_core_channel_coded);
 			bits_counter+=1;
 			if(b_presentation_core_channel_coded){
 				dsi_presentation_channel_mode_core = GetBits(bb, 2, &err); if (err) GOTOBAIL;
-				atomprint("dsi_presentation_channel_mode_core_%lld=\"%d\"\n",count, dsi_presentation_channel_mode_core);
+				atomprint("dsi_presentation_channel_mode_core_%ld=\"%d\"\n",count, dsi_presentation_channel_mode_core);
 				bits_counter+=2;
 			}
 
 		}
 		b_presentation_filter=GetBits(bb, 1, &err); if (err) GOTOBAIL;
-		atomprint("b_presentation_filter_%lld=\"%d\"\n",count, b_presentation_filter);
+		atomprint("b_presentation_filter_%ld=\"%d\"\n",count, b_presentation_filter);
 		bits_counter+=1;
 		if(b_presentation_filter)
 		{
 			b_enable_presentation = GetBits(bb, 1, &err); if (err) GOTOBAIL;
-			atomprint("b_enable_presentation_%lld=\"%d\"\n",count, b_enable_presentation);
+			atomprint("b_enable_presentation_%ld=\"%d\"\n",count, b_enable_presentation);
 			n_filter_bytes=GetBits(bb, 8, &err); if (err) GOTOBAIL;
 			bits_counter+=9;
 			for(i=0;i<n_filter_bytes;i++){
@@ -681,7 +681,7 @@ OSErr Validate_ac4_presentation_v1_dsi( BitBuffer *bb, void *refcon, UInt8 pres_
 		}
 		else {
 			b_multi_pid = GetBits(bb, 1, &err); if (err) GOTOBAIL;
-			atomprint("b_multi_pid_%lld=\"%d\"\n",count, b_multi_pid);
+			atomprint("b_multi_pid_%ld=\"%d\"\n",count, b_multi_pid);
 			bits_counter+=1;
 			if(presentation_config ==0 || presentation_config==1 || presentation_config==2)
 			{
@@ -713,10 +713,10 @@ OSErr Validate_ac4_presentation_v1_dsi( BitBuffer *bb, void *refcon, UInt8 pres_
 		}
 
 		b_pre_virtualized = GetBits(bb, 1, &err); if (err) GOTOBAIL;
-		atomprint("b_pre_virtualized_%lld=\"%d\"\n",count, b_pre_virtualized);
+		atomprint("b_pre_virtualized_%ld=\"%d\"\n",count, b_pre_virtualized);
 
 		b_add_emdf_substreams=GetBits(bb, 1, &err); if (err) GOTOBAIL;
-		atomprint("b_add_emdf_substreams_%lld=\"%d\"\n",count, b_add_emdf_substreams);
+		atomprint("b_add_emdf_substreams_%ld=\"%d\"\n",count, b_add_emdf_substreams);
 		bits_counter+=2;
 
 	}

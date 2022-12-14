@@ -9,7 +9,7 @@ RUN apt -y install \
   apache2 apache2-doc php php-dev php-xml php-curl php-xdebug libapache2-mod-php \
   python2.7 \
   openjdk-8-jdk ant \
-  gcc-multilib g++-multilib
+  g++
 RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
 RUN python2.7 get-pip.py
 RUN pip2 install matplotlib

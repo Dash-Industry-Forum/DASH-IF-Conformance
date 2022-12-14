@@ -8,15 +8,15 @@
 
 NAME=  ValidateMP4
 
-### include debug information: 1=yes, 0=no
-DBG=1
-SAN=0
-COV=0
+### include debug information: 1=yes, 'empty'=no (don't set to 0)
+DBG=
+SAN=
+COV=
 
 FLAGS+=-Wall -Wextra -Werror
 
 ## TODO: remove these
-FLAGS+=-Wno-unused-but-set-variable -Wno-unused-variable -Wno-unused-label -Wno-unused-parameter -Wno-int-to-pointer-cast -Wno-sequence-point -Wno-stringop-truncation
+FLAGS+=-Wno-unused-result -Wno-unused-but-set-variable -Wno-unused-variable -Wno-unused-label -Wno-unused-parameter -Wno-int-to-pointer-cast -Wno-sequence-point -Wno-stringop-truncation
 
 #compatibility=-static-libstdc++
 
@@ -33,9 +33,9 @@ CC=     $(shell which g++)
 FLAGS+=-std=c++11 -ffloat-store -Wall -I$(INCDIR) -DLITTLEENDIAN -Wno-multichar -Wno-unknown-pragmas -fpermissive -Wno-write-strings -fno-stack-protector
 
 ifdef COV
-LIBS= -lgcov #-lcurl
-FLAGS+=-fprofile-generate -fprofile-arcs -ftest-coverage -Wl,-lgcov
-LDFLAGS+=" -lgcov --coverage -WL -lgcov"
+OBJDIR=$(BINDIR)
+LIBS= -lgcov
+FLAGS+=--coverage -fno-inline -fno-elide-constructors -fprofile-generate -fprofile-arcs -ftest-coverage -Wl,-lgcov
 endif
 
 ifdef SAN
@@ -49,7 +49,7 @@ SUFFIX= #.dbg
 FLAGS+= -g
 else
 SUFFIX=
-FLAGS+= -O2 -DGCC
+FLAGS+= -Os -DGCC
 endif
 
 ifdef COV
@@ -64,7 +64,7 @@ OBJ=    $(SRC:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o$(SUFFIX))
 BIN=    $(BINDIR)/$(NAME)$(SUFFIX).exe
 
 
-default: depend bin tags
+default: depend $(BINDIR) $(OBJDIR) binaries tags
 
 dependencies:
 	@echo "" >dependencies
@@ -80,10 +80,10 @@ tags:
 	@echo update tag table
 	@ctags $(INCDIR)/*.h $(SRCDIR)/*.cpp
 
-bin:    $(OBJ)
+binaries:    $(OBJ)
 	@echo
 	@echo 'creating binary "$(BIN)"'
-	@$(CC) $(compatibility) -o $(BIN) $(OBJ) $(LIBS)
+	@$(CC) $(compatibility) -o $(BIN) $(OBJ) $(LIBS) $(LDFLAGS)
 	@echo '... done'
 	@echo
 
@@ -92,6 +92,12 @@ depend:
 	@echo 'checking dependencies'
 	@$(SHELL) -ec '$(CC) -MM $(CFLAGS) -I$(INCDIR) $(SRC) | sed '\''s@\(.*\)\.o[ :]@$(OBJDIR)/\1.o$(SUFFIX):@g'\'' >$(DEPEND)'
 	@echo
+
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
+
+$(BINDIR):
+	mkdir -p $(BINDIR)
 
 $(OBJDIR)/%.o$(SUFFIX): $(SRCDIR)/%.cpp
 	@echo 'compiling object file "$@" ...'

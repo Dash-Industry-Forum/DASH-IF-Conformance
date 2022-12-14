@@ -87,7 +87,7 @@ UInt32 GetBits(BitBuffer *bb, UInt32 nBits, OSErr *errout)
 {
 	OSErr err = noErr;
 	int myBits;
-	int myValue = 0; 
+	UInt32 myValue = 0;
 	int myResidualBits;
 	int leftToRead;
 	
@@ -131,9 +131,11 @@ UInt32 GetBits(BitBuffer *bb, UInt32 nBits, OSErr *errout)
 	bb->cbyte = ((bb->cbyte) << myBits) & 0xff;
 
 	if (leftToRead > 0) {
-		UInt32 newBits;
+		UInt32 newBits, msb = 0;
 		newBits = GetBits(bb, leftToRead, &err);
-		myValue = (myValue<<leftToRead) | newBits;
+		if (leftToRead < 32)
+			msb = myValue<<leftToRead;
+		myValue = msb | newBits;
 	}
 	
 bail:	
@@ -280,7 +282,7 @@ SInt32 read_golomb_sev(BitBuffer *bb, OSErr *errout)
 {
 	OSErr err = noErr;
 	UInt32 uev;
-	SInt32 val;
+	SInt32 val = 0;
 	
 	uev = read_golomb_uev( bb, &err ); if (err) goto bail;
 	if (uev & 1)

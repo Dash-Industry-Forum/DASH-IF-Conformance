@@ -76,7 +76,7 @@ OSErr CheckValuesInContext( UInt32 bufferSize, UInt32 maxBitrate, UInt32 avgBitr
 
 //==========================================================================================
 
-OSErr Validate_iods_OD_Bits( Ptr odDataP, unsigned long odSize, Boolean fileForm )
+OSErr Validate_iods_OD_Bits( Ptr odDataP, UInt32 odSize, Boolean fileForm )
 {
 	OSErr err;
 	BitBuffer thebb;
@@ -472,7 +472,7 @@ OSErr Validate_ES_Descriptor(BitBuffer *inbb, UInt8 Expect_ObjectType, UInt8 Exp
 	
 	VALIDATE_FIELD  ("%d",  ES_ID, 16 );
 	if(vg.cmaf && ES_ID != 0) {
-		errprint("CMAF check violated: Section 10.3.4.2.3. \"fields of the ES_Desciptor SHALL be set to the following values: ES_ID = 0.\", but found %d\n", ES_ID);
+		errprint("CMAF check violated: Section 10.3.4.2.3. \"fields of the ES_Descriptor SHALL be set to the following values: ES_ID = 0.\", but found %d\n", ES_ID);
 	}
 	if (fileForm) {
 		FieldMustBe( ES_ID, 0, "Validate_ES_Descriptor: ES_ID should be %d not %d in media tracks\n" );
@@ -1926,7 +1926,7 @@ bail:
 
 static OSErr Validate_HEVC_hrd_parameters( BitBuffer *bb, UInt32 commonInfPresentFlag, UInt8 maxNumSubLayersMinus1)
 {
-	UInt8 nal_hrd_parameters_present_flag,vcl_hrd_parameters_present_flag,sub_pic_hrd_params_present_flag,tick_divisor_minus2,du_cpb_removal_delay_increment_length_minus1,sub_pic_cpb_params_in_pic_timing_sei_flag,dpb_output_delay_du_length_minus1,bit_rate_scale,cpb_size_scale,cpb_size_du_scale
+	UInt8 nal_hrd_parameters_present_flag,vcl_hrd_parameters_present_flag,sub_pic_hrd_params_present_flag=0,tick_divisor_minus2,du_cpb_removal_delay_increment_length_minus1,sub_pic_cpb_params_in_pic_timing_sei_flag,dpb_output_delay_du_length_minus1,bit_rate_scale,cpb_size_scale,cpb_size_du_scale
 		,initial_cpb_removal_delay_length_minus1,au_cpb_removal_delay_length_minus1,dbp_output_delay_length_minus1,fixed_pic_rate_general_flag[8],fixed_pic_rate_within_cvs_flag[8],low_delay_hrd_flag[8];
 		
 		UInt32 elemental_duration_in_tc_minus1[8],cpb_cnt_minus1[8],bit_rate_value_minus1[32],cpb_size_value_minus1[32],cpb_size_du_value_minus1[32],bit_rate_du_value_minus1[32],cbr_flag[32];
@@ -2971,7 +2971,7 @@ OSErr Validate_NAL_Unit_HEVC(  BitBuffer *inbb, UInt8 expect_type, UInt32 nal_le
 							UInt8 dependent_slice_segments_enabled_flag, output_flag_present_flag, num_extra_slice_header_bits,
 							sign_data_hiding_enabled_flag, cabac_init_present_flag,constrained_intra_pred_flag,transform_skip_enabled_flag,cu_qp_delta_enabled_flag,pps_slice_chroma_qp_offsets_present_flag,weighted_pred_flag,weighted_bipred_flag,transquant_bypass_enabled_flag,tiles_enabled_flag,entropy_coding_sync_enabled_flag,uniform_spacing_flag,loop_filter_across_tiles_enabled_flag,pps_loop_filter_across_slices_enabled_flag,deblocking_filter_control_present_flag,deblocking_filter_override_enabled_flag,pps_deblocking_filter_disabled_flag,pps_scaling_list_data_present_flag,scaling_list_pred_mode_flag[4][6],lists_modification_present_flag,slice_segment_header_exension_present_flag,pps_extension_present_flag,pps_range_extension_flag=0,pps_multilayer_extension_flag=0,pps_3d_extension_flag=0,pps_scc_extension_flag=0,pps_extension_4bits=0,cross_component_prediction_enabled_flag,chroma_qp_offset_list_enabled_flag,poc_reset_info_present_flag,pps_infer_scaling_list_flag,pps_scaling_list_ref_layer_id,ref_loc_offset_layer_id[65],scaled_ref_layer_offset_present_flag[65],ref_region_offset_present_flag[65],resample_phase_set_present_flag[65],colour_mapping_enabled_flag,cm_ref_layer_id[62],cm_octant_depth,cm_y_part_num_log2,cm_res_quant_bits,cm_delta_flc_bits_minus1,dlts_present_flag,pps_depth_layers_minus1,pps_bit_depth_for_depth_layers_minus8,dlt_flag[65],dlt_pred_flag[65],dlt_val_flags_present_flag[65],dlt_value_flag[65][70],pps_curr_pic_ref_enabled_flag,residual_adaptive_colour_transform_enabled_flag,pps_slice_act_qp_offsets_present_flag,pps_palette_predictor_initializer_present_flag,monochrome_palette_flag,pps_extension_data_flag;
 							
-							UInt32 i,j,k, pps_pic_parameter_set_id, pps_seq_parameter_set_id,num_ref_idx_l0_default_active_minus1,num_ref_idx_l1_default_active_minus1, diff_cu_qp_delta_depth,num_tile_columns_minus1,num_tile_rows_minus1,column_width_minus1,row_heigth_minus1,sizeId,matrixId,scaling_list_pred_matrix_id_delta[4][6],nextCoef,coefNum,ScalingList[4][6][64],log2_parallel_merge_level_minus2,log2_max_transform_skip_block_size2_minus2,diff_cu_chroma_qp_offset_depth,chroma_qp_offset_list_len_minus1,log2_sao_offset_scale_luma,log2_sao_offset_scale_chroma,num_ref_loc_offsets,phase_hor_luma,phase_ver_luma,phase_hor_chroma_plus8,phase_ver_chroma_plus8,num_cm_ref_layers_minus1,luma_bit_depth_cm_input_minus8,chroma_bit_depth_cm_input_minus8,luma_bit_depth_cm_output_minus8,chroma_bit_depth_cm_output_minus8,depthMaxValue,num_val_delta_dlt,max_diff,size_min_diff_minus1,min_diff_minus1,delta_dlt_val0,size_delta_val_diff_minus_min,delta_val_diff_minus_min,pps_num_palette_predictor_initializer,luma_bit_depth_entry_minus8,chroma_bit_depth_entry_minus8,numComps,comp,pps_palette_predictor_initializers;
+							UInt32 i,j,k, pps_pic_parameter_set_id, pps_seq_parameter_set_id,num_ref_idx_l0_default_active_minus1,num_ref_idx_l1_default_active_minus1, diff_cu_qp_delta_depth,num_tile_columns_minus1,num_tile_rows_minus1,column_width_minus1,row_heigth_minus1,sizeId,matrixId,scaling_list_pred_matrix_id_delta[4][6],nextCoef,coefNum,ScalingList[4][6][64],log2_parallel_merge_level_minus2,log2_max_transform_skip_block_size2_minus2,diff_cu_chroma_qp_offset_depth,chroma_qp_offset_list_len_minus1,log2_sao_offset_scale_luma,log2_sao_offset_scale_chroma,num_ref_loc_offsets,phase_hor_luma,phase_ver_luma,phase_hor_chroma_plus8,phase_ver_chroma_plus8,num_cm_ref_layers_minus1,luma_bit_depth_cm_input_minus8,chroma_bit_depth_cm_input_minus8,luma_bit_depth_cm_output_minus8,chroma_bit_depth_cm_output_minus8,depthMaxValue,num_val_delta_dlt,max_diff=0,size_min_diff_minus1,min_diff_minus1=0,delta_dlt_val0,size_delta_val_diff_minus_min,delta_val_diff_minus_min,pps_num_palette_predictor_initializer,luma_bit_depth_entry_minus8=0,chroma_bit_depth_entry_minus8=0,numComps,comp,pps_palette_predictor_initializers;
 							
 							SInt32 init_qp_minus26,pps_cb_qp_offset,pps_cr_qp_offset,pps_beta_offset_div2,pps_tc_offset_div2,scaling_list_dc_coef_minus8[4][6], scaling_list_delta_coef,cb_qp_offset_list,cr_qp_offset_list,scaled_ref_layer_left_offset,scaled_ref_layer_top_offset,scaled_ref_layer_right_offset,scaled_ref_layer_bottom_offset,ref_region_left_offset,ref_region_right_offset,ref_region_top_offset,ref_region_bottom_offset,cm_adapt_threshold_u_delta,cm_adapt_threshold_v_delta,pps_act_y_qp_offset_plus5,pps_act_cb_qp_offset_plus5,pps_act_cr_qp_offset_plus3;
 							
@@ -3258,7 +3258,7 @@ bail:
 OSErr Validate_colour_mapping_octants(BitBuffer *bb, UInt32 inpDepth,UInt32 idxY,UInt32 idxCb,UInt32 idxCr, UInt32 inpLength,UInt8 cm_octant_depth,UInt8 cm_y_part_num_log2,UInt8 cm_delta_flc_bits_minus1)
 {
 	OSErr err = noErr;
-	UInt8 PartNumY,split_octant_flag,coded_res_flag,res_coeff_s;
+	UInt8 PartNumY,split_octant_flag=0,coded_res_flag,res_coeff_s;
 	UInt32 k,m,n,idxShiftY,i,j,c,res_coeff_q,res_coeff_r;
         PartNumY=1<<cm_y_part_num_log2;
         if(inpDepth<cm_octant_depth)
@@ -3856,7 +3856,7 @@ OSErr CheckValuesInContext( UInt32 bufferSize, UInt32 maxBitrate, UInt32 avgBitr
     break;
 
   default:
-    sprintf(profString,"WARNING: unknown visual profile= %lu\n",p_vsc->profileLevelInd);
+    sprintf(profString,"WARNING: unknown visual profile= %u\n",p_vsc->profileLevelInd);
     if( p_vsc->profileLevelInd == 255 ){
       err = 1;
       errprint("invalid visual profile= %lu\n",p_vsc->profileLevelInd);
@@ -3892,7 +3892,7 @@ OSErr Validate_HEVCConfigRecord( BitBuffer *bb, void *refcon )
 	HevcConfigInfo hevcHeader;
 	//UInt32* codec_specific;
 	//int counter = 0;
-        UInt32 j,i;
+        UInt32 j=0,i=0;
 	//codec_specific = &((tir->validatedSampleDescriptionRefCons)[tir->currentSampleDescriptionIndex - 1]);
 
 	hevcHeader.config_ver 	= GetBits(bb, 8, &err); if (err) goto bail;
