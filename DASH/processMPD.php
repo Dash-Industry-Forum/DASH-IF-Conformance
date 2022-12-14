@@ -45,11 +45,9 @@ function process_MPD($parseSegments = false, $autoDetect = false)
     fwrite(STDERR, "Going to parse $mpd_url\n");
 
 
-    if ($autoDetect){
-        foreach ($modules as $module) {
-            if ($module->isEnabled()) {
-                $module->detectFromManifest();
-            }
+    if ($autoDetect) {
+        foreach ($modules as &$module) {
+            $module->detectFromManifest();
         }
     }
 
