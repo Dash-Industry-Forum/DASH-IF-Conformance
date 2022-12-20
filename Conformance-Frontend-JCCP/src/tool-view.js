@@ -322,8 +322,6 @@ function ToolView() {
   function createHealthCheckDetailsElement(elementId) {
     let testId = _state.detailSelect;
     let testResult = _state.result.getTestResult(testId);
-    let part = testResult.getPart();
-    let module = part.getModule();
 
     let resultDetails = UI.createElement({
       id: elementId,

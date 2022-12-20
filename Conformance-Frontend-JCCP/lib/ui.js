@@ -15,6 +15,7 @@ const UI = (function () {
         case "title":
         case "accept":
         case "href":
+        case "for":
           element.setAttribute(property, value);
           return;
         case "style":
