@@ -6,7 +6,7 @@ function ToolView() {
   let modules = ConformanceService.modules;
 
   let _state = {
-    //result: Mock.testResults[0],
+    //result: ConformanceService.convertInfoData(Mock.testResults[2]),
     result: null,
     detailSelect: { module: null, part: null, section: null, test: null },
   };
@@ -145,14 +145,43 @@ function ToolView() {
         {
           id: elementId + "-scroll",
           className: "flex-grow-1 overflow-auto",
-          children: _state.result
-            .getModules()
-            .map((module) => createModuleElement(module)),
+          children: [].concat(
+            _state.result
+              .getModules()
+              .map((module) => createModuleElement(module)),
+            createHealthChecksElement(_state.result.getHealthChecks())
+          ),
         },
       ],
     });
     UI.replaceElement(_resultSummaryId, resultSummary);
     UI.loadScrollPosition(_resultSummaryId + "-scroll");
+  }
+
+  function createHealthChecksElement(healthChecks) {
+    if (!healthChecks) return;
+    let part = healthChecks.getParts()[0];
+    let moduleElement = UI.createElement({
+      className: "p-3 border-bottom",
+      children: [
+        {
+          className: "fs-5 mb-2",
+          children: [{ element: "span", className: "", text: "Health Checks" }],
+        },
+        {
+          children: [
+            {
+              className: "list-group",
+              children: part
+                .getTestResults()
+                .map((testResult) => createModulePartTestElement(testResult)),
+            },
+          ],
+        },
+      ],
+    });
+    part.getTestResults().forEach((test) => console.log(test.getTestId()));
+    return moduleElement;
   }
 
   function createModuleElement(module) {
@@ -250,9 +279,14 @@ function ToolView() {
     _resultDetailsId = elementId = elementId || _resultDetailsId;
     let { module, part, section, test, type } = _state.detailSelect;
     let resultDetails = null;
+    console.log(_state.detailSelect);
 
     if (module && part && section && test) {
       resultDetails = createTestResultDetailsElement(elementId);
+    }
+
+    if (module === "HEALTH") {
+      resultDetails = createHealthCheckDetailsElement(elementId);
     }
 
     if (!resultDetails) {
@@ -283,6 +317,82 @@ function ToolView() {
       },
     });
     return instructions;
+  }
+
+  function createHealthCheckDetailsElement(elementId) {
+    let testId = _state.detailSelect;
+    let testResult = _state.result.getTestResult(testId);
+    let part = testResult.getPart();
+    let module = part.getModule();
+
+    let resultDetails = UI.createElement({
+      id: elementId,
+      className: "w-50 d-flex flex-column",
+      children: [
+        {
+          text: "Details",
+          className: "fs-5 fw-semibold bg-light border-bottom py-2 px-3",
+        },
+        {
+          className: "flex-fill overflow-auto",
+          children: {
+            element: "table",
+            className: "table",
+            children: {
+              element: "tbody",
+              children: [
+                {
+                  element: "tr",
+                  children: [
+                    { element: "td", text: "Health Check" },
+                    { element: "td", text: testResult.getTest() },
+                  ],
+                },
+                {
+                  element: "tr",
+                  children: [
+                    { element: "td", text: "State" },
+                    {
+                      element: "td",
+                      children: [
+                        {
+                          element: "i",
+                          className: getVerdictIcon(testResult.getState()),
+                        },
+                        {
+                          element: "span",
+                          text: testResult.getState(),
+                          className: "ms-1",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  element: "tr",
+                  children: [
+                    { element: "td", text: "Messages" },
+                    {
+                      element: "td",
+                      children: {
+                        className:
+                          "font-monospace overflow-auto border rounded bg-light p-2 text-break",
+                        style: "max-height: 30em",
+                        children: testResult.getMessages().map((message) => ({
+                          style: { minHeight: "1em", minWidth: "1em" },
+                          text: message,
+                        })),
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      ],
+    });
+    return resultDetails;
   }
 
   function createTestResultDetailsElement(elementId) {
@@ -356,7 +466,7 @@ function ToolView() {
                       element: "td",
                       children: {
                         className:
-                          "font-monospace overflow-auto border rounded bg-light p-2",
+                          "font-monospace overflow-auto border rounded bg-light p-2 text-break",
                         style: "max-height: 30em",
                         children: testResult.getMessages().map((message) => ({
                           style: { minHeight: "1em", minWidth: "1em" },

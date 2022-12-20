@@ -7,6 +7,7 @@ const ValidationResult = (() => {
     let _verdict = result.verdict;
     let _isParseSegments = result.parse_segments;
     let _modules = parseModules(result);
+    let _healthChecks = parseHealthChecks(result);
 
     function getSource() {
       return _source;
@@ -28,6 +29,10 @@ const ValidationResult = (() => {
       return _modules;
     }
 
+    function getHealthChecks() {
+      return _healthChecks;
+    }
+
     function getTestResult(testId) {
       let moduleName = testId.module;
       let partName = testId.part;
@@ -42,7 +47,7 @@ const ValidationResult = (() => {
 
     function parseModules(result) {
       let moduleNames = Object.keys(result.entries).filter(
-        (key) => key !== "Stats" && key !== "verdict"
+        (key) => key !== "Stats" && key !== "verdict" && key !== "HEALTH"
       );
       let modules = moduleNames.map((name) => {
         let module = result.entries[name];
@@ -54,6 +59,15 @@ const ValidationResult = (() => {
       return modules;
     }
 
+    function parseHealthChecks(result) {
+      let name = "HEALTH";
+      if (!result.entries[name]) return null;
+      let healthChecks = result.entries[name];
+      healthChecks.name = name;
+      healthChecks = new Module(healthChecks);
+      return healthChecks;
+    }
+
     instance = {
       getSource,
       getVerdict,
@@ -61,6 +75,7 @@ const ValidationResult = (() => {
       getRawResult,
       getModules,
       getTestResult,
+      getHealthChecks,
     };
 
     return instance;

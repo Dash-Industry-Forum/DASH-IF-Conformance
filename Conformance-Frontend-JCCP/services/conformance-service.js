@@ -33,8 +33,6 @@ const ConformanceService = (function () {
     results = JSON.parse(results);
     results = convertInfoData(results);
     return results;
-
-    //return Mock.testResults[0];
   }
 
   function convertInfoData(result) {
@@ -105,6 +103,7 @@ const ConformanceService = (function () {
 
   let instance = {
     validateContentByUrl,
+    convertInfoData,
     modules,
   };
   return instance;
