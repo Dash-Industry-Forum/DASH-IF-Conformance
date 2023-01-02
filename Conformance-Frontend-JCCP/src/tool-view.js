@@ -6,7 +6,7 @@ function ToolView() {
   let modules = ConformanceService.modules;
 
   let _state = {
-    //result: Mock.testResults[0],
+    //result: ConformanceService.convertInfoData(Mock.testResults[2]),
     result: null,
     detailSelect: { module: null, part: null, section: null, test: null },
   };
@@ -133,14 +133,6 @@ function ToolView() {
 
   function renderResultSummary(elementId) {
     _resultSummaryId = elementId = elementId || _resultSummaryId;
-    let moduleNames = Object.keys(_state.result.entries).filter(
-      (key) => key !== "Stats" && key !== "verdict"
-    );
-    let modules = moduleNames.map((name) => {
-      let module = _state.result.entries[name];
-      module.name = name;
-      return module;
-    });
 
     let resultSummary = UI.createElement({
       id: elementId,
@@ -153,7 +145,12 @@ function ToolView() {
         {
           id: elementId + "-scroll",
           className: "flex-grow-1 overflow-auto",
-          children: modules.map((module) => createModuleElement(module)),
+          children: [].concat(
+            _state.result
+              .getModules()
+              .map((module) => createModuleElement(module)),
+            createHealthChecksElement(_state.result.getHealthChecks())
+          ),
         },
       ],
     });
@@ -161,15 +158,33 @@ function ToolView() {
     UI.loadScrollPosition(_resultSummaryId + "-scroll");
   }
 
-  function createModuleElement(module) {
-    let partNames = Object.keys(module).filter(
-      (key) => typeof module[key] === "object" && "test" in module[key]
-    );
-    let parts = partNames.map((partName) => {
-      let part = module[partName];
-      part.name = partName;
-      return part;
+  function createHealthChecksElement(healthChecks) {
+    if (!healthChecks) return;
+    let part = healthChecks.getParts()[0];
+    let moduleElement = UI.createElement({
+      className: "p-3 border-bottom",
+      children: [
+        {
+          className: "fs-5 mb-2",
+          children: [{ element: "span", className: "", text: "Health Checks" }],
+        },
+        {
+          children: [
+            {
+              className: "list-group",
+              children: part
+                .getTestResults()
+                .map((testResult) => createModulePartTestElement(testResult)),
+            },
+          ],
+        },
+      ],
     });
+    part.getTestResults().forEach((test) => console.log(test.getTestId()));
+    return moduleElement;
+  }
+
+  function createModuleElement(module) {
     let moduleElement = UI.createElement({
       className: "p-3 border-bottom",
       children: [
@@ -178,22 +193,22 @@ function ToolView() {
           children: [
             {
               element: "i",
-              className: getVerdictIcon(module.verdict),
+              className: getVerdictIcon(module.getVerdict()),
             },
-            { element: "span", className: "ms-2", text: module.name },
+            { element: "span", className: "ms-2", text: module.getName() },
           ],
         },
         {
-          children: parts.map((part) => createModulePartElement(part, module)),
+          children: module
+            .getParts()
+            .map((part) => createModulePartElement(part)),
         },
       ],
     });
     return moduleElement;
   }
 
-  function createModulePartElement(part, module) {
-    let testResults = part.test;
-
+  function createModulePartElement(part) {
     let modulePartElement = UI.createElement({
       children: [
         {
@@ -201,17 +216,17 @@ function ToolView() {
           children: [
             {
               element: "i",
-              className: getVerdictIcon(part.verdict),
+              className: getVerdictIcon(part.getVerdict()),
               style: "width: 1.5em",
             },
-            { element: "span", text: part.name },
+            { element: "span", text: part.getName() },
           ],
         },
         {
           className: "list-group",
-          children: testResults.map((testResult) =>
-            createModulePartTestElement(testResult, part, module)
-          ),
+          children: part
+            .getTestResults()
+            .map((testResult) => createModulePartTestElement(testResult)),
         },
       ],
     });
@@ -219,14 +234,11 @@ function ToolView() {
     return modulePartElement;
   }
 
-  function createModulePartTestElement(testResult, part, module) {
-    let { section, test, state } = testResult;
-    let testId = {
-      module: module.name,
-      part: part.name,
-      section,
-      test,
-    };
+  function createModulePartTestElement(testResult) {
+    let section = testResult.getSection();
+    let test = testResult.getTest();
+    let state = testResult.getState();
+    let testId = testResult.getTestId();
     let isPartSelected = isSelected(testId);
 
     let modulePartTestElement = UI.createElement({
@@ -267,9 +279,14 @@ function ToolView() {
     _resultDetailsId = elementId = elementId || _resultDetailsId;
     let { module, part, section, test, type } = _state.detailSelect;
     let resultDetails = null;
+    console.log(_state.detailSelect);
 
     if (module && part && section && test) {
       resultDetails = createTestResultDetailsElement(elementId);
+    }
+
+    if (module === "HEALTH") {
+      resultDetails = createHealthCheckDetailsElement(elementId);
     }
 
     if (!resultDetails) {
@@ -302,11 +319,86 @@ function ToolView() {
     return instructions;
   }
 
+  function createHealthCheckDetailsElement(elementId) {
+    let testId = _state.detailSelect;
+    let testResult = _state.result.getTestResult(testId);
+
+    let resultDetails = UI.createElement({
+      id: elementId,
+      className: "w-50 d-flex flex-column",
+      children: [
+        {
+          text: "Details",
+          className: "fs-5 fw-semibold bg-light border-bottom py-2 px-3",
+        },
+        {
+          className: "flex-fill overflow-auto",
+          children: {
+            element: "table",
+            className: "table",
+            children: {
+              element: "tbody",
+              children: [
+                {
+                  element: "tr",
+                  children: [
+                    { element: "td", text: "Health Check" },
+                    { element: "td", text: testResult.getTest() },
+                  ],
+                },
+                {
+                  element: "tr",
+                  children: [
+                    { element: "td", text: "State" },
+                    {
+                      element: "td",
+                      children: [
+                        {
+                          element: "i",
+                          className: getVerdictIcon(testResult.getState()),
+                        },
+                        {
+                          element: "span",
+                          text: testResult.getState(),
+                          className: "ms-1",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  element: "tr",
+                  children: [
+                    { element: "td", text: "Messages" },
+                    {
+                      element: "td",
+                      children: {
+                        className:
+                          "font-monospace overflow-auto border rounded bg-light p-2 text-break",
+                        style: "max-height: 30em",
+                        children: testResult.getMessages().map((message) => ({
+                          style: { minHeight: "1em", minWidth: "1em" },
+                          text: message,
+                        })),
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      ],
+    });
+    return resultDetails;
+  }
+
   function createTestResultDetailsElement(elementId) {
-    let { module, part, section, test } = _state.detailSelect;
-    let { state, messages } = _state.result.entries[module][part].test.find(
-      (element) => element.test === test && element.section === section
-    );
+    let testId = _state.detailSelect;
+    let testResult = _state.result.getTestResult(testId);
+    let part = testResult.getPart();
+    let module = part.getModule();
+
     let resultDetails = UI.createElement({
       id: elementId,
       className: "w-50 d-flex flex-column",
@@ -327,14 +419,14 @@ function ToolView() {
                   element: "tr",
                   children: [
                     { element: "td", text: "Section" },
-                    { element: "td", text: section },
+                    { element: "td", text: testResult.getSection() },
                   ],
                 },
                 {
                   element: "tr",
                   children: [
                     { element: "td", text: "Test" },
-                    { element: "td", text: test },
+                    { element: "td", text: testResult.getTest() },
                   ],
                 },
                 {
@@ -344,8 +436,15 @@ function ToolView() {
                     {
                       element: "td",
                       children: [
-                        { element: "i", className: getVerdictIcon(state) },
-                        { element: "span", text: state, className: "ms-1" },
+                        {
+                          element: "i",
+                          className: getVerdictIcon(testResult.getState()),
+                        },
+                        {
+                          element: "span",
+                          text: testResult.getState(),
+                          className: "ms-1",
+                        },
                       ],
                     },
                   ],
@@ -354,7 +453,7 @@ function ToolView() {
                   element: "tr",
                   children: [
                     { element: "td", text: "Module" },
-                    { element: "td", text: module },
+                    { element: "td", text: module.getName() },
                   ],
                 },
                 {
@@ -365,9 +464,9 @@ function ToolView() {
                       element: "td",
                       children: {
                         className:
-                          "font-monospace overflow-auto border rounded bg-light p-2",
+                          "font-monospace overflow-auto border rounded bg-light p-2 text-break",
                         style: "max-height: 30em",
-                        children: messages.map((message) => ({
+                        children: testResult.getMessages().map((message) => ({
                           style: { minHeight: "1em", minWidth: "1em" },
                           text: message,
                         })),

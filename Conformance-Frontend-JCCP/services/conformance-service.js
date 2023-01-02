@@ -33,8 +33,6 @@ const ConformanceService = (function () {
     results = JSON.parse(results);
     results = convertInfoData(results);
     return results;
-
-    //return Mock.testResults[0];
   }
 
   function convertInfoData(result) {
@@ -90,7 +88,7 @@ const ConformanceService = (function () {
             let testResult = {
               spec: module.name,
               section: part.name,
-              test: `Error #${index + 1} ` + xmlTestResult.getAttribute("test"),
+              test: `Error #${index + 1} ` + messages[0],
               messages: messages,
               state: "FAIL",
             };
@@ -100,11 +98,12 @@ const ConformanceService = (function () {
         });
       });
     });
-    return result;
+    return new ValidationResult(result);
   }
 
   let instance = {
     validateContentByUrl,
+    convertInfoData,
     modules,
   };
   return instance;
