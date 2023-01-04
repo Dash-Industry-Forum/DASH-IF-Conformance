@@ -32,9 +32,8 @@ at https://beta.conformance.dashif.org/.
 For the complete installation including dependencies etc, please refer
 to [Installation guide]( https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Installation--guide).
 
-To clone the IntegratedConformance, use the command,
-
-`git clone https://github.com/Dash-Industry-Forum/DASH-IF-Conformance`
+## Usage and documentation
+For more details on how to use the Conformance Software please refer to our [Wiki](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki).
 
 ## Development
 
@@ -43,26 +42,9 @@ please checkout
 the [development principles](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Development-principles) and
 also the [release procedure](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Release-Procedure).
 
-### API documentation
+## API documentation
 
 A hosted version of the Doxygen API documentation can be found at https://dashif.org/DASH-IF-Conformance/
-
-## Usage Guide
-
-Information on how to use the conformance software, please refer to
-our [Usage Guide](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Usage-guide) document.
-
-## CLI
-
-A preliminary CLI has been added to the project, which can be run from the `Utils` directory, see
-the `Utils/Process_cli.php` script. At this point in time it requires the `Conformance-Frontend/temp/` directory to be
-created manually, for storing temporary files.
-
-## Detailed Information
-
-For the framework of the conformance software and how the general conformance testing process works, please refer to
-the [DASH-IF-Conformance document](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/blob/master/Doc/Conformance%20Software.pdf)
-.
 
 ## Issue Reporting
 
