@@ -27,7 +27,14 @@
             <directory suffix=".php">.</directory>
         </include>
         <exclude>
-            <directory suffix=".php">vendor</directory>
+            <directory>vendor</directory>
+            <directory>CTAWAVE/UnitTests</directory>
+            <directory>Conformance-Frontend-HLS</directory>
+            <directory>Conformance-Frontend</directory>
+            <directory>functional-tests</directory>
+            <directory>tests</directory>
+            <directory>validation-tests</directory>
+            <file>index.php</file>
         </exclude>
         <report>
             <html outputDirectory="functional-test-results/html-reports-functional-tests" lowUpperBound="50" highLowerBound="90"/>
