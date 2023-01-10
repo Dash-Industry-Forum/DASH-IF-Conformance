@@ -11,7 +11,8 @@ const ConformanceService = (function () {
     { id: "cmaf", text: "CMAF", queryParam: "cmaf" },
     { id: "cta-wave", text: "CTA-WAVE", queryParam: "ctawave" },
     { id: "hbbtv", text: "HbbTV", queryParam: "hbbtv" },
-    { id: "dvb", text: "DVB", queryParam: "dvb" },
+    { id: "dvb", text: "DVB (2018 xsd)", queryParam: "dvb" },
+    { id: "dvb2019", text: "DVB (2019 xsd)", queryParam: "dvb_2019" },
     {
       id: "dash-if-ll",
       text: "DASH-IF IOP Low Latency",
@@ -19,6 +20,7 @@ const ConformanceService = (function () {
     },
     { id: "dash-if-iop", text: "DASH-IF Interoperability", queryParam: "iop" },
     { id: "dolby", text: "Dolby", queryParam: "dolby" },
+    { id: "autodetect", text: "Automatically detect profiles", queryParam: "autodetect" },
   ];
 
   async function validateContentByUrl({ mpdUrl, activeModules }) {
