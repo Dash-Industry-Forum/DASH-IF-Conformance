@@ -26,6 +26,7 @@ include 'Utils/MPDUtility.php';
 include 'Utils/MPDHandler.php';
 include 'Utils/functions.php';
 
+include 'Conformance-Frontend/Featurelist.php';
 
 include 'DASH/module.php';
 include 'CMAF/module.php';

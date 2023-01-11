@@ -26,6 +26,7 @@ include 'Utils/MPDUtility.php';
 include 'Utils/MPDHandler.php';
 include 'Utils/functions.php';
 
+include 'Conformance-Frontend/Featurelist.php';
 
 include 'DASH/module.php';
 include 'CMAF/module.php';
@@ -86,21 +87,9 @@ final class functionalTest extends TestCase
     public function streamProvider()
     {
         $i = 0;
-        $limit = 2;
+        $limit = 2000;
         $startnumber = 0;
-        $blacklist = [
-            "https://media.axprod.net/TestVectors/v7-MultiDRM-MultiKey/Manifest_1080p.mpd",
-            "https://dash.akamaized.net/WAVE/vectors/avc_sets/14.985_29.97_59.94/t3/2022-01-17/stream.mpd",
-            "https://livesim.dashif.org/livesim/periods_60/mpdcallback_30/testpic_2s/Manifest.mpd",
-            "https://dash.akamaized.net/dash264/TestAdvertising/CMS/Axinom-CMS_HEVC_MultiRes_MultiRate_25fps.mpd",
-            "https://dash.akamaized.net/dash264/TestCasesHD/1c/qualcomm/1/MultiRate.mpd",
-            "https://dash.akamaized.net/dash264/TestCasesIOP33/adapatationSetSwitching/4/manifest.mpd",
-            "https://dash.akamaized.net/dash264/TestCases/9c/qualcomm/1/MultiRate.mpd",
-            "https://dash.akamaized.net/dash264/TestCasesHD/2c/qualcomm/1/MultiResMPEG2.mpd",
-            "https://livesim.dashif.org/livesim/periods_20/testpic_2s/Manifest.mpd",
-            "https://livesim.dashif.org/livesim/testpic_2s/Manifest.mpd#t=posix:now",
-            "https://dash.akamaized.net/dash264/TestCasesIOP33/MPDChaining/fallback_chain/2/manifest_terminationEvent_fallback_MPDChaining.mpd"
-        ];
+        $blacklist = [];
         $content = file_get_contents(
             "functional-tests/dashif/dashjs.json");
         $dbJson = json_decode($content);
