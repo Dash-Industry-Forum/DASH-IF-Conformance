@@ -20,12 +20,17 @@ const ConformanceService = (function () {
     },
     { id: "dash-if-iop", text: "DASH-IF Interoperability", queryParam: "iop" },
     { id: "dolby", text: "Dolby", queryParam: "dolby" },
-    { id: "autodetect", text: "Automatically detect profiles", queryParam: "autodetect" },
+    {
+      id: "autodetect",
+      text: "Automatically detect profiles",
+      queryParam: "autodetect",
+    },
   ];
 
+  const BASE_URI = "/Utils/Process_cli.php?";
+
   async function validateContentByUrl({ mpdUrl, activeModules }) {
-    let uri = "/Utils/Process_cli.php?";
-    uri = uri + `url=${mpdUrl}&`;
+    let uri = BASE_URI + `url=${mpdUrl}&`;
     modules.forEach((module) => {
       if (!module.queryParam) return;
       uri =
@@ -33,6 +38,30 @@ const ConformanceService = (function () {
     });
     let results = await Net.sendRequest({ method: "GET", uri });
     results = JSON.parse(results);
+    results = convertInfoData(results);
+    return results;
+  }
+
+  async function validateContentByText({ mpdText, activeModules }) {
+    console.log("validating");
+    mpdText = encodeURIComponent(mpdText);
+    let data = `mpd=${mpdText}&`;
+    modules.forEach((module) => {
+      if (!module.queryParam) return;
+      data =
+        data + `${module.queryParam}=${activeModules[module.id] ? "1" : "0"}&`;
+    });
+    console.log("requesting");
+    let results = await Net.sendRequest({
+      method: "POST",
+      uri: BASE_URI,
+      data,
+      headers: {
+        "Content-type": "application/x-www-form-urlencoded",
+      },
+    });
+    results = JSON.parse(results);
+    console.log("got result", results);
     results = convertInfoData(results);
     return results;
   }
@@ -105,6 +134,7 @@ const ConformanceService = (function () {
 
   let instance = {
     validateContentByUrl,
+    validateContentByText,
     convertInfoData,
     modules,
   };

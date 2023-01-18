@@ -5,10 +5,14 @@ function Validator({ modules }) {
 
   const PROCESSING_FINISHED = "processing_finished";
 
+  const URL_TYPE = "url";
+  const TEXT_TYPE = "text";
+  const FILE_TYPE = "file";
+
   let mpdForms = [
-    { type: "url", text: "URL" },
-    { type: "file", text: "File Upload" },
-    { type: "text", text: "Text Input" },
+    { type: URL_TYPE, text: "URL" },
+    { type: FILE_TYPE, text: "File Upload" },
+    { type: TEXT_TYPE, text: "Text Input" },
   ];
 
   let instance;
@@ -30,28 +34,61 @@ function Validator({ modules }) {
 
   async function handleValidation() {
     _state.error = null;
-    if (_state.activeMpdForm === "url") {
-      let { mpdUrl, activeModules } = _state;
-      if (!Net.isValidUrl(mpdUrl)) {
-        _state.error = "Invalid URL";
-        render();
-        return;
+
+    switch (_state.activeMpdForm) {
+      case URL_TYPE: {
+        let { mpdUrl } = _state;
+        if (!Net.isValidUrl(mpdUrl)) {
+          _state.error = "Invalid URL";
+          render();
+          return;
+        }
+        break;
       }
-      _state.validatorState = PROCESSING;
-      _state.processingStartDate = Date.now();
-      updateDuration();
-      _durationInterval = setInterval(updateDuration, 1000);
-      render();
-      let result = await ConformanceService.validateContentByUrl({
-        mpdUrl,
-        activeModules,
-      });
-      _state.validatorState = READY;
-      _state.processingEndDate = Date.now();
-      render();
-      let duration = _state.processingEndDate - _state.processingStartDate;
-      eventHandler.dispatchEvent(PROCESSING_FINISHED, { result, duration });
+      case TEXT_TYPE:
+        break;
+      default:
+        return;
     }
+
+    _state.validatorState = PROCESSING;
+    _state.processingStartDate = Date.now();
+    updateDuration();
+    _durationInterval = setInterval(updateDuration, 1000);
+    render();
+
+    let result;
+    switch (_state.activeMpdForm) {
+      case URL_TYPE: {
+        let { mpdUrl, activeModules } = _state;
+        try {
+          result = await ConformanceService.validateContentByUrl({
+            mpdUrl,
+            activeModules,
+          });
+        } catch (error) {
+          _state.error = error;
+        }
+        break;
+      }
+      case TEXT_TYPE: {
+        let { mpdText, activeModules } = _state;
+        try {
+          result = await ConformanceService.validateContentByText({
+            mpdText,
+            activeModules,
+          });
+        } catch (error) {
+          _state.error = error;
+        }
+        break;
+      }
+    }
+    _state.validatorState = READY;
+    _state.processingEndDate = Date.now();
+    render();
+    let duration = _state.processingEndDate - _state.processingStartDate;
+    eventHandler.dispatchEvent(PROCESSING_FINISHED, { result, duration });
   }
 
   function onProcessingFinished(callback) {
@@ -135,10 +172,6 @@ function Validator({ modules }) {
                               ? () => {}
                               : () => {
                                   _state.activeMpdForm = form.type;
-                                  _state.validatorState =
-                                    form.type === "url"
-                                      ? READY
-                                      : NOT_IMPLEMENTED;
                                   render();
                                 },
                           href: "#",
@@ -179,9 +212,8 @@ function Validator({ modules }) {
                               id: "mpd-text",
                               onchange: (event) => {
                                 _state.mpdText = event.target.value;
-                                _state.validatorState = "not_implemented";
-                                render();
                               },
+                              text: _state.mpdText || "",
                             };
                         }
                       })(),

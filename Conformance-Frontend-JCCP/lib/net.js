@@ -20,6 +20,25 @@ const Net = (function () {
     });
   }
 
+  function sendFormRequest({ url, variables }) {
+    var form = document.createElement("form");
+    form.setAttribute("method", "POST");
+    form.setAttribute("action", url);
+
+    for (var name in variables) {
+      var value = variables[name];
+      var postVariable = document.createElement("input");
+      postVariable.setAttribute("type", "hidden");
+      postVariable.setAttribute("name", name);
+      postVariable.setAttribute("value", value);
+      form.appendChild(postVariable);
+    }
+    document.body.appendChild(form);
+    console.log(new FormData(form));
+
+    form.submit();
+  }
+
   // https://www.freecodecamp.org/news/check-if-a-javascript-string-is-a-url/
   function isValidUrl(urlString) {
     let urlPattern = new RegExp(
@@ -36,6 +55,7 @@ const Net = (function () {
 
   let instance = {
     sendRequest,
+    sendFormRequest,
     isValidUrl,
   };
   return instance;
