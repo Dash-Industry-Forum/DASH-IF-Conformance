@@ -158,12 +158,13 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 
     $adaptation_set = $mpdHandler->getFeatures()['Period'][$selectedPeriod]['AdaptationSet'][$selectedAdaptation];
     $representation = $adaptation_set['Representation'][$selectedRepresentation];
+    $stdErrPath = $session->getDir()."/stderr.txt";
     if (!$hls_manifest) {
         $logger->test(
             "Segment Validations",
             "analyze_results()",
             "stderr filled??",
-            filesize("$representationDirectory/stderr.txt") !== 0,
+            filesize($stdErrPath) !== 0 && filesize($stdErrPath) !== false,
             "FAIL",
             "Contents in stderr.txt found",
             "Failed to process adaptationset $selectedAdaptation, " .
@@ -174,7 +175,7 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
             "Segment Validations",
             "analyze_results()",
             "stderr filled??",
-            filesize("$representationDirectory/stderr.txt") !== 0,
+            filesize($stdErrPath) !== 0 && filesize($stdErrPath) !== false,
             "FAIL",
             "Contents in stderr.txt found",
             "Failed to process HLS $tag_array[0] index $tag_array[1]"
@@ -207,6 +208,10 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
     }
 
     rename($session->getDir() . "/leafinfo.txt", "$representationDirectory/leafInfo.txt");
+
+    if (file_exists($stdErrPath)) {
+        rename($stdErrPath, "$representationDirectory/stderr.txt");
+    }
 
     if (!$hls_manifest) {
         ## Check segment duration and start times against MPD times.
@@ -245,6 +250,10 @@ function run_backend($configFile, $representationDirectory = "")
 
     $moveAtom = true;
 
+    $currentModule = $logger->getCurrentModule();
+    $currentHook = $logger->getCurrentHook();
+
+    $logger->setModule("HEALTH");
     $moveAtom &= $logger->test(
         "Health Checks",
         "Segment Validation",
@@ -316,6 +325,10 @@ function run_backend($configFile, $representationDirectory = "")
             rename("$sessionDirectory/atominfo.xml", "$representationDirectory/atomInfo.xml");
         }
     }
+
+    // Restore module information since health checks are over
+    $logger->setModule($currentModule);
+    $logger->setHook($currentHook);
 
     return $returncode;
 }

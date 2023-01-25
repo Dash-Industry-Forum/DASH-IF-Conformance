@@ -105,6 +105,14 @@ class ModuleLogger
         $this->currentHook = '';
     }
 
+    public function getCurrentModule() {
+        return $this->currentModule;
+    }
+
+    public function getCurrentHook() {
+        return $this->currentHook;
+    }
+
     public function getModuleVerdict($moduleName)
     {
         if (!array_key_exists($moduleName, $this->entries)) {
