@@ -11,6 +11,7 @@ const ConformanceService = (function () {
     { id: "cmaf", text: "CMAF", queryParam: "cmaf" },
     { id: "cta-wave", text: "CTA-WAVE", queryParam: "ctawave" },
     { id: "hbbtv", text: "HbbTV", queryParam: "hbbtv" },
+    { id: "latest_xsd", text: "Latest XSD", queryParam: "latest_xsd" },
     { id: "dvb", text: "DVB (2018 xsd)", queryParam: "dvb" },
     { id: "dvb2019", text: "DVB (2019 xsd)", queryParam: "dvb_2019" },
     {
