@@ -84,11 +84,27 @@ function Validator({ modules }) {
         break;
       }
     }
-    _state.validatorState = READY;
+
+    setValidatorState(READY);
     _state.processingEndDate = Date.now();
     render();
     let duration = _state.processingEndDate - _state.processingStartDate;
     eventHandler.dispatchEvent(PROCESSING_FINISHED, { result, duration });
+  }
+
+  function setValidatorState(newState) {
+    if (newState === READY) {
+      if (
+        _state.activeMpdForm === TEXT_TYPE ||
+        _state.activeMpdForm === FILE_TYPE
+      ) {
+        _state.validatorState = NOT_IMPLEMENTED;
+      } else {
+        _state.validatorState = READY;
+      }
+      return;
+    }
+    _state.validatorState = newState;
   }
 
   function onProcessingFinished(callback) {
@@ -172,6 +188,9 @@ function Validator({ modules }) {
                               ? () => {}
                               : () => {
                                   _state.activeMpdForm = form.type;
+                                  if (_state.validatorState !== PROCESSING) {
+                                    setValidatorState(READY);
+                                  }
                                   render();
                                 },
                           href: "#",
