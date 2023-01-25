@@ -24,6 +24,7 @@ function Validator({ modules }) {
     error: null,
     processingStartDate: null,
     processingEndDate: null,
+    m3u8Detected: false,
   };
   let eventHandler = new EventHandler();
 
@@ -165,7 +166,7 @@ function Validator({ modules }) {
                   element: "label",
                   className: "col-sm-2 col-form-label",
                   for: "mpd-url",
-                  text: "MPD",
+                  text: "Manifest",
                 },
                 {
                   className: "col-sm-10",
@@ -211,7 +212,16 @@ function Validator({ modules }) {
                               id: "mpd-url",
                               value: _state.mpdUrl,
                               onchange: (event) => {
-                                _state.mpdUrl = event.target.value;
+                                var mpdUrl = event.target.value;
+                                _state.mpdUrl = mpdUrl;
+                                var lastFourChars = mpdUrl.substring(
+                                  mpdUrl.length - 4
+                                );
+                                var m3u8Detected = lastFourChars === "m3u8";
+                                if (m3u8Detected !== _state.m3u8Detected) {
+                                  _state.m3u8Detected = m3u8Detected;
+                                  render();
+                                }
                               },
                             };
                           case "file":
@@ -263,7 +273,13 @@ function Validator({ modules }) {
                           _state.activeModules[module.id] =
                             event.target.checked;
                         },
-                        checked: _state.activeModules[module.id],
+                        checked: _state.m3u8Detected
+                          ? _state.activeModules[module.id] &&
+                            module.m3u8Compatible
+                          : _state.activeModules[module.id],
+                        disabled: _state.m3u8Detected
+                          ? !module.m3u8Compatible
+                          : false,
                       },
                       {
                         element: "label",
