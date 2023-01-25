@@ -58,6 +58,9 @@ function validate_segment(
         $file_location[] = 'notexist';
     }
 
+    // Save content of stderr
+    saveStdErrOutput($representationDirectory);
+
     return $file_location;
 }
 
@@ -527,4 +530,30 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
             "Incorrect for segment $i with duration " . $segmentsTime[0][$i]['earliestPresentationTime']
         );
     }
+}
+
+function saveStdErrOutput($representationDirectory) {
+    global $logger;
+
+    $currentModule = $logger->getCurrentModule();
+    $currentHook = $logger->getCurrentHook();
+    $path = "$representationDirectory/stderr.txt";
+    $file = fopen( $path,'r');
+    $filesize = filesize($path);
+    $content = fread($file,$filesize);
+    $logger->setModule("SEGMENT_VALIDATION");
+    $logger->test(
+        "Segment Validation",
+        "Segment Validation",
+        "std error output",
+        $filesize == 0 || $filesize == false || $file == false,
+        "FAIL",
+        "Segment validation did not produce any errors",
+        $content
+    );
+
+    fclose($file);
+    // Restore module information since health checks are over
+    $logger->setModule($currentModule);
+    $logger->setHook($currentHook);
 }
