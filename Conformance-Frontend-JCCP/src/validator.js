@@ -5,10 +5,14 @@ function Validator({ modules }) {
 
   const PROCESSING_FINISHED = "processing_finished";
 
+  const URL_TYPE = "url";
+  const TEXT_TYPE = "text";
+  const FILE_TYPE = "file";
+
   let mpdForms = [
-    { type: "url", text: "URL" },
-    { type: "file", text: "File Upload" },
-    { type: "text", text: "Text Input" },
+    { type: URL_TYPE, text: "URL" },
+    { type: FILE_TYPE, text: "File Upload" },
+    { type: TEXT_TYPE, text: "Text Input" },
   ];
 
   let instance;
@@ -20,6 +24,7 @@ function Validator({ modules }) {
     error: null,
     processingStartDate: null,
     processingEndDate: null,
+    m3u8Detected: false,
   };
   let eventHandler = new EventHandler();
 
@@ -30,28 +35,77 @@ function Validator({ modules }) {
 
   async function handleValidation() {
     _state.error = null;
-    if (_state.activeMpdForm === "url") {
-      let { mpdUrl, activeModules } = _state;
-      if (!Net.isValidUrl(mpdUrl)) {
-        _state.error = "Invalid URL";
-        render();
-        return;
+
+    switch (_state.activeMpdForm) {
+      case URL_TYPE: {
+        let { mpdUrl } = _state;
+        if (!Net.isValidUrl(mpdUrl)) {
+          _state.error = "Invalid URL";
+          render();
+          return;
+        }
+        break;
       }
-      _state.validatorState = PROCESSING;
-      _state.processingStartDate = Date.now();
-      updateDuration();
-      _durationInterval = setInterval(updateDuration, 1000);
-      render();
-      let result = await ConformanceService.validateContentByUrl({
-        mpdUrl,
-        activeModules,
-      });
-      _state.validatorState = READY;
-      _state.processingEndDate = Date.now();
-      render();
-      let duration = _state.processingEndDate - _state.processingStartDate;
-      eventHandler.dispatchEvent(PROCESSING_FINISHED, { result, duration });
+      case TEXT_TYPE:
+        break;
+      default:
+        return;
     }
+
+    _state.validatorState = PROCESSING;
+    _state.processingStartDate = Date.now();
+    updateDuration();
+    _durationInterval = setInterval(updateDuration, 1000);
+    render();
+
+    let result;
+    switch (_state.activeMpdForm) {
+      case URL_TYPE: {
+        let { mpdUrl, activeModules } = _state;
+        try {
+          result = await ConformanceService.validateContentByUrl({
+            mpdUrl,
+            activeModules,
+          });
+        } catch (error) {
+          _state.error = error;
+        }
+        break;
+      }
+      case TEXT_TYPE: {
+        let { mpdText, activeModules } = _state;
+        try {
+          result = await ConformanceService.validateContentByText({
+            mpdText,
+            activeModules,
+          });
+        } catch (error) {
+          _state.error = error;
+        }
+        break;
+      }
+    }
+
+    setValidatorState(READY);
+    _state.processingEndDate = Date.now();
+    render();
+    let duration = _state.processingEndDate - _state.processingStartDate;
+    eventHandler.dispatchEvent(PROCESSING_FINISHED, { result, duration });
+  }
+
+  function setValidatorState(newState) {
+    if (newState === READY) {
+      if (
+        _state.activeMpdForm === TEXT_TYPE ||
+        _state.activeMpdForm === FILE_TYPE
+      ) {
+        _state.validatorState = NOT_IMPLEMENTED;
+      } else {
+        _state.validatorState = READY;
+      }
+      return;
+    }
+    _state.validatorState = newState;
   }
 
   function onProcessingFinished(callback) {
@@ -112,7 +166,7 @@ function Validator({ modules }) {
                   element: "label",
                   className: "col-sm-2 col-form-label",
                   for: "mpd-url",
-                  text: "MPD",
+                  text: "Manifest",
                 },
                 {
                   className: "col-sm-10",
@@ -135,10 +189,9 @@ function Validator({ modules }) {
                               ? () => {}
                               : () => {
                                   _state.activeMpdForm = form.type;
-                                  _state.validatorState =
-                                    form.type === "url"
-                                      ? READY
-                                      : NOT_IMPLEMENTED;
+                                  if (_state.validatorState !== PROCESSING) {
+                                    setValidatorState(READY);
+                                  }
                                   render();
                                 },
                           href: "#",
@@ -159,7 +212,16 @@ function Validator({ modules }) {
                               id: "mpd-url",
                               value: _state.mpdUrl,
                               onchange: (event) => {
-                                _state.mpdUrl = event.target.value;
+                                var mpdUrl = event.target.value;
+                                _state.mpdUrl = mpdUrl;
+                                var lastFourChars = mpdUrl.substring(
+                                  mpdUrl.length - 4
+                                );
+                                var m3u8Detected = lastFourChars === "m3u8";
+                                if (m3u8Detected !== _state.m3u8Detected) {
+                                  _state.m3u8Detected = m3u8Detected;
+                                  render();
+                                }
                               },
                             };
                           case "file":
@@ -179,9 +241,8 @@ function Validator({ modules }) {
                               id: "mpd-text",
                               onchange: (event) => {
                                 _state.mpdText = event.target.value;
-                                _state.validatorState = "not_implemented";
-                                render();
                               },
+                              text: _state.mpdText || "",
                             };
                         }
                       })(),
@@ -212,7 +273,13 @@ function Validator({ modules }) {
                           _state.activeModules[module.id] =
                             event.target.checked;
                         },
-                        checked: _state.activeModules[module.id],
+                        checked: _state.m3u8Detected
+                          ? _state.activeModules[module.id] &&
+                            module.m3u8Compatible
+                          : _state.activeModules[module.id],
+                        disabled: _state.m3u8Detected
+                          ? !module.m3u8Compatible
+                          : false,
                       },
                       {
                         element: "label",

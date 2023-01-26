@@ -6,24 +6,65 @@ const ConformanceService = (function () {
       id: "segment-validation",
       text: "Segment Validation",
       queryParam: "segments",
+      m3u8Compatible: true,
     },
-    { id: "dash-if", text: "DASH-IF", queryParam: "dash" },
-    { id: "cmaf", text: "CMAF", queryParam: "cmaf" },
-    { id: "cta-wave", text: "CTA-WAVE", queryParam: "ctawave" },
-    { id: "hbbtv", text: "HbbTV", queryParam: "hbbtv" },
-    { id: "dvb", text: "DVB", queryParam: "dvb" },
+    {
+      id: "dash-if",
+      text: "DASH-IF",
+      queryParam: "dash",
+      m3u8Compatible: false,
+    },
+    { id: "cmaf", text: "CMAF", queryParam: "cmaf", m3u8Compatible: true },
+    {
+      id: "cta-wave",
+      text: "CTA-WAVE",
+      queryParam: "ctawave",
+      m3u8Compatible: true,
+    },
+    { id: "hbbtv", text: "HbbTV", queryParam: "hbbtv", m3u8Compatible: false },
+    {
+      id: "latest_xsd",
+      text: "Latest XSD",
+      queryParam: "latest_xsd",
+      m3u8Compatible: false,
+    },
+    {
+      id: "dvb",
+      text: "DVB (2018 xsd)",
+      queryParam: "dvb",
+      m3u8Compatible: false,
+    },
+    {
+      id: "dvb2019",
+      text: "DVB (2019 xsd)",
+      queryParam: "dvb_2019",
+      m3u8Compatible: false,
+    },
     {
       id: "dash-if-ll",
       text: "DASH-IF IOP Low Latency",
       queryParam: "lowlatency",
+      m3u8Compatible: false,
     },
-    { id: "dash-if-iop", text: "DASH-IF Interoperability", queryParam: "iop" },
-    { id: "dolby", text: "Dolby", queryParam: "dolby" },
+    {
+      id: "dash-if-iop",
+      text: "DASH-IF Interoperability",
+      queryParam: "iop",
+      m3u8Compatible: false,
+    },
+    { id: "dolby", text: "Dolby", queryParam: "dolby", m3u8Compatible: false },
+    {
+      id: "autodetect",
+      text: "Automatically detect profiles",
+      queryParam: "autodetect",
+      m3u8Compatible: true,
+    },
   ];
 
+  const BASE_URI = "/Utils/Process_cli.php?";
+
   async function validateContentByUrl({ mpdUrl, activeModules }) {
-    let uri = "/Utils/Process_cli.php?";
-    uri = uri + `url=${mpdUrl}&`;
+    let uri = BASE_URI + `url=${mpdUrl}&`;
     modules.forEach((module) => {
       if (!module.queryParam) return;
       uri =
@@ -31,6 +72,30 @@ const ConformanceService = (function () {
     });
     let results = await Net.sendRequest({ method: "GET", uri });
     results = JSON.parse(results);
+    results = convertInfoData(results);
+    return results;
+  }
+
+  async function validateContentByText({ mpdText, activeModules }) {
+    console.log("validating");
+    mpdText = encodeURIComponent(mpdText);
+    let data = `mpd=${mpdText}&`;
+    modules.forEach((module) => {
+      if (!module.queryParam) return;
+      data =
+        data + `${module.queryParam}=${activeModules[module.id] ? "1" : "0"}&`;
+    });
+    console.log("requesting");
+    let results = await Net.sendRequest({
+      method: "POST",
+      uri: BASE_URI,
+      data,
+      headers: {
+        "Content-type": "application/x-www-form-urlencoded",
+      },
+    });
+    results = JSON.parse(results);
+    console.log("got result", results);
     results = convertInfoData(results);
     return results;
   }
@@ -103,6 +168,7 @@ const ConformanceService = (function () {
 
   let instance = {
     validateContentByUrl,
+    validateContentByText,
     convertInfoData,
     modules,
   };
