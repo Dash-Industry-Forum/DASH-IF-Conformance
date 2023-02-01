@@ -537,22 +537,47 @@ function saveStdErrOutput($representationDirectory) {
 
     $currentModule = $logger->getCurrentModule();
     $currentHook = $logger->getCurrentHook();
-    $path = "$representationDirectory/stderr.txt";
-    $file = fopen( $path,'r');
-    $filesize = filesize($path);
-    $content = fread($file,$filesize);
     $logger->setModule("SEGMENT_VALIDATION");
-    $logger->test(
-        "Segment Validation",
-        "Segment Validation",
-        "std error output",
-        $filesize == 0 || $filesize == false || $file == false,
-        "FAIL",
-        "Segment validation did not produce any errors",
-        $content
-    );
 
-    fclose($file);
+    $content = file_get_contents("$representationDirectory/stderr.txt");
+    $contentArray = explode("\n", $content);
+
+    if (!$contentArray->length ){
+        $logger->test(
+            "Segment Validation",
+            "Segment Validation",
+            "std error output",
+            true,
+            "PASS",
+            "Segment validation did not produce any output",
+            $content
+        );
+    } else {
+      foreach ($contentArray as $i => $msg){
+          $severity = "PASS";
+          //Catch both warn and warning
+          if (stripos($msg, "warn") !== FALSE){
+            $severity = "WARN";
+          }
+          //Catch errors
+          if (stripos($msg, "error") !== FALSE){
+            $severity = "FAIL";
+          }
+
+          $logger->test(
+              "Segment Validation",
+              "Segment Validation",
+              "std error output",
+              $severity == "PASS",
+              $severity,
+              $msg,
+              $msg
+          );
+
+      }
+    }
+
+
     // Restore module information since health checks are over
     $logger->setModule($currentModule);
     $logger->setHook($currentHook);
