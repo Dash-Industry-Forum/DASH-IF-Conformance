@@ -15,7 +15,6 @@
  */
 
 # General variables
-$main_dir = dirname(__DIR__) . '/Conformance-Frontend/';
 $mpd_url = '';
 $uploaded = false;
 $period_timing_info = array();
@@ -53,7 +52,6 @@ if (isset($_POST['urlcodehls'])) {
 
 
     $hls_manifest = 1;
-    $main_dir = dirname(__DIR__) . '/Conformance-Frontend-HLS/';
 }
 if (isset($_SESSION['url'])) {
     $mpd_url = $_SESSION['url'];

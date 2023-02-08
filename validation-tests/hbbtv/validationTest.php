@@ -53,8 +53,7 @@ include 'DASH/cross_validation.php';
 include 'DASH/Representation.php';
 include 'DASH/SegmentURLs.php';
 include 'HLS/HLSProcessing.php';
-include 'Conformance-Frontend/Featurelist.php';
-include 'Conformance-Frontend/TabulateResults.php';
+include 'Utils/Featurelist.php';
 
 
 set_time_limit(0);
