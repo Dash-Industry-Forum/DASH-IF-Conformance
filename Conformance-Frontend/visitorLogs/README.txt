@@ -1,1 +1,0 @@
-This folder is here to keep individual visitor log files for each user.
