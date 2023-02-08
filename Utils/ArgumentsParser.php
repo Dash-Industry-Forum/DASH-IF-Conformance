@@ -24,7 +24,7 @@ class ArgumentsParser
         $this->extraArguments = array_slice($argv, $restidx);
 
 
-        if ($this->getOption("help") || !$this->getPositionalArgument("url")) {
+        if ($this->getOption("help")) {
             exit($this->help());
         }
 
