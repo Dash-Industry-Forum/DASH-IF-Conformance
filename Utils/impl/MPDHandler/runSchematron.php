@@ -5,7 +5,7 @@ global $logger, $session;
 
 $sessionDir = $session->getDir();
 
-
+file_put_contents($sessionDir . "/manifest.mpd", $this->mpd);
 
 $mpdXml = simplexml_load_string('<mpdresult><xlink>No Result</xlink>' .
   '<schema>No Result</schema><schematron>No Result</schematron></mpdresult>');
@@ -17,7 +17,7 @@ chdir(__DIR__ . '/../../../DASH/mpdvalidator');
 $this->findOrDownloadSchema();
 
 $this->mpdValidatorOutput = syscall("java -cp \"saxon9he.jar:xercesImpl.jar:bin\" Validator \"" .
-  explode('#', $this->url)[0] . "\" $sessionDir/resolved.xml " .
+  $sessionDir . "/manifest.mpd" . "\" $sessionDir/resolved.xml " .
   $this->schemaPath . " $sessionDir/mpdresult.xml");
 
 $this->resolved = file_get_contents("$sessionDir/resolved.xml");
