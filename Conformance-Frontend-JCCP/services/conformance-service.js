@@ -100,6 +100,28 @@ const ConformanceService = (function () {
     return results;
   }
 
+  async function validateContentByFile({ mpdFile, activeModules }) {
+    console.log("validating");
+    let data = new FormData();
+    console.log(mpdFile);
+    data.append("mpd", mpdFile);
+    console.log(data);
+    modules.forEach((module) => {
+      if (!module.queryParam) return;
+      data.append(module.queryParam, activeModules[module.id] ? "1" : "0");
+    });
+    console.log("requesting");
+    let results = await Net.sendRequest({
+      method: "POST",
+      uri: BASE_URI,
+      data,
+    });
+    results = JSON.parse(results);
+    console.log("got result", results);
+    results = convertInfoData(results);
+    return results;
+  }
+
   function convertInfoData(result) {
     let moduleNames = Object.keys(result.entries).filter(
       (key) => key !== "Stats" && key !== "verdict"
@@ -169,6 +191,7 @@ const ConformanceService = (function () {
   let instance = {
     validateContentByUrl,
     validateContentByText,
+    validateContentByFile,
     convertInfoData,
     modules,
   };
