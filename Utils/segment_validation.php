@@ -542,7 +542,7 @@ function saveStdErrOutput($representationDirectory) {
     $content = file_get_contents("$representationDirectory/stderr.txt");
     $contentArray = explode("\n", $content);
 
-    if (!$contentArray->length ){
+    if (!count($contentArray) ){
         $logger->test(
             "Segment Validation",
             "Segment Validation",
