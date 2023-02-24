@@ -99,3 +99,4 @@ $string_info = '<!doctype html>
 </html>';
 
 $modules = array();
+$validators = array();

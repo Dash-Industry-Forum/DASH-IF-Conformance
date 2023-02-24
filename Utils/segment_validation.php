@@ -37,6 +37,18 @@ function validate_segment(
         ## Put segments in one file
         assemble($representationDirectory, $segment_url, $sizearray);
 
+        global $validators;
+        foreach ($validators as &$validator) {
+            if (!$validator->enabled){
+                continue;
+            }
+            if ($is_dolby) {
+                $validator->enableFeature('Dolby');
+            }
+            $validator->run($period, $adaptation_set, $representation);
+        }
+
+        /*
         ## Create config file with the flags for segment validation
         $config_file_loc = config_file_for_backend(
             $period,
@@ -48,6 +60,7 @@ function validate_segment(
 
         ## Run the backend
         $returncode = run_backend($config_file_loc, $representationDirectory);
+         */
 
         $varinfo = var_export($adaptation_set, true);
 
@@ -161,7 +174,7 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 
     $adaptation_set = $mpdHandler->getFeatures()['Period'][$selectedPeriod]['AdaptationSet'][$selectedAdaptation];
     $representation = $adaptation_set['Representation'][$selectedRepresentation];
-    $stdErrPath = $session->getDir()."/stderr.txt";
+    $stdErrPath = $session->getDir() . "/stderr.txt";
     if (!$hls_manifest) {
         $logger->test(
             "Segment Validations",
@@ -263,7 +276,7 @@ function run_backend($configFile, $representationDirectory = "")
         "ISOSegmentValidator runs successful",
         $returncode == 0,
         "FAIL",
-        "Ran succesful on $configFile; took ". ($et - $t) . "seconds",
+        "Ran succesful on $configFile; took " . ($et - $t) . "seconds",
         "Issues with $configFile; Returncode $returncode; took " . ($et - $t) . " seconds"
     );
 
@@ -314,7 +327,7 @@ function run_backend($configFile, $representationDirectory = "")
         filesize("$sessionDirectory/atominfo.xml") < (100 * 1024 * 1024),
         "FAIL",
         "Atominfo for $representationDirectory < 100Mb",
-        "Atominfo for $representationDirectory is ". filesize("$sessionDirectory/atominfo.xml")
+        "Atominfo for $representationDirectory is " . filesize("$sessionDirectory/atominfo.xml")
     );
 
 
@@ -532,7 +545,8 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
     }
 }
 
-function saveStdErrOutput($representationDirectory) {
+function saveStdErrOutput($representationDirectory)
+{
     global $logger;
 
     $currentModule = $logger->getCurrentModule();
@@ -542,7 +556,7 @@ function saveStdErrOutput($representationDirectory) {
     $content = file_get_contents("$representationDirectory/stderr.txt");
     $contentArray = explode("\n", $content);
 
-    if (!$contentArray->length ){
+    if (!$contentArray->length) {
         $logger->test(
             "Segment Validation",
             "Segment Validation",
@@ -553,28 +567,27 @@ function saveStdErrOutput($representationDirectory) {
             $content
         );
     } else {
-      foreach ($contentArray as $i => $msg){
-          $severity = "PASS";
-          //Catch both warn and warning
-          if (stripos($msg, "warn") !== FALSE){
-            $severity = "WARN";
-          }
-          //Catch errors
-          if (stripos($msg, "error") !== FALSE){
-            $severity = "FAIL";
-          }
+        foreach ($contentArray as $i => $msg) {
+            $severity = "PASS";
+            //Catch both warn and warning
+            if (stripos($msg, "warn") !== false) {
+                $severity = "WARN";
+            }
+            //Catch errors
+            if (stripos($msg, "error") !== false) {
+                $severity = "FAIL";
+            }
 
-          $logger->test(
-              "Segment Validation",
-              "Segment Validation",
-              "std error output",
-              $severity == "PASS",
-              $severity,
-              $msg,
-              $msg
-          );
-
-      }
+            $logger->test(
+                "Segment Validation",
+                "Segment Validation",
+                "std error output",
+                $severity == "PASS",
+                $severity,
+                $msg,
+                $msg
+            );
+        }
     }
 
 

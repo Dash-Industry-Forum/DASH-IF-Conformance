@@ -26,6 +26,7 @@ $argumentParser = new DASHIF\ArgumentsParser();
 include __DIR__ . '/functions.php';
 include __DIR__ . '/sessionHandler.php';
 require __DIR__ . '/moduleInterface.php';
+require __DIR__ . '/ValidatorInterface.php';
 include __DIR__ . '/moduleLogger.php';
 
 include __DIR__ . '/Session.php';         //#Session Functions, No Direct Executable Code
@@ -51,6 +52,8 @@ include __DIR__ . '/../DASH/IOP/module.php';
 include __DIR__ . '/../Dolby/module.php';
 
 
+include __DIR__ . '/validators/isoSegmentValidator.php';
+include __DIR__ . '/validators/mp4BoxValidator.php';
 
 $argumentParser->addOption("segments", "s", "segments", "Enable segment validation");
 $argumentParser->addOption("compact", "C", "compact", "Make JSON output compact");
@@ -91,6 +94,10 @@ ini_set("error_log", "myphp-error.log");
 $parseSegments = $argumentParser->getOption("segments");
 $compactOutput = $argumentParser->getOption("compact");
 $autoDetect = $argumentParser->getOption("autodetect");
+
+foreach ($validators as $validator) {
+    fwrite(STDERR, "Validator $validator->name is enabled? $validator->enabled\n");
+}
 
 if (substr($mpd_url, -5) == ".m3u8") {
     processHLS();
