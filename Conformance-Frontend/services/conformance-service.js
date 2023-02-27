@@ -77,7 +77,6 @@ const ConformanceService = (function () {
   }
 
   async function validateContentByText({ mpdText, activeModules }) {
-    console.log("validating");
     mpdText = encodeURIComponent(mpdText);
     let data = `mpd=${mpdText}&`;
     modules.forEach((module) => {
@@ -85,7 +84,6 @@ const ConformanceService = (function () {
       data =
         data + `${module.queryParam}=${activeModules[module.id] ? "1" : "0"}&`;
     });
-    console.log("requesting");
     let results = await Net.sendRequest({
       method: "POST",
       uri: BASE_URI,
@@ -95,7 +93,23 @@ const ConformanceService = (function () {
       },
     });
     results = JSON.parse(results);
-    console.log("got result", results);
+    results = convertInfoData(results);
+    return results;
+  }
+
+  async function validateContentByFile({ mpdFile, activeModules }) {
+    let data = new FormData();
+    data.append("mpd", mpdFile);
+    modules.forEach((module) => {
+      if (!module.queryParam) return;
+      data.append(module.queryParam, activeModules[module.id] ? "1" : "0");
+    });
+    let results = await Net.sendRequest({
+      method: "POST",
+      uri: BASE_URI,
+      data,
+    });
+    results = JSON.parse(results);
     results = convertInfoData(results);
     return results;
   }
@@ -169,6 +183,7 @@ const ConformanceService = (function () {
   let instance = {
     validateContentByUrl,
     validateContentByText,
+    validateContentByFile,
     convertInfoData,
     modules,
   };

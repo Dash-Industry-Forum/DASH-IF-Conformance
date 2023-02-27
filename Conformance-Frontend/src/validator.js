@@ -47,6 +47,7 @@ function Validator({ modules }) {
         break;
       }
       case TEXT_TYPE:
+      case FILE_TYPE:
         break;
       default:
         return;
@@ -84,6 +85,18 @@ function Validator({ modules }) {
         }
         break;
       }
+      case FILE_TYPE: {
+        let { mpdFile, activeModules } = _state;
+        try {
+          result = await ConformanceService.validateContentByFile({
+            mpdFile,
+            activeModules,
+          });
+        } catch (error) {
+          _state.error = error;
+        }
+        break;
+      }
     }
 
     setValidatorState(READY);
@@ -94,17 +107,17 @@ function Validator({ modules }) {
   }
 
   function setValidatorState(newState) {
-    if (newState === READY) {
-      if (
-        _state.activeMpdForm === TEXT_TYPE ||
-        _state.activeMpdForm === FILE_TYPE
-      ) {
-        _state.validatorState = NOT_IMPLEMENTED;
-      } else {
-        _state.validatorState = READY;
-      }
-      return;
-    }
+    //if (newState === READY) {
+    //  if (
+    //    _state.activeMpdForm === TEXT_TYPE ||
+    //    _state.activeMpdForm === FILE_TYPE
+    //  ) {
+    //    _state.validatorState = NOT_IMPLEMENTED;
+    //  } else {
+    //    _state.validatorState = READY;
+    //  }
+    //  return;
+    //}
     _state.validatorState = newState;
   }
 
@@ -231,7 +244,16 @@ function Validator({ modules }) {
                               className: "form-control",
                               id: "mpd-file",
                               onchange: (event) => {
-                                _state.mpdFile = event.target.value;
+                                var mpdFile = event.target.files[0];
+                                _state.mpdFile = mpdFile;
+                                var lastFourChars = mpdFile.name.substring(
+                                  mpdFile.name.length - 4
+                                );
+                                var m3u8Detected = lastFourChars === "m3u8";
+                                if (m3u8Detected !== _state.m3u8Detected) {
+                                  _state.m3u8Detected = m3u8Detected;
+                                  render();
+                                }
                               },
                             };
                           case "text":
