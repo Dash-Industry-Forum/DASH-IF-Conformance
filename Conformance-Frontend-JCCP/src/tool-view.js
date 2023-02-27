@@ -180,7 +180,6 @@ function ToolView() {
         },
       ],
     });
-    part.getTestResults().forEach((test) => console.log(test.getTestId()));
     return moduleElement;
   }
 
@@ -279,7 +278,6 @@ function ToolView() {
     _resultDetailsId = elementId = elementId || _resultDetailsId;
     let { module, part, section, test, type } = _state.detailSelect;
     let resultDetails = null;
-    console.log(_state.detailSelect);
 
     if (module && part && section && test) {
       resultDetails = createTestResultDetailsElement(elementId);

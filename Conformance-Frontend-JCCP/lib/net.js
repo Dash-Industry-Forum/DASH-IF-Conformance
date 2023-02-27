@@ -34,7 +34,6 @@ const Net = (function () {
       form.appendChild(postVariable);
     }
     document.body.appendChild(form);
-    console.log(new FormData(form));
 
     form.submit();
   }
