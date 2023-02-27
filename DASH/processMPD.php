@@ -146,8 +146,6 @@ function processAdaptationSetOfCurrentPeriod()
                 }
             }
 
-
-            $logger->setModule("HEALTH");
             validate_segment(
                 $adaptationDirectory,
                 $representationDirectory,

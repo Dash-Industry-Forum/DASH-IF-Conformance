@@ -14,8 +14,6 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//unlink("../Conformance-Frontend/temp/mpdreport.txt");
-
 ini_set('memory_limit', '-1');
 ini_set('display_errors', 'stderr');
 error_reporting(E_ERROR | E_PARSE);
@@ -75,8 +73,7 @@ include __DIR__ . '/../DASH/cross_validation.php';
 include __DIR__ . '/../DASH/Representation.php';
 include __DIR__ . '/../DASH/SegmentURLs.php';
 include __DIR__ . '/../HLS/HLSProcessing.php';
-include __DIR__ . '/../Conformance-Frontend/Featurelist.php';
-include __DIR__ . '/../Conformance-Frontend/TabulateResults.php';
+include __DIR__ . '/Featurelist.php';
 
 
 set_time_limit(0);

@@ -19,6 +19,6 @@ $logger->test(
     "CMFHD profile",
     count(array_unique($presentationProfileArray)) === 1 && array_unique($presentationProfileArray)[0] == "CMFHD",
     "FAIL",
-    "All CMAF Swithcing sets are CMFHD conformant",
-    "Not all CMAF Swithcing sets are CMFHD conformant"
+    "All CMAF Switching sets are CMFHD conformant",
+    "Not all CMAF Switching sets are CMFHD conformant"
 );

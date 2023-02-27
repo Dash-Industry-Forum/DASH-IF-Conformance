@@ -58,6 +58,9 @@ function validate_segment(
         $file_location[] = 'notexist';
     }
 
+    // Save content of stderr
+    saveStdErrOutput($representationDirectory);
+
     return $file_location;
 }
 
@@ -158,12 +161,13 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 
     $adaptation_set = $mpdHandler->getFeatures()['Period'][$selectedPeriod]['AdaptationSet'][$selectedAdaptation];
     $representation = $adaptation_set['Representation'][$selectedRepresentation];
+    $stdErrPath = $session->getDir()."/stderr.txt";
     if (!$hls_manifest) {
         $logger->test(
             "Segment Validations",
             "analyze_results()",
             "stderr filled??",
-            filesize("$representationDirectory/stderr.txt") !== 0,
+            filesize($stdErrPath) !== 0 && filesize($stdErrPath) !== false,
             "FAIL",
             "Contents in stderr.txt found",
             "Failed to process adaptationset $selectedAdaptation, " .
@@ -174,7 +178,7 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
             "Segment Validations",
             "analyze_results()",
             "stderr filled??",
-            filesize("$representationDirectory/stderr.txt") !== 0,
+            filesize($stdErrPath) !== 0 && filesize($stdErrPath) !== false,
             "FAIL",
             "Contents in stderr.txt found",
             "Failed to process HLS $tag_array[0] index $tag_array[1]"
@@ -207,6 +211,10 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
     }
 
     rename($session->getDir() . "/leafinfo.txt", "$representationDirectory/leafInfo.txt");
+
+    if (file_exists($stdErrPath)) {
+        rename($stdErrPath, "$representationDirectory/stderr.txt");
+    }
 
     if (!$hls_manifest) {
         ## Check segment duration and start times against MPD times.
@@ -245,6 +253,10 @@ function run_backend($configFile, $representationDirectory = "")
 
     $moveAtom = true;
 
+    $currentModule = $logger->getCurrentModule();
+    $currentHook = $logger->getCurrentHook();
+
+    $logger->setModule("HEALTH");
     $moveAtom &= $logger->test(
         "Health Checks",
         "Segment Validation",
@@ -316,6 +328,10 @@ function run_backend($configFile, $representationDirectory = "")
             rename("$sessionDirectory/atominfo.xml", "$representationDirectory/atomInfo.xml");
         }
     }
+
+    // Restore module information since health checks are over
+    $logger->setModule($currentModule);
+    $logger->setHook($currentHook);
 
     return $returncode;
 }
@@ -514,4 +530,55 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
             "Incorrect for segment $i with duration " . $segmentsTime[0][$i]['earliestPresentationTime']
         );
     }
+}
+
+function saveStdErrOutput($representationDirectory) {
+    global $logger;
+
+    $currentModule = $logger->getCurrentModule();
+    $currentHook = $logger->getCurrentHook();
+    $logger->setModule("SEGMENT_VALIDATION");
+
+    $content = file_get_contents("$representationDirectory/stderr.txt");
+    $contentArray = explode("\n", $content);
+
+    if (!count($contentArray) ){
+        $logger->test(
+            "Segment Validation",
+            "Segment Validation",
+            "std error output",
+            true,
+            "PASS",
+            "Segment validation did not produce any output",
+            $content
+        );
+    } else {
+      foreach ($contentArray as $i => $msg){
+          $severity = "PASS";
+          //Catch both warn and warning
+          if (stripos($msg, "warn") !== FALSE){
+            $severity = "WARN";
+          }
+          //Catch errors
+          if (stripos($msg, "error") !== FALSE){
+            $severity = "FAIL";
+          }
+
+          $logger->test(
+              "Segment Validation",
+              "Segment Validation",
+              "std error output",
+              $severity == "PASS",
+              $severity,
+              $msg,
+              $msg
+          );
+
+      }
+    }
+
+
+    // Restore module information since health checks are over
+    $logger->setModule($currentModule);
+    $logger->setHook($currentHook);
 }
