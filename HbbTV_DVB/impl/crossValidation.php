@@ -42,17 +42,16 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
 
 
             foreach ($validators as $v){
+              if (!$v->enabled){continue;}
               $r1 = $v->getRepresentation($mpdHandler->getSelectedPeriod(), $adaptationIndex, $index1);
               $r2 = $v->getRepresentation($mpdHandler->getSelectedPeriod(), $adaptationIndex, $index2);
 
               if ($r1 && $r2){
                 if ($this->DVBEnabled) {
-                    $this->crossValidationDVBAdapter(
-                        $r1,
-                        $r2
-                    );
+                    $this->crossValidationDVBAdapter($r1,$r2);
                 }
               }
+              break;
             }
 
         }
