@@ -41,6 +41,8 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
             }
 
 
+            //Also run crossvalidation for DVB with the adapter based approach
+            //TODO: Select a 'prefered' validator.
             foreach ($validators as $v){
               if (!$v->enabled){continue;}
               $r1 = $v->getRepresentation($mpdHandler->getSelectedPeriod(), $adaptationIndex, $index1);
@@ -48,6 +50,7 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
 
               if ($r1 && $r2){
                 if ($this->DVBEnabled) {
+                    //This takes a lot less parameters as all data is encapsulated in the representation object.
                     $this->crossValidationDVBAdapter($r1,$r2);
                 }
               }

@@ -350,6 +350,7 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/crossvalidationDVB.php';
     }
 
+    //Version of the crossValidationDVB function that instead runs with a given Representation Object.
     private function crossValidationDVBAdapter($r1, $r2)
     {
         include 'impl/crossvalidationDVBAdapter.php';

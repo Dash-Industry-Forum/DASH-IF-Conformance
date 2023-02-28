@@ -1,5 +1,9 @@
 <?php
 
+
+//All checks in this file are equal to their non-adapter counterparts
+//The specific video and audio function have not been translated yet.
+
 global $logger;
 
 $hdlrType1 = $r1->getHandlerType();
