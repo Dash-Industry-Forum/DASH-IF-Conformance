@@ -1,6 +1,6 @@
 <?php
 
-global $mpdHandler, $session;
+global $mpdHandler, $session, $validators;
 
 $this->contentProtectionReport();
 $adaptations = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'];
@@ -39,6 +39,22 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
                     );
                 }
             }
+
+
+            foreach ($validators as $v){
+              $r1 = $v->getRepresentation($mpdHandler->getSelectedPeriod(), $adaptationIndex, $index1);
+              $r2 = $v->getRepresentation($mpdHandler->getSelectedPeriod(), $adaptationIndex, $index2);
+
+              if ($r1 && $r2){
+                if ($this->DVBEnabled) {
+                    $this->crossValidationDVBAdapter(
+                        $r1,
+                        $r2
+                    );
+                }
+              }
+            }
+
         }
     }
     $this->initializationSegmentCommonCheck($files);
