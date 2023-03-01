@@ -304,6 +304,8 @@ const HtmlReport = (() => {
         return "✅";
       case "FAIL":
         return "❌";
+      case "WARN":
+        return "⚠️"
       default:
         return "?";
     }
