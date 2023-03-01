@@ -6,7 +6,7 @@ function ToolView() {
   let modules = ConformanceService.modules;
 
   let _state = {
-    //result: ConformanceService.convertInfoData(Mock.testResults[2]),
+    //result: ConformanceService.convertInfoData(Mock.testResults[3]),
     result: null,
     detailSelect: { module: null, part: null, section: null, test: null },
   };
@@ -279,7 +279,7 @@ function ToolView() {
     let { module, part, section, test, type } = _state.detailSelect;
     let resultDetails = null;
 
-    if (module && part && section && test) {
+    if (module !== null && part !== null && section !== null && test !== null) {
       resultDetails = createTestResultDetailsElement(elementId);
     }
 
@@ -502,6 +502,8 @@ function ToolView() {
         return "fa-solid fa-check text-success";
       case "FAIL":
         return "fa-solid fa-xmark text-danger";
+      case "WARN":
+        return "fa-solid fa-triangle-exclamation text-warning";
       default:
         return "fa-solid fa-question";
     }
