@@ -21,17 +21,19 @@ function validate_segment(
     $adaptation_set,
     $representation,
     $segment_url,
-    $is_subtitle_rep
-) {
+    $is_subtitle_rep,
+    $detailedSegmentOutput = true
+)
+{
     global $sizearray;
 
 
     $sizearray = array();
     $codecs = ($adaptation_set['codecs'] == null) ? $representation['codecs'] : $adaptation_set['codecs'];
     $is_dolby = (($codecs != null) and
-                 ((substr($codecs, 0, 4) == "ac-3") or
-                  (substr($codecs, 0, 4) == "ec-3") or
-                  (substr($codecs, 0, 4) == "ac-4")));
+        ((substr($codecs, 0, 4) == "ac-3") or
+            (substr($codecs, 0, 4) == "ec-3") or
+            (substr($codecs, 0, 4) == "ac-4")));
     $sizearray = download_data($representationDirectory, $segment_url, $is_subtitle_rep, $is_dolby);
     if ($sizearray != 0) {
         ## Put segments in one file
@@ -59,7 +61,7 @@ function validate_segment(
     }
 
     // Save content of stderr
-    saveStdErrOutput($representationDirectory);
+    saveStdErrOutput($representationDirectory, $detailedSegmentOutput);
 
     return $file_location;
 }
@@ -72,9 +74,9 @@ function validate_segment_hls($URL_array, $CodecArray)
     $is_dolby = false;
     for ($i = 0; $i < sizeof($CodecArray); $i++) {
         $is_dolby = (($CodecArray[$i] != null) and
-                     ((substr($CodecArray[$i], 0, 4) == "ac-3") or
-                     (substr($CodecArray[$i], 0, 4) == "ec-3") or
-                     (substr($CodecArray[$i], 0, 4) == "ac-4")));
+            ((substr($CodecArray[$i], 0, 4) == "ac-3") or
+                (substr($CodecArray[$i], 0, 4) == "ec-3") or
+                (substr($CodecArray[$i], 0, 4) == "ac-4")));
         if ($is_dolby) {
             break;
         }
@@ -124,10 +126,9 @@ function assemble($representationDirectory, $segment_urls, $sizearr)
     global $segment_accesses, $hls_manifest, $mpdHandler;
 
 
-
     $index = ($segment_accesses[$mpdHandler->getSelectedAdaptationSet()]
-                               [$mpdHandler->getSelectedRepresentation()][0]
-                               ['initialization']) ? 0 : 1;
+    [$mpdHandler->getSelectedRepresentation()][0]
+    ['initialization']) ? 0 : 1;
 
     for ($i = 0; $i < sizeof($segment_urls); $i++) {
         $fp1 = fopen("$representationDirectory/assembled.mp4", 'a+');
@@ -153,7 +154,7 @@ function assemble($representationDirectory, $segment_urls, $sizearr)
 function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 {
     global $mpdHandler, $session, $logger,
-            $hls_manifest, $hls_tag, $hls_info_file;
+           $hls_manifest, $hls_tag, $hls_info_file;
 
     $selectedPeriod = $mpdHandler->getSelectedPeriod();
     $selectedAdaptation = $mpdHandler->getSelectedAdaptationSet();
@@ -161,7 +162,7 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
 
     $adaptation_set = $mpdHandler->getFeatures()['Period'][$selectedPeriod]['AdaptationSet'][$selectedAdaptation];
     $representation = $adaptation_set['Representation'][$selectedRepresentation];
-    $stdErrPath = $session->getDir()."/stderr.txt";
+    $stdErrPath = $session->getDir() . "/stderr.txt";
     if (!$hls_manifest) {
         $logger->test(
             "Segment Validations",
@@ -189,7 +190,7 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
         } else {
             $tag_array = explode('_', $hls_tag);
             $files = array_diff(scandir($session->getDir() . '/' .
-            $tag_array[0] . '/' . $tag_array[1] . "/"), array('.', '..'));
+                $tag_array[0] . '/' . $tag_array[1] . "/"), array('.', '..'));
             if (
                 strpos($files[2], 'webvtt') !== false || strpos($files[2], 'xml') !== false ||
                 strpos($files[2], 'html') !== false
@@ -263,7 +264,7 @@ function run_backend($configFile, $representationDirectory = "")
         "ISOSegmentValidator runs successful",
         $returncode == 0,
         "FAIL",
-        "Ran succesful on $configFile; took ". ($et - $t) . "seconds",
+        "Ran succesful on $configFile; took " . ($et - $t) . "seconds",
         "Issues with $configFile; Returncode $returncode; took " . ($et - $t) . " seconds"
     );
 
@@ -280,10 +281,10 @@ function run_backend($configFile, $representationDirectory = "")
     $atomXmlString = file_get_contents("$sessionDirectory/atominfo.xml");
     $STYPBeginPos = strpos($atomXmlString, "<styp");
     if ($STYPBugPos !== false) {
-      //try with newline for prettyprinted
+        //try with newline for prettyprinted
         $emptyCompatBrands = strpos($atomXmlString, "compatible_brands='[\n  </styp>", $STYPBeginPos);
         if ($emptyCompatBrands === false) {
-        //Also try without newline just to be sure
+            //Also try without newline just to be sure
             $emptyCompatBrands = strpos($atomXmlString, "compatible_brands='[</styp>", $STYPBeginPos);
         }
         if ($emptyCompatBrands !== false) {
@@ -314,7 +315,7 @@ function run_backend($configFile, $representationDirectory = "")
         filesize("$sessionDirectory/atominfo.xml") < (100 * 1024 * 1024),
         "FAIL",
         "Atominfo for $representationDirectory < 100Mb",
-        "Atominfo for $representationDirectory is ". filesize("$sessionDirectory/atominfo.xml")
+        "Atominfo for $representationDirectory is " . filesize("$sessionDirectory/atominfo.xml")
     );
 
 
@@ -352,10 +353,10 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     }
 
     $flags = (!$hls_manifest) ? construct_flags(
-        $period,
-        $adaptation_set,
-        $representation
-    ) . $additional_flags : $additional_flags;
+            $period,
+            $adaptation_set,
+            $representation
+        ) . $additional_flags : $additional_flags;
     $piece = explode(" ", $flags);
     foreach ($piece as $pie) {
         if ($pie !== "") {
@@ -376,7 +377,7 @@ function loadAndCheckSegmentDuration()
     global $session;
 
     $adaptation_set = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
-                                                ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
+    ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
     $timeoffset = 0;
     $timescale = 1;
     $segmentAlignment = false;
@@ -432,8 +433,8 @@ function loadAndCheckSegmentDuration()
         $duration = (float)$duration / $timescale;
         if (
             (
-              ($adaptation_set['SegmentTemplate'] && sizeof($adaptation_set['SegmentTemplate']) > 0) ||
-              ($representation['SegmentTemplate'] && sizeof($representation['SegmentTemplate']) > 0)
+                ($adaptation_set['SegmentTemplate'] && sizeof($adaptation_set['SegmentTemplate']) > 0) ||
+                ($representation['SegmentTemplate'] && sizeof($representation['SegmentTemplate']) > 0)
             ) && $duration != 0
         ) {
             $representationDirectory = $session->getSelectedRepresentationDir();
@@ -441,6 +442,7 @@ function loadAndCheckSegmentDuration()
         }
     }
 }
+
 function loadSegmentInfoFile($PresTimeOffset, $duration, $representationDirectory)
 {
     $info = array();
@@ -509,8 +511,8 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
             "DASH ISO/IEC 23009-1",
             "Section 7.2.1",
             "The maximum tolerance of segment duration shall be +/-50% of the signaled segment duration",
-            ($i != ($num_segments - 1) && $segmentDurMPD * 0.5 > $segmentDur[$i] ) &&
-             $segmentDur[$i] <= $segmentDurMPD * 1.5,
+            ($i != ($num_segments - 1) && $segmentDurMPD * 0.5 > $segmentDur[$i]) &&
+            $segmentDur[$i] <= $segmentDurMPD * 1.5,
             "FAIL",
             "Segment $i with duration " . $segmentDur[$i] . " is within bounds of signaled " . $segmentDurMPD,
             "Segment $i with duration " . $segmentDur[$i] . " violates bounds of signaled " . $segmentDurMPD
@@ -523,7 +525,7 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
             "Section 7.2.1",
             "The difference between MPD start time and presentation time shall not exceed +/-50% of value of " .
             "@duration divided by the value of the @timescale attribute",
-            $MPDSegmentStartTime - (0.5 * $segmentDurMPD) <= $segmentsTime[0][$i]['earliestPresentationTime']  &&
+            $MPDSegmentStartTime - (0.5 * $segmentDurMPD) <= $segmentsTime[0][$i]['earliestPresentationTime'] &&
             $segmentsTime[0][$i]['earliestPresentationTime'] <= $MPDSegmentStartTime + (0.5 * $segmentDurMPD),
             "FAIL",
             "Correct for segment $i with duration " . $segmentsTime[0][$i]['earliestPresentationTime'],
@@ -532,7 +534,8 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
     }
 }
 
-function saveStdErrOutput($representationDirectory) {
+function saveStdErrOutput($representationDirectory, $saveDetailedOutput = true)
+{
     global $logger;
 
     $currentModule = $logger->getCurrentModule();
@@ -542,7 +545,7 @@ function saveStdErrOutput($representationDirectory) {
     $content = file_get_contents("$representationDirectory/stderr.txt");
     $contentArray = explode("\n", $content);
 
-    if (!count($contentArray) ){
+    if (!count($contentArray)) {
         $logger->test(
             "Segment Validation",
             "Segment Validation",
@@ -553,28 +556,48 @@ function saveStdErrOutput($representationDirectory) {
             $content
         );
     } else {
-      foreach ($contentArray as $i => $msg){
-          $severity = "PASS";
-          //Catch both warn and warning
-          if (stripos($msg, "warn") !== FALSE){
-            $severity = "WARN";
-          }
-          //Catch errors
-          if (stripos($msg, "error") !== FALSE){
-            $severity = "FAIL";
-          }
+        $commonSeverity = "PASS";
+        foreach ($contentArray as $i => $msg) {
+            $severity = "PASS";
+            //Catch both warn and warning
+            if (stripos($msg, "warn") !== FALSE) {
+                $severity = "WARN";
+                if ($commonSeverity == "PASS") {
+                    $commonSeverity = $severity;
+                }
+            }
+            //Catch errors
+            if (stripos($msg, "error") !== FALSE) {
+                $severity = "FAIL";
+                if ($commonSeverity != "FAIL") {
+                    $commonSeverity = $severity;
+                }
+            }
 
-          $logger->test(
-              "Segment Validation",
-              "Segment Validation",
-              "std error output",
-              $severity == "PASS",
-              $severity,
-              $msg,
-              $msg
-          );
+            if ($saveDetailedOutput) {
+                $logger->test(
+                    "Segment Validation",
+                    "Segment Validation",
+                    "std error output",
+                    $severity == "PASS",
+                    $severity,
+                    $msg,
+                    $msg
+                );
+            }
+        }
 
-      }
+        if (!$saveDetailedOutput) {
+            $logger->test(
+                "Segment Validation",
+                "Segment Validation",
+                "std error output",
+                $commonSeverity == "PASS",
+                $commonSeverity,
+                "Segment validation output is not depicted in detail",
+                "Segment validation output is not depicted in detail"
+            );
+        }
     }
 
 

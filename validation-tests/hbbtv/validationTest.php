@@ -87,11 +87,11 @@ final class validationTest extends TestCase
 
         fwrite(STDERR, "Going to parse stream " . $GLOBALS['mpd_url'] . "\n");
 
-        process_MPD(true);//MPD and Segments
+        process_MPD(true, false, false);//MPD and Segments
         //process_MPD(false);//MPD Only
         //
         $source = $GLOBALS['mpd_url'];
-        $id = str_replace("/","_", str_replace([".mpd", "http://", "https://"], [""], $source));
+        $id = str_replace("/", "_", str_replace([".mpd", "http://", "https://"], [""], $source));
         $output_path = "/home/dsi/DASH-IF-Conformance/validation-test-results/hbbtv/" . $id . ".json";
         if (file_put_contents($output_path, $GLOBALS['logger']->asJSON())) {
             echo "JSON file created successfully...";

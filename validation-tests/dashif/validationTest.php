@@ -59,6 +59,7 @@ final class validationTest extends TestCase
         $GLOBALS['mpd_url'] = $stream;
         $enabledModules = ["MPEG-DASH Common", "DASH-IF IOP Conformance", "CMAF"];
         $id = null;
+        $compactOutput = true;
 
         $GLOBALS['logger']->reset($id);
         $GLOBALS['logger']->setSource($GLOBALS['mpd_url']);
@@ -74,13 +75,13 @@ final class validationTest extends TestCase
 
         fwrite(STDERR, "Going to parse stream " . $GLOBALS['mpd_url'] . "\n");
 
-        process_MPD(true);//MPD and Segments
+        process_MPD(true, false, false);//MPD and Segments
         //process_MPD(false);//MPD Only
         //
         $source = $GLOBALS['mpd_url'];
         $id = str_replace("/", "_", str_replace([".mpd", "http://", "https://"], [""], $source));
         $output_path = "/home/dsi/DASH-IF-Conformance/validation-test-results/dashif/" . $id . ".json";
-        if (file_put_contents($output_path, $GLOBALS['logger']->asJSON())) {
+        if (file_put_contents($output_path, $GLOBALS['logger']->asJSON($compactOutput))) {
             echo "JSON file created successfully...";
         } else {
             echo "Oops! Error creating json file...";

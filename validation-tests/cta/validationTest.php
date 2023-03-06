@@ -74,7 +74,7 @@ final class validationTest extends TestCase
 
         fwrite(STDERR, "Going to parse stream " . $GLOBALS['mpd_url'] . "\n");
 
-        process_MPD(true);//MPD and Segments
+        process_MPD(true, false, false);//MPD and Segments
         //process_MPD(false);//MPD Only
         //
 
