@@ -25,6 +25,7 @@ include 'Utils/segment_validation.php'; //#Segment validation functions. No Dire
 include 'Utils/MPDUtility.php';
 include 'Utils/MPDHandler.php';
 include 'Utils/functions.php';
+include 'Utils/Featurelist.php';
 
 
 include 'DASH/module.php';
@@ -41,6 +42,7 @@ include 'DASH/SchematronIssuesAnalyzer.php';
 include 'DASH/cross_validation.php';
 include 'DASH/Representation.php';
 include 'HLS/HLSProcessing.php';
+
 
 
 set_time_limit(0);
