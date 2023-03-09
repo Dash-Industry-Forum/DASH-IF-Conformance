@@ -25,7 +25,6 @@ include 'Utils/segment_validation.php'; //#Segment validation functions. No Dire
 include 'Utils/MPDUtility.php';
 include 'Utils/MPDHandler.php';
 include 'Utils/functions.php';
-
 include 'Utils/Featurelist.php';
 
 include 'DASH/module.php';
@@ -75,7 +74,7 @@ final class functionalTest extends TestCase
 
         fwrite(STDERR, "Going to parse stream " . $GLOBALS['mpd_url'] . "\n");
 
-        process_MPD(true);//MPD and Segments
+        process_MPD(true, false, false);//MPD and Segments
         //process_MPD(false);//MPD Only
         //
         $this->assertSame(true, true);

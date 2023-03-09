@@ -14,7 +14,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function process_MPD($parseSegments = false, $autoDetect = false)
+function process_MPD($parseSegments = false, $autoDetect = false, $detailedSegmentOutput = true)
 {
     global $mpd_url;
 
@@ -52,15 +52,11 @@ function process_MPD($parseSegments = false, $autoDetect = false)
     }
 
 
-
     foreach ($modules as $module) {
         if ($module->isEnabled()) {
             $module->hookBeforeMPD();
         }
     }
-
-
-
 
 
     foreach ($modules as $module) {
@@ -83,7 +79,7 @@ function process_MPD($parseSegments = false, $autoDetect = false)
         $mpdHandler->selectPeriod(0);
     }
     while ($mpdHandler->getSelectedPeriod() < sizeof($mpdHandler->getFeatures()['Period'])) {
-        processAdaptationSetOfCurrentPeriod();
+        processAdaptationSetOfCurrentPeriod($detailedSegmentOutput);
 
         if ($logger->getModuleVerdict("HEALTH") == "FAIL") {
             return;
@@ -104,9 +100,9 @@ function process_MPD($parseSegments = false, $autoDetect = false)
     }
 }
 
-function processAdaptationSetOfCurrentPeriod()
+function processAdaptationSetOfCurrentPeriod($detailedSegmentOutput = true)
 {
-    global  $additional_flags;
+    global $additional_flags;
 
     global $session, $logger;
 
@@ -134,7 +130,7 @@ function processAdaptationSetOfCurrentPeriod()
             }
             $representation = $representations[$mpdHandler->getSelectedRepresentation()];
             $segment_url = $segment_urls[$mpdHandler->getSelectedAdaptationSet()]
-                                        [$mpdHandler->getSelectedRepresentation()];
+            [$mpdHandler->getSelectedRepresentation()];
 
             $representationDirectory = $session->getSelectedRepresentationDir();
 
@@ -153,7 +149,8 @@ function processAdaptationSetOfCurrentPeriod()
                 $adaptation_set,
                 $representation,
                 $segment_url,
-                $is_subtitle_rep
+                $is_subtitle_rep,
+                $detailedSegmentOutput
             );
             $logger->write();
             if ($logger->getModuleVerdict("HEALTH") == "FAIL") {
@@ -188,7 +185,7 @@ function processAdaptationSetOfCurrentPeriod()
     }
 
     if ($logger->getModuleVerdict("HEALTH") != "FAIL") {
-    ## Adaptation Sets in current Period finished
+        ## Adaptation Sets in current Period finished
         foreach ($modules as $module) {
             if ($module->isEnabled()) {
                 $module->hookAdaptationSet();
