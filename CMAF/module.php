@@ -112,6 +112,17 @@ class ModuleCMAF extends ModuleInterface
         }
     }
 
+    public function detectFromManifest()
+    {
+        global $mpdHandler;
+        $mpdProfiles = $mpdHandler->getDOM()->getAttribute('profiles');
+        if (strpos($mpdProfiles, 'urn:mpeg:dash:profile:cmaf:2019') !== false) {
+            $this->enabled = true;
+            $this->detected = true;
+        }
+    }
+
+
     public function hookBeforeRepresentation()
     {
         parent::hookBeforeRepresentation();
