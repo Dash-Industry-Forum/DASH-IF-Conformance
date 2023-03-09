@@ -59,6 +59,12 @@ const ConformanceService = (function () {
       queryParam: "autodetect",
       m3u8Compatible: true,
     },
+    {
+      id: "disable-detailed-segment-output",
+      text: "Disable detailed segment validation output",
+      queryParam: "disable_detailed_segment_output",
+      m3u8Compatible: false
+    }
   ];
 
   const BASE_URI = "/Utils/Process_cli.php?";
