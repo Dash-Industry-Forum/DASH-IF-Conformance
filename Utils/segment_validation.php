@@ -167,7 +167,7 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
         $logger->test(
             "Segment Validations",
             "analyze_results()",
-            "stderr filled??",
+            "Output file contains validation results",
             filesize($stdErrPath) !== 0 && filesize($stdErrPath) !== false,
             "FAIL",
             "Contents in stderr.txt found",
@@ -178,7 +178,7 @@ function analyze_results($returncode, $curr_adapt_dir, $representationDirectory)
         $logger->test(
             "Segment Validations",
             "analyze_results()",
-            "stderr filled??",
+            "Output file contains validation results",
             filesize($stdErrPath) !== 0 && filesize($stdErrPath) !== false,
             "FAIL",
             "Contents in stderr.txt found",
@@ -549,7 +549,7 @@ function saveStdErrOutput($representationDirectory, $saveDetailedOutput = true)
         $logger->test(
             "Segment Validation",
             "Segment Validation",
-            "std error output",
+            "Check for content in error log",
             true,
             "PASS",
             "Segment validation did not produce any output",
@@ -578,7 +578,7 @@ function saveStdErrOutput($representationDirectory, $saveDetailedOutput = true)
                 $logger->test(
                     "Segment Validation",
                     "Segment Validation",
-                    "std error output",
+                    "Check for content in error log",
                     $severity == "PASS",
                     $severity,
                     $msg,
@@ -591,11 +591,11 @@ function saveStdErrOutput($representationDirectory, $saveDetailedOutput = true)
             $logger->test(
                 "Segment Validation",
                 "Segment Validation",
-                "std error output",
+                "Check for content in error log",
                 $commonSeverity == "PASS",
                 $commonSeverity,
-                "Segment validation output is not depicted in detail",
-                "Segment validation output is not depicted in detail"
+                "Segment validation did not produce any errors",
+                "Segment validation produced errors but output is not depicted in detail"
             );
         }
     }
