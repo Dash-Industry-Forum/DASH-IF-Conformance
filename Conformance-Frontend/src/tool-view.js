@@ -39,7 +39,6 @@ function ToolView() {
       id: _rootElementId,
       className: "d-flex flex-column",
       children: [
-        { element: "h1", text: "Validator" },
         { id: validatorFormElementId },
         { id: resultsElementId },
       ],

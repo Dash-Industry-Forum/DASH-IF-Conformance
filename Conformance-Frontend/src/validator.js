@@ -147,7 +147,7 @@ function Validator({ modules }) {
     let validator = UI.createElement({
       id: elementId,
       className: "container border rounded p-3 bg-light",
-      style: "max-width: 768px",
+      style: "max-width: 960px",
       children: [
         _state.error
           ? {
@@ -176,13 +176,13 @@ function Validator({ modules }) {
               className: "mb-3 row",
               children: [
                 {
-                  element: "label",
-                  className: "col-sm-2 col-form-label",
+                  element: "h3",
+                  className: "col-sm-3 col-form-label",
                   for: "mpd-url",
                   text: "Manifest",
                 },
                 {
-                  className: "col-sm-10",
+                  className: "col-sm-9",
                   children: [
                     {
                       element: "ul",
@@ -277,12 +277,12 @@ function Validator({ modules }) {
               className: "mb-3 row",
               children: [
                 {
-                  element: "label",
-                  className: "col-sm-2 col-form-label",
-                  text: "Include additional tests",
+                  element: "h3",
+                  className: "col-sm-3 col-form-label",
+                  text: "Enabled Modules",
                 },
                 {
-                  className: "col-sm-10",
+                  className: "col-sm-9",
                   children: modules.map((module) => ({
                     className: "form-check",
                     children: [
