@@ -89,7 +89,8 @@ function ToolView() {
                         let fileName =
                           "val-result-" + new Date().toISOString() + ".json";
                         let type = "application/json";
-                        let data = JSON.stringify(_state.result, null, 2);
+                        let rawResult = _state.result.getRawResult();
+                        let data = JSON.stringify(rawResult, null, 2);
 
                         Tools.downloadFileFromData({ fileName, type, data });
                       },
