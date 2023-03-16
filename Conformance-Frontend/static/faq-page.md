@@ -63,7 +63,7 @@ DASH-IF provides example MPDs also called as test vectors covering various test 
 
 ##### 6. How can I contribute?
 
-The source code is hosted at [https://github.com/Dash-Industry-Forum/DASH-IF-Conformance](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance). To contribute to the software:
+The source code is hosted at <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance" target="_blank">https://github.com/Dash-Industry-Forum/DASH-IF-Conformance</a>. To contribute to the software:
 
 * Fork the repository(-ies) that will be changed in the scope of the contribution
 * Make changes to files locally

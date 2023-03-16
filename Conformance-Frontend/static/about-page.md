@@ -10,4 +10,4 @@ For each corresponding specification, the scope of the validation covers:
 * _Segment validation_ where the media content pointed to by the MPD is validated at container level,
 * _Cross validation_ of the MPD-level elements and attributes as well as of the mediacontent(s) signaled at the same hierarchy.
 
-The DASH-IF Conformance Tool is an open source software available on [GitHub](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance). A live demo of the tool is also provided [here](https://conformance.dashif.org/).
+The DASH-IF Conformance Tool is an open source software available on <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance" target="_blank">Github</a>. A live demo of the tool is also provided <a href="https://conformance.dashif.org/" target="_blank">here</a>.
