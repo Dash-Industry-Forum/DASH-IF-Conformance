@@ -1,5 +1,5 @@
 <?php
-
+global $logger;
 $samplingRate = $adaptation->getAttribute('audioSamplingRate');
 $language = $adaptation->getAttribute('lang');
 $channelConfigurations = $adaptation->getElementsByTagName('AudioChannelConfiguration');
@@ -9,14 +9,14 @@ $roles = $adaptation->getElementsByTagName('Role');
 $roleValue = ($roles->lenght > 0 ? $roles->item(0)->getAttribute('value') : null);
 
 $accessibilities = $adaptation->getElementsByTagName('Accessibility');
-$accessibilityValue = ($accessibilities->length > 0 ? $accessibility->item(0)->getAttribute('value') : null);
+$accessibilityValue = ($accessibilities->length > 0 ? $accessibilities->item(0)->getAttribute('value') : null);
 
-$codecs = $adapt->getAttribute('codecs');
+$codecs = $adaptation->getAttribute('codecs');
 $logger->test(
     "HbbTV-DVB DASH Validation Requirements",
     "HbbTV Secion E.2.1",
     "The audio content referenced by MPD shall only be encoded using audio codecs defined in 7.3.1 (HE-AAC, E-AC-3)",
-    $codecs != null || strpos($codecs, 'mp4a') !== false || strpos($codecs, 'ec-3') !== false,
+    $codecs == null || strpos($codecs, 'mp4a') !== false || strpos($codecs, 'ec-3') !== false,
     "FAIL",
     "Only valid codecs found for adaptation set $adaptationNumber, period $periodNumber",
     "Invalid codecs in $codecs found for adaptation set $adaptationNumber, period $periodNumber"
@@ -70,7 +70,7 @@ foreach ($representations as $representation) {
             "$adaptationNumber, period $periodNumber"
         );
     }
-    if ($channelConfigurations > 0) {
+    if ($channelConfigurations->length > 0) {
         $this->hbbAudioChannelCheck($channelConfigurations, $codecs, $i, $adaptationNumber, $periodNumber);
     } else {
         $channelConfig = $representation->getElementsByTagName('AudioChannelConfiguration');

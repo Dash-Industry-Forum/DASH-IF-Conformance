@@ -7,7 +7,7 @@ global $logger, $mpdHandler;
 
 $onRequestValue = "";
 if (!empty($onRequest_array)) {
-    $onRequestValue  = implode(', ', array_map(
+    $onRequestValue = implode(', ', array_map(
         function ($v, $k) {
             return sprintf(" %s with index (starting from 0) '%s'", $v, $k);
         },
@@ -28,7 +28,7 @@ $logger->test(
 
 $xlinkNotValidValue = "";
 if (!empty($xlink_not_valid_array)) {
-    $xlinkNotValidValue  = implode(', ', array_map(
+    $xlinkNotValidValue = implode(', ', array_map(
         function ($v, $k) {
             return sprintf(" %s with index (starting from 0) '%s'", $v, $k);
         },
@@ -108,53 +108,53 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
     $this->mainVideoFound = 0;
     $this->mainAudioFound = 0;
 
-    foreach ($adapationSets as $adaptationSet) {
+    foreach ($adaptationSets as $adaptationSet) {
         $adaptationCount++;
-        $roles = $adaptation->getElementsByTagName('Role');
+        $roles = $adaptationSet->getElementsByTagName('Role');
 
         $schemeIdUri = '';
         $roleValue = '';
 
         if ($roles->length > 0) {
-             $schemeIdUri = $role->item(0)->getAttribute('schemeIdUri');
-             $roleValue = $role->item(0)->getAttribute('value');
+            $schemeIdUri = $roles->item(0)->getAttribute('schemeIdUri');
+            $roleValue = $roles->item(0)->getAttribute('value');
         }
 
-        $representations = $adapationSet->getElementsByTagName("Representation");
+        $representations = $adaptationSet->getElementsByTagName("Representation");
         $representationCount = $representations->length;
         if (
             $adaptationSet->getAttribute('contentType') == 'video' ||
             $adaptationSet->getAttribute('mimeType') == 'video/mp4' ||
             (
-            $representation->length > 0 &&
-            $representations->item(0)->getAttribute('mimeType') == 'video/mp4'
+                $representations->length > 0 &&
+                $representations->item(0)->getAttribute('mimeType') == 'video/mp4'
             )
         ) {
-            $this->$adaptationVideoCount++;
+            $this->adaptationVideoCount++;
             if (
-                $role->length > 0 && (strpos($schemeIdUri, "urn:mpeg:dash:role:2011") !== false &&
-                $roleValue == "main")
+                $roles->length > 0 && (strpos($schemeIdUri, "urn:mpeg:dash:role:2011") !== false &&
+                    $roleValue == "main")
             ) {
                 $this->mainVideoFound++;
             }
-            $this->hbbVideoRepresentationChecks($adaptation, $adaptationCount, $this->periodCount);
+            $this->hbbVideoRepresentationChecks($adaptationSet, $adaptationCount, $this->periodCount);
         }
         if (
             $adaptationSet->getAttribute('contentType') == 'audio' ||
             $adaptationSet->getAttribute('mimeType') == 'audio/mp4' ||
             (
-            $representation->length > 0 &&
-            $representations->item(0)->getAttribute('mimeType') == 'audio/mp4'
+                $representations->length > 0 &&
+                $representations->item(0)->getAttribute('mimeType') == 'audio/mp4'
             )
         ) {
-            $this->$adaptationAudioCount++;
+            $this->adaptationAudioCount++;
             if (
-                $role->length > 0 && (strpos($schemeIdUri, "urn:mpeg:dash:role:2011") !== false &&
-                $roleValue == "main")
+                $roles->length > 0 && (strpos($schemeIdUri, "urn:mpeg:dash:role:2011") !== false &&
+                    $roleValue == "main")
             ) {
                 $this->mainAudioFound++;
             }
-            $this->hbbAudioRepresentationChecks($adaptation, $adaptationCount, $this->periodCount);
+            $this->hbbAudioRepresentationChecks($adaptationSet, $adaptationCount, $this->periodCount);
         }
     }
 
@@ -183,7 +183,7 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         "HbbTV-DVB DASH Validation Requirements",
         "HbbTV: Section E.2.2",
         "If there is more than one video AdaptationSet, exactly one shall be labelled with Role@value 'main'",
-        $this->adaptationVideoCount <= 1 || $mainVideoFound == 1,
+        $this->adaptationVideoCount <= 1 || $this->mainVideoFound == 1,
         "FAIL",
         "1 or less video adaptations found in period $this->periodCount, or exactly one is labeled 'main'",
         "Invalid video adapatationset configruation found found in period $this->periodCount"
@@ -193,7 +193,7 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         "HbbTV-DVB DASH Validation Requirements",
         "HbbTV: Section E.2.2",
         "If there is more than one audio AdaptationSet, exactly one shall be labelled with Role@value 'main'",
-        $this->adaptationAudioCount <= 1 || $mainAudioFound == 1,
+        $this->adaptationAudioCount <= 1 || $this->mainAudioFound == 1,
         "FAIL",
         "1 or less audio adaptations found in period $this->periodCount, or exactly one is labeled 'main'",
         "Invalid audio adapatationset configruation found found in period $this->periodCount"
