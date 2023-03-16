@@ -70,7 +70,7 @@ foreach ($representations as $representation) {
             "$adaptationNumber, period $periodNumber"
         );
     }
-    if ($channelConfigurations > 0) {
+    if ($channelConfigurations->length > 0) {
         $this->hbbAudioChannelCheck($channelConfigurations, $codecs, $i, $adaptationNumber, $periodNumber);
     } else {
         $channelConfig = $representation->getElementsByTagName('AudioChannelConfiguration');
