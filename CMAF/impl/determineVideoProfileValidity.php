@@ -38,7 +38,6 @@ $testMatrixCoefficients = $logger->test(
     "colour_primaries, transfer_characteristics and matrix_coefficients values from the options listed " .
     "in the table",
     in_array($matrixCoefficients, $validMatrixCoefficients),
-    $matrixCoefficients === "0x1" || $matrixCoefficients === "0x5" || $matrixCoefficients === "0x6",
     "FAIL",
     "Valid matrix coefficients found",
     "Nonvalid matrix coefficients found"
