@@ -210,8 +210,8 @@ $isLowLatencyAdaptation =  (sizeof(array_unique($validRepPoints)) == 1 && $valid
 //NOTE: This does mean that if one option is valid, failing checks for the other will not get merged
 
 
-$x44Logger = new DASHIF\ModuleLogger('');
-$x45Logger = new DASHIF\ModuleLogger('');
+$x44Logger = new DASHIF\ModuleLogger('', $logger->getCurrentModule(), $logger->getCurrentHook());
+$x45Logger = new DASHIF\ModuleLogger('', $logger->getCurrentModule(), $logger->getCurrentHook());
 
 $valid9X44 = $this->validate9X44(
     $adaptationSet,
