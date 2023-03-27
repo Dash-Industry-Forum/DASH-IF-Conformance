@@ -18,9 +18,15 @@ class ModuleLogger
     private $features;
     private $parseArguments;
 
-    public function __construct($id = null)
+    public function __construct($id = null, $module = null, $hook = null)
     {
         $this->reset($id);
+        if ($module){
+          $this->setModule($module);
+        }
+        if ($hook){
+          $this->setHook($hook);
+        }
     }
 
     public function reset($id = null)
