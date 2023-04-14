@@ -52,7 +52,7 @@ for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex
         $hdlrType = $hdlrBox->getAttribute("handler_type");
 
         $mediaProfileResult = $this->getMediaProfile($xml, $hdlrType, $fileIndex, $adaptationIndex);
-        array_push($switchingSetMediaProfiles, $mediaProfileResult[0]);
+        array_push($switchingSetMediaProfiles, $mediaProfileResult);
 
         if ($hdlrType == "vide") {
             $videoSelectionSetFound = 1;
