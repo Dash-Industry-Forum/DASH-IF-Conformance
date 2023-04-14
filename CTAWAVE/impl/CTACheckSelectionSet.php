@@ -52,7 +52,7 @@ for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex
         $hdlrBox = $xml->getElementsByTagName("hdlr")->item(0);
         $hdlrType = $hdlrBox->getAttribute("handler_type");
         $mediaProfileTrackResult = $this->getMediaProfile($xml, $hdlrType, $fileIndex, $adaptationIndex);
-        $mediaProfileTrack = $mediaProfileTrackResult[0];
+        $mediaProfileTrack = $mediaProfileTrackResult;
 
         //Update the MP database for future checks
         $MediaProfDatabase[$mpdHandler->getSelectedPeriod()][$adaptationIndex][$fileIndex] = $mediaProfileTrack;
