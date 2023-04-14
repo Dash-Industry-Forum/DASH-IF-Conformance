@@ -176,9 +176,9 @@ class ModuleCTAWAVE extends ModuleInterface
         return include 'impl/checkAudioChannelSplicePoint.php';
     }
 
-    private function CTACheckPresentation()
+    private function CTACheckPresentation($adaptationCount = null, $periodIndex = null)
     {
-        include 'impl/CTACheckPresentation.php';
+        return include 'impl/CTACheckPresentation.php';
     }
     private function CTACheckSelectionSet()
     {

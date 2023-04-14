@@ -2,7 +2,9 @@
 
 global $logger, $session, $mpdHandler;
 
-$adaptationCount = sizeof($mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet']);
+if (is_null($adaptationCount)) {
+    $adaptationCount = sizeof($mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet']);
+}
 
 $chfdSwitchingSetFound = 0;
 $videoSelectionSetFound = 0;
@@ -19,7 +21,10 @@ $presentationProfile = "";
 for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex++) {
     $switchingSetMediaProfiles = array();
     $encryptedTracks = array();
-    $location = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $adaptationIndex);
+    if(is_null($periodIndex)) {
+        $periodIndex = $mpdHandler->getSelectedPeriod();
+    }
+    $location = $session->getAdaptationDir($periodIndex, $adaptationIndex);
     $fileCount = 0;
     $files = DASHIF\rglob("$location/*.xml");
     if ($files) {
@@ -174,9 +179,10 @@ if (in_array("", $presentationProfileArray)) {
 }
 
 
-if ($presentationProfile != ""){
+if ($presentationProfile != "") {
 
 }
 
 $logger->message("Stream found to conform to a CMAF Presentation Profile: $presentationProfile");
 
+return $presentationProfile;
