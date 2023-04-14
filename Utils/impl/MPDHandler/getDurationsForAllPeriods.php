@@ -37,7 +37,7 @@ for ($i = 0; $i < sizeof($periods); $i++) {
         }
     }
 
-    if ($periodDuration != '') {
+    if ($periodDuration != '' && $periodDuration != null) {
         $duration = DASHIF\Utility\timeParsing($periodDuration);
     } else {
         if ($i != sizeof($periods) - 1) {

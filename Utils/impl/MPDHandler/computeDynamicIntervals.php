@@ -45,7 +45,7 @@ $buffercapacity = $bufferduration / $segmentduration; //actual buffer capacity
 date_default_timezone_set("UTC"); //Set default timezone to UTC
 $now = time(); // Get actual time
 $AST = strtotime($AST);
-$LST = $now - ($AST + $period_timing_info[0] - $pto - $availabilityTimeOffset - $segmentduration);
+$LST = $now - ($AST + $period_timing_info["start"] - $pto - $availabilityTimeOffset - $segmentduration);
 $LSN = intval($LST / $segmentduration);
 $earliestsegment = $LSN - $buffercapacity * $percent;
 

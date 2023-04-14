@@ -11,7 +11,7 @@ foreach ($segment_access as $seg_acc) {
     $duration = ($seg_acc['duration'] != '') ? (int)($seg_acc['duration']) : 0;
     $timescale = ($seg_acc['timescale'] != '') ? (int)($seg_acc['timescale']) : 1;
 
-    $pres_start = $period_timing_info[0] - $pto / $timescale;
+    $pres_start = $period_timing_info["start"] - $pto / $timescale;
 
     $segtimeline = $seg_acc['SegmentTimeline'];
     if ($segtimeline != null && sizeof($segtimeline) != 0) {
@@ -37,7 +37,7 @@ foreach ($segment_access as $seg_acc) {
                         $index++;
                     }
                 } else {
-                    $segment_cnt = ceil($period_timing_info[1] / $segmentDuration);
+                    $segment_cnt = ceil($period_timing_info["duration"] / $segmentDuration);
 
                     for ($i = 0; $i < $segment_cnt; $i++) {
                         $mpd_timing[] = $pres_start + $i * $segmentDuration;
@@ -54,7 +54,7 @@ foreach ($segment_access as $seg_acc) {
             $mpd_timing[] = $pres_start;
         } else {
             $segmentDuration = $duration / $timescale;
-            $segment_cnt = $period_timing_info[1] / $segmentDuration;
+            $segment_cnt = $period_timing_info["duration"] / $segmentDuration;
 
             for ($i = 0; $i < $segment_cnt; $i++) {
                 $mpd_timing[] = $pres_start + $i * $segmentDuration;
