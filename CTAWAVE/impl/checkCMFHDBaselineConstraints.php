@@ -9,7 +9,7 @@ $presentationProfileArray = array();
 for ($i = 0; $i < $periodCount; $i++) {
     $adaptationCount = sizeof($MediaProfDatabase[$i]);
     $presentationProfile = $this->CTACheckPresentation($adaptationCount, $i);
-    array_push($presentationProfileArray, $presentationProfile);
+    $presentationProfileArray[] = $presentationProfile;
 }
 
 $logger->test(
