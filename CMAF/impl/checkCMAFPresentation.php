@@ -17,7 +17,7 @@ $trackDurArray = array();
 $longestFragmentDuration = 0;
 $videoFragDur = 0;
 
-$presentationDuration = $period_timing_info[1];
+$presentationDuration = $period_timing_info["duration"];
 $adaptationSets = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'];
 for ($adaptationSetIndex = 0; $adaptationSetIndex < sizeof($adaptationSets); $adaptationSetIndex++) {
     $adaptationSet = $adaptationSets[$adaptationSetIndex];

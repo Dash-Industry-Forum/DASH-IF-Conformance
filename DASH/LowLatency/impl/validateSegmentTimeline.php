@@ -42,7 +42,7 @@ foreach ($segementElements as $sIndex => $s) {
 
     if ($r < 0) {
         $until = ($sIndex != $segmentElementCount - 1) ?
-          $segmentElements[$sIndex + 1]['t'] : $period_timing_info[1] * $timescale;
+          $segmentElements[$sIndex + 1]['t'] : $period_timing_info["duration"] * $timescale;
         while ($t < $until) {
             $logger->test(
                 "DASH-IF IOP CR Low Latency Live",

@@ -280,7 +280,7 @@ function run_backend($configFile, $representationDirectory = "")
 
     $atomXmlString = file_get_contents("$sessionDirectory/atominfo.xml");
     $STYPBeginPos = strpos($atomXmlString, "<styp");
-    if ($STYPBugPos !== false) {
+    if ($STYPBeginPos !== false) {
         //try with newline for prettyprinted
         $emptyCompatBrands = strpos($atomXmlString, "compatible_brands='[\n  </styp>", $STYPBeginPos);
         if ($emptyCompatBrands === false) {
@@ -348,8 +348,12 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     fwrite($file, "$representationDirectory/assemblerInfo.txt \n");
 
     if (!$is_dolby) {
-        fwrite($file, "-offsetinfo" . "\n");
-        fwrite($file, "$representationDirectory/mdatoffset \n");
+        if (file_exists("$representationDirectory/mdatoffset") && filesize("$representationDirectory/mdatoffset") > 0) {
+            fwrite($file, "-offsetinfo" . "\n");
+            fwrite($file, "$representationDirectory/mdatoffset \n");
+        } else {
+            fwrite($file, "-c 1" . "\n");
+        }
     }
 
     $flags = (!$hls_manifest) ? construct_flags(
@@ -497,7 +501,7 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
     $segmentDur = array();
     $num_segments = sizeof($segmentsTime[0]);
     if ($mpdHandler->getSelectedPeriod() == 0) {
-        $pres_start = $period_timing_info[0] + $PTO;
+        $pres_start = $period_timing_info["start"] + $PTO;
     } else {
         $pres_start = $PTO;
     }

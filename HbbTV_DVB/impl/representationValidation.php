@@ -21,7 +21,7 @@ if ($xmlRepresentation) {
     $this->segmentTimingCommon($xmlRepresentation);
     $this->bitrateReport($xmlRepresentation);
     $segmentDurationName = $this->segmentDurationChecks();
-    if ($period_timing_info[1] !== '' && $period_timing_info[1] !== 0) {
+    if ($period_timing_info["duration"] !== '' && $period_timing_info["duration"] !== 0) {
         $checks = $this->segmentToPeriodDurationCheck($xmlRepresentation);
         $logger->test(
             "HbbTV-DVB DASH Validation Requirements",

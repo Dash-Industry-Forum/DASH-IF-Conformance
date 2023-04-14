@@ -15,7 +15,7 @@ for ($j = 0; $j < $moofBoxCount; $j++) {
     $totalSegmentDuration += $segmentDuration;
 }
 
-$periodDuration = (float)$period_timing_info[1];
+$periodDuration = (float)$period_timing_info["duration"];
 
 $drift = 0;
 if (round($periodDuration, 2) != 0) {
