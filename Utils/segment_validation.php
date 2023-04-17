@@ -545,6 +545,7 @@ function saveStdErrOutput($representationDirectory, $saveDetailedOutput = true)
     $currentModule = $logger->getCurrentModule();
     $currentHook = $logger->getCurrentHook();
     $logger->setModule("SEGMENT_VALIDATION");
+    $logger->setHook("Segment Validation");
 
     $content = file_get_contents("$representationDirectory/stderr.txt");
     $contentArray = explode("\n", $content);
@@ -553,7 +554,7 @@ function saveStdErrOutput($representationDirectory, $saveDetailedOutput = true)
         $logger->test(
             "Segment Validation",
             "Segment Validation",
-            "Check for content in error log",
+            "Segment validator output should not contain errors",
             true,
             "PASS",
             "Segment validation did not produce any output",
@@ -582,7 +583,7 @@ function saveStdErrOutput($representationDirectory, $saveDetailedOutput = true)
                 $logger->test(
                     "Segment Validation",
                     "Segment Validation",
-                    "Check for content in error log",
+                    "Segment validator output should not contain errors",
                     $severity == "PASS",
                     $severity,
                     $msg,
@@ -595,7 +596,7 @@ function saveStdErrOutput($representationDirectory, $saveDetailedOutput = true)
             $logger->test(
                 "Segment Validation",
                 "Segment Validation",
-                "Check for content in error log",
+                "Segment validator output should not contain errors",
                 $commonSeverity == "PASS",
                 $commonSeverity,
                 "Segment validation did not produce any errors",
