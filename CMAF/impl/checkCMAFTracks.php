@@ -370,8 +370,8 @@ if ($hdlrType == 'vide' && ($sdType == 'avc1' || $sdType == 'avc3')) {
             "decoded and displayed when independently accessed",
             $numberOfUnitsInTick != null && $timeScale != null,
             "FAIL",
-            "FPS info found for representation / track $id",
-            "FPS info not found for representation / track $id",
+            "FPS info (num_ticks & timescale) found for representation / track $id",
+            "FPS info (num_ticks & timescale) not found for representation / track $id",
         );
     }
 }
