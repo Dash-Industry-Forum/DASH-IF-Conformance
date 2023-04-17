@@ -139,10 +139,10 @@ class ModuleLogger
     public function test($spec, $section, $test, $check, $fail_type, $msg_succ, $msg_fail)
     {
         if ($check) {
-            $this->addTestResult($spec, $section, $test, $msg_succ, "PASS");
+            $this->addTestResult($spec, $section, $test, "✓ " . $msg_succ, "PASS");
             return true;
         } else {
-            $this->addTestResult($spec, $section, $test, $msg_fail, $fail_type);
+            $this->addTestResult($spec, $section, $test, ($fail_type == "WARN" ? "! " : "✗ ") . $msg_fail, $fail_type);
             return false;
         }
     }
