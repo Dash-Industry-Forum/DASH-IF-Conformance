@@ -34,7 +34,7 @@ if ($xml->getElementsByTagName('hdlr')->item(0)) {
 $adaptationSet = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]
                                            ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
 
-$errorInTrack = 0;
+$noErrorInTrack = true;
 $id = $adaptationSet['Representation'][$mpdHandler->getSelectedAdaptationSet()]['id'];
 $moofBoxes = $xml->getElementsByTagName('moof');
 $moofBoxesCount = $moofBoxes->length;
@@ -100,7 +100,7 @@ for ($j = 1; $j < $moofBoxesCount; $j++) {
     $previousFragmentDecodeTime = $tfdtBoxes->item($j - 1)->getAttribute('baseMediaDecodeTime');
     $currentFragmentDecodeTime = $tfdtBoxes->item($j)->getAttribute('baseMediaDecodeTime');
 
-    $errorInTrack |= $logger->test(
+    $noErrorInTrack &= $logger->test(
         "CMAF",
         "Section 7.3.2.2",
         "Each CMAF Fragment in a CMAF Track SHALL have baseMediaDecodeTime equal to the sum of all prior " .
@@ -110,7 +110,7 @@ for ($j = 1; $j < $moofBoxesCount; $j++) {
         "Representation $id Fragment $j valid",
         "Representation $id Fragment $j does not have a valid baseMediaDecodeTime"
     );
-    $errorInTrack |= $logger->test(
+    $noErrorInTrack &= $logger->test(
         "CMAF",
         "Section 7.3.2.3",
         "CMAF Chunks in a CMAF Track SHALL NOT overlap or have gaps in decode time",
@@ -178,7 +178,7 @@ $logger->test(
     "Section 7.3.2.2",
     "The concatenation of a CMAF Header and all CMAF Fragments in the CMAF Track in consecutive decode order " .
     "SHALL be a valid fragmented ISOBMFF file",
-    !$errorInTrack,
+    $noErrorInTrack,
     "FAIL",
     "Representation $id valid",
     "Representation $id not valid"
