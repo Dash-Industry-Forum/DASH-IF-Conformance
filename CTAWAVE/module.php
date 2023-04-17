@@ -7,6 +7,7 @@ class ModuleCTAWAVE extends ModuleInterface
     private $mediaProfileAttributesAudio;
     private $mediaProfileAttributesVideo;
     private $mediaProfileAttributesSubtitle;
+    private $presentationProfile;
 
     public function __construct()
     {
