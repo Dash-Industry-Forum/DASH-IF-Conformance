@@ -183,5 +183,7 @@ if ($presentationProfile != ""){
   $logger->message("Stream found to conform to a CMAF Presentation Profile: $presentationProfile");
 }
 
+$this->presentationProfile = $presentationProfile;
+
 
 return $presentationProfile;
