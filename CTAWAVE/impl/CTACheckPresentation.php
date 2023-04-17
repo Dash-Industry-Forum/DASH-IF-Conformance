@@ -179,10 +179,9 @@ if (in_array("", $presentationProfileArray)) {
 }
 
 
-if ($presentationProfile != "") {
-
+if ($presentationProfile != ""){
+  $logger->message("Stream found to conform to a CMAF Presentation Profile: $presentationProfile");
 }
 
-$logger->message("Stream found to conform to a CMAF Presentation Profile: $presentationProfile");
 
 return $presentationProfile;
