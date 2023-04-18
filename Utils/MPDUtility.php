@@ -74,6 +74,7 @@ function profileListContainsAtLeastOne($list, $profiles)
     }
     return false;
 }
+
 function mpdProfilesContainsAtLeastOne($profiles)
 {
     global $mpdHandler;
@@ -118,7 +119,7 @@ function nextElementSibling($node)
 
 function timeParsing($var)
 {
-     return include 'impl/MPDUtility/timeParsing.php';
+    return include 'impl/MPDUtility/timeParsing.php';
 }
 
 
@@ -140,7 +141,7 @@ function checkYearMonth($str)
     }
 
     $duration = ($Y[0] * 365 * 24 * 60 * 60) +
-                ($Mo[0] * 30 * 24 * 60 * 60);
+        ($Mo[0] * 30 * 24 * 60 * 60);
 
     return ($duration > 0);
 }
@@ -167,18 +168,20 @@ function formSegmentAccess($highLevel, $lowLevel)
             if (!$lowValue[$k]) {
                 $lowValue[$k] = $v;
             } elseif (gettype($lowValue[$k]) == 'array') {
-              //$v would also work, but this is more clear in meaning
+                //$v would also work, but this is more clear in meaning
                 $lowValue[$k] = formSegmentAccess($highValue[$k], $lowValue[$k]);
             }
         }
+        $lowLevel[$key] = $lowValue;
     }
+    return $lowLevel;
 }
 
 function parseDoc($path)
 {
     $return_val = false;
 
-    $contents  = file_get_contents($path);
+    $contents = file_get_contents($path);
 
     $loaded = simplexml_load_file($path);
     if (!$loaded) {
