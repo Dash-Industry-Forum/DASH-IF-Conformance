@@ -479,10 +479,11 @@ function loadSegmentInfoFile($PresTimeOffset, $duration, $representationDirector
         for ($j = 0; $j < $info['numLeafs'][$i]; $j++) {
             fscanf(
                 $segmentInfoFile,
-                "%d %f %f\n",
+                "%d %f %f %f\n",
                 $info['leafInfo'][$i][$j]['firstInSegment'],
                 $info['leafInfo'][$i][$j]['earliestPresentationTime'],
-                $info['leafInfo'][$i][$j]['lastPresentationTime']
+                $info['leafInfo'][$i][$j]['lastPresentationTime'],
+                $info['leafInfo'][$i][$j]['presentationEndTime']
             );
         }
     }
@@ -498,7 +499,6 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
         return;
     }
 
-    $segmentDur = array();
     $num_segments = sizeof($segmentsTime[0]);
     if ($mpdHandler->getSelectedPeriod() == 0) {
         $pres_start = $period_timing_info["start"] + $PTO;
@@ -507,20 +507,45 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
     }
 
     $segmentDurMPD = $duration;
-    for ($i = 0; $i < $num_segments; $i++) {
-        $segmentDur[$i] =
-            $segmentsTime[0][$i]['lastPresentationTime'] - $segmentsTime[0][$i]['earliestPresentationTime'];
 
-        $logger->test(
-            "DASH ISO/IEC 23009-1",
-            "Section 7.2.1",
-            "The maximum tolerance of segment duration shall be +/-50% of the signaled segment duration",
-            ($i != ($num_segments - 1) && $segmentDurMPD * 0.5 > $segmentDur[$i]) &&
-            $segmentDur[$i] <= $segmentDurMPD * 1.5,
-            "FAIL",
-            "Segment $i with duration " . $segmentDur[$i] . " is within bounds of signaled " . $segmentDurMPD,
-            "Segment $i with duration " . $segmentDur[$i] . " violates bounds of signaled " . $segmentDurMPD
-        );
+    // We might have multiple moof/mdat boxes in one segment. Combine their duration to get the duration of the complete segment
+    $totalSegmentTimes = array();
+    $currentEntry = null;
+    for ($i = 0; $i < $num_segments; $i++) {
+        $currentSegmentTime = $segmentsTime[0][$i];
+        if ($currentSegmentTime['firstInSegment']) {
+            if (!is_null($currentEntry)) {
+                $totalSegmentTimes[] = $currentEntry;
+            }
+            $currentEntry = array();
+            $currentEntry['earliestPresentationTime'] = $currentSegmentTime['earliestPresentationTime'];
+            $currentEntry['duration'] = 0;
+        }
+        $referenceTime = is_null($currentSegmentTime['presentationEndTime']) ? $currentSegmentTime['lastPresentationTime'] : $currentSegmentTime['presentationEndTime'];
+        $currentEntry['duration'] += $referenceTime - $currentSegmentTime['earliestPresentationTime'];
+    }
+    //push last element
+    if (!is_null($currentEntry)) {
+        $totalSegmentTimes[] = $currentEntry;
+    }
+    // Compare duration of our total segment times
+    $numTotalSegmentTimes = sizeof($totalSegmentTimes);
+    $segmentDur = array();
+    for ($i = 0; $i < $numTotalSegmentTimes; $i++) {
+        $segmentDur[$i] = $totalSegmentTimes[$i]['duration'];
+
+        // Do not check the last segment as we are missing the correct presentationEndTime in leafInfo.txt
+        if ($i < ($num_segments - 1)) {
+            $logger->test(
+                "DASH ISO/IEC 23009-1",
+                "Section 7.2.1",
+                "The maximum tolerance of segment duration shall be +/-50% of the signaled segment duration",
+                ($segmentDur[$i] >= $segmentDurMPD * 0.5 && $segmentDur[$i] <= $segmentDurMPD * 1.5),
+                "FAIL",
+                "Segment $i with duration " . $segmentDur[$i] . " is within bounds of signaled " . $segmentDurMPD,
+                "Segment $i with duration " . $segmentDur[$i] . " violates bounds of signaled " . $segmentDurMPD
+            );
+        }
 
         $MPDSegmentStartTime = $pres_start + $i * $segmentDurMPD;
 
@@ -529,11 +554,11 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
             "Section 7.2.1",
             "The difference between MPD start time and presentation time shall not exceed +/-50% of value of " .
             "@duration divided by the value of the @timescale attribute",
-            $MPDSegmentStartTime - (0.5 * $segmentDurMPD) <= $segmentsTime[0][$i]['earliestPresentationTime'] &&
-            $segmentsTime[0][$i]['earliestPresentationTime'] <= $MPDSegmentStartTime + (0.5 * $segmentDurMPD),
+            $MPDSegmentStartTime - (0.5 * $segmentDurMPD) <= $totalSegmentTimes[$i]['earliestPresentationTime'] &&
+            $totalSegmentTimes['earliestPresentationTime'] <= $MPDSegmentStartTime + (0.5 * $segmentDurMPD),
             "FAIL",
-            "Correct for segment $i with duration " . $segmentsTime[0][$i]['earliestPresentationTime'],
-            "Incorrect for segment $i with duration " . $segmentsTime[0][$i]['earliestPresentationTime']
+            "Correct for segment $i with duration " . $totalSegmentTimes[$i]['earliestPresentationTime'],
+            "Incorrect for segment $i with duration " . $totalSegmentTimes[$i]['earliestPresentationTime']
         );
     }
 }
