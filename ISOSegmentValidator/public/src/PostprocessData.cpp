@@ -1142,9 +1142,9 @@ void processBuffering(SInt32 cnt, atomOffsetEntry *list, MovieInfoRec *mir) {
 		if(currentBandwidth > vg.bandwidth && mpd_val_conf)
 			currentBandwidth = (long double)vg.bandwidth;
 		if(mpd_val_conf)
-			fprintf(stderr, "According to DASH-IF IOP Section 3.2.8 @bandwidth of the Representation (%ld bps) is set too high given the @minimumBufferTime (%ld s), the minimum @bandwidth value required to conform is %ld bps.\n", (long) vg.bandwidth, (long) vg.minBufferTime, (long) currentBandwidth);
+			fprintf(stderr, "According to DASH-IF IOP Section 3.2.8 @bandwidth of the Representation (%ld bps) is set too high given the @minimumBufferTime (%f s), the minimum @bandwidth value required to conform is %ld bps.\n", (long) vg.bandwidth, (float) vg.minBufferTime, (long) currentBandwidth);
 		else
-			errprint("According to DASH-IF IOP Section 3.2.8 @bandwidth of the Representation (%ld bps) is set too low given the @minimumBufferTime (%ld s), the minimum @bandwidth value required to conform is %ld bps.\n", (long) vg.bandwidth, (long) vg.minBufferTime, (long) currentBandwidth);
+			errprint("According to DASH-IF IOP Section 3.2.8 @bandwidth of the Representation (%ld bps) is set too low given the @minimumBufferTime (%f s), the minimum @bandwidth value required to conform is %ld bps.\n", (long) vg.bandwidth, (float) vg.minBufferTime, (long) currentBandwidth);
 
 		/*if (trackNonConforming || (currentBandwidth != (long double) vg.bandwidth) ) //Latter means vg.suggestBandwidth is set and new bw is calculated
 		{
