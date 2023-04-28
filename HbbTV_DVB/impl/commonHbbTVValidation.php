@@ -182,7 +182,7 @@ if ($hdlrType == 'vide') {
         );
     }
 } elseif ($hdlrType == 'soun') {
-    $soundSampleDescription = $xmlRepresentation->getElementsByTagName('soundSampleDescriptiondescription');
+    $soundSampleDescription = $xmlRepresentation->getElementsByTagName('soun_sampledescription');
     $sdType = null;
     $samplingRate = null;
     if ($soundSampleDescription->item(0)) {
