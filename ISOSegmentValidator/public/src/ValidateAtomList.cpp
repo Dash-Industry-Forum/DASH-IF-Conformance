@@ -1230,10 +1230,6 @@ OSErr Validate_ftyp_Atom( atomOffsetEntry *aoe, void *refcon )
 						int64toxstr((UInt64) version));
 
 	vg.majorBrand = majorBrand;
-	if( majorBrand == brandtype_isom ) {
-		// the isom can only be a compatible brand
-		errprint("The brand 'isom' can only be a compatible, not major, brand\n");
-	}
 	
 	if(vg.cmaf){
 			if((majorBrand=='cmfc' || majorBrand=='cmf2') && version != 0)
@@ -1325,10 +1321,6 @@ OSErr Validate_styp_Atom( atomOffsetEntry *aoe, void *refcon )
 						int64toxstr((UInt64) version));
 
 	vg.majorBrand = majorBrand;
-	if( majorBrand == brandtype_isom ) {
-		// the isom can only be a compatible brand
-		errprint("The brand 'isom' can only be a compatible, not major, brand\n");
-	}
 	
 	compatBrandListSize = (UInt32)(aoe->size - 8 - aoe->atomStartSize);
 	numCompatibleBrands = compatBrandListSize / sizeof(OSType);
