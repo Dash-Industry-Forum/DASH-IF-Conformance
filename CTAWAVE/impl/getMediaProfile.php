@@ -109,7 +109,7 @@ if ($hdlrType == 'vide') {
         }
 
         for ($nalIndex = 0; $nalIndex < $nalUnits->length; $nalIndex++) {
-            if ($nalUnits->item($nalIndex)->getAttribute("nalUnits_type") == "33") {
+            if ($nalUnits->item($nalIndex)->getAttribute("nal_unit_type") == "33") {
                 $spsIndex = $nalIndex;
                  break;
             }

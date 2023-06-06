@@ -91,7 +91,7 @@ if ($hdlrType == 'vide') {
         $nalUnits = $xml->getElementsByTagName("NALUnit");
         if ($nalUnits->length != 0) {
             for ($nalIndex = 0; $nalIndex < $nalUnits->length; $nalIndex++) {
-                if ($nalUnits->item($nalIndex)->getAttribute("nalUnits_type") == "33") {
+                if ($nalUnits->item($nalIndex)->getAttribute("nal_unit_type") == "33") {
                     $spsUnitIndex = $nalIndex;
                     break;
                 }
