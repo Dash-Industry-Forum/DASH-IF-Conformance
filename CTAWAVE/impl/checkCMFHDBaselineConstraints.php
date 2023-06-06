@@ -10,5 +10,5 @@ $logger->test(
     $this->presentationProfile == "CMFHD",
     "FAIL",
     "All CMAF Switching sets are CMFHD conformant",
-    "Not all CMAF Switching sets are CMFHD conformant, found $presentationProfile"
+    "Not all CMAF Switching sets are CMFHD conformant, found $this->presentationProfile"
 );
