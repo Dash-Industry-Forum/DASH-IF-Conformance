@@ -21,7 +21,7 @@ $presentationProfile = "";
 for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex++) {
     $switchingSetMediaProfiles = array();
     $encryptedTracks = array();
-    if(is_null($periodIndex)) {
+    if (is_null($periodIndex)) {
         $periodIndex = $mpdHandler->getSelectedPeriod();
     }
     $location = $session->getAdaptationDir($periodIndex, $adaptationIndex);
@@ -108,6 +108,7 @@ for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex
 
 
 $presentationProfileArray = array();
+$conforms = false;
 if ($videoSelectionSetFound) {
     $conforms = $logger->test(
         "CTAWAVE",
@@ -119,14 +120,11 @@ if ($videoSelectionSetFound) {
         "Switching set found",
         "Switching set not found"
     );
-    if ($conforms) {
-        array_push(
-            $presentationProfileArray,
-            $this->getPresentationProfile($encryptedTrackFound, $cencSwSetFound, $cbcsSwSetFound)
-        );
-    } else {
-        array_push($presentationProfileArray, "");
-    }
+
+    array_push(
+        $presentationProfileArray,
+        $this->getPresentationProfile($encryptedTrackFound, $cencSwSetFound, $cbcsSwSetFound));
+
 }
 if ($audioSelectionSetFound) {
     $conforms = $logger->test(
@@ -139,14 +137,12 @@ if ($audioSelectionSetFound) {
         "Switching set found",
         "Switching set not found"
     );
-    if ($conforms) {
-        array_push(
-            $presentationProfileArray,
-            $this->getPresentationProfile($encryptedTrackFound, $cencSwSetFound, $cbcsSwSetFound)
-        );
-    } else {
-        array_push($presentationProfileArray, "");
-    }
+
+    array_push(
+        $presentationProfileArray,
+        $this->getPresentationProfile($encryptedTrackFound, $cencSwSetFound, $cbcsSwSetFound)
+    );
+
 }
 if ($subtitleSelectionSetFound) {
     $conforms = $logger->test(
@@ -159,14 +155,10 @@ if ($subtitleSelectionSetFound) {
         "Switching set found",
         "Switching set not found"
     );
-    if ($conforms) {
-        array_push(
-            $presentationProfileArray,
-            $this->getPresentationProfile($encryptedTrackFound, $cencSwSetFound, $cbcsSwSetFound)
-        );
-    } else {
-        array_push($presentationProfileArray, "");
-    }
+    array_push(
+        $presentationProfileArray,
+        $this->getPresentationProfile($encryptedTrackFound, $cencSwSetFound, $cbcsSwSetFound)
+    );
 }
 
 
@@ -179,8 +171,8 @@ if (in_array("", $presentationProfileArray)) {
 }
 
 
-if ($presentationProfile != ""){
-  $logger->message("Stream found to conform to a CMAF Presentation Profile: $presentationProfile");
+if ($presentationProfile != "" && $conforms) {
+    $logger->message("Stream found to conform to a CMAF Presentation Profile: $presentationProfile");
 }
 
 $this->presentationProfile = $presentationProfile;
