@@ -2395,6 +2395,12 @@ OSErr Validate_vide_SD_Entry( atomOffsetEntry *aoe, void *refcon )
 						atomerr= Validate_hvcC_Atom( entry, refcon, (char *)"hvcC" );
 												if (!err) err = atomerr;
 					}
+					else if (entry->type == 'pasp') {
+                    	BAILIFERR( Validate_pasp_Atom( entry, refcon, (char *)"pasp" ) );
+                    }
+                    else if ( entry->type == 'btrt'){
+                    	BAILIFERR( Validate_btrt_Atom( entry, refcon, (char *)"btrt" ) );
+                    }
 					else {
 						err = badAtomErr;
 						warnprint("Warning: In %s - unknown atom found \"%s\": video sample descriptions would not normally contain this\n",vg.curatompath, ostypetostr(entry->type));
