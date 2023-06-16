@@ -6,6 +6,7 @@ function MainView() {
   const locations = [
     { id: "home", text: "Validator", icon: "fa-solid fa-gears", view: ToolView },
     { id: "about", text: "About", icon: "fa-solid fa-info-circle", view: AboutView },
+    { id: "statistics", text: "Statistics", icon: "fa-solid fa-bar-chart", view: StatisticsView },
     { id: "faq", text: "FAQ", icon: "fa-solid fa-question-circle", view: FaqView },
   ];
 
