@@ -78,7 +78,7 @@ function profileListContainsAtLeastOne($list, $profiles)
 function mpdProfilesContainsAtLeastOne($profiles)
 {
     global $mpdHandler;
-    return profileListContainsAtLeastOne($mpdHandler->getDom()->getAttribute('profiles'), $profile);
+    return profileListContainsAtLeastOne($mpdHandler->getDom()->getAttribute('profiles'), $profiles);
 }
 
 function mediaTypes()
