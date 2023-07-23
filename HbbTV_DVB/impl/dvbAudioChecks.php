@@ -15,7 +15,7 @@ $roleValues = array();
 
 foreach ($roles as $role) {
     if ($role->getAttribute('schemeIdUri') == 'urn:mpeg:dash:role:2011') {
-        $adaptationSpecificRoleCountcount++;
+        $adaptationSpecificRoleCount++;
         $roleValues[] = $role->getAttribute('value');
 
         if ($role->getAttribute('value') == 'main') {
