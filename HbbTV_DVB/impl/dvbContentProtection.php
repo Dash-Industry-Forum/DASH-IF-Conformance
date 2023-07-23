@@ -26,9 +26,9 @@ $logger->test(
     "DVB: Section 8.4",
     "Any Adaptation Set containing protected content SHALL contain one \"mp4protection\" ContentProtection " .
     "descriptor with @schemeIdUri=\"urn:mped:dash:mp4protection:2011\" and @value=\"cenc\"",
-    empty($contentProtection) || $protectionCount > 0,
+    count($contentProtection) == 0 || $protectionCount > 0,
     "FAIL",
-    "Found at least one element in $this->periodCount, adaptation $i",
+    "Non protected content or protected content with at least one correct ContentProtection descriptor in $this->periodCount, adaptation $i",
     "Not found in $this->periodCount, adaptation $i"
 );
 if (!empty($contentProtection) && $protectionCount == 0) {
