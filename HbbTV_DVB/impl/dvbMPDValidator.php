@@ -144,13 +144,13 @@ if ($type == 'dynamic' || $AST != '') {
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
         "DVB: Section 4.7.2",
-        "'If the MPD is dynamic or if the MPD@availabilityStartTime is present then the MPD SHOULD countain at least " .
+        "'If the MPD is dynamic or if the MPD@availabilityStartTime is present then the MPD SHOULD contain at least " .
         "one UTCTiming element with the @schemeIdUri attribute set to one of the following: " .
-        join(', ', $acceptedTimingURIs),
+        join(', ', $acceptedURIs),
         $utcTimingValid,
         "WARN",
         "At least one valid UTCTiming element found",
-        "None of thevalid UTCTiming elements found"
+        "None of the valid UTCTiming elements found"
     );
 }
 
