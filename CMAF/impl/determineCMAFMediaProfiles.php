@@ -1,14 +1,12 @@
 <?php
 
-global $CMAFMediaProfileAttributesVideo, $CMAFMediaProfileAttributesAudio, $CMAFMediaProfileAttributesSubtitle;
-
 global $logger;
 
 $compatibleBrands = $xml->getElementsByTagName("ftyp")->item(0)->getAttribute("compatibleBrands");
 $hdlrType = $xml->getElementsByTagName("hdlr")->item(0)->getAttribute("handler_type");
 
 if ($hdlrType == 'vide') {
-    $mediaProfileParameters = $CMAFMediaProfileAttributesVideo;
+    $mediaProfileParameters = $this->CMAFMediaProfileAttributesVideo;
     $videoSampleDescription = $xml->getElementsByTagName("vide_sampledescription")->item(0);
     $sdType = $videoSampleDescription->getAttribute("sdType");
 
@@ -137,7 +135,7 @@ if ($hdlrType == 'vide') {
     return $this->getVideoTrackMediaProfile($mediaProfileParameters);
 }
 if ($hdlrType == 'soun') {
-    $mediaProfileParameters = $CMAFMediaProfileAttributesAudio;
+    $mediaProfileParameters = $this->CMAFMediaProfileAttributesAudio;
     $audioSampleDescription = $xml->getElementsByTagName("soun_sampledescription")->item(0);
     $sdType = $audioSampleDescription->getAttribute("sdType");
     if ($sdType == "mp4a") {
@@ -164,7 +162,7 @@ if ($hdlrType == 'soun') {
     return $this->getAudioTrackMediaProfile($mediaProfileParameters);
 }
 if ($hdlrType == 'text') {
-    $mediaProfileParameters = $CMAFMediaProfileAttributesSubtitle;
+    $mediaProfileParameters = $this->CMAFMediaProfileAttributesSubtitle;
     $testSampleDescription = $xml->getElementsByTagName("text_sampledescription")->item(0);
     $sdType = $testSampleDescription->getAttribute("sdType");
     if ($sdType == 'wvtt') {
@@ -177,7 +175,7 @@ if ($hdlrType == 'text') {
     return $this->getSubtitleTrackMediaProfile($mediaProfileParameters);
 }
 if ($hdlrType == 'subt') {
-    $mediaProfileParameters = $CMAFMediaProfileAttributesSubtitle;
+    $mediaProfileParameters = $this->CMAFMediaProfileAttributesSubtitle;
     $subtitleSampleDescription = $xml->getElementsByTagName("subt_sampledescription")->item(0);
     $sdType = $subtitleSampleDescription->getAttribute("sdType");
     if ($sdType == "stpp") {
