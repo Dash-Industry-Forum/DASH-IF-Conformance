@@ -31,7 +31,7 @@ $logger->test(
     "Non protected content or protected content with at least one correct ContentProtection descriptor in $this->periodCount, adaptation $i",
     "Not found in $this->periodCount, adaptation $i"
 );
-if (!empty($contentProtection) && $protectionCount == 0) {
+if ($contentProtection->count() > 0 && $protectionCount == 0) {
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
         "DVB: Section 8.4",
