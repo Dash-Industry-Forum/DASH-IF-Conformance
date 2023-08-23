@@ -588,32 +588,34 @@ function saveStdErrOutput($representationDirectory, $saveDetailedOutput = true)
     } else {
         $commonSeverity = "PASS";
         foreach ($contentArray as $i => $msg) {
-            $severity = "PASS";
-            //Catch both warn and warning
-            if (stripos($msg, "warn") !== FALSE) {
-                $severity = "WARN";
-                if ($commonSeverity == "PASS") {
-                    $commonSeverity = $severity;
+            if ($msg != "") {
+                $severity = "PASS";
+                //Catch both warn and warning
+                if (stripos($msg, "warn") !== FALSE) {
+                    $severity = "WARN";
+                    if ($commonSeverity == "PASS") {
+                        $commonSeverity = $severity;
+                    }
                 }
-            }
-            //Catch errors
-            if (stripos($msg, "error") !== FALSE) {
-                $severity = "FAIL";
-                if ($commonSeverity != "FAIL") {
-                    $commonSeverity = $severity;
+                //Catch errors
+                if (stripos($msg, "error") !== FALSE) {
+                    $severity = "FAIL";
+                    if ($commonSeverity != "FAIL") {
+                        $commonSeverity = $severity;
+                    }
                 }
-            }
 
-            if ($saveDetailedOutput) {
-                $logger->test(
-                    "Segment Validation",
-                    "Segment Validation",
-                    "Segment validator output should not contain errors",
-                    $severity == "PASS",
-                    $severity,
-                    $msg,
-                    $msg
-                );
+                if ($saveDetailedOutput) {
+                    $logger->test(
+                        "Segment Validation",
+                        "Segment Validation",
+                        "Segment validator output should not contain errors",
+                        $severity == "PASS",
+                        $severity,
+                        $msg,
+                        $msg
+                    );
+                }
             }
         }
 
