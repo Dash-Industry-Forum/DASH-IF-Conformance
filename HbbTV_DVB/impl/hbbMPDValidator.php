@@ -85,7 +85,7 @@ $docType = $mpdHandler->getDom()->doctype;
 $logger->test(
     "HbbTV-DVB DASH Validation Requirements",
     "HbbTV: Section 'MPD'",
-    "The MPD must not contain an XML Document Type Definition(<!DOCTYPE>)",
+    "The MPD must not contain an XML Document Type Definition",
     $docType === null,
     "FAIL",
     "No Doctype found",
