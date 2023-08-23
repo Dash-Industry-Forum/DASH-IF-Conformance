@@ -11,7 +11,7 @@ jobs:
     with:
       envname: staging
       docker_tag: latest
-      docker_port: 8000
+      docker_port: 8001
     secrets:
       host: ${{secrets.HOST}}
       user: ${{secrets.USER}}

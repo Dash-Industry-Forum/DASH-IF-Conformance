@@ -9,9 +9,9 @@ jobs:
   deploy_staging:
     uses: ./.github/workflows/deploy.yml
     with:
-      envname: beta
+      envname: main
       docker_tag: main
-      docker_port: 8001
+      docker_port: 8000
     secrets:
       host: ${{secrets.HOST}}
       user: ${{secrets.USER}}
