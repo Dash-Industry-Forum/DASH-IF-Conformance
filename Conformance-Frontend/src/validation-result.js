@@ -45,6 +45,13 @@ const ValidationResult = (() => {
       return new TestResult(rawTest);
     }
 
+    function getInfo(infoId) {
+      let moduleName = infoId.module;
+      let partName = infoId.part;
+      let info = _rawResult.entries[moduleName][partName].info;
+      return info;
+    }
+
     function parseModules(result) {
       let moduleNames = Object.keys(result.entries).filter(
         (key) => key !== "Stats" && key !== "verdict" && key !== "HEALTH"
@@ -75,6 +82,7 @@ const ValidationResult = (() => {
       getRawResult,
       getModules,
       getTestResult,
+      getInfo,
       getHealthChecks,
     };
 
@@ -129,6 +137,7 @@ const ValidationResult = (() => {
     let _module = part.module;
     let _name = part.name || "";
     let _verdict = part.verdict || "";
+    let _info = part.info || [];
 
     function getName() {
       return _name;
@@ -146,6 +155,10 @@ const ValidationResult = (() => {
       return _testResults;
     }
 
+    function getInfo() {
+      return _info;
+    }
+
     function parseTestResults(part) {
       return part.test.map((test) => {
         test.part = instance;
@@ -158,6 +171,7 @@ const ValidationResult = (() => {
       getVerdict,
       getModule,
       getTestResults,
+      getInfo,
     };
 
     let _testResults = parseTestResults(part);
