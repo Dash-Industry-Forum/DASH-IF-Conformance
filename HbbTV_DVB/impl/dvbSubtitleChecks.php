@@ -143,7 +143,7 @@ foreach ($representations as $representation) {
             $logger->test(
                 "HbbTV-DVB DASH Validation Requirements",
                 "DVB: Section 7.1.2",
-                "In oder to allow a Player to identify the primary purpose of a subtitle track, " .
+                "In order to allow a Player to identify the primary purpose of a subtitle track, " .
                 "the language attribute SHALL be set on the Adaptation Set",
                 $adaptation->getAttribute('lang') != '',
                 "FAIL",
