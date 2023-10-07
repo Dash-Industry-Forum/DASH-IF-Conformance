@@ -56,7 +56,7 @@ foreach ($timeRange as $timestamp) {
                     $p == 0,
                     "WARN",
                     "Valid value",
-                    "Uses W3C Media Fragment format with \"npt\" but fraciton notation is used"
+                    "Uses W3C Media Fragment format with \"npt\" but fraction notation is used"
                 );
 
                 $logger->test(
