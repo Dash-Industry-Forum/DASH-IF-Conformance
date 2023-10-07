@@ -11,7 +11,7 @@ $equalRepresentationCount = (sizeof($representation1) == sizeof($representation2
 $logger->test(
     "HbbTV-DVB DASH Validation Requirements",
     "DVB: Section 10.4",
-    "Players SHALL support seamless swicthing between audio Representations which only differ in bit rate",
+    "Players SHALL support seamless switching between audio Representations which only differ in bit rate",
     $equalRepresentationCount,
     "PASS",
     "Adaptation $adaptationIndex: " .
@@ -27,7 +27,7 @@ if ($equalRepresentationCount) {
         $logger->test(
             "HbbTV-DVB DASH Validation Requirements",
             "DVB: Section 10.4",
-            "Players SHALL support seamless swicthing between audio Representations which " .
+            "Players SHALL support seamless switching between audio Representations which " .
             "only differ in bit rate",
             array_key_exists($key1, $representation2),
             "PASS",
@@ -42,7 +42,7 @@ if ($equalRepresentationCount) {
                 $logger->test(
                     "HbbTV-DVB DASH Validation Requirements",
                     "DVB: Section 10.4",
-                    "Players SHALL support seamless swicthing between audio Representations which " .
+                    "Players SHALL support seamless switching between audio Representations which " .
                     "only differ in bit rate",
                     $val1 == $val2,
                     "PASS",

@@ -11,7 +11,7 @@ $equalRepresentationCount = (sizeof($representation1) == sizeof($representation2
 $logger->test(
     "HbbTV-DVB DASH Validation Requirements",
     "DVB: Section 10.4",
-    "Players SHALL support seamless swicthing between video Representations",
+    "Players SHALL support seamless switching between video Representations",
     $equalRepresentationCount,
     "PASS",
     "Adaptation $adaptationIndex: " .
@@ -30,7 +30,7 @@ foreach ($representation1 as $key1 => $val1) {
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
         "DVB: Section 10.4",
-        "Players SHALL support seamless swicthing between video Representations",
+        "Players SHALL support seamless switching between video Representations",
         array_key_exists($key1, $representation2),
         "PASS",
         "Adaptation $adaptationIndex: attribute $key1 found in both" .
@@ -47,7 +47,7 @@ foreach ($representation1 as $key1 => $val1) {
             $logger->test(
                 "HbbTV-DVB DASH Validation Requirements",
                 "DVB: Section 10.4",
-                "Players SHALL support seamless swicthing between audio Representations which differ only in " .
+                "Players SHALL support seamless switching between audio Representations which differ only in " .
                 "frame rate, bit rate, profile and/or level, and resolution",
                 $val1 == $val2,
                 "PASS",
@@ -90,7 +90,7 @@ if ($frameRate1 != '' && $frameRate2 != '') {
 $logger->test(
     "HbbTV-DVB DASH Validation Requirements",
     "DVB: Section 10.4",
-    "Players SHALL support seamless swicthing between audio Representations which differ only in " .
+    "Players SHALL support seamless switching between audio Representations which differ only in " .
     "frame rate, bit rate, profile and/or level, and resolution",
     $frameRatesInSameGroup,
     "PASS",
@@ -151,7 +151,7 @@ if ($adaptation['pictureAspectRatio'] != '') {
 $logger->test(
     "HbbTV-DVB DASH Validation Requirements",
     "DVB: Section 10.4",
-    "Players SHALL support seamless swicthing between video Representations which can differ in resolution, " .
+    "Players SHALL support seamless switching between video Representations which can differ in resolution, " .
     "maintaining the same picture aspect ratio",
     $validAspectRatio,
     "PASS",
