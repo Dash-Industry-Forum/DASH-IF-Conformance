@@ -9,7 +9,7 @@ foreach ($contentProtection as $protection) {
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
         "DVB: Section 8.3",
-        "ContentProtection descriptor SHALL be placed at he AdaptationSet level",
+        "ContentProtection descriptor SHALL be placed at the AdaptationSet level",
         $protection->parentNode->nodeName == 'AdaptationSet',
         "FAIL",
         "Protection element found for $this->periodCount",
