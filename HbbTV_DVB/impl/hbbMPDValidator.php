@@ -166,7 +166,7 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         $this->adaptationSetCount <= 64,
         "FAIL",
         "$this->adaptationSetCount adaptation sets found in period $this->periodCount",
-        "$this->adaptationSetCount adapation sets found in period $this->periodCount"
+        "$this->adaptationSetCount adaptation sets found in period $this->periodCount"
     );
 
     $logger->test(

@@ -31,7 +31,7 @@ for ($i = 0; $i < $periodCount; $i++) {
                         continue;
                     }
 
-                    ## Period continuous adapation sets are signalled.
+                    ## Period continuous adaptation sets are signalled.
                     ## Start checking for conformity according to Section 10.5.2.3
                     // Check associativity
                     $logger->test(
