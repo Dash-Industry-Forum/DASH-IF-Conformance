@@ -119,9 +119,9 @@ if ($abs) {
             abs(($fragmentDurationSeconds - $totalSegmentDuration) / $totalSegmentDuration) <= 0.00001,
             "INFO",
             "The fragment duration of track with hdlrType '$hdlrType' in Adaptation $adaptationSetId, " .
-            "representation $representationId matches the sum of it's segments",
+            "representation $representationId matches the sum of its segments",
             "The fragment duration of track with hdlrType '$hdlrType' in Adaptation $adaptationSetId, " .
-            "representation $representationId does not match the sum of it's segments"
+            "representation $representationId does not match the sum of its segments"
         );
     }
 }

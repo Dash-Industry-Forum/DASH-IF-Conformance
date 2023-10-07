@@ -44,8 +44,8 @@ for ($j = 0; $j < $moofBoxesCount; $j++) {
             "Representations SHALL not contain gaps between the segment timings",
             $currentFragmentDecodeTime == $previousFragmentDecodeTime + $cummulatedSampleDurFragPrev,
             "FAIL",
-            "No gap between segment $j and it's predecessor",
-            "Gap found between segment $j and it's predecessor",
+            "No gap between segment $j and its predecessor",
+            "Gap found between segment $j and its predecessor",
         );
     }
     ##
