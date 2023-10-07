@@ -37,7 +37,7 @@
 			<assert test="dash:Role[@schemeIdUri='urn:mpeg:dash:role:2011']">Every AC-4 or MPEG-H Audio Preselection element shall include at least one Role element using the scheme
 				"urn:mpeg:dash:role:2011" as defined in ISO/IEC 23009-1:2019 [1].</assert>
 
-			<!-- the ID of the bundle is that ID which points to an AdapationSet which is not an Auxiliary -->
+			<!-- the ID of the bundle is that ID which points to an AdaptationSet which is not an Auxiliary -->
 			<let name="psc" value="tokenize(@preselectionComponents,' ')"/>
 			<let name="bundleID" value="../dash:AdaptationSet[@id = $psc][not(dlb:isAuxiliaryStream(.))]/@id"/>
 
