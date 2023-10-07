@@ -31,7 +31,7 @@ for ($i = 0; $i < $periodCount; $i++) {
                         continue;
                     }
 
-                    ## Period continuous adapation sets are signalled.
+                    ## Period continuous adaptation sets are signalled.
                     ## Start checking for conformity according to Section 10.5.2.3
                     // Check associativity
                     $logger->test(
@@ -42,8 +42,8 @@ for ($i = 0; $i < $periodCount; $i++) {
                         "be associated as defined in clause 10.5.2.3",
                         in_array("$i $a1 $j $a2", $associativity),
                         "FAIL",
-                        "Associated values found for Adaptation $a1 period $i, and Adapation $a2 period $j",
-                        "Associated values not found for Adaptation $a1 period $i, and Adapation $a2 period $j"
+                        "Associated values found for Adaptation $a1 period $i, and Adaptation $a2 period $j",
+                        "Associated values not found for Adaptation $a1 period $i, and Adaptation $a2 period $j"
                     );
                     // EPT1 comparisons within the Adaptation Sets
                     if ($i != 0) {

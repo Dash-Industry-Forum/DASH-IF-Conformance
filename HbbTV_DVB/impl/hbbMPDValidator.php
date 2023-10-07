@@ -166,7 +166,7 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         $this->adaptationSetCount <= 64,
         "FAIL",
         "$this->adaptationSetCount adaptation sets found in period $this->periodCount",
-        "$this->adaptationSetCount adapation sets found in period $this->periodCount"
+        "$this->adaptationSetCount adaptation sets found in period $this->periodCount"
     );
 
     $logger->test(
@@ -186,7 +186,7 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         $this->adaptationVideoCount <= 1 || $this->mainVideoFound == 1,
         "FAIL",
         "1 or less video adaptations found in period $this->periodCount, or exactly one is labeled 'main'",
-        "Invalid video adapatationset configruation found found in period $this->periodCount"
+        "Invalid video adaptationset configuration found found in period $this->periodCount"
     );
 
     $logger->test(
@@ -196,7 +196,7 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         $this->adaptationAudioCount <= 1 || $this->mainAudioFound == 1,
         "FAIL",
         "1 or less audio adaptations found in period $this->periodCount, or exactly one is labeled 'main'",
-        "Invalid audio adapatationset configruation found found in period $this->periodCount"
+        "Invalid audio adaptationset configuration found found in period $this->periodCount"
     );
 }
 

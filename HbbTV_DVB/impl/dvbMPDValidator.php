@@ -355,7 +355,7 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
             }
         }
 
-        //Continuation of adapationset-level checks
+        //Continuation of adaptationset-level checks
         $adaptationContentType = $adaptationSet->getAttribute("contentType");
         $adaptationMimeType = $adaptationSet->getAttribute("mimeType");
 

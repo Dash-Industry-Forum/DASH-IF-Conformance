@@ -115,13 +115,13 @@ if ($abs) {
         $logger->test(
             "HbbTV-DVB DASH Validation Requirements",
             "DVB: Section 'Duration Self consistency'",
-            "Durations of the fragments should match the sum all contained segmenet durations",
+            "Durations of the fragments should match the sum all contained segment durations",
             abs(($fragmentDurationSeconds - $totalSegmentDuration) / $totalSegmentDuration) <= 0.00001,
             "INFO",
             "The fragment duration of track with hdlrType '$hdlrType' in Adaptation $adaptationSetId, " .
-            "representation $representationId matches the sum of it's segments",
+            "representation $representationId matches the sum of its segments",
             "The fragment duration of track with hdlrType '$hdlrType' in Adaptation $adaptationSetId, " .
-            "representation $representationId does not match the sum of it's segments"
+            "representation $representationId does not match the sum of its segments"
         );
     }
 }
