@@ -39,6 +39,13 @@ function validate_segment(
         ## Put segments in one file
         assemble($representationDirectory, $segment_url, $sizearray);
 
+        $validatorWrapper = $GLOBALS['validatorWrapper'];
+        if ($is_dolby) {
+          $validatorWrapper->enableFeature('Dolby');
+        }
+        $validatorWrapper->run($period, $adaptation_set, $representation);
+
+        /*
         ## Create config file with the flags for segment validation
         $config_file_loc = config_file_for_backend(
             $period,
@@ -50,6 +57,7 @@ function validate_segment(
 
         ## Run the backend
         $returncode = run_backend($config_file_loc, $representationDirectory);
+         */
 
         $varinfo = var_export($adaptation_set, true);
 

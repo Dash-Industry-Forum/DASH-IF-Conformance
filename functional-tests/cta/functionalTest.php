@@ -74,8 +74,8 @@ final class functionalTest extends TestCase
 
         fwrite(STDERR, "Going to parse stream " . $GLOBALS['mpd_url'] . "\n");
 
-        process_MPD(true, false, false);//MPD and Segments
-        //process_MPD(false);//MPD Only
+        //process_MPD(true, false, false);//MPD and Segments
+        process_MPD(false);//MPD Only
         //
         $this->assertSame(true, true);
     }
