@@ -58,7 +58,7 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
 
     foreach ($modules as $module) {
         if ($module->name == "DASH-IF Low Latency") {
-            if ($module->isEnabled()) {
+            if ($module->isEnabled() && $availability_times != null) {
                 $count = sizeof($availability_times[$mpdHandler->getSelectedAdaptationSet()]
                                                    [$mpdHandler->getSelectedRepresentation()]['ASAST']);
                 $media_segment_index = ($count == sizeof($array_file)) ? 0 : 1;

@@ -123,8 +123,8 @@ if ($videoSelectionSetFound) {
 
     array_push(
         $presentationProfileArray,
-        $this->getPresentationProfile($encryptedTrackFound, $cencSwSetFound, $cbcsSwSetFound));
-
+        $this->getPresentationProfile($encryptedTrackFound, $cencSwSetFound, $cbcsSwSetFound)
+    );
 }
 if ($audioSelectionSetFound) {
     $conforms = $logger->test(
@@ -142,7 +142,6 @@ if ($audioSelectionSetFound) {
         $presentationProfileArray,
         $this->getPresentationProfile($encryptedTrackFound, $cencSwSetFound, $cbcsSwSetFound)
     );
-
 }
 if ($subtitleSelectionSetFound) {
     $conforms = $logger->test(

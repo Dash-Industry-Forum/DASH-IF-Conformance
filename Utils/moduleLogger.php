@@ -18,6 +18,8 @@ class ModuleLogger
     private $features;
     private $parseArguments;
 
+    private $validatorMessages;
+
     public function __construct($id = null, $module = null, $hook = null)
     {
         $this->reset($id);
@@ -34,8 +36,10 @@ class ModuleLogger
         global $session;
 
         if ($id !== '') {
+          if ($session){
             $session->reset($id);
             $this->logfile = $session->getDir() . '/logger.txt';
+          }
         }
         $this->entries = array();
         $this->features = array();
@@ -201,13 +205,19 @@ class ModuleLogger
             $this->entries['verdict'] = "FAIL";
         }
         if ($severity == "WARN") {
-            if ($this->entries[$this->currentModule][$this->currentHook]['verdict'] != "FAIL") {
+            if (empty($this->entries[$this->currentModule][$this->currentHook]['verdict'])) {
+                $this->entries[$this->currentModule][$this->currentHook]['verdict'] = "WARN";
+            } elseif ($this->entries[$this->currentModule][$this->currentHook]['verdict'] != "FAIL") {
                 $this->entries[$this->currentModule][$this->currentHook]['verdict'] = "WARN";
             }
-            if ($this->entries[$this->currentModule]['verdict'] != "FAIL") {
+            if (empty($this->entries[$this->currentModule]['verdict'])) {
+                $this->entries[$this->currentModule]['verdict'] = "WARN";
+            } elseif ($this->entries[$this->currentModule]['verdict'] != "FAIL") {
                 $this->entries[$this->currentModule]['verdict'] = "WARN";
             }
-            if ($this->entries['verdict'] != "FAIL") {
+            if (empty($this->entries['verdict'])) {
+                $this->entries['verdict'] = "WARN";
+            } elseif ($this->entries['verdict'] != "FAIL") {
                 $this->entries['verdict'] = "WARN";
             }
         }
@@ -247,6 +257,7 @@ class ModuleLogger
         return null;
     }
 
+
     public function error($err)
     {
         $this->addEntry('error', $message);
@@ -260,6 +271,10 @@ class ModuleLogger
     public function debug($message)
     {
         $this->addEntry('debug', $message);
+    }
+
+    public function validatorMessage($message){
+      $this->validatorMessages[] = $message;
     }
 
     private function addEntry($type, $entry)
@@ -354,6 +369,7 @@ class ModuleLogger
 
         $result['enabled_modules'] = array();
 
+
         global $modules;
 
         foreach ($modules as $module) {
@@ -361,6 +377,8 @@ class ModuleLogger
                 $result['enabled_modules'][] = $module;
             }
         }
+
+        $result['validator_messages'] = $this->validatorMessages;
 
         return $result;
     }

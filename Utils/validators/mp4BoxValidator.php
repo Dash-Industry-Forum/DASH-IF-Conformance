@@ -15,7 +15,9 @@ class MP4BoxValidator extends ValidatorInterface
         $this->name = "MP4BoxValidator";
         $this->enabled = (exec("MP4Box -h") !== false);
         $this->output = array();
+        $this->flags[] = ValidatorFlags::PreservesOrder;
     }
+
 
     public function run($period, $adaptation, $representation)
     {
@@ -28,7 +30,10 @@ class MP4BoxValidator extends ValidatorInterface
         $thisRep->periodNumber = $mpdHandler->getSelectedPeriod();
         $thisRep->adaptationNumber = $mpdHandler->getSelectedAdaptationSet();
         $thisRep->representationNumber = $mpdHandler->getSelectedRepresentation();
-        $thisRep->payload = Utility\parseDom($session->getSelectedRepresentationDir() . "/assembled_dump.xml", "ISOBaseMediaFileTrace");
+        $thisRep->payload = Utility\parseDom(
+            $session->getSelectedRepresentationDir() . "/assembled_dump.xml",
+            "ISOBaseMediaFileTrace"
+        );
 
 
         $this->validRepresentations[] = $thisRep;
@@ -48,11 +53,11 @@ class MP4BoxValidator extends ValidatorInterface
 
         $contentArray = $this->output;
 
-        $testName = "std error output for Period " . $mpdHandler->getSelectedPeriod() . 
-                    ", adaptation " . $mpdHandler->getSelectedAdaptationSet() . 
+        $testName = "std error output for Period " . $mpdHandler->getSelectedPeriod() .
+                    ", adaptation " . $mpdHandler->getSelectedAdaptationSet() .
                     ", representation " . $mpdHandler->getSelectedRepresentation();
 
-        if (!count($contentArray)){ 
+        if (!count($contentArray)) {
             $logger->test(
                 "Segment Validation",
                 "Segment Validation",
@@ -92,4 +97,3 @@ class MP4BoxValidator extends ValidatorInterface
         $logger->setHook($currentHook);
     }
 }
-

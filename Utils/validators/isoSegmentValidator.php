@@ -3,6 +3,7 @@
 namespace DASHIF;
 
 require_once __DIR__ . '/isoSegmentRepresentation.php';
+require_once __DIR__ . '/../boxes/boxes.php';
 
 
 class ISOSegmentValidator extends ValidatorInterface
@@ -77,7 +78,8 @@ class ISOSegmentValidator extends ValidatorInterface
             if ($emptyCompatBrands !== false) {
                 $logger->message(
                     "Fixed empty styp xml bug for period " . $mpdHandler->getSelectedPeriod() . " adaptation " .
-                    $mpdHandler->getSelectedAdaptationSet() . " representation " . $mpdHandler->getSelectedRepresentation()
+                    $mpdHandler->getSelectedAdaptationSet() . " representation " .
+                    $mpdHandler->getSelectedRepresentation()
                 );
                 $fixedAtom = substr_replace($atomXmlString, "]'>", $emptyCompatBrands + 20, 0);
                 file_put_contents("$sessionDirectory/atominfo.xml", $fixedAtom);
@@ -126,7 +128,8 @@ class ISOSegmentValidator extends ValidatorInterface
         chmod("$validatemp4", 0777);
 
     ## Execute backend conformance software
-        $command = "timeout -k 30s 30s $validatemp4 -logconsole -atomxml -configfile $representationDirectory/isoSegmentValidatorConfig.txt";
+        $command = "timeout -k 30s 30s $validatemp4 -logconsole -atomxml -configfile " .
+          "$representationDirectory/isoSegmentValidatorConfig.txt";
         $output = [];
         $returncode = 0;
         chdir($sessionDirectory);
@@ -172,14 +175,14 @@ class ISOSegmentValidator extends ValidatorInterface
         $logger->setHook("ISOSegmentValidator");
 
 
-        $testName = "std error output for Period " . $mpdHandler->getSelectedPeriod() . 
-                    ", adaptation " . $mpdHandler->getSelectedAdaptationSet() . 
+        $testName = "std error output for Period " . $mpdHandler->getSelectedPeriod() .
+                    ", adaptation " . $mpdHandler->getSelectedAdaptationSet() .
                     ", representation " . $mpdHandler->getSelectedRepresentation();
 
         $content = file_get_contents("$representationDirectory/stderr.txt");
         $contentArray = explode("\n", $content);
 
-        if (!count($contentArray)){
+        if (!count($contentArray)) {
             $logger->test(
                 "Segment Validation",
                 "Segment Validation",
@@ -259,4 +262,3 @@ class ISOSegmentValidator extends ValidatorInterface
         fclose($file);
     }
 }
-
