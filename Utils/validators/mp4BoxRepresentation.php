@@ -87,6 +87,42 @@ class MP4BoxRepresentation extends RepresentationInterface
         return $result;
     }
 
+    public function getProtectionScheme(): Boxes\ProtectionScheme|null
+    {
+        $res = null;
+        if ($this->payload) {
+            $sinfBoxes = $this->payload->getElementsByTagName('ProtectionSchemeInfoBox');
+            if (count($sinfBoxes) == 1) {
+                $sinfBox = $sinfBoxes->item(0);
+                $res = new Boxes\ProtectionScheme();
+
+                $originalFormatBox = $sinfBox->getElementsByTagName('OriginalFormatBox');
+                if (count($originalFormatBox)) {
+                    $res->originalFormat = $originalFormatBox->item(0)->getAttribute('data_format');
+                }
+
+                $schemeTypeBoxes = $sinfBox->getElementsByTagName('SchemeTypeBox');
+                if (count($schemeTypeBoxes)) {
+                    $schemeTypeBox = $schemeTypeBoxes->item(0);
+                    $res->scheme->schemeType = $schemeTypeBox->getAttribute('scheme_type');
+                    $res->scheme->schemeVersion = $schemeTypeBox->getAttribute('scheme_version');
+                }
+
+                $trackEncryptionBoxes = $sinfBox->getElementsByTagName('TrackEncryptionBox');
+                if (count($trackEncryptionBoxes)) {
+                    $trackEncryptionBox = $trackEncryptionBoxes->item(0);
+                    $res->encryption->isEncrypted = (int)$trackEncryptionBox->getAttribute('isEncrypted');
+                    $res->encryption->ivSize = (int)$trackEncryptionBox->getAttribute('constant_IV_size');
+                    $res->encryption->iv = $trackEncryptionBox->getAttribute('constant_IV');
+                    $res->encryption->kid = $trackEncryptionBox->getAttribute('KID');
+                    $res->encryption->cryptByteBlock = (int)$trackEncryptionBox->getAttribute('crypt_byte_block');
+                    $res->encryption->skipByteBlock = (int)$trackEncryptionBox->getAttribute('skip_byte_block');
+                }
+            }
+        }
+        return $res;
+    }
+
     public function getSegmentDurations()
     {
         $res = array();
@@ -100,6 +136,18 @@ class MP4BoxRepresentation extends RepresentationInterface
                     $thisDuration += floatval($reference->getAttribute('duration'));
                 }
                 $res[] = ($thisDuration / $timescale);
+            }
+        }
+        return $res;
+    }
+
+    public function getSampleAuxiliaryInformation(): Boxes\SampleAuxiliaryInformation|null
+    {
+        $res = null;
+        if ($this->payload) {
+            $saioBoxes = $this->payload->getElementsByTagName('SampleAuxiliaryInfoOffsetBox');
+            if (count($saioBoxes)) {
+                $res = new Boxes\SampleAuxiliaryInformation();
             }
         }
         return $res;
@@ -189,6 +237,7 @@ class MP4BoxRepresentation extends RepresentationInterface
         }
         return $sampleDescriptionBoxes->item(0)->getAttribute('Height');
     }
+
 
 
     /*

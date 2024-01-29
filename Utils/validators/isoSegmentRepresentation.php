@@ -64,6 +64,44 @@ class ISOSegmentValidatorRepresentation extends RepresentationInterface
         return $result;
     }
 
+    public function getProtectionScheme(): Boxes\ProtectionScheme|null
+    {
+        $res = null;
+        if ($this->payload) {
+            $sinfBoxes = $this->payload->getElementsByTagName('sinf');
+            if (count($sinfBoxes) == 1) {
+                $sinfBox = $sinfBoxes->item(0);
+                $res = new Boxes\ProtectionScheme();
+
+                $originalFormatBox = $sinfBox->getElementsByTagName('frma');
+                if (count($originalFormatBox)) {
+                    $res->originalFormat = $originalFormatBox->item(0)->getAttribute('original_format');
+                }
+
+                $schemeTypeBoxes = $sinfBox->getElementsByTagName('schm');
+                if (count($schemeTypeBoxes)) {
+                    $schemeTypeBox = $schemeTypeBoxes->item(0);
+                    $res->scheme->schemeType = $schemeTypeBox->getAttribute('scheme');
+                    $res->scheme->schemeVersion = $schemeTypeBox->getAttribute('version');
+                }
+
+                $trackEncryptionBoxes = $sinfBox->getElementsByTagName('tenc');
+                if (count($trackEncryptionBoxes)) {
+                    $trackEncryptionBox = $trackEncryptionBoxes->item(0);
+                    $res->encryption->isEncrypted = (int)$trackEncryptionBox->getAttribute('default_IsEncrypted');
+                    $res->encryption->ivSize = (int)$trackEncryptionBox->getAttribute('default_IV_size');
+                    $res->encryption->kid = $trackEncryptionBox->getAttribute('default_KID');
+                    $GLOBALS['logger']->validatorMessage(
+                        'Not all protection parameters can be extracted with this validator yet'
+                    );
+                    //- Constant IV
+                    //- Crypt/skip blocks
+                }
+            }
+        }
+        return $res;
+    }
+
     public function getSegmentDurations()
     {
         $res = array();
@@ -75,6 +113,7 @@ class ISOSegmentValidatorRepresentation extends RepresentationInterface
         }
         return $res;
     }
+
 
     private function parseSubtDescription($box)
     {

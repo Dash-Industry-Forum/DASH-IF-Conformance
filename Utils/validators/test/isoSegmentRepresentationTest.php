@@ -131,4 +131,42 @@ final class ISOSegmentRepresentationTest extends TestCase
         );
         $this->assertEquals([2,2], $r->getSegmentDurations());
     }
+
+    public function testGetProtectionScheme()
+    {
+        $r = new DASHIF\ISOSegmentValidatorRepresentation();
+        $this->assertNull($r->getProtectionScheme());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+             <sinf>
+               <frma original_format="avc1"
+                 >
+               </frma>
+               <schm scheme="cbcs" version="65536"
+                 >
+               </schm>
+               <schi>
+                  comment="1 contained atoms" >
+                 <tenc       version="1" flags="0"
+                   default_IsEncrypted="71936"
+                   default_IV_size="16"
+                   default_KID="3915338731061279337218105242179178121154127"
+                   >
+                 </tenc>
+               </schi>
+             </sinf>
+          </container>'
+        );
+
+        $protection = $r->getProtectionScheme();
+
+        $this->assertNotNull($protection);
+        $this->assertEquals('avc1', $protection->originalFormat);
+        $this->assertEquals('cbcs', $protection->scheme->schemeType);
+        $this->assertEquals('65536', $protection->scheme->schemeVersion);
+        $this->assertEquals(true, $protection->encryption->isEncrypted);
+        $this->assertEquals(16, $protection->encryption->ivSize);
+        $this->assertEquals("3915338731061279337218105242179178121154127", $protection->encryption->kid);
+    }
 }

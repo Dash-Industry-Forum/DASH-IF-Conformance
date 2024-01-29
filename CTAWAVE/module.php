@@ -248,6 +248,11 @@ class ModuleCTAWAVE extends ModuleInterface
     {
         return include 'impl/bitrate.php';
     }
+
+    public function encryptionScheme($representation)
+    {
+        return include 'impl/encryptionScheme.php';
+    }
 }
 
 $modules[] = new ModuleCTAWAVE();

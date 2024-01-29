@@ -16,6 +16,7 @@ class MP4BoxValidator extends ValidatorInterface
         $this->enabled = (exec("MP4Box -h") !== false);
         $this->output = array();
         $this->flags[] = ValidatorFlags::PreservesOrder;
+        $this->flags[] = ValidatorFlags::CanExtractEncryption;
     }
 
 

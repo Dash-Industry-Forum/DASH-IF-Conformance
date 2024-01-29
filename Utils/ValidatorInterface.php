@@ -7,6 +7,7 @@ require_once __DIR__ . '/RepresentationInterface.php';
 enum ValidatorFlags
 {
     case PreservesOrder;
+    case CanExtractEncryption;
 }
 
 //See the validators subfolder for example implementations
