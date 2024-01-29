@@ -53,7 +53,12 @@ include __DIR__ . '/../Dolby/module.php';
 require_once __DIR__ . '/ValidatorWrapper.php';
 
 $argumentParser->addOption("segments", "s", "segments", "Enable segment validation");
-$argumentParser->addOption("disable_detailed_segment_output", "", "disable_detailed_segment_output", "Disable detailed segment validation output");
+$argumentParser->addOption(
+    "disable_detailed_segment_output",
+    "",
+    "disable_detailed_segment_output",
+    "Disable detailed segment validation output"
+);
 $argumentParser->addOption("compact", "C", "compact", "Make JSON output compact");
 $argumentParser->addOption("silent", "S", "silent", "Do not output JSON to stdout");
 $argumentParser->addOption("autodetect", "A", "autodetect", "Try to automatically detect profiles");

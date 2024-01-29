@@ -139,7 +139,7 @@ for ($j = 0; $j < $moofBoxesCount; $j++) {
         );
     }
 
-    if ($mdatFile == null) {
+    if ($mdatFile === false) {
         continue;
     }
 
@@ -169,7 +169,7 @@ for ($j = 0; $j < $moofBoxesCount; $j++) {
         "Representation $id, chunk $j not valid"
     );
 }
-if ($mdatFile !== null) {
+if ($mdatFile !== false) {
     fclose($mdatFile);
 }
 

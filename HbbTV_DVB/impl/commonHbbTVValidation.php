@@ -76,7 +76,7 @@ if (strpos($sdType, 'avc') !== false || strpos($originalFormat, 'avc') !== false
 
     $nalUnits = $xmlRepresentation->getElementsByTagName('NALUnit');
     foreach ($nalUnits as $nalUnit) {
-        if ($nalUnit->getAttribute('nal_type') != '0x07') {
+        if (hexdec($nalUnit->getAttribute('nal_type')) != 7) {
             continue;
         }
         $profileIdc = $nalUnit->getAttribute('profile_idc');
@@ -143,10 +143,10 @@ if ($hdlrType == 'vide') {
     if ($avcC->length > 0) {
         $nalUnits = $xmlRepresentation->getElementsByTagName('NALUnit');
         foreach ($nalUnits as $nalUnit) {
-            if ($nalUnit->getAttribute('nal_type') == '0x07') {
+            if (hexdec($nalUnit->getAttribute('nal_type')) == 7) {
                 $spsFound = 1;
             }
-            if ($nalUnit->getAttribute('nal_type') == '0x08') {
+            if (hexdec($nalUnit->getAttribute('nal_type')) == 8) {
                 $ppsFound = 1;
             }
         }
@@ -255,8 +255,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
                 "of not more than 15 seconds",
                 $segmentDuration <= 15,
                 "FAIL",
-                "Duration of segment " . $j + 1 . " in bounds",
-                "Duration of segment " . $j + 1 . " not in bounds (is $segmentDuration)",
+                "Duration of segment " . ($j + 1) . " in bounds",
+                "Duration of segment " . ($j + 1) . " not in bounds (is $segmentDuration)",
             );
         }
 
@@ -266,8 +266,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
             "Segment duration SHALL be at least 1 second except for the last segment of a Period",
             $segmentDuration >= 1,
             "FAIL",
-            "Duration of segment " . $j + 1 . " is at least 1 second",
-            "Duration of segment " . $j + 1 . " is less than 1 second",
+            "Duration of segment " . ($j + 1) . " is at least 1 second",
+            "Duration of segment " . ($j + 1) . " is less than 1 second",
         );
     } elseif (!empty($subsegmentSignaling) && !in_array(0, $subsegmentSignaling)) {
         $referenceCount = $subsegmentSignaling[$sidxIndex];
@@ -280,8 +280,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
                 "of not more than 15 seconds",
                 $segmentDuration <= 15,
                 "FAIL",
-                "Duration of segment " . $j + 1 . " in bounds",
-                "Duration of segment " . $j + 1 . " not in bounds (is $segmentDuration)",
+                "Duration of segment " . ($j + 1) . " in bounds",
+                "Duration of segment " . ($j + 1) . " not in bounds (is $segmentDuration)",
             );
         }
 
@@ -293,8 +293,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
                 "Segment duration SHALL be at least 1 second except for the last segment of a Period",
                 $cumulativeSubsegmentDuration >= 1,
                 "FAIL",
-                "Duration of segment " . $j + 1 . " is at least 1 second",
-                "Duration of segment " . $j + 1 . " is less than 1 second",
+                "Duration of segment " . ($j + 1) . " is at least 1 second",
+                "Duration of segment " . ($j + 1) . " is less than 1 second",
             );
 
             $sidxIndex++;
@@ -311,8 +311,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
                     "of not more than 15 seconds",
                     $segmentDuration <= 15,
                     "FAIL",
-                    "Duration of segment " . $j + 1 . " in bounds",
-                    "Duration of segment " . $j + 1 . " not in bounds (is $segmentDuration)",
+                    "Duration of segment " . ($j + 1) . " in bounds",
+                    "Duration of segment " . ($j + 1) . " not in bounds (is $segmentDuration)",
                 );
             }
 
@@ -322,8 +322,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
                 "Segment duration SHALL be at least 1 second except for the last segment of a Period",
                 $segmentDuration >= 1,
                 "FAIL",
-                "Duration of segment " . $j + 1 . " is at least 1 second",
-                "Duration of segment " . $j + 1 . " is less than 1 second",
+                "Duration of segment " . ($j + 1) . " is at least 1 second",
+                "Duration of segment " . ($j + 1) . " is less than 1 second",
             );
 
             $sidxIndex++;
@@ -338,8 +338,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
                     "of not more than 15 seconds",
                     $segmentDuration <= 15,
                     "FAIL",
-                    "Duration of segment " . $j + 1 . " in bounds",
-                    "Duration of segment " . $j + 1 . " not in bounds (is $segmentDuration)",
+                    "Duration of segment " . ($j + 1) . " in bounds",
+                    "Duration of segment " . ($j + 1) . " not in bounds (is $segmentDuration)",
                 );
             }
 
@@ -351,8 +351,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
                     "Segment duration SHALL be at least 1 second except for the last segment of a Period",
                     $cumulativeSubsegmentDuration >= 1,
                     "FAIL",
-                    "Duration of segment " . $j + 1 . " is at least 1 second",
-                    "Duration of segment " . $j + 1 . " is less than 1 second",
+                    "Duration of segment " . ($j + 1) . " is at least 1 second",
+                    "Duration of segment " . ($j + 1) . " is less than 1 second",
                 );
 
                 $cumulativeSubsegmentDuration = 0;

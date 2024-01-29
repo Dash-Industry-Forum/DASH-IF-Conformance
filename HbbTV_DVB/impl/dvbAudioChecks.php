@@ -4,7 +4,7 @@ global $logger;
 
 $contentType = $adaptation->getAttribute('contentType');
 if ($contentType == 'audio') {
-    $this->adaptationAudioCount ++;
+    $this->adaptationAudioCount++;
 }
 
 

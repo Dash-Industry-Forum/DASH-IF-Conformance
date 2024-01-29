@@ -47,8 +47,8 @@ class ModuleCTAWAVE extends ModuleInterface
     protected function addCLIArguments()
     {
         global $argumentParser;
-        if ($argumentParser){
-          $argumentParser->addOption("ctawave", "w", "ctawave", "Enable CTAWAVE checking");
+        if ($argumentParser) {
+            $argumentParser->addOption("ctawave", "w", "ctawave", "Enable CTAWAVE checking");
         }
     }
 
@@ -234,16 +234,19 @@ class ModuleCTAWAVE extends ModuleInterface
         return include 'impl/getMediaProfile.php';
     }
 
-    public function textComponentConstraints($representation){
-      return include 'impl/textComponentConstraints.php';
+    public function textComponentConstraints($representation)
+    {
+        return include 'impl/textComponentConstraints.php';
     }
 
-    public function addressableMediaObject($representation){
-      return include 'impl/addressableMediaObject.php';
+    public function addressableMediaObject($representation)
+    {
+        return include 'impl/addressableMediaObject.php';
     }
 
-    public function bitrate($representation){
-      return include 'impl/bitrate.php';
+    public function bitrate($representation)
+    {
+        return include 'impl/bitrate.php';
     }
 }
 

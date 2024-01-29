@@ -34,6 +34,8 @@ include 'HbbTV_DVB/module.php';
 include 'DASH/LowLatency/module.php';
 include 'DASH/IOP/module.php';
 
+require_once 'Utils/ValidatorWrapper.php';
+
 $argumentParser->parseAll();
 
 include 'DASH/processMPD.php';
@@ -74,8 +76,8 @@ final class functionalTest extends TestCase
 
         fwrite(STDERR, "Going to parse stream " . $GLOBALS['mpd_url'] . "\n");
 
-        //process_MPD(true, false, false);//MPD and Segments
-        process_MPD(false);//MPD Only
+        process_MPD(true, false, false);//MPD and Segments
+        //process_MPD(false);//MPD Only
         //
         $this->assertSame(true, true);
     }
@@ -90,7 +92,8 @@ final class functionalTest extends TestCase
         $startnumber = 0;
         $blacklist = [];
         $content = file_get_contents(
-            "functional-tests/cta/wave.json");
+            "functional-tests/cta/wave.json"
+        );
         $dbJson = json_decode($content);
         $streamsToTest = array();
         foreach ($dbJson as $item) {

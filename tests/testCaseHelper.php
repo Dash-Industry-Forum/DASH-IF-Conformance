@@ -51,7 +51,7 @@ class TestCaseHelper implements \Iterator
 
     public function next(): void
     {
-        $this->index ++;
+        $this->index++;
         for (; $this->index < count($this->json); $this->index++) {
             if (in_array($this->label, $this->json[$this->index]['labels'])) {
                 break;

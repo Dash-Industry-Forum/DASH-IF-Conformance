@@ -23,9 +23,8 @@ function validate_segment(
     $segment_url,
     $is_subtitle_rep,
     $detailedSegmentOutput = true
-)
-{
-    global $sizearray;
+) {
+    global $sizearray, $validatorWrapper;
 
 
     $sizearray = array();
@@ -41,7 +40,7 @@ function validate_segment(
 
         $validatorWrapper = $GLOBALS['validatorWrapper'];
         if ($is_dolby) {
-          $validatorWrapper->enableFeature('Dolby');
+            $validatorWrapper->enableFeature('Dolby');
         }
         $validatorWrapper->run($period, $adaptation_set, $representation);
 
@@ -365,10 +364,10 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     }
 
     $flags = (!$hls_manifest) ? construct_flags(
-            $period,
-            $adaptation_set,
-            $representation
-        ) . $additional_flags : $additional_flags;
+        $period,
+        $adaptation_set,
+        $representation
+    ) . $additional_flags : $additional_flags;
     $piece = explode(" ", $flags);
     foreach ($piece as $pie) {
         if ($pie !== "") {
@@ -516,7 +515,8 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
 
     $segmentDurMPD = $duration;
 
-    // We might have multiple moof/mdat boxes in one segment. Combine their duration to get the duration of the complete segment
+    // We might have multiple moof/mdat boxes in one segment.
+    // Combine their duration to get the duration of the complete segment
     $totalSegmentTimes = array();
     $currentEntry = null;
     for ($i = 0; $i < $num_segments; $i++) {
@@ -529,7 +529,9 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
             $currentEntry['earliestPresentationTime'] = $currentSegmentTime['earliestPresentationTime'];
             $currentEntry['duration'] = 0;
         }
-        $referenceTime = is_null($currentSegmentTime['presentationEndTime']) ? $currentSegmentTime['lastPresentationTime'] : $currentSegmentTime['presentationEndTime'];
+        $referenceTime = is_null($currentSegmentTime['presentationEndTime']) ?
+          $currentSegmentTime['lastPresentationTime'] :
+          $currentSegmentTime['presentationEndTime'];
         $currentEntry['duration'] += $referenceTime - $currentSegmentTime['earliestPresentationTime'];
     }
     //push last element
@@ -599,14 +601,14 @@ function saveStdErrOutput($representationDirectory, $saveDetailedOutput = true)
             if ($msg != "") {
                 $severity = "PASS";
                 //Catch both warn and warning
-                if (stripos($msg, "warn") !== FALSE) {
+                if (stripos($msg, "warn") !== false) {
                     $severity = "WARN";
                     if ($commonSeverity == "PASS") {
                         $commonSeverity = $severity;
                     }
                 }
                 //Catch errors
-                if (stripos($msg, "error") !== FALSE) {
+                if (stripos($msg, "error") !== false) {
                     $severity = "FAIL";
                     if ($commonSeverity != "FAIL") {
                         $commonSeverity = $severity;

@@ -80,7 +80,7 @@ final class validationTest extends TestCase
         //
 
         $source = $GLOBALS['mpd_url'];
-        $id = str_replace("/","_", str_replace([".mpd", "http://", "https://"], [""], $source));
+        $id = str_replace("/", "_", str_replace([".mpd", "http://", "https://"], [""], $source));
         $output_path = "/home/dsi/DASH-IF-Conformance/validation-test-results/cta/" . $id . ".json";
         file_put_contents($output_path, $GLOBALS['logger']->asJSON());
         $this->assertSame(true, true);
@@ -96,7 +96,8 @@ final class validationTest extends TestCase
         $startnumber = 0;
         $blacklist = [];
         $content = file_get_contents(
-            "validation-tests/cta/wave.json");
+            "validation-tests/cta/wave.json"
+        );
         $dbJson = json_decode($content);
         $streamsToTest = array();
         foreach ($dbJson as $item) {

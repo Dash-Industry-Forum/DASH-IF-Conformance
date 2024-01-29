@@ -203,14 +203,15 @@ function parseDoc($path)
     return $dom_doc;
 }
 
-function xmlStringAsDoc($str){
-  $xml = simplexml_load_string($str);
-  $dom_sxe = dom_import_simplexml($xml);
-  if (!$dom_sxe){
-    return null;
-  }
-  $doc = new \DOMDocument('1.0');
-  return $doc->importNode($dom_sxe, true);
+function xmlStringAsDoc($str)
+{
+    $xml = simplexml_load_string($str);
+    $dom_sxe = dom_import_simplexml($xml);
+    if (!$dom_sxe) {
+        return null;
+    }
+    $doc = new \DOMDocument('1.0');
+    return $doc->importNode($dom_sxe, true);
 }
 
 function parseDOM($path, $main_element)

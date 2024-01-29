@@ -90,7 +90,8 @@ final class functionalTest extends TestCase
         $startnumber = 0;
         $blacklist = [];
         $content = file_get_contents(
-            "functional-tests/dashif/dashjs.json");
+            "functional-tests/dashif/dashjs.json"
+        );
         $dbJson = json_decode($content);
         $streamsToTest = array();
         foreach ($dbJson->items as $item) {
@@ -106,6 +107,4 @@ final class functionalTest extends TestCase
         }
         return $streamsToTest;
     }
-
-
 }

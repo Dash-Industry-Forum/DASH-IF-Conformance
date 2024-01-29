@@ -23,11 +23,11 @@ class ModuleLogger
     public function __construct($id = null, $module = null, $hook = null)
     {
         $this->reset($id);
-        if ($module){
-          $this->setModule($module);
+        if ($module) {
+            $this->setModule($module);
         }
-        if ($hook){
-          $this->setHook($hook);
+        if ($hook) {
+            $this->setHook($hook);
         }
     }
 
@@ -36,10 +36,10 @@ class ModuleLogger
         global $session;
 
         if ($id !== '') {
-          if ($session){
-            $session->reset($id);
-            $this->logfile = $session->getDir() . '/logger.txt';
-          }
+            if ($session) {
+                $session->reset($id);
+                $this->logfile = $session->getDir() . '/logger.txt';
+            }
         }
         $this->entries = array();
         $this->features = array();
@@ -115,11 +115,13 @@ class ModuleLogger
         $this->currentHook = '';
     }
 
-    public function getCurrentModule() {
+    public function getCurrentModule()
+    {
         return $this->currentModule;
     }
 
-    public function getCurrentHook() {
+    public function getCurrentHook()
+    {
         return $this->currentHook;
     }
 
@@ -143,10 +145,22 @@ class ModuleLogger
     public function test($spec, $section, $test, $check, $fail_type, $msg_succ, $msg_fail)
     {
         if ($check) {
-            $this->addTestResult($spec, $section, $test, "✓ " . $msg_succ, "PASS");
+            $this->addTestResult(
+                $spec,
+                $section,
+                $test,
+                "✓ " . $msg_succ,
+                "PASS"
+            );
             return true;
         } else {
-            $this->addTestResult($spec, $section, $test, ($fail_type == "WARN" ? "! " : "✗ ") . $msg_fail, $fail_type);
+            $this->addTestResult(
+                $spec,
+                $section,
+                $test,
+                ($fail_type == "WARN" ? "! " : "✗ ") . $msg_fail,
+                $fail_type
+            );
             return false;
         }
     }
@@ -273,8 +287,9 @@ class ModuleLogger
         $this->addEntry('debug', $message);
     }
 
-    public function validatorMessage($message){
-      $this->validatorMessages[] = $message;
+    public function validatorMessage($message)
+    {
+        $this->validatorMessages[] = $message;
     }
 
     private function addEntry($type, $entry)

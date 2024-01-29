@@ -45,8 +45,7 @@ function safe_json_encode($value)
             return 'Syntax error, malformed JSON';
 // or trigger_error() or throw new Exception()
         case JSON_ERROR_UTF8:
-                                                                                                                                                                                       $clean = utf8ize($value);
-
+            $clean = utf8ize($value);
             return safe_json_encode($clean);
         default:
             return 'Unknown error'; // or trigger_error() or throw new Exception()
