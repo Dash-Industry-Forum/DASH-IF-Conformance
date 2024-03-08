@@ -49,6 +49,9 @@ class MPDHandler
             $this->validateSchematron();
         }
     }
+    public function getRoles($period, $adaptation){
+      return include 'impl/MPDHandler/getRoles.php';
+    }
 
     public function selectPeriod($period)
     {

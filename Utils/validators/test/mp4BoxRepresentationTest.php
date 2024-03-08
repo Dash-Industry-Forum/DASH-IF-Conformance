@@ -182,4 +182,44 @@ final class MP4BoxRepresentationTest extends TestCase
         );
         $this->assertNotNull($r->getSampleAuxiliaryInformation());
     }
+    public function testGetKindBoxes()
+    {
+        $r = new DASHIF\MP4BoxRepresentation();
+        $this->assertEquals($r->getKindBoxes(), array());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+          </container>'
+        );
+        $this->assertEquals($r->getKindBoxes(), array());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+            <KindBox Size="41" Type="kind" Version="0" Flags="0" Specification="p12" Container="udta" schemeURI="urn:mpeg:dash:role:2011" value="main">
+            </KindBox>
+            <KindBox Size="46" Type="kind" Version="0" Flags="0" Specification="p12" Container="udta" schemeURI="urn:mpeg:dash:role:2011" value="alternate">
+            </KindBox>
+
+          </container>'
+        );
+        $this->assertEquals($r->getKindBoxes(), array());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+            <UserDataBox>
+              <KindBox Size="41" Type="kind" Version="0" Flags="0" Specification="p12" Container="udta" schemeURI="urn:mpeg:dash:role:2011" value="main">
+              </KindBox>
+              <KindBox Size="46" Type="kind" Version="0" Flags="0" Specification="p12" Container="udta" schemeURI="urn:mpeg:dash:role:2011" value="alternate">
+              </KindBox>
+            </UserDataBox>
+
+          </container>'
+        );
+        $kindBoxes = $r->getKindBoxes();
+        $this->assertEquals(count($kindBoxes), 2);
+        $this->assertEquals($kindBoxes[0]->schemeURI, "urn:mpeg:dash:role:2011");
+        $this->assertEquals($kindBoxes[0]->value, "main");
+        $this->assertEquals($kindBoxes[1]->schemeURI, "urn:mpeg:dash:role:2011");
+        $this->assertEquals($kindBoxes[1]->value, "alternate");
+    }
 }

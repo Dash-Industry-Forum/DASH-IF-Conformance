@@ -17,6 +17,7 @@ class MP4BoxValidator extends ValidatorInterface
         $this->output = array();
         $this->flags[] = ValidatorFlags::PreservesOrder;
         $this->flags[] = ValidatorFlags::CanExtractEncryption;
+        $this->flags[] = ValidatorFlags::ExtractKind;
     }
 
 

@@ -2,7 +2,7 @@
 
 global $session;
 
-if (move_uploaded_file($_FILES['mpd']['tmp_name'], $session->getDir() . '/Manifest.mpd')) {
+if (isset($_FILES['mpd']) && move_uploaded_file($_FILES['mpd']['tmp_name'], $session->getDir() . '/Manifest.mpd')) {
     $this->url = $session->getDir() . '/Manifest.mpd';
 }
 

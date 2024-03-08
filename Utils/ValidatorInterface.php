@@ -8,6 +8,7 @@ enum ValidatorFlags
 {
     case PreservesOrder;
     case CanExtractEncryption;
+    case ExtractKind;
 }
 
 //See the validators subfolder for example implementations

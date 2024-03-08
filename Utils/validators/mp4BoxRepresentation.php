@@ -153,6 +153,24 @@ class MP4BoxRepresentation extends RepresentationInterface
         return $res;
     }
 
+    public function getKindBoxes(): array|null
+    {
+        $res = array();
+        if ($this->payload) {
+            $userDataBoxes = $this->payload->getElementsByTagName('UserDataBox');
+            foreach ($userDataBoxes as $udtaBox) {
+                $kindBoxes = $udtaBox->getElementsByTagName('KindBox');
+                foreach ($kindBoxes as $kindBox) {
+                    $box = new Boxes\KINDBox();
+                    $box->schemeURI = $kindBox->getAttribute('schemeURI');
+                    $box->value = $kindBox->getAttribute('value');
+                    $res[] = $box;
+                }
+            }
+        }
+        return $res;
+    }
+
     private function parseSubtDescription($box)
     {
         $result = null;

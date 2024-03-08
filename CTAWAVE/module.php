@@ -253,6 +253,11 @@ class ModuleCTAWAVE extends ModuleInterface
     {
         return include 'impl/encryptionScheme.php';
     }
+
+    public function trackRoles($representation)
+    {
+        return include 'impl/trackRoles.php';
+    }
 }
 
 $modules[] = new ModuleCTAWAVE();
