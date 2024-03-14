@@ -258,6 +258,11 @@ class ModuleCTAWAVE extends ModuleInterface
     {
         return include 'impl/trackRoles.php';
     }
+
+    public function timedEventData($representation)
+    {
+        return include 'impl/timedEventData.php';
+    }
 }
 
 $modules[] = new ModuleCTAWAVE();
