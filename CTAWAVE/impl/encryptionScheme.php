@@ -60,7 +60,7 @@ if ($schemeInfo->schemeType == "cbcs") {
         $schemeAlternativeExplanation,
         true,
         "PASS",
-        "`enc` encryption scheme found " . $representation->getPrintable(),
+        "`cenc` encryption scheme found " . $representation->getPrintable(),
         ""
     );
 

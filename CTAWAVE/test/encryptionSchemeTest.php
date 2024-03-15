@@ -15,6 +15,9 @@ enum EncryptionSchemeTestCases
     case NonCBCS;
     case Non16Byte;
     case NoIV;
+    case ValidCENC;
+    case InvalidCENC16ByteIV;
+    case InvalidCENCNoIV;
     case ValidVideoPattern;
     case ValidVideoPatternMultiple;
     case InvalidVideoPatternZeroCrypt;
@@ -22,6 +25,9 @@ enum EncryptionSchemeTestCases
     case ValidAudioPattern;
     case InvalidAudioPattern;
     case ValidWithSAIO;
+    case ValidPsshAndSenc;
+    case InvalidMultipleKeys;
+    case InvalidSenc;
 }
 
 class EncryptionSchemeMockRepresentation extends DASHIF\RepresentationInterface
@@ -58,8 +64,55 @@ class EncryptionSchemeMockRepresentation extends DASHIF\RepresentationInterface
           break;
         }
       return $handler;
+    }
 
+    public function getPsshBoxes(): array | null{
+      $res = array();
+      switch ($this->case) {
+        case EncryptionSchemeTestCases::ValidPsshAndSenc:
+        case EncryptionSchemeTestCases::InvalidSenc:
+          $res[] = $this->validPssh();
+          break;
+        case EncryptionSchemeTestCases::InvalidMultipleKeys:
+          $psshBox = $this->validPssh();
+          $psshBox->keys[] = 'invalid-second-key';
+          $res[] = $psshBox;
+          break;
+      }
 
+      return $res;
+    }
+
+    private function validPssh(){
+      $pssh = new DASHIF\Boxes\ProtectionSystem();
+      $pssh->systemId = 'some-system';
+      $pssh->keys[] = 'some-key';
+      $pssh->data[] = 'some-data';
+      return $pssh;
+    }
+
+    public function getSencBoxes(): array | null{
+      $res = array();
+      switch ($this->case) {
+        case EncryptionSchemeTestCases::ValidPsshAndSenc:
+        case EncryptionSchemeTestCases::InvalidMultipleKeys:
+          $res[] = $this->validSenc();
+          break;
+        case EncryptionSchemeTestCases::InvalidSenc:
+          $senc = $this->validSenc();
+          $senc->ivSizes[] = 5;
+          $res[] = $senc;
+          break;
+      }
+
+      return $res;
+    }
+
+    private function validSenc(){
+      $senc = new DASHIF\Boxes\SampleEncryption();
+      $senc->sampleCount = 1;
+      $senc->ivSizes[] = 0;
+      return $senc;
     }
 
     public function getProtectionScheme() : DASHIF\Boxes\ProtectionScheme|null
@@ -71,11 +124,14 @@ class EncryptionSchemeMockRepresentation extends DASHIF\RepresentationInterface
             break;
           case EncryptionSchemeTestCases::Valid:
           case EncryptionSchemeTestCases::ValidWithSAIO:
+          case EncryptionSchemeTestCases::ValidPsshAndSenc:
+          case EncryptionSchemeTestCases::InvalidMultipleKeys:
+          case EncryptionSchemeTestCases::InvalidSenc:
             $res = $this->getValidEncryption();
             break;
           case EncryptionSchemeTestCases::NonCBCS:
             $res = $this->getValidEncryption();
-            $res->scheme->schemeType = 'cenc';
+            $res->scheme->schemeType = 'unkn';
             break;
           case EncryptionSchemeTestCases::Non16Byte:
             $res = $this->getValidEncryption();
@@ -83,6 +139,21 @@ class EncryptionSchemeMockRepresentation extends DASHIF\RepresentationInterface
             break;
           case EncryptionSchemeTestCases::NoIV:
             $res = $this->getValidEncryption();
+            $res->encryption->iv = '';
+            break;
+          case EncryptionSchemeTestCases::ValidCENC:
+            $res = $this->getValidEncryption();
+            $res->scheme->schemeType = 'cenc';
+            $res->encryption->ivSize = 8;
+            break;
+          case EncryptionSchemeTestCases::InvalidCENC16ByteIV:
+            $res = $this->getValidEncryption();
+            $res->scheme->schemeType = 'cenc';
+            break;
+          case EncryptionSchemeTestCases::InvalidCENCNoIV:
+            $res = $this->getValidEncryption();
+            $res->scheme->schemeType = 'cenc';
+            $res->encryption->ivSize = 8;
             $res->encryption->iv = '';
             break;
           case EncryptionSchemeTestCases::ValidVideoPattern:
@@ -284,6 +355,60 @@ final class WaveEncryptionSchemeTest extends TestCase
     {
         $GLOBALS['validatorWrapper']->analyzeSingle(
             array(0,0,EncryptionSchemeTestCases::InvalidAudioPattern),
+            $this->module,
+            'encryptionScheme'
+        );
+        $this->assertEquals('FAIL', $GLOBALS['logger']->asArray()['verdict']);
+    }
+    public function testValidCENC(): void
+    {
+        $GLOBALS['validatorWrapper']->analyzeSingle(
+            array(0,0,EncryptionSchemeTestCases::ValidCENC),
+            $this->module,
+            'encryptionScheme'
+        );
+        $this->assertEquals('PASS', $GLOBALS['logger']->asArray()['verdict']);
+    }
+    public function testInvalidCENC16ByteIV(): void
+    {
+        $GLOBALS['validatorWrapper']->analyzeSingle(
+            array(0,0,EncryptionSchemeTestCases::InvalidCENC16ByteIV),
+            $this->module,
+            'encryptionScheme'
+        );
+        $this->assertEquals('FAIL', $GLOBALS['logger']->asArray()['verdict']);
+    }
+    public function testInvalidCENCNoIV(): void
+    {
+        $GLOBALS['validatorWrapper']->analyzeSingle(
+            array(0,0,EncryptionSchemeTestCases::InvalidCENCNoIV),
+            $this->module,
+            'encryptionScheme'
+        );
+        $this->assertEquals('FAIL', $GLOBALS['logger']->asArray()['verdict']);
+    }
+    public function testValidPsshAndCenc(): void
+    {
+        $GLOBALS['validatorWrapper']->analyzeSingle(
+            array(0,0,EncryptionSchemeTestCases::ValidPsshAndSenc),
+            $this->module,
+            'encryptionScheme'
+        );
+        $this->assertEquals('PASS', $GLOBALS['logger']->asArray()['verdict']);
+    }
+    public function testInvalidMultipleKeys(): void
+    {
+        $GLOBALS['validatorWrapper']->analyzeSingle(
+            array(0,0,EncryptionSchemeTestCases::InvalidMultipleKeys),
+            $this->module,
+            'encryptionScheme'
+        );
+        $this->assertEquals('FAIL', $GLOBALS['logger']->asArray()['verdict']);
+    }
+    public function testInvalidSenc(): void
+    {
+        $GLOBALS['validatorWrapper']->analyzeSingle(
+            array(0,0,EncryptionSchemeTestCases::InvalidSenc),
             $this->module,
             'encryptionScheme'
         );
