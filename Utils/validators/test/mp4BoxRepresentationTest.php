@@ -222,4 +222,61 @@ final class MP4BoxRepresentationTest extends TestCase
         $this->assertEquals($kindBoxes[1]->schemeURI, "urn:mpeg:dash:role:2011");
         $this->assertEquals($kindBoxes[1]->value, "alternate");
     }
+    public function testGetPsshBoxes()
+    {
+        $r = new DASHIF\MP4BoxRepresentation();
+        $this->assertEquals($r->getPsshBoxes(), array());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+          </container>'
+        );
+        $this->assertEquals($r->getPsshBoxes(), array());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+             <ProtectionSystemHeaderBox Size="109" Type="pssh" Version="1" Flags="0" Specification="cenc" Container="moov moof meta" SystemID="0x6770616363656E6364726D746F6F6C31">
+              <PSSHKey KID="0x279926496A7F5D25DA69F2B3B2799A7F"/>
+              <PSSHKey KID="0x676CB88F302D10227992649885984045"/>
+              <PSSHData size="41" value="0x084349443D546F746F5A8E62EB7DF2829F7D583A722E60DA8AD0F9A2234837719EF2A7332871FC5517"/>
+            </ProtectionSystemHeaderBox>
+          </container>'
+        );
+        $psshBoxes = $r->getPsshBoxes();
+        $this->assertEquals(count($psshBoxes), 1);
+        $this->assertEquals($psshBoxes[0]->systemId, "0x6770616363656E6364726D746F6F6C31");
+        $this->assertEquals(count($psshBoxes[0]->keys), 2);
+        $this->assertEquals(count($psshBoxes[0]->data), 1);
+    }
+    public function testGetSencBoxes()
+    {
+        $r = new DASHIF\MP4BoxRepresentation();
+        $this->assertEquals($r->getSencBoxes(), array());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+          </container>'
+        );
+        $this->assertEquals($r->getSencBoxes(), array());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+          <SampleEncryptionBox Size="1056" Type="senc" Specification="cenc" Container="trak traf" sampleCount="2">
+            <FullBoxInfo Version="0" Flags="0x2"/>
+            <SampleEncryptionEntry sampleNumber="1" IV_size="0" SubsampleCount="1">
+              <SubSampleEncryptionEntry NumClearBytes="10" NumEncryptedBytes="236125"/>
+            </SampleEncryptionEntry>
+            <SampleEncryptionEntry sampleNumber="2" IV_size="10" SubsampleCount="1">
+              <SubSampleEncryptionEntry NumClearBytes="10" NumEncryptedBytes="34819"/>
+            </SampleEncryptionEntry>
+            </SampleEncryptionBox>
+          </container>'
+        );
+        $sencBoxes = $r->getSencBoxes();
+        $this->assertEquals(count($sencBoxes), 1);
+        $this->assertEquals($sencBoxes[0]->sampleCount, 2);
+        $this->assertEquals(count($sencBoxes[0]->ivSizes), 2);
+        $this->assertEquals($sencBoxes[0]->ivSizes[0], 0);
+        $this->assertEquals($sencBoxes[0]->ivSizes[1], 10);
+    }
 }

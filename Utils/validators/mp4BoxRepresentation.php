@@ -183,7 +183,7 @@ class MP4BoxRepresentation extends RepresentationInterface
                     $box->keys[] = $psshKey->getAttribute('KID');
                 }
                 foreach ($psshBox->getElementsByTagName('PSSHData') as $psshData) {
-                    $box->data[] = $psshKey->getAttribute('value');
+                    $box->data[] = $psshData->getAttribute('value');
                 }
                 $res[] = $box;
             }
