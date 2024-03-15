@@ -279,4 +279,37 @@ final class MP4BoxRepresentationTest extends TestCase
         $this->assertEquals($sencBoxes[0]->ivSizes[0], 0);
         $this->assertEquals($sencBoxes[0]->ivSizes[1], 10);
     }
+    public function testGetEmsgBoxes()
+    {
+        $r = new DASHIF\MP4BoxRepresentation();
+        $this->assertEquals($r->getEmsgBoxes(), array());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+          </container>'
+        );
+        $this->assertEquals($r->getEmsgBoxes(), array());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+            <EventMessageBox Size="85" Type="emsg" Version="1" Flags="0" Specification="dash" Container="file" 
+                             timescale="90000" presentation_time="450000" event_duration="270000" event_id="0" 
+                             scheme_id_uri="https://aomedia.org/emsg/ID3" value="1" 
+                             message_data="0x4944330400000000000C545858580000000200000300" >
+            </EventMessageBox>
+          </container>'
+        );
+        $emsgBoxes = $r->getEmsgBoxes();
+        $this->assertEquals(count($emsgBoxes), 1);
+        $this->assertEquals($emsgBoxes[0]->timeScale, 90000);
+        $this->assertEquals($emsgBoxes[0]->presentationTime, 450000);
+        $this->assertEquals($emsgBoxes[0]->eventDuration, 270000);
+
+        //Optionals
+        $this->assertEquals($emsgBoxes[0]->id, null);
+        $this->assertEquals($emsgBoxes[0]->schemeIdUri, 'https://aomedia.org/emsg/ID3');
+        $this->assertEquals($emsgBoxes[0]->value, 1);
+        $this->assertEquals($emsgBoxes[0]->messageData,  '0x4944330400000000000C545858580000000200000300');
+
+    }
 }

@@ -169,4 +169,42 @@ final class ISOSegmentRepresentationTest extends TestCase
         $this->assertEquals(16, $protection->encryption->ivSize);
         $this->assertEquals("3915338731061279337218105242179178121154127", $protection->encryption->kid);
     }
+
+    public function testGetEmsgBoxes()
+    {
+        $r = new DASHIF\ISOSegmentValidatorRepresentation();
+        $this->assertEquals($r->getEmsgBoxes(), array());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+          </container>'
+        );
+        $this->assertEquals($r->getEmsgBoxes(), array());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+            <emsg version="1" flags="0"
+              offset="0"
+              timeScale="0"
+              presentationTimeDelta="115200000"
+              eventDuration="69120000"
+              id="104"
+              >
+            </emsg>
+
+          </container>'
+        );
+        $emsgBoxes = $r->getEmsgBoxes();
+        $this->assertEquals(count($emsgBoxes), 1);
+        $this->assertEquals($emsgBoxes[0]->timeScale, 0);
+        $this->assertEquals($emsgBoxes[0]->presentationTime, 115200000);
+        $this->assertEquals($emsgBoxes[0]->eventDuration, 69120000);
+
+        //Optionals
+        $this->assertEquals($emsgBoxes[0]->id, 104);
+        $this->assertEquals($emsgBoxes[0]->schemeIdUri, null);
+        $this->assertEquals($emsgBoxes[0]->value, null);
+        $this->assertEquals($emsgBoxes[0]->messageData, null);
+
+    }
 }

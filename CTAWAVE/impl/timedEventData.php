@@ -11,6 +11,7 @@ if (!$boxCount) {
 }
 
 $emsgIndices = array_keys($boxOrder, 'emsg');
+
 $emsgCount = count($emsgIndices);
 
 if (!$emsgCount) {
@@ -19,6 +20,12 @@ if (!$emsgCount) {
 }
 
 $emsgBoxes = $representation->getEmsgBoxes();
+
+
+if ($emsgBoxes == null || !count($emsgBoxes)){
+  //No emsg boxes parsed
+  return;
+}
 
 
 $spec = "CTA-5005-A";
@@ -41,22 +48,20 @@ $expectRepeat = array();
 $emsgNum = -1;
 for ($i = 0; $i < $boxCount; $i++) {
     if ($boxOrder[$i] == 'moof') {
-        if ($nextMoofIsSegment) {
-            foreach ($expectRepeat as $expectation) {
-                $logger->test(
-                    $spec,
-                    $section,
-                    $emsgExplanation,
-                    false,
-                    "FAIL",
-                    "",
-                    "Box for time $expectation->presentationTime did not get repeated for " .
-                      $representation->getPrintable()
-                );
-            }
-            $expectRepeat = array();
-            $nextMoofIsSegment = false;
+        foreach ($expectRepeat as $expectation) {
+            $logger->test(
+                $spec,
+                $section,
+                $emsgExplanation,
+                false,
+                "FAIL",
+                "",
+                "Box for time $expectation->presentationTime did not get repeated for " .
+                  $representation->getPrintable()
+            );
         }
+        $expectRepeat = array();
+        $nextMoofIsSegment = false;
         $activeSegment = true;
     }
     if ($boxOrder[$i] == 'mdat') {
