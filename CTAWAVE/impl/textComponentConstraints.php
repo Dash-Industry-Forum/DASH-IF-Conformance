@@ -9,7 +9,7 @@ if (!$sampleDescription) {
 }
 
 $spec = "CTA-5005-A";
-$section = "4.1.2 - Constraints on CMAF Authoring for Manifest Interoperability";
+$section = "4.1.2 - Basic On-Demand and Live Streaming";
 $explanation = "Text components SHALL be packaged in ISMC1, ISMC1.1 or WebVTT Tracks";
 
 if ($sampleDescription->type == DASHIF\Boxes\DescriptionType::Subtitle) {

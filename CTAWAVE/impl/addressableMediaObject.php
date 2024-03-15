@@ -9,7 +9,7 @@ if (!count($boxOrder)) {
 }
 
 $spec = "CTA-5005-A";
-$section = "4.1.2 - Constraints on CMAF Authoring for Manifest Interoperability";
+$section = "4.1.2 - Basic On-Demand and Live Streaming";
 $sidxExplanation = "CMAF Track Files used as a CMAF Addressable Media Object (i.e., those that are delivered to " .
   "the client) SHALL contain a single SegmentIndexBox (‘sidx’) following the CMAF Header and preceding any CMAF " .
   "Fragments.";

@@ -18,7 +18,7 @@ $schemeInfo = $protectionInformation->scheme;
 
 
 $spec = "CTA-5005-A";
-$section = "4.3.2 - Constraints on CMAF Authoring for Manifest Interoperability";
+$section = "4.3.2 - Encrypted Media Presentations";
 $schemeExplanation = "The common encryption `cbcs` scheme SHALL be used for encryption.";
 $ivExplanation = "Constant 16-byte Initialization Vectors SHALL be used.";
 $schemeAlternativeExplanation = "For every `cbcs` encrypted component, an alternative component MAY be produced " .

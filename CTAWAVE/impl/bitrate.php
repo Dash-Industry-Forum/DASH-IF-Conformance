@@ -6,7 +6,7 @@ $sizes = $representation->getSegmentSizes();
 $durations = $representation->getSegmentDurations();
 
 $spec = "CTA-5005-A";
-$section = "4.1.2 - Constraints on CMAF Authoring for Manifest Interoperability";
+$section = "4.1.2 - Basic On-Demand and Live Streaming";
 $bitrateExplanation = "For presentations presented in an on-demand environment: The Average Bitrate of a CMAF " .
   "Fragment within a CMAF Track SHOULD be within 10% of the Average Bitrate calculated over the full duration " .
   "of the Track.";

@@ -22,7 +22,7 @@ $emsgBoxes = $representation->getEmsgBoxes();
 
 
 $spec = "CTA-5005-A";
-$section = "4.5.2 - Constraints on CMAF Authoring for Manifest Interoperability";
+$section = "4.5.2 - Carriage of Timed Event Data";
 $emsgExplanation = "All emsg boxes inserted into the CMAF Segment after the start of the first CMAF Chunk SHALL be " .
   "repeated before the first Chunk of the next Segment.";
 
