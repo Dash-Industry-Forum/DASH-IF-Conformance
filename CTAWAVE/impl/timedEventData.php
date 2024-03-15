@@ -18,7 +18,7 @@ if (!$emsgCount) {
     return;
 }
 
-$emsgBoxes = $representation->getAllEmsg();
+$emsgBoxes = $representation->getEmsgBoxes();
 
 
 $spec = "CTA-5005-A";

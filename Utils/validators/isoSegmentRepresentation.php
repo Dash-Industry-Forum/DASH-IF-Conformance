@@ -64,6 +64,24 @@ class ISOSegmentValidatorRepresentation extends RepresentationInterface
         return $result;
     }
 
+    public function getEmsgBoxes(): array|null
+    {
+        $res = array();
+        if ($this->payload) {
+            $emsgBoxes = $this->payload->getElementsByTagName('emsg');
+            foreach ($emsgBoxes as $emsgBox) {
+                $box = new Boxes\EventMessage();
+                $box->presentationTime = $emsgBox->getAttribute('presentationTimeDelta');
+                $box->timeScale = $emsgBox->getAttribute('timeScale');
+                $box->eventDuration = $emsgBox->getAttribute('eventDuration');
+
+                $box->id = $emsgBox->getAttribute('id');
+                $res[] = $box;
+            }
+        }
+        return $res;
+    }
+
     public function getProtectionScheme(): Boxes\ProtectionScheme|null
     {
         $res = null;

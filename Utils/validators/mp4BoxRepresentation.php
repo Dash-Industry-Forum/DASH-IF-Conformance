@@ -171,6 +171,63 @@ class MP4BoxRepresentation extends RepresentationInterface
         return $res;
     }
 
+    public function getPsshBoxes(): array|null
+    {
+        $res = array();
+        if ($this->payload) {
+            $psshBoxes = $this->payload->getElementsByTagName('ProtectionSystemHeaderBox');
+            foreach ($psshBoxes as $psshBox) {
+                $box = new Boxes\ProtectionSystem();
+                $box->systemId = $psshBox->getAttribute('SystemID');
+                foreach ($psshBox->getElementsByTagName('PSSHKey') as $psshKey) {
+                    $box->keys[] = $psshKey->getAttribute('KID');
+                }
+                foreach ($psshBox->getElementsByTagName('PSSHData') as $psshData) {
+                    $box->data[] = $psshKey->getAttribute('value');
+                }
+                $res[] = $box;
+            }
+        }
+        return $res;
+    }
+
+    public function getSencBoxes(): array|null
+    {
+        $res = array();
+        if ($this->payload) {
+            $sencBoxes = $this->payload->getElementsByTagName('SampleEncryptionBox');
+            foreach ($sencBoxes as $sencBox) {
+                $box = new Boxes\SampleEncryption();
+                $box->sampleCount = $sencBox->getAttribute('sampleCount');
+                foreach ($sencBox->getElementsByTagName('SampleEncryptionEntry') as $sencEntry) {
+                    $box->ivSizes[] = $sencEntry->getAttribute('IV_size');
+                }
+                $res[] = $box;
+            }
+        }
+        return $res;
+    }
+
+    public function getEmsgBoxes(): array|null
+    {
+        $res = array();
+        if ($this->payload) {
+            $emsgBoxes = $this->payload->getElementsByTagName('EventMessageBox');
+            foreach ($emsgBoxes as $emsgBox) {
+                $box = new Boxes\EventMessage();
+                $box->presentationTime = $emsgBox->getAttribute('presentation_time');
+                $box->timeScale = $emsgBox->getAttribute('timescale');
+                $box->eventDuration = $emsgBox->getAttribute('event_duration');
+
+                $box->schemeIdUri = $emsgBox->getAttribute('scheme_id_uri');
+                $box->value = $emsgBox->getAttribute('value');
+                $box->messageData = $emsgBox->getAttribute('message_data');
+                $res[] = $box;
+            }
+        }
+        return $res;
+    }
+
     private function parseSubtDescription($box)
     {
         $result = null;
