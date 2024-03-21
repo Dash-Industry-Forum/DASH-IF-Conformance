@@ -312,4 +312,64 @@ final class MP4BoxRepresentationTest extends TestCase
         $this->assertEquals($emsgBoxes[0]->messageData,  '0x4944330400000000000C545858580000000200000300');
 
     }
+
+    public function testGetBoxNameTree()
+    {
+        $r = new DASHIF\MP4BoxRepresentation();
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+            <IsoMediaFile>
+            <ProtectionSchemeInfoBox Size="97" Type="sinf" Specification="p12" Container="ipro sample_entry">
+              <OriginalFormatBox Size="12" Type="frma" Specification="p12" Container="sinf rinf" data_format="avc1">
+</OriginalFormatBox>
+              <SchemeTypeBox Size="20" Type="schm" Version="0" Flags="0" Specification="p12" Container="sinf rinf" scheme_type="cbcs" scheme_version="65536">
+</SchemeTypeBox>
+              <SchemeInformationBox Size="57" Type="schi" Specification="p12" Container="sinf rinf">
+                <TrackEncryptionBox Size="49" Type="tenc" Version="1" Flags="0" Specification="cenc" Container="schi" isEncrypted="1" constant_IV_size="16" constant_IV="0x0A610676CB88F302D10AC8BC66E039ED" KID="0x279926496A7F5D25DA69F2B3B2799A7F" crypt_byte_block="1" skip_byte_block="9">
+                </TrackEncryptionBox>
+              </SchemeInformationBox>
+            </ProtectionSchemeInfoBox>
+          </IsoMediaFile>
+          </container>'
+        );
+
+        $boxTree = $r->getBoxNameTree();
+
+        $this->assertEquals(count($boxTree->children), 1);
+        $this->assertEquals($boxTree->children[0]->name, 'sinf');
+        $this->assertEquals(count($boxTree->children[0]->children), 3);
+        $this->assertEquals($boxTree->children[0]->children[0]->name, 'frma');
+        $this->assertEquals($boxTree->children[0]->children[1]->name, 'schm');
+        $this->assertEquals($boxTree->children[0]->children[2]->name, 'schi');
+
+        $filtered = $boxTree->filterChildrenRecursive('schi');
+        $this->assertEquals(count($filtered), 1);
+    }
+    public function testGetSampleDuration()
+    {
+        $r = new DASHIF\MP4BoxRepresentation();
+        $this->assertNull($r->getSampleDuration());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+          </container>'
+        );
+        $this->assertNull($r->getSampleDuration());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+            <TrackExtendsBox SampleDuration="424242" />
+          </container>'
+        );
+        $this->assertEquals($r->getSampleDuration(), 424.242);
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+            <TrackExtendsBox SampleDuration="12000" />
+            <MediaHeaderBox TimeScale="400" />
+          </container>'
+        );
+        $this->assertEquals($r->getSampleDuration(), 30.0);
+    }
 }

@@ -9,6 +9,24 @@ class MP4BoxRepresentation extends RepresentationInterface
         parent::__construct();
     }
 
+    public function getBoxNameTree(): Boxes\NameOnlyNode | null
+    {
+        $box = new Boxes\NameOnlyNode('');
+        if ($this->payload) {
+            $topLevelBoxes = $this->payload->getElementsByTagName('IsoMediaFile');
+            for ($i = 0; $i < $topLevelBoxes->count(); $i++) {
+                $child = $topLevelBoxes->item($i)->firstElementChild;
+                while ($child != null) {
+                    $thisBox = new Boxes\NameOnlyNode('');
+                    $thisBox->fillChildrenRecursive($child);
+                    $box->children[] = $thisBox;
+                    $child = $child->nextElementSibling;
+                }
+            }
+        }
+        return $box;
+    }
+
     public function getTopLevelBoxNames()
     {
         $boxNames = array();
@@ -353,5 +371,46 @@ class MP4BoxRepresentation extends RepresentationInterface
             return null;
         }
         return $boxes->item($index);
+    }
+
+    public function getSampleDuration(): float|null
+    {
+        if (!$this->payload) {
+            return null;
+        }
+        $trexBoxes = $this->payload->getElementsByTagName('TrackExtendsBox');
+        if (!count($trexBoxes)) {
+            return null;
+        }
+        $duration = (float)$trexBoxes->item(0)->getAttribute('SampleDuration');
+        //Assume ms if we can't find otherwise
+        $timescale = 1000;
+        $mdhdBoxes = $this->payload->getElementsByTagName('MediaHeaderBox');
+        if (count($mdhdBoxes)) {
+            $timescale = $mdhdBoxes->item(0)->getAttribute('TimeScale');
+        }
+
+        return $duration / $timescale;
+    }
+
+    public function getFragmentDurations(): array|null
+    {
+        if (!$this->payload) {
+            return null;
+        }
+        $sidxBoxes = $this->payload->getElementsByTagName('SegementIndexBox');
+        if (!count($sidxBoxes)) {
+            return null;
+        }
+        $res = array();
+        foreach ($sidxBoxes as $sidxBox) {
+            $references = $sidxBox->getElementsByTagName('Reference');
+            $duration = 0.0;
+            foreach ($references as $reference) {
+                $duration += (float)$reference->getAttribute('duration');
+            }
+            $res[] = $duration / $sidxBox->getAttribute('timescale');
+        }
+        return $res;
     }
 }

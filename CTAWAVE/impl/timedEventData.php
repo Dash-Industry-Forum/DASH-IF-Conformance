@@ -22,9 +22,9 @@ if (!$emsgCount) {
 $emsgBoxes = $representation->getEmsgBoxes();
 
 
-if ($emsgBoxes == null || !count($emsgBoxes)){
+if ($emsgBoxes == null || !count($emsgBoxes)) {
   //No emsg boxes parsed
-  return;
+    return;
 }
 
 

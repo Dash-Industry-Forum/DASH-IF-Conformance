@@ -65,6 +65,11 @@ class RepresentationInterface
         return null;
     }
 
+    public function getBoxNameTree(): Boxes\NameOnlyNode|null
+    {
+        return null;
+    }
+
     public function getSegmentSizes()
     {
         return $this->fileSizes;
@@ -106,6 +111,16 @@ class RepresentationInterface
     }
 
     public function getEmsgBoxes(): array|null
+    {
+        return null;
+    }
+
+    public function getSampleDuration(): float|null
+    {
+        return null;
+    }
+
+    public function getFragmentDurations(): array|null
     {
         return null;
     }

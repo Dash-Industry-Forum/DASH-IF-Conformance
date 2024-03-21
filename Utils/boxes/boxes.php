@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/nameOnlyNode.php';
+
 require_once __DIR__ . '/stppbox.php';
 require_once __DIR__ . '/schmbox.php';
 require_once __DIR__ . '/tencbox.php';

@@ -263,6 +263,11 @@ class ModuleCTAWAVE extends ModuleInterface
     {
         return include 'impl/timedEventData.php';
     }
+
+    public function splicingPoints($representation)
+    {
+        return include 'impl/splicingPoints.php';
+    }
 }
 
 $modules[] = new ModuleCTAWAVE();

@@ -11,6 +11,21 @@ class ISOSegmentValidatorRepresentation extends RepresentationInterface
         parent::__construct();
     }
 
+    public function getBoxNameTree(): Boxes\NameOnlyNode | null
+    {
+        $box = new Boxes\NameOnlyNode('');
+        if ($this->payload) {
+            $child = $this->payload->firstElementChild;
+            while ($child != null) {
+                $thisBox = new Boxes\NameOnlyNode('');
+                $thisBox->fillChildrenRecursive($child);
+                $box->children[] = $thisBox;
+                $child = $child->nextElementSibling;
+            }
+        }
+        return $box;
+    }
+
     public function getHandlerType()
     {
         if (!$this->payload) {
@@ -269,5 +284,45 @@ class ISOSegmentValidatorRepresentation extends RepresentationInterface
             return null;
         }
         return $boxes->item($index);
+    }
+
+    public function getSampleDuration(): float|null
+    {
+        if (!$this->payload) {
+            return null;
+        }
+        $trexBoxes = $this->payload->getElementsByTagName('trex');
+        if (!count($trexBoxes)) {
+            return null;
+        }
+        $duration = (float) $trexBoxes->item(0)->getAttribute('sampleDuration');
+        //Assume ms if we can't find otherwise
+        $timescale = 1000;
+        $mdhdBoxes = $this->payload->getElementsByTagName('mdhd');
+        if (count($mdhdBoxes)) {
+            $timescale = $mdhdBoxes->item(0)->getAttribute('timescale');
+        }
+
+
+        return $duration / $timescale;
+    }
+
+    public function getFragmentDurations(): array|null
+    {
+        if (!$this->payload) {
+            return null;
+        }
+        $sidxBoxes = $this->payload->getElementsByTagName('sidx');
+        if (!count($sidxBoxes)) {
+            return null;
+        }
+        $prevDuration = 0.0;
+        $res = array();
+        foreach ($sidxBoxes as $sidxBox) {
+            $duration = (float)$sidxBox->getAttribute('cumulatedDuration');
+            $res[] = $duration - $prevDuration;
+            $prevDuration = $duration;
+        }
+        return $res;
     }
 }

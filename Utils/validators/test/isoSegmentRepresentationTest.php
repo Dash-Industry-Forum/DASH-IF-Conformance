@@ -207,4 +207,85 @@ final class ISOSegmentRepresentationTest extends TestCase
         $this->assertEquals($emsgBoxes[0]->messageData, null);
 
     }
+
+    public function testGetBoxNameTree()
+    {
+        $r = new DASHIF\ISOSegmentValidatorRepresentation();
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+         '<atomlist>
+            <ftyp majorbrand="iso6" version="0x1">
+            </ftyp>
+            <moov>
+              <mvhd       version="0" flags="0"
+                creationTime="0x3789971995"
+                modificationTime="0x3789971995"
+                timeScale="1000"
+                duration="0"
+                nextTrackID="2"
+                >
+              </mvhd>
+              <trak>
+                <tkhd     version="0" flags="3"
+                  creationTime="0x0"
+                  modificationTime="0x3789971995"
+                  trackID="1"
+                  duration="0"
+                  volume="0.000000"
+                  width="1920.000000"
+                  height="1080.000000"
+                  >
+                </tkhd>
+                <edts>
+                  <elst   version="0" flags="0"
+                    entryCount="1"
+                    >
+                      <elstEntry duration="0" mediaTime="1024" mediaRate="1.000000" />
+                  </elst>
+                </edts>
+              </trak>
+            </moov>
+          </atomlist>'
+        );
+
+        $boxTree = $r->getBoxNameTree();
+
+        $this->assertEquals(count($boxTree->children), 2);
+        $this->assertEquals($boxTree->children[0]->name, 'ftyp');
+        $this->assertEquals($boxTree->children[1]->name, 'moov');
+        $this->assertEquals(count($boxTree->children[1]->children), 2);
+        $this->assertEquals($boxTree->children[1]->children[0]->name, 'mvhd');
+        $this->assertEquals($boxTree->children[1]->children[1]->name, 'trak');
+
+        $filtered = $boxTree->filterChildrenRecursive('mvhd');
+        $this->assertEquals(count($filtered), 1);
+
+
+    }
+    public function testGetSampleDuration()
+    {
+        $r = new DASHIF\ISOSegmentValidatorRepresentation();
+        $this->assertNull($r->getSampleDuration());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+          </container>'
+        );
+        $this->assertNull($r->getSampleDuration());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+            <trex sampleDuration="424242" />
+          </container>'
+        );
+        $this->assertEquals($r->getSampleDuration(), 424.242);
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+            <trex sampleDuration="12000" />
+            <mdhd timescale="400" />
+          </container>'
+        );
+        $this->assertEquals($r->getSampleDuration(), 30.0);
+    }
 }
