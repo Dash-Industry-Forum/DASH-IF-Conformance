@@ -125,6 +125,15 @@ class RepresentationInterface
         return null;
     }
 
+    public function getSeigDescriptionGroups(): array | null
+    {
+        return null;
+    }
+    public function getSampleGroups(): array | null
+    {
+        return null;
+    }
+
     //Fields that can be found in multiple locations take a boxname as well as a box index.
     //Set $index to 0 for singular boxes.
     //For the sample implementations, only the used boxes are handled.

@@ -268,6 +268,11 @@ class ModuleCTAWAVE extends ModuleInterface
     {
         return include 'impl/splicingPoints.php';
     }
+
+    public function keyRotation($representation)
+    {
+        return include 'impl/keyRotation.php';
+    }
 }
 
 $modules[] = new ModuleCTAWAVE();

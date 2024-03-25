@@ -413,4 +413,53 @@ class MP4BoxRepresentation extends RepresentationInterface
         }
         return $res;
     }
+
+    public function getSeigDescriptionGroups(): array | null
+    {
+        if (!$this->payload) {
+            return null;
+        }
+        $sgpdBoxes = $this->payload->getElementsByTagName('SampleGroupDescriptionBox');
+        if (!count($sgpdBoxes)) {
+            return null;
+        }
+        $res = array();
+        foreach ($sgpdBoxes as $sgpdBox) {
+            $description = new Boxes\SampleGroupDescription();
+            $description->groupingType = $sgpdBox->getAttribute('grouping_type');
+            foreach ($sgpdBox->getElementsByTagName('CENCSampleEncryptionGroupEntry') as $seigEntry) {
+                $entry = new Boxes\SeigDescription();
+                $entry->isEncrypted = $seigEntry->getAttribute('IsEncrypted');
+                $entry->ivSize = $seigEntry->getAttribute('IV_Size');
+                $entry->kid = $seigEntry->getAttribute('KID');
+                $entry->constantIvSize = $seigEntry->getAttribute('constant_IV_size');
+                $entry->constantIv = $seigEntry->getAttribute('constant_IV');
+                $description->entries[] = $entry;
+            }
+
+            $res[] = $description;
+        }
+
+        return $res;
+    }
+    public function getSampleGroups(): array | null
+    {
+        if (!$this->payload) {
+            return null;
+        }
+        $sbgpBoxes = $this->payload->getElementsByTagName('SampleGroupBox');
+        if (!count($sbgpBoxes)) {
+            return null;
+        }
+        $res = array();
+        foreach ($sbgpBoxes as $sbgpBox) {
+            $sampleGroup = new Boxes\SampleGroup();
+            foreach ($sbgpBox->getElementsByTagName('SampleGroupBoxEntry') as $sgbpEntry) {
+                $sampleGroup->sampleCounts[] = $sgbpEntry->getAttribute('sample_count');
+                $sampleGroup->groupDescriptionIndices[] = $sgbpEntry->getAttribute('group_description_index');
+            }
+            $res[] = $sampleGroup;
+        }
+        return $res;
+    }
 }

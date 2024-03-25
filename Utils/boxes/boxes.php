@@ -11,3 +11,7 @@ require_once __DIR__ . '/sampleAuxiliaryInformation.php';
 require_once __DIR__ . '/sinfbox.php';
 require_once __DIR__ . '/kindbox.php';
 require_once __DIR__ . '/emsgbox.php';
+
+require_once __DIR__ . '/sampleGroup.php';
+require_once __DIR__ . '/sampleGroupDescription.php';
+require_once __DIR__ . '/seigDescription.php';
