@@ -114,7 +114,7 @@ class SplicingPointMockValidator extends DASHIF\ValidatorInterface
     }
 }
 
-class SplicingPointTestModule extends DASHIF\ModuleCTAWave
+class SplicingPointTestModule extends DASHIF\ModuleWaveHLSInterop
 {
     public function __construct()
     {

@@ -152,7 +152,7 @@ class KeyRotationMockValidator extends DASHIF\ValidatorInterface
     }
 }
 
-class KeyRotationTestModule extends DASHIF\ModuleCTAWave
+class KeyRotationTestModule extends DASHIF\ModuleWaveHLSInterop
 {
     public function __construct()
     {

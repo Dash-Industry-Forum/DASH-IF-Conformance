@@ -45,6 +45,7 @@ include __DIR__ . '/MPDHandler.php';
 include __DIR__ . '/../DASH/module.php';
 include __DIR__ . '/../CMAF/module.php';
 include __DIR__ . '/../CTAWAVE/module.php';
+include __DIR__ . '/../WaveHLSInterop/module.php';
 include __DIR__ . '/../HbbTV_DVB/module.php';
 include __DIR__ . '/../DASH/LowLatency/module.php';
 include __DIR__ . '/../DASH/IOP/module.php';

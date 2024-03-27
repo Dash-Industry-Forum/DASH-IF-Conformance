@@ -134,7 +134,7 @@ class AddressableObjectsMockValidator extends DASHIF\ValidatorInterface
     }
 }
 
-class AddressableObjectsTestModule extends DASHIF\ModuleCTAWave
+class AddressableObjectsTestModule extends DASHIF\ModuleWaveHLSInterop
 {
     public function __construct()
     {

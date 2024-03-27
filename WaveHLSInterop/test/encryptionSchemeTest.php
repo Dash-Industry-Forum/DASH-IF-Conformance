@@ -224,7 +224,7 @@ class EncryptionSchemeMockValidator extends DASHIF\ValidatorInterface
     }
 }
 
-class EncryptionSchemeTestModule extends DASHIF\ModuleCTAWave
+class EncryptionSchemeTestModule extends DASHIF\ModuleWaveHLSInterop
 {
     public function __construct()
     {

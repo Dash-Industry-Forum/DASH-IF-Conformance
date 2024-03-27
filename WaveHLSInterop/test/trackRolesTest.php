@@ -85,7 +85,7 @@ class TrackRoleMockValidator extends DASHIF\ValidatorInterface
     }
 }
 
-class TrackRoleTestModule extends DASHIF\ModuleCTAWave
+class TrackRoleTestModule extends DASHIF\ModuleWaveHLSInterop
 {
     public function __construct()
     {

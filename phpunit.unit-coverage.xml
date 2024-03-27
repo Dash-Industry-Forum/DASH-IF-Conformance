@@ -17,7 +17,7 @@
          verbose="true">
     <testsuites>
         <testsuite name="default">
-          <directory>CTAWAVE/test</directory>
+          <directory>WaveHLSInterop/test</directory>
           <directory>Utils/test</directory>
           <directory>Utils/validators/test</directory>
         </testsuite>

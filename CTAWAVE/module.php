@@ -233,46 +233,6 @@ class ModuleCTAWAVE extends ModuleInterface
     {
         return include 'impl/getMediaProfile.php';
     }
-
-    public function textComponentConstraints($representation)
-    {
-        return include 'impl/textComponentConstraints.php';
-    }
-
-    public function addressableMediaObject($representation)
-    {
-        return include 'impl/addressableMediaObject.php';
-    }
-
-    public function bitrate($representation)
-    {
-        return include 'impl/bitrate.php';
-    }
-
-    public function encryptionScheme($representation)
-    {
-        return include 'impl/encryptionScheme.php';
-    }
-
-    public function trackRoles($representation)
-    {
-        return include 'impl/trackRoles.php';
-    }
-
-    public function timedEventData($representation)
-    {
-        return include 'impl/timedEventData.php';
-    }
-
-    public function splicingPoints($representation)
-    {
-        return include 'impl/splicingPoints.php';
-    }
-
-    public function keyRotation($representation)
-    {
-        return include 'impl/keyRotation.php';
-    }
 }
 
 $modules[] = new ModuleCTAWAVE();

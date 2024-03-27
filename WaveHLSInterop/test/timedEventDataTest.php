@@ -142,7 +142,7 @@ class TimedEventDataMockValidator extends DASHIF\ValidatorInterface
     }
 }
 
-class TimedEventDataTestModule extends DASHIF\ModuleCTAWave
+class TimedEventDataTestModule extends DASHIF\ModuleWaveHLSInterop
 {
     public function __construct()
     {

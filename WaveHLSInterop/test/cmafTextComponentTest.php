@@ -153,7 +153,7 @@ class TextComponentsMockValidator extends DASHIF\ValidatorInterface
     }
 }
 
-class TextComponentsTestModule extends DASHIF\ModuleCTAWave
+class TextComponentsTestModule extends DASHIF\ModuleWaveHLSInterop
 {
     public function __construct()
     {

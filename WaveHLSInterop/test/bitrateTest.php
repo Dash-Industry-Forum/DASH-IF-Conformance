@@ -101,7 +101,7 @@ class BitRateMockValidator extends DASHIF\ValidatorInterface
     }
 }
 
-class BitRateTestModule extends DASHIF\ModuleCTAWave
+class BitRateTestModule extends DASHIF\ModuleWaveHLSInterop
 {
     public function __construct()
     {
