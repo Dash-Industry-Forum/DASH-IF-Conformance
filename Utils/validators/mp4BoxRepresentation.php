@@ -398,18 +398,22 @@ class MP4BoxRepresentation extends RepresentationInterface
         if (!$this->payload) {
             return null;
         }
-        $sidxBoxes = $this->payload->getElementsByTagName('SegementIndexBox');
+        $sidxBoxes = $this->payload->getElementsByTagName('SegmentIndexBox');
         if (!count($sidxBoxes)) {
             return null;
         }
+        $prevDuration = 0.0;
         $res = array();
         foreach ($sidxBoxes as $sidxBox) {
             $references = $sidxBox->getElementsByTagName('Reference');
             $duration = 0.0;
             foreach ($references as $reference) {
-                $duration += (float)$reference->getAttribute('duration');
+                //Take the maximum
+                $duration = (float)$reference->getAttribute('duration');
             }
-            $res[] = $duration / $sidxBox->getAttribute('timescale');
+            $duration /= $sidxBox->getAttribute('timescale');
+            $res[] = $duration - $prevDuration;
+            $prevDuration = $duration;
         }
         return $res;
     }
@@ -430,7 +434,7 @@ class MP4BoxRepresentation extends RepresentationInterface
             foreach ($sgpdBox->getElementsByTagName('CENCSampleEncryptionGroupEntry') as $seigEntry) {
                 $entry = new Boxes\SeigDescription();
                 $entry->isEncrypted = $seigEntry->getAttribute('IsEncrypted');
-                $entry->ivSize = $seigEntry->getAttribute('IV_Size');
+                $entry->ivSize = $seigEntry->getAttribute('IV_size');
                 $entry->kid = $seigEntry->getAttribute('KID');
                 $entry->constantIvSize = $seigEntry->getAttribute('constant_IV_size');
                 $entry->constantIv = $seigEntry->getAttribute('constant_IV');

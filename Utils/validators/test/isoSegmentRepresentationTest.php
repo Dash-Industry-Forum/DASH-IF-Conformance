@@ -288,4 +288,47 @@ final class ISOSegmentRepresentationTest extends TestCase
         );
         $this->assertEquals($r->getSampleDuration(), 30.0);
     }
+    public function testGetFragmentDurations()
+    {
+        $r = new DASHIF\ISOSegmentValidatorRepresentation();
+        $this->assertNull($r->getFragmentDurations());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+          </container>'
+        );
+        $this->assertNull($r->getFragmentDurations());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+            <sidx version="0" flags="0"
+              referenceID="1"
+              timeScale="12288"
+              earliestPresentationTime="0"
+              firstOffset="0"
+              referenceCount="1"
+              reference_type_1="0"
+              cumulatedDuration="1.333333"
+              >
+            </sidx>
+            <sidx version="0" flags="0"
+              referenceID="1"
+              timeScale="12288"
+              earliestPresentationTime="16384"
+              firstOffset="0"
+              referenceCount="1"
+              reference_type_1="0"
+              cumulatedDuration="4.208333"
+              >
+            </sidx>
+          </container>'
+        );
+        $fragmentDurations = $r->getFragmentDurations();
+
+        $this->assertEquals(count($fragmentDurations), 2);
+        //With floor to make sure we dont have rounding errors during the test.
+        $this->assertEquals(floor($fragmentDurations[0] * 1000), 1333);
+        $this->assertEquals(floor($fragmentDurations[1] * 1000), 2874);
+
+    }
 }

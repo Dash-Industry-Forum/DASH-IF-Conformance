@@ -17,7 +17,7 @@ $durationExplanation = "CMAF Fragments of different media types NEED NOT have ex
 
 $moofBoxes = $boxTree->filterChildrenRecursive('moof');
 if (count($moofBoxes) > 0) {
-    foreach ($moofBoxes as $moofBoxes) {
+    foreach ($moofBoxes as $moofBox) {
         $trafBoxes = $moofBox->filterChildrenRecursive('traf');
         $logger->test(
             $spec,
@@ -32,7 +32,7 @@ if (count($moofBoxes) > 0) {
 }
 
 $fragmentDurations = $representation->getFragmentDurations();
-$fragmentCount = count($fragmentDurations);
+$fragmentCount = $fragmentDurations == null ? 0 : count($fragmentDurations);
 
 $sampleDuration = $representation->getSampleDuration();
 
@@ -57,7 +57,7 @@ for ($i = 0; $i < $fragmentCount - 2; $i++) {
         $spec,
         $section,
         $durationExplanation,
-        abs($fragmentDurations[$i] - $fragmentDurations[$i - 1]) <= $sampleDuration,
+        abs($fragmentDurations[$i] - $fragmentDurations[$i + 1]) <= $sampleDuration,
         "FAIL",
         "Duration comparison between fragment $i and " . ($i + 1) . " within sampleduration $sampleDuration for " .
           $representation->getPrintable(),

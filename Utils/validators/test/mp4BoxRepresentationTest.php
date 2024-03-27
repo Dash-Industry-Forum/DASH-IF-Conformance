@@ -372,4 +372,109 @@ final class MP4BoxRepresentationTest extends TestCase
         );
         $this->assertEquals($r->getSampleDuration(), 30.0);
     }
+
+    public function testGetFragmentDurations()
+    {
+      $r = new DASHIF\MP4BoxRepresentation();
+        $this->assertNull($r->getFragmentDurations());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+          </container>'
+        );
+        $this->assertNull($r->getFragmentDurations());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+             <SegmentIndexBox Size="44" Type="sidx" Version="0" Flags="0" Specification="p12" Container="file" reference_ID="1" timescale="12288" earliest_presentation_time="0" first_offset="0">
+              <Reference type="0" size="467615" duration="16384" startsWithSAP="1" SAP_type="1" SAPDeltaTime="0"/>
+            </SegmentIndexBox>
+            <SegmentIndexBox Size="44" Type="sidx" Version="0" Flags="0" Specification="p12" Container="file" reference_ID="1" timescale="12288" earliest_presentation_time="16384" first_offset="0">
+              <Reference type="0" size="1855560" duration="51712" startsWithSAP="1" SAP_type="1" SAPDeltaTime="0"/>
+            </SegmentIndexBox>
+          </container>'
+        );
+        $fragmentDurations = $r->getFragmentDurations();
+
+        $this->assertEquals(count($fragmentDurations), 2);
+        //With floor to make sure we dont have rounding errors during the test.
+        $this->assertEquals(floor($fragmentDurations[0] * 1000), 1333);
+        $this->assertEquals(floor($fragmentDurations[1] * 1000), 2875);
+    }
+
+    public function testGetSeigDescriptionGroups()
+    {
+      $r = new DASHIF\MP4BoxRepresentation();
+        $this->assertNull($r->getSeigDescriptionGroups());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+          </container>'
+        );
+        $this->assertNull($r->getSeigDescriptionGroups());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+            <SampleGroupDescriptionBox/>
+          </container>'
+        );
+        $this->assertEquals(count($r->getSeigDescriptionGroups()), 1);
+        $this->assertEquals($r->getSeigDescriptionGroups()[0]->groupingType, '');
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+             <SampleGroupDescriptionBox Size="61" Type="sgpd" Version="1" Flags="0" Specification="p12" Container="stbl traf" grouping_type="seig" default_length="37">
+                <CENCSampleEncryptionGroupEntry IsEncrypted="1" IV_size="0" KID="0x676CB88F302D10227992649885984045" constant_IV_size="16" constant_IV="0x0A610676CB88F302D10AC8BC66E039ED"/>
+              </SampleGroupDescriptionBox>
+          </container>'
+        );
+
+        $seigDescriptions = $r->getSeigDescriptionGroups();
+        $this->assertEquals(count($seigDescriptions), 1);
+        $this->assertEquals($seigDescriptions[0]->groupingType, 'seig');
+        $this->assertEquals(count($seigDescriptions[0]->entries), 1);
+
+        $seigEntry = $seigDescriptions[0]->entries[0];
+        $this->assertEquals($seigEntry->isEncrypted, 1);
+        $this->assertEquals($seigEntry->ivSize, 0);
+        $this->assertEquals($seigEntry->kid, '0x676CB88F302D10227992649885984045');
+        $this->assertEquals($seigEntry->constantIvSize, 16);
+        $this->assertEquals($seigEntry->constantIv, '0x0A610676CB88F302D10AC8BC66E039ED');
+    }
+
+    public function testGetSampleGroups()
+    {
+        $r = new DASHIF\MP4BoxRepresentation();
+        $this->assertNull($r->getSampleGroups());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+          </container>'
+        );
+        $this->assertNull($r->getSampleGroups());
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+            <SampleGroupBox/>
+          </container>'
+        );
+        $this->assertEquals(count($r->getSampleGroups()), 1);
+        $this->assertEquals(count($r->getSampleGroups()[0]->sampleCounts), 0);
+        $this->assertEquals(count($r->getSampleGroups()[0]->groupDescriptionIndices), 0);
+
+        $r->payload = DASHIF\Utility\xmlStringAsDoc(
+          '<container>
+            <SampleGroupBox Size="28" Type="sbgp" Version="0" Flags="0" Specification="p12" Container="stbl traf" grouping_type="seig">
+              <SampleGroupBoxEntry sample_count="101" group_description_index="1"/>
+            </SampleGroupBox>
+          </container>'
+        );
+
+        $sampleGroups = $r->getSampleGroups();
+        $this->assertEquals(count($sampleGroups), 1);
+        $this->assertEquals(count($sampleGroups[0]->sampleCounts), 1);
+        $this->assertEquals($sampleGroups[0]->sampleCounts[0], 101);
+        $this->assertEquals(count($sampleGroups[0]->groupDescriptionIndices), 1);
+        $this->assertEquals($sampleGroups[0]->groupDescriptionIndices[0], 1);
+    }
 }
