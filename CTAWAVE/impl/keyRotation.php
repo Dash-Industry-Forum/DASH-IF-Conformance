@@ -20,12 +20,12 @@ $assumptionExplanationSgbp = "Count of `sgbp` is equal to count of `sgpd`";
 $assumptionExplanationPSSH = "Count of `pssh` is a valid multiple of either `spgd` count or `spgd` count + 1";
 
 $seigDescriptionGroups = $representation->getSeigDescriptionGroups();
-$seigDescriptionCount = count($seigDescriptionGroups);
+$seigDescriptionCount = $seigDescriptionGroups == null ? 0 : count($seigDescriptionGroups);
 $sampleGroups = $representation->getSampleGroups();
-$sampleGroupCount = count($sampleGroups);
+$sampleGroupCount = $sampleGroups == null ? 0 : count($sampleGroups);
 
 $psshBoxes = $representation->getPsshBoxes();
-$psshCount = count($psshBoxes);
+$psshCount = $psshBoxes == null ? 0 : count($psshBoxes);
 
 if ($seigDescriptionCount == 0) {
   //No sgpd found, assuming no key rotation
@@ -59,7 +59,7 @@ if (!$hasKeyChanges) {
 
 
 $logger->test(
-    $internalAssumption,
+    $assumptionSpec,
     $assumptionSection,
     $assumptionExplanationSgbp,
     $seigDescriptionCount == $sampleGroupCount,
@@ -69,6 +69,9 @@ $logger->test(
       ", messages regarding $spec - $section might be invalid"
 );
 
+if (!$sampleGroupCount) {
+    return;
+}
 
 
 foreach ($sampleGroups as $sampleGroup) {
@@ -87,17 +90,19 @@ foreach ($sampleGroups as $sampleGroup) {
 
 $checkPssh = false;
 $validPssh = false;
-if ($psshCount % $seigDescriptionCount == 0) {
-    $validPssh = true;
-}
-if ($psshCount % ($seigDescriptionCount + 1) == 0) {
-    $validPssh = true;
-    $checkPssh = true;
+if ($psshCount) {
+    if ($psshCount % $seigDescriptionCount == 0) {
+        $validPssh = true;
+    }
+    if ($psshCount % ($seigDescriptionCount + 1) == 0) {
+        $validPssh = true;
+        $checkPssh = true;
+    }
 }
 
 
 $logger->test(
-    $internalAssumption,
+    $assumptionSpec,
     $assumptionSection,
     $assumptionExplanationPSSH,
     $validPssh,
@@ -118,9 +123,9 @@ $psshBoxesGrouped = array();
 for ($i = 0; $i < $psshCount; $i += $seigDescriptionCount) {
     $psshGroup = array();
     for ($j = 0; $j < $seigDescriptionCount; $j++) {
-        $psshBoxesToCheck[] = $psshBoxes[$i + $j];
+        $psshGroup[] = $psshBoxes[$i + $j];
     }
-    $psshBoxesGrouped[] = $psshGroup();
+    $psshBoxesGrouped[] = $psshGroup;
 }
 
 $first = true;
@@ -142,7 +147,7 @@ foreach ($psshBoxesGrouped as $psshGroup) {
             $spec,
             $section,
             $psshExplanation,
-            $validPssh,
+            $foundExpected,
             "FAIL",
             "Expected systemid " . $expectedPssh->systemId . " found in group for " . $representation->getPrintable(),
             "Expected systemid " . $expectedPssh->systemId . " not found in group for " .
