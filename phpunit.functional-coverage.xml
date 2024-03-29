@@ -17,7 +17,7 @@
          verbose="true">
     <testsuites>
         <testsuite name="default">
-            <directory>functional-tests/cta</directory>
+            <directory>functional-tests/dashif</directory>
         </testsuite>
     </testsuites>
 

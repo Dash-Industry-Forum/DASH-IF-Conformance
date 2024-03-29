@@ -158,7 +158,6 @@ function download_data($directory, $array_file, $is_subtitle_rep, $is_dolby)
                 $location = $location + $box_size;
                 $file_size = $file_size + $box_size;
                 $totalDataDownloaded = $totalDataDownloaded + $box_size;
-                $percent = (int) (100 * $index / (sizeof($array_file) - 1));
             }
 
             # Modify node and sav it to a progress report

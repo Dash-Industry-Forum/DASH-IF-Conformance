@@ -133,9 +133,7 @@ function assemble($representationDirectory, $segment_urls, $sizearr)
     global $segment_accesses, $hls_manifest, $mpdHandler;
 
 
-    $index = ($segment_accesses[$mpdHandler->getSelectedAdaptationSet()]
-    [$mpdHandler->getSelectedRepresentation()][0]
-    ['initialization']) ? 0 : 1;
+    $index = 0;
 
     for ($i = 0; $i < sizeof($segment_urls); $i++) {
         $fp1 = fopen("$representationDirectory/assembled.mp4", 'a+');

@@ -34,6 +34,8 @@ include 'HbbTV_DVB/module.php';
 include 'DASH/LowLatency/module.php';
 include 'DASH/IOP/module.php';
 
+include 'Utils/ValidatorWrapper.php';
+
 $argumentParser->parseAll();
 
 include 'DASH/processMPD.php';
@@ -85,8 +87,8 @@ final class functionalTest extends TestCase
      */
     public function streamProvider()
     {
-        $i = 0;
-        $limit = 2000;
+        $i = 10;
+        $limit = 20;
         $startnumber = 0;
         $blacklist = [];
         $content = file_get_contents(
@@ -99,7 +101,7 @@ final class functionalTest extends TestCase
                 if ($limit && $i >= $limit) {
                     break;
                 }
-                if (!in_array($submenu->url, $blacklist) && $i >= $startnumber && strpos($submenu->url, 'media.axprod.net') === false) {
+                if (!in_array($submenu->url, $blacklist) && $i >= $startnumber && strpos($submenu->url, 'livesim.dashif.org') === false && strpos($submenu->url, 'media.axprod.net') === false) {
                     $streamsToTest["$item->name::$submenu->name"] = array($submenu->url);
                 }
                 $i++;

@@ -114,7 +114,8 @@ function processAdaptationSetOfCurrentPeriod($detailedSegmentOutput = true)
     global $logger;
 
     $adaptation_sets = $period['AdaptationSet'];
-    while ($mpdHandler->getSelectedAdaptationSet() < sizeof($adaptation_sets)) {
+    $adaptationSetCount = $adaptation_sets == null ? 0 : sizeof($adaptation_sets);
+    while ($mpdHandler->getSelectedAdaptationSet() < $adaptationSetCount) {
         if ($logger->getModuleVerdict("HEALTH") == "FAIL") {
             break;
         }
