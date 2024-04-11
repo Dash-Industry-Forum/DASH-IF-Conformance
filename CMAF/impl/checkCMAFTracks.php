@@ -185,7 +185,7 @@ $logger->test(
 );
 
 $hdlrBox = $xml->getElementsByTagName('hdlr')->item(0);
-$hdlrType = $hdlrBox->getAttribute('handler_type');
+$hdlrType = ($hdlrBox == null ? '' : $hdlrBox->getAttribute('handler_type'));
 
 $elstBoxes = $xml->getElementsByTagName('elstEntry');
 if ($elstBoxes->length > 0 && $hdlrType == 'vide') {

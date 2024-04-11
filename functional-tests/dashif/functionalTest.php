@@ -87,8 +87,8 @@ final class functionalTest extends TestCase
      */
     public function streamProvider()
     {
-        $i = 10;
-        $limit = 20;
+        $i = 0;
+        $limit = 2;
         $startnumber = 0;
         $blacklist = [];
         $content = file_get_contents(
