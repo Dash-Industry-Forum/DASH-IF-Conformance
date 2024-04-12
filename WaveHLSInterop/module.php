@@ -56,7 +56,7 @@ class ModuleWaveHLSInterop extends ModuleInterface
             $thisRepresentation,
             $this,
             'addressableMediaObject',
-            DASHIF\ValidatorFlags::PreservesOrder
+            ValidatorFlags::PreservesOrder
         );
         $validatorWrapper->analyzeSingle(
             $thisRepresentation,
@@ -69,7 +69,7 @@ class ModuleWaveHLSInterop extends ModuleInterface
             $thisRepresentation,
             $this,
             'encryptionScheme',
-            DASHIF\ValidatorFlags::CanExtractEncryption
+            ValidatorFlags::CanExtractEncryption
         );
 
         //Section 4.4 - Presentation Splicing
@@ -77,7 +77,7 @@ class ModuleWaveHLSInterop extends ModuleInterface
             $thisRepresentation,
             $this,
             'splicingPoints',
-            DASHIF\ValidatorFlags::PreservesOrder
+            ValidatorFlags::PreservesOrder
         );
         
         //Section 4.5 - Carriage of Timed EventData
@@ -85,7 +85,7 @@ class ModuleWaveHLSInterop extends ModuleInterface
             $thisRepresentation,
             $this,
             'timedEventData',
-            DASHIF\ValidatorFlags::PreservesOrder
+            ValidatorFlags::PreservesOrder
         );
 
         //Section 4.6 - Rotation of Encryption Keys
@@ -93,7 +93,7 @@ class ModuleWaveHLSInterop extends ModuleInterface
             $thisRepresentation,
             $this,
             'keyRotation',
-            DASHIF\ValidatorFlags::CanExtractEncryption
+            ValidatorFlags::CanExtractEncryption
         );
         
         //Section 4.7 - Carriage of Track Roles
