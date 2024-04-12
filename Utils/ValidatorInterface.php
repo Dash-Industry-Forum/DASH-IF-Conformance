@@ -43,7 +43,12 @@ class ValidatorInterface
 
     public function hasValidatorFlag($flag)
     {
-        return in_array($flag, $this->flags);
+        foreach ($this->flags as $vFlag){
+          if ($vFlag->name == $flag){
+            return true;
+          }
+        }
+        return false;
     }
 
     //Return a representation object if the configuration exists.
