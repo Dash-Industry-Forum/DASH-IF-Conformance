@@ -182,6 +182,18 @@ class ISOSegmentValidator extends ValidatorInterface
         $content = file_get_contents("$representationDirectory/stderr.txt");
         $contentArray = explode("\n", $content);
 
+        //Filter false-positive messages as these are simply not handled by the ISOSegmenvalidator,
+        //but not technically bugs
+        $contentArray = array_filter($contentArray, static function ($errorLine) {
+            if (strpos($errorLine, "unknown/unexpected atom 'meta'")) {
+                return false;
+            }
+            if (strpos($errorLine, "colr atom of type nclx")) {
+                return false;
+            }
+            return true;
+        });
+
         if (!count($contentArray)) {
             $logger->test(
                 "Segment Validation",
