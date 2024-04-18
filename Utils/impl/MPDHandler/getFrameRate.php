@@ -14,8 +14,8 @@ if ($period >= count($periods)) {
 
 $thisPeriod = $periods->item($period);
 
-if ($thisPeriod->hasAttribute('framerate')) {
-    $framerate = $thisPeriod->getAttribute('framerate');
+if ($thisPeriod->hasAttribute('frameRate')) {
+    $framerate = $thisPeriod->getAttribute('frameRate');
 }
 
 $adaptationSets = $thisPeriod->getElementsByTagName("AdaptationSet");
@@ -25,8 +25,8 @@ if ($adaptation >= count($adaptationSets)) {
 
 $thisAdaptation = $adaptationSets->item($adaptation);
 
-if ($thisAdaptation->hasAttribute('framerate')) {
-    $framerate = $thisAdaptation->getAttribute('framerate');
+if ($thisAdaptation->hasAttribute('frameRate')) {
+    $framerate = $thisAdaptation->getAttribute('frameRate');
 }
 
 $representations = $thisAdaptation->getElementsByTagName("Representation");
@@ -37,8 +37,8 @@ if ($representation >= count($representations)) {
 
 $thisRepresentation = $representations->item($representation);
 
-if ($thisRepresentation->hasAttribute('framerate')) {
-    $framerate = $thisRepresentation->getAttribute('framerate');
+if ($thisRepresentation->hasAttribute('frameRate')) {
+    $framerate = $thisRepresentation->getAttribute('frameRate');
 }
 
 return $framerate;
