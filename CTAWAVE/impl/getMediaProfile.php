@@ -2,7 +2,7 @@
 
 global $mediaProfileAttributesVideo, $mediaProfileAttributesAudio, $mediaProfileAttributesSubtitle;
 
-global $logger;
+global $logger, $mpdHandler;
 
 $compatibleBrands = $xml->getElementsByTagName("ftyp")->item(0)->getAttribute("compatible_brands");
 if ($hdlrType == 'vide') {
@@ -58,11 +58,8 @@ if ($hdlrType == 'vide') {
                     $mediaProfileParameters['matrix_coeff'] = 1;
                 }
             }
-            if (hexdec($comment->getAttribute("timing_info_present_flag")) == 1) {
-                $numberOfUnitsPerTick = $comment->getAttribute("num_units_in_tick");
-                $timeScale = $comment->getAttribute("time_scale");
-                $mediaProfileParameters['framerate'] = $timeScale / (2 * $numberOfUnitsPerTick);
-            }
+
+            $mediaProfileParameters['framerate'] = $mpdHandler->getFrameRate();
         }
 
         if (strpos($compatibleBrands, "cfsd") !== false) {
@@ -133,11 +130,7 @@ if ($hdlrType == 'vide') {
                     $mediaProfileParameters['matrix_coeff'] = "1";
                 }
             }
-            if ($sps->getAttribute("vui_timing_info_present_flag") == "1") {
-                $numberOfUnitsPerTick = $sps->getAttribute("vui_num_units_in_tick");
-                $timeScale = $sps->getAttribute("vui_time_scale");
-                $mediaProfileParameters['framerate'] = $timeScale / ($numberOfUnitsPerTick);
-            }
+            $mediaProfileParameters['framerate'] = $mpdHandler->getFrameRate();
         }
         if (strpos($compatibleBrands, "chh1") !== false) {
             $mediaProfileParameters['brand'] = "chh1";

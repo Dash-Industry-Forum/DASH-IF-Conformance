@@ -157,6 +157,16 @@ class MPDHandler
         return include 'impl/MPDHandler/getFrameRate.php';
     }
 
+    public function getContentType(
+        $periodIndex = null,
+        $adaptationIndex = null,
+        $representationIndex = null
+    ) {
+        return include 'impl/MPDHandler/getContentType.php';
+    }
+
+
+
     private function computeTiming(
         $presentationDuration,
         $segmentAccess,
