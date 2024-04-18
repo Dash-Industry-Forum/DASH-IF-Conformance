@@ -49,8 +49,9 @@ class MPDHandler
             $this->validateSchematron();
         }
     }
-    public function getRoles($period, $adaptation){
-      return include 'impl/MPDHandler/getRoles.php';
+    public function getRoles($period, $adaptation)
+    {
+        return include 'impl/MPDHandler/getRoles.php';
     }
 
     public function selectPeriod($period)
@@ -146,6 +147,11 @@ class MPDHandler
     public function getSegmentUrls($periodIndex = null)
     {
         return include 'impl/MPDHandler/getSegmentUrls.php';
+    }
+
+    public function getFrameRate($periodIndex = null, $adaptationIndex = null, $representationIndex = null)
+    {
+        return include 'impl/MPDHandler/getFrameRate.php';
     }
 
     private function computeTiming(
