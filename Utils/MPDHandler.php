@@ -149,8 +149,11 @@ class MPDHandler
         return include 'impl/MPDHandler/getSegmentUrls.php';
     }
 
-    public function getFrameRate($periodIndex = null, $adaptationIndex = null, $representationIndex = null)
-    {
+    public function getFrameRate(
+        $periodIndex = null,
+        $adaptationIndex = null,
+        $representationIndex = null
+    ) {
         return include 'impl/MPDHandler/getFrameRate.php';
     }
 
