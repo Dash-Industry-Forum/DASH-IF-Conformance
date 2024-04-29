@@ -48,28 +48,29 @@ foreach ($mpdAsArray['Period'] as $periodIdx => $period) {
             );
 
 
-            if (count($currentTemplate)) {
-                $segmentInfo = $this->computeTiming(
-                    $periodTimingInfo['duration'],
-                    $currentTemplate[0],
-                    'SegmentTemplate'
-                );
-                $urlObj = array();
-                $urlObj['segments'] = $this->computeUrls(
-                    $periodIdx,
-                    $adaptationIdx,
-                    $representationIdx,
-                    $currentTemplate[0],
-                    $segmentInfo,
-                    $baseUrls[$adaptationIdx][$representationIdx]
-                );
-                if (array_key_exists('initialization', $currentTemplate[0])) {
-                    $urlObj['init'] = array_shift($urlObj['segments']);
-                }
-                $adaptationUrls[] = $urlObj;
+            if (!count($currentTemplate)) {
+                $adaptationUrls[] = array($baseUrls[$adaptationIdx][$representationIdx]);
                 continue;
             }
-            $adaptationUrls[] = array($baseUrls[$adaptationIdx][$representationIdx]);
+
+            $segmentInfo = $this->computeTiming(
+                $periodTimingInfo['duration'],
+                $currentTemplate[0],
+                'SegmentTemplate'
+            );
+            $urlObj = array();
+            $urlObj['segments'] = $this->computeUrls(
+                $periodIdx,
+                $adaptationIdx,
+                $representationIdx,
+                $currentTemplate[0],
+                $segmentInfo,
+                $baseUrls[$adaptationIdx][$representationIdx]
+            );
+            if (array_key_exists('initialization', $currentTemplate[0])) {
+                $urlObj['init'] = array_shift($urlObj['segments']);
+            }
+            $adaptationUrls[] = $urlObj;
         }
 
         $periodUrls[] = $adaptationUrls;
