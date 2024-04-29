@@ -1,6 +1,7 @@
 <?php
 
-if (!($fp = fopen($target, "w+"))) {
+$fp = fopen($target, "w+");
+if (!$fp) {
     return;
 }
 
