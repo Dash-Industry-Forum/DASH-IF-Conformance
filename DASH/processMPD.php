@@ -71,6 +71,7 @@ function process_MPD($parseSegments = false, $autoDetect = false, $detailedSegme
     print_r($mpdHandler->getSegmentUrls(0));
 
 
+    $mpdHandler->downloadAll();
 
     if (!$parseSegments) {
         fwrite(STDERR, ($parseSegments ? "DO " : "DO NOT ") . "parse segments\n");

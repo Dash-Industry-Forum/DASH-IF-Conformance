@@ -54,6 +54,16 @@ class MPDHandler
         }
     }
 
+    public function downloadAll()
+    {
+        include 'impl/MPDHandler/downloadAll.php';
+    }
+
+    public function downloadSegment($target, $url)
+    {
+        include 'impl/MPDHandler/downloadSegment.php';
+    }
+
     public function internalSegmentUrls()
     {
         return $this->segmentUrls;
