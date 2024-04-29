@@ -54,9 +54,14 @@ class MPDHandler
         }
     }
 
-    public function downloadAll()
+    public function downloadAll($assemble = true)
     {
         include 'impl/MPDHandler/downloadAll.php';
+    }
+
+    private function assembleSingle($source, $assembly, $sizeFile, $index)
+    {
+        include 'impl/MPDHandler/assembleSingle.php';
     }
 
     public function downloadSegment($target, $url)

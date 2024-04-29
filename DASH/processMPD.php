@@ -65,11 +65,6 @@ function process_MPD($parseSegments = false, $autoDetect = false, $detailedSegme
         }
     }
 
-    echo "Internal\n";
-    print_r($mpdHandler->internalSegmentUrls());
-    echo "----\nFormer\n";
-    print_r($mpdHandler->getSegmentUrls(0));
-
 
     $mpdHandler->downloadAll();
 
