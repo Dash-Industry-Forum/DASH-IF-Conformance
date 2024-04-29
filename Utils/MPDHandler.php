@@ -24,6 +24,8 @@ class MPDHandler
     private $hlsPlaylistArray;
     private $hlsManifestType;
 
+    private $segmentUrls;
+
     public function __construct($url)
     {
         $this->url = $url;
@@ -40,6 +42,7 @@ class MPDHandler
         $this->mpdValidatorOutput = null;
         $this->schematronOutput = null;
         $this->schematronIssuesReport = null;
+        $this->segmentUrls = array();
 
         $this->load();
         if ($this->mpd) {
@@ -47,10 +50,23 @@ class MPDHandler
             $this->extractProfiles();
             $this->runSchematron();
             $this->validateSchematron();
+            $this->loadSegmentUrls();
         }
     }
-    public function getRoles($period, $adaptation){
-      return include 'impl/MPDHandler/getRoles.php';
+
+    public function internalSegmentUrls()
+    {
+        return $this->segmentUrls;
+    }
+
+    public function loadSegmentUrls()
+    {
+        return include 'impl/MPDHandler/loadSegmentUrls.php';
+    }
+
+    public function getRoles($period, $adaptation)
+    {
+        return include 'impl/MPDHandler/getRoles.php';
     }
 
     public function selectPeriod($period)

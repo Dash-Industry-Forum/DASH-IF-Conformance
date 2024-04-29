@@ -65,6 +65,13 @@ function process_MPD($parseSegments = false, $autoDetect = false, $detailedSegme
         }
     }
 
+    echo "Internal\n";
+    print_r($mpdHandler->internalSegmentUrls());
+    echo "----\nFormer\n";
+    print_r($mpdHandler->getSegmentUrls(0));
+
+
+
     if (!$parseSegments) {
         fwrite(STDERR, ($parseSegments ? "DO " : "DO NOT ") . "parse segments\n");
         return;

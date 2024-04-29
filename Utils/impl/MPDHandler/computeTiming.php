@@ -1,11 +1,11 @@
 <?php
 
 if ($segmentAccessType == 'SegmentBase') {
-    array(0);
+    return array(0);
 }
 
 if ($segmentAccessType != 'SegmentTemplate') {
-    array();
+    return  array();
 }
 
 $segmentCount = 0;
