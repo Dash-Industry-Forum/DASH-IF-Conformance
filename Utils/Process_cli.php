@@ -35,7 +35,6 @@ include __DIR__ . '/FileOperations.php';  //#Filesystem and XML checking functio
 //#Global variables. Direct evaluation of post/session vars to define conditionals,
 //#conditional extra includes for module initialization
 include __DIR__ . '/GlobalVariables.php';
-include __DIR__ . '/segment_download.php'; //#Very large function for downloading data. No Direct Executable Code.
 include __DIR__ . '/segment_validation.php'; //#Segment validation functions. No Direct Executable Code.
 
 include __DIR__ . '/MPDUtility.php';
