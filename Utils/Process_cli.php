@@ -100,8 +100,6 @@ $compactOutput = $argumentParser->getOption("compact");
 $autoDetect = $argumentParser->getOption("autodetect");
 $detailedSegmentOutput = !$argumentParser->getOption("disable_detailed_segment_output");
 
-$GLOBALS['validatorWrapper']->printEnabled();
-
 if (substr($mpd_url, -5) == ".m3u8") {
     processHLS();
 } else {
