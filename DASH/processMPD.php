@@ -66,7 +66,6 @@ function process_MPD($parseSegments = false, $autoDetect = false, $detailedSegme
     }
 
 
-    $mpdHandler->downloadAll();
 
     if (!$parseSegments) {
         fwrite(STDERR, ($parseSegments ? "DO " : "DO NOT ") . "parse segments\n");
@@ -81,6 +80,9 @@ function process_MPD($parseSegments = false, $autoDetect = false, $detailedSegme
     if ($mpdHandler->getFeatures()['type'] !== 'dynamic') {
         $mpdHandler->selectPeriod(0);
     }
+
+    $mpdHandler->downloadAll();
+
     while ($mpdHandler->getSelectedPeriod() < sizeof($mpdHandler->getFeatures()['Period'])) {
         processAdaptationSetOfCurrentPeriod($detailedSegmentOutput);
 

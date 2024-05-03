@@ -33,39 +33,20 @@ function validate_segment(
         ((substr($codecs, 0, 4) == "ac-3") or
             (substr($codecs, 0, 4) == "ec-3") or
             (substr($codecs, 0, 4) == "ac-4")));
-    $sizearray = download_data($representationDirectory, $segment_url, $is_subtitle_rep, $is_dolby);
-    if ($sizearray != 0) {
-        ## Put segments in one file
-        assemble($representationDirectory, $segment_url, $sizearray);
 
-        $validatorWrapper = $GLOBALS['validatorWrapper'];
-        if ($is_dolby) {
-            $validatorWrapper->enableFeature('Dolby');
-        }
-        $validatorWrapper->run($period, $adaptation_set, $representation);
 
-        /*
-        ## Create config file with the flags for segment validation
-        $config_file_loc = config_file_for_backend(
-            $period,
-            $adaptation_set,
-            $representation,
-            $representationDirectory,
-            $is_dolby
-        );
 
-        ## Run the backend
-        $returncode = run_backend($config_file_loc, $representationDirectory);
-         */
-
-        $varinfo = var_export($adaptation_set, true);
-
-        ## Analyse the results and report them
-        $file_location = analyze_results($returncode, $adaptationDirectory, $representationDirectory);
-    } else {
-        ## Save to progress report that the representation does not exist
-        $file_location[] = 'notexist';
+    $validatorWrapper = $GLOBALS['validatorWrapper'];
+    if ($is_dolby) {
+        $validatorWrapper->enableFeature('Dolby');
     }
+    $validatorWrapper->run($period, $adaptation_set, $representation);
+
+
+    $varinfo = var_export($adaptation_set, true);
+
+    ## Analyse the results and report them
+    $file_location = analyze_results($returncode, $adaptationDirectory, $representationDirectory);
 
     // Save content of stderr
     saveStdErrOutput($representationDirectory, $detailedSegmentOutput);
