@@ -54,7 +54,7 @@ class MPDHandler
         }
     }
 
-    public funtion refresh()
+    public function refresh()
     {
       $tmpMpd = $this->mpd;
       $this->load();
