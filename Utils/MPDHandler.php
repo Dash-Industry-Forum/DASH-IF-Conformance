@@ -54,6 +54,23 @@ class MPDHandler
         }
     }
 
+    public funtion refresh()
+    {
+      $tmpMpd = $this->mpd;
+      $this->load();
+      if ($this->mpd == $tmpMpd){
+        return false;
+      }
+      $this->features = $this->recursiveExtractFeatures($this->dom);
+      $this->extractProfiles();
+      $this->runSchematron();
+      $this->validateSchematron();
+      $this->loadSegmentUrls();
+      return true;
+
+    }
+
+
     public function downloadAll($assemble = true)
     {
         include 'impl/MPDHandler/downloadAll.php';
