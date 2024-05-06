@@ -1,6 +1,6 @@
 <?php
 
-global $session;
+global $session, $limit;
 
 foreach ($this->segmentUrls as $periodIdx => $periodUrls) {
     foreach ($periodUrls as $adaptationIdx => $adaptationUrls) {
@@ -22,7 +22,12 @@ foreach ($this->segmentUrls as $periodIdx => $periodUrls) {
                 $this->downloadSegment("$dir/seg${segmentPadded}.mp4", $url);
                 $this->assembleSingle("$dir/seg${segmentPadded}.mp4", $assembly, $sizeFile, $index);
                 $index++;
+
+                if ($limit != 0 && $index >= $limit){
+                  break;
+                }
             }
+
 
             if ($assembly) {
                 fclose($assembly);
