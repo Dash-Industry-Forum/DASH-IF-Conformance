@@ -66,6 +66,11 @@ function process_MPD($parseSegments = false, $autoDetect = false, $detailedSegme
     }
 
 
+    $earliestUpdate = $mpdHandler->getEarliestUpdate();
+    if ($earliestUpdate){
+      fwrite(STDERR, "Earliest update: " . $earliestUpdate->format("Y-m-d HH:MM:II"));
+    }
+
 
     if (!$parseSegments) {
         fwrite(STDERR, ($parseSegments ? "DO " : "DO NOT ") . "parse segments\n");

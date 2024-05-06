@@ -1,9 +1,9 @@
 <?php
 
-if (!this->downloadTime) {
+if (!$this->downloadTime) {
     return null;
 }
-if (!this->dom) {
+if (!$this->dom) {
     return null;
 }
 
