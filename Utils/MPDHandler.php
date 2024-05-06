@@ -16,6 +16,8 @@ class MPDHandler
     private $schematronOutput;
     private $schematronIssuesReport;
 
+    private $downloadTime; //Datetimeimmutable
+
     private $selectedPeriod;
     private $selectedAdapationSet;
     private $selectedRepresentation;
@@ -56,18 +58,22 @@ class MPDHandler
 
     public function refresh()
     {
-      $tmpMpd = $this->mpd;
-      $this->load();
-      if ($this->mpd == $tmpMpd){
-        return false;
-      }
-      $this->features = $this->recursiveExtractFeatures($this->dom);
-      $this->extractProfiles();
-      $this->runSchematron();
-      $this->validateSchematron();
-      $this->loadSegmentUrls();
-      return true;
+        $tmpMpd = $this->mpd;
+        $this->load();
+        if ($this->mpd == $tmpMpd) {
+            return false;
+        }
+        $this->features = $this->recursiveExtractFeatures($this->dom);
+        $this->extractProfiles();
+        $this->runSchematron();
+        $this->validateSchematron();
+        $this->loadSegmentUrls();
+        return true;
+    }
 
+    public function getEarliestUpdate(): DateTimeImmutable | null
+    {
+        return include 'impl/MPDHandler/getEarliestUpdate.php';
     }
 
 
