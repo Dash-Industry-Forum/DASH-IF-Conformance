@@ -4,10 +4,10 @@ global $session;
 
 $this->downloadTime = new DateTimeImmutable();
 
-$localManifestLocation = $session->getDir() . '/Manifest.mpd';
 if (isset($_FILES['mpd']) && move_uploaded_file($_FILES['mpd']['tmp_name'], $session->getDir() . '/Manifest.mpd')) {
-    $this->url = $localManifestLocation;
+    $this->url = $session->getDir() . '/Manifest.mpd';
 } elseif ($this->url && $this->url != '') {
+    $localManifestLocation = $session->getDir() . '/Manifest.mpd';
     //Download with CURL;
     $this->downloadSegment($localManifestLocation, $this->url);
     $this->url = $localManifestLocation;
