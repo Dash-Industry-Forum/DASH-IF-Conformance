@@ -101,9 +101,9 @@ $autoDetect = $argumentParser->getOption("autodetect");
 $detailedSegmentOutput = !$argumentParser->getOption("disable_detailed_segment_output");
 
 global $limit;
-$limit = 0; 
-if ($argumentParser->getOption("limit")){
-  $limit = 5;
+$limit = 0;
+if ($argumentParser->getOption("limit")) {
+    $limit = 5;
 }
 
 if (substr($mpd_url, -5) == ".m3u8") {

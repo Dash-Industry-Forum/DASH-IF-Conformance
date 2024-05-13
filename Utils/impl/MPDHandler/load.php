@@ -4,13 +4,17 @@ global $session;
 
 $this->downloadTime = new DateTimeImmutable();
 
-if (isset($_FILES['mpd']) && move_uploaded_file($_FILES['mpd']['tmp_name'], $session->getDir() . '/Manifest.mpd')) {
-    $this->url = $session->getDir() . '/Manifest.mpd';
-} elseif ($this->url && $this->url != '') {
+if ($session) {
     $localManifestLocation = $session->getDir() . '/Manifest.mpd';
-    //Download with CURL;
-    $this->downloadSegment($localManifestLocation, $this->url);
-    $this->url = $localManifestLocation;
+    if (isset($_FILES['mpd']) && move_uploaded_file($_FILES['mpd']['tmp_name'], $localManifestLocation)) {
+        $this->url = $localManifestLocation;
+    } else {
+        if ($this->url && $this->url != '') {
+          //Download with CURL;
+            $this->downloadSegment($localManifestLocation, $this->url);
+            $this->url = $localManifestLocation;
+        }
+    }
 }
 
 if ($this->url && $this->url != '') {

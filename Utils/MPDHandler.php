@@ -33,6 +33,7 @@ class MPDHandler
         $this->url = $url;
         $this->mpd = null;
         $this->dom = null;
+        $this->downloadTime = null;
         $this->features = null;
         $this->profiles = null;
         $this->resolved = null;
