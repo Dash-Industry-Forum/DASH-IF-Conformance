@@ -211,7 +211,8 @@ class MPDHandler
     }
 
     private function computeDynamicIntervals(
-        $adapatationSetId,
+        $adaptationSetId,
+        $representationId,
         $segmentAccess,
         $segmentTimings,
         $segmentCount
