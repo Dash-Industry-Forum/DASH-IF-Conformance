@@ -9,24 +9,28 @@ if (!$this->dom) {
 
 //TODO Explicit check for type is dynamic
 
-$mpdElement = $this->dom->getElementsByTagName("MPD");
-if (!count($mpdElement)) {
-    return null;
+$mpdElement = $this->dom;
+if ($mpdElement->tagName != "MPD") {
+    $mpdElements = $this->dom->getElementsByTagName("MPD");
+    if (!count($mpdElements)) {
+        fwrite(STDERR, "No mpd element\n");
+        return null;
+    }
+    $mpdElement = $mpdElements->item(0);
 }
 
-$minimumUpdatePeriod = $mpdElement->item(0)->getAttribute('minimumUpdatePeriod');
+
+$minimumUpdatePeriod = $mpdElement->getAttribute('minimumUpdatePeriod');
+
 if (!$minimumUpdatePeriod) {
     return null;
 }
 
-$interval = null;
-try {
-    $interval = new \DateInterval($minimumUpdatePeriod);
-} catch (Exception $e) {
-}
+$interval = DASHIF\Utility\timeParsing($minimumUpdatePeriod);
 
 if (!$interval) {
     return null;
 }
 
-return $this->downloadTime->add($interval);
+$originalTime = $this->downloadTime->getTimestamp();
+return new DateTimeImmutable("@$originalTime");

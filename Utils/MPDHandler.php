@@ -71,7 +71,7 @@ class MPDHandler
         return true;
     }
 
-    public function getEarliestUpdate(): DateTimeImmutable | null
+    public function getEarliestUpdate(): \DateTimeImmutable | null
     {
         return include 'impl/MPDHandler/getEarliestUpdate.php';
     }

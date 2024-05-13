@@ -2,7 +2,7 @@
 
 global $session;
 
-$this->downloaded = new DateTimeImmutable();
+$this->downloadTime = new DateTimeImmutable();
 
 $localManifestLocation = $session->getDir() . '/Manifest.mpd';
 if (isset($_FILES['mpd']) && move_uploaded_file($_FILES['mpd']['tmp_name'], $session->getDir() . '/Manifest.mpd')) {
@@ -52,6 +52,6 @@ if ($main_element_nodes->length == 0) {
     return;
 }
 
-    fwrite(STDERR, "Valid mpd");
+fwrite(STDERR, "Valid mpd\n");
 
 $this->dom = $main_element_nodes->item(0);
