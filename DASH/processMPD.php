@@ -16,16 +16,7 @@
 
 function process_MPD($parseSegments = false, $autoDetect = false, $detailedSegmentOutput = true)
 {
-    global $mpd_url;
-
-    global $session;
-
-    global $modules;
-
-    global $logger;
-
-
-    global $mpdHandler;
+    global $mpd_url,$session, $modules, $logger, $mpdHandler;
 
     $logger->parseSegments = $parseSegments;
 
@@ -69,8 +60,6 @@ function process_MPD($parseSegments = false, $autoDetect = false, $detailedSegme
     $earliestUpdate = $mpdHandler->getEarliestUpdate();
     if ($earliestUpdate) {
         fwrite(STDERR, "Earliest update: " . $earliestUpdate->format("Y-m-d H:i:s") . "\n");
-    } else {
-        fwrite(STDERR, "No earliest update\n");
     }
 
 
@@ -78,6 +67,13 @@ function process_MPD($parseSegments = false, $autoDetect = false, $detailedSegme
         fwrite(STDERR, ($parseSegments ? "DO " : "DO NOT ") . "parse segments\n");
         return;
     }
+
+    parseSegments();
+}
+
+function parseSegments()
+{
+    global $mpdHandler, $logger, $modules;
 
     //------------------------------------------------------------------------//
     ## Perform Segment Validation for each representation in each adaptation set within the current period
