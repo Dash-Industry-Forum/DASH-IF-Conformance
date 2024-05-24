@@ -14,6 +14,18 @@ $logger->test(
     "The attribute MPD@timeShiftBufferDepth shall not change.",
     $features["timeShiftBufferDepth"] == $nextFeatures["timeShiftBufferDepth"],
     "FAIL",
-    "Timeshiftbuffer did not change",
-    "Timeshiftbuffer did change"
+    "MPD@timeShiftBufferDepth did not change",
+    "MPD@timeShiftBufferDepth did change (" . $features["timeShiftBufferDepth"] . " -> " .
+      $nextFeatures["timeShiftBufferDepth"] . ")"
+);
+
+$logger->test(
+    $spec,
+    $section,
+    "The attribute MPD@availabilityStartTime shall not change.",
+    $features["availabilityStartTime"] == $nextFeatures["availabilityStartTime"],
+    "FAIL",
+    "MPD@availabilityStartTime did not change",
+    "MPD@availabilityStartTime did change (" . $features["availabilityStartTime"] . " -> " .
+      $nextFeatures["availabilityStartTime"] . ")"
 );

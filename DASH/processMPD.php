@@ -74,7 +74,7 @@ function process_MPD($parseSegments = false, $autoDetect = false, $detailedSegme
 
 function handleLiveMpdChecks()
 {
-    global $mpdHandler, $logger, $mpd_url;
+    global $mpdHandler, $logger, $modules, $mpd_url;
 
     $nextUpdate = $mpdHandler->getEarliestUpdate();
 
@@ -93,6 +93,7 @@ function handleLiveMpdChecks()
 
     foreach ($modules as $module) {
         if ($module->isEnabled()) {
+            fwrite(STDERR, "Running livehook for $module->name \n");
             $module->hookLiveMpd($mpdHandler, $nextMpd);
         }
     }
