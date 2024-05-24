@@ -94,6 +94,17 @@ class ModuleHbbTVDVB extends ModuleInterface
         }
     }
 
+    public function hookLiveMpd($mpd, $nextMpd)
+    {
+        parent::hookLiveMpd($mpd, $nextMpd);
+        $this->mpdUpdateConstraints($mpd, $nextMpd);
+    }
+
+    private function mpdUpdateConstraints($mpd, $nextMpd)
+    {
+        include 'impl/mpdUpdateConstraints.php';
+    }
+
 
     public function hookBeforeMPD()
     {
