@@ -59,16 +59,37 @@ function process_MPD($parseSegments = false, $autoDetect = false, $detailedSegme
 
     $earliestUpdate = $mpdHandler->getEarliestUpdate();
     if ($earliestUpdate) {
-        fwrite(STDERR, "Earliest update: " . $earliestUpdate->format("Y-m-d H:i:s") . "\n");
     }
 
 
-    if (!$parseSegments) {
-        fwrite(STDERR, ($parseSegments ? "DO " : "DO NOT ") . "parse segments\n");
-        return;
+    if ($parseSegments) {
+      fwrite(STDERR, "Parsing segments\n");
+      parseSegments();
+    }else{
+      fwrite(STDERR, "Not parsing segments\n");
     }
 
-    parseSegments();
+    handleLiveMpdChecks();
+
+}
+
+function handleLiveMpdChecks(){
+    global $mpdHandler, $logger, $mpd_url;
+
+    $nextUpdate = $mpdHandler->getEarliestUpdate();
+
+    if ($nextUpdate == null){
+      //No live manifest found
+      return;
+    }
+
+    $now = new DateTimeImmutable();
+    while ($now < $nextUpdate){
+      sleep(1);
+      $now = new DateTimeImmutable();
+    }
+
+    $nextMpd = new DASHIF\MPDHandler($mpd_url);
 }
 
 function parseSegments()

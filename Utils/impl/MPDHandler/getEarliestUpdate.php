@@ -33,4 +33,5 @@ if (!$interval) {
 }
 
 $originalTime = $this->downloadTime->getTimestamp();
-return new DateTimeImmutable("@$originalTime");
+$nextTime = $originalTime + $interval;
+return new DateTimeImmutable("@$nextTime");
