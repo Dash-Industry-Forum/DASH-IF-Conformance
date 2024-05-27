@@ -77,6 +77,11 @@ class MPDHandler
         return include 'impl/MPDHandler/getEarliestUpdate.php';
     }
 
+    public function getPeriodAttribute($idx, $attr): string | null
+    {
+        return $this->features["Period"][$idx][$attr];
+    }
+
 
     public function downloadAll($assemble = true)
     {
@@ -98,6 +103,7 @@ class MPDHandler
         return $this->segmentUrls;
     }
 
+
     public function loadSegmentUrls()
     {
         return include 'impl/MPDHandler/loadSegmentUrls.php';
@@ -106,6 +112,11 @@ class MPDHandler
     public function getRoles($period, $adaptation)
     {
         return include 'impl/MPDHandler/getRoles.php';
+    }
+
+    public function getPeriodIds()
+    {
+        return include 'impl/MPDHandler/getPeriodIds.php';
     }
 
     public function selectPeriod($period)
