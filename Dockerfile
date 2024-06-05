@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 ENV TZ=Etc/GMT
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -10,7 +10,7 @@ RUN apt -y install \
   python2.7 \
   openjdk-8-jdk ant \
   sudo \
-  g++
+  g++ gpac
 RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
 RUN python2.7 get-pip.py
 RUN pip2 install matplotlib

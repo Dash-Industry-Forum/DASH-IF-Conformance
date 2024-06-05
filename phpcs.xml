@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<ruleset name="Custom">
+  <rule ref="PHPCompatibility"/>
+  <rule ref="PSR12"/>
+  <exclude-pattern>*/vendor/*</exclude-pattern>
+  <exclude-pattern>*/test/*</exclude-pattern>
+  <exclude-pattern>CTAWave/UnitTests/*</exclude-pattern>
+
+  <arg name="extensions" value="php" />
+</ruleset>

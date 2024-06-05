@@ -45,15 +45,21 @@ include __DIR__ . '/MPDHandler.php';
 include __DIR__ . '/../DASH/module.php';
 include __DIR__ . '/../CMAF/module.php';
 include __DIR__ . '/../CTAWAVE/module.php';
+include __DIR__ . '/../WaveHLSInterop/module.php';
 include __DIR__ . '/../HbbTV_DVB/module.php';
 include __DIR__ . '/../DASH/LowLatency/module.php';
 include __DIR__ . '/../DASH/IOP/module.php';
 include __DIR__ . '/../Dolby/module.php';
 
-
+require_once __DIR__ . '/ValidatorWrapper.php';
 
 $argumentParser->addOption("segments", "s", "segments", "Enable segment validation");
-$argumentParser->addOption("disable_detailed_segment_output", "", "disable_detailed_segment_output", "Disable detailed segment validation output");
+$argumentParser->addOption(
+    "disable_detailed_segment_output",
+    "",
+    "disable_detailed_segment_output",
+    "Disable detailed segment validation output"
+);
 $argumentParser->addOption("compact", "C", "compact", "Make JSON output compact");
 $argumentParser->addOption("silent", "S", "silent", "Do not output JSON to stdout");
 $argumentParser->addOption("autodetect", "A", "autodetect", "Try to automatically detect profiles");
@@ -93,6 +99,8 @@ $parseSegments = $argumentParser->getOption("segments");
 $compactOutput = $argumentParser->getOption("compact");
 $autoDetect = $argumentParser->getOption("autodetect");
 $detailedSegmentOutput = !$argumentParser->getOption("disable_detailed_segment_output");
+
+$GLOBALS['validatorWrapper']->printEnabled();
 
 if (substr($mpd_url, -5) == ".m3u8") {
     processHLS();

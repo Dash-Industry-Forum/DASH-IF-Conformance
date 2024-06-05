@@ -114,7 +114,8 @@ final class validationTest extends TestCase
             "https://livesim.dashif.org/livesim/testpic_2s/Manifest.mpd#t=posix:now"
         ];
         $content = file_get_contents(
-            "validation-tests/dashif/dashjs.json");
+            "validation-tests/dashif/dashjs.json"
+        );
         $dbJson = json_decode($content);
         $streamsToTest = array();
         foreach ($dbJson->items as $item) {
@@ -130,6 +131,4 @@ final class validationTest extends TestCase
         }
         return $streamsToTest;
     }
-
-
 }

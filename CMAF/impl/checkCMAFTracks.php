@@ -139,7 +139,7 @@ for ($j = 0; $j < $moofBoxesCount; $j++) {
         );
     }
 
-    if ($mdatFile == null) {
+    if ($mdatFile === false) {
         continue;
     }
 
@@ -169,7 +169,7 @@ for ($j = 0; $j < $moofBoxesCount; $j++) {
         "Representation $id, chunk $j not valid"
     );
 }
-if ($mdatFile !== null) {
+if ($mdatFile !== false) {
     fclose($mdatFile);
 }
 
@@ -185,7 +185,7 @@ $logger->test(
 );
 
 $hdlrBox = $xml->getElementsByTagName('hdlr')->item(0);
-$hdlrType = $hdlrBox->getAttribute('handler_type');
+$hdlrType = ($hdlrBox == null ? '' : $hdlrBox->getAttribute('handler_type'));
 
 $elstBoxes = $xml->getElementsByTagName('elstEntry');
 if ($elstBoxes->length > 0 && $hdlrType == 'vide') {

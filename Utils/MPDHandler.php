@@ -42,12 +42,15 @@ class MPDHandler
         $this->schematronIssuesReport = null;
 
         $this->load();
-        if ($this->mpd){
+        if ($this->mpd) {
             $this->features = $this->recursiveExtractFeatures($this->dom);
             $this->extractProfiles();
             $this->runSchematron();
             $this->validateSchematron();
         }
+    }
+    public function getRoles($period, $adaptation){
+      return include 'impl/MPDHandler/getRoles.php';
     }
 
     public function selectPeriod($period)

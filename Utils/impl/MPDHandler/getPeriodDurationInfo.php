@@ -1,4 +1,5 @@
 <?php
+
 global $period_timing_info;
 
 if (empty($this->periodTimingInformation)) {

@@ -35,6 +35,8 @@ include 'HbbTV_DVB/module.php';
 include 'DASH/LowLatency/module.php';
 include 'DASH/IOP/module.php';
 
+require_once __DIR__ . '/ValidatorWrapper.php';
+
 $argumentParser->parseAll();
 
 include 'DASH/processMPD.php';

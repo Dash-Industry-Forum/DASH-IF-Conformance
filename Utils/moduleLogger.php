@@ -18,14 +18,16 @@ class ModuleLogger
     private $features;
     private $parseArguments;
 
+    private $validatorMessages;
+
     public function __construct($id = null, $module = null, $hook = null)
     {
         $this->reset($id);
-        if ($module){
-          $this->setModule($module);
+        if ($module) {
+            $this->setModule($module);
         }
-        if ($hook){
-          $this->setHook($hook);
+        if ($hook) {
+            $this->setHook($hook);
         }
     }
 
@@ -34,8 +36,10 @@ class ModuleLogger
         global $session;
 
         if ($id !== '') {
-            $session->reset($id);
-            $this->logfile = $session->getDir() . '/logger.txt';
+            if ($session) {
+                $session->reset($id);
+                $this->logfile = $session->getDir() . '/logger.txt';
+            }
         }
         $this->entries = array();
         $this->features = array();
@@ -111,11 +115,13 @@ class ModuleLogger
         $this->currentHook = '';
     }
 
-    public function getCurrentModule() {
+    public function getCurrentModule()
+    {
         return $this->currentModule;
     }
 
-    public function getCurrentHook() {
+    public function getCurrentHook()
+    {
         return $this->currentHook;
     }
 
@@ -139,10 +145,22 @@ class ModuleLogger
     public function test($spec, $section, $test, $check, $fail_type, $msg_succ, $msg_fail)
     {
         if ($check) {
-            $this->addTestResult($spec, $section, $test, "✓ " . $msg_succ, "PASS");
+            $this->addTestResult(
+                $spec,
+                $section,
+                $test,
+                "✓ " . $msg_succ,
+                "PASS"
+            );
             return true;
         } else {
-            $this->addTestResult($spec, $section, $test, ($fail_type == "WARN" ? "! " : "✗ ") . $msg_fail, $fail_type);
+            $this->addTestResult(
+                $spec,
+                $section,
+                $test,
+                ($fail_type == "WARN" ? "! " : "✗ ") . $msg_fail,
+                $fail_type
+            );
             return false;
         }
     }
@@ -201,13 +219,19 @@ class ModuleLogger
             $this->entries['verdict'] = "FAIL";
         }
         if ($severity == "WARN") {
-            if ($this->entries[$this->currentModule][$this->currentHook]['verdict'] != "FAIL") {
+            if (empty($this->entries[$this->currentModule][$this->currentHook]['verdict'])) {
+                $this->entries[$this->currentModule][$this->currentHook]['verdict'] = "WARN";
+            } elseif ($this->entries[$this->currentModule][$this->currentHook]['verdict'] != "FAIL") {
                 $this->entries[$this->currentModule][$this->currentHook]['verdict'] = "WARN";
             }
-            if ($this->entries[$this->currentModule]['verdict'] != "FAIL") {
+            if (empty($this->entries[$this->currentModule]['verdict'])) {
+                $this->entries[$this->currentModule]['verdict'] = "WARN";
+            } elseif ($this->entries[$this->currentModule]['verdict'] != "FAIL") {
                 $this->entries[$this->currentModule]['verdict'] = "WARN";
             }
-            if ($this->entries['verdict'] != "FAIL") {
+            if (empty($this->entries['verdict'])) {
+                $this->entries['verdict'] = "WARN";
+            } elseif ($this->entries['verdict'] != "FAIL") {
                 $this->entries['verdict'] = "WARN";
             }
         }
@@ -247,6 +271,7 @@ class ModuleLogger
         return null;
     }
 
+
     public function error($err)
     {
         $this->addEntry('error', $message);
@@ -260,6 +285,11 @@ class ModuleLogger
     public function debug($message)
     {
         $this->addEntry('debug', $message);
+    }
+
+    public function validatorMessage($message)
+    {
+        $this->validatorMessages[] = $message;
     }
 
     private function addEntry($type, $entry)
@@ -354,6 +384,7 @@ class ModuleLogger
 
         $result['enabled_modules'] = array();
 
+
         global $modules;
 
         foreach ($modules as $module) {
@@ -361,6 +392,8 @@ class ModuleLogger
                 $result['enabled_modules'][] = $module;
             }
         }
+
+        $result['validator_messages'] = $this->validatorMessages;
 
         return $result;
     }

@@ -1,4 +1,5 @@
 <?php
+
 global $logger;
 $samplingRate = $adaptation->getAttribute('audioSamplingRate');
 $language = $adaptation->getAttribute('lang');

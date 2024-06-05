@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         cacheResultFile=".phpunit.cache/test-results"
+         executionOrder="depends,defects"
+         forceCoversAnnotation="false"
+         beStrictAboutCoversAnnotation="true"
+         beStrictAboutOutputDuringTests="false"
+         beStrictAboutTodoAnnotatedTests="true"
+         convertDeprecationsToExceptions="true"
+         failOnRisky="true"
+         backupGlobals="false"
+         failOnWarning="false"
+         enforceTimeLimit="false"
+         timeoutForLargeTests="360"
+         verbose="true">
+    <testsuites>
+        <testsuite name="default">
+          <directory>WaveHLSInterop/test</directory>
+          <directory>Utils/test</directory>
+          <directory>Utils/validators/test</directory>
+        </testsuite>
+    </testsuites>
+
+    <coverage cacheDirectory=".phpunit.cache/code-coverage"
+              processUncoveredFiles="false" includeUncoveredFiles="true" pathCoverage="true">
+        <include>
+            <directory suffix=".php">.</directory>
+        </include>
+        <exclude>
+            <directory>vendor</directory>
+            <directory>CTAWAVE/UnitTests</directory>
+            <directory>Conformance-Frontend-HLS</directory>
+            <directory>Conformance-Frontend</directory>
+            <directory>functional-tests</directory>
+            <directory>tests</directory>
+            <directory>validation-tests</directory>
+            <directory>*/test</directory>
+            <file>index.php</file>
+        </exclude>
+        <report>
+            <html outputDirectory="functional-test-results/html-reports-functional-tests" lowUpperBound="50" highLowerBound="90"/>
+            <xml outputDirectory="functional-test-results/xml-reports-functional-tests"/>
+        </report>
+    </coverage>
+</phpunit>

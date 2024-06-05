@@ -10,7 +10,7 @@ $validEncoding = $logger->test(
     "CMAF",
     "Section 10.4",
     "Each AAC elementary stream SHALL be encoded using MPEG-4 AAC LC, HE-AAC Level 2, or HE-AACv2 Level 2",
-    in_array($mpParameters['profile'], array("0x02", "0x05", "0x1d")),
+    in_array($mpParameters['profile'], array(2, 5, 29)),
     "FAIL",
     "Valid profile found",
     "Nonvalid profile found"
@@ -38,7 +38,7 @@ $validChannelCount = $logger->test(
     "CMAF",
     "Section 10.4",
     "AAC Core CMAF tracks SHALL not exceed two audio channels",
-    $mpParameters['channels'] == "0x1" || $mpParameters['channels'] == "0x2",
+    $mpParameters['channels'] == 1 || $mpParameters['channels'] == 2,
     "FAIL",
     "Valid channel count found",
     "Nonvalid channel count found"

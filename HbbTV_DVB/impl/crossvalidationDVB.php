@@ -16,8 +16,8 @@ $sdTypeEqual = ($sdType1 == $sdType2);
 $logger->test(
     "HbbTV-DVB DASH Validation Requirements",
     "DVB: Section 4.3",
-    "All the initialization segments for Representations within an Adaptation Set SHALL 
-    have the same sample entry type",
+    "All the initialization segments for Representations within an Adaptation Set SHALL " .
+    "have the same sample entry type",
     $sdTypeEqual,
     "FAIL",
     "Adaptation $adaptationIndex: Sample entry types for " .

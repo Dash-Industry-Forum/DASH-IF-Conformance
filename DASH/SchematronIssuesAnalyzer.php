@@ -50,6 +50,8 @@ function analyzeSchematronIssues($SchematronIssuesReport)
 
     $reportStartString = "<svrl:failed-assert";
     $reportEndString = "</svrl:failed-assert>";
+    $schematronIssue = array();
+    $schematronIssue[0] = new \stdClass();
     $schematronIssue[0]->text = "";
     $schematronIssue[0]->location = "";
     $schematronIssue[0]->attributes = "";
@@ -64,6 +66,7 @@ function analyzeSchematronIssues($SchematronIssuesReport)
     for ($i = 0; $i < $numErrors; $i++) {
         $errorElement = $dom_sxe->getElementsByTagName('assert')->item($i);
 // access the parent "MPD" in mpd file
+        $schematronIssue[$i] = new \stdClass();
         $schematronIssue[$i]->text = getSchemaErrorText($errorElement);
         $schematronIssue[$i]->location = getSchemaErrorLocation($errorElement);
 // get mediapersentation duration from mpd level

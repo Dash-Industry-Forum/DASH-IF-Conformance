@@ -1,4 +1,5 @@
 <?php
+
 global $logger;
 $width = $adaptation->getAttribute('width');
 $height = $adaptation->getAttribute('height');

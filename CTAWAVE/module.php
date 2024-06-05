@@ -2,6 +2,8 @@
 
 namespace DASHIF;
 
+require_once __DIR__ . '/../Utils/moduleInterface.php';
+
 class ModuleCTAWAVE extends ModuleInterface
 {
     private $mediaProfileAttributesAudio;
@@ -45,7 +47,9 @@ class ModuleCTAWAVE extends ModuleInterface
     protected function addCLIArguments()
     {
         global $argumentParser;
-        $argumentParser->addOption("ctawave", "w", "ctawave", "Enable CTAWAVE checking");
+        if ($argumentParser) {
+            $argumentParser->addOption("ctawave", "w", "ctawave", "Enable CTAWAVE checking");
+        }
     }
 
     public function handleArguments()

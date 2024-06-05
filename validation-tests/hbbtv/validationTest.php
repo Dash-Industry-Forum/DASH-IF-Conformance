@@ -132,6 +132,4 @@ final class validationTest extends TestCase
         );
         return $streamsToTest;
     }
-
-
 }

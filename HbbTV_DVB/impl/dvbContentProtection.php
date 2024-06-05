@@ -28,7 +28,8 @@ $logger->test(
     "descriptor with @schemeIdUri=\"urn:mped:dash:mp4protection:2011\" and @value=\"cenc\"",
     count($contentProtection) == 0 || $protectionCount > 0,
     "FAIL",
-    "Non protected content or protected content with at least one correct ContentProtection descriptor in $this->periodCount, adaptation $i",
+    "Non protected content or protected content with at least one correct ContentProtection descriptor " .
+    "in $this->periodCount, adaptation $i",
     "Not found in $this->periodCount, adaptation $i"
 );
 if ($contentProtection->count() > 0 && $protectionCount == 0) {

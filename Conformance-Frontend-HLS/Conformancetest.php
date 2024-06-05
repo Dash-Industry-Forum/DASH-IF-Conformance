@@ -37,13 +37,12 @@
     <script type="text/javascript"  src="tree/dhtmlxTree/codebase/dhtmlxtree.js"></script>
     <script type="text/javascript" src="tree/dhtmlxTree/codebase/ext/dhtmlxtree_json.js"></script>
     
-<?php 
-    if(isset($_REQUEST['mpdurl']))
-    {
-        $url = $_REQUEST['mpdurl'];     // To get url from POST request.
-    }
-    else
+<?php
+if (isset($_REQUEST['mpdurl'])) {
+    $url = $_REQUEST['mpdurl'];     // To get url from POST request.
+} else {
         $url = "";
+}
 ?>
 
 <script type="text/javascript">
@@ -269,12 +268,12 @@
     }
     
     .box__file {
-	width: 0.1px;
-	height: 0.1px;
-	opacity: 0;
-	overflow: hidden;
-	position: absolute;
-	z-index: -1;
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
     }
     
     .box__file + label {
@@ -486,7 +485,7 @@ var counting =0;
 var representationid =1;
 var adaptationid = 1;
 var hinindex = 1;
-var repid =[];	
+var repid =[];  
 var totarr = [];
 var adaptid=[];
 var file,fd,xhr;
@@ -622,7 +621,7 @@ function  progressEventHandler(){
                     progressText = "Processing, please wait...";
                 else
                     progressText = "Processing Track "+lastRep+" in Tag "+lastAdapt+", "+progressPercent+"% done ( "+dataDownloaded+" KB downloaded, "+dataProcessed+" MB processed )";
-		
+        
                 document.getElementById("par").innerHTML=progressText;
             }
             catch(e)
@@ -666,10 +665,10 @@ function submit()
     url = document.getElementById("urlinput").value; 
  
     if (uploaded===true)
-	url="upload";
+    url="upload";
     
     var stringurl = [];
-	
+    
     stringurl[0] = url;
     if($("#cmafprofile").is(':checked'))
         cmaf = 1;
@@ -704,7 +703,7 @@ function submit()
              }
              else{ //if(urlStatus === 404){
                 window.alert("Error loading the M3U8, please check the URL.");
-                clearInterval( pollingTimer);	
+                clearInterval( pollingTimer);   
                 finishTest(); 
              }
          });
@@ -1086,7 +1085,7 @@ function setUpTreeView()
 {
     if (typeof tree === "undefined") 
     {
-//        console.log("tree:doesnt exist");				
+//        console.log("tree:doesnt exist");             
     }
     else
     {

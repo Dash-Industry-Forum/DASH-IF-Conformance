@@ -23,9 +23,8 @@ function validate_segment(
     $segment_url,
     $is_subtitle_rep,
     $detailedSegmentOutput = true
-)
-{
-    global $sizearray;
+) {
+    global $sizearray, $validatorWrapper;
 
 
     $sizearray = array();
@@ -39,6 +38,13 @@ function validate_segment(
         ## Put segments in one file
         assemble($representationDirectory, $segment_url, $sizearray);
 
+        $validatorWrapper = $GLOBALS['validatorWrapper'];
+        if ($is_dolby) {
+            $validatorWrapper->enableFeature('Dolby');
+        }
+        $validatorWrapper->run($period, $adaptation_set, $representation);
+
+        /*
         ## Create config file with the flags for segment validation
         $config_file_loc = config_file_for_backend(
             $period,
@@ -50,6 +56,7 @@ function validate_segment(
 
         ## Run the backend
         $returncode = run_backend($config_file_loc, $representationDirectory);
+         */
 
         $varinfo = var_export($adaptation_set, true);
 
@@ -126,9 +133,7 @@ function assemble($representationDirectory, $segment_urls, $sizearr)
     global $segment_accesses, $hls_manifest, $mpdHandler;
 
 
-    $index = ($segment_accesses[$mpdHandler->getSelectedAdaptationSet()]
-    [$mpdHandler->getSelectedRepresentation()][0]
-    ['initialization']) ? 0 : 1;
+    $index = 0;
 
     for ($i = 0; $i < sizeof($segment_urls); $i++) {
         $fp1 = fopen("$representationDirectory/assembled.mp4", 'a+');
@@ -357,10 +362,10 @@ function config_file_for_backend($period, $adaptation_set, $representation, $rep
     }
 
     $flags = (!$hls_manifest) ? construct_flags(
-            $period,
-            $adaptation_set,
-            $representation
-        ) . $additional_flags : $additional_flags;
+        $period,
+        $adaptation_set,
+        $representation
+    ) . $additional_flags : $additional_flags;
     $piece = explode(" ", $flags);
     foreach ($piece as $pie) {
         if ($pie !== "") {
@@ -508,7 +513,8 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
 
     $segmentDurMPD = $duration;
 
-    // We might have multiple moof/mdat boxes in one segment. Combine their duration to get the duration of the complete segment
+    // We might have multiple moof/mdat boxes in one segment.
+    // Combine their duration to get the duration of the complete segment
     $totalSegmentTimes = array();
     $currentEntry = null;
     for ($i = 0; $i < $num_segments; $i++) {
@@ -521,7 +527,9 @@ function checkSegmentDurationWithMPD($segmentsTime, $PTO, $duration, $representa
             $currentEntry['earliestPresentationTime'] = $currentSegmentTime['earliestPresentationTime'];
             $currentEntry['duration'] = 0;
         }
-        $referenceTime = is_null($currentSegmentTime['presentationEndTime']) ? $currentSegmentTime['lastPresentationTime'] : $currentSegmentTime['presentationEndTime'];
+        $referenceTime = is_null($currentSegmentTime['presentationEndTime']) ?
+          $currentSegmentTime['lastPresentationTime'] :
+          $currentSegmentTime['presentationEndTime'];
         $currentEntry['duration'] += $referenceTime - $currentSegmentTime['earliestPresentationTime'];
     }
     //push last element
@@ -591,14 +599,14 @@ function saveStdErrOutput($representationDirectory, $saveDetailedOutput = true)
             if ($msg != "") {
                 $severity = "PASS";
                 //Catch both warn and warning
-                if (stripos($msg, "warn") !== FALSE) {
+                if (stripos($msg, "warn") !== false) {
                     $severity = "WARN";
                     if ($commonSeverity == "PASS") {
                         $commonSeverity = $severity;
                     }
                 }
                 //Catch errors
-                if (stripos($msg, "error") !== FALSE) {
+                if (stripos($msg, "error") !== false) {
                     $severity = "FAIL";
                     if ($commonSeverity != "FAIL") {
                         $commonSeverity = $severity;

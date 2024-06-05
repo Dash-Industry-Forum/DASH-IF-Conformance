@@ -2,14 +2,14 @@
 
 global $session;
 
-if (move_uploaded_file($_FILES['mpd']['tmp_name'], $session->getDir() . '/Manifest.mpd')){
-  $this->url = $session->getDir() . '/Manifest.mpd';
+if (isset($_FILES['mpd']) && move_uploaded_file($_FILES['mpd']['tmp_name'], $session->getDir() . '/Manifest.mpd')) {
+    $this->url = $session->getDir() . '/Manifest.mpd';
 }
 
 if ($this->url && $this->url != '') {
-  $this->mpd = file_get_contents($this->url);
-}else if (isset($_REQUEST['mpd'])){
-  $this->mpd = $_REQUEST['mpd'];
+    $this->mpd = file_get_contents($this->url);
+} elseif (isset($_REQUEST['mpd'])) {
+    $this->mpd = $_REQUEST['mpd'];
 }
 
 
