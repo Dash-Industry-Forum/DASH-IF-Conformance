@@ -11,17 +11,17 @@ foreach ($periodElements as $p) {
     if (!$p->hasAttribute("id")) {
         continue;
     }
-    if ($periodId != $p->getAttribute("id");
-      continue;
-}
-    $adaptationElements = $p->getElementsByTagName("AdaptationSet");
-foreach ($adaptationElements as $a) {
-    if ($a->hasAttribute("id")) {
-        $result[] = $a->getAttribute("id");
-    } else {
-        $result[] = null;
+    if ($periodId != $p->getAttribute("id")) {
+        continue;
     }
-}
+    $adaptationElements = $p->getElementsByTagName("AdaptationSet");
+    foreach ($adaptationElements as $a) {
+        if ($a->hasAttribute("id")) {
+            $result[] = $a->getAttribute("id");
+        } else {
+            $result[] = null;
+        }
+    }
 }
 
 
