@@ -10,6 +10,8 @@ global $logger;
 $spec = "TS 103 285 v1.4.1";
 $section = "4.8.3 - Constraints to MPD updates";
 
+$shallNotChangeInPeriod = "for a corresponding Representation or AdaptationSet in a Period shall not change.";
+
 $periodId = $mpd->getPeriodAttribute($periodIndex, 'id');
 
 $originalAdaptations = $mpd->getAdaptationSetIds($mpd->getPeriodAttribute($periodIndex, 'id'));
@@ -39,7 +41,7 @@ foreach ($originalAdaptations as $origIndex => $origId) {
         $logger->test(
             $spec,
             $section,
-            "A Role Element in a corresponding Representation or AdaptationSet shall not change.",
+            "A Role Element " . $shallNotChangeInPeriod,
             $mpd->getAdaptationSetAttribute($periodIndex, $origIndex, "Role") ==
               $nextMpd->getAdaptationSetAttribute($nextPeriodIndex, $nextIndex, "Role"),
             "FAIL",
@@ -49,7 +51,7 @@ foreach ($originalAdaptations as $origIndex => $origId) {
         $logger->test(
             $spec,
             $section,
-            "An AudioConfiguration Element in a corresponding Representation or AdaptationSet shall not change.",
+            "An AudioConfiguration Element " . $shallNotChangeInPeriod,
             $mpd->getAdaptationSetAttribute($periodIndex, $origIndex, "AudioConfiguration") ==
               $nextMpd->getAdaptationSetAttribute($nextPeriodIndex, $nextIndex, "AudioConfiguration"),
             "FAIL",
@@ -59,8 +61,7 @@ foreach ($originalAdaptations as $origIndex => $origId) {
         $logger->test(
             $spec,
             $section,
-            "The attribute @contentType for a corresponding Representation or AdaptationSet in a corresponding " .
-            "Period shall not change.",
+            "The attribute @contentType " . $shallNotChangeInPeriod,
             $mpd->getAdaptationSetAttribute($periodIndex, $origIndex, "contentType") ==
             $nextMpd->getAdaptationSetAttribute($nextPeriodIndex, $nextIndex, "contentType"),
             "FAIL",
@@ -70,8 +71,7 @@ foreach ($originalAdaptations as $origIndex => $origId) {
         $logger->test(
             $spec,
             $section,
-            "The attribute @codecs for a corresponding Representation or AdaptationSet in a corresponding " .
-            "Period shall not change.",
+            "The attribute @codecs " . $shallNotChangeInPeriod,
             $mpd->getAdaptationSetAttribute($periodIndex, $origIndex, "codecs") ==
             $nextMpd->getAdaptationSetAttribute($nextPeriodIndex, $nextIndex, "codecs"),
             "FAIL",
@@ -81,8 +81,7 @@ foreach ($originalAdaptations as $origIndex => $origId) {
         $logger->test(
             $spec,
             $section,
-            "The attribute @lang for a corresponding Representation or AdaptationSet in a corresponding " .
-            "Period shall not change.",
+            "The attribute @lang " . $shallNotChangeInPeriod,
             $mpd->getAdaptationSetAttribute($periodIndex, $origIndex, "lang") ==
             $nextMpd->getAdaptationSetAttribute($nextPeriodIndex, $nextIndex, "lang"),
             "FAIL",
