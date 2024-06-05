@@ -86,5 +86,7 @@ foreach ($originalPeriods as $origIndex => $origId) {
             "Period@AssetIdentifier for Period@id $origId identical",
             "Period@AssetIdentifier for Period@id $origId differs"
         );
+
+        $this->mpdUpdateConstraintsWithinPeriod($mpd, $nextMpd, $origIndex, $nextIndex);
     }
 }

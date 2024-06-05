@@ -105,6 +105,11 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/mpdUpdateConstraints.php';
     }
 
+    private function mpdUpdateConstraintsWithinPeriod($mpd, $nextMpd, $periodIndex, $nextPeriodIndex)
+    {
+        include 'impl/mpdUpdateConstraintsWithinPeriod.php';
+    }
+
 
     public function hookBeforeMPD()
     {
