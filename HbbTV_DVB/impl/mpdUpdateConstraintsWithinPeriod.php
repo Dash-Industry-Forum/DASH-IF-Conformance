@@ -40,11 +40,54 @@ foreach ($originalAdaptations as $origIndex => $origId) {
             $spec,
             $section,
             "A Role Element in a corresponding Representation or AdaptationSet shall not change.",
-            $mpd->getAdaptationSetAttribute($periodIndex, $origIndex, "role") ==
-              $nextMpd->getAdaptationSetAttribute($nextPeriodIndex, $nextIndex, "role"),
+            $mpd->getAdaptationSetAttribute($periodIndex, $origIndex, "Role") ==
+              $nextMpd->getAdaptationSetAttribute($nextPeriodIndex, $nextIndex, "Role"),
             "FAIL",
-            "Adaptation@role for AdaptationSet@id $origId within period $periodId identical",
-            "Adaptation@role for AdaptationSet@id $origId within period $periodId differs"
+            "Role for AdaptationSet@id $origId within period $periodId identical",
+            "Role for AdaptationSet@id $origId within period $periodId differs"
+        );
+        $logger->test(
+            $spec,
+            $section,
+            "An AudioConfiguration Element in a corresponding Representation or AdaptationSet shall not change.",
+            $mpd->getAdaptationSetAttribute($periodIndex, $origIndex, "AudioConfiguration") ==
+              $nextMpd->getAdaptationSetAttribute($nextPeriodIndex, $nextIndex, "AudioConfiguration"),
+            "FAIL",
+            "AudioConfiguration for AdaptationSet@id $origId within period $periodId identical",
+            "AudioConfiguration for AdaptationSet@id $origId within period $periodId differs"
+        );
+        $logger->test(
+            $spec,
+            $section,
+            "The attribute @contentType for a corresponding Representation or AdaptationSet in a corresponding " .
+            "Period shall not change.",
+            $mpd->getAdaptationSetAttribute($periodIndex, $origIndex, "contentType") ==
+            $nextMpd->getAdaptationSetAttribute($nextPeriodIndex, $nextIndex, "contentType"),
+            "FAIL",
+            "@contentType for AdaptationSet@id $origId within period $periodId identical",
+            "@contentType for AdaptationSet@id $origId within period $periodId differs"
+        );
+        $logger->test(
+            $spec,
+            $section,
+            "The attribute @codecs for a corresponding Representation or AdaptationSet in a corresponding " .
+            "Period shall not change.",
+            $mpd->getAdaptationSetAttribute($periodIndex, $origIndex, "codecs") ==
+            $nextMpd->getAdaptationSetAttribute($nextPeriodIndex, $nextIndex, "codecs"),
+            "FAIL",
+            "@codecs for AdaptationSet@id $origId within period $periodId identical",
+            "@codecs for AdaptationSet@id $origId within period $periodId differs"
+        );
+        $logger->test(
+            $spec,
+            $section,
+            "The attribute @lang for a corresponding Representation or AdaptationSet in a corresponding " .
+            "Period shall not change.",
+            $mpd->getAdaptationSetAttribute($periodIndex, $origIndex, "lang") ==
+            $nextMpd->getAdaptationSetAttribute($nextPeriodIndex, $nextIndex, "lang"),
+            "FAIL",
+            "@lang for AdaptationSet@id $origId within period $periodId identical",
+            "@lang for AdaptationSet@id $origId within period $periodId differs"
         );
     }
 }
