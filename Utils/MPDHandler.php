@@ -86,6 +86,10 @@ class MPDHandler
     {
         return $this->features["Period"][$idx]["AdaptationSet"][$aIdx][$attr];
     }
+    public function getRepresentationAttribute($idx, $aIdx, $rIdx, $attr): string | null
+    {
+        return $this->features["Period"][$idx]["AdaptationSet"][$aIdx]['Representation'][$rIdx][$attr];
+    }
 
 
     public function downloadAll($assemble = true)
@@ -127,6 +131,10 @@ class MPDHandler
     public function getAdaptationSetIds($periodId)
     {
         return include 'impl/MPDHandler/getAdaptationSetIds.php';
+    }
+    public function getRepresentationIds($periodId, $adaptationSetId)
+    {
+        return include 'impl/MPDHandler/getRepresentationIds.php';
     }
 
     public function selectPeriod($period)

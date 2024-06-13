@@ -13,9 +13,11 @@ $section = "4.8.3 - Constraints to MPD updates";
 $shallNotChangeInPeriod = "for a corresponding Representation or AdaptationSet in a Period shall not change.";
 
 $periodId = $mpd->getPeriodAttribute($periodIndex, 'id');
+$nextPeriodId = $nextMpd->getPeriodAttribute($nextPeriodIndex, 'id');
 
-$originalAdaptations = $mpd->getAdaptationSetIds($mpd->getPeriodAttribute($periodIndex, 'id'));
-$nextAdaptations = $nextMpd->getAdaptationSetIds($mpd->getPeriodAttribute($nextPeriodIndex, 'id'));
+
+$originalAdaptations = $mpd->getAdaptationSetIds($periodId);
+$nextAdaptations = $nextMpd->getAdaptationSetIds($nextPeriodId);
 
 foreach ($originalAdaptations as $origIndex => $origId) {
     $logger->test(
@@ -87,6 +89,14 @@ foreach ($originalAdaptations as $origIndex => $origId) {
             "FAIL",
             "@lang for AdaptationSet@id $origId within period $periodId identical",
             "@lang for AdaptationSet@id $origId within period $periodId differs"
+        );
+        $this->mpdUpdateConstraintsWithinAdaptationSet(
+            $mpd,
+            $nextMpd,
+            $periodIndex,
+            $nextPeriodIndex,
+            $origIndex,
+            $nextIndex
         );
     }
 }
