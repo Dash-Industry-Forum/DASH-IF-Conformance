@@ -60,7 +60,7 @@ foreach ($mpdAsArray['Period'] as $periodIdx => $period) {
             );
             $urlObj = array();
             $urlObj['segments'] = $this->computeUrls(
-                $periodIdx,
+                $representation,
                 $adaptationIdx,
                 $representationIdx,
                 $currentTemplate[0],
