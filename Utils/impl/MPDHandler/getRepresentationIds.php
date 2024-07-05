@@ -19,10 +19,10 @@ foreach ($periodElements as $p) {
         if (!$a->hasAttribute("id")) {
             continue;
         }
-        if ($adaptationId != $a->getAttribute("id")) {
+        if ($adaptationSetId != $a->getAttribute("id")) {
             continue;
         }
-        $representationElements = $a->getElementsByTagName("Representaion");
+        $representationElements = $a->getElementsByTagName("Representation");
         foreach ($representationElements as $r) {
             if ($r->hasAttribute("id")) {
                 $result[] = $r->getAttribute("id");

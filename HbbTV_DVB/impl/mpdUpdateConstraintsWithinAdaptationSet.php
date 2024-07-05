@@ -17,11 +17,11 @@ $shallNotChangeInPeriod = "for a corresponding Representation or AdaptationSet i
 $periodId = $mpd->getPeriodAttribute($periodIndex, 'id');
 $nextPeriodId = $nextMpd->getPeriodAttribute($nextPeriodIndex, 'id');
 
-$adaptationId = $mpd->getRepresentationAttribute($periodIndex, $adaptationIndex, 'id');
-$nextAdaptationId = $nextMpd->getRepresentationAttribute($nextPeriodIndex, $nextAdaptationIndex, 'id');
+$adaptationId = $mpd->getAdaptationSetAttribute($periodIndex, $adaptationIndex, 'id');
+$nextAdaptationId = $nextMpd->getAdaptationSetAttribute($nextPeriodIndex, $nextAdaptationIndex, 'id');
 
-$originalRepresentations = $mpd->getRepresentationSetIds($periodId, $adaptationId);
-$nextRepresentations = $nextMpd->getRepresentationSetIds($nextPeriodId, $nextAdaptationId);
+$originalRepresentations = $mpd->getRepresentationIds($periodId, $adaptationId);
+$nextRepresentations = $nextMpd->getRepresentationIds($nextPeriodId, $nextAdaptationId);
 
 $identicalMsg = "within period $periodId and adaptation $adaptationId identical";
 $differentMsg = "within period $periodId and adaptation $adaptationId differs";

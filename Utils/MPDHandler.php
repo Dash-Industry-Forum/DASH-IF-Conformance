@@ -48,6 +48,7 @@ class MPDHandler
         $this->segmentUrls = array();
 
         $this->load();
+        $this->parseXML();
         if ($this->mpd) {
             $this->features = $this->recursiveExtractFeatures($this->dom);
             $this->extractProfiles();
@@ -57,18 +58,26 @@ class MPDHandler
         }
     }
 
-    public function refresh()
+
+    public function refresh($content = null)
     {
         $tmpMpd = $this->mpd;
-        $this->load();
+        if (!$content) {
+            $this->load();
+        } else {
+            $this->mpd = $content;
+        }
+        $this->parseXML();
         if ($this->mpd == $tmpMpd) {
             return false;
         }
         $this->features = $this->recursiveExtractFeatures($this->dom);
         $this->extractProfiles();
-        $this->runSchematron();
-        $this->validateSchematron();
-        $this->loadSegmentUrls();
+        if (!$content) {
+            $this->runSchematron();
+            $this->validateSchematron();
+            $this->loadSegmentUrls();
+        }
         return true;
     }
 
@@ -79,16 +88,27 @@ class MPDHandler
 
     public function getPeriodAttribute($idx, $attr): string | null
     {
+        if (!array_key_exists($attr, $this->features["Period"][$idx])) {
+            return null;
+        }
         return $this->features["Period"][$idx][$attr];
     }
 
     public function getAdaptationSetAttribute($idx, $aIdx, $attr): string | null
     {
-        return $this->features["Period"][$idx]["AdaptationSet"][$aIdx][$attr];
+        $adaptationSetFeatures = $this->features["Period"][$idx]["AdaptationSet"][$aIdx];
+        if (!array_key_exists($attr, $adaptationSetFeatures)) {
+            return null;
+        }
+        return $adaptationSetFeatures[$attr];
     }
     public function getRepresentationAttribute($idx, $aIdx, $rIdx, $attr): string | null
     {
-        return $this->features["Period"][$idx]["AdaptationSet"][$aIdx]['Representation'][$rIdx][$attr];
+        $representationFeatures = $this->features["Period"][$idx]["AdaptationSet"][$aIdx]['Representation'][$rIdx];
+        if (!array_key_exists($attr, $representationFeatures)) {
+            return null;
+        }
+        return $representationFeatures[$attr];
     }
 
 
@@ -267,6 +287,11 @@ class MPDHandler
         include 'impl/MPDHandler/load.php';
     }
 
+    private function parseXML()
+    {
+        include 'impl/MPDHandler/parseXML.php';
+    }
+
     public function getUrl()
     {
         return $this->url;
@@ -291,6 +316,13 @@ class MPDHandler
     public function getFeatures()
     {
         return $this->features;
+    }
+    public function getFeature($featureName)
+    {
+        if (!array_key_exists($featureName, $this->features)) {
+            return null;
+        }
+        return $this->features[$featureName];
     }
 
     public function getProfiles()

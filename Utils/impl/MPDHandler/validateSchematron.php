@@ -38,8 +38,10 @@ $logger->test(
     "Schematron validation failed"
 );
 
-if (strpos($this->schematronOutput, 'Schematron validation successful') === false) {
-    $this->schematronIssuesReport = analyzeSchematronIssues($this->mpdValidatorOutput);
+if ($this->schematronOutput != '') {
+    if (strpos($this->schematronOutput, 'Schematron validation successful') === false) {
+        $this->schematronIssuesReport = analyzeSchematronIssues($this->mpdValidatorOutput);
+    }
 }
 //createMpdFeatureList($this->dom, $schematronIssuesReport);
 //convertToHtml();
