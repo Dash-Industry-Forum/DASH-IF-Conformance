@@ -62,7 +62,7 @@ $argumentParser->addOption(
 $argumentParser->addOption("compact", "C", "compact", "Make JSON output compact");
 $argumentParser->addOption("silent", "S", "silent", "Do not output JSON to stdout");
 $argumentParser->addOption("autodetect", "A", "autodetect", "Try to automatically detect profiles");
-$argumentParser->addOption("limit", "L", "limit", "Limit the amount of segments downloaded per representation to 5");
+$argumentParser->addOption("unlimited", "U", "unlimited", "Unlimit the amount of segments downloaded (default is 5 per representation");
 
 $argumentParser->parseAll();
 
@@ -101,9 +101,9 @@ $autoDetect = $argumentParser->getOption("autodetect");
 $detailedSegmentOutput = !$argumentParser->getOption("disable_detailed_segment_output");
 
 global $limit;
-$limit = 0;
-if ($argumentParser->getOption("limit")) {
-    $limit = 5;
+$limit = 5;
+if ($argumentParser->getOption("unlimited")) {
+    $limit = 0;
 }
 
 if (substr($mpd_url, -5) == ".m3u8") {
