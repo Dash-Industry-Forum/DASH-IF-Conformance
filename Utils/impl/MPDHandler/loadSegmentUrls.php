@@ -48,7 +48,7 @@ foreach ($mpdAsArray['Period'] as $periodIdx => $period) {
             );
 
 
-            if (!count($currentTemplate)) {
+            if (!$currentTemplate || !count($currentTemplate)) {
                 $adaptationUrls[] = array($baseUrls[$adaptationIdx][$representationIdx]);
                 continue;
             }
