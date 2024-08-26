@@ -1,6 +1,6 @@
 <?php
 
-if (!$this->mpd) {
+if (!$this->mpd || !$this->dom) {
     return;
 }
 
