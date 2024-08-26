@@ -171,11 +171,6 @@ class ModuleCTAWAVE extends ModuleInterface
         include 'impl/checkFrameRateSplicePoint.php';
     }
 
-    private function getFrameRate($xml)
-    {
-        return include 'impl/getFrameRate.php';
-    }
-
     private function checkAudioChannelSplicePoint()
     {
         return include 'impl/checkAudioChannelSplicePoint.php';

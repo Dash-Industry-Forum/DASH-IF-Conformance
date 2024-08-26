@@ -1,5 +1,7 @@
 <?php
 
+global $mpdHandler;
+
 $videoSampleDescription = $xml->getElementsByTagName('vide_sampledescription');
 if (!$videoSampleDescription->length) {
     return false;
@@ -53,10 +55,7 @@ if ($nalUnits->length > 0) {
             }
         }
 
-        $unitsInTick = $nalComments->item(0)->getAttribute('num_units_in_tick');
-        $timescale = $nalComments->item(0)->getAttribute('timescale');
-        $maxFPS = ceil((int)timescale / (2 * (int)unitsInTick));
-        if ($maxFPS > 60) {
+        if ($mpdHandler->getFrameRate() > 60) {
             return false;
         }
     }

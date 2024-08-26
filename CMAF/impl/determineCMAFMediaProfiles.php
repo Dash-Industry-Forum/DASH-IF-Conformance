@@ -50,9 +50,7 @@ if ($hdlrType == 'vide') {
                     }
                 }
                 if (hexdec($comment->getAttribute("timing_info_present_flag")) == 1) {
-                    $numUnitsInTick = $comment->getAttribute("num_units_in_tick");
-                    $timeScale = $comment->getAttribute("time_scale");
-                    $mediaProfileParameters['framerate'] = $timeScale / (2 * $numUnitsInTick);
+                    $mediaProfileParameters['framerate'] = $mpdHandler->getFrameRate();
                 }
             }
 
@@ -122,9 +120,7 @@ if ($hdlrType == 'vide') {
                     }
                 }
                 if ($sps->getAttribute("vui_timing_info_present_flag") == "1") {
-                    $numUnitsInTick = $sps->getAttribute("vui_num_units_in_tick");
-                    $timeScale = $sps->getAttribute("vui_time_scale");
-                    $mediaProfileParameters['framerate'] = $timeScale / ($numUnitsInTick);
+                    $mediaProfileParameters['framerate'] = $mpdHandler->getFrameRate();
                 }
             }
 

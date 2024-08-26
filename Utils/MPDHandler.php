@@ -156,6 +156,11 @@ class MPDHandler
     {
         return include 'impl/MPDHandler/getRepresentationIds.php';
     }
+  
+    public function getRoles($period, $adaptation)
+    {
+        return include 'impl/MPDHandler/getRoles.php';
+    }
 
     public function selectPeriod($period)
     {
@@ -251,6 +256,24 @@ class MPDHandler
     {
         return include 'impl/MPDHandler/getSegmentUrls.php';
     }
+
+    public function getFrameRate(
+        $periodIndex = null,
+        $adaptationIndex = null,
+        $representationIndex = null
+    ) {
+        return include 'impl/MPDHandler/getFrameRate.php';
+    }
+
+    public function getContentType(
+        $periodIndex = null,
+        $adaptationIndex = null,
+        $representationIndex = null
+    ) {
+        return include 'impl/MPDHandler/getContentType.php';
+    }
+
+
 
     private function computeTiming(
         $presentationDuration,
