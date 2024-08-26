@@ -3,6 +3,9 @@
 if (!$this->features) {
     return;
 }
+if (!array_key_exists("Period", $this->features)) {
+    return;
+}
 
 $this->profiles = array();
 $periods = $this->features['Period'];

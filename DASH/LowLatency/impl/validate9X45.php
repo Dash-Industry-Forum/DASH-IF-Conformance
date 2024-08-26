@@ -34,9 +34,10 @@ foreach ($representations as $representationId => $representation) {
     $chunkedAdaptationPoints[$representationId] = 3;
 
     // Bullet 3
-    $isSegmentStarts = $infoFileAdapt[$representationId]['isSegmentStart'];
-    $presStarts = $infoFileAdapt[$representationId]['PresStart'];
-    $presEnds = $infoFileAdapt[$representationId]['NextPresStart'];
+    $isSegmentStarts = $infoFileAdaptation[$representationId]['isSegmentStart'];
+    $presStarts = $infoFileAdaptation[$representationId]['PresStart'];
+    $presEnds = $infoFileAdaptation[$representationId]['NextPresStart'];
+    if (!$isSegmentStarts){continue;}
     $segmentIndexes = array_keys($isSegmentStarts, '1');
     foreach ($segmentIndexes as $segmentIndexId => $segmentIndex) {
         $presStart = $presStarts[$segmentIndex];

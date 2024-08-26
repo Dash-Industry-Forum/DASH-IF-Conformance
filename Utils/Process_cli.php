@@ -35,7 +35,6 @@ include __DIR__ . '/FileOperations.php';  //#Filesystem and XML checking functio
 //#Global variables. Direct evaluation of post/session vars to define conditionals,
 //#conditional extra includes for module initialization
 include __DIR__ . '/GlobalVariables.php';
-include __DIR__ . '/segment_download.php'; //#Very large function for downloading data. No Direct Executable Code.
 include __DIR__ . '/segment_validation.php'; //#Segment validation functions. No Direct Executable Code.
 
 include __DIR__ . '/MPDUtility.php';
@@ -63,6 +62,7 @@ $argumentParser->addOption(
 $argumentParser->addOption("compact", "C", "compact", "Make JSON output compact");
 $argumentParser->addOption("silent", "S", "silent", "Do not output JSON to stdout");
 $argumentParser->addOption("autodetect", "A", "autodetect", "Try to automatically detect profiles");
+$argumentParser->addOption("unlimited", "U", "unlimited", "Unlimit the amount of segments downloaded (default is 5 per representation");
 
 $argumentParser->parseAll();
 
@@ -100,7 +100,11 @@ $compactOutput = $argumentParser->getOption("compact");
 $autoDetect = $argumentParser->getOption("autodetect");
 $detailedSegmentOutput = !$argumentParser->getOption("disable_detailed_segment_output");
 
-$GLOBALS['validatorWrapper']->printEnabled();
+global $limit;
+$limit = 5;
+if ($argumentParser->getOption("unlimited")) {
+    $limit = 0;
+}
 
 if (substr($mpd_url, -5) == ".m3u8") {
     processHLS();

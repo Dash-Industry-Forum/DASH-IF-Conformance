@@ -32,9 +32,13 @@ foreach ($representations as $representationId => $representation) {
         $segmentProfiles = $representation['segmentProfiles'];
     }
 
-    $isSegmentStarts = $infoFileAdapt[$representationId]['isSegmentStart'];
-    $presStarts = $infoFileAdapt[$representationId]['PresStart'];
-    $presEnds = $infoFileAdapt[$representationId]['NextPresStart'];
+    $isSegmentStarts = $infoFileAdaptation[$representationId]['isSegmentStart'];
+    $presStarts = $infoFileAdaptation[$representationId]['PresStart'];
+    $presEnds = $infoFileAdaptation[$representationId]['NextPresStart'];
+
+    if (!$isSegmentStarts){
+      continue;
+    }
 
     $segmentIndexes = array_keys($isSegmentStarts, '1');
     $segmentCount = sizeof($segmentIndexes);

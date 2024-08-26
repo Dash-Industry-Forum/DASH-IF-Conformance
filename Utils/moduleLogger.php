@@ -80,7 +80,9 @@ class ModuleLogger
                 if ($hook == 'verdict') {
                     continue;
                 }
-                $hookValues['verdict'] = $this->selectVerdict($hookValues['verdict']);
+                if (gettype($hookValues) == "array"){
+                  $hookValues['verdict'] = $this->selectVerdict($hookValues['verdict']);
+                }
             }
         }
     }

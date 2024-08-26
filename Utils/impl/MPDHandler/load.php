@@ -2,12 +2,31 @@
 
 global $session;
 
-if (isset($_FILES['mpd']) && move_uploaded_file($_FILES['mpd']['tmp_name'], $session->getDir() . '/Manifest.mpd')) {
-    $this->url = $session->getDir() . '/Manifest.mpd';
+$this->downloadTime = new DateTimeImmutable();
+
+$isLocal = false;
+$localManifestLocation = '';
+
+if ($session) {
+    $localManifestLocation = $session->getDir() . '/Manifest.mpd';
+    if (isset($_FILES['mpd']) && move_uploaded_file($_FILES['mpd']['tmp_name'], $localManifestLocation)) {
+        $this->url = $localManifestLocation;
+        $isLocal = true;
+    } else {
+        if ($this->url && $this->url != '') {
+            //Download with CURL;
+            $this->downloadSegment($localManifestLocation, $this->url);
+            $isLocal = true;
+        }
+    }
 }
 
 if ($this->url && $this->url != '') {
-    $this->mpd = file_get_contents($this->url);
+    if ($isLocal) {
+        $this->mpd = file_get_contents($localManifestLocation);
+    } else {
+        $this->mpd = file_get_contents($this->url);
+    }
 } elseif (isset($_REQUEST['mpd'])) {
     $this->mpd = $_REQUEST['mpd'];
 }
@@ -17,28 +36,3 @@ if ($this->url && $this->url != '') {
 if (!$this->mpd) {
     return;
 }
-
-$simpleXML = simplexml_load_string($this->mpd);
-if (!$simpleXML) {
-    return;
-}
-
-$domSxe = dom_import_simplexml($simpleXML);
-if (!$domSxe) {
-    return;
-}
-
-$dom = new \DOMDocument('1.0');
-$domSxe = $dom->importNode($domSxe, true);
-if (!$domSxe) {
-    return;
-}
-
-$dom->appendChild($domSxe);
-$main_element_nodes = $dom->getElementsByTagName('MPD');
-if ($main_element_nodes->length == 0) {
-    $this->dom = null;
-    return;
-}
-
-$this->dom = $main_element_nodes->item(0);

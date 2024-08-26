@@ -252,4 +252,12 @@ class ModuleInterface
         $logger->setHook("Period");
         $logger->message(null);
     }
+
+    public function hookLiveMpd($mpd, $nextMpd)
+    {
+        global $logger;
+        $logger->setModule($this->name);
+        $logger->setHook("LiveMPD");
+        $logger->message(null);
+    }
 }

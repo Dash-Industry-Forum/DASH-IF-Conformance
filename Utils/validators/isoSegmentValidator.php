@@ -251,11 +251,6 @@ class ISOSegmentValidator extends ValidatorInterface
         fwrite($file, "-infofile" . "\n");
         fwrite($file, "$representationDirectory/assemblerInfo.txt \n");
 
-        if (!$this->isDolby) {
-            fwrite($file, "-offsetinfo" . "\n");
-            fwrite($file, "$representationDirectory/mdatoffset \n");
-        }
-
         $flags = (!$hls_manifest) ? construct_flags(
             $period,
             $adaptation,

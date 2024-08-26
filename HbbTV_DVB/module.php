@@ -29,8 +29,8 @@ class ModuleHbbTVDVB extends ModuleInterface
         $this->HbbTvEnabled = false;
         $this->DVBEnabled = false;
 
-        $this->hasJPGraph = include_once __DIR__ . '/../external/jpgraph/src/jpgraph.php';
-        $this->hasJPBarGraph = include_once __DIR__ . '/../external/jpgraph/src/jpgraph_bar.php';
+        $this->hasJPGraph = false;//include_once __DIR__ . '/../external/jpgraph/src/jpgraph.php';
+        $this->hasJPBarGraph = false;//include_once __DIR__ . '/../external/jpgraph/src/jpgraph_bar.php';
     }
     public function isEnabled()
     {
@@ -70,9 +70,11 @@ class ModuleHbbTVDVB extends ModuleInterface
     protected function addCLIArguments()
     {
         global $argumentParser;
-        $argumentParser->addOption("hbbtv", "H", "hbbtv", "Enable HBBTV checking");
-        $argumentParser->addOption("dvb", "D", "dvb", "Enable DVB checking (2018 xsd)");
-        $argumentParser->addOption("dvb2019", "", "dvb_2019", "Enable DVB checking (2019 xsd)");
+        if ($argumentParser){
+          $argumentParser->addOption("hbbtv", "H", "hbbtv", "Enable HBBTV checking");
+          $argumentParser->addOption("dvb", "D", "dvb", "Enable DVB checking (2018 xsd)");
+          $argumentParser->addOption("dvb2019", "", "dvb_2019", "Enable DVB checking (2019 xsd)");
+        }
     }
 
     public function handleArguments()
@@ -92,6 +94,36 @@ class ModuleHbbTVDVB extends ModuleInterface
             $this->DVBEnabled = true;
             $this->DVBVersion = "2019";
         }
+    }
+
+    public function hookLiveMpd($mpd, $nextMpd)
+    {
+        parent::hookLiveMpd($mpd, $nextMpd);
+        $this->mpdUpdateConstraints($mpd, $nextMpd);
+    }
+
+    public function mpdUpdateConstraints($mpd, $nextMpd)
+    {
+        include 'impl/mpdUpdateConstraints.php';
+    }
+
+    private function mpdUpdateConstraintsWithinPeriod(
+        $mpd,
+        $nextMpd,
+        $periodIndex,
+        $nextPeriodIndex
+    ) {
+        include 'impl/mpdUpdateConstraintsWithinPeriod.php';
+    }
+    private function mpdUpdateConstraintsWithinAdaptationSet(
+        $mpd,
+        $nextMpd,
+        $periodIndex,
+        $nextPeriodIndex,
+        $adaptationIndex,
+        $nextAdaptationIndex
+    ) {
+        include 'impl/mpdUpdateConstraintsWithinAdaptationSet.php';
     }
 
 
