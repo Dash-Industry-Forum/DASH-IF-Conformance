@@ -157,10 +157,6 @@ class MPDHandler
         return include 'impl/MPDHandler/getRepresentationIds.php';
     }
   
-    public function getRoles($period, $adaptation)
-    {
-        return include 'impl/MPDHandler/getRoles.php';
-    }
 
     public function selectPeriod($period)
     {
