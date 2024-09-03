@@ -21,7 +21,9 @@ class ArgumentsParser
         $this->parsedOptions = getopt($this->getShortOpts(), $this->getLongOpts(), $restidx);
 
         global $argv;
-        $this->extraArguments = array_slice($argv, $restidx);
+        if ($argv){
+          $this->extraArguments = array_slice($argv, $restidx);
+        }
 
 
         if ($this->getOption("help")) {
@@ -35,6 +37,10 @@ class ArgumentsParser
 
     public function getOption($name)
     {
+        if ($_REQUEST[$name]) {
+            return true;
+        }
+        if ($this->parsedOptions){
         foreach ($this->allOptions as $option) {
             if ($option->label == $name) {
                 if (
@@ -45,8 +51,6 @@ class ArgumentsParser
                 }
             }
         }
-        if ($_REQUEST[$name]) {
-            return true;
         }
         return false;
     }

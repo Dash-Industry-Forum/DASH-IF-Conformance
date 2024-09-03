@@ -14,6 +14,11 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+if(!defined('STDIN'))  define('STDIN',  fopen('php://stdin',  'rb'));
+if(!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
+if(!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
+
 ini_set('memory_limit', '-1');
 ini_set('display_errors', 'stderr');
 error_reporting(E_ERROR | E_PARSE);
