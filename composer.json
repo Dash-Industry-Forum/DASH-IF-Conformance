@@ -4,6 +4,13 @@
         "ext-dom": "*",
         "ext-json": "*",
         "ext-sqlite3": "*",
-        "phpunit/phpunit": "9.5.20"
+        "phpunit/phpunit": "9.5.20",
+        "phpcompatibility/php-compatibility": "*",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }

@@ -152,10 +152,10 @@ function checkAlignment($leafInfoA, $leafInfoB, $segmentAlignment, $subsegmentAl
                     "Leafs should not overlap",
                     !$overlapLeafA,
                     "FAIL",
-                    "EPT for Leaf number " . $j + 2 . " in representation $leafIdA is > the latest presentation " .
+                    "EPT for Leaf number " . ($j + 2) . " in representation $leafIdA is > the latest presentation " .
                     "time for corresponding leaf in representation $leafIdB",
                     "Overlapping " . ($isSegmentLeafA ? "segment" : "subsegment") . ": EPT for Leaf number " .
-                    $j + 2 . " in representation $leafIdA is <= the latest presentation time for corresponding " .
+                    ($j + 2) . " in representation $leafIdA is <= the latest presentation time for corresponding " .
                     "leaf in representation i$leafIdB"
                 );
 
@@ -170,10 +170,10 @@ function checkAlignment($leafInfoA, $leafInfoB, $segmentAlignment, $subsegmentAl
                     "Leafs should not overlap",
                     !$overlapLeafB,
                     "FAIL",
-                    "EPT for Leaf number " . $j + 2 . " in representation $leafIdB is > the latest presentation " .
+                    "EPT for Leaf number " . ($j + 2) . " in representation $leafIdB is > the latest presentation " .
                     "time for corresponding leaf in representation $leafIdA",
                     "Overlapping " . ($isSegmentLeafB ? "segment" : "subsegment") . ": EPT for Leaf number " .
-                    $j + 2 . " in representation $leafIdB is <= the latest presentation time for corresponding " .
+                    ($j + 2) . " in representation $leafIdB is <= the latest presentation time for corresponding " .
                     "leaf in representation $leafIdA"
                 );
             }

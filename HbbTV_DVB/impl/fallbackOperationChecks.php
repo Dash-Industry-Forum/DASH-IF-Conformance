@@ -1,7 +1,7 @@
 <?php
 
 $adaptationCount = sizeof($audioAdaptations);
-for ($i = 0; $i < $len; $i++) {
+for ($i = 0; $i < $adaptationCount; $i++) {
     $adaptation = $audioAdaptations[$i];
     $supplementalProperties = $adaptation->getElementsByTagName('SupplementalProperty');
 

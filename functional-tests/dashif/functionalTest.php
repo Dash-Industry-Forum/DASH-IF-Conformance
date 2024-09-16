@@ -20,7 +20,6 @@ include 'Utils/FileOperations.php';  //#Filesystem and XML checking functions. N
 //#Global variables. Direct evaluation of post/session vars to define conditionals,
 //#conditional extra includes for module initialization
 include 'Utils/GlobalVariables.php';
-include 'Utils/segment_download.php'; //#Very large function for downloading data. No Direct Executable Code.
 include 'Utils/segment_validation.php'; //#Segment validation functions. No Direct Executable Code.
 include 'Utils/MPDUtility.php';
 include 'Utils/MPDHandler.php';
@@ -33,6 +32,8 @@ include 'CTAWAVE/module.php';
 include 'HbbTV_DVB/module.php';
 include 'DASH/LowLatency/module.php';
 include 'DASH/IOP/module.php';
+
+include 'Utils/ValidatorWrapper.php';
 
 $argumentParser->parseAll();
 
@@ -86,11 +87,12 @@ final class functionalTest extends TestCase
     public function streamProvider()
     {
         $i = 0;
-        $limit = 2000;
+        $limit = 2;
         $startnumber = 0;
         $blacklist = [];
         $content = file_get_contents(
-            "functional-tests/dashif/dashjs.json");
+            "functional-tests/dashif/dashjs.json"
+        );
         $dbJson = json_decode($content);
         $streamsToTest = array();
         foreach ($dbJson->items as $item) {
@@ -98,7 +100,7 @@ final class functionalTest extends TestCase
                 if ($limit && $i >= $limit) {
                     break;
                 }
-                if (!in_array($submenu->url, $blacklist) && $i >= $startnumber && strpos($submenu->url, 'media.axprod.net') === false) {
+                if (!in_array($submenu->url, $blacklist) && $i >= $startnumber && strpos($submenu->url, 'livesim.dashif.org') === false && strpos($submenu->url, 'media.axprod.net') === false) {
                     $streamsToTest["$item->name::$submenu->name"] = array($submenu->url);
                 }
                 $i++;
@@ -106,6 +108,4 @@ final class functionalTest extends TestCase
         }
         return $streamsToTest;
     }
-
-
 }

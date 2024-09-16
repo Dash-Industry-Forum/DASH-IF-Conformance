@@ -169,7 +169,7 @@ function construct_flags($period, $adaptation_set, $representation)
             $processArguments = $processArguments . $default_KID;
         }
 
-        $psshCount = sizeof($psshBox);
+        $psshCount = $psshBox == null ? 0 : sizeof($psshBox);
         if ($psshCount > 0) {
             $processArguments = $processArguments . " -pssh_count ";
             $processArguments = $processArguments . $psshCount;

@@ -44,8 +44,8 @@ for ($j = 0; $j < $moofBoxesCount; $j++) {
             "Representations SHALL not contain gaps between the segment timings",
             $currentFragmentDecodeTime == $previousFragmentDecodeTime + $cummulatedSampleDurFragPrev,
             "FAIL",
-            "No gap between segment $j and it's predecessor",
-            "Gap found between segment $j and it's predecessor",
+            "No gap between segment $j and its predecessor",
+            "Gap found between segment $j and its predecessor",
         );
     }
     ##
@@ -81,7 +81,8 @@ for ($j = 0; $j < $moofBoxesCount; $j++) {
                     "HbbTV-DVB DASH Validation Requirements",
                     "Section 'Segments'",
                     "Timing SHALL be consistent with the MPD",
-                    $mpdTiming[$sidxIndex] == 0 || (abs(($segmentTime - $mpdTiming[$sidxIndex]) / $mpdTiming[$sidxIndex]) <= 0.00001),
+                    $mpdTiming[$sidxIndex] == 0 ||
+                    (abs(($segmentTime - $mpdTiming[$sidxIndex]) / $mpdTiming[$sidxIndex]) <= 0.00001),
                     "FAIL",
                     "Start time of segment $sidxIndex is consistent with the MPD",
                     "Start time of segment $sidxIndex is not consistent with the MPD"

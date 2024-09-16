@@ -8,7 +8,8 @@ $indices = array();
 //Todo:More generalized approach with many Aligned Sw Sets.
 //Here assumption is only two Sw Sets are aligned.
 $adaptationSets = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'];
-for ($z = 0; $z < count($adaptationSets); $z++) {
+$adaptationCount = ($adaptationSets == null ? 0 : count($adaptationSets));
+for ($z = 0; $z < $adaptationCount; $z++) {
     $supplementalProperty = $adaptationSets[$z]['SupplementalProperty'];
     if ($supplementalProperty) {
         if ($supplementalProperty[0]['schemeIdUri'] == 'urn:mpeg:dash:adaptation-set-switching:2016') {

@@ -47,10 +47,10 @@ if (strpos($y, 'M') !== false) { // Minute
 $S = explode("S", $y); // Second
 
 ///\todo This function does not take into account leap years. There has to be a better way for this?
-return ($Y[0] * 365 * 24 * 60 * 60) +
-       ($Mo[0] * 30 * 24 * 60 * 60) +
-       ($W[0] * 7 * 24 * 60 * 60) +
-       ($D[0] * 24 * 60 * 60) +
-       ($H[0] * 60 * 60) +
-       ($M[0] * 60) +
-       $S[0]; // calculate durations in seconds
+return (intval($Y[0]) * 365 * 24 * 60 * 60) +
+       (intval($Mo[0]) * 30 * 24 * 60 * 60) +
+       (intval($W[0]) * 7 * 24 * 60 * 60) +
+       (intval($D[0]) * 24 * 60 * 60) +
+       (intval($H[0]) * 60 * 60) +
+       (intval($M[0]) * 60) +
+       intval($S[0]); // calculate durations in seconds

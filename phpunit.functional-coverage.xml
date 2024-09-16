@@ -17,12 +17,12 @@
          verbose="true">
     <testsuites>
         <testsuite name="default">
-            <directory>functional-tests/cta</directory>
+            <directory>functional-tests/dashif</directory>
         </testsuite>
     </testsuites>
 
     <coverage cacheDirectory=".phpunit.cache/code-coverage"
-              processUncoveredFiles="false" includeUncoveredFiles="true" pathCoverage="true">
+              processUncoveredFiles="false" includeUncoveredFiles="true" >
         <include>
             <directory suffix=".php">.</directory>
         </include>

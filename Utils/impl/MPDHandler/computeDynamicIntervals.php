@@ -7,13 +7,16 @@ $bufferduration = ($this->features['timeShiftBufferDepth'] != null) ?
   DASHIF\Utility\timeParsing($this->features['timeShiftBufferDepth']) : INF;
 
 $AST = $this->features['availabilityStartTime'];
+$segmentduration = 0;
 if ($segmentAccess['SegmentTimeline'] != null) {
-    $segmentduration = ($segmentTimings[$segmentCount - 1] - $segmentTimings[0]) / ((float)($segmentCount - 1));
+    if (count($segmentTimings) > 1) {
+        $segmentduration = ($segmentTimings[$segmentCount - 1] - $segmentTimings[0]) / ((float)($segmentCount - 1));
+    }
 } else {
     $segmentduration = ($segmentAccess['duration'] != null) ? $segmentAccess['duration'] : 0;
 }
 $timescale = ($segmentAccess['timescale'] != null) ? $segmentAccess['timescale'] : 1;
-$availabilityTimeOffset = ($segmentAccess['availabilityTimeOffset'] != null &&
+$availabilityTimeOffset = (array_key_exists("availabilityTimeOffset", $segmentAccess) &&
   $segmentAccess['availabilityTimeOffset'] != 'INF') ? $segmentAccess['availabilityTimeOffset'] : 0;
 
 $pto = ($segmentAccess['presentationTimeOffset'] != '') ?
@@ -39,6 +42,10 @@ for ($k = 0; $k < sizeof($adaptation_sets); $k++) {
 $sumbandwidth = array_sum($sumbandwidth);
 $avgsum = array_sum($avgsum) / sizeof($avgsum);
 $percent = $avgsum / $sumbandwidth;
+
+if ($segmentduration == 0) {
+    $segmentduration = 1;
+}
 
 $buffercapacity = $bufferduration / $segmentduration; //actual buffer capacity
 

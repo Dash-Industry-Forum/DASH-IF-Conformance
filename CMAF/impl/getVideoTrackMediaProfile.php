@@ -9,7 +9,6 @@ if ($codec != "AVC" && $codec != "HEVC") {
 
 $level = $mpParameters['level'];
 $profile = $mpParameters['profile'];
-$colorPrimaries = $mpParameters['color_primaries'];
 $transferCharacteristics = $mpParameters['transfer_char'];
 $matrixCoefficients = $mpParameters['matrix_coeff'];
 $height = $mpParameters['height'];
@@ -38,9 +37,9 @@ if ($codec == "AVC") {
             $mpParameters,
             "A.2",
             "A.1",
-            array("0x1","0x5","0x6"),
-            array("0x1","0x6"),
-            array("0x1","0x5","0x6"),
+            array(1,5,6),
+            array(1,6),
+            array(1,5,6),
             576,
             864,
             60
@@ -56,9 +55,9 @@ if ($codec == "AVC") {
             $mpParameters,
             "A.2",
             "A.1",
-            array("0x1"),
-            array("0x1"),
-            array("0x1"),
+            array(1),
+            array(1),
+            array(1),
             1080,
             1920,
             60
@@ -74,9 +73,9 @@ if ($codec == "AVC") {
             $mpParameters,
             "A.2",
             "A.1",
-            array("0x1"),
-            array("0x1"),
-            array("0x1"),
+            array(1),
+            array(1),
+            array(1),
             1080,
             1920,
             60
@@ -138,9 +137,9 @@ if ($codec == "HEVC") {
                 $mpParameters,
                 "B.5",
                 "B.1",
-                array("0x1"),
-                array("0x1"),
-                array("0x1"),
+                array(1),
+                array(1),
+                array(1),
                 1080,
                 1920,
                 60
@@ -156,9 +155,9 @@ if ($codec == "HEVC") {
                 $mpParameters,
                 "B.5",
                 "B.1",
-                array("0x1"),
-                array("0x1"),
-                array("0x1"),
+                array(1),
+                array(1),
+                array(1),
                 2160,
                 3840,
                 60
@@ -193,9 +192,9 @@ if ($codec == "HEVC") {
                 $mpParameters,
                 "B.5",
                 "B.1",
-                array("0x1"),
-                array("0x1"),
-                array("0x1"),
+                array(1),
+                array(1),
+                array(1),
                 1080,
                 1920,
                 60
@@ -211,9 +210,9 @@ if ($codec == "HEVC") {
                 $mpParameters,
                 "B.5",
                 "B.1",
-                array("0x1", "0x9"),
-                array("0x1", "0x14", "0x15"),
-                array("0x1", "0x9", "0x10"),
+                array(1, 9),
+                array(1, 20, 21),
+                array(1, 9, 16),
                 2160,
                 3840,
                 60
@@ -233,9 +232,9 @@ if ($codec == "HEVC") {
                 $mpParameters,
                 "B.5",
                 "B.1",
-                array("0x9"),
-                array("0x16"),
-                array("0x9", "0x10"),
+                array(9),
+                array(22),
+                array(9, 16),
                 2160,
                 3840,
                 60
@@ -249,9 +248,9 @@ if ($codec == "HEVC") {
                 $mpParameters,
                 "B.5",
                 "B.1",
-                array("0x9"),
-                array("0x14","0x18"),
-                array("0x9"),
+                array(9),
+                array(20,24),
+                array(9),
                 2160,
                 3840,
                 60

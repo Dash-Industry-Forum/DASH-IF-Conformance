@@ -55,7 +55,20 @@ if ($codecs != '') {
 }
 
 // Segment part
-$hdlrType = $xmlRepresentation->getElementsByTagName('hdlr')->item(0)->getAttribute('handler_type');
+$hdlrBoxes = $xmlRepresentation->getElementsByTagName('hdlr');
+$logger->test(
+    "HbbTV-DVB DASH Validation Requirements",
+    "Conformance-Internal",
+    "Representation is expected to contain (at least one) `hdlr` box",
+    count($hdlrBoxes),
+    "WARN",
+    "`hdlr` box found",
+    "No `hdlr` box found, skipping further checks"
+);
+if (!count($hdlrBoxes)) {
+    return;
+}
+$hdlrType = $hdlrBoxes->item(0)->getAttribute('handler_type');
 $sdType = $xmlRepresentation->getElementsByTagName("$hdlrType" . '_sampledescription')->item(0)->getAttribute('sdType');
 
 
@@ -87,7 +100,7 @@ if (strpos($sdType, 'enc') !== false) {
 if (strpos($sdType, 'avc') !== false || strpos($originalFormat, 'avc') !== false) {
     $nalUnits = $xmlRepresentation->getElementsByTagName('NALUnit');
     foreach ($nalUnits as $nalUnit) {
-        if ($nalUnit->getAttribute('nal_type') != '0x07') {
+        if (hexdec($nalUnit->getAttribute('nal_type')) != 7) {
             continue;
         }
         $logger->test(
@@ -480,8 +493,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
                 "of not more than 15 seconds",
                 $segmentDuration <= 15,
                 "FAIL",
-                "Duration of segment " . $j + 1 . " in bounds",
-                "Duration of segment " . $j + 1 . " not in bounds (is $segmentDuration)",
+                "Duration of segment " . ($j + 1) . " in bounds",
+                "Duration of segment " . ($j + 1) . " not in bounds (is $segmentDuration)",
             );
         }
 
@@ -491,8 +504,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
             "Segment duration SHALL be at least 1 second except for the last segment of a Period",
             $segmentDuration >= 1,
             "FAIL",
-            "Duration of segment " . $j + 1 . " is at least 1 second",
-            "Duration of segment " . $j + 1 . " is less than 1 second",
+            "Duration of segment " . ($j + 1) . " is at least 1 second",
+            "Duration of segment " . ($j + 1) . " is less than 1 second",
         );
     } elseif (!empty($subsegmentSignaling) && !in_array(0, $subsegmentSignaling)) {
         $referenceCount = $subsegmentSignaling[$sidxIndex];
@@ -506,8 +519,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
                 "of not more than 15 seconds",
                 $segmentDuration <= 15,
                 "FAIL",
-                "Duration of segment " . $j + 1 . " in bounds",
-                "Duration of segment " . $j + 1 . " not in bounds (is $segmentDuration)",
+                "Duration of segment " . ($j + 1) . " in bounds",
+                "Duration of segment " . ($j + 1) . " not in bounds (is $segmentDuration)",
             );
         }
 
@@ -519,8 +532,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
                 "Segment duration SHALL be at least 1 second except for the last segment of a Period",
                 $cumulativeSubsegmentDuration >= 1,
                 "FAIL",
-                "Duration of segment " . $j + 1 . " is at least 1 second",
-                "Duration of segment " . $j + 1 . " is less than 1 second",
+                "Duration of segment " . ($j + 1) . " is at least 1 second",
+                "Duration of segment " . ($j + 1) . " is less than 1 second",
             );
 
             $sidxIndex++;
@@ -557,8 +570,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
                     "of not more than 15 seconds",
                     $segmentDuration <= 15,
                     "FAIL",
-                    "Duration of segment " . $j + 1 . " in bounds",
-                    "Duration of segment " . $j + 1 . " not in bounds (is $segmentDuration)",
+                    "Duration of segment " . ($j + 1) . " in bounds",
+                    "Duration of segment " . ($j + 1) . " not in bounds (is $segmentDuration)",
                 );
             }
 
@@ -568,8 +581,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
                 "Segment duration SHALL be at least 1 second except for the last segment of a Period",
                 $segmentDuration >= 1,
                 "FAIL",
-                "Duration of segment " . $j + 1 . " is at least 1 second",
-                "Duration of segment " . $j + 1 . " is less than 1 second",
+                "Duration of segment " . ($j + 1) . " is at least 1 second",
+                "Duration of segment " . ($j + 1) . " is less than 1 second",
             );
 
             $sidxIndex++;
@@ -584,8 +597,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
                     "of not more than 15 seconds",
                     $segmentDuration <= 15,
                     "FAIL",
-                    "Duration of segment " . $j + 1 . " in bounds",
-                    "Duration of segment " . $j + 1 . " not in bounds (is $segmentDuration)",
+                    "Duration of segment " . ($j + 1) . " in bounds",
+                    "Duration of segment " . ($j + 1) . " not in bounds (is $segmentDuration)",
                 );
             }
 
@@ -597,8 +610,8 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
                     "Segment duration SHALL be at least 1 second except for the last segment of a Period",
                     $cumulativeSubsegmentDuration >= 1,
                     "FAIL",
-                    "Duration of segment " . $j + 1 . " is at least 1 second",
-                    "Duration of segment " . $j + 1 . " is less than 1 second",
+                    "Duration of segment " . ($j + 1) . " is at least 1 second",
+                    "Duration of segment " . ($j + 1) . " is less than 1 second",
                 );
 
                 $cumulativeSubsegmentDuration = 0;
@@ -669,10 +682,10 @@ if ($hdlrType == 'vide' && strpos($sdType, 'avc') !== false) {
     $spsFound = false;
     $ppsFound = false;
     foreach ($nalUnits as $nalUnit) {
-        if ($nalUnit->getAttribute('nal_type') == '0x07') {
+        if (hexdec($nalUnit->getAttribute('nal_type')) == 7) {
             $spsFound = true;
         }
-        if ($nalUnit->getAttribute('nal_type') == '0x08') {
+        if (hexdec($nalUnit->getAttribute('nal_type')) == 8) {
             $ppsFound = true;
         }
     }

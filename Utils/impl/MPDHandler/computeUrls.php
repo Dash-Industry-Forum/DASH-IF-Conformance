@@ -6,7 +6,7 @@ $bandwidth = $representation['bandwidth'];
 $id = $representation['id'];
 
 $startNumber = 1;
-if ($segmentAccess['startNumber'] != null) {
+if (array_key_exists("startNumber", $segmentAccess)) {
     $startNumber =  $segmentAccess['startNumber'];
 }
 
@@ -44,9 +44,13 @@ if ($this->features['type'] == 'dynamic') {
 
 ///\Todo translate checks below into actual "check"
 while ($index < $segmentCount) {
+    $timeReplace = 0;
+    if (array_key_exists($currentTime, $segmentInfo)) {
+        $timeReplace = $segmentInfo[$currentTime];
+    }
     $segmentUrl = str_replace(
         array('$Bandwidth$', '$Number$', '$RepresentationID$', '$Time$'),
-        array($bandwidth, $index + $startNumber, $id, $segmentInfo[$currentTime]),
+        array($bandwidth, $index + $startNumber, $id, $timeReplace),
         $media
     );
 

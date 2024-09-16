@@ -143,7 +143,7 @@ foreach ($representations as $representation) {
             $logger->test(
                 "HbbTV-DVB DASH Validation Requirements",
                 "DVB: Section 7.1.2",
-                "In oder to allow a Player to identify the primary purpose of a subtitle track, " .
+                "In order to allow a Player to identify the primary purpose of a subtitle track, " .
                 "the language attribute SHALL be set on the Adaptation Set",
                 $adaptation->getAttribute('lang') != '',
                 "FAIL",
@@ -181,8 +181,8 @@ if ($subtitle) {
                     "@schemeIdUri and @value specified in clause 7.2.1.2",
                     $supplementalValues[$x] == '1',
                     "FAIL",
-                    "Valid configuration found in $this->periodCount, supplemental property " . $x + 1,
-                    "Invalid configuration found in $this->periodCount, supplemental property " . $x + 1
+                    "Valid configuration found in $this->periodCount, supplemental property " . ($x + 1),
+                    "Invalid configuration found in $this->periodCount, supplemental property " . ($x + 1)
                 );
                 $logger->test(
                     "HbbTV-DVB DASH Validation Requirements",
@@ -193,8 +193,8 @@ if ($subtitle) {
                     ($supplementalMimeTypes[$x] == 'application/font-sfnt' ||
                      $supplementalMimeTypes[$x] == 'application/font-woff'),
                     "FAIL",
-                    "Valid configuration found in $this->periodCount, supplemental property " . $x + 1,
-                    "Invalid configuration found in $this->periodCount, supplemental property " . $x + 1
+                    "Valid configuration found in $this->periodCount, supplemental property " . ($x + 1),
+                    "Invalid configuration found in $this->periodCount, supplemental property " . ($x + 1)
                 );
             }
             $x++;
@@ -210,8 +210,8 @@ if ($subtitle) {
                     "@schemeIdUri and @value specified in clause 7.2.1.2",
                     $essentialValues[$x] == '1',
                     "FAIL",
-                    "Valid configuration found in $this->periodCount, essential property " . $x + 1,
-                    "Invalid configuration found in $this->periodCount, essential property " . $x + 1
+                    "Valid configuration found in $this->periodCount, essential property " . ($x + 1),
+                    "Invalid configuration found in $this->periodCount, essential property " . ($x + 1)
                 );
                 $logger->test(
                     "HbbTV-DVB DASH Validation Requirements",
@@ -222,8 +222,8 @@ if ($subtitle) {
                     ($essentialMimeTypes[$x] == 'application/font-sfnt' ||
                      $essentialMimeTypes[$x] == 'application/font-woff'),
                     "FAIL",
-                    "Valid configuration found in $this->periodCount, essential property " . $x + 1,
-                    "Invalid configuration found in $this->periodCount, essential property " . $x + 1
+                    "Valid configuration found in $this->periodCount, essential property " . ($x + 1),
+                    "Invalid configuration found in $this->periodCount, essential property " . ($x + 1)
                 );
             }
             $x++;

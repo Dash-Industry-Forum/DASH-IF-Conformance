@@ -2,6 +2,7 @@ function ToolView() {
   const URL = "url";
   const FILE = "file";
   const TEXT = "text";
+  const TYPE_INFO = "info";
 
   let modules = ConformanceService.modules;
 
@@ -38,10 +39,7 @@ function ToolView() {
     let toolView = UI.createElement({
       id: _rootElementId,
       className: "d-flex flex-column",
-      children: [
-        { id: validatorFormElementId },
-        { id: resultsElementId },
-      ],
+      children: [{ id: validatorFormElementId }, { id: resultsElementId }],
     });
     UI.replaceElement(_rootElementId, toolView);
     _validator.render(validatorFormElementId);
@@ -223,14 +221,53 @@ function ToolView() {
         },
         {
           className: "list-group",
-          children: part
-            .getTestResults()
-            .map((testResult) => createModulePartTestElement(testResult)),
+          children: [createModulePartInfoElement(part)].concat(
+            part
+              .getTestResults()
+              .map((testResult) => createModulePartTestElement(testResult))
+          ),
         },
       ],
     });
 
     return modulePartElement;
+  }
+
+  function createModulePartInfoElement(part) {
+    let info = part.getInfo();
+    if (!info || info.length === 0) {
+      return null;
+    }
+
+    let partName = part.getName();
+    let module = part.getModule().getName();
+    let type = TYPE_INFO;
+    let testId = { module, part: partName, type, section: null };
+    let isPartSelected = isSelected(testId);
+
+    let modulePartTestElement = UI.createElement({
+      element: "a",
+      className:
+        "list-group-item list-group-item-action" +
+        (isPartSelected ? " fw-semibold bg-light" : ""),
+      href: "#",
+      onClick: () => {
+        if (isPartSelected) return;
+        _state.detailSelect = testId;
+        UI.saveScrollPosition(_resultSummaryId + "-scroll");
+        renderResultSummary();
+        renderResultDetails();
+      },
+      children: [
+        {
+          element: "i",
+          className: "fa-solid fa-info",
+          style: "padding-left: 0.3em; width: 1.5em",
+        },
+        { element: "span", text: "Info" },
+      ],
+    });
+    return modulePartTestElement;
   }
 
   function createModulePartTestElement(testResult) {
@@ -285,6 +322,10 @@ function ToolView() {
 
     if (module === "HEALTH") {
       resultDetails = createHealthCheckDetailsElement(elementId);
+    }
+
+    if (type === TYPE_INFO) {
+      resultDetails = createPartInfoDetailsElement(elementId);
     }
 
     if (!resultDetails) {
@@ -384,6 +425,33 @@ function ToolView() {
                 },
               ],
             },
+          },
+        },
+      ],
+    });
+    return resultDetails;
+  }
+
+  function createPartInfoDetailsElement(elementId) {
+    let infoId = _state.detailSelect;
+    let info = _state.result.getInfo(infoId);
+
+    let resultDetails = UI.createElement({
+      id: elementId,
+      className: "w-50 d-flex flex-column",
+      children: [
+        { element: "span", text: "Messages:", style: "margin: 1em; margin-bottom: 0" },
+        {
+          element: "div",
+          style: "margin: 1em",
+          children: {
+            className:
+              "font-monospace overflow-auto border rounded bg-light p-2 text-break",
+            style: "max-height: 30em",
+            children: info.map((message) => ({
+              style: { minHeight: "1em", minWidth: "1em" },
+              text: message,
+            })),
           },
         },
       ],

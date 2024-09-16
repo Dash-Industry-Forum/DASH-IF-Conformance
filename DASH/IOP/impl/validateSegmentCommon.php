@@ -57,10 +57,10 @@ if ($isAvc) {
         $nalBoxes = $codec_box->item(0)->getElementsByTagName('NALUnit');
         foreach ($nalBoxes as $nalBox) {
             $unitType = $nalBox->getAttribute('nal_unit_type');
-            if ($unitType == '0x07') {
+            if (hexdec($unitType) == 7) {
                 $spsFound = true;
             }
-            if ($unitType == '0x08') {
+            if (hexdec($unitType) == 8) {
                 $ppsFound = true;
             }
         }

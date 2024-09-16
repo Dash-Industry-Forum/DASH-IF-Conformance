@@ -2,9 +2,11 @@
 
 global $mpdHandler, $period_timing_info;
 
-$isSegmentStarts = $infoFileAdapt[$representation_id]['isSegmentStart'];
-$presentationStarts = $infoFileAdapt[$representation_id]['PresStart'];
-$presentationEnds = $infoFileAdapt[$representation_id]['NextPresStart'];
+$isSegmentStarts = $infoFileAdaptation[$representation_id]['isSegmentStart'];
+$presentationStarts = $infoFileAdaptation[$representation_id]['PresStart'];
+$presentationEnds = $infoFileAdaptation[$representation_id]['NextPresStart'];
+
+if (!$isSegmentStarts){return;}
 
 $segmentIndexes = array_keys($isSegmentStarts, '1');
 $segmentCount = sizeof($segmentIndexes);

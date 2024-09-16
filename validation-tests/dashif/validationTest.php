@@ -20,7 +20,6 @@ include 'Utils/FileOperations.php';  //#Filesystem and XML checking functions. N
 //#Global variables. Direct evaluation of post/session vars to define conditionals,
 //#conditional extra includes for module initialization
 include 'Utils/GlobalVariables.php';
-include 'Utils/segment_download.php'; //#Very large function for downloading data. No Direct Executable Code.
 include 'Utils/segment_validation.php'; //#Segment validation functions. No Direct Executable Code.
 include 'Utils/MPDUtility.php';
 include 'Utils/MPDHandler.php';
@@ -114,7 +113,8 @@ final class validationTest extends TestCase
             "https://livesim.dashif.org/livesim/testpic_2s/Manifest.mpd#t=posix:now"
         ];
         $content = file_get_contents(
-            "validation-tests/dashif/dashjs.json");
+            "validation-tests/dashif/dashjs.json"
+        );
         $dbJson = json_decode($content);
         $streamsToTest = array();
         foreach ($dbJson->items as $item) {
@@ -130,6 +130,4 @@ final class validationTest extends TestCase
         }
         return $streamsToTest;
     }
-
-
 }

@@ -19,7 +19,8 @@ $videoFragDur = 0;
 
 $presentationDuration = $period_timing_info["duration"];
 $adaptationSets = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'];
-for ($adaptationSetIndex = 0; $adaptationSetIndex < sizeof($adaptationSets); $adaptationSetIndex++) {
+$adaptationCount = ($adaptationSets == null ? 0 : count($adaptationSets));
+for ($adaptationSetIndex = 0; $adaptationSetIndex < $adaptationCount; $adaptationSetIndex++) {
     $adaptationSet = $adaptationSets[$adaptationSetIndex];
 
     $location = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $adaptationSetIndex);

@@ -3,7 +3,7 @@
 if ($eventStream->getAttribute('schemeIdUri') != 'urn:dvb:iptv:cpm:2014') {
     return;
 }
-if ($eventStream->getAttribute('value') = '1') {
+if ($eventStream->getAttribute('value') != '1') {
     return;
 }
 
@@ -30,7 +30,7 @@ foreach ($events as $event) {
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
         "DVB: Section 9.1.2.2",
-        "In order to carry XML structured data within the string value of an MPD Event element, the data o" .
+        "In order to carry XML structured data within the string value of an MPD Event element, the data " .
         "SHALL be escaped or placed in a CDATA section in accordance with the XML specification 1.0'",
         $eventXML !== false,
         "FAIL",

@@ -3,6 +3,10 @@
 global $logger, $session;
 
 
+if (!$session) {
+    return;
+}
+
 $sessionDir = $session->getDir();
 
 file_put_contents($sessionDir . "/manifest.mpd", $this->mpd);

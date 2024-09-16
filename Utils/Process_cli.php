@@ -14,6 +14,17 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+if (!defined('STDIN')) {
+    define('STDIN', fopen('php://stdin', 'rb'));
+}
+if (!defined('STDOUT')) {
+    define('STDOUT', fopen('php://stdout', 'wb'));
+}
+if (!defined('STDERR')) {
+    define('STDERR', fopen('php://stderr', 'wb'));
+}
+
 ini_set('memory_limit', '-1');
 ini_set('display_errors', 'stderr');
 error_reporting(E_ERROR | E_PARSE);
@@ -28,14 +39,10 @@ include __DIR__ . '/sessionHandler.php';
 require __DIR__ . '/moduleInterface.php';
 include __DIR__ . '/moduleLogger.php';
 
-include __DIR__ . '/Session.php';         //#Session Functions, No Direct Executable Code
-//#Document loading functions, mostly xml. Some assertion options and error initialization
-include __DIR__ . '/Load.php';
 include __DIR__ . '/FileOperations.php';  //#Filesystem and XML checking functions. No Direct Executable Code.
 //#Global variables. Direct evaluation of post/session vars to define conditionals,
 //#conditional extra includes for module initialization
 include __DIR__ . '/GlobalVariables.php';
-include __DIR__ . '/segment_download.php'; //#Very large function for downloading data. No Direct Executable Code.
 include __DIR__ . '/segment_validation.php'; //#Segment validation functions. No Direct Executable Code.
 
 include __DIR__ . '/MPDUtility.php';
@@ -45,18 +52,25 @@ include __DIR__ . '/MPDHandler.php';
 include __DIR__ . '/../DASH/module.php';
 include __DIR__ . '/../CMAF/module.php';
 include __DIR__ . '/../CTAWAVE/module.php';
+include __DIR__ . '/../WaveHLSInterop/module.php';
 include __DIR__ . '/../HbbTV_DVB/module.php';
 include __DIR__ . '/../DASH/LowLatency/module.php';
 include __DIR__ . '/../DASH/IOP/module.php';
 include __DIR__ . '/../Dolby/module.php';
 
-
+require_once __DIR__ . '/ValidatorWrapper.php';
 
 $argumentParser->addOption("segments", "s", "segments", "Enable segment validation");
-$argumentParser->addOption("disable_detailed_segment_output", "", "disable_detailed_segment_output", "Disable detailed segment validation output");
+$argumentParser->addOption(
+    "disable_detailed_segment_output",
+    "",
+    "disable_detailed_segment_output",
+    "Disable detailed segment validation output"
+);
 $argumentParser->addOption("compact", "C", "compact", "Make JSON output compact");
 $argumentParser->addOption("silent", "S", "silent", "Do not output JSON to stdout");
 $argumentParser->addOption("autodetect", "A", "autodetect", "Try to automatically detect profiles");
+$argumentParser->addOption("unlimited", "U", "unlimited", "Unlimit the amount of segments downloaded (default is 5 per representation");
 
 $argumentParser->parseAll();
 
@@ -66,13 +80,9 @@ $logger->setSource($mpd_url);
 
 //#Cross repo includes. These should be made optional at the very least.
 include __DIR__ . '/../DASH/processMPD.php';
-include __DIR__ . '/../DASH/MPDFeatures.php';
-include __DIR__ . '/../DASH/validateMPD.php';
-include __DIR__ . '/../DASH/MPDInfo.php';
 include __DIR__ . '/../DASH/SchematronIssuesAnalyzer.php';
 include __DIR__ . '/../DASH/cross_validation.php';
 include __DIR__ . '/../DASH/Representation.php';
-include __DIR__ . '/../DASH/SegmentURLs.php';
 include __DIR__ . '/../HLS/HLSProcessing.php';
 include __DIR__ . '/Featurelist.php';
 
@@ -93,6 +103,12 @@ $parseSegments = $argumentParser->getOption("segments");
 $compactOutput = $argumentParser->getOption("compact");
 $autoDetect = $argumentParser->getOption("autodetect");
 $detailedSegmentOutput = !$argumentParser->getOption("disable_detailed_segment_output");
+
+global $limit;
+$limit = 5;
+if ($argumentParser->getOption("unlimited")) {
+    $limit = 0;
+}
 
 if (substr($mpd_url, -5) == ".m3u8") {
     processHLS();

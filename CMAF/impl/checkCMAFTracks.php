@@ -139,7 +139,7 @@ for ($j = 0; $j < $moofBoxesCount; $j++) {
         );
     }
 
-    if ($mdatFile == null) {
+    if ($mdatFile === false) {
         continue;
     }
 
@@ -169,7 +169,7 @@ for ($j = 0; $j < $moofBoxesCount; $j++) {
         "Representation $id, chunk $j not valid"
     );
 }
-if ($mdatFile !== null) {
+if ($mdatFile !== false) {
     fclose($mdatFile);
 }
 
@@ -185,7 +185,7 @@ $logger->test(
 );
 
 $hdlrBox = $xml->getElementsByTagName('hdlr')->item(0);
-$hdlrType = $hdlrBox->getAttribute('handler_type');
+$hdlrType = ($hdlrBox == null ? '' : $hdlrBox->getAttribute('handler_type'));
 
 $elstBoxes = $xml->getElementsByTagName('elstEntry');
 if ($elstBoxes->length > 0 && $hdlrType == 'vide') {
@@ -317,8 +317,6 @@ if ($hdlrType == 'vide' && ($sdType == 'avc1' || $sdType == 'avc3')) {
     $nalUnits = $xml->getElementsByTagName('NALUnit');
     if ($nalUnits->length > 0) {
         $nalComment = $nalUnits->item(0)->getElementsByTagName('comment');
-        $numberOfUnitsInTick = $nalComment->item(0)->getAttribute('num_units_in_tick');
-        $timeScale = $nalComment->item(0)->getAttribute('time_scale');
         $profileIdc = $nalUnits->item(0)->getAttribute('profile_idc');
         $levelIdc = $nalComment->item(0)->getAttribute('level_idc');
     }
@@ -368,10 +366,10 @@ if ($hdlrType == 'vide' && ($sdType == 'avc1' || $sdType == 'avc3')) {
             "Section 7.3.2.4",
             "Each CMAF Fragment in combination with its associated Header SHALL contain sufficient metadata to be " .
             "decoded and displayed when independently accessed",
-            $numberOfUnitsInTick != null && $timeScale != null,
+            $mpdHandler->getFrameRate() != null,
             "FAIL",
-            "FPS info (num_ticks & timescale) found for representation / track $id",
-            "FPS info (num_ticks & timescale) not found for representation / track $id",
+            "FPS info found in MPD for representation / track $id",
+            "FPS info not found in MPD for representation / track $id",
         );
     }
 }

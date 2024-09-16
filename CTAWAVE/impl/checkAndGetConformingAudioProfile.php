@@ -21,7 +21,7 @@ if ($codec == "AAC") {
     if (!$validSampleRate) {
         return "unknown";
     }
-    if (in_array($channels, array("0x1", "0x2"))) {
+    if (in_array($channels, array(1, 2))) {
         //Level is checked here , however level can not be found always from the atom xml as the
         //IODS atom is not always present in the track.
         $validLevel = $logger->test(
@@ -40,7 +40,7 @@ if ($codec == "AAC") {
             "CTAWAVE",
             "WAVE Content Spec 2018Ed-Section 4.3.1",
             "Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2",
-            in_array($profile, array("0x02", "0x05", "0x1d")),
+            in_array($profile, array(2, 5, 29)),
             "FAIL",
             "Valid profile for track $representationIndex of switching set $adaptationIndex",
             "Invalid profile for track $representationIndex of switching set $adaptationIndex",
@@ -55,12 +55,12 @@ if ($codec == "AAC") {
         return "AAC_Core";
     }
 
-    if (in_array($channels, array("0x5","0x6","0x7","0xc","0xe"))) {
+    if (in_array($channels, array(5,6,7,12,14))) {
         $validProfile = $logger->test(
             "CTAWAVE",
             "WAVE Content Spec 2018Ed-Section 4.3.1",
             "Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2",
-            $profile == "0x05" || ($profile == "0x02" && $level == "High Quality Audio@L6"),
+            $profile == 5 || ($profile == 2 && $level == "High Quality Audio@L6"),
             "FAIL",
             "Valid profile for track $representationIndex of switching set $adaptationIndex",
             "Invalid profile for track $representationIndex of switching set $adaptationIndex",

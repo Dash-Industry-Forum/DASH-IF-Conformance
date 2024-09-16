@@ -16,7 +16,7 @@ if ($hdlrType == 'vide') {
         if ($nalUnits->length != 0) {
             $spsUnitIndex = -1;
             for ($nalIndex = 0; $nalIndex < $nalUnits->length; $nalIndex++) {
-                if ($nalUnits->item($nalIndex)->getAttribute("nal_type") == "0x07") {
+                if (hexdec($nalUnits->item($nalIndex)->getAttribute("nal_type")) == 7) {
                     $spsUnitIndex = $nalIndex;
                     break;
                 }
@@ -26,27 +26,31 @@ if ($hdlrType == 'vide') {
             ///\Resiliency Add checks for existing spsUnit
             $avcC = $videoSampleDescription->getElementsByTagName('avcC')->item(0);
             $comment = $nalUnits->item($spsUnitIndex)->getElementsByTagName("comment")->item(0);
-            $mediaProfileParameters['profile'] = $avcC->getAttribute("profile");
+            $mediaProfileParameters['profile'] = hexdec($avcC->getAttribute("profile"));
             $mediaProfileParameters['level'] = (float)($comment->getAttribute("level_idc")) / 10;
             $mediaProfileParameters['width'] = $videoSampleDescription->getAttribute("width");
             $mediaProfileParameters['height'] = $videoSampleDescription->getAttribute("height");
 
-            if ($comment->getAttribute("vui_parameters_present_flag") == "0x1") {
-                if ($comment->getAttribute("video_signal_type_present_flag") == "0x1") {
-                    if ($comment->getAttribute("colour_description_present_flag") == "0x1") {
-                        $mediaProfileParameters['color_primaries'] = $comment->getAttribute("colour_primaries");
-                        $mediaProfileParameters['transfer_char'] = $comment->getAttribute("transfer_characteristics");
-                        $mediaProfileParameters['matrix_coeff'] = $comment->getAttribute("matrix_coefficients");
-                    } elseif ($comment->getAttribute("colour_description_present_flag") == "0x0") {
-                        $mediaProfileParameters['color_primaries'] = "0x1";
-                        $mediaProfileParameters['transfer_char'] = "0x1";
-                        $mediaProfileParameters['matrix_coeff'] = "0x1";
+            if (hexdec($comment->getAttribute("vui_parameters_present_flag")) == 1) {
+                if (hexdec($comment->getAttribute("video_signal_type_present_flag")) == 1) {
+                    if (hexdec($comment->getAttribute("colour_description_present_flag")) == 1) {
+                        $mediaProfileParameters['color_primaries'] = hexdec(
+                            $comment->getAttribute("colour_primaries")
+                        );
+                        $mediaProfileParameters['transfer_char'] = hexdec(
+                            $comment->getAttribute("transfer_characteristics")
+                        );
+                        $mediaProfileParameters['matrix_coeff'] = hexdec(
+                            $comment->getAttribute("matrix_coefficients")
+                        );
+                    } elseif (hexdec($comment->getAttribute("colour_description_present_flag")) == 0) {
+                        $mediaProfileParameters['color_primaries'] = 1;
+                        $mediaProfileParameters['transfer_char'] = 1;
+                        $mediaProfileParameters['matrix_coeff'] = 1;
                     }
                 }
-                if ($comment->getAttribute("timing_info_present_flag") == "0x1") {
-                    $numUnitsInTick = $comment->getAttribute("num_units_in_tick");
-                    $timeScale = $comment->getAttribute("time_scale");
-                    $mediaProfileParameters['framerate'] = $timeScale / (2 * $numUnitsInTick);
+                if (hexdec($comment->getAttribute("timing_info_present_flag")) == 1) {
+                    $mediaProfileParameters['framerate'] = $mpdHandler->getFrameRate();
                 }
             }
 
@@ -100,19 +104,23 @@ if ($hdlrType == 'vide') {
             if ($sps->getAttribute("vui_parameters_present_flag") == "1") {
                 if ($sps->getAttribute("video_signal_type_present_flag") == "1") {
                     if ($sps->getAttribute("colour_description_present_flag") == "1") {
-                        $mediaProfileParameters['color_primaries'] = $sps->getAttribute("colour_primaries");
-                        $mediaProfileParameters['transfer_char'] = $sps->getAttribute("transfer_characteristics");
-                        $mediaProfileParameters['matrix_coeff'] = $sps->getAttribute("matrix_coeffs");
+                        $mediaProfileParameters['color_primaries'] = hexdec(
+                            $sps->getAttribute("colour_primaries")
+                        );
+                        $mediaProfileParameters['transfer_char'] = hexdec(
+                            $sps->getAttribute("transfer_characteristics")
+                        );
+                        $mediaProfileParameters['matrix_coeff'] = hexdec(
+                            $sps->getAttribute("matrix_coeffs")
+                        );
                     } elseif ($sps->getAttribute("colour_description_present_flag") == "0") {
-                        $mediaProfileParameters['color_primaries'] = "1";
-                        $mediaProfileParameters['transfer_char'] = "1";
-                        $mediaProfileParameters['matrix_coeff'] = "1";
+                        $mediaProfileParameters['color_primaries'] = 1;
+                        $mediaProfileParameters['transfer_char'] = 1;
+                        $mediaProfileParameters['matrix_coeff'] = 1;
                     }
                 }
                 if ($sps->getAttribute("vui_timing_info_present_flag") == "1") {
-                    $numUnitsInTick = $sps->getAttribute("vui_num_units_in_tick");
-                    $timeScale = $sps->getAttribute("vui_time_scale");
-                    $mediaProfileParameters['framerate'] = $timeScale / ($numUnitsInTick);
+                    $mediaProfileParameters['framerate'] = $mpdHandler->getFrameRate();
                 }
             }
 
@@ -142,8 +150,8 @@ if ($hdlrType == 'soun') {
         $mediaProfileParameters['codec'] = "AAC";
         $decoderSpecificInfo = $audioSampleDescription->getElementsByTagName("DecoderSpecificInfo")->item(0);
         $mediaProfileParameters['sampleRate'] = $audioSampleDescription->getAttribute('sampleRate');
-        $mediaProfileParameters['profile'] = $decoderSpecificInfo->getAttribute("audioObjectType");
-        $mediaProfileParameters['channels'] = $decoderSpecificInfo->getAttribute("channelConfig");
+        $mediaProfileParameters['profile'] = hexdec($decoderSpecificInfo->getAttribute("audioObjectType"));
+        $mediaProfileParameters['channels'] = hexdec($decoderSpecificInfo->getAttribute("channelConfig"));
 
         if (strpos($compatibleBrands, "caaa") !== false) {
             $mediaProfileParameters['brand'] = "caaa";

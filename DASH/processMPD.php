@@ -16,16 +16,7 @@
 
 function process_MPD($parseSegments = false, $autoDetect = false, $detailedSegmentOutput = true)
 {
-    global $mpd_url;
-
-    global $session;
-
-    global $modules;
-
-    global $logger;
-
-
-    global $mpdHandler;
+    global $mpd_url,$session, $modules, $logger, $mpdHandler;
 
     $logger->parseSegments = $parseSegments;
 
@@ -65,10 +56,52 @@ function process_MPD($parseSegments = false, $autoDetect = false, $detailedSegme
         }
     }
 
-    if (!$parseSegments) {
-        fwrite(STDERR, ($parseSegments ? "DO " : "DO NOT ") . "parse segments\n");
+
+    $earliestUpdate = $mpdHandler->getEarliestUpdate();
+    if ($earliestUpdate) {
+    }
+
+
+    if ($parseSegments) {
+        fwrite(STDERR, "Parsing segments\n");
+        parseSegments();
+    } else {
+        fwrite(STDERR, "Not parsing segments\n");
+    }
+
+    handleLiveMpdChecks();
+}
+
+function handleLiveMpdChecks()
+{
+    global $mpdHandler, $logger, $modules, $mpd_url;
+
+    $nextUpdate = $mpdHandler->getEarliestUpdate();
+
+    if ($nextUpdate == null) {
+      //No live manifest found
         return;
     }
+
+    $now = new DateTimeImmutable();
+    while ($now < $nextUpdate) {
+        sleep(1);
+        $now = new DateTimeImmutable();
+    }
+
+    $nextMpd = new DASHIF\MPDHandler($mpd_url);
+
+    foreach ($modules as $module) {
+        if ($module->isEnabled()) {
+            fwrite(STDERR, "Running livehook for $module->name \n");
+            $module->hookLiveMpd($mpdHandler, $nextMpd);
+        }
+    }
+}
+
+function parseSegments()
+{
+    global $mpdHandler, $logger, $modules;
 
     //------------------------------------------------------------------------//
     ## Perform Segment Validation for each representation in each adaptation set within the current period
@@ -78,6 +111,9 @@ function process_MPD($parseSegments = false, $autoDetect = false, $detailedSegme
     if ($mpdHandler->getFeatures()['type'] !== 'dynamic') {
         $mpdHandler->selectPeriod(0);
     }
+
+    $mpdHandler->downloadAll();
+
     while ($mpdHandler->getSelectedPeriod() < sizeof($mpdHandler->getFeatures()['Period'])) {
         processAdaptationSetOfCurrentPeriod($detailedSegmentOutput);
 
@@ -114,7 +150,8 @@ function processAdaptationSetOfCurrentPeriod($detailedSegmentOutput = true)
     global $logger;
 
     $adaptation_sets = $period['AdaptationSet'];
-    while ($mpdHandler->getSelectedAdaptationSet() < sizeof($adaptation_sets)) {
+    $adaptationSetCount = $adaptation_sets == null ? 0 : sizeof($adaptation_sets);
+    while ($mpdHandler->getSelectedAdaptationSet() < $adaptationSetCount) {
         if ($logger->getModuleVerdict("HEALTH") == "FAIL") {
             break;
         }

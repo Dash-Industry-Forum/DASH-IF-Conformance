@@ -2,7 +2,7 @@
 
 global $mediaProfileAttributesVideo, $mediaProfileAttributesAudio, $mediaProfileAttributesSubtitle;
 
-global $logger;
+global $logger, $mpdHandler;
 
 $compatibleBrands = $xml->getElementsByTagName("ftyp")->item(0)->getAttribute("compatible_brands");
 if ($hdlrType == 'vide') {
@@ -28,7 +28,7 @@ if ($hdlrType == 'vide') {
         }
 
         for ($nalIndex = 0; $nalIndex < $nalUnits->length; $nalIndex++) {
-            if ($nalUnits->item($nalIndex)->getAttribute("nal_type") == "0x07") {
+            if (hexdec($nalUnits->item($nalIndex)->getAttribute("nal_type")) == 7) {
                 $spsIndex = $nalIndex;
                  break;
             }
@@ -40,23 +40,26 @@ if ($hdlrType == 'vide') {
         $mediaProfileParameters['width'] = $videoSampleDescription->getAttribute("width");
         $mediaProfileParameters['height'] = $videoSampleDescription->getAttribute("height");
 
-        if ($comment->getAttribute("vui_parameters_present_flag") == "0x1") {
-            if ($comment->getAttribute("video_signal_type_present_flag") == "0x1") {
-                if ($comment->getAttribute("colour_description_present_flag") == "0x1") {
-                    $mediaProfileParameters['color_primaries'] = $comment->getAttribute("colour_primaries");
-                    $mediaProfileParameters['transfer_char'] = $comment->getAttribute("transfer_characteristics");
-                    $mediaProfileParameters['matrix_coeff'] = $comment->getAttribute("matrix_coefficients");
-                } elseif ($comment->getAttribute("colour_description_present_flag") == "0x0") {
-                    $mediaProfileParameters['color_primaries'] = "0x1";
-                    $mediaProfileParameters['transfer_char'] = "0x1";
-                    $mediaProfileParameters['matrix_coeff'] = "0x1";
+        if (hexdec($comment->getAttribute("vui_parameters_present_flag")) == 1) {
+            if (hexdec($comment->getAttribute("video_signal_type_present_flag")) == 1) {
+                if (hexdec($comment->getAttribute("colour_description_present_flag")) == 1) {
+                    $mediaProfileParameters['color_primaries'] = hexdec(
+                        $comment->getAttribute("colour_primaries")
+                    );
+                    $mediaProfileParameters['transfer_char'] = hexdec(
+                        $comment->getAttribute("transfer_characteristics")
+                    );
+                    $mediaProfileParameters['matrix_coeff'] = hexdec(
+                        $comment->getAttribute("matrix_coefficients")
+                    );
+                } elseif (hexdec($comment->getAttribute("colour_description_present_flag")) == 0) {
+                    $mediaProfileParameters['color_primaries'] = 1;
+                    $mediaProfileParameters['transfer_char'] = 1;
+                    $mediaProfileParameters['matrix_coeff'] = 1;
                 }
             }
-            if ($comment->getAttribute("timing_info_present_flag") == "0x1") {
-                $numberOfUnitsPerTick = $comment->getAttribute("num_units_in_tick");
-                $timeScale = $comment->getAttribute("time_scale");
-                $mediaProfileParameters['framerate'] = $timeScale / (2 * $numberOfUnitsPerTick);
-            }
+
+            $mediaProfileParameters['framerate'] = $mpdHandler->getFrameRate();
         }
 
         if (strpos($compatibleBrands, "cfsd") !== false) {
@@ -127,11 +130,7 @@ if ($hdlrType == 'vide') {
                     $mediaProfileParameters['matrix_coeff'] = "1";
                 }
             }
-            if ($sps->getAttribute("vui_timing_info_present_flag") == "1") {
-                $numberOfUnitsPerTick = $sps->getAttribute("vui_num_units_in_tick");
-                $timeScale = $sps->getAttribute("vui_time_scale");
-                $mediaProfileParameters['framerate'] = $timeScale / ($numberOfUnitsPerTick);
-            }
+            $mediaProfileParameters['framerate'] = $mpdHandler->getFrameRate();
         }
         if (strpos($compatibleBrands, "chh1") !== false) {
             $mediaProfileParameters['brand'] = "chh1";
