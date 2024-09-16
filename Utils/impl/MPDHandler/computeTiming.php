@@ -15,22 +15,22 @@ $segmentCount = 0;
 $start = 0;
 
 $duration = 0;
-if ($segmentAccess['duration'] != null) {
+if (array_key_exists("duration", $segmentAccess)) {
     $duration = $segmentAccess['duration'];
 }
 
 $timescale = 1;
-if ($segmentAccess['timescale'] != null) {
+if (array_key_exists("timescale", $segmentAccess)) {
     $timescale = $segmentAccess['timescale'];
 }
 
 $availabilityTimeOffset = 0;
-if ($segmentAccess['availabilityTimeOffset'] != null && $segmentAccess['availabilityTimeOffset'] != 'INF') {
+if (array_key_exists("availabilityTimeOffset", $segmentAccess) && $segmentAccess['availabilityTimeOffset'] != 'INF') {
     $availabilityTimeOffset =  $segmentAccess['availabilityTimeOffset'];
 }
 
 $presentationTimeOffset = 0;
-if ($segmentAccess['presentationTimeOffset'] != '') {
+if (array_key_exists("presentationTimeOffset", $segmentAccess) && $segmentAccess['presentationTimeOffset'] != '') {
     $presentationTimeOffset = (int)($segmentAccess['presentationTimeOffset']) / $timescale;
 }
 
@@ -69,11 +69,11 @@ $segmentTime -= $timeOffset;
 foreach ($segmentEntries as $index => $segmentEntry) {
     $d = $segmentEntry['d'];
     $r = 0;
-    if ($segmentEntry['r']) {
+    if (array_key_exists("r", $segmentEntry)) {
         $r = $segmentEntry['r'];
     }
     $t = 0;
-    if ($segmentEntry['t']) {
+    if (array_key_exists("t", $segmentEntry)) {
         $t = $segmentEntry['t'];
     }
     $t -= $timeOffset;

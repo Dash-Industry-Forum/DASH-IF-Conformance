@@ -44,8 +44,8 @@ foreach ($originalAdaptations as $origIndex => $origId) {
             $spec,
             $section,
             "A Role Element " . $shallNotChangeInPeriod,
-            $mpd->getAdaptationSetAttribute($periodIndex, $origIndex, "Role") ==
-              $nextMpd->getAdaptationSetAttribute($nextPeriodIndex, $nextIndex, "Role"),
+            $mpd->getAdaptationSetChild($periodIndex, $origIndex, "Role") ==
+              $nextMpd->getAdaptationSetChild($nextPeriodIndex, $nextIndex, "Role"),
             "FAIL",
             "Role for AdaptationSet@id $origId within period $periodId identical",
             "Role for AdaptationSet@id $origId within period $periodId differs"

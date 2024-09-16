@@ -2,15 +2,26 @@
 
 $periods = $this->features['Period'];
 
-$mediapresentationduration = DASHIF\Utility\timeParsing($this->features['mediaPresentationDuration']);
+$mediapresentationduration = 0;
+if (array_key_exists("mediaPresentationDuration", $this->features)) {
+    $mediapresentationduration = DASHIF\Utility\timeParsing(
+        $this->features['mediaPresentationDuration']
+    );
+}
 
 $this->periodTimingInformation = array();
 
 for ($i = 0; $i < sizeof($periods); $i++) {
     $period = $periods[$i];
 
-    $periodStart = $period['start'];
-    $periodDuration = $period['duration'];
+    $periodStart = '';
+    if (array_key_exists('start', $period)) {
+        $periodStart = $period['start'];
+    }
+    $periodDuration = '';
+    if (array_key_exists('duration', $period)) {
+        $periodDuration = $period['duration'];
+    }
 
     if ($periodStart != '') {
         $start = DASHIF\Utility\timeParsing($periodStart);

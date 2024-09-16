@@ -20,16 +20,16 @@ foreach ($roles as $role) {
 
         if ($role->getAttribute('value') == 'main') {
             $this->mainAudioFound = true;
-            $this->mainAudios[] = $adaptations;
+            $this->mainAudios[] = $adaptation;
         }
     }
 }
 
-$accesibilityRoles = array();
-$accesibilities = $adaptation->getElementsByTagName("Accessibility");
-foreach ($accesibilities as $accesibility) {
+$accessibilityRoles = array();
+$accessibilities = $adaptation->getElementsByTagName("Accessibility");
+foreach ($accessibilities as $accessibility) {
     if ($accessibility->getAttribute('schemeIdUri') == 'urn:tva:metadata:cs:AudioPurposeCS:2007') {
-        $accessibilityRoles[] = $accesibility->getAttribute('value');
+        $accessibilityRoles[] = $accessibility->getAttribute('value');
     }
 }
 

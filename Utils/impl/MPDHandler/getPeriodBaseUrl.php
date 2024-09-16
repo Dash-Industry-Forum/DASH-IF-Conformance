@@ -5,22 +5,34 @@ if ($periodIdx == null) {
     $periodIdx = $this->selectedPeriod;
 }
 
-$mpdBaseUrl = $this->features['BaseURL'];
+$mpdBaseUrl = null;
+if (array_key_exists("BaseURL", $this->features)) {
+    $mpdBaseUrl =  $this->features['BaseURL'];
+}
 
 $period = $this->features['Period'][$periodIdx];
-$periodBaseUrl = $period['BaseURL'];
+$periodBaseUrl = null;
+if (array_key_exists("BaseURL", $period)) {
+    $periodBaseUrl = $period['BaseURL'];
+}
 
 $adaptationUrls = array();
 
 $adaptations = $period['AdaptationSet'];
 foreach ($adaptations as $adaptation) {
     $representationUrls = array();
-    $adaptationBaseUrl = $adaptation['BaseURL'];
+    $adaptationBaseUrl = null;
+    if (array_key_exists("BaseURL", $adaptation)) {
+        $adaptationBaseUrl = $adaptation['BaseURL'];
+    }
 
     $representations = $adaptation['Representation'];
     foreach ($representations as $representation) {
         $representationUrl = '';
-        $representationBaseUrl = $representation['BaseURL'];
+        $representationBaseUrl = null;
+        if (array_key_exists("BaseURL", $representation)) {
+            $representationBaseUrl  = $representation['BaseURL'];
+        }
 
         if ($mpdBaseUrl || $periodBaseUrl || $adaptationBaseUrl || $representationBaseUrl) {
             $url = '';

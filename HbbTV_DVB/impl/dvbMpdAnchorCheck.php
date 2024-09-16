@@ -3,6 +3,9 @@
 global $mpdHandler, $logger;
 $allowedKeys = array('t', 'period', 'track', 'group');
 
+if (!array_key_exists("urlcode", $_POST)) {
+    return;
+}
 $anchors = explode('#', json_decode($_POST['urlcode'])[0]);
 if (sizeof($anchors) <= 1) {
     return;

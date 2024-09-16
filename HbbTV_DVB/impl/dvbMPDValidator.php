@@ -182,7 +182,7 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         if ($child->nodeName == 'EventStream') {
             $this->dvbEventChecks($child);
         }
-        if ($child->nodename == 'SegmentTemplate') {
+        if ($child->nodeName == 'SegmentTemplate') {
             if (DASHIF\Utility\mpdContainsProfile('urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014')) {
                 $invalidSegmentTemplateFound = true;
             }
@@ -250,8 +250,8 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
             $adaptationSetProfileExists,
             "WARN",
             "Check succeeded",
-            "Check failed: Contains clause 4.1: " . ($adaptationSetContainsDVBDash ? "Yes" : "No") .
-            ", contains either 4.2.5 or 4.2.8: " . ($adaptationSetContainsExtension ? "Yes" : "No"),
+            "Check failed: Contains clause 4.1: " . ($adaptationContainsDVBDash ? "Yes" : "No") .
+            ", contains either 4.2.5 or 4.2.8: " . ($adaptationContainsExtension ? "Yes" : "No"),
         );
 
         $representations = $adaptationSet->getElementsByTagName("Representation");
@@ -270,7 +270,7 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         $videoComponentFound = false;
         $audioComponentFound = false;
 
-        if ($ch) {
+        if (isset($ch) && $ch) {
             $contentComponents = $ch->getElementsByTagName("ContentComponent");
             foreach ($contentComponents as $component) {
                 $contentType = $component->getAttribute("contentType");
@@ -393,18 +393,18 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
             "$this->adaptationVideoCount adaptations found, none labeled as main for period $this->periodCount"
         );
 
-        $this->dvbContentProtection($adaptationSet, $representations, $i, $cenc);
+        $this->dvbContentProtection($adaptationSet, $representations, $i, $cencAttribute);
     }
 
     if ($hasVideoService) {
         $this->streamBandwidthCheck();
     }
 
-    if ($audioAdaptations->length > 1) {
+    if (count($audioAdaptations) > 1) {
         $this->fallbackOperationChecks($audioAdaptations);
     }
 
-    if ($mainAudioFound && !empty($hoh_subtitle_lang)) {
+    if ($this->mainAudioFound && !empty($hoh_subtitle_lang)) {
         $mainLanguage = array();
         foreach ($main_audios as $main_audio) {
             if ($main_audio->getAttribute('lang') != '') {
@@ -443,13 +443,14 @@ $logger->test(
 
 $this->dvbAssociatedAdaptationSetsCheck();
 
+$audioCount = count($audioAdaptations);
 $logger->test(
     "HbbTV-DVB DASH Validation Requirements",
     "DVB: Section 6.1.2",
     "If there is more than one audio Adaptation Set in a DASH Presentation then at least one of them SHALL be " .
     "tagged with an @value set to \"main\"",
-    $audioAdaptations->length <= 1 || $this->mainAudioFound,
+    $audioCount <= 1 || $this->mainAudioFound,
     "FAIL",
-    "$audioAdaptations->length adaptation(s) found with main label if needed in Presentation",
-    "$audioAdaptations->length adaptations found but none of them are labeled as main in Presentation"
+    "$audioCount adaptation(s) found with main label if needed in Presentation",
+    "$audioCount adaptations found but none of them are labeled as main in Presentation"
 );

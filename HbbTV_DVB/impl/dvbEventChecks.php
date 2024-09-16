@@ -3,7 +3,7 @@
 if ($eventStream->getAttribute('schemeIdUri') != 'urn:dvb:iptv:cpm:2014') {
     return;
 }
-if ($eventStream->getAttribute('value') = '1') {
+if ($eventStream->getAttribute('value') != '1') {
     return;
 }
 

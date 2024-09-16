@@ -15,9 +15,15 @@
  */
 
 
-if(!defined('STDIN'))  define('STDIN',  fopen('php://stdin',  'rb'));
-if(!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
-if(!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
+if (!defined('STDIN')) {
+    define('STDIN', fopen('php://stdin', 'rb'));
+}
+if (!defined('STDOUT')) {
+    define('STDOUT', fopen('php://stdout', 'wb'));
+}
+if (!defined('STDERR')) {
+    define('STDERR', fopen('php://stderr', 'wb'));
+}
 
 ini_set('memory_limit', '-1');
 ini_set('display_errors', 'stderr');
@@ -33,9 +39,6 @@ include __DIR__ . '/sessionHandler.php';
 require __DIR__ . '/moduleInterface.php';
 include __DIR__ . '/moduleLogger.php';
 
-include __DIR__ . '/Session.php';         //#Session Functions, No Direct Executable Code
-//#Document loading functions, mostly xml. Some assertion options and error initialization
-include __DIR__ . '/Load.php';
 include __DIR__ . '/FileOperations.php';  //#Filesystem and XML checking functions. No Direct Executable Code.
 //#Global variables. Direct evaluation of post/session vars to define conditionals,
 //#conditional extra includes for module initialization
@@ -77,13 +80,9 @@ $logger->setSource($mpd_url);
 
 //#Cross repo includes. These should be made optional at the very least.
 include __DIR__ . '/../DASH/processMPD.php';
-include __DIR__ . '/../DASH/MPDFeatures.php';
-include __DIR__ . '/../DASH/validateMPD.php';
-include __DIR__ . '/../DASH/MPDInfo.php';
 include __DIR__ . '/../DASH/SchematronIssuesAnalyzer.php';
 include __DIR__ . '/../DASH/cross_validation.php';
 include __DIR__ . '/../DASH/Representation.php';
-include __DIR__ . '/../DASH/SegmentURLs.php';
 include __DIR__ . '/../HLS/HLSProcessing.php';
 include __DIR__ . '/Featurelist.php';
 

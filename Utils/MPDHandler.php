@@ -102,6 +102,14 @@ class MPDHandler
         }
         return $adaptationSetFeatures[$attr];
     }
+    public function getAdaptationSetChild($idx, $aIdx, $childName)
+    {
+        $adaptationSetFeatures = $this->features["Period"][$idx]["AdaptationSet"][$aIdx];
+        if (!array_key_exists($childName, $adaptationSetFeatures)) {
+            return null;
+        }
+        return $adaptationSetFeatures[$childName];
+    }
     public function getRepresentationAttribute($idx, $aIdx, $rIdx, $attr): string | null
     {
         $representationFeatures = $this->features["Period"][$idx]["AdaptationSet"][$aIdx]['Representation'][$rIdx];
@@ -156,7 +164,7 @@ class MPDHandler
     {
         return include 'impl/MPDHandler/getRepresentationIds.php';
     }
-  
+
 
     public function selectPeriod($period)
     {
@@ -229,7 +237,7 @@ class MPDHandler
 
     public function getPeriodTimingInfo($periodIndex = null)
     {
-        return include 'impl/MPDHandler/getPeriodTimingInfo.php';
+        return $this->getPeriodDurationInfo($periodIndex ? $periodIndex : $this->selectedPeriod);
     }
 
     private function getPeriodDurationInfo($period)
@@ -320,7 +328,6 @@ class MPDHandler
     {
         return $this->mpd;
     }
-
 
     public function getDom()
     {

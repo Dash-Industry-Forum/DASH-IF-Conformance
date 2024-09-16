@@ -21,8 +21,8 @@ class ArgumentsParser
         $this->parsedOptions = getopt($this->getShortOpts(), $this->getLongOpts(), $restidx);
 
         global $argv;
-        if ($argv){
-          $this->extraArguments = array_slice($argv, $restidx);
+        if ($argv) {
+            $this->extraArguments = array_slice($argv, $restidx);
         }
 
 
@@ -37,20 +37,21 @@ class ArgumentsParser
 
     public function getOption($name)
     {
-        if ($_REQUEST[$name]) {
+        if (array_key_exists($name, $_REQUEST) && $_REQUEST[$name]) {
             return true;
         }
-        if ($this->parsedOptions){
-        foreach ($this->allOptions as $option) {
-            if ($option->label == $name) {
-                if (
-                    array_key_exists($option->short[0], $this->parsedOptions) ||
-                    array_key_exists($option->long, $this->parsedOptions)
-                ) {
-                    return true;
+        if ($this->parsedOptions) {
+            foreach ($this->allOptions as $option) {
+                if ($option->label == $name) {
+                    if (
+                        (strlen($option->short) > 0 &&
+                        array_key_exists($option->short[0], $this->parsedOptions)) ||
+                        array_key_exists($option->long, $this->parsedOptions)
+                    ) {
+                        return true;
+                    }
                 }
             }
-        }
         }
         return false;
     }
@@ -80,7 +81,7 @@ class ArgumentsParser
 
     public function getPositionalArgument($argname)
     {
-        if ($argname == "url" && $_REQUEST["url"]) {
+        if ($argname == "url" && array_key_exists("url", $_REQUEST) && $_REQUEST["url"]) {
             return urldecode($_REQUEST["url"]);
         }
         switch ($argname) {

@@ -12,8 +12,11 @@ if ($session) {
     if (isset($_FILES['mpd']) && move_uploaded_file($_FILES['mpd']['tmp_name'], $localManifestLocation)) {
         $this->url = $localManifestLocation;
         $isLocal = true;
-    } else {
-        if ($this->url && $this->url != '') {
+    } elseif ($this->url && $this->url != '') {
+        if ($this->url[0] == '/') {
+            $isLocal = true;
+            copy($this->url, $localManifestLocation);
+        } else {
             //Download with CURL;
             $this->downloadSegment($localManifestLocation, $this->url);
             $isLocal = true;
@@ -34,5 +37,6 @@ if ($this->url && $this->url != '') {
 
 ///\Todo: Check if this works with http basic auth
 if (!$this->mpd) {
+    fwrite(STDERR, "NO MPD\n");
     return;
 }

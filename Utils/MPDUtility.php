@@ -21,7 +21,7 @@ function in_array_at_least_one($options, $array)
 function isAbsoluteURL($URL)
 {
     $parsedUrl = parse_url($URL);
-    return $parsedUrl['scheme'] && $parsedUrl['host'];
+    return array_key_exists("scheme", $parsedUrl) && array_key_exists("host", $parsedUrl);
 }
 
 function inString($option, $string)
@@ -163,9 +163,9 @@ function mergeSegmentAccess($highLevel, $lowLevel)
 function formSegmentAccess($highLevel, $lowLevel)
 {
     foreach ($highLevel as $key => $highValue) {
-        $lowValue = $lowLevel[$key];
+        $lowValue = array_key_exists($key, $lowLevel) ? $lowLevel[$key] : array();
         foreach ($highValue as $k => $v) {
-            if (!$lowValue[$k]) {
+            if (!array_key_exists($k, $lowValue) || !$lowValue[$k]) {
                 $lowValue[$k] = $v;
             } elseif (gettype($lowValue[$k]) == 'array') {
                 //$v would also work, but this is more clear in meaning

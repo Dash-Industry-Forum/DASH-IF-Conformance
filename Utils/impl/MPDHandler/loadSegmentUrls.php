@@ -19,33 +19,47 @@ foreach ($mpdAsArray['Period'] as $periodIdx => $period) {
     $baseUrls = $this->getPeriodBaseUrl($periodIdx);
     $periodTimingInfo = $this->getPeriodTimingInfo($periodIdx);
 
-    $currentTemplate = $period['SegmentTemplate'];
-    $currentBase = $period['SegmentBase'];
+    $currentTemplate = '';
+    if (array_key_exists("SegmentTemplate", $period)) {
+        $period['SegmentTemplate'];
+    }
+    $currentBase = '';
+    if (array_key_exists("SegmentBase", $period)) {
+        $currentBase = $period['SegmentBase'];
+    }
 
     $periodUrls = array();
 
     $adaptations = $period['AdaptationSet'];
     foreach ($adaptations as $adaptationIdx => $adaptation) {
-        $currentTemplate = DASHIF\Utility\mergeSegmentAccess(
-            $currentTemplate,
-            $adaptation['SegmentTemplate']
-        );
-        $currentBase = DASHIF\Utility\mergeSegmentAccess(
-            $currentBase,
-            $adaptation['SegmentBase']
-        );
+        if (array_key_exists("SegmentTemplate", $adaptation)) {
+            $currentTemplate = DASHIF\Utility\mergeSegmentAccess(
+                $currentTemplate,
+                $adaptation['SegmentTemplate']
+            );
+        }
+        if (array_key_exists("SegmentBase", $adaptation)) {
+            $currentBase = DASHIF\Utility\mergeSegmentAccess(
+                $currentBase,
+                $adaptation['SegmentBase']
+            );
+        }
 
         $adaptationUrls = array();
 
         foreach ($adaptation['Representation'] as $representationIdx => $representation) {
-            $currentTemplate = DASHIF\Utility\mergeSegmentAccess(
-                $currentTemplate,
-                $representation['SegmentTemplate']
-            );
-            $currentBase = DASHIF\Utility\mergeSegmentAccess(
-                $currentBase,
-                $representation['SegmentBase']
-            );
+            if (array_key_exists("SegmentTemplate", $representation)) {
+                $currentTemplate = DASHIF\Utility\mergeSegmentAccess(
+                    $currentTemplate,
+                    $representation['SegmentTemplate']
+                );
+            }
+            if (array_key_exists("SegmentBase", $representation)) {
+                $currentBase = DASHIF\Utility\mergeSegmentAccess(
+                    $currentBase,
+                    $representation['SegmentBase']
+                );
+            }
 
 
             if (!$currentTemplate || !count($currentTemplate)) {
