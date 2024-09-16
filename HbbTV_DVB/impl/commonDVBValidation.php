@@ -55,7 +55,20 @@ if ($codecs != '') {
 }
 
 // Segment part
-$hdlrType = $xmlRepresentation->getElementsByTagName('hdlr')->item(0)->getAttribute('handler_type');
+$hdlrBoxes = $xmlRepresentation->getElementsByTagName('hdlr');
+$logger->test(
+    "HbbTV-DVB DASH Validation Requirements",
+    "Conformance-Internal",
+    "Representation is expected to contain (at least one) `hdlr` box",
+    count($hdlrBoxes),
+    "WARN",
+    "`hdlr` box found",
+    "No `hdlr` box found, skipping further checks"
+);
+if (!count($hdlrBoxes)) {
+    return;
+}
+$hdlrType = $hdlrBoxes->item(0)->getAttribute('handler_type');
 $sdType = $xmlRepresentation->getElementsByTagName("$hdlrType" . '_sampledescription')->item(0)->getAttribute('sdType');
 
 
