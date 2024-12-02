@@ -6,7 +6,7 @@ $representation = ($representationIndex == null ? $this->getSelectedRepresentati
 
 $framerate = 0;
 
-$periods = $mpdHandler->getElementsByTagName("Period");
+$periods = $this->dom->getElementsByTagName("Period");
 
 if ($period >= count($periods)) {
     return null;
