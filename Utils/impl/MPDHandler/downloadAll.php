@@ -2,7 +2,12 @@
 
 global $session, $limit;
 
+$periodIdx = 0;
+
 foreach ($this->segmentUrls as $periodIdx => $periodUrls) {
+    if ($limit != 0 && $periodIdx >= $limit) {
+        break;
+    }
     foreach ($periodUrls as $adaptationIdx => $adaptationUrls) {
         foreach ($adaptationUrls as $representationIdx => $representationUrls) {
             $dir = $session->getRepresentationDir($periodIdx, $adaptationIdx, $representationIdx);
@@ -23,8 +28,8 @@ foreach ($this->segmentUrls as $periodIdx => $periodUrls) {
                 $this->assembleSingle("$dir/seg${segmentPadded}.mp4", $assembly, $sizeFile, $index);
                 $index++;
 
-                if ($limit != 0 && $index >= $limit){
-                  break;
+                if ($limit != 0 && $index >= $limit) {
+                    break;
                 }
             }
 
@@ -38,4 +43,5 @@ foreach ($this->segmentUrls as $periodIdx => $periodUrls) {
             }
         }
     }
+    $periodIdx++;
 }
