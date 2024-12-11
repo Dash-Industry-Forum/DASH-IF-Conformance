@@ -122,4 +122,4 @@ if (!$argumentParser->getOption("silent")) {
 
 
 global $session;
-//$session->clearDirectory();
+$session->clearDirectory();
