@@ -7,24 +7,17 @@ EXPOSE 80
 RUN apt-get update -y
 RUN apt -y install \
   g++ \
-  make
-RUN apt -y install \
+  make \
   python3 \
-  python-matplotlib-data 
-RUN apt -y install \
-  openjdk-8-jdk 
-RUN apt -y install \
-  apache2 
-RUN apt -y install \
+  python-matplotlib-data  \
+  openjdk-8-jdk \ 
+  apache2 \
   php \
   php-xml \
   php-curl \
-  libapache2-mod-php 
-RUN apt -y install \
-  php-xdebug 
-RUN apt -y install \
-  sudo 
-RUN apt -y install \
+  libapache2-mod-php \ 
+  php-xdebug \
+  sudo \ 
   gpac
 RUN update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
 
