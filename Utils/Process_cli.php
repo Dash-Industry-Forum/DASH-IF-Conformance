@@ -70,7 +70,13 @@ $argumentParser->addOption(
 $argumentParser->addOption("compact", "C", "compact", "Make JSON output compact");
 $argumentParser->addOption("silent", "S", "silent", "Do not output JSON to stdout");
 $argumentParser->addOption("autodetect", "A", "autodetect", "Try to automatically detect profiles");
-$argumentParser->addOption("unlimited", "U", "unlimited", "Unlimit the amount of segments downloaded (default is 5 per representation");
+$argumentParser->addOption(
+    "unlimited",
+    "U",
+    "unlimited",
+    "Unlimit the amount of segments downloaded (default is 5 per representation"
+);
+$argumentParser->addOption("keep", "K", "keep", "Do not clear session directory after parsing");
 
 $argumentParser->parseAll();
 
@@ -103,6 +109,7 @@ $parseSegments = $argumentParser->getOption("segments");
 $compactOutput = $argumentParser->getOption("compact");
 $autoDetect = $argumentParser->getOption("autodetect");
 $detailedSegmentOutput = !$argumentParser->getOption("disable_detailed_segment_output");
+$keepData = $argumentParser->getOption("keep");
 
 global $limit;
 $limit = 5;
@@ -122,4 +129,6 @@ if (!$argumentParser->getOption("silent")) {
 
 
 global $session;
-$session->clearDirectory();
+if (!$keepData) {
+    $session->clearDirectory();
+}
