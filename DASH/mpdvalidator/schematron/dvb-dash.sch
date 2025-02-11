@@ -12,22 +12,22 @@
 		<!-- Check the conformance of AdaptationSet -->
 		<rule context="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]/dash:Period/dash:AdaptationSet[dlb:isAdaptationSetAudio(.)][not(dlb:isAuxiliaryStream(.))]/dash:Representation">
 			<!--  see="https://www.etsi.org/deliver/etsi_ts/103200_103299/103285/01.02.01_60/ts_103285v010201p.pdf#page=28" -->
-			<report test="@mimeType != ancestor::dash:AdaptationSet/dash:Representation/@mimeType">@mimeType shall be common between all Representations in an Adaptation Set</report>
+			<assert test="@mimeType = ancestor::dash:AdaptationSet/dash:Representation/@mimeType">@mimeType shall be common between all Representations in an Adaptation Set</assert>
 			<!-- see="https://www.etsi.org/deliver/etsi_ts/103200_103299/103285/01.02.01_60/ts_103285v010201p.pdf#page=28" -->
-			<report test="@codecs   != ancestor::dash:AdaptationSet/dash:Representation/@codecs" role="warn">@codecs should be common between all Representations in an Adaptation Set</report>
+			<assert test="@codecs   = ancestor::dash:AdaptationSet/dash:Representation/@codecs" role="warn">@codecs should be common between all Representations in an Adaptation Set</assert>
 			<!-- see="https://www.etsi.org/deliver/etsi_ts/103200_103299/103285/01.02.01_60/ts_103285v010201p.pdf#page=28" -->
-			<report test="@audioSamplingRate != ancestor::dash:AdaptationSet/dash:Representation/@audioSamplingRate" role="warn">@audioSamplingRate should be common between all Representations in an Adaptation Set</report>
+			<assert test="@audioSamplingRate = ancestor::dash:AdaptationSet/dash:Representation/@audioSamplingRate" role="warn">@audioSamplingRate should be common between all Representations in an Adaptation Set</assert>
 		</rule>
 		<rule context="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]/dash:Period/dash:AdaptationSet[dlb:isAdaptationSetAudio(.)][not(dlb:isAuxiliaryStream(.))]/dash:Representation/dash:AudioChannelConfiguration">
 			<let name="siu" value="@schemeIdUri"/>
 			<let name="val" value="@value"/>
 			<!-- see="https://www.etsi.org/deliver/etsi_ts/103200_103299/103285/01.02.01_60/ts_103285v010201p.pdf#page=28" -->
-			<report test="$val != ancestor::dash:AdaptationSet/dash:Representation/dash:AudioChannelConfiguration[@schemeIdUri = $siu]/@value" role="warn">audioChannelConfiguration should be common between all Representations in an Adaptation Set</report>
+			<assert test="$val = ancestor::dash:AdaptationSet/dash:Representation/dash:AudioChannelConfiguration[@schemeIdUri = $siu]/@value" role="warn">audioChannelConfiguration should be common between all Representations in an Adaptation Set</assert>
 		</rule>
 		<rule context="dash:MPD[$dvbdash-profile-2017 = tokenize(@profiles,' ')]/dash:Period/dash:AdaptationSet[dlb:isAdaptationSetAudio(.)][dlb:isAuxiliaryStream(.)]">
 			<!-- see="https://www.etsi.org/deliver/etsi_ts/103200_103299/103285/01.02.01_60/ts_103285v010201p.pdf#page=37" -->
-			<report test="dash:AudioChannelConfiguration or dash:Role or dash:Accessibility or @lang">All Adaptation Sets that refer to Auxiliary Audio streams may not contain the @lang attribute and Role,
-				Accessibility, AudioChannelConfiguration descriptors</report>
+			<assert test="not(dash:AudioChannelConfiguration or dash:Role or dash:Accessibility or @lang)">All Adaptation Sets that refer to Auxiliary Audio streams may not contain the @lang attribute and Role,
+				Accessibility, AudioChannelConfiguration descriptors</assert>
 		</rule>
 	</pattern>
 
@@ -43,15 +43,15 @@
 
 			<!-- If there is more than one preselection in this bundle, at least one must be main -->
 			<!-- see="https://www.etsi.org/deliver/etsi_ts/103200_103299/103285/01.02.01_60/ts_103285v010201p.pdf#page=37" -->
-			<report test="count(../dash:Preselection[$bundleID = tokenize(@preselectionComponents,' ')]) &gt; 1 and not(../dash:Preselection[$bundleID = tokenize(@preselectionComponents,' ')]/dash:Role[@schemeIdUri='urn:mpeg:dash:role:2011'][@value='main'])">If there is more than one audio Preselection associated with an audio bundle, at least one of the Preselection
-				elements shall be tagged with an @value set to "main".</report>
+			<assert test="count(../dash:Preselection[$bundleID = tokenize(@preselectionComponents,' ')]) &lt;= 1 or ../dash:Preselection[$bundleID = tokenize(@preselectionComponents,' ')]/dash:Role[@schemeIdUri='urn:mpeg:dash:role:2011'][@value='main']">If there is more than one audio Preselection associated with an audio bundle, at least one of the Preselection
+				elements shall be tagged with an @value set to "main".</assert>
 
 			<!-- ISO/IEC 23009-1, 3rd edition, clause 5.3.11.3 -->
-			<report test="some $x in tokenize(@preselectionComponents,' ') satisfies not($x = preceding-sibling::dash:AdaptationSet/@id)"
+			<assert test="every $x in tokenize(@preselectionComponents,' ') satisfies $x = preceding-sibling::dash:AdaptationSet/@id"
 				diagnostics="preselID">
 				@preselectionComponents specifies the ids of the contained Adaptation Sets or Content Components that belong to this Preselection
 				as white space separated list in processing order.
-			</report>
+			</assert>
 		</rule>
 	</pattern>
 	<diagnostics>
