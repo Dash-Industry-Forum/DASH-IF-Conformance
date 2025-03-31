@@ -1,4 +1,6 @@
-/* GDPR Consent Banner Styles */
+/* GDPR Consent Management Styles */
+
+/* Primary consent banner - appears at bottom of screen when consent needed */
 #gdpr-consent-banner {
   display: none;
   position: fixed;
@@ -34,6 +36,7 @@
   gap: 10px;
 }
 
+/* Information notice about consent requirement - appears inside validator form */
 .upload-consent-notice {
   margin: 15px 0;
   padding: 12px 15px;
@@ -41,4 +44,97 @@
   border: 1px solid #ffeeba;
   border-radius: 4px;
   color: #856404;
+}
+
+/* Warning banner - appears at top when user has declined consent */
+.global-consent-notice {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px 15px;
+  margin: 0 0 15px 0;
+  border-radius: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9000;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Style for process buttons when consent is declined */
+.consent-disabled {
+  position: relative;
+  opacity: 0.7;
+  cursor: not-allowed !important;
+  background-color: #e9ecef !important;
+  border-color: #ddd !important;
+  color: #6c757d !important;
+}
+
+/* Hover tooltip for disabled buttons */
+.consent-disabled:hover::after {
+  content: "Consent required to process files";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 5px;
+  background: #f8d7da;
+  color: #721c24;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+  border: 1px solid #f5c6cb;
+}
+
+/* Lock indicator shown on disabled process buttons */
+.consent-indicator {
+  margin-left: 8px;
+  font-size: 14px;
+}
+
+/* Popup message shown when clicking on disabled process button */
+.consent-error-tooltip {
+  position: absolute;
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px 15px;
+  border-radius: 4px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  animation: fade-in 0.3s ease-out;
+  text-align: center;
+  border: 1px solid #f5c6cb;
+  max-width: 300px;
+}
+
+.consent-error-tooltip a {
+  color: #0066cc;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.consent-error-tooltip a:hover {
+  color: #004080;
+}
+
+/* Generic reset consent link styling */
+.reset-consent {
+  color: #0066cc;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.reset-consent:hover {
+  color: #004080;
+}
+
+/* Animation for tooltip appearance */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
