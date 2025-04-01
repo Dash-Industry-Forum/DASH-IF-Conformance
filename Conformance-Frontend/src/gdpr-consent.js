@@ -45,7 +45,8 @@ class GDPRConsentManager {
       <div class="gdpr-content">
         <p>This site processes uploaded files on our servers for validation purposes. 
            By using this service, you consent to our 
-           <a href="javascript:void(0)" onclick="return showTerms()">Terms and Privacy Policy</a>.</p>
+           <a href="javascript:void(0)" onclick="return showTerms()">Terms and Privacy Policy</a>.
+           If you prefer not to upload your content, a <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Installation--guide" target="_blank">self-hosted version</a> is available.</p>
         <div class="gdpr-buttons">
           <button id="gdpr-accept" class="btn btn-primary">Accept</button>
           <button id="gdpr-reject" class="btn btn-secondary">Decline</button>

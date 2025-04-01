@@ -21,12 +21,20 @@ Under GDPR, you have the right to:
 * Object to processing of your data
 * Withdraw consent at any time
 
-##### 5. Contact
+##### 5. Self-Hosted Option
+
+If you prefer not to upload your content to our servers, a self-hosted version of this tool is available. You can install and run the validation tool locally on your own infrastructure.
+
+* Download and installation instructions are available at: [https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Installation--guide](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Installation--guide)
+* The self-hosted version provides the same validation capabilities without sending data to external servers
+* This option is recommended for sensitive or confidential content
+
+##### 6. Contact
 
 For any questions regarding this privacy policy, please contact:
 [contact@dashif.org](mailto:contact@dashif.org)
 
-##### 6. Changes to This Policy
+##### 7. Changes to This Policy
 
 We may update this privacy policy from time to time. We will notify you of any changes by posting the new privacy policy on this page.
 
