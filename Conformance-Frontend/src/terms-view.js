@@ -1,0 +1,46 @@
+function TermsView() {
+  let instance = {};
+
+  let _state = {
+    markdown: null,
+  };
+
+  let _rootElementId;
+
+  async function loadMarkdown() {
+    _state.markdown = await Net.sendRequest({
+      method: "GET",
+      uri: "./static/terms-page.md",
+    });
+    render();
+  }
+
+  function generateContent() {
+    if (!_state.markdown) return;
+    return Tools.markdownToHtml(_state.markdown);
+  }
+
+  function render(rootElementId) {
+    _rootElementId = rootElementId = rootElementId || _rootElementId;
+
+    let termsView = UI.createElement({
+      id: rootElementId,
+    });
+
+    if (!_state.markdown) {
+      loadMarkdown();
+      return;
+    }
+
+    let content = generateContent();
+    termsView.appendChild(content);
+
+    UI.replaceElement(_rootElementId, termsView);
+  }
+
+  instance = {
+    render,
+  };
+
+  return instance;
+}

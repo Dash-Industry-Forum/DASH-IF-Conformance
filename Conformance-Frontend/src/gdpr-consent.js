@@ -45,7 +45,7 @@ class GDPRConsentManager {
       <div class="gdpr-content">
         <p>This site processes uploaded files on our servers for validation purposes. 
            By using this service, you consent to our 
-           <a href="/Conformance-Frontend/terms.html" target="_blank">Terms and Privacy Policy</a>.</p>
+           <a href="javascript:void(0)" onclick="return showTerms()">Terms and Privacy Policy</a>.</p>
         <div class="gdpr-buttons">
           <button id="gdpr-accept" class="btn btn-primary">Accept</button>
           <button id="gdpr-reject" class="btn btn-secondary">Decline</button>
@@ -330,4 +330,14 @@ window.resetGDPRConsent = function() {
     window.gdprManager.enableProcessFeature();
   }
   return "Consent reset. Banner should appear on page refresh.";
+};
+
+window.showTerms = function() {
+  // Update the hash for URL consistency
+  location.hash = "terms";
+  // trigger navigation
+  if (window.mainView && typeof window.mainView.handleLocationChange === "function") {
+    window.mainView.handleLocationChange("terms");
+  }
+  return false;
 };
