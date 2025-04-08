@@ -29,9 +29,6 @@ class GDPRConsentManager {
       this.disableProcessFeature();
     }
     
-    // Add consent notices
-    this.addConsentNotices();
-    
     // Intercept process button clicks
     this.interceptProcessButton();
     
@@ -66,16 +63,73 @@ class GDPRConsentManager {
   }
   
   acceptConsent() {
+    // Store consent
     localStorage.setItem(this.consentKey, 'true');
-    this.hideBanner();
+    
+    this.banner.innerHTML = `
+      <div class="gdpr-content">
+        <p>You have accepted data processing consent. 
+           View our <a href="javascript:void(0)" onclick="return showTerms()">Terms and Privacy Policy</a>
+           or use <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Installation--guide" target="_blank">Self-hosted version</a>.</p>
+        <div class="gdpr-buttons">
+          <button id="gdpr-withdraw-button" class="btn btn-secondary gdpr-action-button">Withdraw Consent</button>
+        </div>
+      </div>
+    `;
+    
+    // Pointer to reference the class instance
+    const self = this;
+    
+    // Direct click handler for withdraw button
+    document.getElementById('gdpr-withdraw-button').addEventListener('click', function(event) {
+      event.stopPropagation();
+      
+      // Call rejectConsent
+      self.rejectConsent();
+    });
+    
+    this.showBanner();
+    
     this.enableProcessFeature();
   }
   
   rejectConsent() {
-    // Store the rejection explicitly
+    // Store the rejection
     localStorage.setItem(this.consentKey, 'false');
-    alert('This service requires consent to process files. The process feature will be disabled.');
-    this.hideBanner();
+    
+    this.banner.innerHTML = `
+    <div class="gdpr-content">
+      <p>File processing is disabled because data processing consent was declined.
+         By using this service, you consent to our 
+         <a href="javascript:void(0)" onclick="return showTerms()">Terms and Privacy Policy</a>.
+         If you prefer not to upload your content, a 
+         <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Installation--guide" target="_blank">self-hosted version</a> is available.</p>
+      <div class="gdpr-buttons">
+        <button id="gdpr-consent-button" class="btn btn-primary gdpr-action-button">Consent and Enable Processing</button>
+      </div>
+    </div>
+  `;
+    
+    // direct click handler 
+    const consentButton = document.getElementById('gdpr-consent-button');
+    if (consentButton) {
+      // Remove any existing listeners 
+      const newButton = consentButton.cloneNode(true);
+      consentButton.parentNode.replaceChild(newButton, consentButton);
+      
+      // Add fresh click handler
+      newButton.addEventListener('click', function(event) {
+        // Stop event propagation to prevent other handlers from catching it
+        event.stopPropagation();
+        
+        // Call the reset function 
+        localStorage.removeItem('dashIfConformanceConsent');
+        location.reload(); // Force reload to reset everything cleanly
+      });
+    }
+    
+    this.showBanner();
+    
     this.disableProcessFeature();
   }
   
@@ -85,27 +139,16 @@ class GDPRConsentManager {
     return status === 'true';
   }
   
-  addConsentNotices() {
-    // Find validator component
-    const validatorContainer = document.querySelector('.validator-component') || 
-                             document.querySelector('.tool-container') || 
-                             document.querySelector('form');
-    
-    if (validatorContainer) {
-      const notice = document.createElement('div');
-      notice.className = 'upload-consent-notice';
-      notice.innerHTML = '<p>By uploading files for validation, you consent to processing your content on our servers.</p>';
-      
-      // Insert at beginning of validator or form
-      validatorContainer.insertAdjacentElement('afterbegin', notice);
-    }
-  }
-  
   interceptProcessButton() {
     const self = this;
     
-    // Event delegation for all clicks - this is the most efficient approach
     document.addEventListener('click', function(event) {
+      // Skip if the click is on our consent button or inside it
+      if (event.target.id === 'gdpr-consent-button' || 
+          (event.target.closest('button') && event.target.closest('button').id === 'gdpr-consent-button')) {
+        return; // Exit early, don't handle this click
+      }
+      
       // Check for clicks on Process button or its children
       let targetButton = null;
       
@@ -163,6 +206,13 @@ class GDPRConsentManager {
     observer.observe(document.body, { 
       childList: true, 
       subtree: true 
+    });
+    
+    window.addEventListener('hashchange', () => {
+      // Re-apply restrictions if consent was declined
+      if (this.hasConsentStatus() === false) {
+        setTimeout(() => this.disableProcessFeature(), 100);
+      }
     });
   }
 
@@ -235,6 +285,10 @@ class GDPRConsentManager {
     const processButtons = document.querySelectorAll('button');
     
     processButtons.forEach(button => {
+      if (button.id === 'gdpr-consent-button' || button.closest('#gdpr-consent-banner')) {
+        return; // Skip buttons inside  banner
+      }
+      
       const isProcessButton = 
         button.textContent.includes('Process') || 
         Array.from(button.querySelectorAll('span'))
@@ -252,33 +306,6 @@ class GDPRConsentManager {
           button.appendChild(indicator);
         }
       }
-    });
-    
-    // Add global notice
-    this.addGlobalConsentNotice();
-  }
-  
-  addGlobalConsentNotice() {
-    // Remove existing notice if any
-    const existingNotice = document.querySelector('.global-consent-notice');
-    if (existingNotice) existingNotice.remove();
-    
-    // Add a global notice at the top of the page
-    const notice = document.createElement('div');
-    notice.className = 'global-consent-notice';
-    
-    notice.innerHTML = `
-      <p>You declined consent to process files on our servers. 
-      File processing is disabled. 
-      <a href="#" class="reset-consent">Reset consent preferences</a></p>
-    `;
-    
-    document.body.insertBefore(notice, document.body.firstChild);
-    
-    // Add reset listener
-    notice.querySelector('.reset-consent').addEventListener('click', (e) => {
-      e.preventDefault();
-      this.resetConsent();
     });
   }
   
@@ -299,10 +326,6 @@ class GDPRConsentManager {
       const indicator = button.querySelector('.consent-indicator');
       if (indicator) indicator.remove();
     });
-    
-    // Remove notices
-    const globalNotice = document.querySelector('.global-consent-notice');
-    if (globalNotice) globalNotice.remove();
   }
 }
 

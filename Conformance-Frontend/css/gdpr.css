@@ -138,3 +138,12 @@
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.gdpr-action-button {
+  opacity: 1 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  background-color: #007bff !important; 
+  border-color: #007bff !important;
+  color: white !important;
+}
