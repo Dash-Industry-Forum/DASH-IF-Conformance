@@ -3,15 +3,16 @@
 /* Primary consent banner - appears at bottom of screen when consent needed */
 #gdpr-consent-banner {
   display: none;
-  position: fixed;
-  left: 0;
+  position: sticky; 
   bottom: 0;
+  left: 0;
   width: 100%;
   background-color: rgba(33, 37, 41, 0.95);
   color: #fff;
   padding: 20px;
   z-index: 9999;
   box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+  margin-top: 20px; 
 }
 
 .gdpr-content {
@@ -44,22 +45,6 @@
   border: 1px solid #ffeeba;
   border-radius: 4px;
   color: #856404;
-}
-
-/* Warning banner - appears at top when user has declined consent */
-.global-consent-notice {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 10px 15px;
-  margin: 0 0 15px 0;
-  border-radius: 0;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 9000;
-  text-align: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 /* Style for process buttons when consent is declined */
@@ -146,4 +131,14 @@
   background-color: #007bff !important; 
   border-color: #007bff !important;
   color: white !important;
+}
+
+/* Add space at the bottom of the page to ensure content isn't too close to the banner */
+body {
+  padding-bottom: 10px;
+}
+
+/* Ensure the banner is always visible when displayed */
+html {
+  scroll-padding-bottom: 150px; /* Ensure content doesn't get hidden behind the banner */
 }
