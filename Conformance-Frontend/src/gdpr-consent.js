@@ -22,11 +22,73 @@ class GDPRConsentManager {
     document.getElementById('gdpr-reject').addEventListener('click', () => this.rejectConsent());
     
     // Check existing consent
-    if (this.hasConsentStatus() === null) {
+    const consentStatus = this.hasConsentStatus();
+    
+    if (consentStatus === null) {
+      // New user, show initial banner
       this.showBanner();
-    } else if (this.hasConsentStatus() === false) {
-      // User previously declined - block process functionality
+    } else if (consentStatus === false) {
+      // treat refreshing the page action
+      // User previously declined - show rejection banner and block functionality
+      this.banner.innerHTML = `
+        <div class="gdpr-content">
+          <p>File processing is disabled because data processing consent was declined.
+             By using this service, you consent to our 
+             <a href="javascript:void(0)" onclick="return showTerms()">Terms and Privacy Policy</a>.
+             If you prefer not to upload your content, a 
+             <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Installation--guide" target="_blank">self-hosted version</a> is available.</p>
+          <div class="gdpr-buttons">
+            <button id="gdpr-consent-button" class="btn btn-primary gdpr-action-button">Consent and Enable Processing</button>
+          </div>
+        </div>
+      `;
+      
+      // Add click handler for the consent button
+      const consentButton = document.getElementById('gdpr-consent-button');
+      if (consentButton) {
+        // Remove any existing listeners to avoid duplicates
+        const newButton = consentButton.cloneNode(true);
+        consentButton.parentNode.replaceChild(newButton, consentButton);
+        
+        // Add fresh click handler
+        newButton.addEventListener('click', (event) => {
+          event.stopPropagation();
+          localStorage.removeItem('dashIfConformanceConsent');
+          location.reload();
+        });
+      }
+      
+      this.showBanner();
       this.disableProcessFeature();
+    } else {
+      // User previously accepted - show acceptance banner
+      this.banner.innerHTML = `
+        <div class="gdpr-content">
+          <p>You have accepted data processing consent. 
+             View our <a href="javascript:void(0)" onclick="return showTerms()">Terms and Privacy Policy</a>
+             or use <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Installation--guide" target="_blank">Self-hosted version</a>.</p>
+          <div class="gdpr-buttons">
+            <button id="gdpr-withdraw-button" class="btn btn-secondary gdpr-action-button">Withdraw Consent</button>
+          </div>
+        </div>
+      `;
+      
+      // Add event listener for withdraw button
+      const withdrawButton = document.getElementById('gdpr-withdraw-button');
+      if (withdrawButton) {
+        // Remove any existing listeners to avoid duplicates
+        const newButton = withdrawButton.cloneNode(true);  
+        withdrawButton.parentNode.replaceChild(newButton, withdrawButton);
+        
+        // Add fresh click handler
+        newButton.addEventListener('click', (event) => {
+          event.stopPropagation();
+          this.rejectConsent();
+        });
+      }
+      
+      this.showBanner();
+      this.enableProcessFeature();
     }
     
     // Intercept process button clicks
