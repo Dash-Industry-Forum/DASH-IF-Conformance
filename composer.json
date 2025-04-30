@@ -12,5 +12,8 @@
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
+    },
+    "require": {
+        "laravel/installer": "^5.14"
     }
 }
