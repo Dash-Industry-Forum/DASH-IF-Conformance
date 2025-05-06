@@ -153,4 +153,14 @@ class RepresentationInterface
     {
         return false;
     }
+
+    public function getDAC4Boxes(): array|null
+    {
+        return null;
+    }
+
+    public function getAC4TOCBoxes(): array|null
+    {
+        return null;
+    }
 }

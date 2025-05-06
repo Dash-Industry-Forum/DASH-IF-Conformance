@@ -325,4 +325,40 @@ class ISOSegmentValidatorRepresentation extends RepresentationInterface
         }
         return $res;
     }
+
+    public function getDAC4Boxes(): array|null
+    {
+        $res = array();
+        if ($this->payload) {
+            $dac4Nodes = $this->payload->getElementsByTagName('ac4_dsi_v1');
+            foreach ($dac4Nodes as $node) {
+                $box = new \DASHIF\Boxes\DAC4();
+                $box->bitstream_version = $node->getAttribute('bitstream_version');
+                $box->fs_index = $node->getAttribute('fs_index');
+                $box->frame_rate_index = $node->getAttribute('frame_rate_index');
+                $box->short_program_id = $node->getAttribute('short_program_id');
+                $box->n_presentations = $node->getAttribute('n_presentations');
+                $res[] = $box;
+            }
+        }
+        return $res;
+    }
+    
+    public function getAC4TOCBoxes(): array|null
+    {
+        $res = array();
+        if ($this->payload) {
+            $tocNodes = $this->payload->getElementsByTagName('ac4_toc');
+            foreach ($tocNodes as $node) {
+                $box = new \DASHIF\Boxes\AC4TOC();
+                $box->bitstream_version = $node->getAttribute('bitstream_version');
+                $box->fs_index = $node->getAttribute('fs_index');
+                $box->frame_rate_index = $node->getAttribute('frame_rate_index');
+                $box->short_program_id = $node->getAttribute('short_program_id');
+                $box->n_presentations = $node->getAttribute('n_presentations');
+                $res[] = $box;
+            }
+        }
+        return $res;
+    }
 }

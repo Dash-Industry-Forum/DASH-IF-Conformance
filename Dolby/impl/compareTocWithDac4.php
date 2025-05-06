@@ -2,8 +2,13 @@
 
 global $logger;
 
-$tocArray = $this->getToc($atomInfo);
-$dac4Array = $this->getDac4($atomInfo);
+$tocArray = $representation->getAC4TOCBoxes();
+$dac4Array = $representation->getDAC4Boxes();
+
+if (!$dac4Array || !$tocArray) {
+    // handle missing data
+    return;
+}
 
 $dac4 = $dac4Array[0];
 
