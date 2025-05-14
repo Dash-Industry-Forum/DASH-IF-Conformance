@@ -2,6 +2,8 @@
 
 namespace DASHIF;
 
+require_once __DIR__ . '/../Utils/moduleInterface.php';
+
 class ModuleDolby extends ModuleInterface
 {
     public function __construct()
@@ -13,7 +15,14 @@ class ModuleDolby extends ModuleInterface
     protected function addCLIArguments()
     {
         global $argumentParser;
-        $argumentParser->addOption("dolby", "o", "dolby", "Enable Dolby checking");
+        if ($argumentParser) {
+            $argumentParser->addOption(
+                "dolby",
+                "o",
+                "dolby",
+                "Enable Dolby checking"
+            );
+        }
     }
 
     public function handleArguments()
