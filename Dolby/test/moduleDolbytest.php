@@ -138,6 +138,25 @@ final class ModuleDolbyTest extends TestCase
         $this->assertEquals('PASS', $GLOBALS['logger']->asArray()['verdict']);
     }
 
+    public function testOnlyDAC4Missing()
+    {
+        $GLOBALS['validatorWrapper']->analyzeSingle(
+            array(0,0,DolbyTestCases::OnlyDAC4Missing),
+            $this->module,
+            'validateDolby'
+        );
+        $this->assertEquals('PASS', $GLOBALS['logger']->asArray()['verdict']);
+    }
+
+    public function testOnlyTOCMissing()
+    {
+        $GLOBALS['validatorWrapper']->analyzeSingle(
+            array(0,0,DolbyTestCases::OnlyTOCMissing),
+            $this->module,
+            'validateDolby'
+        );
+        $this->assertEquals('PASS', $GLOBALS['logger']->asArray()['verdict']);
+    }
     public function testAllFieldsMatch()
     {
         $GLOBALS['validatorWrapper']->analyzeSingle(
