@@ -7,6 +7,7 @@ require_once __DIR__ . '/../../Utils/ValidatorInterface.php';
 require_once __DIR__ . '/../../Utils/moduleLogger.php';
 require_once __DIR__ . '/../../Utils/boxes/boxes.php';
 require_once __DIR__ . '/../../Utils/ValidatorWrapper.php';
+require_once __DIR__ . '/../../Utils/MPDHandler.php';
 
 enum DolbyTestCases
 {
@@ -82,11 +83,29 @@ class DolbyMockValidator extends \DASHIF\ValidatorInterface
     public function run($p, $a, $r) { throw new \Exception("Run"); }
 }
 
-// Mock MPDHandler 
-class MockMPDHandler {
-    public function getFeatures() {
-        // Structure matches what validateDolby expects
-        return [
+class MockMPDHandler extends \DASHIF\MPDHandler
+{
+    public function __construct($features)
+    {
+        parent::__construct(null); // No URL
+        $this->setFeatures($features);
+    }
+}
+
+class DolbyTestModule extends \DASHIF\ModuleDolby
+{
+    public function __construct() { parent::__construct(); }
+}
+
+final class ModuleDolbyTest extends TestCase
+{
+    protected function setUp(): void
+    {
+        $GLOBALS['validatorWrapper'] = new DASHIF\ValidatorWrapper(false);
+        $GLOBALS['validatorWrapper']->addValidator(new DolbyMockValidator());
+        $GLOBALS['logger'] = new \DASHIF\ModuleLogger();
+
+        $features = [
             'Period' => [
                 0 => [
                     'AdaptationSet' => [
@@ -104,25 +123,8 @@ class MockMPDHandler {
                 ]
             ]
         ];
-    }
-    public function getSelectedPeriod() { return 0; }
-    public function getSelectedAdaptationSet() { return 0; }
-    public function getSelectedRepresentation() { return 0; }
-}
+        $GLOBALS['mpdHandler'] = new MockMPDHandler($features);
 
-class DolbyTestModule extends \DASHIF\ModuleDolby
-{
-    public function __construct() { parent::__construct(); }
-}
-
-final class ModuleDolbyTest extends TestCase
-{
-    protected function setUp(): void
-    {
-        $GLOBALS['validatorWrapper'] = new DASHIF\ValidatorWrapper(false);
-        $GLOBALS['validatorWrapper']->addValidator(new DolbyMockValidator());
-        $GLOBALS['logger'] = new \DASHIF\ModuleLogger();
-        $GLOBALS['mpdHandler'] = new MockMPDHandler();
         $this->module = new DolbyTestModule();
     }
 
