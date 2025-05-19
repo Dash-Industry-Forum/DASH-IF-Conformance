@@ -8,5 +8,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/manifest/{url}', [ManifestController::class, 'retrieve']);
+Route::get('/mpd', [ManifestController::class, 'retrieve']);
 
