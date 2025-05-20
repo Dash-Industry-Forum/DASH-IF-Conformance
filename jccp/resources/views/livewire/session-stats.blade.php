@@ -7,4 +7,7 @@
         <div>Session mpd</div>
         <div>{{ session()->get('mpd') }}</div>
       </div>
+
+
+      <button wire:click="resetSession">Reset Session</button>
 </div>
