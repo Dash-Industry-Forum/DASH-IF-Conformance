@@ -31,9 +31,9 @@ class MPDHandler
     private $segmentUrls;
 
 
-    public function __construct($url)
+    public function __construct()
     {
-        $this->url = $url;
+        $this->url = session()->get('mpd');
         $this->mpd = null;
         $this->dom = null;
         $this->downloadTime = null;

@@ -3,6 +3,7 @@ use Illuminate\Support\Facades\Log;
 
 global $logger, $session;
 
+if (!function_exists('syscall')){
 function sysCall($command) {
     $result = '';
     if ($proc = popen("($command)2>&1", "r")){
@@ -12,6 +13,7 @@ function sysCall($command) {
         pclose($proc);
     }
     return $result;
+}
 }
 
 $sessionDir = '/tmp';// $session->getDir();
