@@ -3,7 +3,7 @@
 global $logger;
 
 $tocArray = $representation->getAC4TOCBoxes();
-$dac4Array = $representation->getDAC4Boxes();
+$dac4Array = $representation->getAC4DSIBoxes();
 
 if (!$dac4Array || !$tocArray) {
     // handle missing data

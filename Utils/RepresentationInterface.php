@@ -154,7 +154,7 @@ class RepresentationInterface
         return false;
     }
 
-    public function getDAC4Boxes(): array|null
+    public function getAC4DSIBoxes(): array|null
     {
         return null;
     }

@@ -2,7 +2,7 @@
 
 namespace DASHIF\Boxes;
 
-class DAC4
+class AC4DSI
 {
     public function __construct()
     {

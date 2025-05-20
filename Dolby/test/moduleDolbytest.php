@@ -22,12 +22,12 @@ class DolbyMockRepresentation extends \DASHIF\RepresentationInterface
 {
     private $case;
     public function __construct($testCase) { $this->case = $testCase; }
-    public function getDAC4Boxes(): array|null {
+    public function getAC4DSIBoxes(): array|null {
         switch ($this->case) {
             case DolbyTestCases::OnlyTOCMissing:
             case DolbyTestCases::AllFieldsMatch:
             case DolbyTestCases::BitstreamVersionMismatch:
-                $dac4 = new \DASHIF\Boxes\DAC4();
+                $dac4 = new \DASHIF\Boxes\AC4DSI();
                 $dac4->bitstream_version = 1;
                 $dac4->fs_index = 2;
                 $dac4->frame_rate_index = 3;

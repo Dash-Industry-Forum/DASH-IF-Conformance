@@ -326,13 +326,13 @@ class ISOSegmentValidatorRepresentation extends RepresentationInterface
         return $res;
     }
 
-    public function getDAC4Boxes(): array|null
+    public function getAC4DSIBoxes(): array|null
     {
         $res = array();
         if ($this->payload) {
             $dac4Nodes = $this->payload->getElementsByTagName('ac4_dsi_v1');
             foreach ($dac4Nodes as $node) {
-                $box = new \DASHIF\Boxes\DAC4();
+                $box = new \DASHIF\Boxes\AC4DSI();
                 $box->bitstream_version = $node->getAttribute('bitstream_version');
                 $box->fs_index = $node->getAttribute('fs_index');
                 $box->frame_rate_index = $node->getAttribute('frame_rate_index');
