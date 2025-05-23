@@ -22,46 +22,44 @@ class DolbyMockRepresentation extends \DASHIF\RepresentationInterface
 {
     private $case;
     public function __construct($testCase) { $this->case = $testCase; }
+
+    private function validAC4DSIBox() {
+        $dac4 = new \DASHIF\Boxes\AC4DSI();
+        $dac4->bitstream_version = 1;
+        $dac4->fs_index = 2;
+        $dac4->frame_rate_index = 3;
+        $dac4->n_presentations = 4;
+        $dac4->short_program_id = 5;
+        return $dac4;
+    }
+    private function validAC4TOCBox() {
+        $toc = new \DASHIF\Boxes\AC4TOC();
+        $toc->bitstream_version = 1;
+        $toc->fs_index = 2;
+        $toc->frame_rate_index = 3;
+        $toc->n_presentations = 4;
+        $toc->short_program_id = 5;
+        return $toc;
+    }
+
     public function getAC4DSIBoxes(): array|null {
         switch ($this->case) {
             case DolbyTestCases::OnlyTOCMissing:
             case DolbyTestCases::AllFieldsMatch:
             case DolbyTestCases::BitstreamVersionMismatch:
-                $dac4 = new \DASHIF\Boxes\AC4DSI();
-                $dac4->bitstream_version = 1;
-                $dac4->fs_index = 2;
-                $dac4->frame_rate_index = 3;
-                $dac4->n_presentations = 4;
-                $dac4->short_program_id = 5;
-                return [$dac4];
+                return [$this->validAC4DSIBox()];
             default: return null;
         }
     }
     public function getAC4TOCBoxes(): array|null {
         switch ($this->case) {
             case DolbyTestCases::OnlyDAC4Missing:
-                $toc = new \DASHIF\Boxes\AC4TOC();
-                $toc->bitstream_version = 1;
-                $toc->fs_index = 2;
-                $toc->frame_rate_index = 3;
-                $toc->n_presentations = 4;
-                $toc->short_program_id = 5;
-                return [$toc];
+                return [$this->validAC4TOCBox()];
             case DolbyTestCases::AllFieldsMatch:
-                $toc = new \DASHIF\Boxes\AC4TOC();
-                $toc->bitstream_version = 1;
-                $toc->fs_index = 2;
-                $toc->frame_rate_index = 3;
-                $toc->n_presentations = 4;
-                $toc->short_program_id = 5;
-                return [$toc];
+                return [$this->validAC4TOCBox()];
             case DolbyTestCases::BitstreamVersionMismatch:
-                $toc = new \DASHIF\Boxes\AC4TOC();
+                $toc = $this->validAC4TOCBox();
                 $toc->bitstream_version = 99; // mismatch
-                $toc->fs_index = 2;
-                $toc->frame_rate_index = 3;
-                $toc->n_presentations = 4;
-                $toc->short_program_id = 5;
                 return [$toc];
             default: return null;
         }
