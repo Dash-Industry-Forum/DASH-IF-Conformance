@@ -15,17 +15,17 @@ if (
     return;
 }
 
-$sidxBoxes = $xml->getElementsByTagName('sidx');
+$sidxBoxes = $representation->getSIDXBoxes();
 
 $logger->test(
     "DASH-IF IOP 4.3",
     "Section 3.10.3.2",
     "Only a single 'sidx' SHALL be present",
-    $sidxBoxes->length == 1,
+    $sidxBoxes && count($sidxBoxes) == 1,
     "FAIL",
     "Exactly one 'sidx' box found for Period $selectedPeriod Adaptation Set $selectedAdaptation " .
     "Representation $selectedRepresentation",
-    $sidxBoxes->length . " 'sidx' boxes found for Period $selectedPeriod Adaptation Set $selectedAdaptation " .
+    ($sidxBoxes ? count($sidxBoxes) : 0) . " 'sidx' boxes found for Period $selectedPeriod Adaptation Set $selectedAdaptation " .
     "Representation $selectedRepresentation"
 );
 
