@@ -12,6 +12,6 @@ $xml = DASHIF\Utility\parseDOM($rep_xml, 'atomlist');
 if (!$xml) {
     return;
 }
-
-$this->validateSegmentCommon($xml);
-$this->validateSegmentOnDemand($xml);
+// TODO: we should probably romove these checks for files existance. 
+$this->validateSegmentCommon($representation);
+$this->validateSegmentOnDemand($representation);

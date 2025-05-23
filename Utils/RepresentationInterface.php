@@ -153,4 +153,35 @@ class RepresentationInterface
     {
         return false;
     }
+
+    public function getAVCCBoxes(): array|null
+    {
+        return null;
+    }
+
+    public function getHVCCBoxes(): array|null
+    {
+        return null;
+    }
+
+    public function getELSTBoxes(): array|null
+    {
+        return null;
+    }
+
+    public function getTRUNBoxes(): array|null
+    {
+        return null;
+    }
+
+    public function getTFDTBoxes(): array|null
+    {
+        return null;
+    }
+        
+    public function getSIDXBoxes(): array|null
+    {
+        return null;
+    }
+
 }

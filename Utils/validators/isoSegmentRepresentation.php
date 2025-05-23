@@ -325,4 +325,96 @@ class ISOSegmentValidatorRepresentation extends RepresentationInterface
         }
         return $res;
     }
+    public function getAVCCBoxes(): array|null
+    {
+        $res = array();
+        if ($this->payload) {
+            $avcCNodes = $this->payload->getElementsByTagName('avcC');
+            foreach ($avcCNodes as $node) {
+                $box = new Boxes\AVCCBox();
+                $nalUnits = $node->getElementsByTagName('NALUnit');
+                foreach ($nalUnits as $nalNode) {
+                    $nal = new Boxes\NALUnit();
+                    $nal->type = $nalNode->getAttribute('nal_unit_type');
+                    $box->NALUnits[] = $nal;
+                }
+                $res[] = $box;
+            }
+        }
+        return $res;
+    }
+
+    public function getHVCCBoxes(): array|null
+    {
+        $res = array();
+        if ($this->payload) {
+            $hvccNodes = $this->payload->getElementsByTagName('hvcC');
+            foreach ($hvccNodes as $node) {
+                $box = new Boxes\HVCCBox();
+                $nalUnits = $node->getElementsByTagName('NALUnit');
+                foreach ($nalUnits as $nalNode) {
+                    $nal = new Boxes\NALUnit();
+                    $nal->type = $nalNode->getAttribute('nal_unit_type');
+                    $box->NALUnits[] = $nal;
+                }
+                $res[] = $box;
+            }
+        }
+        return $res;
+    }
+
+    public function getELSTBoxes(): array|null
+    {
+        $res = array();
+        if ($this->payload) {
+            $elstNodes = $this->payload->getElementsByTagName('elst');
+            foreach ($elstNodes as $node) {
+                $box = new Boxes\ELSTBox();
+                $res[] = $box;
+            }
+        }
+        return $res;
+    }
+
+    public function getTRUNBoxes(): array|null
+    {
+        $res = array();
+        if ($this->payload) {
+            $trunNodes = $this->payload->getElementsByTagName('trun');
+            foreach ($trunNodes as $node) {
+                $box = new Boxes\TRUNBox();
+                $box->earliestCompositionTime = $node->getAttribute('earliestCompositionTime');
+                $res[] = $box;
+            }
+        }
+        return $res;
+    }
+
+    public function getTFDTBoxes(): array|null
+    {
+        $res = array();
+        if ($this->payload) {
+            $tfdtNodes = $this->payload->getElementsByTagName('tfdt');
+            foreach ($tfdtNodes as $node) {
+                $box = new Boxes\TFDTBox();
+                $box->baseMediaDecodeTime = $node->getAttribute('baseMediaDecodeTime');
+                $res[] = $box;
+            }
+        }
+        return $res;
+    }
+
+    public function getSIDXBoxes(): array|null
+    {
+        $res = array();
+        if ($this->payload) {
+            $sidxNodes = $this->payload->getElementsByTagName('sidx');
+            foreach ($sidxNodes as $node) {
+                $box = new \DASHIF\Boxes\SIDXBox();
+                // Add attribute extraction here
+                $res[] = $box;
+            }
+        }
+        return $res;
+    }
 }

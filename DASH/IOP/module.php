@@ -66,22 +66,32 @@ class ModuleDASHInteroperability extends ModuleInterface
     public function hookRepresentation()
     {
         parent::hookRepresentation();
-        $this->validateSegment();
+        global $validatorWrapper, $mpdHandler;
+        $thisRepresentation = [
+            $mpdHandler->getSelectedPeriod(),
+            $mpdHandler->getSelectedAdaptationSet(),
+            $mpdHandler->getSelectedRepresentation()
+        ];
+        $validatorWrapper->analyzeSingle(
+            $thisRepresentation,
+            $this,
+            'validateSegment'
+        );
     }
 
-    private function validateSegment()
+    public function validateSegment($representation)
     {
-        include 'impl/validateSegment.php';
+        return include 'impl/validateSegment.php';
     }
 
-    private function validateSegmentCommon($xml)
+    public function validateSegmentCommon($representation)
     {
-        include 'impl/validateSegmentCommon.php';
+        return include 'impl/validateSegmentCommon.php';
     }
 
-    private function validateSegmentOnDemand($xml)
+    public function validateSegmentOnDemand($representation)
     {
-        include 'impl/validateSegmentOnDemand.php';
+        return include 'impl/validateSegmentOnDemand.php';
     }
 
     public function hookAdaptationSet()
