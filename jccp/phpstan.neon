@@ -12,8 +12,3 @@ parameters:
 
     # Level 10 is the highest level
     level: 1
-
-
-    ignoreErrors:
-        - '#^Call to static method .+ on an unknown class App\\Services\\Log.$#'
-

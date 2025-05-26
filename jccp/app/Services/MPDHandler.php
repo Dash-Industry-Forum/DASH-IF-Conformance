@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Services\ModuleLogger;
 use App\Services\Schematron;
+use Illuminate\Support\Facades\Log;
 
 class MPDHandler
 {
