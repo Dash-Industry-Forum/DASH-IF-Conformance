@@ -3,7 +3,7 @@
 namespace DASHIF\Utility;
 
 if (! function_exists('formSegmentAccess')) {
-    function formSegmentAccess($highLevel, $lowLevel)
+    function formSegmentAccess(array $highLevel, array $lowLevel): array
     {
         foreach ($highLevel as $key => $highValue) {
             $lowValue = array_key_exists($key, $lowLevel) ? $lowLevel[$key] : array();
@@ -23,10 +23,10 @@ if (! function_exists('formSegmentAccess')) {
 
 
 if (!function_exists('mergeSegmentAccess')) {
-    function mergeSegmentAccess($highLevel, $lowLevel)
+    function mergeSegmentAccess(array $highLevel, array $lowLevel): array
     {
         if (!$highLevel && !$lowLevel) {
-            return null;
+            return array();
         }
         if (!$highLevel) {
             return $lowLevel;
@@ -40,9 +40,9 @@ if (!function_exists('mergeSegmentAccess')) {
 
 
 if (! function_exists('isAbsoluteURL')) {
-    function isAbsoluteURL($URL)
+    function isAbsoluteURL(string $url): bool
     {
-        $parsedUrl = parse_url($URL);
+        $parsedUrl = parse_url($url);
         return array_key_exists("scheme", $parsedUrl) && array_key_exists("host", $parsedUrl);
     }
 }
