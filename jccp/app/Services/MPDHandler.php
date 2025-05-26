@@ -24,10 +24,6 @@ class MPDHandler
     private $selectedAdaptationSet;
     private $selectedRepresentation;
 
-    private $hls;
-    private $hlsPlaylistArray;
-    private $hlsManifestType;
-
     private $segmentUrls;
 
 
@@ -114,7 +110,7 @@ class MPDHandler
 
         $originalTime = $this->downloadTime->getTimestamp();
         $nextTime = $originalTime + $interval;
-        return new DateTimeImmutable("@$nextTime");
+        return new \DateTimeImmutable("@$nextTime");
     }
 
     public function getPeriodAttribute($idx, $attr): string | null
@@ -1191,7 +1187,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
     {
         global $session;
 
-        $this->downloadTime = new DateTimeImmutable();
+        $this->downloadTime = new \DateTimeImmutable();
 
         $isLocal = false;
         $localManifestLocation = '';

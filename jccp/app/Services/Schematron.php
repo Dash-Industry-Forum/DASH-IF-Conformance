@@ -25,7 +25,6 @@ class Schematron
     private string $schemaPath;
     private $mpdValidatorOutput;
     private $schematronOutput;
-    private $schematronIssuesReport;
 
     public function __construct(string $mpd = '')
     {
@@ -116,11 +115,7 @@ class Schematron
             "Schematron validation failed"
         );
 
-        if ($this->schematronOutput != '') {
-            if (strpos($this->schematronOutput, 'Schematron validation successful') === false) {
-                $this->schematronIssuesReport = analyzeSchematronIssues($this->mpdValidatorOutput);
-            }
-        }
+        //TODO Schmatron analysis report
     }
 
     private function findOrDownloadSchema()

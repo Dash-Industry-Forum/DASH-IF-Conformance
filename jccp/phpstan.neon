@@ -7,11 +7,13 @@ parameters:
     paths:
         - app/
 
+    scanDirectories:
+        - vendor
+
     # Level 10 is the highest level
     level: 1
 
-#    ignoreErrors:
-#        - '#PHPDoc tag @var#'
-#
-#    excludePaths:
-#        - ./*/*/FileToBeExcluded.php
+
+    ignoreErrors:
+        - '#^Call to static method .+ on an unknown class App\\Services\\Log.$#'
+

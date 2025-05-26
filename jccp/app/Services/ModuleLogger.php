@@ -25,8 +25,11 @@ class ModuleLogger
 
     private $validatorMessages;
 
+    private $id;
+
     public function __construct($id = null, $module = null, $hook = null)
     {
+        $this->id = $id;
         Log::info("Construct!");
         if ($module) {
             $this->setModule($module);
@@ -281,7 +284,7 @@ class ModuleLogger
     }
 
 
-    public function error($err)
+    public function error($message)
     {
         $this->addEntry('error', $message);
     }
