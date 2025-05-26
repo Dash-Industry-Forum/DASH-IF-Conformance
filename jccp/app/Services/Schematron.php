@@ -24,7 +24,7 @@ class Schematron
     public string $resolved = '';
     private string $schemaPath;
     private $mpdValidatorOutput;
-    private $schematronOutput;
+    public string $schematronOutput;
 
     public function __construct(string $mpd = '')
     {

@@ -103,7 +103,7 @@ class MPDHandler
             return null;
         }
 
-        $interval = DASHIF\Utility\timeParsing($minimumUpdatePeriod);
+        $interval = timeParsing($minimumUpdatePeriod);
 
         if (!$interval) {
             return null;
@@ -221,7 +221,7 @@ class MPDHandler
         }
 
         $ch = curl_init();
-        $curlOpts = DASHIF\Utility\curlOptions();
+        $curlOpts = curlOptions();
         $curlOpts[CURLOPT_URL] = $url;
         $curlOpts[CURLOPT_FILE] = $fp;
         curl_setopt_array($ch, $curlOpts);
@@ -271,13 +271,13 @@ class MPDHandler
             $adaptations = $period['AdaptationSet'];
             foreach ($adaptations as $adaptationIdx => $adaptation) {
                 if (array_key_exists("SegmentTemplate", $adaptation)) {
-                    $currentTemplate = DASHIF\Utility\mergeSegmentAccess(
+                    $currentTemplate = mergeSegmentAccess(
                         $currentTemplate,
                         $adaptation['SegmentTemplate']
                     );
                 }
                 if (array_key_exists("SegmentBase", $adaptation)) {
-                    $currentBase = DASHIF\Utility\mergeSegmentAccess(
+                    $currentBase = mergeSegmentAccess(
                         $currentBase,
                         $adaptation['SegmentBase']
                     );
@@ -287,13 +287,13 @@ class MPDHandler
 
                 foreach ($adaptation['Representation'] as $representationIdx => $representation) {
                     if (array_key_exists("SegmentTemplate", $representation)) {
-                        $currentTemplate = DASHIF\Utility\mergeSegmentAccess(
+                        $currentTemplate = mergeSegmentAccess(
                             $currentTemplate,
                             $representation['SegmentTemplate']
                         );
                     }
                     if (array_key_exists("SegmentBase", $representation)) {
-                        $currentBase = DASHIF\Utility\mergeSegmentAccess(
+                        $currentBase = mergeSegmentAccess(
                             $currentBase,
                             $representation['SegmentBase']
                         );
@@ -491,14 +491,9 @@ class MPDHandler
 
     public function getSchematronOutput()
     {
-        return $this->schematronOutput;
+        return $this->schematron->schematronOutput;
     }
 
-
-    private function findOrDownloadSchema()
-    {
-        include 'impl/MPDHandler/findOrDownloadSchema.php';
-    }
 
     private function extractProfiles()
     {
@@ -593,7 +588,7 @@ class MPDHandler
         $mediapresentationduration = 0;
 /* TODO
 if (array_key_exists("mediaPresentationDuration", $this->features)) {
-    $mediapresentationduration = DASHIF\Utility\timeParsing(
+    $mediapresentationduration = timeParsing(
         $this->features['mediaPresentationDuration']
     );
 }*/
@@ -612,9 +607,10 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
                 $periodDuration = $period['duration'];
             }
 
+            $start = 0;
             if ($periodStart != '') {
                 //TODO
-                //$start = DASHIF\Utility\timeParsing($periodStart);
+                //$start = timeParsing($periodStart);
             } else {
                 if ($i > 0) {
                     $previous =  $this->periodTimingInformation[$i - 1];
@@ -640,10 +636,10 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
 
             $duration = 0;
             if ($periodDuration != '' && $periodDuration != null) {
-                //TODO $duration = DASHIF\Utility\timeParsing($periodDuration);
+                //TODO $duration = timeParsing($periodDuration);
             } else {
                 if ($i != sizeof($periods) - 1) {
-                    //TODO $duration = DASHIF\Utility\timeParsing($periods[$i + 1]['start']) - $start;
+                    //TODO $duration = timeParsing($periods[$i + 1]['start']) - $start;
                 } else {
                     $duration = $mediapresentationduration - $start;
                 }
@@ -698,7 +694,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
                     foreach ($urlParts as $urlPart) {
                         if ($urlPart) {
                             $base = $urlPart[0]['anyURI'];
-                            //if (DASHIF\Utility\isAbsoluteURL($base)) {
+                            //if (isAbsoluteURL($base)) {
                                 $url = $base;
                             Log::warning("Re-implement non-base url!");
                             //} else {
@@ -712,7 +708,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
                     $representationUrl = dirname($this->url) . '/';
                 }
                     Log::warning("Re-implement non-base url!");
-        //        if (!DASHIF\Utility\isAbsoluteURL($representationUrl)) {
+        //        if (!isAbsoluteURL($representationUrl)) {
         //            $representationUrl = dirname($this->url) . '/' . $representationUrl;
         //        }
 
@@ -741,11 +737,11 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
         $adaptationSegmentUrls = array();
 
         foreach ($adaptationSets as $adaptationIndex => $adaptationSet) {
-            $segmentTemplateAdaptation = DASHIF\Utility\mergeSegmentAccess(
+            $segmentTemplateAdaptation = mergeSegmentAccess(
                 $period['SegmentTemplate'],
                 $adaptationSet['SegmentTemplate']
             );
-            $segmentBaseAdaptation = DASHIF\Utility\mergeSegmentAccess(
+            $segmentBaseAdaptation = mergeSegmentAccess(
                 $period['SegmentBase'],
                 $adaptationSet['SegmentBase']
             );
@@ -756,11 +752,11 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
             $segmentAccess = array();
             $segmentUrls = array();
             foreach ($representations as $representationIndex => $representation) {
-                $segmentTemplate = DASHIF\Utility\mergeSegmentAccess(
+                $segmentTemplate = mergeSegmentAccess(
                     $segmentTemplateAdaptation,
                     $representation['SegmentTemplate']
                 );
-                $segmentBase = DASHIF\Utility\mergeSegmentAccess(
+                $segmentBase = mergeSegmentAccess(
                     $segmentBaseAdaptation,
                     $representation['SegmentBase']
                 );
@@ -854,7 +850,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
         $period = ($periodIndex == null ? $this->getSelectedPeriod() : $periodIndex);
         $adaptation = ($adaptationIndex == null ? $this->getSelectedAdaptationSet() : $adaptationIndex);
 
-        $periods = $mpdHandler->getElementsByTagName("Period");
+        $periods = $this->mpd->getElementsByTagName("Period");
 
         if ($period >= count($periods)) {
             return null;
@@ -1003,7 +999,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
         global $period_timing_info, $modules, $availability_times;
 
         $bufferduration = ($this->features['timeShiftBufferDepth'] != null) ?
-        DASHIF\Utility\timeParsing($this->features['timeShiftBufferDepth']) : INF;
+        timeParsing($this->features['timeShiftBufferDepth']) : INF;
 
         $AST = $this->features['availabilityStartTime'];
         $segmentduration = 0;
@@ -1109,7 +1105,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
             $initializationUrl = '';
             $init = str_replace(array('$Bandwidth$', '$RepresentationID$'), array($bandwidth, $id), $initialization);
 
-            if (DASHIF\Utility\isAbsoluteURL($init)) {
+            if (isAbsoluteURL($init)) {
                 $segmentUrls[] = $init;
             } else {
                 if (substr($baseUrl, -1) == '/') {
@@ -1168,7 +1164,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
                 }
             }
 
-            if (!DASHIF\Utility\isAbsoluteURL($segmentUrl)) {
+            if (isAbsoluteURL($segmentUrl)) {
                 if (substr($baseUrl, -1) == '/') {
                     $segmentUrl = $baseUrl . $segmentUrl;
                 } else {
