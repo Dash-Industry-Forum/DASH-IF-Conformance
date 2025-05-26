@@ -6,9 +6,10 @@ parameters:
 
     paths:
         - app/
+        - resources/
 
     scanDirectories:
         - vendor
 
     # Level 10 is the highest level
-    level: 1
+    level: 4

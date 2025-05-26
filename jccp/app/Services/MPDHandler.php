@@ -13,7 +13,6 @@ class MPDHandler
     private $dom;
     private $features;
     private $profiles;
-    private string $resolved;
     private $periodTimingInformation;
 
 
@@ -45,13 +44,15 @@ class MPDHandler
 
         $this->load();
         $this->parseXML();
-        if ($this->mpd) {
+        //\TODO PHPStan recognises this as always false....
+//        if ($this->mpd) {
             $this->schematron = new Schematron($this->mpd);
             $this->features = $this->recursiveExtractFeatures($this->dom);
             $this->extractProfiles();
             $this->loadSegmentUrls();
-        }
+//        }
     }
+
 
 
     public function refresh($content = null)
@@ -257,9 +258,9 @@ class MPDHandler
             $baseUrls = $this->getPeriodBaseUrl($periodIdx);
             $periodTimingInfo = $this->getPeriodTimingInfo($periodIdx);
 
-            $currentTemplate = '';
+            $currentTemplate = null;
             if (array_key_exists("SegmentTemplate", $period)) {
-                $period['SegmentTemplate'];
+                $currentBase = $period['SegmentTemplate'];
             }
             $currentBase = '';
             if (array_key_exists("SegmentBase", $period)) {
@@ -300,7 +301,8 @@ class MPDHandler
                     }
 
 
-                    if (!$currentTemplate || !count($currentTemplate)) {
+                    //\TODO We should probably also check for empty array?
+                    if (!$currentTemplate) {
                         $adaptationUrls[] = array($baseUrls[$adaptationIdx][$representationIdx]);
                         continue;
                     }
@@ -1235,17 +1237,13 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
             return;
         }
 
+        //TODO: Add try/catch?
         $domSxe = dom_import_simplexml($simpleXML);
-        if (!$domSxe) {
-            Log::error("Unable to import xml");
-            return;
-        }
 
         $dom = new \DOMDocument('1.0');
+
+        //TODO: Add try/catch?
         $domSxe = $dom->importNode($domSxe, true);
-        if (!$domSxe) {
-            return;
-        }
 
         $dom->appendChild($domSxe);
         $main_element_nodes = $dom->getElementsByTagName('MPD');

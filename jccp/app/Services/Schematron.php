@@ -72,7 +72,7 @@ class Schematron
         chdir($currentDir);
     }
 
-    private function validateSchematron()
+    public function validateSchematron()
     {
         $logger = app(ModuleLogger::class);
         if (!$this->schematronOutput) {

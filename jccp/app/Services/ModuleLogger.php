@@ -16,12 +16,9 @@ class ModuleLogger
     private $streamSource;
     private $parseSegments = false;
 
-    private $currentTest;
-
     private $verdict;
 
     private $features;
-    private $parseArguments;
 
     private $validatorMessages;
 
@@ -37,6 +34,11 @@ class ModuleLogger
         if ($hook) {
             $this->setHook($hook);
         }
+    }
+
+    public function getID()
+    {
+        return $this->id;
     }
 
     public function reset($id = null)
@@ -57,7 +59,6 @@ class ModuleLogger
         $this->currentHook = '';
         $this->verdict = "PASS";
         $this->streamSource = '';
-        $this->currentTest = null;
         $this->parseSegments = false;
     }
 
@@ -259,30 +260,6 @@ class ModuleLogger
             }
         }
     }
-
-    private function &findTest($spec, $section, $test)
-    {
-        if (!array_key_exists($this->currentModule, $this->entries)) {
-            return null;
-        }
-        if (!array_key_exists($this->currentHook, $this->entries[$this->currentModule])) {
-            return null;
-        }
-        foreach ($this->entries[$this->currentModule][$this->currentHook]['test'] as $entry) {
-            if ($entry['spec'] != $spec) {
-                continue;
-            }
-            if ($entry['section'] != $section) {
-                continue;
-            }
-            if ($entry['test'] != $test) {
-                continue;
-            }
-            return $entry;
-        }
-        return null;
-    }
-
 
     public function error($message)
     {
