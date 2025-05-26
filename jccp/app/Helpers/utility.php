@@ -4,9 +4,9 @@ namespace DASHIF\Utility;
 
 if (! function_exists('formSegmentAccess')) {
     /**
-     * @param array<string, string> $highLevel
-     * @param array<string, string> $lowLevel
-     * @return array<string, string>
+     * @param array<string, array<string,string>> $highLevel
+     * @param array<string, array<string,string>> $lowLevel
+     * @return array<string, array<string,string>>
      **/
     function formSegmentAccess(array $highLevel, array $lowLevel): array
     {
@@ -29,9 +29,9 @@ if (! function_exists('formSegmentAccess')) {
 
 if (!function_exists('mergeSegmentAccess')) {
     /**
-     * @param array<string, string> $highLevel
-     * @param array<string, string> $lowLevel
-     * @return array<string, string>
+     * @param array<string, array<string,string>> $highLevel
+     * @param array<string, array<string,string>> $lowLevel
+     * @return array<string, array<string,string>>
      **/
     function mergeSegmentAccess(array $highLevel, array $lowLevel): array
     {
