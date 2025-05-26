@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Services\ModuleLogger;
+use App\Services\Schematron;
 
 class MPDHandler
 {
@@ -11,12 +12,11 @@ class MPDHandler
     private $dom;
     private $features;
     private $profiles;
-    private $resolved;
+    private string $resolved;
     private $periodTimingInformation;
-    private $schemaPath;
-    private $mpdValidatorOutput;
-    private $schematronOutput;
-    private $schematronIssuesReport;
+
+
+    private Schematron $schematron;
 
     private $downloadTime; //Datetimeimmutable
 
@@ -39,11 +39,11 @@ class MPDHandler
         $this->downloadTime = null;
         $this->features = null;
         $this->profiles = null;
-        $this->resolved = null;
         $this->selectedPeriod = 0;
         $this->selectedAdaptationSet = 0;
         $this->selectedRepresentation = 0;
         $this->periodTimingInformation = array();
+        $this->schematron = new Schematron();
         $this->schemaPath = null;
         $this->mpdValidatorOutput = null;
         $this->schematronOutput = null;
@@ -53,10 +53,9 @@ class MPDHandler
         $this->load();
         $this->parseXML();
         if ($this->mpd) {
+            $this->schmatron = new Schematron($this->mpd);
             $this->features = $this->recursiveExtractFeatures($this->dom);
             $this->extractProfiles();
-            $this->runSchematron();
-            $this->validateSchematron();
             $this->loadSegmentUrls();
         }
     }
@@ -77,7 +76,6 @@ class MPDHandler
         $this->features = $this->recursiveExtractFeatures($this->dom);
         $this->extractProfiles();
         if (!$content) {
-            $this->runSchematron();
             $this->validateSchematron();
             $this->loadSegmentUrls();
         }
@@ -213,15 +211,6 @@ class MPDHandler
         return $this->schematronOutput;
     }
 
-    private function runSchematron()
-    {
-        include 'impl/MPDHandler/runSchematron.php';
-    }
-
-    private function validateSchematron()
-    {
-        include 'impl/MPDHandler/validateSchematron.php';
-    }
 
     private function findOrDownloadSchema()
     {
@@ -337,9 +326,9 @@ class MPDHandler
         return $this->dom;
     }
 
-    public function getResolved()
+    public function getResolved(): string
     {
-        return $this->resolved;
+        return $this->schematron->resolved;
     }
 
     public function getFeatures()

@@ -2,21 +2,6 @@
 
 namespace DASHIF\Utility;
 
-if (!function_exists('syscall')) {
-    function sysCall($command)
-    {
-        $result = '';
-        if ($proc = popen("($command)2>&1", "r")) {
-            while (!feof($proc)) {
-                $result .= fgets($proc, 1000);
-            }
-            pclose($proc);
-        }
-        return $result;
-    }
-}
-
-
 if (! function_exists('formSegmentAccess')) {
     function formSegmentAccess($highLevel, $lowLevel): array
     {

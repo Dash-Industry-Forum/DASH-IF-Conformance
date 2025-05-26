@@ -4,21 +4,35 @@ namespace App\Services;
 
 use App\Services\ModuleLogger;
 
+if (!function_exists('systemCall')) {
+    function systemCall($command)
+    {
+        $result = '';
+        if ($proc = popen("($command)2>&1", "r")) {
+            while (!feof($proc)) {
+                $result .= fgets($proc, 1000);
+            }
+            pclose($proc);
+        }
+        return $result;
+    }
+}
+
 class Schematron
 {
-    private string $resolved;
-    private stirng $schemaPath;
+    private string $mpd;
+    public string $resolved = '';
+    private string $schemaPath;
     private $mpdValidatorOutput;
     private $schematronOutput;
     private $schematronIssuesReport;
 
-    public function __construct(string $resolved)
+    public function __construct(string $mpd = '')
     {
-        $this->resolved = $resolved;
-        $this->schemaPath = '';
-        $this->mpdValidatorOutput = null;
-        $this->schematronOutput = null;
-        $this->schematronIssuesReport = null;
+        $this->mpd = $mpd;
+        if ($this->mpd == '') {
+            return;
+        }
 
         $this->runSchematron();
         $this->validateSchematron();
@@ -42,10 +56,10 @@ class Schematron
 
         $currentDir = getcwd();
 
-        chdir(__DIR__ . '/../../../../../DASH/mpdvalidator');
+        chdir(__DIR__ . '/../../../DASH/mpdvalidator');
         $this->findOrDownloadSchema();
 
-        $this->mpdValidatorOutput = syscall("java -cp \"saxon9he.jar:xercesImpl.jar:bin\" Validator \"" .
+        $this->mpdValidatorOutput = systemCall("java -cp \"saxon9he.jar:xercesImpl.jar:bin\" Validator \"" .
         $sessionDir . "/manifest.mpd" . "\" $sessionDir/resolved.xml " .
         $this->schemaPath . " $sessionDir/mpdresult.xml");
 
