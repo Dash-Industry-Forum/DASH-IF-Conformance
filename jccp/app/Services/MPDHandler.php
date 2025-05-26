@@ -241,7 +241,98 @@ class MPDHandler
 
     public function loadSegmentUrls()
     {
-        return include 'impl/MPDHandler/loadSegmentUrls.php';
+        if (!$this->mpd || !$this->dom) {
+            return;
+        }
+
+        $this->segmentUrls = array();
+
+        $xmlPeriods = $this->dom->getElementsByTagName('Period');
+
+
+        $mpdAsArray = $this->features;
+
+        if (!array_key_exists('Period', $mpdAsArray)) {
+            return;
+        }
+
+        foreach ($mpdAsArray['Period'] as $periodIdx => $period) {
+            $baseUrls = $this->getPeriodBaseUrl($periodIdx);
+            $periodTimingInfo = $this->getPeriodTimingInfo($periodIdx);
+
+            $currentTemplate = '';
+            if (array_key_exists("SegmentTemplate", $period)) {
+                $period['SegmentTemplate'];
+            }
+            $currentBase = '';
+            if (array_key_exists("SegmentBase", $period)) {
+                $currentBase = $period['SegmentBase'];
+            }
+
+            $periodUrls = array();
+
+            $adaptations = $period['AdaptationSet'];
+            foreach ($adaptations as $adaptationIdx => $adaptation) {
+                if (array_key_exists("SegmentTemplate", $adaptation)) {
+                    $currentTemplate = DASHIF\Utility\mergeSegmentAccess(
+                        $currentTemplate,
+                        $adaptation['SegmentTemplate']
+                    );
+                }
+                if (array_key_exists("SegmentBase", $adaptation)) {
+                    $currentBase = DASHIF\Utility\mergeSegmentAccess(
+                        $currentBase,
+                        $adaptation['SegmentBase']
+                    );
+                }
+
+                $adaptationUrls = array();
+
+                foreach ($adaptation['Representation'] as $representationIdx => $representation) {
+                    if (array_key_exists("SegmentTemplate", $representation)) {
+                        $currentTemplate = DASHIF\Utility\mergeSegmentAccess(
+                            $currentTemplate,
+                            $representation['SegmentTemplate']
+                        );
+                    }
+                    if (array_key_exists("SegmentBase", $representation)) {
+                        $currentBase = DASHIF\Utility\mergeSegmentAccess(
+                            $currentBase,
+                            $representation['SegmentBase']
+                        );
+                    }
+
+
+                    if (!$currentTemplate || !count($currentTemplate)) {
+                        $adaptationUrls[] = array($baseUrls[$adaptationIdx][$representationIdx]);
+                        continue;
+                    }
+
+                    $segmentInfo = $this->computeTiming(
+                        $periodTimingInfo['duration'],
+                        $currentTemplate[0],
+                        'SegmentTemplate'
+                    );
+                    $urlObj = array();
+                    $urlObj['segments'] = $this->computeUrls(
+                        $representation,
+                        $adaptationIdx,
+                        $representationIdx,
+                        $currentTemplate[0],
+                        $segmentInfo,
+                        $baseUrls[$adaptationIdx][$representationIdx]
+                    );
+                    if (array_key_exists('initialization', $currentTemplate[0])) {
+                        $urlObj['init'] = array_shift($urlObj['segments']);
+                    }
+                    $adaptationUrls[] = $urlObj;
+                }
+
+                $periodUrls[] = $adaptationUrls;
+            }
+
+            $this->segmentUrls[] = $periodUrls;
+        }
     }
 
     public function getRoles($period, $adaptation)
@@ -391,7 +482,75 @@ class MPDHandler
 
     public function getSegmentUrls($periodIndex = null)
     {
-        return include 'impl/MPDHandler/getSegmentUrls.php';
+        global $segment_accesses;
+
+        $periodIdx = $periodIndex;
+        if ($periodIdx == null) {
+            $periodIdx = $this->selectedPeriod;
+        }
+
+        $periodTimingInfo = $this->getPeriodTimingInfo($periodIdx);
+        $baseUrls = $this->getPeriodBaseUrl($periodIdx);
+
+        $period = $this->features['Period'][$periodIdx];
+        $adaptationSets = $period['AdaptationSet'];
+        $adaptationSegmentUrls = array();
+
+        foreach ($adaptationSets as $adaptationIndex => $adaptationSet) {
+            $segmentTemplateAdaptation = DASHIF\Utility\mergeSegmentAccess(
+                $period['SegmentTemplate'],
+                $adaptationSet['SegmentTemplate']
+            );
+            $segmentBaseAdaptation = DASHIF\Utility\mergeSegmentAccess(
+                $period['SegmentBase'],
+                $adaptationSet['SegmentBase']
+            );
+
+
+
+            $representations = $adaptationSet['Representation'];
+            $segmentAccess = array();
+            $segmentUrls = array();
+            foreach ($representations as $representationIndex => $representation) {
+                $segmentTemplate = DASHIF\Utility\mergeSegmentAccess(
+                    $segmentTemplateAdaptation,
+                    $representation['SegmentTemplate']
+                );
+                $segmentBase = DASHIF\Utility\mergeSegmentAccess(
+                    $segmentBaseAdaptation,
+                    $representation['SegmentBase']
+                );
+
+                if ($segmentTemplate) {
+                            $segmentAccess[] = $segmentTemplate;
+                            $segmentInfo = $this->computeTiming(
+                                $periodTimingInfo['duration'],
+                                $segmentTemplate[0],
+                                'SegmentTemplate'
+                            );
+                            $segmentUrls[] = $this->computeUrls(
+                                $representation,
+                                $adaptationIndex,
+                                $representationIndex,
+                                $segmentTemplate[0],
+                                $segmentInfo,
+                                $baseUrls[$adaptationIndex][$representationIndex]
+                            );
+                            continue;
+                }
+                if ($segmentBase) {
+                    $segmentAccess[] = $segmentBase;
+                    $segmentUrls[] = array($baseUrls[$adaptationIndex][$representationIndex]);
+                    continue;
+                }
+                $segmentAccess[] = '';
+                $segmentUrls[] = array($baseUrls[$adaptationIndex][$representationIndex]);
+            }
+            $adaptationSegmentUrls[] = $segmentUrls;
+            $segment_accesses[] = $segmentAccess;
+        }
+
+        return $adaptationSegmentUrls;
     }
 
     public function getFrameRate(
@@ -521,12 +680,139 @@ class MPDHandler
         $segmentInfo,
         $baseUrl
     ) {
-        return include 'impl/MPDHandler/computeUrls.php';
+        $initialization = $segmentAccess['initialization'];
+        $media = $segmentAccess['media'];
+        $bandwidth = $representation['bandwidth'];
+        $id = $representation['id'];
+
+        $startNumber = 1;
+        if (array_key_exists("startNumber", $segmentAccess)) {
+            $startNumber =  $segmentAccess['startNumber'];
+        }
+
+        $segmentUrls = array();
+
+        if ($initialization != null) {
+            $initializationUrl = '';
+            $init = str_replace(array('$Bandwidth$', '$RepresentationID$'), array($bandwidth, $id), $initialization);
+
+            if (DASHIF\Utility\isAbsoluteURL($init)) {
+                $segmentUrls[] = $init;
+            } else {
+                if (substr($baseUrl, -1) == '/') {
+                    $url = $baseUrl . $init;
+                } else {
+                    $url = $baseUrl . "/" . $init;
+                }
+                $segmentUrls[] = $url;
+            }
+        }
+
+        $currentTime = 0;
+
+        $index = 0;
+        $segmentCount = sizeof($segmentInfo);
+        if ($this->features['type'] == 'dynamic') {
+            list($index, $segmentCount, $currentTime) = $this->computeDynamicIntervals(
+                $adaptationSetId,
+                $representationId,
+                $segmentAccess,
+                $segmentInfo,
+                $segmentCount
+            );
+        }
+
+///\Todo translate checks below into actual "check"
+        while ($index < $segmentCount) {
+            $timeReplace = 0;
+            if (array_key_exists($currentTime, $segmentInfo)) {
+                $timeReplace = $segmentInfo[$currentTime];
+            }
+            $segmentUrl = str_replace(
+                array('$Bandwidth$', '$Number$', '$RepresentationID$', '$Time$'),
+                array($bandwidth, $index + $startNumber, $id, $timeReplace),
+                $media
+            );
+
+            $pos = strpos($segmentUrl, '$Number');
+            if ($pos !== false) {
+                if (substr($segmentUrl, $pos + strlen('$Number'), 1) === '%') {
+                    $segmentUrl = sprintf($segmentUrl, $startNumber + $index);
+                    $segmentUrl = str_replace('$Number', '', $segmentUrl);
+                    $segmentUrl = str_replace('$', '', $segmentUrl);
+                } else {
+                    Log::alert("It cannot happen! the format should be either \$Number$ or \$Number%xd$!");
+                }
+            }
+            $pos = strpos($segmentUrl, '$Time');
+            if ($pos !== false) {
+                if (substr($segmentUrl, $pos + strlen('$Time'), 1) === '%') {
+                    $segmentUrl = sprintf($segmentUrl, $segmentInfo[$index]);
+                    $segmentUrl = str_replace('$Time', '', $segmentUrl);
+                    $segmentUrl = str_replace('$', '', $segmentUrl);
+                } else {
+                    Log::alert("It cannot happen! the format should be either \$Time$ or \$Time%xd$!");
+                }
+            }
+
+            if (!DASHIF\Utility\isAbsoluteURL($segmentUrl)) {
+                if (substr($baseUrl, -1) == '/') {
+                    $segmentUrl = $baseUrl . $segmentUrl;
+                } else {
+                    $segmentUrl = $baseUrl . "/" . $segmentUrl;
+                }
+            }
+            $segmentUrls[] = $segmentUrl;
+            $index++;
+            $currentTime++;
+        }
+
+
+        return $segmentUrls;
     }
 
     private function load()
     {
-        include 'impl/MPDHandler/load.php';
+        global $session;
+
+        $this->downloadTime = new DateTimeImmutable();
+
+        $isLocal = false;
+        $localManifestLocation = '';
+
+        if ($session) {
+            $localManifestLocation = $session->getDir() . '/Manifest.mpd';
+            if (isset($_FILES['mpd']) && move_uploaded_file($_FILES['mpd']['tmp_name'], $localManifestLocation)) {
+                $this->url = $localManifestLocation;
+                $isLocal = true;
+            } elseif ($this->url && $this->url != '') {
+                if ($this->url[0] == '/') {
+                    $isLocal = true;
+                    copy($this->url, $localManifestLocation);
+                } else {
+                    //Download with CURL;
+                    $this->downloadSegment($localManifestLocation, $this->url);
+                    $isLocal = true;
+                }
+            }
+        }
+
+        if ($this->url && $this->url != '') {
+            if ($isLocal) {
+                $this->mpd = file_get_contents($localManifestLocation);
+            } else {
+                $this->mpd = file_get_contents($this->url);
+            }
+        } elseif (isset($_REQUEST['mpd'])) {
+            $this->mpd = $_REQUEST['mpd'];
+        }
+
+
+///\Todo: Check if this works with http basic auth
+        if (!$this->mpd) {
+            Log::critical("NO MPD");
+            return;
+        }
     }
 
     private function parseXML()
