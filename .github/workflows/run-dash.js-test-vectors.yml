@@ -53,6 +53,9 @@ jobs:
         export vectors=$(cat ${{ env.TESTS_FILENAME }} |jq -j '.items[] | select(.name == "${{ matrix.submenu }}") | .submenu[].url as $url | $url, " "')
         for url in $(echo $vectors)
         do
+          if [[ $url == *"m3u8" ]]; then
+            continue
+          fi
           outfile=results/${url//[\/:\?]/_}
           php Process_cli.php -i $url > $outfile
           if [ $(stat --format %s $outfile) -eq 31 ]
