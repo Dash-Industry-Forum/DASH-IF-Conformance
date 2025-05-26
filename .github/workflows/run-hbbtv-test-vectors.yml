@@ -5,6 +5,7 @@ on:
     branches:
       - 'development'
       - 'parallelize'
+      - 'bugfix/upload-artifact'
 
 env:
   TESTS_URL: https://conformance.dashif.org/static/hbbtv-test-suite-mpds-for-motionspell.zip.gpg
@@ -73,7 +74,7 @@ jobs:
           fi
         done
       id: run_cli
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: cli-results
         path: Utils/results/
