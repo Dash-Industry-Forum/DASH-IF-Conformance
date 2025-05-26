@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: run-test-vectors
     steps:
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
     - name: create joined result
       id: mangle
       run: |

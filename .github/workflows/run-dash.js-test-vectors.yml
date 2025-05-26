@@ -20,7 +20,7 @@ jobs:
         id: set-matrix
         run: |
           curl -sko ${{ env.TESTS_FILENAME }} ${{ env.TESTS_URL }}
-          echo "::set-output name=matrix::$(cat ${{ env.TESTS_FILENAME }} | jq -r -c '.items | map(.name)')"
+          echo "::set-output name=matrix::$(cat ${{ env.TESTS_FILENAME }} | jq -r -c '.items | map(.name)|unique')"
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
   run-test-vectors:
