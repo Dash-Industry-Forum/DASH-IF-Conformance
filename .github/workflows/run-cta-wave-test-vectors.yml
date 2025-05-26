@@ -53,7 +53,7 @@ jobs:
         export vectors=$(cat ${{ env.TESTS_FILENAME }} |jq -j '."${{ matrix.submenu }}" |  .[].mpdPath as $url | $url, " "')
         for url in $(echo $vectors)
         do
-          outfile=results/${url//[\/:]/_}
+          outfile=results/${url//[\/:\?]/_}
           php Process_cli.php -i $url > $outfile
           if [ $(stat --format %s $outfile) -eq 31 ]
           then
