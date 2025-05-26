@@ -63,6 +63,7 @@ jobs:
       id: run_cli
     - uses: actions/upload-artifact@v4
       with:
+        name: cli-results-${{ matrix.submenu }}
         path: Utils/results/
   get-result:
     runs-on: ubuntu-latest

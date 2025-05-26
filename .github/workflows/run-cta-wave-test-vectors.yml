@@ -63,12 +63,13 @@ jobs:
       id: run_cli
     - uses: actions/upload-artifact@v4
       with:
+        name: cli-results-${{ matrix.submenu }}
         path: Utils/results/
   get-result:
     runs-on: ubuntu-latest
     needs: run-test-vectors
     steps:
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v3
     - name: create joined result
       id: mangle
       run: |
