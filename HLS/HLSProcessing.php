@@ -160,6 +160,7 @@ function playlistToArray($url)
 function playlistURLs($array)
 {
     global $mpd_url;
+    $XMediaURLArray = array();
 
     $base_url = dirname($mpd_url);
 
