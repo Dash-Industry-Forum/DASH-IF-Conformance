@@ -9,7 +9,8 @@ use App\Services\ModuleLogger;
 
 class ManifestController extends Controller
 {
-    public function retrieve(Request $request) {
+    public function retrieve(Request $request)
+    {
 
         $logger = app(ModuleLogger::class);
         $logger->validatorMessage("testmsg");
@@ -24,8 +25,8 @@ class ManifestController extends Controller
         return view('mpd');
     }
 
-    public function mpdJSON() {
+    public function mpdJSON()
+    {
         return app(ModuleLogger::class)->asJSON();
-
     }
 }

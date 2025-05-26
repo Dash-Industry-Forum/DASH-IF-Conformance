@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+
 use Illuminate\Support\Facades\Log;
 
 class ModuleLogger
@@ -84,8 +85,8 @@ class ModuleLogger
                 if ($hook == 'verdict') {
                     continue;
                 }
-                if (gettype($hookValues) == "array"){
-                  $hookValues['verdict'] = $this->selectVerdict($hookValues['verdict']);
+                if (gettype($hookValues) == "array") {
+                    $hookValues['verdict'] = $this->selectVerdict($hookValues['verdict']);
                 }
             }
         }
@@ -392,7 +393,7 @@ class ModuleLogger
 
 
         global $modules;
-        if (!$modules){
+        if (!$modules) {
             $modules = [];
         }
 
@@ -407,4 +408,3 @@ class ModuleLogger
         return $result;
     }
 }
-$logger = new ModuleLogger();

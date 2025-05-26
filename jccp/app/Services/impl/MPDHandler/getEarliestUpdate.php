@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Log;
 
 if (!$this->downloadTime) {

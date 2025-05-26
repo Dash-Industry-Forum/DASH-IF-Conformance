@@ -6,10 +6,10 @@ use Livewire\Component;
 
 class SessionStats extends Component
 {
-    public function resetSession() {
+    public function resetSession()
+    {
         session()->invalidate();
         return redirect('/');
-
     }
 
     protected $listeners = [

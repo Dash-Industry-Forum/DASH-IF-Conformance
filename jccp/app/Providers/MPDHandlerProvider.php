@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-
 use App\Services\MPDHandler;
 
 class MPDHandlerProvider extends ServiceProvider

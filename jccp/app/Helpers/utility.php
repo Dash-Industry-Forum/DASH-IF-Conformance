@@ -2,13 +2,23 @@
 
 namespace DASHIF\Utility;
 
+if (!function_exists('syscall')) {
+    function sysCall($command)
+    {
+        $result = '';
+        if ($proc = popen("($command)2>&1", "r")) {
+            while (!feof($proc)) {
+                $result .= fgets($proc, 1000);
+            }
+            pclose($proc);
+        }
+        return $result;
+    }
+}
+
+
 if (! function_exists('formSegmentAccess')) {
-    /**
-     * @param array<string, array<string,string>> $highLevel
-     * @param array<string, array<string,string>> $lowLevel
-     * @return array<string, array<string,string>>
-     **/
-    function formSegmentAccess(array $highLevel, array $lowLevel): array
+    function formSegmentAccess($highLevel, $lowLevel): array
     {
         foreach ($highLevel as $key => $highValue) {
             $lowValue = array_key_exists($key, $lowLevel) ? $lowLevel[$key] : array();
@@ -28,12 +38,7 @@ if (! function_exists('formSegmentAccess')) {
 
 
 if (!function_exists('mergeSegmentAccess')) {
-    /**
-     * @param array<string, array<string,string>> $highLevel
-     * @param array<string, array<string,string>> $lowLevel
-     * @return array<string, array<string,string>>
-     **/
-    function mergeSegmentAccess(array $highLevel, array $lowLevel): array
+    function mergeSegmentAccess($highLevel, $lowLevel): array
     {
         if (!$highLevel && !$lowLevel) {
             return array();

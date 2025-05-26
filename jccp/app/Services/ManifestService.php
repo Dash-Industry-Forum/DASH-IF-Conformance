@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Services;
-class ManifestService {
-    public string $url;
 
+class ManifestService
+{
+    public string $url;
 }

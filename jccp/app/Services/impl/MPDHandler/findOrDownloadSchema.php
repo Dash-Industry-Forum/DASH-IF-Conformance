@@ -4,7 +4,7 @@ global $session;
 
 
 global $modules;
-if (!$modules){
+if (!$modules) {
     $modules = [];
 }
 
