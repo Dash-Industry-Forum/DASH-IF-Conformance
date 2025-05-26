@@ -18,6 +18,8 @@ class ModuleLogger
 
     private $currentTest;
 
+    private $verdict;
+
     private $features;
     private $parseArguments;
 
@@ -317,21 +319,21 @@ class ModuleLogger
 
     public function addFeature($feature)
     {
-        if (!array_key_exists($this->currentModule, $this->featureses)) {
-            $this->featuress[$this->currentModule] = array();
+        if (!array_key_exists($this->currentModule, $this->features)) {
+            $this->features[$this->currentModule] = array();
         }
-        if (!array_key_exists($this->currentHook, $this->featuress[$this->currentModule])) {
-            $this->featuress[$this->currentModule][$this->currentHook] = array();
+        if (!array_key_exists($this->currentHook, $this->features[$this->currentModule])) {
+            $this->features[$this->currentModule][$this->currentHook] = array();
         }
         $this->features[$this->currentModule][$this->currentHook][] = $feature;
     }
 
     public function hasFeature($feature)
     {
-        if (!array_key_exists($this->currentModule, $this->featureses)) {
+        if (!array_key_exists($this->currentModule, $this->features)) {
             return false;
         }
-        if (!array_key_exists($this->currentHook, $this->featuress[$this->currentModule])) {
+        if (!array_key_exists($this->currentHook, $this->features[$this->currentModule])) {
             return false;
         }
         foreach ($this->features[$this->currentModule][$this->currentHook] as $ft) {

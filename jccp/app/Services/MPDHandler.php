@@ -365,16 +365,91 @@ class MPDHandler
 
     public function getPeriodIds()
     {
-        return include 'impl/MPDHandler/getPeriodIds.php';
+        if (!$this->dom) {
+            return array();
+        }
+
+        $result = array();
+        $periodElements = $this->dom->getElementsByTagName("Period");
+
+        foreach ($periodElements as $p) {
+            if ($p->hasAttribute("id")) {
+                $result[] = $p->getAttribute("id");
+            } else {
+                $result[] = null;
+            }
+        }
+
+
+        return $result;
     }
 
     public function getAdaptationSetIds($periodId)
     {
-        return include 'impl/MPDHandler/getAdaptationSetIds.php';
+        if (!$this->dom) {
+            return array();
+        }
+
+        $result = array();
+        $periodElements = $this->dom->getElementsByTagName("Period");
+
+        foreach ($periodElements as $p) {
+            if (!$p->hasAttribute("id")) {
+                continue;
+            }
+            if ($periodId != $p->getAttribute("id")) {
+                continue;
+            }
+            $adaptationElements = $p->getElementsByTagName("AdaptationSet");
+            foreach ($adaptationElements as $a) {
+                if ($a->hasAttribute("id")) {
+                    $result[] = $a->getAttribute("id");
+                } else {
+                    $result[] = null;
+                }
+            }
+        }
+
+
+        return $result;
     }
     public function getRepresentationIds($periodId, $adaptationSetId)
     {
-        return include 'impl/MPDHandler/getRepresentationIds.php';
+        if (!$this->dom) {
+            return array();
+        }
+
+        $result = array();
+        $periodElements = $this->dom->getElementsByTagName("Period");
+
+        foreach ($periodElements as $p) {
+            if (!$p->hasAttribute("id")) {
+                continue;
+            }
+            if ($periodId != $p->getAttribute("id")) {
+                continue;
+            }
+            $adaptationElements = $p->getElementsByTagName("AdaptationSet");
+            foreach ($adaptationElements as $a) {
+                if (!$a->hasAttribute("id")) {
+                    continue;
+                }
+                if ($adaptationSetId != $a->getAttribute("id")) {
+                    continue;
+                }
+                $representationElements = $a->getElementsByTagName("Representation");
+                foreach ($representationElements as $r) {
+                    if ($r->hasAttribute("id")) {
+                        $result[] = $r->getAttribute("id");
+                    } else {
+                        $result[] = null;
+                    }
+                }
+            }
+        }
+
+
+        return $result;
     }
 
 
@@ -430,7 +505,43 @@ class MPDHandler
 
     private function extractProfiles()
     {
-        include 'impl/MPDHandler/extractProfiles.php';
+        if (!$this->features) {
+            return;
+        }
+        if (!array_key_exists("Period", $this->features)) {
+            return;
+        }
+
+        $this->profiles = array();
+        $periods = $this->features['Period'];
+
+        foreach ($periods as $period) {
+            $adapts = $period['AdaptationSet'];
+            $adapt_profiles = array();
+            foreach ($adapts as $adapt) {
+                $reps = $adapt['Representation'];
+                $rep_profiles = array();
+                foreach ($reps as $rep) {
+                    $profiles = $this->features['profiles'];
+
+                    if (array_key_exists('profiles', $period) && $period['profiles']) {
+                        $profiles = $period['profiles'];
+                    }
+
+                    if (array_key_exists('profile', $adapt) && $adapt['profile']) {
+                        $profiles = $adapt['profiles'];
+                    }
+
+                    if (array_key_exists('profile', $rep) && $rep['profile']) {
+                        $profiles = $rep['profiles'];
+                    }
+
+                    $rep_profiles[] = $profiles;
+                }
+                $adapt_profiles[] = $rep_profiles;
+            }
+            $this->profiles[] = $adapt_profiles;
+        }
     }
 
     private function recursiveExtractFeatures($node)
@@ -466,18 +577,154 @@ class MPDHandler
 
     private function getPeriodDurationInfo($period)
     {
-        return include 'impl/MPDHandler/getPeriodDurationInfo.php';
+        global $period_timing_info;
+
+        if (empty($this->periodTimingInformation)) {
+            $this->getDurationForAllPeriods();
+        }
+
+
+        $period_timing_info = $this->periodTimingInformation[$period];
+
+        return $period_timing_info;
     }
 
     private function getDurationForAllPeriods()
     {
-        include 'impl/MPDHandler/getDurationsForAllPeriods.php';
+        $periods = $this->features['Period'];
+
+        $mediapresentationduration = 0;
+/* TODO
+if (array_key_exists("mediaPresentationDuration", $this->features)) {
+    $mediapresentationduration = DASHIF\Utility\timeParsing(
+        $this->features['mediaPresentationDuration']
+    );
+}*/
+
+        $this->periodTimingInformation = array();
+
+        for ($i = 0; $i < sizeof($periods); $i++) {
+            $period = $periods[$i];
+
+            $periodStart = '';
+            if (array_key_exists('start', $period)) {
+                $periodStart = $period['start'];
+            }
+            $periodDuration = '';
+            if (array_key_exists('duration', $period)) {
+                $periodDuration = $period['duration'];
+            }
+
+            if ($periodStart != '') {
+                //TODO
+                //$start = DASHIF\Utility\timeParsing($periodStart);
+            } else {
+                if ($i > 0) {
+                    $previous =  $this->periodTimingInformation[$i - 1];
+                    if ($previous['duration'] != '') {
+                        $start = (float)($previous['start'] + $previous['duration']);
+                    } else {
+                        $start = '';
+                        if ($this->features['type'] == 'dynamic') {
+                          ///\todo handle early available period
+                        }
+                    }
+                } else {
+                    if ($this->features['type'] == 'static') {
+                        $start = 0;
+                    } else {
+                        $start = '';
+                        if ($this->features['type'] == 'dynamic') {
+                          ///\todo handle early available period
+                        }
+                    }
+                }
+            }
+
+            $duration = 0;
+            if ($periodDuration != '' && $periodDuration != null) {
+                //TODO $duration = DASHIF\Utility\timeParsing($periodDuration);
+            } else {
+                if ($i != sizeof($periods) - 1) {
+                    //TODO $duration = DASHIF\Utility\timeParsing($periods[$i + 1]['start']) - $start;
+                } else {
+                    $duration = $mediapresentationduration - $start;
+                }
+            }
+
+            $this->periodTimingInformation[] = array(
+              'start' => $start,
+              'duration' => min([$duration, 1800])
+            );
+        }
     }
 
     public function getPeriodBaseUrl($periodIndex = null)
     {
+        $periodIdx = $periodIndex;
+        if ($periodIdx == null) {
+            $periodIdx = $this->selectedPeriod;
+        }
 
-        return include 'impl/MPDHandler/getPeriodBaseUrl.php';
+        $mpdBaseUrl = null;
+        if (array_key_exists("BaseURL", $this->features)) {
+            $mpdBaseUrl =  $this->features['BaseURL'];
+        }
+
+        $period = $this->features['Period'][$periodIdx];
+        $periodBaseUrl = null;
+        if (array_key_exists("BaseURL", $period)) {
+            $periodBaseUrl = $period['BaseURL'];
+        }
+
+        $adaptationUrls = array();
+
+        $adaptations = $period['AdaptationSet'];
+        foreach ($adaptations as $adaptation) {
+            $representationUrls = array();
+            $adaptationBaseUrl = null;
+            if (array_key_exists("BaseURL", $adaptation)) {
+                $adaptationBaseUrl = $adaptation['BaseURL'];
+            }
+
+            $representations = $adaptation['Representation'];
+            foreach ($representations as $representation) {
+                $representationUrl = '';
+                $representationBaseUrl = null;
+                if (array_key_exists("BaseURL", $representation)) {
+                    $representationBaseUrl  = $representation['BaseURL'];
+                }
+
+                if ($mpdBaseUrl || $periodBaseUrl || $adaptationBaseUrl || $representationBaseUrl) {
+                    $url = '';
+                    $urlParts = array($mpdBaseUrl, $periodBaseUrl, $adaptationBaseUrl, $representationBaseUrl);
+                    foreach ($urlParts as $urlPart) {
+                        if ($urlPart) {
+                            $base = $urlPart[0]['anyURI'];
+                            //if (DASHIF\Utility\isAbsoluteURL($base)) {
+                                $url = $base;
+                            Log::warning("Re-implement non-base url!");
+                            //} else {
+                            //    $url .=  $base;
+                            //}
+                        }
+                    }
+                    $representationUrl = $url;
+                }
+                if ($representationUrl == '') {
+                    $representationUrl = dirname($this->url) . '/';
+                }
+                    Log::warning("Re-implement non-base url!");
+        //        if (!DASHIF\Utility\isAbsoluteURL($representationUrl)) {
+        //            $representationUrl = dirname($this->url) . '/' . $representationUrl;
+        //        }
+
+
+                $representationUrls[] = $representationUrl;
+            }
+            $adaptationUrls[] = $representationUrls;
+        }
+        return $adaptationUrls;
     }
 
     public function getSegmentUrls($periodIndex = null)
@@ -558,7 +805,48 @@ class MPDHandler
         $adaptationIndex = null,
         $representationIndex = null
     ) {
-        return include 'impl/MPDHandler/getFrameRate.php';
+        $period = ($periodIndex == null ? $this->getSelectedPeriod() : $periodIndex);
+        $adaptation = ($adaptationIndex == null ? $this->getSelectedAdaptationSet() : $adaptationIndex);
+        $representation = ($representationIndex == null ? $this->getSelectedRepresentation() : $representationIndex);
+
+        $framerate = 0;
+
+        $periods = $this->dom->getElementsByTagName("Period");
+
+        if ($period >= count($periods)) {
+            return null;
+        }
+
+        $thisPeriod = $periods->item($period);
+
+        if ($thisPeriod->hasAttribute('frameRate')) {
+            $framerate = $thisPeriod->getAttribute('frameRate');
+        }
+
+        $adaptationSets = $thisPeriod->getElementsByTagName("AdaptationSet");
+        if ($adaptation >= count($adaptationSets)) {
+            return null;
+        }
+
+        $thisAdaptation = $adaptationSets->item($adaptation);
+
+        if ($thisAdaptation->hasAttribute('frameRate')) {
+            $framerate = $thisAdaptation->getAttribute('frameRate');
+        }
+
+        $representations = $thisAdaptation->getElementsByTagName("Representation");
+
+        if ($representation >= count($representations)) {
+            return null;
+        }
+
+        $thisRepresentation = $representations->item($representation);
+
+        if ($thisRepresentation->hasAttribute('frameRate')) {
+            $framerate = $thisRepresentation->getAttribute('frameRate');
+        }
+
+        return $framerate;
     }
 
     public function getContentType(
@@ -566,7 +854,24 @@ class MPDHandler
         $adaptationIndex = null,
         $representationIndex = null
     ) {
-        return include 'impl/MPDHandler/getContentType.php';
+        $period = ($periodIndex == null ? $this->getSelectedPeriod() : $periodIndex);
+        $adaptation = ($adaptationIndex == null ? $this->getSelectedAdaptationSet() : $adaptationIndex);
+
+        $periods = $mpdHandler->getElementsByTagName("Period");
+
+        if ($period >= count($periods)) {
+            return null;
+        }
+
+        $thisPeriod = $periods->item($period);
+
+        $adaptationSets = $thisPeriod->getElementsByTagName("AdaptationSet");
+        if ($adaptation >= count($adaptationSets)) {
+            return null;
+        }
+
+
+        return $adaptationSets->item($adaptation)->getAttribute("contentType");
     }
 
 
@@ -576,7 +881,118 @@ class MPDHandler
         $segmentAccess,
         $segmentAccessType
     ) {
-        return include 'impl/MPDHandler/computeTiming.php';
+        if ($segmentAccessType == 'SegmentBase') {
+            return array(0);
+        }
+
+        if ($segmentAccessType != 'SegmentTemplate') {
+            return  array();
+        }
+
+        $segmentCount = 0;
+
+///\Note start is always 0... leads to negative segmentStartTimes?
+
+        $start = 0;
+
+        $duration = 0;
+        if (array_key_exists("duration", $segmentAccess)) {
+            $duration = $segmentAccess['duration'];
+        }
+
+        $timescale = 1;
+        if (array_key_exists("timescale", $segmentAccess)) {
+            $timescale = $segmentAccess['timescale'];
+        }
+
+        $availabilityTimeOffset = 0;
+        if (
+            array_key_exists(
+                "availabilityTimeOffset",
+                $segmentAccess
+            ) && $segmentAccess['availabilityTimeOffset'] != 'INF'
+        ) {
+            $availabilityTimeOffset =  $segmentAccess['availabilityTimeOffset'];
+        }
+
+        $presentationTimeOffset = 0;
+        if (
+            array_key_exists(
+                "presentationTimeOffset",
+                $segmentAccess
+            ) && $segmentAccess['presentationTimeOffset'] != ''
+        ) {
+            $presentationTimeOffset = (int)($segmentAccess['presentationTimeOffset']) / $timescale;
+        }
+
+        if ($duration != 0) {
+            $duration /= $timescale;
+            $segmentCount = ceil(($presentationDuration - $start) / $duration);
+        }
+
+        $timeOffset = $presentationTimeOffset + $availabilityTimeOffset;
+        $segmentTimings = array();
+
+        if (!array_key_exists("Segment(Timeline", $segmentAccess)) {
+            $segmentStartTime = $start - $timeOffset;
+
+            for ($index = 0; $index < $segmentCount; $index++) {
+                $segmentTimings[] = ($segmentStartTime + ($index * $duration));
+            }
+            return $segmentTimings;
+        }
+
+        $segmentTimeline = $segmentAccess['SegmentTimeline'];
+
+        $segmentEntries = $segmentTimeline[0]['S'];
+
+        if ($segmentEntries == null) {
+            return array();
+        }
+
+
+        $segmentTime = 0;
+        if ($segmentEntries[0]['t']) {
+            $segmentTime =  $segmentEntries[0]['t'] ;
+        }
+        $segmentTime -= $timeOffset;
+
+        foreach ($segmentEntries as $index => $segmentEntry) {
+            $d = $segmentEntry['d'];
+            $r = 0;
+            if (array_key_exists("r", $segmentEntry)) {
+                $r = $segmentEntry['r'];
+            }
+            $t = 0;
+            if (array_key_exists("t", $segmentEntry)) {
+                $t = $segmentEntry['t'];
+            }
+            $t -= $timeOffset;
+
+            if ($r == 0) {
+                $segmentTimings[] = (float) $segmentTime;
+                $segmentTime += $d;
+                continue;
+            }
+            if ($r < 0) {
+                $endTime = $presentationDuration * $timescale;
+                if (isset($segmentEntries[$index + 1])) {
+                    $endTime = ($segmentEntries[$index + 1]['t']);
+                }
+
+                while ($segmentTime < $endTime) {
+                    $segmentTimings[] = (float) $segmentTime;
+                    $segmentTime += $d;
+                }
+                continue;
+            }
+            for ($repeat = 0; $repeat <= $r; $repeat++) {
+                $segmentTimings[] = (float) $segmentTime;
+                $segmentTime += $d;
+            }
+        }
+
+        return $segmentTimings;
     }
 
     private function computeDynamicIntervals(
