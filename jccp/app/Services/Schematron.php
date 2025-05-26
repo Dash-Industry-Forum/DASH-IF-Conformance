@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Services\ModuleLogger;
 
 if (!function_exists('systemCall')) {
-    function systemCall($command)
+    function systemCall(string $command): string
     {
         $result = '';
         if ($proc = popen("($command)2>&1", "r")) {
@@ -20,11 +20,12 @@ if (!function_exists('systemCall')) {
 
 class Schematron
 {
-    private string $mpd;
     public string $resolved = '';
-    private string $schemaPath;
-    private $mpdValidatorOutput;
     public string $schematronOutput;
+
+    private string $mpd;
+    private string $schemaPath;
+    private string $mpdValidatorOutput;
 
     public function __construct(string $mpd = '')
     {
@@ -37,12 +38,12 @@ class Schematron
         $this->validateSchematron();
     }
 
-    public function getSchematronOutput()
+    public function getSchematronOutput(): string
     {
         return $this->schematronOutput;
     }
 
-    private function runSchematron()
+    private function runSchematron(): void
     {
 
         $sessionDir = '/tmp';// $session->getDir();
@@ -72,7 +73,7 @@ class Schematron
         chdir($currentDir);
     }
 
-    public function validateSchematron()
+    public function validateSchematron(): void
     {
         $logger = app(ModuleLogger::class);
         if (!$this->schematronOutput) {
@@ -118,7 +119,8 @@ class Schematron
         //TODO Schmatron analysis report
     }
 
-    private function findOrDownloadSchema()
+    //\TODO Should we return true/false here
+    private function findOrDownloadSchema(): void
     {
         global $session;
 
@@ -180,7 +182,7 @@ class Schematron
         $saveTo = "$sessionDir/schema.xsd";
         $fp = fopen($saveTo, 'w+');
         if ($fp === false) {
-            return null;
+            return;
         }
 
         $ch = curl_init($schemaUrl);
@@ -191,7 +193,7 @@ class Schematron
         curl_exec($ch);
 
         if (curl_errno($ch)) {
-            return null;
+            return;
         }
 
         $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 class MPDHandler
 {
-    private $url;
+    private string $url;
     private $mpd;
     private $dom;
     private $features;
@@ -30,7 +30,6 @@ class MPDHandler
     public function __construct()
     {
         $this->url = session()->get('mpd');
-        $this->mpd = null;
         $this->dom = null;
         $this->downloadTime = null;
         $this->features = null;
@@ -44,13 +43,13 @@ class MPDHandler
 
         $this->load();
         $this->parseXML();
-        //\TODO PHPStan recognises this as always false....
-//        if ($this->mpd) {
+
+        if ($this->mpd) {
             $this->schematron = new Schematron($this->mpd);
             $this->features = $this->recursiveExtractFeatures($this->dom);
             $this->extractProfiles();
             $this->loadSegmentUrls();
-//        }
+        }
     }
 
 
@@ -1141,7 +1140,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
             }
             $segmentUrl = str_replace(
                 array('$Bandwidth$', '$Number$', '$RepresentationID$', '$Time$'),
-                array($bandwidth, $index + $startNumber, $id, $timeReplace),
+                array(strval($bandwidth), strval($index + $startNumber), strval($id), strval($timeReplace)),
                 $media
             );
 
@@ -1196,7 +1195,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
             if (isset($_FILES['mpd']) && move_uploaded_file($_FILES['mpd']['tmp_name'], $localManifestLocation)) {
                 $this->url = $localManifestLocation;
                 $isLocal = true;
-            } elseif ($this->url && $this->url != '') {
+            } elseif ($this->url) {
                 if ($this->url[0] == '/') {
                     $isLocal = true;
                     copy($this->url, $localManifestLocation);
@@ -1208,7 +1207,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
             }
         }
 
-        if ($this->url && $this->url != '') {
+        if ($this->url) {
             if ($isLocal) {
                 $this->mpd = file_get_contents($localManifestLocation);
             } else {
