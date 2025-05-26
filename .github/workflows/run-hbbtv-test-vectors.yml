@@ -76,15 +76,12 @@ jobs:
       id: run_cli
     - uses: actions/upload-artifact@v4
       with:
-        name: cli-results
         path: Utils/results/
   get-result:
     runs-on: ubuntu-latest
     needs: run-test-vectors
     steps:
-    - uses: actions/download-artifact@v3
-      with:
-        name: cli-results
+    - uses: actions/download-artifact@v4
     - name: create joined result
       id: mangle
       run: |
