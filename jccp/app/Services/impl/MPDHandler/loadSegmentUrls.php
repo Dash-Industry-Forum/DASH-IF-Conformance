@@ -1,6 +1,4 @@
 <?php
-return;
-
 if (!$this->mpd || !$this->dom) {
     return;
 }

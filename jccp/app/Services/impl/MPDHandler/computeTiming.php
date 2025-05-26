@@ -42,8 +42,7 @@ if ($duration != 0) {
 $timeOffset = $presentationTimeOffset + $availabilityTimeOffset;
 $segmentTimings = array();
 
-$segmentTimeline = $segmentAccess['SegmentTimeline'];
-if ($segmentTimeline == null) {
+if (!array_key_exists("Segment(Timeline", $segmentAccess)) {
     $segmentStartTime = $start - $timeOffset;
 
     for ($index = 0; $index < $segmentCount; $index++) {
@@ -52,6 +51,7 @@ if ($segmentTimeline == null) {
     return $segmentTimings;
 }
 
+$segmentTimeline = $segmentAccess['SegmentTimeline'];
 
 $segmentEntries = $segmentTimeline[0]['S'];
 

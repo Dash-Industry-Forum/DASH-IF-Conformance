@@ -1,10 +1,16 @@
 <div>
   @session('mpd')
-    @foreach ($this->segmentUrls() as $url)
-      <p>Segment: <span>{{ $url }}</span></p>
+    <h4> Parsed segment urls </h4>
+    @foreach ($this->segmentUrls() as $periodUrl)
+        @foreach ($periodUrl as $adaptationUrl)
+            @foreach ($adaptationUrl as $representationUrl)
+{{ var_dump($representationUrl) }}
+            @endforeach
+        @endforeach
     @endforeach
 
-    <p>Resolved: <span>{{ $this->getManifestChecks() }}</span></p>
+    <h4>Resolved Manifest</h4>
+    <pre>{{ $this->getManifestChecks() }}</pre>
 
   @endsession
 
