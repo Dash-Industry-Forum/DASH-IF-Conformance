@@ -5,14 +5,19 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Services\MPDHandler;
 use App\Services\ModuleLogger;
+use Illuminate\View\View;
 
 class ManifestDetails extends Component
 {
+    /**
+     * This is a laravel-specific type, so we ignore it
+     * @phpstan-ignore missingType.property
+     **/
     protected $listeners = [
         'select-mpd' => '$refresh'
     ];
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.manifest-details');
     }
@@ -23,7 +28,7 @@ class ManifestDetails extends Component
         return $mpdHandler->getResolved();
     }
 
-    public function segmentUrls()
+    public function segmentUrls(): mixed
     {
         $mpdHandler = app(MPDHandler::class);
         return $mpdHandler->internalSegmentUrls();

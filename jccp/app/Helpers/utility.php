@@ -1,7 +1,7 @@
 <?php
 
 if (! function_exists('curlOptions')) {
-    function curlOptions(): array
+    function curlOptions(): mixed
     {
         return array(
             CURLOPT_FAILONERROR => true,
@@ -15,7 +15,7 @@ if (! function_exists('curlOptions')) {
 }
 
 if (! function_exists('formSegmentAccess')) {
-    function formSegmentAccess($highLevel, $lowLevel): array
+    function formSegmentAccess(mixed $highLevel, mixed $lowLevel): mixed
     {
         foreach ($highLevel as $key => $highValue) {
             $lowValue = array_key_exists($key, $lowLevel) ? $lowLevel[$key] : array();
@@ -35,10 +35,10 @@ if (! function_exists('formSegmentAccess')) {
 
 
 if (!function_exists('mergeSegmentAccess')) {
-    function mergeSegmentAccess($highLevel, $lowLevel): array
+    function mergeSegmentAccess(mixed $highLevel, mixed $lowLevel): mixed
     {
         if (!$highLevel && !$lowLevel) {
-            return array();
+            return null;
         }
         if (!$highLevel) {
             return $lowLevel;
@@ -61,7 +61,7 @@ if (! function_exists('isAbsoluteURL')) {
 
 
 if (! function_exists('timeParsing')) {
-    function timeParsing($var)
+    function timeParsing(string $var): int
     {
         $y = str_replace("P", "", $var);
         if (strpos($y, 'Y') !== false) { // Year

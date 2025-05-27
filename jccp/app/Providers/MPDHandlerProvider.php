@@ -10,7 +10,7 @@ class MPDHandlerProvider extends ServiceProvider
     /**
      * Register services.
      */
-    public $singletons = [
+    public mixed $singletons = [
         MPDHandler::class => MPDHandler::class
     ];
 

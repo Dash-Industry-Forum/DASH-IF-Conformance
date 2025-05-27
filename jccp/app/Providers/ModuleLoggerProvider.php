@@ -10,7 +10,7 @@ class ModuleLoggerProvider extends ServiceProvider
     /**
      * Register services.
      */
-    public $singletons = [
+    public mixed $singletons = [
         ModuleLogger::class => ModuleLogger::class
     ];
 

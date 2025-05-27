@@ -9,22 +9,22 @@ use Illuminate\Support\Facades\Log;
 class MPDHandler
 {
     private string $url;
-    private $mpd;
-    private $dom;
-    private $features;
-    private $profiles;
-    private $periodTimingInformation;
+    private mixed $mpd;
+    private mixed $dom;
+    private mixed $features;
+    private mixed $profiles;
+    private mixed $periodTimingInformation;
 
 
     private Schematron $schematron;
 
-    private $downloadTime; //Datetimeimmutable
+    private \DateTimeImmutable|null $downloadTime = null;
 
-    private $selectedPeriod;
-    private $selectedAdaptationSet;
-    private $selectedRepresentation;
+    private int $selectedPeriod = 0;
+    private int $selectedAdaptationSet = 0;
+    private int $selectedRepresentation = 0;
 
-    private $segmentUrls;
+    private mixed $segmentUrls;
 
 
     public function __construct()
@@ -54,7 +54,7 @@ class MPDHandler
 
 
 
-    public function refresh($content = null)
+    public function refresh(mixed $content = null): bool
     {
         $tmpMpd = $this->mpd;
         if (!$content) {
@@ -114,7 +114,7 @@ class MPDHandler
         return new \DateTimeImmutable("@$nextTime");
     }
 
-    public function getPeriodAttribute($idx, $attr): string | null
+    public function getPeriodAttribute(int $idx, string $attr): string | null
     {
         if (!array_key_exists($attr, $this->features["Period"][$idx])) {
             return null;
@@ -122,7 +122,7 @@ class MPDHandler
         return $this->features["Period"][$idx][$attr];
     }
 
-    public function getAdaptationSetAttribute($idx, $aIdx, $attr): string | null
+    public function getAdaptationSetAttribute(int $idx, int $aIdx, string $attr): string | null
     {
         $adaptationSetFeatures = $this->features["Period"][$idx]["AdaptationSet"][$aIdx];
         if (!array_key_exists($attr, $adaptationSetFeatures)) {
@@ -130,7 +130,7 @@ class MPDHandler
         }
         return $adaptationSetFeatures[$attr];
     }
-    public function getAdaptationSetChild($idx, $aIdx, $childName)
+    public function getAdaptationSetChild(int $idx, int $aIdx, string $childName): mixed
     {
         $adaptationSetFeatures = $this->features["Period"][$idx]["AdaptationSet"][$aIdx];
         if (!array_key_exists($childName, $adaptationSetFeatures)) {
@@ -138,7 +138,7 @@ class MPDHandler
         }
         return $adaptationSetFeatures[$childName];
     }
-    public function getRepresentationAttribute($idx, $aIdx, $rIdx, $attr): string | null
+    public function getRepresentationAttribute(int $idx, int $aIdx, int $rIdx, string $attr): string | null
     {
         $representationFeatures = $this->features["Period"][$idx]["AdaptationSet"][$aIdx]['Representation'][$rIdx];
         if (!array_key_exists($attr, $representationFeatures)) {
@@ -148,7 +148,7 @@ class MPDHandler
     }
 
 
-    public function downloadAll($assemble = true)
+    public function downloadAll(bool $assemble = true): void
     {
         global $session, $limit;
 
@@ -202,7 +202,7 @@ class MPDHandler
         }
     }
 
-    private function assembleSingle($source, $assembly, $sizeFile, $index)
+    private function assembleSingle(string $source, mixed $assembly, mixed $sizeFile, int $index): void
     {
         if (!$assembly) {
             return;
@@ -213,7 +213,7 @@ class MPDHandler
         fwrite($sizeFile, "$index " . strlen($toAppend) . "\n");
     }
 
-    public function downloadSegment($target, $url)
+    public function downloadSegment(string $target, string $url): void
     {
         $fp = fopen($target, "w+");
         if (!$fp) {
@@ -230,13 +230,13 @@ class MPDHandler
         fclose($fp);
     }
 
-    public function internalSegmentUrls()
+    public function internalSegmentUrls(): mixed
     {
         return $this->segmentUrls;
     }
 
 
-    public function loadSegmentUrls()
+    public function loadSegmentUrls(): void
     {
         if (!$this->mpd || !$this->dom) {
             return;
@@ -333,7 +333,7 @@ class MPDHandler
         }
     }
 
-    public function getRoles($period, $adaptation)
+    public function getRoles(int $period, int $adaptation): mixed
     {
         $res = array();
 
@@ -361,7 +361,7 @@ class MPDHandler
         return $res;
     }
 
-    public function getPeriodIds()
+    public function getPeriodIds(): mixed
     {
         if (!$this->dom) {
             return array();
@@ -382,7 +382,7 @@ class MPDHandler
         return $result;
     }
 
-    public function getAdaptationSetIds($periodId)
+    public function getAdaptationSetIds(int $periodId): mixed
     {
         if (!$this->dom) {
             return array();
@@ -411,7 +411,7 @@ class MPDHandler
 
         return $result;
     }
-    public function getRepresentationIds($periodId, $adaptationSetId)
+    public function getRepresentationIds(int $periodId, int $adaptationSetId): mixed
     {
         if (!$this->dom) {
             return array();
@@ -451,52 +451,52 @@ class MPDHandler
     }
 
 
-    public function selectPeriod($period)
+    public function selectPeriod(int $period): void
     {
         $this->selectedPeriod = $period;
     }
-    public function selectNextPeriod()
+    public function selectNextPeriod(): void
     {
         $this->selectedPeriod++;
     }
-    public function getSelectedPeriod()
+    public function getSelectedPeriod(): int
     {
         return $this->selectedPeriod;
     }
 
-    public function selectAdaptationSet($adaptationSet)
+    public function selectAdaptationSet(int $adaptationSet): void
     {
         $this->selectedAdaptationSet = $adaptationSet;
     }
-    public function selectNextAdaptationSet()
+    public function selectNextAdaptationSet(): void
     {
         $this->selectedAdaptationSet++;
     }
-    public function getSelectedAdaptationSet()
+    public function getSelectedAdaptationSet(): int
     {
         return $this->selectedAdaptationSet;
     }
 
-    public function selectRepresentation($representation)
+    public function selectRepresentation(int $representation): void
     {
         $this->selectedRepresentation = $representation;
     }
-    public function selectNextRepresentation()
+    public function selectNextRepresentation(): void
     {
         $this->selectedRepresentation++;
     }
-    public function getSelectedRepresentation()
+    public function getSelectedRepresentation(): int
     {
         return $this->selectedRepresentation;
     }
 
-    public function getSchematronOutput()
+    public function getSchematronOutput(): string
     {
         return $this->schematron->schematronOutput;
     }
 
 
-    private function extractProfiles()
+    private function extractProfiles(): void
     {
         if (!$this->features) {
             return;
@@ -537,7 +537,7 @@ class MPDHandler
         }
     }
 
-    private function recursiveExtractFeatures($node)
+    private function recursiveExtractFeatures(mixed $node): mixed
     {
         if (!$node) {
             return null;
@@ -563,12 +563,12 @@ class MPDHandler
         return $array;
     }
 
-    public function getPeriodTimingInfo($periodIndex = null)
+    public function getPeriodTimingInfo(int $periodIndex = -1): mixed
     {
-        return $this->getPeriodDurationInfo($periodIndex ? $periodIndex : $this->selectedPeriod);
+        return $this->getPeriodDurationInfo($periodIndex  == -1 ?  $this->selectedPeriod : $periodIndex);
     }
 
-    private function getPeriodDurationInfo($period)
+    private function getPeriodDurationInfo(int $period): mixed
     {
         global $period_timing_info;
 
@@ -582,7 +582,7 @@ class MPDHandler
         return $period_timing_info;
     }
 
-    private function getDurationForAllPeriods()
+    private function getDurationForAllPeriods(): void
     {
         $periods = $this->features['Period'];
 
@@ -653,10 +653,10 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
         }
     }
 
-    public function getPeriodBaseUrl($periodIndex = null)
+    public function getPeriodBaseUrl(int $periodIndex = -1): mixed
     {
         $periodIdx = $periodIndex;
-        if ($periodIdx == null) {
+        if ($periodIdx == -1) {
             $periodIdx = $this->selectedPeriod;
         }
 
@@ -721,14 +721,11 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
         return $adaptationUrls;
     }
 
-    public function getSegmentUrls($periodIndex = null)
+    public function getSegmentUrls(int $periodIndex = -1): mixed
     {
         global $segment_accesses;
 
-        $periodIdx = $periodIndex;
-        if ($periodIdx == null) {
-            $periodIdx = $this->selectedPeriod;
-        }
+        $periodIdx = $periodIndex == -1 ? $this->selectedPeriod : $periodIndex;
 
         $periodTimingInfo = $this->getPeriodTimingInfo($periodIdx);
         $baseUrls = $this->getPeriodBaseUrl($periodIdx);
@@ -795,13 +792,13 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
     }
 
     public function getFrameRate(
-        $periodIndex = null,
-        $adaptationIndex = null,
-        $representationIndex = null
-    ) {
-        $period = ($periodIndex == null ? $this->getSelectedPeriod() : $periodIndex);
-        $adaptation = ($adaptationIndex == null ? $this->getSelectedAdaptationSet() : $adaptationIndex);
-        $representation = ($representationIndex == null ? $this->getSelectedRepresentation() : $representationIndex);
+        int $periodIndex = -1,
+        int $adaptationIndex = -1,
+        int $representationIndex = -1
+    ): mixed {
+        $period = ($periodIndex == -1 ? $this->getSelectedPeriod() : $periodIndex);
+        $adaptation = ($adaptationIndex == -1 ? $this->getSelectedAdaptationSet() : $adaptationIndex);
+        $representation = ($representationIndex == -1 ? $this->getSelectedRepresentation() : $representationIndex);
 
         $framerate = 0;
 
@@ -844,24 +841,23 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
     }
 
     public function getContentType(
-        $periodIndex = null,
-        $adaptationIndex = null,
-        $representationIndex = null
-    ) {
-        $period = ($periodIndex == null ? $this->getSelectedPeriod() : $periodIndex);
-        $adaptation = ($adaptationIndex == null ? $this->getSelectedAdaptationSet() : $adaptationIndex);
+        int $periodIndex = -1,
+        int $adaptationIndex = -1,
+    ): string {
+        $period = ($periodIndex == -1 ? $this->getSelectedPeriod() : $periodIndex);
+        $adaptation = ($adaptationIndex == -1 ? $this->getSelectedAdaptationSet() : $adaptationIndex);
 
         $periods = $this->mpd->getElementsByTagName("Period");
 
         if ($period >= count($periods)) {
-            return null;
+            return '';
         }
 
         $thisPeriod = $periods->item($period);
 
         $adaptationSets = $thisPeriod->getElementsByTagName("AdaptationSet");
         if ($adaptation >= count($adaptationSets)) {
-            return null;
+            return '';
         }
 
 
@@ -871,10 +867,10 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
 
 
     private function computeTiming(
-        $presentationDuration,
-        $segmentAccess,
-        $segmentAccessType
-    ) {
+        float $presentationDuration,
+        mixed $segmentAccess,
+        string $segmentAccessType
+    ): mixed {
         if ($segmentAccessType == 'SegmentBase') {
             return array(0);
         }
@@ -990,12 +986,12 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
     }
 
     private function computeDynamicIntervals(
-        $adaptationSetId,
-        $representationId,
-        $segmentAccess,
-        $segmentTimings,
-        $segmentCount
-    ) {
+        int $adaptationSetId,
+        int $representationId,
+        mixed $segmentAccess,
+        mixed $segmentTimings,
+        int $segmentCount
+    ): mixed {
         ///\Todo Bring this file up to naming specs
         global $period_timing_info, $modules, $availability_times;
 
@@ -1083,13 +1079,13 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
 
 
     private function computeUrls(
-        $representation,
-        $adaptationSetId,
-        $representationId,
-        $segmentAccess,
-        $segmentInfo,
-        $baseUrl
-    ) {
+        mixed $representation,
+        int $adaptationSetId,
+        int $representationId,
+        mixed $segmentAccess,
+        mixed $segmentInfo,
+        string $baseUrl
+    ): mixed {
         $initialization = $segmentAccess['initialization'];
         $media = $segmentAccess['media'];
         $bandwidth = $representation['bandwidth'];
@@ -1181,7 +1177,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
         return $segmentUrls;
     }
 
-    private function load()
+    private function load(): void
     {
         global $session;
 
@@ -1225,7 +1221,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
         }
     }
 
-    private function parseXML()
+    private function parseXML(): void
     {
         if (!$this->mpd) {
             return;
@@ -1256,17 +1252,17 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
         $this->dom = $main_element_nodes->item(0);
     }
 
-    public function getUrl()
+    public function getUrl(): string
     {
         return $this->url;
     }
 
-    public function getMPD()
+    public function getMPD(): string
     {
         return $this->mpd;
     }
 
-    public function getDom()
+    public function getDom(): \DOM\Element
     {
         return $this->dom;
     }
@@ -1276,11 +1272,11 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
         return $this->schematron->resolved;
     }
 
-    public function getFeatures()
+    public function getFeatures(): mixed
     {
         return $this->features;
     }
-    public function getFeature($featureName)
+    public function getFeature(string $featureName): mixed
     {
         if (!array_key_exists($featureName, $this->features)) {
             return null;
@@ -1288,17 +1284,17 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
         return $this->features[$featureName];
     }
 
-    public function getProfiles()
+    public function getProfiles(): string
     {
         return $this->profiles;
     }
 
-    public function getAllPeriodFeatures()
+    public function getAllPeriodFeatures(): mixed
     {
         return $this->features['Period'];
     }
 
-    public function getCurrentPeriodFeatures()
+    public function getCurrentPeriodFeatures(): mixed
     {
         return $this->features['Period'][$this->selectedPeriod];
     }

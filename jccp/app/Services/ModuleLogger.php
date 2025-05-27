@@ -6,25 +6,28 @@ use Illuminate\Support\Facades\Log;
 
 class ModuleLogger
 {
-    public $logfile;
+    public string $logfile = '';
 
-    private $entries = [];
+    private mixed $entries = [];
 
-    private $currentModule;
-    private $currentHook;
+    private string $currentModule = '';
+    private string $currentHook = '';
 
-    private $streamSource;
-    private $parseSegments = false;
+    private string $streamSource = '';
+    private bool $parseSegments = false;
 
-    private $verdict;
+    private string $verdict = 'PASS';
 
-    private $features;
+    private mixed $features = [];
 
-    private $validatorMessages;
+    /**
+     * @var array<string> $validatorMessages;
+     **/
+    private array $validatorMessages;
 
-    private $id;
+    private string $id;
 
-    public function __construct($id = null, $module = null, $hook = null)
+    public function __construct(string $id = '', string $module = '', string $hook = '')
     {
         $this->id = $id;
         Log::info("Construct!");
@@ -36,12 +39,12 @@ class ModuleLogger
         }
     }
 
-    public function getID()
+    public function getID(): string
     {
         return $this->id;
     }
 
-    public function reset($id = null)
+    public function reset(string $id = ''): void
     {
         /*
         global $session;
@@ -62,7 +65,10 @@ class ModuleLogger
         $this->parseSegments = false;
     }
 
-    public function selectVerdict($verdictList)
+    /**
+     * @param array<string> $verdictList
+     **/
+    public function selectVerdict(array $verdictList): string
     {
         $result = "PASS";
         foreach ($verdictList as $i => $verdict) {
@@ -76,11 +82,11 @@ class ModuleLogger
         return $result;
     }
 
-    public function merge($l)
+    public function merge(mixed $l): void
     {
         $this->entries = array_merge_recursive($this->entries, $l->entries);
 
-        $this->verdict = $this->selectVerdict($this->verdict);
+        $this->verdict = $this->selectVerdict([$l->verdict]);
         $this->entries['verdict'] = $this->selectVerdict($this->entries['verdict']);
         foreach ($this->entries as $module => &$moduleValues) {
             if ($module == 'verdict') {
@@ -98,12 +104,12 @@ class ModuleLogger
         }
     }
 
-    public function setParseSegments($parseSegments)
+    public function setParseSegments(bool $parseSegments): void
     {
         $this->parseSegments = $parseSegments;
     }
 
-    public function testCountCurrentHook()
+    public function testCountCurrentHook(): int
     {
         if (!array_key_exists($this->currentModule, $this->entries)) {
             return 0;
@@ -117,28 +123,28 @@ class ModuleLogger
         return sizeof($this->entries[$this->currentModule][$this->currentHook]['test']);
     }
 
-    public function setSource($sourceName)
+    public function setSource(string $sourceName): void
     {
         $this->streamSource = $sourceName;
     }
 
-    public function setModule($moduleName)
+    public function setModule(string $moduleName): void
     {
         $this->currentModule = $moduleName;
         $this->currentHook = '';
     }
 
-    public function getCurrentModule()
+    public function getCurrentModule(): string
     {
         return $this->currentModule;
     }
 
-    public function getCurrentHook()
+    public function getCurrentHook(): string
     {
         return $this->currentHook;
     }
 
-    public function getModuleVerdict($moduleName)
+    public function getModuleVerdict(string $moduleName): string
     {
         if (!array_key_exists($moduleName, $this->entries)) {
             return "PASS";
@@ -146,17 +152,24 @@ class ModuleLogger
         return $this->entries[$moduleName]['verdict'];
     }
 
-    public function setHook($hookName)
+    public function setHook(string $hookName): void
     {
         $this->currentHook = $hookName;
     }
-    public function getHook()
+    public function getHook(): string
     {
         return $this->currentHook;
     }
 
-    public function test($spec, $section, $test, $check, $fail_type, $msg_succ, $msg_fail)
-    {
+    public function test(
+        string $spec,
+        string $section,
+        string $test,
+        bool $check,
+        string $fail_type,
+        string $msg_succ,
+        string $msg_fail
+    ): bool {
         if ($check) {
             $this->addTestResult(
                 $spec,
@@ -166,7 +179,7 @@ class ModuleLogger
                 "PASS"
             );
             return true;
-        } else {
+        }
             $this->addTestResult(
                 $spec,
                 $section,
@@ -175,11 +188,15 @@ class ModuleLogger
                 $fail_type
             );
             return false;
-        }
     }
 
-    public function addTestResult($spec, $section, $test, $result, $severity)
-    {
+    public function addTestResult(
+        string $spec,
+        string $section,
+        string $test,
+        string $result,
+        string $severity
+    ): void {
         if (!array_key_exists($this->currentModule, $this->entries)) {
             $this->entries[$this->currentModule] = array();
         }
@@ -224,7 +241,7 @@ class ModuleLogger
         $this->propagateSeverity($severity);
     }
 
-    private function propagateSeverity($severity)
+    private function propagateSeverity(string $severity): void
     {
         if ($severity == "FAIL") {
             $this->entries[$this->currentModule][$this->currentHook]['verdict'] = "FAIL";
@@ -261,27 +278,27 @@ class ModuleLogger
         }
     }
 
-    public function error($message)
+    public function error(string $message): void
     {
         $this->addEntry('error', $message);
     }
 
-    public function message($message)
+    public function message(string $message): void
     {
         $this->addEntry('info', $message);
     }
 
-    public function debug($message)
+    public function debug(string $message): void
     {
         $this->addEntry('debug', $message);
     }
 
-    public function validatorMessage($message)
+    public function validatorMessage(string $message): void
     {
         $this->validatorMessages[] = $message;
     }
 
-    private function addEntry($type, $entry)
+    private function addEntry(string $type, mixed $entry): void
     {
 
         if (!array_key_exists($this->currentModule, $this->entries)) {
@@ -297,7 +314,7 @@ class ModuleLogger
         $this->write();
     }
 
-    public function addFeature($feature)
+    public function addFeature(string $feature): void
     {
         if (!array_key_exists($this->currentModule, $this->features)) {
             $this->features[$this->currentModule] = array();
@@ -308,7 +325,7 @@ class ModuleLogger
         $this->features[$this->currentModule][$this->currentHook][] = $feature;
     }
 
-    public function hasFeature($feature)
+    public function hasFeature(string $feature): bool
     {
         if (!array_key_exists($this->currentModule, $this->features)) {
             return false;
@@ -324,7 +341,7 @@ class ModuleLogger
         return false;
     }
 
-    public function write()
+    public function write(): void
     {
         if ($this->logfile) {
             $this->entries['Stats']['LastWritten'] = date("Y-m-d h:i:s");
@@ -332,7 +349,7 @@ class ModuleLogger
         }
     }
 
-    public function asJSON($compact = false)
+    public function asJSON(bool $compact = false): string
     {
         if (!$compact) {
             return \json_encode($this->asArray());
@@ -360,7 +377,10 @@ class ModuleLogger
         return \json_encode($this->entries);
     }
 
-    public function asArray()
+    /**
+     * @return array<string, mixed>
+     **/
+    public function asArray(): array
     {
         $result = array();
         $result['parse_segments'] = $this->parseSegments;
