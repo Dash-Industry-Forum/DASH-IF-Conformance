@@ -33,11 +33,17 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN  }}
+      - name: Calculate short git commit SHA
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
           push: true
           tags: ghcr.io/${{ env.REPOSITORY_LC }}:${{inputs.docker_tag}}
+          build-args: |
+            SHORT_SHA:${{ env.COMMIT_SHORT_SHA }}
       - name: Login to production server and deploy
         uses: fifsky/ssh-action@v0.0.6
         with:
