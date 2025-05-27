@@ -351,6 +351,11 @@ class MPDHandler
         return $this->features[$featureName];
     }
 
+    protected function setFeatures($features)
+    {
+        $this->features = $features;
+    }
+
     public function getProfiles()
     {
         return $this->profiles;

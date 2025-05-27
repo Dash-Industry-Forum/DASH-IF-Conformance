@@ -2,6 +2,8 @@
 
 namespace DASHIF;
 
+require_once __DIR__ . '/../Utils/moduleInterface.php';
+
 class ModuleDolby extends ModuleInterface
 {
     public function __construct()
@@ -13,7 +15,14 @@ class ModuleDolby extends ModuleInterface
     protected function addCLIArguments()
     {
         global $argumentParser;
-        $argumentParser->addOption("dolby", "o", "dolby", "Enable Dolby checking");
+        if ($argumentParser) {
+            $argumentParser->addOption(
+                "dolby",
+                "o",
+                "dolby",
+                "Enable Dolby checking"
+            );
+        }
     }
 
     public function handleArguments()
@@ -24,31 +33,33 @@ class ModuleDolby extends ModuleInterface
         }
     }
 
-
     public function hookRepresentation()
     {
         parent::hookRepresentation();
-        $this->validateDolby();
+
+        global $validatorWrapper, $mpdHandler;
+
+        $thisRepresentation = array(
+            $mpdHandler->getSelectedPeriod(),
+            $mpdHandler->getSelectedAdaptationSet(),
+            $mpdHandler->getSelectedRepresentation()
+        );
+
+        $validatorWrapper->analyzeSingle(
+            $thisRepresentation,
+            $this,
+            'validateDolby'
+        );
     }
 
-    private function validateDolby()
+    public function validateDolby($representation)
     {
-        include 'impl/validateDolby.php';
+        return include 'impl/validateDolby.php';
     }
 
-    private function compareTocWithDac4($atomInfo)
+    public function compareTocWithDac4($representation)
     {
-        include 'impl/compareTocWithDac4.php';
-    }
-
-    private function getDac4($atomInfo)
-    {
-        return include 'impl/getDac4.php';
-    }
-
-    private function getToc($atomInfo)
-    {
-        return include 'impl/getToc.php';
+        return include 'impl/compareTocWithDac4.php';
     }
 }
 
