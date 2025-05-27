@@ -55,7 +55,7 @@ foreach ($profile_specific_MPDs as $profile_specific_MPD) {
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
         "MPD",
-        "??",
+        "Unknown section",
         $str == '',
         "FAIL",
         "All entries found for profile " . $mpdProfilesList[$ind],
