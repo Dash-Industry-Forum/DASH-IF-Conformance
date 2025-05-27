@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Services\ModuleLogger;
 use App\Services\Schematron;
+use App\Services\MPDSelection;
 use Illuminate\Support\Facades\Log;
 
 class MPDHandler
@@ -20,11 +21,9 @@ class MPDHandler
 
     private \DateTimeImmutable|null $downloadTime = null;
 
-    private int $selectedPeriod = 0;
-    private int $selectedAdaptationSet = 0;
-    private int $selectedRepresentation = 0;
-
     private mixed $segmentUrls;
+
+    public MPDSelection $selected;
 
 
     public function __construct()
@@ -34,9 +33,6 @@ class MPDHandler
         $this->downloadTime = null;
         $this->features = null;
         $this->profiles = null;
-        $this->selectedPeriod = 0;
-        $this->selectedAdaptationSet = 0;
-        $this->selectedRepresentation = 0;
         $this->periodTimingInformation = array();
         $this->schematron = new Schematron();
         $this->segmentUrls = array();
@@ -450,46 +446,6 @@ class MPDHandler
         return $result;
     }
 
-
-    public function selectPeriod(int $period): void
-    {
-        $this->selectedPeriod = $period;
-    }
-    public function selectNextPeriod(): void
-    {
-        $this->selectedPeriod++;
-    }
-    public function getSelectedPeriod(): int
-    {
-        return $this->selectedPeriod;
-    }
-
-    public function selectAdaptationSet(int $adaptationSet): void
-    {
-        $this->selectedAdaptationSet = $adaptationSet;
-    }
-    public function selectNextAdaptationSet(): void
-    {
-        $this->selectedAdaptationSet++;
-    }
-    public function getSelectedAdaptationSet(): int
-    {
-        return $this->selectedAdaptationSet;
-    }
-
-    public function selectRepresentation(int $representation): void
-    {
-        $this->selectedRepresentation = $representation;
-    }
-    public function selectNextRepresentation(): void
-    {
-        $this->selectedRepresentation++;
-    }
-    public function getSelectedRepresentation(): int
-    {
-        return $this->selectedRepresentation;
-    }
-
     public function getSchematronOutput(): string
     {
         return $this->schematron->schematronOutput;
@@ -565,7 +521,7 @@ class MPDHandler
 
     public function getPeriodTimingInfo(int $periodIndex = -1): mixed
     {
-        return $this->getPeriodDurationInfo($periodIndex  == -1 ?  $this->selectedPeriod : $periodIndex);
+        return $this->getPeriodDurationInfo($this->selected->getSelectedPeriod($periodIndex));
     }
 
     private function getPeriodDurationInfo(int $period): mixed
@@ -655,10 +611,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
 
     public function getPeriodBaseUrl(int $periodIndex = -1): mixed
     {
-        $periodIdx = $periodIndex;
-        if ($periodIdx == -1) {
-            $periodIdx = $this->selectedPeriod;
-        }
+        $periodIdx = $this->selected->getSelectedPeriod($periodIndex);
 
         $mpdBaseUrl = null;
         if (array_key_exists("BaseURL", $this->features)) {
@@ -725,7 +678,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
     {
         global $segment_accesses;
 
-        $periodIdx = $periodIndex == -1 ? $this->selectedPeriod : $periodIndex;
+        $periodIdx = $this->selected->getSelectedPeriod($periodIndex);
 
         $periodTimingInfo = $this->getPeriodTimingInfo($periodIdx);
         $baseUrls = $this->getPeriodBaseUrl($periodIdx);
@@ -796,9 +749,9 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
         int $adaptationIndex = -1,
         int $representationIndex = -1
     ): mixed {
-        $period = ($periodIndex == -1 ? $this->getSelectedPeriod() : $periodIndex);
-        $adaptation = ($adaptationIndex == -1 ? $this->getSelectedAdaptationSet() : $adaptationIndex);
-        $representation = ($representationIndex == -1 ? $this->getSelectedRepresentation() : $representationIndex);
+        $period = $this->selected->getSelectedPeriod($periodIndex);
+        $adaptation = $this->selected->getSelectedAdaptationSet($adaptationIndex);
+        $representation = $this->selected->getSelectedRepresentation($representationIndex);
 
         $framerate = 0;
 
@@ -844,8 +797,8 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
         int $periodIndex = -1,
         int $adaptationIndex = -1,
     ): string {
-        $period = ($periodIndex == -1 ? $this->getSelectedPeriod() : $periodIndex);
-        $adaptation = ($adaptationIndex == -1 ? $this->getSelectedAdaptationSet() : $adaptationIndex);
+        $period = $this->selected->getSelectedPeriod($periodIndex);
+        $adaptation = $this->selected->getSelectedAdaptationSet($adaptationIndex);
 
         $periods = $this->mpd->getElementsByTagName("Period");
 
@@ -1022,7 +975,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
 
         $avgsum = array();
         $sumbandwidth = array();
-        $adaptation_sets = $this->features['Period'][$this->selectedPeriod]['AdaptationSet'];
+        $adaptation_sets = $this->features['Period'][$this->selected->getSelectedPeriod()]['AdaptationSet'];
         for ($k = 0; $k < sizeof($adaptation_sets); $k++) {
             $representations = $adaptation_sets[$k]['Representation'];
             $sum = 0;
@@ -1296,6 +1249,6 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
 
     public function getCurrentPeriodFeatures(): mixed
     {
-        return $this->features['Period'][$this->selectedPeriod];
+        return $this->features['Period'][$this->selected->getSelectedPeriod()];
     }
 }
