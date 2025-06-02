@@ -23,9 +23,9 @@ class ModuleLogger
     /**
      * @var array<string> $validatorMessages;
      **/
-    private array $validatorMessages;
+    private array $validatorMessages = array();
 
-    private string $id;
+    private string $id = '';
 
     public function __construct(string $id = '', string $module = '', string $hook = '')
     {

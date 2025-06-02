@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Services\ModuleLogger;
 use App\Services\Schematron;
 use App\Services\MPDSelection;
+use App\Services\Manifest\Period;
 use Illuminate\Support\Facades\Log;
 
 class MPDHandler
@@ -17,6 +18,11 @@ class MPDHandler
     private mixed $periodTimingInformation;
 
 
+    /**
+     * @var array<Period> $periods;
+     **/
+    private array $periods = [];
+
     private Schematron $schematron;
 
     private \DateTimeImmutable|null $downloadTime = null;
@@ -26,25 +32,37 @@ class MPDHandler
     public MPDSelection $selected;
 
 
+
     public function __construct()
     {
+        $this->schematron = new Schematron();
+        $this->selected = new MPDSelection();
+
         $this->url = session()->get('mpd');
         $this->dom = null;
         $this->downloadTime = null;
         $this->features = null;
         $this->profiles = null;
         $this->periodTimingInformation = array();
-        $this->schematron = new Schematron();
         $this->segmentUrls = array();
 
         $this->load();
         $this->parseXML();
+        $this->setPeriods();
 
         if ($this->mpd) {
             $this->schematron = new Schematron($this->mpd);
             $this->features = $this->recursiveExtractFeatures($this->dom);
             $this->extractProfiles();
             $this->loadSegmentUrls();
+        }
+    }
+
+    private function setPeriods(): void
+    {
+        $this->periods = array();
+        foreach ($this->dom->getElementsByTagName('Period') as $period) {
+            $this->periods[] = new Period($period);
         }
     }
 
@@ -110,22 +128,15 @@ class MPDHandler
         return new \DateTimeImmutable("@$nextTime");
     }
 
-    public function getPeriodAttribute(int $idx, string $attr): string | null
+    public function getPeriod(int $idx = -1): Period | null
     {
-        if (!array_key_exists($attr, $this->features["Period"][$idx])) {
+        $index = $this->selected->getSelectedPeriod($idx);
+        if ($index >= count($this->periods)) {
             return null;
         }
-        return $this->features["Period"][$idx][$attr];
+        return $this->periods[$index];
     }
 
-    public function getAdaptationSetAttribute(int $idx, int $aIdx, string $attr): string | null
-    {
-        $adaptationSetFeatures = $this->features["Period"][$idx]["AdaptationSet"][$aIdx];
-        if (!array_key_exists($attr, $adaptationSetFeatures)) {
-            return null;
-        }
-        return $adaptationSetFeatures[$attr];
-    }
     public function getAdaptationSetChild(int $idx, int $aIdx, string $childName): mixed
     {
         $adaptationSetFeatures = $this->features["Period"][$idx]["AdaptationSet"][$aIdx];
@@ -133,14 +144,6 @@ class MPDHandler
             return null;
         }
         return $adaptationSetFeatures[$childName];
-    }
-    public function getRepresentationAttribute(int $idx, int $aIdx, int $rIdx, string $attr): string | null
-    {
-        $representationFeatures = $this->features["Period"][$idx]["AdaptationSet"][$aIdx]['Representation'][$rIdx];
-        if (!array_key_exists($attr, $representationFeatures)) {
-            return null;
-        }
-        return $representationFeatures[$attr];
     }
 
 
@@ -357,92 +360,15 @@ class MPDHandler
         return $res;
     }
 
-    public function getPeriodIds(): mixed
+    /**
+     * @return array<string>
+     **/
+    public function getPeriodIds(): array
     {
-        if (!$this->dom) {
-            return array();
-        }
-
         $result = array();
-        $periodElements = $this->dom->getElementsByTagName("Period");
-
-        foreach ($periodElements as $p) {
-            if ($p->hasAttribute("id")) {
-                $result[] = $p->getAttribute("id");
-            } else {
-                $result[] = null;
-            }
+        foreach ($this->periods as $p) {
+            $result[] = $p->getId();
         }
-
-
-        return $result;
-    }
-
-    public function getAdaptationSetIds(int $periodId): mixed
-    {
-        if (!$this->dom) {
-            return array();
-        }
-
-        $result = array();
-        $periodElements = $this->dom->getElementsByTagName("Period");
-
-        foreach ($periodElements as $p) {
-            if (!$p->hasAttribute("id")) {
-                continue;
-            }
-            if ($periodId != $p->getAttribute("id")) {
-                continue;
-            }
-            $adaptationElements = $p->getElementsByTagName("AdaptationSet");
-            foreach ($adaptationElements as $a) {
-                if ($a->hasAttribute("id")) {
-                    $result[] = $a->getAttribute("id");
-                } else {
-                    $result[] = null;
-                }
-            }
-        }
-
-
-        return $result;
-    }
-    public function getRepresentationIds(int $periodId, int $adaptationSetId): mixed
-    {
-        if (!$this->dom) {
-            return array();
-        }
-
-        $result = array();
-        $periodElements = $this->dom->getElementsByTagName("Period");
-
-        foreach ($periodElements as $p) {
-            if (!$p->hasAttribute("id")) {
-                continue;
-            }
-            if ($periodId != $p->getAttribute("id")) {
-                continue;
-            }
-            $adaptationElements = $p->getElementsByTagName("AdaptationSet");
-            foreach ($adaptationElements as $a) {
-                if (!$a->hasAttribute("id")) {
-                    continue;
-                }
-                if ($adaptationSetId != $a->getAttribute("id")) {
-                    continue;
-                }
-                $representationElements = $a->getElementsByTagName("Representation");
-                foreach ($representationElements as $r) {
-                    if ($r->hasAttribute("id")) {
-                        $result[] = $r->getAttribute("id");
-                    } else {
-                        $result[] = null;
-                    }
-                }
-            }
-        }
-
-
         return $result;
     }
 

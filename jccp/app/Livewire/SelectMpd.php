@@ -19,7 +19,7 @@ class SelectMpd extends Component
     public function render(): View
     {
         if ($this->mpd == '') {
-            $this->mpd = session()->get('mpd');
+            $this->mpd = session()->get('mpd') ?? '';
         }
         return view('livewire.select-mpd');
     }
