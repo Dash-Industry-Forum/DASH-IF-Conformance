@@ -28,6 +28,12 @@ class ManifestDetails extends Component
         return $mpdHandler->getResolved();
     }
 
+    public function getFeatures(): mixed
+    {
+        $mpdHandler = app(MPDHandler::class);
+        return $mpdHandler->getFeatures();
+    }
+
     public function segmentUrls(): mixed
     {
         $mpdHandler = app(MPDHandler::class);

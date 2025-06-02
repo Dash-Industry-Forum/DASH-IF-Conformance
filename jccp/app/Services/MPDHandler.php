@@ -14,9 +14,13 @@ class MPDHandler
     private mixed $mpd;
     private mixed $dom;
     private mixed $features;
-    private mixed $profiles;
+    private mixed $oldProfiles;
     private mixed $periodTimingInformation;
 
+
+    private \DateTimeImmutable|null $downloadTime = null;
+
+    private mixed $segmentUrls;
 
     /**
      * @var array<Period> $periods;
@@ -24,10 +28,6 @@ class MPDHandler
     private array $periods = [];
 
     private Schematron $schematron;
-
-    private \DateTimeImmutable|null $downloadTime = null;
-
-    private mixed $segmentUrls;
 
     public MPDSelection $selected;
 
@@ -42,7 +42,7 @@ class MPDHandler
         $this->dom = null;
         $this->downloadTime = null;
         $this->features = null;
-        $this->profiles = null;
+        $this->oldProfiles = null;
         $this->periodTimingInformation = array();
         $this->segmentUrls = array();
 
@@ -387,7 +387,7 @@ class MPDHandler
             return;
         }
 
-        $this->profiles = array();
+        $this->oldProfiles = array();
         $periods = $this->features['Period'];
 
         foreach ($periods as $period) {
@@ -415,7 +415,7 @@ class MPDHandler
                 }
                 $adapt_profiles[] = $rep_profiles;
             }
-            $this->profiles[] = $adapt_profiles;
+            $this->oldProfiles[] = $adapt_profiles;
         }
     }
 
@@ -1163,9 +1163,17 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
         return $this->features[$featureName];
     }
 
-    public function getProfiles(): string
+    public function getProfiles(): mixed
     {
-        return $this->profiles;
+        return $this->oldProfiles;
+    }
+
+    /**
+     * @return array<string>
+     **/
+    public function getMPDProfiles(): array
+    {
+        return array();
     }
 
     public function getAllPeriodFeatures(): mixed

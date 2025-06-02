@@ -15,13 +15,6 @@ class ManifestController extends Controller
         $logger = app(ModuleLogger::class);
         $logger->validatorMessage("testmsg");
 
-        //$url2  = "https://dash.akamaized.net/dash264/TestCasesUHD/2b/11/MultiRate.mpd";
-        //$mpd = new MPDHandler($url2);
-
-
-        /*
-        return $logger->asJSON();
-         */
         return view('mpd');
     }
 
