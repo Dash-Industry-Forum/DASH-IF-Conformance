@@ -352,7 +352,7 @@ class ModuleLogger
     public function asJSON(bool $compact = false): string
     {
         if (!$compact) {
-            return \json_encode($this->asArray());
+            return \json_encode($this->asArray(), \JSON_PRETTY_PRINT);
         }
 
         $entries = $this->entries;

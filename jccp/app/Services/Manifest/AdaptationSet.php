@@ -9,7 +9,7 @@ class AdaptationSet
     private \DOMElement $dom;
 
     /**
-     * @var array<AdaptationSet> $representations;
+     * @var array<Representation> $representations;
      */
     private array $representations;
 
@@ -30,6 +30,27 @@ class AdaptationSet
     public function getAttribute(string $attribute): string
     {
         return $this->dom->getAttribute($attribute);
+    }
+
+    /**
+     * @param array<string> $parentProfiles;
+     * @return array<string>
+     **/
+    public function getProfiles(array $parentProfiles): array
+    {
+        $profiles = $this->dom->getAttribute('profiles');
+        if ($profiles != '') {
+            return explode(',', $profiles);
+        }
+        return $parentProfiles;
+    }
+
+    /**
+     * @return array<Representation>
+     **/
+    public function getRepresentations(): array
+    {
+        return $this->representations;
     }
 
     /**

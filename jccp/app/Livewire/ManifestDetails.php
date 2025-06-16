@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Services\MPDHandler;
 use App\Services\ModuleLogger;
+use App\Modules\DashIOP;
 use Illuminate\View\View;
 
 class ManifestDetails extends Component
@@ -43,6 +44,8 @@ class ManifestDetails extends Component
     public function logs(): string
     {
         $logger = app(ModuleLogger::class);
+        $dashIOP = new DashIOP();
+        $dashIOP->MPDHook();
         return $logger->asJSON();
     }
 }

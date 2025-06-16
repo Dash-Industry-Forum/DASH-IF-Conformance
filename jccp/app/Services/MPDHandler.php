@@ -7,12 +7,14 @@ use App\Services\Schematron;
 use App\Services\MPDSelection;
 use App\Services\Manifest\Period;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
+
 
 class MPDHandler
 {
-    private string $url;
-    private mixed $mpd;
-    private mixed $dom;
+    private string $url = '';
+    private string $mpd = '';
+    private \DOMElement|null $dom;
     private mixed $features;
     private mixed $oldProfiles;
     private mixed $periodTimingInformation;
@@ -38,7 +40,7 @@ class MPDHandler
         $this->schematron = new Schematron();
         $this->selected = new MPDSelection();
 
-        $this->url = session()->get('mpd');
+        $this->url = session()->get('mpd') ?? Cache::get('CLI.URL', '');
         $this->dom = null;
         $this->downloadTime = null;
         $this->features = null;
@@ -48,13 +50,13 @@ class MPDHandler
 
         $this->load();
         $this->parseXML();
-        $this->setPeriods();
+//        $this->setPeriods();
 
         if ($this->mpd) {
-            $this->schematron = new Schematron($this->mpd);
-            $this->features = $this->recursiveExtractFeatures($this->dom);
-            $this->extractProfiles();
-            $this->loadSegmentUrls();
+//            $this->schematron = new Schematron($this->mpd);
+//            $this->features = $this->recursiveExtractFeatures($this->dom);
+//            $this->extractProfiles();
+//            $this->loadSegmentUrls();
         }
     }
 
@@ -126,6 +128,15 @@ class MPDHandler
         $originalTime = $this->downloadTime->getTimestamp();
         $nextTime = $originalTime + $interval;
         return new \DateTimeImmutable("@$nextTime");
+    }
+
+
+    /**
+     * @return array<Period>
+     **/
+    public function getPeriods(): array
+    {
+        return $this->periods;
     }
 
     public function getPeriod(int $idx = -1): Period | null
@@ -726,7 +737,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
         $period = $this->selected->getSelectedPeriod($periodIndex);
         $adaptation = $this->selected->getSelectedAdaptationSet($adaptationIndex);
 
-        $periods = $this->mpd->getElementsByTagName("Period");
+        $periods = $this->dom->getElementsByTagName("Period");
 
         if ($period >= count($periods)) {
             return '';
@@ -1098,6 +1109,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
             Log::critical("NO MPD");
             return;
         }
+        Cache::add("CLI.MPD", $this->mpd, now()->addMinutes(1));
     }
 
     private function parseXML(): void
@@ -1141,7 +1153,7 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
         return $this->mpd;
     }
 
-    public function getDom(): \DOM\Element
+    public function getDom(): \DOMElement|null
     {
         return $this->dom;
     }
@@ -1173,7 +1185,12 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
      **/
     public function getMPDProfiles(): array
     {
-        return array();
+        $res = array();
+        if (!$this->dom) {
+            return $res;
+        }
+        $profiles = $this->dom->getAttribute('profiles');
+        return explode(',', $profiles);
     }
 
     public function getAllPeriodFeatures(): mixed

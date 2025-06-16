@@ -1,5 +1,22 @@
 <?php
 
+if (!function_exists('cli_or_session')){
+    function cli_or_session(): string
+    {
+        if (session('artisan', false)){
+          return 'CLI';
+        }
+        return session()->id();
+    }
+}
+
+if (!function_exists('cache_path')){
+
+    function cache_path(array $path): string {
+        return cli_or_session() . '::' . implode("::",$path);
+    }
+}
+
 if (! function_exists('curlOptions')) {
     function curlOptions(): mixed
     {

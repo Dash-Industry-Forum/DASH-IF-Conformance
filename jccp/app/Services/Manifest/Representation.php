@@ -21,4 +21,17 @@ class Representation
     {
         return $this->dom->getAttribute($attribute);
     }
+
+    /**
+     * @param array<string> $parentProfiles;
+     * @return array<string>
+     **/
+    public function getProfiles(array $parentProfiles): array
+    {
+        $profiles = $this->dom->getAttribute('profiles');
+        if ($profiles != '') {
+            return explode(',', $profiles);
+        }
+        return $parentProfiles;
+    }
 }

@@ -33,6 +33,27 @@ class Period
     }
 
     /**
+     * @param array<string> $parentProfiles;
+     * @return array<string>
+     **/
+    public function getProfiles(array $parentProfiles): array
+    {
+        $profiles = $this->dom->getAttribute('profiles');
+        if ($profiles != '') {
+            return explode(',', $profiles);
+        }
+        return $parentProfiles;
+    }
+
+    /**
+     * @return array<AdaptationSet>
+     **/
+    public function getAdaptationSets(): array
+    {
+        return $this->adaptationSets;
+    }
+
+    /**
      * @return array<string>
      */
     public function getAdaptationSetIds(): array
