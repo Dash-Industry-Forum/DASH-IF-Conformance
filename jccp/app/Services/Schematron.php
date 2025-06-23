@@ -25,12 +25,12 @@ class Schematron
 {
     private string $schemaPath;
 
-    public function getSchematronOutput(): string
+    public function getValidatorOutput(): string
     {
-        if (!Cache::get(cache_path(['schematron']))) {
+        if (!Cache::get(cache_path(['validator','output']))) {
             $this->run();
         }
-        return Cache::get(cache_path(['schematron']), '');
+        return Cache::get(cache_path(['validator','output']), '');
     }
 
     private function run(): void
@@ -73,7 +73,7 @@ class Schematron
 
 
 
-        Cache::remember(cache_path(['schematron']), 10, function () use ($mpdValidatorOutput) {
+        Cache::remember(cache_path(['validator','output']), 10, function () use ($mpdValidatorOutput) {
             $javaRemoved = str_replace("[java]", "", $mpdValidatorOutput);
             $xlinkOffset = strpos($javaRemoved, "Start XLink resolving");
             return substr($javaRemoved, $xlinkOffset);
@@ -84,27 +84,26 @@ class Schematron
     {
         if (
             !Cache::get(cache_path(['resolvedmpd'])) ||
-            !Cache::get(cache_path(['schematron']))
+            !Cache::get(cache_path(['validator','output']))
         ) {
             $this->run();
         }
         $logger = app(ModuleLogger::class);
 
-        $schematronOutput = $this->getSchematronOutput();
+        $validatorOutput = $this->getValidatorOutput();
 
         $logger->setModule("Schematron");
         $logger->setHook("MPD");
 
-        if (!$schematronOutput) {
-            $logger->validatorMessage("No schematron?");
+        if (!$validatorOutput) {
+            $logger->validatorMessage("Validator was unable to run");
         }
-        $logger->validatorMessage("Schematron output: " . $schematronOutput);
 
         $logger->test(
             "MPEG-DASH",
             "Commmon",
             "Schematron Validation",
-            strpos($schematronOutput, 'XLink resolving successful') !== false,
+            strpos($validatorOutput, 'XLink resolving successful') !== false,
             "FAIL",
             "XLink resolving succesful",
             "XLink resolving failed"
@@ -114,7 +113,7 @@ class Schematron
             "MPEG-DASH",
             "Commmon",
             "Schematron Validation",
-            strpos($schematronOutput, 'MPD validation successful') !== false,
+            strpos($validatorOutput, 'MPD validation successful') !== false,
             "FAIL",
             "MPD validation succesful",
             "MPD validation failed"
@@ -124,7 +123,7 @@ class Schematron
             "MPEG-DASH",
             "Commmon",
             "Schematron Validation",
-            strpos($schematronOutput, 'Schematron validation successful') !== false,
+            strpos($validatorOutput, 'Schematron validation successful') !== false,
             "FAIL",
             "Schematron validation succesful",
             "Schematron validation failed"

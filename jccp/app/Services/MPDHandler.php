@@ -383,12 +383,6 @@ class MPDHandler
         return $result;
     }
 
-    public function getSchematronOutput(): string
-    {
-        return $this->schematron->getSchematronOutput();
-    }
-
-
     private function extractProfiles(): void
     {
         if (!$this->features) {
