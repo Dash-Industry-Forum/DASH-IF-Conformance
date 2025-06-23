@@ -85,7 +85,7 @@ class MPDHandler
         $this->features = $this->recursiveExtractFeatures($this->dom);
         $this->extractProfiles();
         if (!$content) {
-            $this->schematron->validateSchematron();
+            $this->schematron->validate();
             $this->loadSegmentUrls();
         }
         return true;
@@ -385,7 +385,7 @@ class MPDHandler
 
     public function getSchematronOutput(): string
     {
-        return $this->schematron->schematronOutput;
+        return $this->schematron->getSchematronOutput();
     }
 
 
@@ -1166,10 +1166,6 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
         return $this->dom;
     }
 
-    public function getResolved(): string
-    {
-        return $this->schematron->resolved;
-    }
 
     public function getFeatures(): mixed
     {

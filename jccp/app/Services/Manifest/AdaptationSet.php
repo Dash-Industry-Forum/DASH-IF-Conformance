@@ -64,7 +64,12 @@ class AdaptationSet
     {
         $result = [];
         foreach ($this->dom->getElementsByTagName('Representation') as $representationIndex => $representation) {
-            $result[] = new Representation($representation, $this->periodIndex, $this->adaptationSetIndex, $representationIndex);
+            $result[] = new Representation(
+                $representation,
+                $this->periodIndex,
+                $this->adaptationSetIndex,
+                $representationIndex
+            );
         }
         return $result;
     }

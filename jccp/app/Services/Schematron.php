@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Facades\Cache;
 use App\Services\ModuleLogger;
+use App\Services\MPDCache;
 
 if (!function_exists('systemCall')) {
     function systemCall(string $command): string
@@ -20,77 +23,88 @@ if (!function_exists('systemCall')) {
 
 class Schematron
 {
-    public string $resolved = '';
-    public string $schematronOutput;
-
-    private string $mpd;
     private string $schemaPath;
-    private string $mpdValidatorOutput;
-
-    public function __construct(string $mpd = '')
-    {
-        $this->mpd = $mpd;
-        if ($this->mpd == '') {
-            return;
-        }
-
-        $this->runSchematron();
-        $this->validateSchematron();
-    }
 
     public function getSchematronOutput(): string
     {
-        return $this->schematronOutput;
+        if (!Cache::get(cache_path(['schematron']))) {
+            $this->run();
+        }
+        return Cache::get(cache_path(['schematron']), '');
     }
 
-    private function runSchematron(): void
+    private function run(): void
     {
 
-        $sessionDir = '/tmp';// $session->getDir();
+        $sessionDir = session_dir();
 
-        file_put_contents($sessionDir . "/manifest.mpd", $this->mpd);
+        file_put_contents($sessionDir . "manifest.mpd", app(MPDCache::class)->getMPD());
 
         $mpdXml = simplexml_load_string('<mpdresult><xlink>No Result</xlink>' .
         '<schema>No Result</schema><schematron>No Result</schematron></mpdresult>');
-        $mpdXml->asXML("$sessionDir/mpdresult.xml");
+        $mpdXml->asXML($sessionDir . "mpdresult.xml");
 
         $currentDir = getcwd();
 
+        echo "Current path: " . __DIR__  . "\n";
         chdir(__DIR__ . '/../../../DASH/mpdvalidator');
         $this->findOrDownloadSchema();
 
-        $this->mpdValidatorOutput = systemCall("java -cp \"saxon9he.jar:xercesImpl.jar:bin\" Validator \"" .
-        $sessionDir . "/manifest.mpd" . "\" $sessionDir/resolved.xml " .
-        $this->schemaPath . " $sessionDir/mpdresult.xml");
+        $validatorCommand =
+            "java -cp \"saxon9he.jar:xercesImpl.jar:bin\" Validator " .
+            "\"" . $sessionDir . "manifest.mpd\" " .
+            $sessionDir . "resolved.xml " .
+            $this->schemaPath . " " . $sessionDir . "mpdresult.xml";
 
-        $this->resolved = file_get_contents("$sessionDir/resolved.xml");
+        echo $validatorCommand . "\n";
 
-        $javaRemoved = str_replace("[java]", "", $this->mpdValidatorOutput);
-        $xlinkOffset = strpos($javaRemoved, "Start XLink resolving");
-
-        $this->schematronOutput = substr($javaRemoved, $xlinkOffset);
+        $validatorResult = Process::run($validatorCommand);
 
         chdir($currentDir);
+
+
+        $mpdValidatorOutput = $validatorResult->output();
+
+
+
+        $resolvedMPD = Cache::remember(cache_path(['resolvedmpd']), 10, function () use ($sessionDir) {
+            return file_get_contents($sessionDir . "resolved.xml");
+        });
+
+
+
+        Cache::remember(cache_path(['schematron']), 10, function () use ($mpdValidatorOutput) {
+            $javaRemoved = str_replace("[java]", "", $mpdValidatorOutput);
+            $xlinkOffset = strpos($javaRemoved, "Start XLink resolving");
+            return substr($javaRemoved, $xlinkOffset);
+        });
     }
 
-    public function validateSchematron(): void
+    public function validate(): void
     {
-        $logger = app(ModuleLogger::class);
-        if (!$this->schematronOutput) {
-            $logger->validatorMessage("No schematron?");
+        if (
+            !Cache::get(cache_path(['resolvedmpd'])) ||
+            !Cache::get(cache_path(['schematron']))
+        ) {
+            $this->run();
         }
+        $logger = app(ModuleLogger::class);
+
+        $schematronOutput = $this->getSchematronOutput();
 
         $logger->setModule("Schematron");
         $logger->setHook("MPD");
 
-        $logger->validatorMessage("MPDValidator output: " . $this->mpdValidatorOutput);
-        $logger->validatorMessage("Schematron output: " . $this->schematronOutput);
+        if (!$schematronOutput) {
+            $logger->validatorMessage("No schematron?");
+        }
+        $logger->validatorMessage("Schematron output: " . $schematronOutput);
 
         $logger->test(
             "MPEG-DASH",
             "Commmon",
             "Schematron Validation",
-            strpos($this->schematronOutput, 'XLink resolving successful') !== false,
+            strpos($schematronOutput, 'XLink resolving successful') !== false,
             "FAIL",
             "XLink resolving succesful",
             "XLink resolving failed"
@@ -100,7 +114,7 @@ class Schematron
             "MPEG-DASH",
             "Commmon",
             "Schematron Validation",
-            strpos($this->schematronOutput, 'MPD validation successful') !== false,
+            strpos($schematronOutput, 'MPD validation successful') !== false,
             "FAIL",
             "MPD validation succesful",
             "MPD validation failed"
@@ -110,7 +124,7 @@ class Schematron
             "MPEG-DASH",
             "Commmon",
             "Schematron Validation",
-            strpos($this->schematronOutput, 'Schematron validation successful') !== false,
+            strpos($schematronOutput, 'Schematron validation successful') !== false,
             "FAIL",
             "Schematron validation succesful",
             "Schematron validation failed"

@@ -4,8 +4,10 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
-use App\Services\MPDCache;
 use Keepsuit\LaravelOpenTelemetry\Facades\Tracer;
+use App\Services\ModuleLogger;
+use App\Services\MPDCache;
+use App\Services\Schematron;
 
 class AnalyzeManifest extends Command
 {
@@ -51,6 +53,11 @@ class AnalyzeManifest extends Command
                     }
                 }
             }
+
+            $schematron = app(Schematron::class);
+            $schematron->validate();
+
+            echo app(ModuleLogger::class)->asJSON() . "\n";
         });
     }
 }
