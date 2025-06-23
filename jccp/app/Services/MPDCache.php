@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use League\Uri\Uri;
 use Keepsuit\LaravelOpenTelemetry\Facades\Tracer;
 use App\Services\Manifest\Period;
 use App\Services\Manifest\AdaptationSet;
@@ -58,6 +59,23 @@ class MPDCache
                 return file_get_contents(session()->get('mpd'));
             });
         });
+    }
+
+    public function getBaseUrl(): string
+    {
+        $myBase = '';
+        $baseUrls = $this->getDom()->getElementsByTagName('BaseURL');
+        if (count($baseUrls)) {
+            $myBase = $baseUrls->item(0)->nodeValue;
+        }
+        $urlPath = Cache::get(cache_path(['mpd','url']), '');
+        if (!$urlPath) {
+            return $myBase;
+        }
+        if ($urlPath[0] == '/') {
+            $urlPath = "file://$urlPath";
+        }
+        return Uri::fromBaseUri($myBase, $urlPath)->toString();
     }
 
     public function getPeriodCount(): int

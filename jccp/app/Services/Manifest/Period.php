@@ -2,7 +2,7 @@
 
 namespace App\Services\Manifest;
 
-use Illuminate\Support\Facades\Cache;
+use League\Uri\Uri;
 use App\Services\MPDCache;
 use App\Services\Manifest\AdaptationSet;
 use App\Services\Manifest\Representation;
@@ -28,7 +28,18 @@ class Period
         return $this->dom->ownerDocument->saveXML();
     }
 
-
+    public function getBaseUrl(): string
+    {
+        $myBase = '';
+        $baseUrls = $this->dom->getElementsByTagName('BaseURL');
+        if (count($baseUrls)) {
+            $myBase = $baseUrls->item(0)->nodeValue;
+        }
+        return Uri::fromBaseUri(
+            $myBase,
+            app(MPDCache::class)->getBaseUrl()
+        )->toString();
+    }
 
     public function getAttribute(string $attribute): string
     {

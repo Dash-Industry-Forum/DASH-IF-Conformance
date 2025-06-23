@@ -39,17 +39,26 @@ class AnalyzeManifest extends Command
 
             $mpdCache = app(MPDCache::class);
 
+            echo " - " .
+                $mpdCache->getBaseUrl() . "\n";
+
             foreach ($mpdCache->allPeriods() as $period) {
                 $adaptationSetCount = $period->getAdaptationSetCount();
                 echo $period->path() . " - " .
                     $period->getTransientAttribute('profiles') . "\n";
+                echo $period->path() . " - " .
+                    $period->getBaseUrl() . "\n";
 
                 foreach ($period->allAdaptationSets() as $adaptationSet) {
                     echo $adaptationSet->path() . " - " .
                         $adaptationSet->getTransientAttribute('profiles') . "\n";
+                    echo $adaptationSet->path() . " - " .
+                    $adaptationSet->getBaseUrl() . "\n";
                     foreach ($adaptationSet->allRepresentations() as $representation) {
                         echo $representation->path() . " - " .
                         $representation->getTransientAttribute('profiles') . "\n";
+                        echo $representation->path() . " - " .
+                        $representation->getBaseUrl() . "\n";
                     }
                 }
             }
@@ -58,7 +67,7 @@ class AnalyzeManifest extends Command
             $schematron->validate();
             $schematron->validateSchematron();
 
-            echo app(ModuleLogger::class)->asJSON() . "\n";
+            #echo app(ModuleLogger::class)->asJSON() . "\n";
         });
     }
 }

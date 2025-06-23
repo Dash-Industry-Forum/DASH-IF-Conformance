@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bab06a29ee6f90de5acdf2c176e1200b",
+    "content-hash": "458f41d5283430ba108e3ed74064a2d2",
     "packages": [
         {
             "name": "arifhp86/laravel-clear-expired-cache-file",

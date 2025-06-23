@@ -14,6 +14,7 @@
         "keepsuit/laravel-opentelemetry": "^1.5",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "league/uri": "^7.0",
         "livewire/livewire": "^3.6"
     },
     "require-dev": {

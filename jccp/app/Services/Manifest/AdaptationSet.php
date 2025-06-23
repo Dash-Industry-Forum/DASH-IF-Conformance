@@ -2,6 +2,7 @@
 
 namespace App\Services\Manifest;
 
+use League\Uri\Uri;
 use App\Services\MPDCache;
 use App\Services\Manifest\Representation;
 
@@ -24,6 +25,19 @@ class AdaptationSet
     public function path(): string
     {
         return "$this->periodIndex::$this->adaptationSetIndex";
+    }
+
+    public function getBaseUrl(): string
+    {
+        $myBase = '';
+        $baseUrls = $this->dom->getElementsByTagName('BaseURL');
+        if (count($baseUrls)) {
+            $myBase = $baseUrls->item(0)->nodeValue;
+        }
+        return Uri::fromBaseUri(
+            $myBase,
+            app(MPDCache::class)->getPeriod($this->periodIndex)->getBaseUrl()
+        )->toString();
     }
 
 

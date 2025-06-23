@@ -2,6 +2,7 @@
 
 namespace App\Services\Manifest;
 
+use League\Uri\Uri;
 use App\Services\MPDCache;
 
 class Representation
@@ -27,6 +28,22 @@ class Representation
     public function path(): string
     {
         return "$this->periodIndex::$this->adaptationSetIndex::$this->representationIndex";
+    }
+
+    public function getBaseUrl(): string
+    {
+        $myBase = '';
+        $baseUrls = $this->dom->getElementsByTagName('BaseURL');
+        if (count($baseUrls)) {
+            $myBase = $baseUrls->item(0)->nodeValue;
+        }
+        return Uri::fromBaseUri(
+            $myBase,
+            app(MPDCache::class)->getAdaptationSet(
+                $this->periodIndex,
+                $this->adaptationSetIndex
+            )->getBaseUrl()
+        )->toString();
     }
 
     public function getId(): string
