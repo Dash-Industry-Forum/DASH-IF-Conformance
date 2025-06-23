@@ -56,6 +56,7 @@ class AnalyzeManifest extends Command
 
             $schematron = app(Schematron::class);
             $schematron->validate();
+            $schematron->validateSchematron();
 
             echo app(ModuleLogger::class)->asJSON() . "\n";
         });

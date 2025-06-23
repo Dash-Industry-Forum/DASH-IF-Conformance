@@ -21,6 +21,17 @@ if (!function_exists('session_dir')) {
     }
 }
 
+if (!function_exists('invalidate_mpd_cache')) {
+    function invalidate_mpd_cache(): void
+    {
+        Cache::forget(cache_path(['validator','output']));
+        Cache::forget(cache_path(['resolvedmpd']));
+        Cache::forget(cache_path(['mpd','url']));
+        Cache::forget(cache_path(['mpd','contents']));
+    }
+
+}
+
 if (!function_exists('cache_path')) {
 
     /**

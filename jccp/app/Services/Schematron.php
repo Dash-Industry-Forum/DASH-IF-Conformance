@@ -7,20 +7,6 @@ use Illuminate\Support\Facades\Cache;
 use App\Services\ModuleLogger;
 use App\Services\MPDCache;
 
-if (!function_exists('systemCall')) {
-    function systemCall(string $command): string
-    {
-        $result = '';
-        if ($proc = popen("($command)2>&1", "r")) {
-            while (!feof($proc)) {
-                $result .= fgets($proc, 1000);
-            }
-            pclose($proc);
-        }
-        return $result;
-    }
-}
-
 class Schematron
 {
     private string $schemaPath;
@@ -28,12 +14,46 @@ class Schematron
     public function getValidatorOutput(): string
     {
         if (!Cache::get(cache_path(['validator','output']))) {
-            $this->run();
+            $this->runValidator();
         }
         return Cache::get(cache_path(['validator','output']), '');
     }
 
-    private function run(): void
+    public function getSchematronOutput(): string
+    {
+        if (!Cache::get(cache_path(['mpd','schematron']))) {
+            $this->runSchematron();
+        }
+        return Cache::get(cache_path(['mpd','schematron']), '');
+    }
+
+
+    private function runSchematron(): void
+    {
+        echo "Running Schematron!\n";
+        $sessionDir = session_dir();
+        if (!Cache::get(cache_path(['mpd','resolved']))) {
+            $this->runValidator();
+        }
+
+        $validatorPath = __DIR__ . "/../../../DASH/mpdvalidator";
+        $schematronCommand = implode(" ", [
+            "java",
+            "-jar",
+            "${validatorPath}/saxon9he.jar",
+            "-versionmsg:off",
+            "-s:${sessionDir}/resolved.xml",
+            "-o:${sessionDir}/schematron.xml",
+            "-xsl:${validatorPath}/schematron/output/val_schema.xsl"
+        ]);
+        $schematronResult = Process::run($schematronCommand);
+
+        $resolvedMPD = Cache::remember(cache_path(['mpd','schematron']), 10, function () use ($sessionDir) {
+            return file_get_contents($sessionDir . "schematron.xml");
+        });
+    }
+
+    private function runValidator(): void
     {
 
         $sessionDir = session_dir();
@@ -46,28 +66,31 @@ class Schematron
 
         $currentDir = getcwd();
 
-        echo "Current path: " . __DIR__  . "\n";
-        chdir(__DIR__ . '/../../../DASH/mpdvalidator');
+
+        $validatorPath = __DIR__ . "/../../../DASH/mpdvalidator";
         $this->findOrDownloadSchema();
 
-        $validatorCommand =
-            "java -cp \"saxon9he.jar:xercesImpl.jar:bin\" Validator " .
-            "\"" . $sessionDir . "manifest.mpd\" " .
-            $sessionDir . "resolved.xml " .
-            $this->schemaPath . " " . $sessionDir . "mpdresult.xml";
+        $validatorCommand = implode(" ", [
+            "java","-cp",
+            "\"${validatorPath}/saxon9he.jar:${validatorPath}xercesImpl.jar:${validatorPath}/bin\"",
+            "Validator",
+            "\"${sessionDir}manifest.mpd\"",
+            "${sessionDir}resolved.xml",
+            $this->schemaPath,
+            "${sessionDir}mpdresult.xml"
+        ]);
 
         echo $validatorCommand . "\n";
 
         $validatorResult = Process::run($validatorCommand);
 
-        chdir($currentDir);
 
 
         $mpdValidatorOutput = $validatorResult->output();
 
 
 
-        $resolvedMPD = Cache::remember(cache_path(['resolvedmpd']), 10, function () use ($sessionDir) {
+        $resolvedMPD = Cache::remember(cache_path(['mpd','resolved']), 10, function () use ($sessionDir) {
             return file_get_contents($sessionDir . "resolved.xml");
         });
 
@@ -80,14 +103,65 @@ class Schematron
         });
     }
 
+    public function validateSchematron(): void
+    {
+        if (!Cache::get(cache_path(['mpd','schematron']))) {
+            $this->runSchematron();
+        }
+
+        $logger = app(ModuleLogger::class);
+        $logger->setModule("Schematron");
+        $logger->setHook("MPD");
+
+        $schematronOutput = $this->getSchematronOutput();
+        if (!$schematronOutput) {
+            $logger->validatorMessage("Schematron was unable to run");
+            return;
+        }
+
+        $doc = new \DOMDocument();
+        $doc->loadXML($schematronOutput);
+
+        echo $schematronOutput . "\n";
+        $schematronResult = $doc->getElementsByTagNameNS(
+            'http://purl.oclc.org/dsdl/svrl',
+            'schematron-output'
+        )->item(0);
+        $failedAssertions = $schematronResult->getElementsByTagNameNS(
+            'http://purl.oclc.org/dsdl/svrl',
+            'failed-assert'
+        );
+        foreach ($failedAssertions as $failedAssertion) {
+            $testLocation = $failedAssertion->getAttribute('location');
+            $testDescription = $failedAssertion->getAttribute('test');
+            $textComponents = $failedAssertion->getElementsByTagNameNS(
+                'http://purl.oclc.org/dsdl/svrl',
+                'text'
+            );
+
+            foreach ($textComponents as $textComponent) {
+                $logger->test(
+                    "Schematron",
+                    $testLocation,
+                    $testDescription,
+                    false, //Always false, as we're parsing failed assertions
+                    "FAIL",
+                    "",
+                    $textComponent->nodeValue
+                );
+            }
+        }
+    }
+
     public function validate(): void
     {
         if (
-            !Cache::get(cache_path(['resolvedmpd'])) ||
+            !Cache::get(cache_path(['mpd','resolved'])) ||
             !Cache::get(cache_path(['validator','output']))
         ) {
-            $this->run();
+            $this->runValidator();
         }
+
         $logger = app(ModuleLogger::class);
 
         $validatorOutput = $this->getValidatorOutput();

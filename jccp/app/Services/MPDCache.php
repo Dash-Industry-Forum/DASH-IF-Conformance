@@ -46,9 +46,16 @@ class MPDCache
 
     public function getMPD(): string
     {
-        return Cache::remember(cache_path(['mpd']), 3600, function () {
+        $cachedUrl = Cache::get(cache_path(['mpd', 'url']), '');
+        if ($cachedUrl != session()->get('mpd')) {
+            invalidate_mpd_cache();
+        }
+        return Cache::remember(cache_path(['mpd','contents']), 3600, function () {
             return Tracer::newSpan("Retrieve mpd")->measure(function () {
-                return file_get_contents(session()->get('mpd'));
+                $mpdUrl = Cache::remember(cache_path(['mpd','url']), 3600, function () {
+                    return session()->get('mpd');
+                });
+                return file_get_contents($mpdUrl);
             });
         });
     }
