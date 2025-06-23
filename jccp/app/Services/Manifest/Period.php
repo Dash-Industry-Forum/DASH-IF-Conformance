@@ -2,6 +2,7 @@
 
 namespace App\Services\Manifest;
 
+use Illuminate\Support\Facades\Cache;
 use App\Services\Manifest\AdaptationSet;
 
 class Period
@@ -21,6 +22,12 @@ class Period
             $this->adaptationSets[] = new AdaptationSet($adaptationSet);
         }
     }
+
+    public function asXML(): string
+    {
+        return $this->dom->ownerDocument->saveXML();
+    }
+
 
     public function getId(): string
     {

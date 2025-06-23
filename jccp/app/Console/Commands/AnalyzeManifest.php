@@ -4,8 +4,10 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
-
-use App\Services\MPDHandler;
+use App\Services\MPDCache;
+use App\Services\Manifest\AdaptationSetCache;
+use App\Services\Manifest\PeriodCache;
+use Keepsuit\LaravelOpenTelemetry\Facades\Tracer;
 
 class AnalyzeManifest extends Command
 {
@@ -26,15 +28,27 @@ class AnalyzeManifest extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
-        session(['artisan' => true]);
-        $url = Cache::remember(cache_path(['url']), 60, function(){
-            return $this->argument('manifest_url');
+        Tracer::newSpan("artisan: analyze-manifest")->measure(function () {
+            session([
+                'artisan' => true,
+                'mpd' => $this->argument('manifest_url')
+            ]);
+
+
+            $periodCount = app(MPDCache::class)->getPeriodCount();
+
+            for ($periodIndex = 0; $periodIndex < $periodCount; $periodIndex++) {
+                $periodCache = new PeriodCache($periodIndex);
+                $adaptationSetCount = $periodCache->getAdaptationSetCount();
+                echo "Period $periodIndex: " . $periodCache->getTransientAttribute('profiles') . "\n";
+
+                for ($adaptationSetIndex = 0; $adaptationSetIndex < $adaptationSetCount; $adaptationSetIndex++) {
+                    $adaptationSetCache = new AdaptationSetCache($periodIndex, $adaptationSetIndex);
+                    echo "  AdaptationSet $adaptationSetIndex: " . $adaptationSetCache->getTransientAttribute('profiles') . "\n";
+                }
+            }
         });
-        $mpd = Cache::remember(cache_path(['mpd']), 60, function(){
-            return file_get_contents(Cache::get(cache_path(['url'])));
-        });
-        #echo "$mpd \n";
     }
 }

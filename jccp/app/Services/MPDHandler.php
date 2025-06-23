@@ -8,7 +8,7 @@ use App\Services\MPDSelection;
 use App\Services\Manifest\Period;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
-
+use Keepsuit\LaravelOpenTelemetry\Facades\Tracer;
 
 class MPDHandler
 {
@@ -50,7 +50,7 @@ class MPDHandler
 
         $this->load();
         $this->parseXML();
-//        $this->setPeriods();
+        $this->setPeriods();
 
         if ($this->mpd) {
 //            $this->schematron = new Schematron($this->mpd);
@@ -1110,6 +1110,14 @@ if (array_key_exists("mediaPresentationDuration", $this->features)) {
             return;
         }
         Cache::add("CLI.MPD", $this->mpd, now()->addMinutes(1));
+    }
+
+    public function cacheXMLToDom(): void
+    {
+        Tracer::newSpan("Parse mpd")->measure(function () {
+            $this->mpd = Cache::get(cache_path(['mpd']));
+            $this->parseXML();
+        });
     }
 
     private function parseXML(): void
