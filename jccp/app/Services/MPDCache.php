@@ -6,10 +6,12 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Keepsuit\LaravelOpenTelemetry\Facades\Tracer;
 use App\Services\Manifest\Period;
+use App\Services\Manifest\AdaptationSet;
+use App\Services\Manifest\Representation;
 
 class MPDCache
 {
-    private \DOMElement|null $dom = null;
+    private \DOMElement|null $domCache = null;
 
     public function __construct()
     {
@@ -36,23 +38,11 @@ class MPDCache
 
     private function getDom(): \DOMElement|null
     {
-        if (!$this->dom) {
-            $this->dom = $this->parseDom();
+        if (!$this->domCache) {
+            $this->domCache = $this->parseDom();
         }
-        return $this->dom;
+        return $this->domCache;
     }
-
-    public function getPeriod(int $periodIndex): Period|null
-    {
-        if ($periodIndex > $this->getPeriodCount()) {
-            return null;
-        }
-        $dom = $this->getDom();
-        return new Period(
-            $dom->getElementsByTagName('Period')->item($periodIndex)
-        );
-    }
-
 
     public function getMPD(): string
     {
@@ -63,15 +53,6 @@ class MPDCache
         });
     }
 
-    public function getAttribute(string $attribute): string
-    {
-        $dom = $this->getDom();
-        if (!$dom) {
-            return '';
-        }
-        return $dom->getAttribute($attribute);
-    }
-
     public function getPeriodCount(): int
     {
         $dom = $this->getDom();
@@ -79,5 +60,65 @@ class MPDCache
             return 0;
         }
         return count($dom->getElementsByTagName('Period'));
+    }
+
+    public function getPeriod(int $periodIndex): Period|null
+    {
+        if ($periodIndex > $this->getPeriodCount()) {
+            return null;
+        }
+        return new Period(
+            $this->getDom()->getElementsByTagName('Period')->item($periodIndex),
+            $periodIndex
+        );
+    }
+
+    /**
+     * @return array<Period>
+     */
+    public function allPeriods(): array
+    {
+        $result = [];
+        $dom = $this->getDom();
+        if ($dom) {
+            foreach ($dom->getElementsByTagName('Period') as $periodIndex => $period) {
+                $result[] = new Period($period, $periodIndex);
+            }
+        }
+        return $result;
+    }
+
+    public function getAdaptationSet(
+        int $periodIndex,
+        int $adaptationIndex
+    ): AdaptationSet|null {
+        $period = $this->getPeriod($periodIndex);
+        if (!$period) {
+            return null;
+        }
+        return $period->getAdaptationSet($adaptationIndex);
+    }
+
+    public function getRepresentation(
+        int $periodIndex,
+        int $adaptationIndex,
+        int $representationIndex
+    ): Representation|null {
+        $period = $this->getPeriod($periodIndex);
+        if (!$period) {
+            return null;
+        }
+        return $period->getRepresentation($adaptationIndex, $representationIndex);
+    }
+
+
+
+    public function getAttribute(string $attribute): string
+    {
+        $dom = $this->getDom();
+        if (!$dom) {
+            return '';
+        }
+        return $dom->getAttribute($attribute);
     }
 }

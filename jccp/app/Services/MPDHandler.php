@@ -63,8 +63,8 @@ class MPDHandler
     private function setPeriods(): void
     {
         $this->periods = array();
-        foreach ($this->dom->getElementsByTagName('Period') as $period) {
-            $this->periods[] = new Period($period);
+        foreach ($this->dom->getElementsByTagName('Period') as $periodIndex => $period) {
+            $this->periods[] = new Period($period, $periodIndex);
         }
     }
 
@@ -378,7 +378,7 @@ class MPDHandler
     {
         $result = array();
         foreach ($this->periods as $p) {
-            $result[] = $p->getId();
+            $result[] = $p->getAttribute('id');
         }
         return $result;
     }

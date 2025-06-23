@@ -3,24 +3,24 @@
 namespace App\Services\Manifest;
 
 use Illuminate\Support\Facades\Cache;
+use App\Services\MPDCache;
 use App\Services\Manifest\AdaptationSet;
+use App\Services\Manifest\Representation;
 
 class Period
 {
     private \DOMElement $dom;
+    private int $periodIndex;
 
-    /**
-     * @var array<AdaptationSet> $adaptationSets;
-     */
-    private array $adaptationSets;
-
-    public function __construct(\DOMElement $dom)
+    public function __construct(\DOMElement $dom, int $periodIndex)
     {
         $this->dom = $dom;
-        $this->adaptationSets = array();
-        foreach ($this->dom->getElementsByTagName('AdaptationSet') as $adaptationSet) {
-            $this->adaptationSets[] = new AdaptationSet($adaptationSet);
-        }
+        $this->periodIndex = $periodIndex;
+    }
+
+    public function path(): string
+    {
+        return "$this->periodIndex";
     }
 
     public function asXML(): string
@@ -29,56 +29,55 @@ class Period
     }
 
 
-    public function getId(): string
-    {
-        return $this->dom->getAttribute('id');
-    }
 
     public function getAttribute(string $attribute): string
     {
         return $this->dom->getAttribute($attribute);
     }
 
-    /**
-     * @param array<string> $parentProfiles;
-     * @return array<string>
-     **/
-    public function getProfiles(array $parentProfiles): array
+
+    public function getTransientAttribute(string $attribute): string
     {
-        $profiles = $this->dom->getAttribute('profiles');
-        if ($profiles != '') {
-            return explode(',', $profiles);
+        $myAttribute = $this->getAttribute($attribute);
+        if ($myAttribute != '') {
+            return $myAttribute;
         }
-        return $parentProfiles;
+        return app(MPDCache::class)->getAttribute($attribute);
+    }
+
+
+    public function getAdaptationSetCount(): int
+    {
+        return count($this->dom->getElementsByTagName('AdaptationSet'));
+    }
+
+    public function getAdaptationSet(int $adaptationSetIndex): AdaptationSet|null
+    {
+        $adaptationSets = $this->dom->getElementsByTagName('AdaptationSet');
+        if ($adaptationSetIndex >= count($adaptationSets)) {
+            return null;
+        }
+        return new AdaptationSet($adaptationSets->item($adaptationSetIndex), $this->periodIndex, $adaptationSetIndex);
     }
 
     /**
      * @return array<AdaptationSet>
-     **/
-    public function getAdaptationSets(): array
-    {
-        return $this->adaptationSets;
-    }
-
-    /**
-     * @return array<string>
      */
-    public function getAdaptationSetIds(): array
+    public function allAdaptationSets(): array
     {
-        $result = array();
-        foreach ($this->adaptationSets as $adaptationSet) {
-            $result[] = $adaptationSet->getId();
+        $result = [];
+        foreach ($this->dom->getElementsByTagName('AdaptationSet') as $adaptationSetIndex => $adaptationSet) {
+            $result[] = new AdaptationSet($adaptationSet, $this->periodIndex, $adaptationSetIndex);
         }
         return $result;
     }
 
-    public function getAdaptationSet(int $idx = -1): AdaptationSet|null
+    public function getRepresentation(int $adaptationIndex, int $representationIndex): Representation|null
     {
-        ///\TODO Translate to singleton selector.
-        $index = $idx == -1 ? 0 : $idx;
-        if ($index >= count($this->adaptationSets)) {
+        $adaptationSet = $this->getAdaptationSet($adaptationIndex);
+        if (!$adaptationSet) {
             return null;
         }
-        return $this->adaptationSets[$index];
+        return $adaptationSet->getRepresentation($representationIndex);
     }
 }

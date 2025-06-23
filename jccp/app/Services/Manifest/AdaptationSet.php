@@ -2,65 +2,69 @@
 
 namespace App\Services\Manifest;
 
+use App\Services\MPDCache;
 use App\Services\Manifest\Representation;
 
 class AdaptationSet
 {
     private \DOMElement $dom;
 
-    /**
-     * @var array<Representation> $representations;
-     */
-    private array $representations;
+    private int $periodIndex;
+    private int $adaptationSetIndex;
 
-    public function __construct(\DOMElement $dom)
+
+
+    public function __construct(\DOMElement $dom, int $periodIndex, int $adaptationSetIndex)
     {
         $this->dom = $dom;
-        $this->representations = array();
-        foreach ($this->dom->getElementsByTagName('Representation') as $representation) {
-            $this->representations[] = new Representation($representation);
-        }
+        $this->periodIndex = $periodIndex;
+        $this->adaptationSetIndex = $adaptationSetIndex;
     }
 
-    public function getId(): string
+    public function path(): string
     {
-        return $this->dom->getAttribute('id');
+        return "$this->periodIndex::$this->adaptationSetIndex";
     }
+
 
     public function getAttribute(string $attribute): string
     {
         return $this->dom->getAttribute($attribute);
     }
 
-    /**
-     * @param array<string> $parentProfiles;
-     * @return array<string>
-     **/
-    public function getProfiles(array $parentProfiles): array
+    public function getTransientAttribute(string $attribute): string
     {
-        $profiles = $this->dom->getAttribute('profiles');
-        if ($profiles != '') {
-            return explode(',', $profiles);
+        $myAttribute = $this->getAttribute($attribute);
+        if ($myAttribute != '') {
+            return $myAttribute;
         }
-        return $parentProfiles;
+        return app(MPDCache::class)->getPeriod($this->periodIndex)
+                                   ->getTransientAttribute($attribute);
+    }
+
+
+    public function getRepresentation(int $representationIndex): Representation|null
+    {
+        $representations = $this->dom->getElementsByTagName('Representation');
+        if ($representationIndex >= count($representations)) {
+            return null;
+        }
+        return new Representation(
+            $representations->item($representationIndex),
+            $this->periodIndex,
+            $this->adaptationSetIndex,
+            $representationIndex
+        );
     }
 
     /**
      * @return array<Representation>
-     **/
-    public function getRepresentations(): array
-    {
-        return $this->representations;
-    }
-
-    /**
-     * @return array<string>
      */
-    public function getRepresentationIds(): array
+    public function allRepresentations(): array
     {
-        $result = array();
-        foreach ($this->representations as $representation) {
-            $result[] = $representation->getId();
+        $result = [];
+        foreach ($this->dom->getElementsByTagName('Representation') as $representationIndex => $representation) {
+            $result[] = new Representation($representation, $this->periodIndex, $this->adaptationSetIndex, $representationIndex);
         }
         return $result;
     }

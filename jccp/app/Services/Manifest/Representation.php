@@ -2,14 +2,31 @@
 
 namespace App\Services\Manifest;
 
+use App\Services\MPDCache;
+
 class Representation
 {
     private \DOMElement $dom;
+    private int $periodIndex;
+    private int $adaptationSetIndex;
+    private int $representationIndex;
 
 
-    public function __construct(\DOMElement $dom)
-    {
+    public function __construct(
+        \DOMElement $dom,
+        int $periodIndex,
+        int $adaptationSetIndex,
+        int $representationIndex
+    ) {
         $this->dom = $dom;
+        $this->periodIndex = $periodIndex;
+        $this->adaptationSetIndex = $adaptationSetIndex;
+        $this->representationIndex = $representationIndex;
+    }
+
+    public function path(): string
+    {
+        return "$this->periodIndex::$this->adaptationSetIndex::$this->representationIndex";
     }
 
     public function getId(): string
@@ -22,16 +39,13 @@ class Representation
         return $this->dom->getAttribute($attribute);
     }
 
-    /**
-     * @param array<string> $parentProfiles;
-     * @return array<string>
-     **/
-    public function getProfiles(array $parentProfiles): array
+    public function getTransientAttribute(string $attribute): string
     {
-        $profiles = $this->dom->getAttribute('profiles');
-        if ($profiles != '') {
-            return explode(',', $profiles);
+        $myAttribute = $this->getAttribute($attribute);
+        if ($myAttribute != '') {
+            return $myAttribute;
         }
-        return $parentProfiles;
+        return app(MPDCache::class)->getAdaptationSet($this->periodIndex, $this->adaptationSetIndex)
+                                   ->getTransientAttribute($attribute);
     }
 }
