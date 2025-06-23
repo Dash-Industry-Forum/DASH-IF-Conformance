@@ -76,11 +76,10 @@ class Schematron
             "Validator",
             "\"${sessionDir}manifest.mpd\"",
             "${sessionDir}resolved.xml",
-            $this->schemaPath,
+            "${validatorPath}/$this->schemaPath",
             "${sessionDir}mpdresult.xml"
         ]);
 
-        echo $validatorCommand . "\n";
 
         $validatorResult = Process::run($validatorCommand);
 
@@ -122,7 +121,6 @@ class Schematron
         $doc = new \DOMDocument();
         $doc->loadXML($schematronOutput);
 
-        echo $schematronOutput . "\n";
         $schematronResult = $doc->getElementsByTagNameNS(
             'http://purl.oclc.org/dsdl/svrl',
             'schematron-output'
