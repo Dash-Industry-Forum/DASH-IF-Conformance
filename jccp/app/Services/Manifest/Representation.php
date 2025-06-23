@@ -46,6 +46,55 @@ class Representation
         )->toString();
     }
 
+    /**
+     * @return array<string>
+     */
+    public function segmentUrls()
+    {
+        $result = array(
+        );
+
+        $base = $this->getBaseUrl();
+
+        $segmentBase = $this->dom->getElementsByTagName('SegmentBase');
+        if (count($segmentBase)) {
+            $result[] = $base;
+        }
+
+        $segmentList = $this->dom->getElementsByTagName('SegmentList');
+        if (count($segmentList)) {
+            foreach ($segmentList->item(0)->getElementsByTagName('SegmentURL') as $segmentUrl) {
+                $result[] = Uri::fromBaseUri(
+                    $segmentUrl->getAttribute('media'),
+                    $base
+                )->toString();
+            }
+        }
+
+        $segmentTemplate = $this->dom->getElementsByTagName("SegmentTemplate");
+        if (count($segmentTemplate)) {
+            $segmentTemplateUrl = Uri::fromBaseUri(
+                $segmentTemplate->item(0)->getAttribute('media'),
+                $base
+            )->toString();
+            $uriTemplate = str_replace(
+                array('$Bandwidth$','$Number$','$RepresentationID$','$Time$'),
+                array('{bandwidth}','{Number}','{RepresentationID}','{Time}'),
+                $segmentTemplateUrl
+            );
+            $startNumber = $segmentTemplate->item(0)->getAttribute('startNumber');
+            if (!$startNumber) {
+                $startNumber = 1;
+            }
+            for ($i = 0; $i < 5; $i++) {
+                $result[] = Uri::fromTemplate($uriTemplate, ['Number' => ($startNumber + $i)])->toString();
+            }
+        }
+
+
+        return $result;
+    }
+
     public function getId(): string
     {
         return $this->dom->getAttribute('id');
