@@ -59,6 +59,10 @@ class AnalyzeManifest extends Command
                         $representation->getTransientAttribute('profiles') . "\n";
                         echo $representation->path() . " - " .
                         $representation->getBaseUrl() . "\n";
+                        $initUrl = $representation->initializationUrl();
+                        if ($initUrl){
+                            echo "  Init: $initUrl\n";
+                        }
                         foreach ($representation->segmentUrls() as $url) {
                             echo "    $url\n";
                         }

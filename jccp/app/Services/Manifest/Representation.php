@@ -46,10 +46,34 @@ class Representation
         )->toString();
     }
 
+    public function initializationUrl(): string|null
+    {
+        $base = $this->getBaseUrl();
+        if (count($this->dom->getElementsByTagName('SegmentBase'))) {
+            //Self-initializing
+            return null;
+        }
+
+        ///\TODO Add segmentlist variant (based on example_G4)
+
+        $segmentTemplate = $this->dom->getElementsByTagName("SegmentTemplate");
+        if (count($segmentTemplate)) {
+            $segmentTemplateUrl = Uri::fromBaseUri(
+                $segmentTemplate->item(0)->getAttribute('initialization'),
+                $base
+            )->toString();
+            return Uri::fromBaseUri($segmentTemplateUrl, $base)->toString();
+        }
+
+
+
+        return null;
+    }
+
     /**
      * @return array<string>
      */
-    public function segmentUrls()
+    public function segmentUrls(): array
     {
         $result = array(
         );
