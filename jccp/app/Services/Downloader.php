@@ -38,23 +38,25 @@ class Downloader
     }
     public function downloadSegments(int $periodIndex, int $adaptationSetIndex, int $representationIndex): void
     {
-        $sessionDir = session_dir();
+        $representationDir = session_dir() . "${periodIndex}/${adaptationSetIndex}/${representationIndex}/";
 
         $mpdCache = app(MPDCache::class);
 
         $representation = $mpdCache->getRepresentation($periodIndex, $adaptationSetIndex, $representationIndex);
 
 
-        $prefix = "${periodIndex}_${adaptationSetIndex}_${representationIndex}";
+        if (!file_exists($representationDir)) {
+            mkdir($representationDir, 0777, true);
+        }
 
 
         $initUrl = $representation->initializationUrl();
         if ($initUrl) {
-            $this->downloadFile($initUrl, "${sessionDir}${prefix}_init.mp4");
+            $this->downloadFile($initUrl, "${representationDir}init.mp4");
         }
 
         foreach ($representation->segmentUrls() as $segmentIndex => $segmentUrl) {
-            $this->downloadFile($segmentUrl, "${sessionDir}${prefix}_${segmentIndex}.mp4");
+            $this->downloadFile($segmentUrl, "${representationDir}${segmentIndex}.mp4");
         }
     }
 }
