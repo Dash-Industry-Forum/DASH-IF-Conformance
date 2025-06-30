@@ -8,6 +8,7 @@ use Keepsuit\LaravelOpenTelemetry\Facades\Tracer;
 use App\Services\ModuleLogger;
 use App\Services\MPDCache;
 use App\Services\Schematron;
+use App\Services\Downloader;
 
 class AnalyzeManifest extends Command
 {
@@ -60,7 +61,7 @@ class AnalyzeManifest extends Command
                         echo $representation->path() . " - " .
                         $representation->getBaseUrl() . "\n";
                         $initUrl = $representation->initializationUrl();
-                        if ($initUrl){
+                        if ($initUrl) {
                             echo "  Init: $initUrl\n";
                         }
                         foreach ($representation->segmentUrls() as $url) {
@@ -70,11 +71,14 @@ class AnalyzeManifest extends Command
                 }
             }
 
-            $schematron = app(Schematron::class);
-            $schematron->validate();
-            $schematron->validateSchematron();
+            #$schematron = app(Schematron::class);
+            #$schematron->validate();
+            #$schematron->validateSchematron();
 
             #echo app(ModuleLogger::class)->asJSON() . "\n";
+            #
+            $downloader = app(Downloader::class);
+            $downloader->downloadSegments(0, 0, 0);
         });
     }
 }
