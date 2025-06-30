@@ -19,6 +19,10 @@ class Module
         return $this->autoDetected;
     }
 
+    public function validateMPD(): void
+    {
+    }
+
     public function MPDHook(): void
     {
         $logger = app(ModuleLogger::class);

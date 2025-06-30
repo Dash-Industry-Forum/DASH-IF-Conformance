@@ -68,8 +68,12 @@ class Downloader
         }
     }
 
-    private function analyseSegment(string $initPath, string $segmentPath, string $representationDir, int $segmentIndex): bool
-    {
+    private function analyseSegment(
+        string $initPath,
+        string $segmentPath,
+        string $representationDir,
+        int $segmentIndex
+    ): bool {
         if ($segmentPath == '') {
             return app(MP4Box::class)->run($initPath);
         }

@@ -5,10 +5,12 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Keepsuit\LaravelOpenTelemetry\Facades\Tracer;
+use App\Services\ModuleReporter;
 use App\Services\ModuleLogger;
 use App\Services\MPDCache;
 use App\Services\Schematron;
 use App\Services\Downloader;
+use App\Modules\DVB\MPD as DVBMpd;
 
 class AnalyzeManifest extends Command
 {
@@ -39,6 +41,7 @@ class AnalyzeManifest extends Command
 
 
             $mpdCache = app(MPDCache::class);
+            $reporter = app(ModuleReporter::class);
 
             echo " - " .
                 $mpdCache->getBaseUrl() . "\n";
@@ -75,10 +78,17 @@ class AnalyzeManifest extends Command
             #$schematron->validate();
             #$schematron->validateSchematron();
 
+            #$downloader = app(Downloader::class);
+            #$downloader->downloadSegments(0, 0, 0);
+
+
+            $dvbMpd = new DVBMpd();
+            $dvbMpd->validateMPD();
+
             #echo app(ModuleLogger::class)->asJSON() . "\n";
-            #
-            $downloader = app(Downloader::class);
-            $downloader->downloadSegments(0, 0, 0);
+
+
+            print_r($reporter);
         });
     }
 }
