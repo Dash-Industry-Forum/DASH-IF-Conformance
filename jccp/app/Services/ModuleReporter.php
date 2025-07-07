@@ -3,13 +3,13 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
-use App\Services\ReporterContext;
-use App\Services\SubReporter;
+use App\Services\Reporter\Context;
+use App\Services\Reporter\SubReporter;
 
 class ModuleReporter
 {
     /**
-        * @var array<ReporterContext> $contextList
+        * @var array<Context> $contextList
     **/
     private array $contextList = [];
     /**
@@ -21,12 +21,11 @@ class ModuleReporter
     {
     }
 
-    public function &context(ReporterContext $context): SubReporter
+    public function &context(Context $context): SubReporter
     {
-        $key = array_find_key($this->contextList, function (ReporterContext $value) use ($context) {
+        $key = array_find_key($this->contextList, function (Context $value) use ($context) {
             return $value == $context;
         });
-        echo "  Found key " . $key . "\n";
         if ($key == null) {
             $this->contextList[] = $context;
             $this->reportByContext[] = new SubReporter();
@@ -45,5 +44,31 @@ class ModuleReporter
             $result[] = $context->toString();
         }
         return $result;
+    }
+
+    /**
+     * @return array<array<mixed>>
+     **/
+    public function serialize(bool $verbose = false): array
+    {
+        $res = [];
+
+
+        foreach ($this->contextList as $i => $ctx) {
+            $specVersion = $ctx->spec . " - " . $ctx->version;
+
+            if (!array_key_exists($ctx->element, $res)) {
+                $res[$ctx->element] = [];
+            }
+            if (!array_key_exists($specVersion, $res[$ctx->element])) {
+                $byElement[$specVersion] = [];
+            }
+
+            $res[$ctx->element][$specVersion][] =
+             $this->reportByContext[$i]->byCheck($verbose);
+        }
+
+
+        return $res;
     }
 }

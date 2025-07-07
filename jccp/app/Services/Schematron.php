@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Cache;
 use App\Services\ModuleLogger;
 use App\Services\MPDCache;
+use App\Services\ModuleReporter;
+use App\Services\Reporter\Context as ReporterContext;
 
 class Schematron
 {
@@ -83,8 +85,6 @@ class Schematron
 
         $validatorResult = Process::run($validatorCommand);
 
-
-
         $mpdValidatorOutput = $validatorResult->output();
 
 
@@ -107,6 +107,11 @@ class Schematron
         if (!Cache::get(cache_path(['mpd','schematron']))) {
             $this->runSchematron();
         }
+
+        $reporter = app(ModuleReporter::class);
+        $schematronContext = new ReporterContext("MPD", "Schematron", "", array());
+        $schematronReporter = &$reporter->context($schematronContext);
+
 
         $logger = app(ModuleLogger::class);
         $logger->setModule("Schematron");
@@ -138,6 +143,14 @@ class Schematron
             );
 
             foreach ($textComponents as $textComponent) {
+                $schematronReporter->test(
+                    $testLocation,
+                    $testDescription,
+                    false, //Always false, as we're parsing failed assertions
+                    "FAIL",
+                    "",
+                    $textComponent->nodeValue
+                );
                 $logger->test(
                     "Schematron",
                     $testLocation,
@@ -200,8 +213,6 @@ class Schematron
             "Schematron validation succesful",
             "Schematron validation failed"
         );
-
-        //TODO Schmatron analysis report
     }
 
     //\TODO Should we return true/false here

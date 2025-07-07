@@ -7,7 +7,7 @@ return [
     /**
      * Service name
      */
-    'service_name' => env(Variables::OTEL_SERVICE_NAME, \Illuminate\Support\Str::slug((string) env('APP_NAME', 'jccp'))),
+    'service_name' => 'dashif.conformance.laravel',
 
     /**
      * Comma separated list of propagators to use.

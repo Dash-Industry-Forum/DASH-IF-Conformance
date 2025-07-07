@@ -3,13 +3,14 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Services\MPDHandler;
+use App\Services\MPDCache;
 use App\Services\ModuleLogger;
 use App\Modules\DashIOP;
 use Illuminate\View\View;
 
 class ManifestDetails extends Component
 {
+    //TODO re-implement
     /**
      * This is a laravel-specific type, so we ignore it
      * @phpstan-ignore missingType.property
@@ -25,27 +26,21 @@ class ManifestDetails extends Component
 
     public function getManifestChecks(): string
     {
-        $mpdHandler  = app(MPDHandler::class);
-        return $mpdHandler->getResolved();
+        return '';
     }
 
     public function getFeatures(): mixed
     {
-        $mpdHandler = app(MPDHandler::class);
-        return $mpdHandler->getFeatures();
+        return null;
     }
 
     public function segmentUrls(): mixed
     {
-        $mpdHandler = app(MPDHandler::class);
-        return $mpdHandler->internalSegmentUrls();
+        return null;
     }
 
     public function logs(): string
     {
-        $logger = app(ModuleLogger::class);
-        $dashIOP = new DashIOP();
-        $dashIOP->MPDHook();
-        return $logger->asJSON();
+        return '';
     }
 }

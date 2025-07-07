@@ -74,12 +74,12 @@ class AnalyzeManifest extends Command
                 }
             }
 
-            #$schematron = app(Schematron::class);
-            #$schematron->validate();
-            #$schematron->validateSchematron();
+            $schematron = app(Schematron::class);
+            $schematron->validate();
+            $schematron->validateSchematron();
 
-            #$downloader = app(Downloader::class);
-            #$downloader->downloadSegments(0, 0, 0);
+            $downloader = app(Downloader::class);
+            $downloader->downloadSegments(0, 0, 0);
 
 
             $dvbMpd = new DVBMpd();
@@ -88,7 +88,7 @@ class AnalyzeManifest extends Command
             #echo app(ModuleLogger::class)->asJSON() . "\n";
 
 
-            print_r($reporter);
+            echo \json_encode($reporter->serialize(true), JSON_PRETTY_PRINT);
         });
     }
 }

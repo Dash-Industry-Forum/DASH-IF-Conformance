@@ -99,7 +99,7 @@ class MPDCache
     }
 
     /**
-     * @return array<Period>
+     * @return array<int,Period>
      */
     public function allPeriods(): array
     {

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Reporter;
 
 use Illuminate\Support\Facades\Log;
 
-class ReporterContext
+class Context
 {
-    private string $element;
-    private string $spec;
-    private string $version;
+    public readonly string $element;
+    public readonly string $spec;
+    public readonly string $version;
     /**
         * @var array<string,string> $context
     **/
@@ -29,5 +29,10 @@ class ReporterContext
     {
         print_r($this->context);
         return "$this->element - $this->spec ($this->version)";
+    }
+
+    public function getElement(): string
+    {
+        return $this->element;
     }
 }
