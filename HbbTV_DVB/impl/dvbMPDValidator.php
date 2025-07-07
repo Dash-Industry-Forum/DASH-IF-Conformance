@@ -48,39 +48,6 @@ $logger->test(
     "Invalid 'xlink:href' found in: " . $xlinkNotValidValue
 );
 
-$this->tlsBitrateCheck();
-
-$mpd_bytes = strlen($mpdHandler->getResolved());
-
-$logger->test(
-    "DVB",
-    "Section 4.5",
-    "The MPD size after xlink resolution SHALL NOT exceed 256 Kbytes",
-    $mpd_bytes <= 1024 * 256,
-    "FAIL",
-    "MPD size of " . $mpd_bytes . " bytes is within bounds",
-    "MPD size of " . $mpd_bytes . " bytes is not within bounds",
-);
-
-## Warn on low values of MPD@minimumUpdatePeriod (for now the lowest possible value is assumed to be 1 second)
-$minimumUpdateWarning = false;
-if ($mpdHandler->getDom()->getAttribute('minimumUpdatePeriod') != '') {
-    $mup = DASHIF\Utility\timeParsing($mpdHandler->getDom()->getAttribute('minimumUpdatePeriod'));
-    if ($mup < 1) {
-        $minimumUpdateWarning = true;
-    }
-}
-
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "DVB: Section 'MPD'",
-    "MPD@minimumUpdatePeriod should have a value of 1 second or higher",
-    $minimumUpdateWarning == false,
-    "WARN",
-    "Check succeeded",
-    "Check failed"
-);
-
 
 $logger->test(
     "HbbTV-DVB DASH Validation Requirements",

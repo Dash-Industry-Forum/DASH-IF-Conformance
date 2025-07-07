@@ -214,11 +214,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/fallbackOperationChecks.php';
     }
 
-    private function tlsBitrateCheck()
-    {
-        include 'impl/tlsBitrateCheck.php';
-    }
-
     private function checkDVBValidRelative()
     {
         include 'impl/checkDVBValidRelative.php';
