@@ -7,10 +7,10 @@ use App\Services\MPDCache;
 
 class Representation
 {
-    private \DOMElement $dom;
-    private int $periodIndex;
-    private int $adaptationSetIndex;
-    private int $representationIndex;
+    private readonly \DOMElement $dom;
+    private readonly int $periodIndex;
+    private readonly int $adaptationSetIndex;
+    private readonly int $representationIndex;
 
 
     public function __construct(

@@ -8,10 +8,10 @@ use App\Services\Manifest\Representation;
 
 class AdaptationSet
 {
-    private \DOMElement $dom;
+    private readonly \DOMElement $dom;
 
-    private int $periodIndex;
-    private int $adaptationSetIndex;
+    private readonly int $periodIndex;
+    private readonly int $adaptationSetIndex;
 
 
 
