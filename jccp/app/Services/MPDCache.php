@@ -12,13 +12,13 @@ use App\Services\Manifest\Representation;
 
 class MPDCache
 {
-    private \DOMElement|null $domCache = null;
+    private ?\DOMElement $domCache = null;
 
     public function __construct()
     {
     }
 
-    private function parseDom(): \DOMElement|null
+    private function parseDom(): ?\DOMElement
     {
         return Tracer::newSpan("Parse mpd")->measure(function () {
             $mpd = $this->getMPD();
@@ -37,7 +37,7 @@ class MPDCache
         });
     }
 
-    private function getDom(): \DOMElement|null
+    private function getDom(): ?\DOMElement
     {
         if (!$this->domCache) {
             $this->domCache = $this->parseDom();
@@ -87,7 +87,7 @@ class MPDCache
         return count($dom->getElementsByTagName('Period'));
     }
 
-    public function getPeriod(int $periodIndex): Period|null
+    public function getPeriod(int $periodIndex): ?Period
     {
         if ($periodIndex > $this->getPeriodCount()) {
             return null;
@@ -116,7 +116,7 @@ class MPDCache
     public function getAdaptationSet(
         int $periodIndex,
         int $adaptationIndex
-    ): AdaptationSet|null {
+    ): ?AdaptationSet {
         $period = $this->getPeriod($periodIndex);
         if (!$period) {
             return null;
@@ -128,7 +128,7 @@ class MPDCache
         int $periodIndex,
         int $adaptationIndex,
         int $representationIndex
-    ): Representation|null {
+    ): ?Representation {
         $period = $this->getPeriod($periodIndex);
         if (!$period) {
             return null;

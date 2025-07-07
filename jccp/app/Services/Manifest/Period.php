@@ -62,7 +62,7 @@ class Period
         return count($this->dom->getElementsByTagName('AdaptationSet'));
     }
 
-    public function getAdaptationSet(int $adaptationSetIndex): AdaptationSet|null
+    public function getAdaptationSet(int $adaptationSetIndex): ?AdaptationSet
     {
         $adaptationSets = $this->dom->getElementsByTagName('AdaptationSet');
         if ($adaptationSetIndex >= count($adaptationSets)) {
@@ -83,7 +83,7 @@ class Period
         return $result;
     }
 
-    public function getRepresentation(int $adaptationIndex, int $representationIndex): Representation|null
+    public function getRepresentation(int $adaptationIndex, int $representationIndex): ?Representation
     {
         $adaptationSet = $this->getAdaptationSet($adaptationIndex);
         if (!$adaptationSet) {

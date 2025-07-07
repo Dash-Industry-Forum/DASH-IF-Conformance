@@ -57,7 +57,7 @@ class AdaptationSet
     }
 
 
-    public function getRepresentation(int $representationIndex): Representation|null
+    public function getRepresentation(int $representationIndex): ?Representation
     {
         $representations = $this->dom->getElementsByTagName('Representation');
         if ($representationIndex >= count($representations)) {

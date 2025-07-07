@@ -46,7 +46,7 @@ class Representation
         )->toString();
     }
 
-    public function initializationUrl(): string|null
+    public function initializationUrl(): ?string
     {
         $base = $this->getBaseUrl();
         if (count($this->dom->getElementsByTagName('SegmentBase'))) {
