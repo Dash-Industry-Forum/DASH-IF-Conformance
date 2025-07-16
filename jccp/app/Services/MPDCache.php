@@ -146,4 +146,10 @@ class MPDCache
         }
         return $dom->getAttribute($attribute);
     }
+
+    public function hasProfile(string $profile): bool
+    {
+        $profileList = explode(',', $this->getAttribute('profiles'));
+        return in_array($profile, $profileList);
+    }
 }

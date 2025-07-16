@@ -49,38 +49,6 @@ $logger->test(
 );
 
 
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "DVB: Section E.2.1",
-    "The MPD SHALL indicate either or both of the following profiles: \"urn:dvb:dash:profile:dvb-dash:2014\"" .
-    " and \"urn:hbbtv:dash:profile:isoff-live:2012\"",
-    DASHIF\Utility\mpdProfilesContainsAtLeastOne(
-        array("urn:dvb:dash:profile:dvb-dash:2014","urn:hbbtv:dash:profile:isoff-live:2012")
-    ),
-    "FAIL",
-    "Check succeeded",
-    "Check failed"
-);
-
-
-$containsDVBDash = DASHIF\Utility\mpdContainsProfile('urn:dvb:dash:profile:dvb-dash:2014');
-$containsExtension = DASHIF\Utility\mpdProfilesContainsAtLeastOne(
-    array('urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014','urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014')
-);
-
-
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "DVB: Section 11.1",
-    "All Representations that are intended to be decoded and presented by a DVB conformant Player SHOULD " .
-    "be such that they will be inferred to have an @profiles attribute that includes the profile name defined " .
-    "in clause 4.1 as well as either the one defined in 4.2.5 or the one defined in 4.2.8'",
-    $containsDVBDash && $containsExtension,
-    "WARN",
-    "Check succeeded",
-    "Check failed: Contains clause 4.1: " . ($containsDVBDash ? "Yes" : "No") .
-    ", contains either 4.2.5 or 4.2.8: " . ($containsExtension ? "Yes" : "No"),
-);
 
 $profileExists = ($containsDVBDash && $containsExtension);
 

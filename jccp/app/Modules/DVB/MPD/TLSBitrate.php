@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\DVB;
+namespace App\Modules\DVB\MPD;
 
 use App\Services\MPDCache;
 use App\Services\Manifest\Period;

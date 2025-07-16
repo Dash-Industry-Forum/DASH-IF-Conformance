@@ -21,14 +21,14 @@ class SubReporter
         string $test,
         bool $result,
         string $severity,
-        string $msg_succ,
-        string $msg_fail
+        string $pass_message,
+        string $fail_message
     ): bool {
         $this->results[] = new TestResult(
             section: $section,
             test: $test,
             severity: ($result ? "PASS" : $severity),
-            message: ($result ? $msg_succ : $msg_fail),
+            message: ($result ? $pass_message : $fail_message),
         );
 
         return $result;
