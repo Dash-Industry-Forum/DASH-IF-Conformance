@@ -143,16 +143,6 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
     $adaptationSets = $node->getElementsByTagName('AdaptationSet');
     $adaptationSetCount = $adaptationSets->length;
 
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "DVB: Section 4.5",
-        "'The MPD has a maximum of 16 adaptation sets per period'",
-        $adaptationSetCount <= 16,
-        "FAIL",
-        "$adaptationSetCount adaption sets found for period $this->periodCount",
-        "$adaptationSetCount adaption sets found for period $this->periodCount, exceeding the maximum"
-    );
-
     $audioAdaptations = array();
     for ($i = 0; $i < $adaptationSetCount; $i++) {
         $adaptationSet = $adaptationSets->item($i);
@@ -264,17 +254,6 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         }
     }
 }
-
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "DVB: Section 4.5",
-    "The MPD has a maximum of 64 periods after xlink resolution",
-    $this->periodCount <= 64,
-    "FAIL",
-    "$this->periodCount periods found in MPD",
-    "$this->periodCount periods found in MPD"
-);
-
 
 $this->dvbAssociatedAdaptationSetsCheck();
 

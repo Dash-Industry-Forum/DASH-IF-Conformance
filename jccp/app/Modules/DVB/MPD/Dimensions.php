@@ -41,7 +41,47 @@ class Dimensions
             "MPD Size in bounds",
             ($resolved ? "MPD too large" : "No resolved MPD found")
         );
+
+        $this->validateCounts();
     }
 
     //Private helper functions
+    private function validateCounts(): void
+    {
+        $mpdCache = app(MPDCache::class);
+
+        $allPeriods = $mpdCache->allPeriods();
+        $this->v141reporter->test(
+            "Section 4.5",
+            "The MPD has a maximum of 64 periods after xlink resolution",
+            count($allPeriods) <= 64,
+            "FAIL",
+            count($allPeriods) . " periods in MPD",
+            count($allPeriods) . " periods in MPD"
+        );
+
+        foreach ($allPeriods as $period) {
+            $adaptationSets = $period->allAdaptationSets();
+            $this->v141reporter->test(
+                "Section 4.5",
+                "The MPD has a maximum of 16 adaptation sets per period",
+                count($adaptationSets) <= 16,
+                "FAIL",
+                count($adaptationSets) . " adaptation set(s) in period " . $period->path(),
+                count($adaptationSets) . " adaptation sets in period " . $period->path()
+            );
+            foreach ($adaptationSets as $adaptationSet) {
+                $representations = $adaptationSet->allRepresentations();
+                $this->v141reporter->test(
+                    "Section 4.5",
+                    "The MPD has a maximum of 16 representations per adaptation sets",
+                    count($representations) <= 16,
+                    "FAIL",
+                    count($representations) . " representation(s) in adaptation set " . $adaptationSet->path(),
+                    count($representations) . " representations in adaptation set " . $adaptationSet->path()
+                );
+            }
+        }
+    }
+
 }
