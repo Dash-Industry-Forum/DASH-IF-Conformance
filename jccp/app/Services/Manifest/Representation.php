@@ -8,9 +8,9 @@ use App\Services\MPDCache;
 class Representation
 {
     private readonly \DOMElement $dom;
-    private readonly int $periodIndex;
-    private readonly int $adaptationSetIndex;
-    private readonly int $representationIndex;
+    public readonly int $periodIndex;
+    public readonly int $adaptationSetIndex;
+    public readonly int $representationIndex;
 
 
     public function __construct(
@@ -137,5 +137,11 @@ class Representation
         }
         return app(MPDCache::class)->getAdaptationSet($this->periodIndex, $this->adaptationSetIndex)
                                    ->getTransientAttribute($attribute);
+    }
+
+    public function hasProfile(string $profile): bool
+    {
+        $profileList = explode(',', $this->getTransientAttribute('profiles'));
+        return in_array($profile, $profileList);
     }
 }

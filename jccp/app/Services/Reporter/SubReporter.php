@@ -44,7 +44,7 @@ class SubReporter
 
         foreach ($this->results as $result) {
             $c = $result->getSection() . " - " . $result->getTest();
-            if (!in_array($c, $res)) {
+            if (!array_key_exists($c, $res)) {
                 $res[$c]  = array(
                     'state' => 'PASS'
                 );

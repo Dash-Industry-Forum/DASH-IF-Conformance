@@ -48,11 +48,6 @@ $logger->test(
     "Invalid 'xlink:href' found in: " . $xlinkNotValidValue
 );
 
-
-
-$profileExists = ($containsDVBDash && $containsExtension);
-
-
 $this->checkDVBValidRelative();
 
 ## Verifying the DVB Metric reporting mechanism according to Section 10.12.3
@@ -164,30 +159,6 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         $videoFound = false;
         $audioFound = false;
 
-        $adaptationSetProfiles = $adaptationSet->getAttribute('profiles');
-        $adaptationContainsDVBDash = DASHIF\Utility\profileListContainsProfile(
-            $adaptationSetProfiles,
-            'urn:dvb:dash:profile:dvb-dash:2014'
-        );
-        $adaptationContainsExtension = DASHIF\Utility\profileListContainsAtLeastOne(
-            $adaptationSetProfiles,
-            array('urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014',
-            'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014')
-        );
-        $adaptationSetProfileExists = ($adaptationContainsDVBDash && $adaptationContainsExtension);
-
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 11.1",
-            "All Representations that are intended to be decoded and presented by a DVB conformant Player SHOULD " .
-            "be such that they will be inferred to have an @profiles attribute that includes the profile name " .
-            "defined in clause 4.1 as well as either the one defined in 4.2.5 or the one defined in 4.2.8'",
-            $adaptationSetProfileExists,
-            "WARN",
-            "Check succeeded",
-            "Check failed: Contains clause 4.1: " . ($adaptationContainsDVBDash ? "Yes" : "No") .
-            ", contains either 4.2.5 or 4.2.8: " . ($adaptationContainsExtension ? "Yes" : "No"),
-        );
 
         $representations = $adaptationSet->getElementsByTagName("Representation");
         $representationCount = $representations->length;
@@ -218,77 +189,6 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
             }
         }
 
-        foreach ($representations as $representation) {
-            if ($profileExists && $adaptationSetProfileExists) {
-                $representationProfiles = $adaptationSet->getAttribute('profiles');
-                $representationContainsDVBDash = DASHIF\Utility\profileListContainsProfile(
-                    $representationProfiles,
-                    'urn:dvb:dash:profile:dvb-dash:2014'
-                );
-                $representationContainsExtension = DASHIF\Utility\profileListContainsAtLeastOne(
-                    $representationProfiles,
-                    array('urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014',
-                    'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014')
-                );
-                $representationProfileExists = ($representationContainsDVBDash && $representationContainsExtension);
-                $logger->test(
-                    "HbbTV-DVB DASH Validation Requirements",
-                    "DVB: Section 11.1",
-                    "All Representations that are intended to be decoded and presented by a DVB conformant Player " .
-                    "SHOULD be such that they will be inferred to have an @profiles attribute that includes the " .
-                    "profile name defined in clause 4.1 as well as either the one defined in 4.2.5 or the one " .
-                    "defined in 4.2.8'",
-                    $representationProfileExists,
-                    "WARN",
-                    "Check succeeded",
-                    "Check failed: Contains clause 4.1: " . ($representationContainsDVBDash ? "Yes" : "No") .
-                    ", contains either 4.2.5 or 4.2.8: " . ($representationContainsExtension ? "Yes" : "No"),
-                );
-
-                $mimeType = $representation->getAttribute("mimeType");
-                if (strpos($mimeType, "video") !== false) {
-                    $videoFound = true;
-                }
-                if (strpos($mimeType, "audio") !== false) {
-                    $audioFound = true;
-                }
-
-                if (
-                    $profileExists &&
-                    ($adaptationSetProfiles == '' ||  $adaptationSetProfileExists) &&
-                    ($representationProfiles == '' || $representationProfileExists)
-                ) {
-                    $subRepresentations = $representation->getElementsByTagName("SubRepresentation");
-                    foreach ($subRepresentations as $subRep) {
-                        $subRepProfiles = $subRep->getAttribute('profiles');
-                        $subRepContainsDVBDash = DASHIF\Utility\profileListContainsProfile(
-                            $subRepProfiles,
-                            'urn:dvb:dash:profile:dvb-dash:2014'
-                        );
-                        $subRepContainsExtension = DASHIF\Utility\profileListContainsAtLeastOne(
-                            $subRepProfiles,
-                            array('urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014',
-                            'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014')
-                        );
-                        $subRepProfileExists = ($subRepContainsDVBDash && $subRepContainsExtension);
-                        $logger->test(
-                            "HbbTV-DVB DASH Validation Requirements",
-                            "DVB: Section 11.1",
-                            "All Representations that are intended to be decoded and presented by a DVB " .
-                            "conformant Player SHOULD be such that they will be inferred to have an @profiles " .
-                            "attribute that includes the profile name defined in clause 4.1 as well as either " .
-                            "the one defined in 4.2.5 or the one defined in 4.2.8'",
-                            $subRepProfileExists,
-                            "WARN",
-                            "SubRepresentation Check succeeded",
-                            "SubRepresentation Check failed: Contains clause 4.1: " .
-                            ($subRepContainsDVBDash ? "Yes" : "No") .
-                            ", contains either 4.2.5 or 4.2.8: " . ($subRepContainsExtension ? "Yes" : "No"),
-                        );
-                    }
-                }
-            }
-        }
 
         //Continuation of adaptationset-level checks
         $adaptationContentType = $adaptationSet->getAttribute("contentType");

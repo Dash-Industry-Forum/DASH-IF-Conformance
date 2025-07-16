@@ -10,8 +10,8 @@ class AdaptationSet
 {
     private readonly \DOMElement $dom;
 
-    private readonly int $periodIndex;
-    private readonly int $adaptationSetIndex;
+    public readonly int $periodIndex;
+    public readonly int $adaptationSetIndex;
 
 
 
@@ -54,6 +54,12 @@ class AdaptationSet
         }
         return app(MPDCache::class)->getPeriod($this->periodIndex)
                                    ->getTransientAttribute($attribute);
+    }
+
+    public function hasProfile(string $profile): bool
+    {
+        $profileList = explode(',', $this->getTransientAttribute('profiles'));
+        return in_array($profile, $profileList);
     }
 
 

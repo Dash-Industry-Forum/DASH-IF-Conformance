@@ -9,6 +9,7 @@ use Keepsuit\LaravelOpenTelemetry\Facades\Tracer;
 use App\Services\Manifest\Period;
 use App\Services\Manifest\AdaptationSet;
 use App\Services\Manifest\Representation;
+use App\Services\Manifest\ProfileSpecificMPD;
 
 class MPDCache
 {
@@ -151,5 +152,33 @@ class MPDCache
     {
         $profileList = explode(',', $this->getAttribute('profiles'));
         return in_array($profile, $profileList);
+    }
+
+    public function profileSpecificMPD(string $profile): ?ProfileSpecificMPD
+    {
+        if (!$this->hasProfile($profile)) {
+            return null;
+        }
+        $result = new ProfileSpecificMPD();
+
+        foreach ($this->allPeriods() as $period) {
+            $result->periods[] = $period;
+
+            foreach ($period->allAdaptationSets() as $adaptationSet) {
+                if (!$adaptationSet->hasProfile($profile)) {
+                    continue;
+                }
+                $result->adaptationSets[] = $adaptationSet;
+                foreach ($adaptationSet->allRepresentations() as $representation) {
+                    if (!$representation->hasProfile($profile)) {
+                        continue;
+                    }
+                    $result->representations[] = $representation;
+                    Log::info("Added representation " . $representation->path() . " for profile $profile");
+                }
+            }
+        }
+
+        return $result;
     }
 }

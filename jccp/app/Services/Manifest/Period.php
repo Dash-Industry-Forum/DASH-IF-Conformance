@@ -10,7 +10,7 @@ use App\Services\Manifest\Representation;
 class Period
 {
     private readonly \DOMElement $dom;
-    private readonly int $periodIndex;
+    public readonly int $periodIndex;
 
     public function __construct(\DOMElement $dom, int $periodIndex)
     {
