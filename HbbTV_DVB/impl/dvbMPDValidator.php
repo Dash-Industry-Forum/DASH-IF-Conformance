@@ -149,6 +149,16 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         $videoFound = false;
         $audioFound = false;
 
+        /* Accidentally removed in previous commit, for each representation:
+            $mimeType = $representation->getAttribute("mimeType");
+                if (strpos($mimeType, "video") !== false) {
+                    $videoFound = true;
+                }
+                if (strpos($mimeType, "audio") !== false) {
+                    $audioFound = true;
+                }
+         */
+
 
         $representations = $adaptationSet->getElementsByTagName("Representation");
         $representationCount = $representations->length;
