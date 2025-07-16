@@ -163,16 +163,6 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         $representations = $adaptationSet->getElementsByTagName("Representation");
         $representationCount = $representations->length;
 
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 4.5",
-            "The MPD has a maximum of 16 represtentations per adaptation set",
-            $representationCount <= 16,
-            "FAIL",
-            "$representationCount representations in period $this->periodCount, set " . ($i + 1),
-            "$representationCount representations in period $this->periodCount, set " . ($i + 1) . ", exceeding bound",
-        );
-
         $videoComponentFound = false;
         $audioComponentFound = false;
 

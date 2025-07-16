@@ -38,8 +38,6 @@ class MPD extends Module
         parent::validateMPD();
         $mpdCache = app(MPDCache::class);
 
-
-
         $minimumUpdatePeriod = $mpdCache->getAttribute('minimumUpdatePeriod');
 
         $this->legacyreporter->test(

@@ -7,11 +7,20 @@ use Illuminate\Support\Facades\Cache;
 use App\Services\ModuleLogger;
 use App\Services\MPDCache;
 use App\Services\ModuleReporter;
+use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
 
 class Schematron
 {
     private string $schemaPath;
+    private SubReporter $schematronReporter;
+
+    public function __construct()
+    {
+        $reporter = app(ModuleReporter::class);
+        $schematronContext = new ReporterContext("MPD", "Schematron", "", array());
+        $this->schematronReporter = &$reporter->context($schematronContext);
+    }
 
     public function getValidatorOutput(): string
     {
@@ -50,7 +59,8 @@ class Schematron
         ]);
         $schematronResult = Process::run($schematronCommand);
 
-        $resolvedMPD = Cache::remember(cache_path(['mpd','schematron']), 10, function () use ($sessionDir) {
+        //Make sure we cache our schematron code
+        Cache::remember(cache_path(['mpd','schematron']), 10, function () use ($sessionDir) {
             return file_get_contents($sessionDir . "schematron.xml");
         });
     }
@@ -65,9 +75,6 @@ class Schematron
         $mpdXml = simplexml_load_string('<mpdresult><xlink>No Result</xlink>' .
         '<schema>No Result</schema><schematron>No Result</schematron></mpdresult>');
         $mpdXml->asXML($sessionDir . "mpdresult.xml");
-
-        $currentDir = getcwd();
-
 
         $validatorPath = __DIR__ . "/../../../DASH/mpdvalidator";
         $this->findOrDownloadSchema();
@@ -87,13 +94,10 @@ class Schematron
 
         $mpdValidatorOutput = $validatorResult->output();
 
-
-
-        $resolvedMPD = Cache::remember(cache_path(['mpd','resolved']), 10, function () use ($sessionDir) {
+        //Cache resolved
+        Cache::remember(cache_path(['mpd','resolved']), 10, function () use ($sessionDir) {
             return file_get_contents($sessionDir . "resolved.xml");
         });
-
-
 
         Cache::remember(cache_path(['validator','output']), 10, function () use ($mpdValidatorOutput) {
             $javaRemoved = str_replace("[java]", "", $mpdValidatorOutput);
@@ -108,54 +112,28 @@ class Schematron
             $this->runSchematron();
         }
 
-        $reporter = app(ModuleReporter::class);
-        $schematronContext = new ReporterContext("MPD", "Schematron", "", array());
-        $schematronReporter = &$reporter->context($schematronContext);
-
-
-        $logger = app(ModuleLogger::class);
-        $logger->setModule("Schematron");
-        $logger->setHook("MPD");
-
         $schematronOutput = $this->getSchematronOutput();
         if (!$schematronOutput) {
-            $logger->validatorMessage("Schematron was unable to run");
             return;
         }
 
         $doc = new \DOMDocument();
         $doc->loadXML($schematronOutput);
 
-        $schematronResult = $doc->getElementsByTagNameNS(
-            'http://purl.oclc.org/dsdl/svrl',
-            'schematron-output'
-        )->item(0);
-        $failedAssertions = $schematronResult->getElementsByTagNameNS(
-            'http://purl.oclc.org/dsdl/svrl',
-            'failed-assert'
-        );
+        $namespace = 'http://purl.oclc.org/dsdl/svrl';
+        $schematronResult = $doc->getElementsByTagNameNS($namespace, 'schematron-output')->item(0);
+        $failedAssertions = $schematronResult->getElementsByTagNameNS($namespace, 'failed-assert');
         foreach ($failedAssertions as $failedAssertion) {
             $testLocation = $failedAssertion->getAttribute('location');
             $testDescription = $failedAssertion->getAttribute('test');
-            $textComponents = $failedAssertion->getElementsByTagNameNS(
-                'http://purl.oclc.org/dsdl/svrl',
-                'text'
-            );
+            $textComponents = $failedAssertion->getElementsByTagNameNS($namespace, 'text');
 
             foreach ($textComponents as $textComponent) {
-                $schematronReporter->test(
+                //Always false, as we're parsing failed assertions
+                $this->schematronReporter->test(
                     $testLocation,
                     $testDescription,
-                    false, //Always false, as we're parsing failed assertions
-                    "FAIL",
-                    "",
-                    $textComponent->nodeValue
-                );
-                $logger->test(
-                    "Schematron",
-                    $testLocation,
-                    $testDescription,
-                    false, //Always false, as we're parsing failed assertions
+                    false,
                     "FAIL",
                     "",
                     $textComponent->nodeValue
@@ -173,40 +151,38 @@ class Schematron
             $this->runValidator();
         }
 
+        //Todo: Move to reporter
+
         $logger = app(ModuleLogger::class);
 
         $validatorOutput = $this->getValidatorOutput();
 
-        $logger->setModule("Schematron");
-        $logger->setHook("MPD");
 
         if (!$validatorOutput) {
             $logger->validatorMessage("Validator was unable to run");
         }
 
-        $logger->test(
-            "MPEG-DASH",
-            "Commmon",
-            "Schematron Validation",
+
+        $this->schematronReporter->test(
+            "",
+            "Resolve XLink",
             strpos($validatorOutput, 'XLink resolving successful') !== false,
             "FAIL",
             "XLink resolving succesful",
             "XLink resolving failed"
         );
 
-        $logger->test(
-            "MPEG-DASH",
-            "Commmon",
-            "Schematron Validation",
+        $this->schematronReporter->test(
+            "",
+            "MPD Validation",
             strpos($validatorOutput, 'MPD validation successful') !== false,
             "FAIL",
             "MPD validation succesful",
             "MPD validation failed"
         );
 
-        $logger->test(
-            "MPEG-DASH",
-            "Commmon",
+        $this->schematronReporter->test(
+            "",
             "Schematron Validation",
             strpos($validatorOutput, 'Schematron validation successful') !== false,
             "FAIL",
