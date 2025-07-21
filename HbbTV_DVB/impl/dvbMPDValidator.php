@@ -68,15 +68,6 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
     $this->adaptationAudioCount = 0;
     $this->mainAudios = array();
 
-
-    foreach ($node->childNodes as $child) {
-        if ($child->nodeName == 'EventStream') {
-            $this->dvbEventChecks($child);
-        }
-    }
-
-
-
     // Adaptation Sets within each Period
     $adaptationSets = $node->getElementsByTagName('AdaptationSet');
     $adaptationSetCount = $adaptationSets->length;
