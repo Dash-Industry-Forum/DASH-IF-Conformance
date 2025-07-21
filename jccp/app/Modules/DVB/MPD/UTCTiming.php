@@ -33,7 +33,7 @@ class UTCTiming
     public function validateUTCTimingElement(): void
     {
         $mpdCache = app(MPDCache::class);
-        if ($mpdCache->getAttribute('type') != "dynamic" && $mpdCache->getAttribute('availabilityStartTime') != '') {
+        if ($mpdCache->getAttribute('type') != "dynamic" && $mpdCache->getAttribute('availabilityStartTime') == '') {
             return;
         }
 
