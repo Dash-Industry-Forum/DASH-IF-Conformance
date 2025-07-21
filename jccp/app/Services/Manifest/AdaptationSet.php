@@ -93,4 +93,12 @@ class AdaptationSet
         }
         return $result;
     }
+
+    /**
+     * @return \DOMNodeList<\DOMElement>
+     **/
+    public function getDOMElements(string $tagName): ?\DOMNodeList
+    {
+        return $this->dom->getElementsByTagName($tagName);
+    }
 }

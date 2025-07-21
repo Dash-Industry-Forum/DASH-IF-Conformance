@@ -4,18 +4,6 @@ global $logger;
 
 $contentType = $adaptation->getAttribute("contentType");
 
-## Information from this part is used for Section 4.2.2 check about multiple Adaptation Sets with video as contentType
-if ($contentType == 'video') {
-    $this->adaptationVideoCount++;
-
-    $roles = $adaptation->getElementsByTagName("Role");
-    foreach ($roles as $role) {
-        if ($role->getAttribute('schemeIdUri') == 'urn:mpeg:dash:role:2011' && $role->getAttribute('value') == 'main') {
-            $this->mainVideoFound = true;
-        }
-    }
-}
-
 $ids = array();
 $contentComponents = $adaptation->getElementsByTagName("ContentComponent");
 foreach ($contentComponents as $component) {

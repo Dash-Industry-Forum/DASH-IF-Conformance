@@ -65,9 +65,7 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
     }
     $this->periodCount++;
 
-    $this->adaptationVideoCount = 0;
     $this->adaptationAudioCount = 0;
-    $this->mainVideoFound = false;
     $this->mainAudios = array();
 
 
@@ -145,18 +143,6 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         } else {
             $this->dvbSubtitleChecks($adaptationSet, $representations, $i);
         }
-
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 4.2.2",
-            "If a Period element contains multiple Adaptation Sets with @contentType=\"video\" then at least one " .
-            "Adaptation Set SHALL contain a Role element with @schemeIdUri=\"urn:mpeg:dash:role:2011\" and " .
-            "@value=\"main\"",
-            $this->adaptationVideoCount <= 1 || $this->mainVideoFound,
-            "FAIL",
-            "$this->adaptationVideoCount adaptation(s) found with main label if needed for period $this->periodCount",
-            "$this->adaptationVideoCount adaptations found, none labeled as main for period $this->periodCount"
-        );
 
         $this->dvbContentProtection($adaptationSet, $representations, $i, $cencAttribute);
     }

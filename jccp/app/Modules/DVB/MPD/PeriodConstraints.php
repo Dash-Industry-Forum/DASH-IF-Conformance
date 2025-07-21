@@ -48,7 +48,12 @@ class PeriodConstraints
             fail_message: "SegmentList found in Period " . $period->path()
         );
 
+        $this->validateLiveXorOnDemand($period);
+        $this->validateMainVideo($period);
+    }
 
+    private function validateLiveXorOnDemand(Period $period): void
+    {
         $isLive =  $period->hasProfile("urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014");
         $isOnDemand = $period->hasProfile("urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014");
 
@@ -72,5 +77,40 @@ class PeriodConstraints
                 fail_message: "SegmentTemplate found in Period " . $period->path()
             );
         }
+    }
+
+    private function validateMainVideo(Period $period): void
+    {
+        $videoCount = 0;
+        $foundMain = false;
+
+        foreach ($period->allAdaptationSets() as $adaptationSet) {
+            if ($adaptationSet->getAttribute('contentType') != 'video') {
+                continue;
+            }
+            $videoCount++;
+            foreach ($adaptationSet->getDOMElements('Role') as $role) {
+                if (
+                    $role->getAttribute('schemeIdUri') == 'urn:mpeg:dash:role:2011' &&
+                    $role->getAttribute('value') == 'main'
+                ) {
+                    $foundMain = true;
+                    break;
+                }
+            }
+            if ($foundMain) {
+                break;
+            }
+        }
+
+        $this->v141reporter->test(
+            section: "Section 4.2.2",
+            test: "If a Period element contains multiple Adaptation Sets with @contentType='video' then at least one " .
+                  "[..] shall contain a Role element with @schemeIdUri='urn:mpeg:dash:role:2011' and @value='main'",
+            result: $videoCount < 2 ||  $foundMain,
+            severity: "FAIL",
+            pass_message: "Check passed for Period " . $period->path(),
+            fail_message: "Check failed for Period " . $period->path(),
+        );
     }
 }
