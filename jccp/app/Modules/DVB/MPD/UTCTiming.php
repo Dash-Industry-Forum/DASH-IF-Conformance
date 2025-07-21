@@ -19,7 +19,6 @@ class UTCTiming
     public function __construct()
     {
         $reporter = app(ModuleReporter::class);
-        $reporter = app(ModuleReporter::class);
         $this->v141reporter = &$reporter->context(new ReporterContext(
             "MPD",
             "DVB",
@@ -28,7 +27,6 @@ class UTCTiming
         ));
     }
 
-    //Public validation functions
     //Public validation functions
     public function validateUTCTimingElement(): void
     {
@@ -56,7 +54,7 @@ class UTCTiming
         }
 
         $this->v141reporter->test(
-            section: "DVB: Section 4.7.2",
+            section: "Section 4.7.2",
             test: "'If the MPD is dynamic or if the MPD@availabilityStartTime is present theni [..] " .
                   "the MPD SHOULD contain at least one UTCTiming element with the @schemeIdUri attribute set " .
                   "to one of the following: " . join(', ', $acceptedURIs),

@@ -2,6 +2,8 @@
 
 namespace App\Modules\DVB;
 
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use App\Services\ModuleLogger;
 use App\Services\MPDCache;
 use App\Services\ModuleReporter;
@@ -12,8 +14,7 @@ use App\Modules\DVB\MPD\TLSBitrate;
 use App\Modules\DVB\MPD\Dimensions;
 use App\Modules\DVB\MPD\Profiles;
 use App\Modules\DVB\MPD\UTCTiming;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
+use App\Modules\DVB\MPD\PeriodConstraints;
 
 class MPD extends Module
 {
@@ -54,5 +55,6 @@ class MPD extends Module
         new Dimensions()->validateDimensions();
         new TLSBitrate()->validateTLSBitrate();
         new UTCTiming()->validateUTCTimingElement();
+        new PeriodConstraints()->validatePeriodConstraints();
     }
 }

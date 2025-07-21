@@ -70,42 +70,13 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
     $this->mainVideoFound = false;
     $this->mainAudios = array();
 
-    $invalidSegmentListFound = false;
-    $invalidSegmentTemplateFound = false;
 
     foreach ($node->childNodes as $child) {
-        if ($child->nodeName == 'SegmentList') {
-            $invalidSegmentListFound = true;
-        }
-
         if ($child->nodeName == 'EventStream') {
             $this->dvbEventChecks($child);
         }
-        if ($child->nodeName == 'SegmentTemplate') {
-            if (DASHIF\Utility\mpdContainsProfile('urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014')) {
-                $invalidSegmentTemplateFound = true;
-            }
-        }
     }
 
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "DVB: Section 4.2.2",
-        "'The period SegmentList SHALL not be present'",
-        !$invalidSegmentListFound,
-        "FAIL",
-        "Period SegmentList not found for period $this->periodCount",
-        "Period SegmentList found for period $this->periodCount"
-    );
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "DVB: Section 4.2.6",
-        "'The period SegmentTemplate SHALL not be present for Period elements conforming to On Demand profile'",
-        !$invalidSegmentTemplateFound,
-        "FAIL",
-        "Period SegmentTemplate not found or no On Demand profile in period $this->periodCount",
-        "Period SegmentTemplate found for On Demand profile in period $this->periodCount"
-    );
 
 
     // Adaptation Sets within each Period
