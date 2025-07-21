@@ -182,15 +182,3 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
 }
 
 $this->dvbAssociatedAdaptationSetsCheck();
-
-$audioCount = count($audioAdaptations);
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "DVB: Section 6.1.2",
-    "If there is more than one audio Adaptation Set in a DASH Presentation then at least one of them SHALL be " .
-    "tagged with an @value set to \"main\"",
-    $audioCount <= 1 || $this->mainAudioFound,
-    "FAIL",
-    "$audioCount adaptation(s) found with main label if needed in Presentation",
-    "$audioCount adaptations found but none of them are labeled as main in Presentation"
-);

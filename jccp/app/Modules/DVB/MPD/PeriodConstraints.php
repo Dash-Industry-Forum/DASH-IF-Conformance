@@ -50,6 +50,7 @@ class PeriodConstraints
 
         $this->validateLiveXorOnDemand($period);
         $this->validateMainVideo($period);
+        $this->validateMainAudio($period);
     }
 
     private function validateLiveXorOnDemand(Period $period): void
@@ -108,6 +109,44 @@ class PeriodConstraints
             test: "If a Period element contains multiple Adaptation Sets with @contentType='video' then at least one " .
                   "[..] shall contain a Role element with @schemeIdUri='urn:mpeg:dash:role:2011' and @value='main'",
             result: $videoCount < 2 ||  $foundMain,
+            severity: "FAIL",
+            pass_message: "Check passed for Period " . $period->path(),
+            fail_message: "Check failed for Period " . $period->path(),
+        );
+    }
+
+    /**
+     * @todo Find out what the definition of 'DASH presentation' should be. Uses Period for now.
+     **/
+    private function validateMainAudio(Period $period): void
+    {
+        $audioCount = 0;
+        $foundMain = false;
+
+        foreach ($period->allAdaptationSets() as $adaptationSet) {
+            if ($adaptationSet->getAttribute('contentType') != 'audio') {
+                continue;
+            }
+            $audioCount++;
+            foreach ($adaptationSet->getDOMElements('Role') as $role) {
+                if (
+                    $role->getAttribute('schemeIdUri') == 'urn:mpeg:dash:role:2011' &&
+                    $role->getAttribute('value') == 'main'
+                ) {
+                    $foundMain = true;
+                    break;
+                }
+            }
+            if ($foundMain) {
+                break;
+            }
+        }
+
+        $this->v141reporter->test(
+            section: "Section 6.1.2",
+            test: "If there is more than one audio Adaptation Set in a DASH presentation then at least one of them " .
+                  "[..] shall be tagged with @value='main'",
+            result: $audioCount < 2 ||  $foundMain,
             severity: "FAIL",
             pass_message: "Check passed for Period " . $period->path(),
             fail_message: "Check failed for Period " . $period->path(),
