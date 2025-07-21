@@ -11,6 +11,7 @@ use App\Interfaces\Module;
 use App\Modules\DVB\MPD\TLSBitrate;
 use App\Modules\DVB\MPD\Dimensions;
 use App\Modules\DVB\MPD\Profiles;
+use App\Modules\DVB\MPD\UTCTiming;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
@@ -52,5 +53,6 @@ class MPD extends Module
         new Profiles()->validateProfiles();
         new Dimensions()->validateDimensions();
         new TLSBitrate()->validateTLSBitrate();
+        new UTCTiming()->validateUTCTimingElement();
     }
 }

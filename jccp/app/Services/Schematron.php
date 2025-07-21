@@ -57,7 +57,8 @@ class Schematron
             "-o:${sessionDir}/schematron.xml",
             "-xsl:${validatorPath}/schematron/output/val_schema.xsl"
         ]);
-        $schematronResult = Process::run($schematronCommand);
+
+        Process::run($schematronCommand);
 
         //Make sure we cache our schematron code
         Cache::remember(cache_path(['mpd','schematron']), 10, function () use ($sessionDir) {
@@ -151,8 +152,6 @@ class Schematron
             $this->runValidator();
         }
 
-        //Todo: Move to reporter
-
         $logger = app(ModuleLogger::class);
 
         $validatorOutput = $this->getValidatorOutput();
@@ -190,10 +189,9 @@ class Schematron
             "Schematron validation failed"
         );
     }
-
-    //\TODO Should we return true/false here
     private function findOrDownloadSchema(): void
     {
+    //\TODO Rewrite function
         global $session;
 
 

@@ -148,6 +148,18 @@ class MPDCache
         return $dom->getAttribute($attribute);
     }
 
+    /**
+     * @return \DOMNodeList<\DOMElement>
+     **/
+    public function getDOMElements(string $tagName): ?\DOMNodeList
+    {
+        $dom = $this->getDom();
+        if (!$dom) {
+            return null;
+        }
+        return $dom->getElementsByTagName($tagName);
+    }
+
     public function hasProfile(string $profile): bool
     {
         $profileList = explode(',', $this->getAttribute('profiles'));

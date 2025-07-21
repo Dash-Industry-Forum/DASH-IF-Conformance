@@ -53,37 +53,6 @@ $this->checkDVBValidRelative();
 ## Verifying the DVB Metric reporting mechanism according to Section 10.12.3
 $this->dvbMetricReporting();
 
-$type = $mpdHandler->getDom()->getAttribute('type');
-$AST = $mpdHandler->getDom()->getAttribute('availabilityStartTime');
-
-if ($type == 'dynamic' || $AST != '') {
-    $UTCTimings = $mpdHandler->getDom()->getElementsByTagName('UTCTiming');
-    $acceptedURIs = array('urn:mpeg:dash:utc:ntp:2014',
-                          'urn:mpeg:dash:utc:http-head:2014',
-                          'urn:mpeg:dash:utc:http-xsdate:2014',
-                          'urn:mpeg:dash:utc:http-iso:2014',
-                          'urn:mpeg:dash:utc:http-ntp:2014');
-
-    $utcTimingValid = false;
-    foreach ($UTCTimings as $UTCTiming) {
-        if (in_array($UTCTiming->getAttribute('schemeIdUri'), $acceptedURIs)) {
-            $utcTimingValid = true;
-        }
-    }
-
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "DVB: Section 4.7.2",
-        "'If the MPD is dynamic or if the MPD@availabilityStartTime is present then the MPD SHOULD contain at least " .
-        "one UTCTiming element with the @schemeIdUri attribute set to one of the following: " .
-        join(', ', $acceptedURIs),
-        $utcTimingValid,
-        "WARN",
-        "At least one valid UTCTiming element found",
-        "None of the valid UTCTiming elements found"
-    );
-}
-
 $this->periodCount = 0;
 
 $hasVideoService = false;
