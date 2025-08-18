@@ -52,7 +52,6 @@ $this->checkDVBValidRelative();
 
 $this->periodCount = 0;
 
-$hasVideoService = false;
 
 $cencAttribute = $mpdHandler->getDom()->getAttribute("xmlns:cenc");
 
@@ -96,12 +95,6 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         $adaptationMimeType = $adaptationSet->getAttribute("mimeType");
 
         if (
-            $adaptationContentType == 'video' || 
-            $videoFound || strpos($adaptationMimeType, 'video') !== false
-        ) {
-            $hasVideoService = true;
-            $this->dvbVideoChecks($adaptationSet, $representations, $i, false);
-        } elseif (
             $adaptationContentType == 'audio' ||
             $audioFound || strpos($adaptationMimeType, 'audio') !== false
         ) {
@@ -114,9 +107,8 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         $this->dvbContentProtection($adaptationSet, $representations, $i, $cencAttribute);
     }
 
-    if ($hasVideoService) {
-        $this->streamBandwidthCheck();
-    }
+    //NOTE: Only if video
+    $this->streamBandwidthCheck();
 
     if (count($audioAdaptations) > 1) {
         $this->fallbackOperationChecks($audioAdaptations);

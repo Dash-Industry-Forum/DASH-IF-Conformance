@@ -1,5 +1,8 @@
 <?php
 
+
+//TODO Calculate bandwidths for video tracks
+
 foreach ($this->videoBandwidth as $v) {
     foreach ($this->audioBandwidth as $a) {
         if (empty($this->subtitleBandwidth)) {

@@ -169,11 +169,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/dvbEventChecks.php';
     }
 
-    private function dvbVideoChecks($adaptation, $representations, $i, $videoComponentFound)
-    {
-        include 'impl/dvbVideoChecks.php';
-    }
-
     private function dvbAudioChecks($adaptation, $representations, $i, $audioComponentFound)
     {
         include 'impl/dvbAudioChecks.php';
@@ -257,11 +252,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         $periodNumber
     ) {
         include 'impl/hbbAudioChannelCheck.php';
-    }
-
-    private function avcCodecValidForDVB($codec)
-    {
-        include 'impl/avcCodecValidForDVB.php';
     }
 
     public function hookBeforeRepresentation()

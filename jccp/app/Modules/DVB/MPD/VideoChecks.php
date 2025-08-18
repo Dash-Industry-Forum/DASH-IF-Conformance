@@ -39,6 +39,9 @@ class VideoChecks
                 }
                 $this->validateFontProperties($adaptationSet);
                 $this->validateAttributePresence($adaptationSet);
+                $this->validateFrameRates($adaptationSet);
+
+                //NOTE: We have removed the checks for valid avc, as they require an external specification
             }
         }
     }
@@ -191,5 +194,44 @@ class VideoChecks
             pass_message: "Scan types valid for AdaptationSet " . $adaptationSet->path(),
             fail_message: "At least one missing scan type for AdaptationSet " . $adaptationSet->path(),
         );
+    }
+
+    private function validateFrameRates(AdaptationSet $adaptationSet): void
+    {
+        //NOTE: This function depends on behaviour of integer conversion
+        //TODO: Make this function correct for fractional notations
+        $frameRates = [];
+        foreach ($adaptationSet->allRepresentations() as $representation) {
+            $frameRate = $representation->getAttribute('frameRate');
+            if ($frameRate != '') {
+                $frameRates[] = $frameRate;
+            }
+        }
+
+        $frameRateCount = count($frameRates);
+
+        for ($baseIndex = 0; $baseIndex < $frameRateCount; $baseIndex++) {
+            $baseFrameRate = (int)$frameRates[$baseIndex];
+            for ($compareIndex = $baseIndex + 1; $compareIndex < $frameRateCount; $compareIndex++) {
+                $compareFrameRate = (int)$frameRates[$compareIndex];
+
+                $remainder = (
+                    $baseFrameRate > $compareFrameRate ?
+                    $baseFrameRate % $compareFrameRate :
+                    $compareFrameRate % $baseFrameRate
+                );
+
+                $this->v141reporter->test(
+                    section: "Section 11.2.2",
+                    test: "The frame rates used should be integer multiples of eachother",
+                    result: $remainder == 0,
+                    severity: "WARN",
+                    pass_message: "Exact multiples at indexes $baseIndex and $compareIndex are for AdaptationSet " .
+                          $adaptationSet->path(),
+                    fail_message: "No exact multiples at indexes $baseIndex and $compareIndex are for AdaptationSet " .
+                          $adaptationSet->path(),
+                );
+            }
+        }
     }
 }
