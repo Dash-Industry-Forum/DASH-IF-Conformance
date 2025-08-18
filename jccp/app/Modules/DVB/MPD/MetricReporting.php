@@ -105,7 +105,7 @@ class MetricReporting
         }
 
         $this->v141reporter->test(
-            section: "Section 10.12.3.3",
+            section: "Section 10.12.3.4",
             test: "Probability - if present - is required to be an integer between 1 and 1000",
             result: $validProbability,
             severity: "FAIL",
