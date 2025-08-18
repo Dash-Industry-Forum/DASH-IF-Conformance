@@ -15,6 +15,7 @@ use App\Modules\DVB\MPD\Dimensions;
 use App\Modules\DVB\MPD\Profiles;
 use App\Modules\DVB\MPD\UTCTiming;
 use App\Modules\DVB\MPD\PeriodConstraints;
+use App\Modules\DVB\MPD\MetricReporting;
 
 class MPD extends Module
 {
@@ -56,5 +57,6 @@ class MPD extends Module
         new TLSBitrate()->validateTLSBitrate();
         new UTCTiming()->validateUTCTimingElement();
         new PeriodConstraints()->validatePeriodConstraints();
+        new MetricReporting()->validateMetricReporting();
     }
 }
