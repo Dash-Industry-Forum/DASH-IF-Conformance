@@ -20,64 +20,16 @@ $adaptationScanTypePresent = ($adaptation->getAttribute("scanType") != '');
 $adaptationSetCodecs = $adaptation->getAttribute('codecs');
 $representationCodecs = array();
 $subRepresentationCodecs = array();
-$representationScanTypes = array();
 $representationFrameRate = array();
 
 
 $j = 0;
 foreach ($representations as $representation) {
     $j++;
-    $representationWidthPresent = ($representation->getAttribute("width") != '');
-    $representationHeightPresent  = ($representation->getAttribute("height") != '');
-    $representationFrameRatePresent  = ($representation->getAttribute("frameRate") != '');
     $representationFrameRates[]  = $representation->getAttribute("frameRate");
-    $representationScanTypePresent  = ($representation->getAttribute("scanType") != '');
-    $representationScanTypes[]  = $representation->getAttribute("scanType");
-
-    if ($contentType == "video") {
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 4.4",
-            "For any Representation within an Adaptation Set with @contentType=\"video\" @width " .
-            "attribute SHALL be present if not in the AdaptationSet element'",
-            $adaptationWidthPresent || $representationWidthPresent,
-            "FAIL",
-            "Width attribute found in adaptation set and/or representation $j",
-            "Width attribute not found in adaptation set and/or representation $j"
-        );
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 4.4",
-            "For any Representation within an Adaptation Set with @contentType=\"video\" @height " .
-            "attribute SHALL be present if not in the AdaptationSet element'",
-            $adaptationHeightPresent || $representationHeightPresent,
-            "FAIL",
-            "Height attribute found in adaptation set and/or representation $j",
-            "Height attribute not found in adaptation set and/or representation $j"
-        );
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 4.4",
-            "For any Representation within an Adaptation Set with @contentType=\"video\" @frameRate " .
-            "attribute SHALL be present if not in the AdaptationSet element'",
-            $adaptationFrameRatePresent || $representationFrameRatePresent,
-            "FAIL",
-            "FrameRate attribute found in adaptation set and/or representation $j",
-            "FrameRate attribute not found in adaptation set and/or representation $j"
-        );
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 4.4",
-            "For any Representation within an Adaptation Set with @contentType=\"video\" @sar " .
-            "attribute SHALL be present if not in the AdaptationSet element'",
-            $adaptationScanTypePresent || $representationScanTypePresent,
-            "FAIL",
-            "SAR attribute found in adaptation set and/or representation $j",
-            "SAR attribute not found in adaptation set and/or representation $j"
-        );
-    }
 
     $codecs[] = $representation->getAttribute('codecs');
+
     $subRepresentations = $representation->getElementsByTagName('SubRepresentation');
     foreach ($subRepresentations as $subRepresentation) {
         $subRepresentationCodecs[] = $subRepresentation->getAttribute('codecs');
@@ -153,18 +105,6 @@ $logger->test(
     "Attribute not found in adaptation set for period $this->periodCount"
 );
 
-if (in_array('interlaced', $representationScanTypes)) {
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "DVB: Section 4.4",
-        "For any Representation within an Adaptation Set with @contentType=\"video\" @scanType attribute " .
-        "SHALL be present if interlaced pictures are used within any Representation in the Adaptation Set",
-        !in_array('', $representationScanTypes),
-        "FAIL",
-        "All scanTypes are accounted for in period $this->periodCount",
-        "Missing at least one scanType for period $this->periodCount"
-    );
-}
 
 ## Information from this part is used for Section 11.2.2 frame rate check
 $frameRateLen = sizeof($representationFrameRates);

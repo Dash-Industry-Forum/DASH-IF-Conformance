@@ -34,7 +34,11 @@ class VideoChecks
         $mpdCache = app(MPDCache::class);
         foreach ($mpdCache->allPeriods() as $period) {
             foreach ($period->allAdaptationSets() as $adaptationSet) {
+                if ($adaptationSet->getAttribute('contentType') != 'video') {
+                    continue;
+                }
                 $this->validateFontProperties($adaptationSet);
+                $this->validateAttributePresence($adaptationSet);
             }
         }
     }
@@ -67,5 +71,81 @@ class VideoChecks
     {
         return $propertyElement->getAttribute('schemeIdUri') == 'urn:dvb:dash:fontdownload:2014' &&
                $propertyElement->getAttribute('value') == '1';
+    }
+
+    private function validateAttributePresence(AdaptationSet $adaptationSet): void
+    {
+        $section = 'Section 4.4';
+        $test = 'Elements and attributes are expected to be present for certain Adaptation Sets and Representations ' .
+                'to enable suitable initial selection and switching.';
+        $resultMessage = "in AdaptationSet or all Representations for AdaptationSet " . $adaptationSet->path();
+
+
+        $this->v141reporter->test(
+            section: $section,
+            test: $test,
+            result: $this->attributeInAdaptationOrAllRepresentations('width', $adaptationSet),
+            severity: "FAIL",
+            pass_message: "@width $resultMessage",
+            fail_message: "Missing at least one @width $resultMessage",
+        );
+
+        $this->v141reporter->test(
+            section: $section,
+            test: $test,
+            result: $this->attributeInAdaptationOrAllRepresentations('height', $adaptationSet),
+            severity: "FAIL",
+            pass_message: "@height $resultMessage",
+            fail_message: "Missing at least one @height $resultMessage",
+        );
+
+        $this->v141reporter->test(
+            section: $section,
+            test: $test,
+            result: $this->attributeInAdaptationOrAllRepresentations('frameRate', $adaptationSet),
+            severity: "FAIL",
+            pass_message: "@frameRate $resultMessage",
+            fail_message: "Missing at least one @frameRate $resultMessage",
+        );
+
+        $this->validateScanType($adaptationSet);
+    }
+
+    private function attributeInAdaptationOrAllRepresentations(string $attribute, AdaptationSet $adaptationSet): bool
+    {
+        if ($adaptationSet->getAttribute($attribute) != '') {
+            return true;
+        }
+
+        foreach ($adaptationSet->allRepresentations() as $representation) {
+            if ($representation->getAttribute($attribute) == '') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private function validateScanType(AdaptationSet $adaptationSet): void
+    {
+        $allHaveScanType = true;
+        $hasInterlaced = false;
+
+        foreach ($adaptationSet->allRepresentations() as $representation) {
+            if ($representation->getAttribute('scanType') == '') {
+                $allHaveScanType = false;
+            }
+            if ($representation->getAttribute('scanType') == 'interlaced') {
+                $hasInterlaced = true;
+            }
+        }
+
+        $this->v141reporter->test(
+            section: "Section 4.4",
+            test: "@scanType SHALL be present in all Representations, if interlaced pictures are used in any of them",
+            result: !$hasInterlaced || $allHaveScanType,
+            severity: "FAIL",
+            pass_message: "Scan types valid for AdaptationSet " . $adaptationSet->path(),
+            fail_message: "At least one missing scan type for AdaptationSet " . $adaptationSet->path(),
+        );
     }
 }
