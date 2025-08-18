@@ -38,7 +38,9 @@ class AudioChecks
                     continue;
                 }
                 $this->validateFontProperties($adaptationSet);
+                $this->validateDolbyChannelConfiguration($adaptationSet);
 
+                //NOTE: Removed DTS as they have been moved to a different spec
             }
         }
     }
@@ -73,4 +75,43 @@ class AudioChecks
                $propertyElement->getAttribute('value') == '1';
     }
 
+    private function validateDolbyChannelConfiguration(AdaptationSet $adaptationSet): void
+    {
+        $codecs = explode(',', $adaptationSet->getAttribute('codecs'));
+        foreach ($codecs as $codec) {
+            if (!str_starts_with('ec-3', $codec) && !str_starts_with('ac-4', $codec)) {
+                return;
+            }
+        }
+        foreach ($adaptationSet->getDOMElements('AudioChannelConfiguration') as $configurationIndex => $configuration) {
+            $correctScheme = $configuration->getAttribute('schemeIdUri') ==
+                             'tag:dolby.com,2014:dash:audio_channel_configuration:2011';
+            $this->v141reporter->test(
+                section: "Section 6.3.1",
+                test: "For E-AC-3 and AC-4 part 1, the Audio Channel Configuration shall use the " .
+                      "'tag:dolby.com,2014:dash:audio_channel_configuration:2011' scheme URI",
+                result: $correctScheme,
+                severity: "FAIL",
+                pass_message: "Configuration scheme at $configurationIndex correct for AdaptationSet " .
+                              $adaptationSet->path(),
+                fail_message: "Configuration scheme at $configurationIndex incorrect for AdaptationSet " .
+                              $adaptationSet->path(),
+            );
+
+
+            $value = $configuration->getAttribute('value');
+            $correctValue = strlen($value) == 4 && ctype_xdigit($value);
+            $this->v141reporter->test(
+                section: "Section 6.3.1",
+                test: "[For E-AC-3 and AC-4 part 1], the Audio Channel Configuration value SHALL " .
+                      "contain a 4-byte hexadecimal [value]",
+                result: $correctValue,
+                severity: "FAIL",
+                pass_message: "Configuration value at $configurationIndex correct for AdaptationSet " .
+                              $adaptationSet->path(),
+                fail_message: "Configuration value at $configurationIndex incorrect for AdaptationSet " .
+                              $adaptationSet->path(),
+            );
+        }
+    }
 }
