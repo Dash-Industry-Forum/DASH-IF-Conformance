@@ -33,13 +33,13 @@ class AudioChecks
     {
         $mpdCache = app(MPDCache::class);
         foreach ($mpdCache->allPeriods() as $period) {
+            $this->validateRoles($period);
             foreach ($period->allAdaptationSets() as $adaptationSet) {
                 if ($adaptationSet->getAttribute('contentType') != 'audio') {
                     continue;
                 }
                 $this->validateFontProperties($adaptationSet);
                 $this->validateDolbyChannelConfiguration($adaptationSet);
-
                 //NOTE: Removed DTS as they have been moved to a different spec
             }
         }
@@ -113,5 +113,54 @@ class AudioChecks
                               $adaptationSet->path(),
             );
         }
+    }
+
+    private function validateRoles(Period $period): void
+    {
+        $hasMainAudio = false;
+        $audioAdaptationCount = 0;
+        foreach ($period->allAdaptationSets() as $adaptationSet) {
+            if ($adaptationSet->getAttribute('contentType') != 'audio') {
+                continue;
+            }
+            $audioAdaptationCount++;
+            $roles = $adaptationSet->getDOMElements('Role');
+
+            $atLeastOneDashRole = false;
+
+            foreach ($roles as $role) {
+                if ($role->getAttribute('schemeIdUri') != 'urn:mpeg:dash:role:2011') {
+                    continue;
+                }
+                $atLeastOneDashRole = true;
+                if ($role->getAttribute('value') == 'main') {
+                    $hasMainAudio = true;
+                }
+            }
+
+            $this->v141reporter->test(
+                section: "Section 6.1.2",
+                test: "Each audio AdaptationSet shall include at least one Role Element",
+                result: $atLeastOneDashRole,
+                severity: "FAIL",
+                pass_message: "At least one Role found for AdaptationSet " .
+                              $adaptationSet->path(),
+                fail_message: "No Roles found for AdaptationSet " .
+                              $adaptationSet->path(),
+            );
+        }
+
+        if (!$audioAdaptationCount) {
+            return;
+        }
+        $this->v141reporter->test(
+            section: "Section 6.1.2",
+            test: "If there is more than one audio Adaptation Set [..] then at least one of them shall be tagged " .
+                  "with an @value set to 'main'",
+            result: $hasMainAudio || $audioAdaptationCount < 2,
+            severity: "FAIL",
+            pass_message: "Valid for Period " . $period->path(),
+            fail_message: "Invalid for Period " . $period->path(),
+        );
     }
 }

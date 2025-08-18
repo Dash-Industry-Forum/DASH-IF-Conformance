@@ -8,22 +8,7 @@ if ($contentType == 'audio') {
 }
 
 
-$roles = $adaptation->getElementsByTagName("Role");
-$adaptationRoleElementFound = (sizeof($roles) > 0);
-$adaptationSpecificRoleCount = 0;
-$roleValues = array();
-
-foreach ($roles as $role) {
-    if ($role->getAttribute('schemeIdUri') == 'urn:mpeg:dash:role:2011') {
-        $adaptationSpecificRoleCount++;
-        $roleValues[] = $role->getAttribute('value');
-
-        if ($role->getAttribute('value') == 'main') {
-            $this->mainAudioFound = true;
-            $this->mainAudios[] = $adaptation;
-        }
-    }
-}
+$adaptationRoleElementFound = count($adaptation->getElementsByTagName("Role")) > 0;
 
 $accessibilityRoles = array();
 $accessibilities = $adaptation->getElementsByTagName("Accessibility");
@@ -47,21 +32,6 @@ $adaptationMimeType = $adaptation->getAttribute('mimeType');
 $adapt_audioSamplingRate = $adaptation->getAttribute('audioSamplingRate');
 
 $adaptationCodecs = $adaptation->getAttribute('codecs');
-
-
-if ($contentType == 'audio') {
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "Section 6.1.2",
-        "Every audio Adaptation Set SHALL include at least one Role Element using the scheme " .
-        "\"urn:mpeg:dash:role:2011\" as defined in ISO/IEC 23009-1:2014'",
-        $adaptationSpecificRoleCount > 0,
-        "FAIL",
-        "At least one role element found Period $this->periodCount adaptation set " . ($i + 1),
-        "No role element found Period $this->periodCount adaptation set " . ($i + 1)
-    );
-}
-
 
 $dependencyIds = array();
 
@@ -152,19 +122,5 @@ foreach ($representations as $representation) {
         "FAIL",
         "audioSamplingRate attribute found in Period $this->periodCount adaptation set " . ($i + 1),
         "audioSamplingRate attribute not found in Period $this->periodCount adaptation set " . ($i + 1)
-    );
-}
-
-    ## Information from this part is for Section 6.1: Receiver Mix AD
-if (in_array('commentary', $roleValues) && in_array('1', $accessibilityRoles)) {
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "Section 6.1.2",
-        "For receiver mixed Audio Description the associated audio stream SHALL use the @dependencyId " .
-        "attribute to indicate the dependency to the related Adaptation Set's Representations",
-        !empty($dependencyIds),
-        "FAIL",
-        "Found dependencyId in Period $this->periodCount adaptation set " . ($i + 1),
-        "depenendencyId not found in Period $this->periodCount adaptation set " . ($i + 1)
     );
 }
