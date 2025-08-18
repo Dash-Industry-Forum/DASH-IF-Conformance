@@ -42,63 +42,6 @@ foreach ($audioChannelConfigurations as $audioChannelConfiguration) {
         $audioConfigurationValues[] = $audioChannelConfiguration->getAttribute('value');
 }
 
-$ids = array();
-
-$supplementalProperties = $adaptation->getElementsByTagName("SupplementProperty");
-$validSupplemental = true;
-foreach ($supplementalProperties as $property) {
-    if (
-        $property->getAttribute('schemeIdUri') == 'urn:dvb:dash:fontdownload:2014' &&
-        $property->getAttribute('value') == '1'
-    ) {
-        $hasURL = ($property->getAttribute('url') . $property->getAttribute('dvburl') != '');
-        $hasFontFamily = ($property->getAttribute('fontFamily') . $property->getAttribute('dvb:fontFamily') != '');
-        $hasMimeType = ($property->getAttribute('mimeType') . $property->getAttribute('dvb:mimeType') != '');
-        if ($hasURL && $hasFontFamily && $hasMimeType) {
-            $validSupplemental = false;
-        }
-    }
-}
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "DVB: Section 7.2.1.1",
-    "For DVB font download for subtitles, a descriptor with these properties SHALL only be placed within an " .
-    "Adaptation Set containing subtitle Representations",
-    $validSupplemental,
-    "FAIL",
-    "No downloadable fonts found in Supplemental Properties for Period $this->periodCount",
-    "Downloadable fonts found in Supplemental Properties for Period $this->periodCount"
-);
-
-$validEssential = true;
-$essentialProperties = $adaptation->getElementsByTagName("EssentialProperty");
-foreach ($essentialProperties as $property) {
-    if (
-        $property->getAttribute('schemeIdUri') == 'urn:dvb:dash:fontdownload:2014' &&
-        $property->getAttribute('value') == '1'
-    ) {
-      ///\Correctness shouldn't this be dvb:url?
-        $url = ($property->getAttribute('url') != '' || $property->getAttribute('dvburl') != '');
-        $fontFamily = ($property->getAttribute('fontFamily') != '' || $property->getAttribute('dvb:fontFamily') != '');
-        $mimeType = ($property->getAttribute('mimeType') != '' || $property->getAttribute('dvb:mimeType') != '');
-
-        if ($url && $fontFamily && $mimeType) {
-            $validEssential = false;
-        }
-    }
-}
-
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "DVB: Section 7.2.1.1",
-    "For DVB font download for subtitles, a descriptor with these properties SHALL only be placed within an " .
-    "Adaptation  Set containing subtitle Representations",
-    $validEssential,
-    "FAIL",
-    "No downloadable fonts found in Essential Properties for Period $this->periodCount",
-    "Downloadable fonts found in Essential Properties for Period $this->periodCount"
-);
-
 $adapt_role_element_found = false;
 $adaptationMimeType = $adaptation->getAttribute('mimeType');
 $adapt_audioSamplingRate = $adaptation->getAttribute('audioSamplingRate');

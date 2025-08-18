@@ -71,14 +71,10 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
     $audioAdaptations = array();
     for ($i = 0; $i < $adaptationSetCount; $i++) {
         $adaptationSet = $adaptationSets->item($i);
-        $videoFound = false;
         $audioFound = false;
 
         /* Accidentally removed in previous commit, for each representation:
             $mimeType = $representation->getAttribute("mimeType");
-                if (strpos($mimeType, "video") !== false) {
-                    $videoFound = true;
-                }
                 if (strpos($mimeType, "audio") !== false) {
                     $audioFound = true;
                 }
@@ -86,8 +82,6 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
 
 
         $representations = $adaptationSet->getElementsByTagName("Representation");
-        $representationCount = $representations->length;
-
 
 
         //Continuation of adaptationset-level checks

@@ -17,6 +17,7 @@ use App\Modules\DVB\MPD\UTCTiming;
 use App\Modules\DVB\MPD\PeriodConstraints;
 use App\Modules\DVB\MPD\MetricReporting;
 use App\Modules\DVB\MPD\VideoChecks;
+use App\Modules\DVB\MPD\AudioChecks;
 
 class MPD extends Module
 {
@@ -62,5 +63,8 @@ class MPD extends Module
         new PeriodConstraints()->validatePeriodConstraints();
         new MetricReporting()->validateMetricReporting();
         new VideoChecks()->validateVideo();
+        new AudioChecks()->validateAudio();
+
+        //TODO Move font checks to validateSubtitles() only!
     }
 }
