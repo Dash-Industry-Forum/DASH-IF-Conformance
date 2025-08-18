@@ -12,11 +12,6 @@ foreach ($contentComponents as $component) {
     }
 }
 
-$adaptationWidthPresent = ($adaptation->getAttribute("width") != '');
-$adaptationHeightPresent = ($adaptation->getAttribute("height") != '');
-$adaptationFrameRatePresent = ($adaptation->getAttribute("frameRate") != '');
-$adaptationScanTypePresent = ($adaptation->getAttribute("scanType") != '');
-
 $adaptationSetCodecs = $adaptation->getAttribute('codecs');
 $representationCodecs = array();
 $subRepresentationCodecs = array();
@@ -62,49 +57,6 @@ foreach ($subRepresentationCodecs as $codecs) {
 if ($contentType != 'video') {
     return;
 }
-
-
-
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "DVB: Section 4.4",
-    "For any Adaptation Sets with @contentType=\"video\" @maxWidth attribute (or @width if all Representations " .
-    "have the same width) SHOULD be present",
-    $adaptation->getAttribute('maxWidth') != '' || $adaptationWidthPresent,
-    "WARN",
-    "Attribute found in adaptation set for period $this->periodCount",
-    "Attribute not found in adaptation set for period $this->periodCount"
-);
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "DVB: Section 4.4",
-    "For any Adaptation Sets with @contentType=\"video\" @maxHeight attribute (or @height if all Representations " .
-    "have the same height) SHOULD be present",
-    $adaptation->getAttribute('maxHeight') != '' || $adaptationHeightPresent,
-    "WARN",
-    "Attribute found in adaptation set for period $this->periodCount",
-    "Attribute not found in adaptation set for period $this->periodCount"
-);
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "DVB: Section 4.4",
-    "For any Adaptation Sets with @contentType=\"video\" @maxFrameRate attribute (or @frameRate if all " .
-    "Representations have the same height) SHOULD be present",
-    $adaptation->getAttribute('maxFrameRate') != '' || $adaptationFrameRatePresent,
-    "WARN",
-    "Attribute found in adaptation set for period $this->periodCount",
-    "Attribute not found in adaptation set for period $this->periodCount"
-);
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "DVB: Section 4.4",
-    "For any Adaptation Sets with @contentType=\"video\" @par attribute SHOULD be present",
-    $adaptation->getAttribute('par') != '',
-    "WARN",
-    "Attribute found in adaptation set for period $this->periodCount",
-    "Attribute not found in adaptation set for period $this->periodCount"
-);
-
 
 ## Information from this part is used for Section 11.2.2 frame rate check
 $frameRateLen = sizeof($representationFrameRates);

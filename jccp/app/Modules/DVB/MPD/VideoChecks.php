@@ -80,6 +80,16 @@ class VideoChecks
                 'to enable suitable initial selection and switching.';
         $resultMessage = "in AdaptationSet or all Representations for AdaptationSet " . $adaptationSet->path();
 
+        /** WIDTH **/
+        $this->v141reporter->test(
+            section: $section,
+            test: $test,
+            result: $adaptationSet->getAttribute('maxWidth') != '' ||
+                    $adaptationSet->getAttribute('width') != '',
+            severity: "WARN",
+            pass_message: "Either @maxWidth or @width found for AdaptationSet " . $adaptationSet->path(),
+            fail_message: "Neither @maxWidth nor @width found for AdaptationSet " . $adaptationSet->path(),
+        );
 
         $this->v141reporter->test(
             section: $section,
@@ -88,6 +98,17 @@ class VideoChecks
             severity: "FAIL",
             pass_message: "@width $resultMessage",
             fail_message: "Missing at least one @width $resultMessage",
+        );
+
+        /** HEIGHT **/
+        $this->v141reporter->test(
+            section: $section,
+            test: $test,
+            result: $adaptationSet->getAttribute('maxHeight') != '' ||
+                    $adaptationSet->getAttribute('height') != '',
+            severity: "WARN",
+            pass_message: "Either @maxHeight or @height found for AdaptationSet " . $adaptationSet->path(),
+            fail_message: "Neither @maxHeight nor @height found for AdaptationSet " . $adaptationSet->path(),
         );
 
         $this->v141reporter->test(
@@ -99,6 +120,16 @@ class VideoChecks
             fail_message: "Missing at least one @height $resultMessage",
         );
 
+        /** FRAME RATE **/
+        $this->v141reporter->test(
+            section: $section,
+            test: $test,
+            result: $adaptationSet->getAttribute('maxFrameRate') != '' ||
+                    $adaptationSet->getAttribute('frameRate') != '',
+            severity: "WARN",
+            pass_message: "Either @maxFrameRate or @frameRate found for AdaptationSet " . $adaptationSet->path(),
+            fail_message: "Neither @maxFrameRate nor @frameRate found for AdaptationSet " . $adaptationSet->path(),
+        );
         $this->v141reporter->test(
             section: $section,
             test: $test,
@@ -107,6 +138,19 @@ class VideoChecks
             pass_message: "@frameRate $resultMessage",
             fail_message: "Missing at least one @frameRate $resultMessage",
         );
+
+        /** PICTURE ASPECT RATIO **/
+        $this->v141reporter->test(
+            section: $section,
+            test: $test,
+            result: $adaptationSet->getAttribute('par') != '',
+            severity: "WARN",
+            pass_message: "@par found for AdaptationSet " . $adaptationSet->path(),
+            fail_message: "@par not found for AdaptationSet " . $adaptationSet->path(),
+        );
+
+
+        /** SCAN TYPE **/
 
         $this->validateScanType($adaptationSet);
     }
