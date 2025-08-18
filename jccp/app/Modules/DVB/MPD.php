@@ -52,6 +52,8 @@ class MPD extends Module
             "Check failed"
         );
 
+        //NOTE: All 'ContentComponent' checks have been removed, as they're no longer in the spec.
+
         new Profiles()->validateProfiles();
         new Dimensions()->validateDimensions();
         new TLSBitrate()->validateTLSBitrate();

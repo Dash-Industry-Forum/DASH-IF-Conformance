@@ -43,16 +43,6 @@ foreach ($audioChannelConfigurations as $audioChannelConfiguration) {
 }
 
 $ids = array();
-$audioComponentRoleFound = false;
-if ($audioComponentFound) {
-    $contentComponents = $adaptation->getElementsByTagName("ContentComponent");
-    foreach ($contentComponents as $component) {
-        if ($component->getAttribute('contentType') == 'audio') {
-            $audioComponentRoleFound = (sizeof($component->getElementsByTagName("Role")) > 0);
-            $ids[] = $ch->getAttribute('id');
-        }
-    }
-}
 
 $supplementalProperties = $adaptation->getElementsByTagName("SupplementProperty");
 $validSupplemental = true;
@@ -234,27 +224,16 @@ foreach ($representations as $representation) {
             $subRepAudioConfigurationSchemes[] = $audioConfiguration->getAttribute('schemeIdUri');
             $subRepAudioConfigurationValues[] = $audioConfiguration->getAttribute('value');
         }
-        ///\Resiliency Validate EC3, AC4 and DTS as above for subrepresentation
-        if ($audioComponentFound) {
-            if (in_array($subRepresentation->getAttribute('contentComponent'), $ids)) {
-                $$this->audioBandwidth[] = (float)($representation->getAttribute('bandwidth') != '' ?
-                $representation->getAttribute('bandwidth') :
-                $subRepresentation->getAttribute('bandwidth'));
-            }
-        }
     }
 
     ///\Resiliency Validate EC3, AC4 and DTS as above for representation
 
-    if ($audioComponentFound) {
-        $$this->audioBandwidth[] = (float)($representation->getAttribute('bandwidth'));
-    }
 
     $logger->test(
         "HbbTV-DVB DASH Validation Requirements",
         "Section 6.1.1",
         "All audio Representations SHALL either define or inherit the elements and attributes shown in Table 3",
-        $adaptationRoleElementFound || $audioComponentRoleFound || $representationRoleElementFound,
+        $adaptationRoleElementFound  || $representationRoleElementFound,
         "FAIL",
         "Role element found in Period $this->periodCount adaptation set " . ($i + 1),
         "Role element not found in Period $this->periodCount adaptation set " . ($i + 1)

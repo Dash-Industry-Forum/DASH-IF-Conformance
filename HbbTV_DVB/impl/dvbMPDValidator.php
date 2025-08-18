@@ -89,21 +89,6 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         $representations = $adaptationSet->getElementsByTagName("Representation");
         $representationCount = $representations->length;
 
-        $videoComponentFound = false;
-        $audioComponentFound = false;
-
-        if (isset($ch) && $ch) {
-            $contentComponents = $ch->getElementsByTagName("ContentComponent");
-            foreach ($contentComponents as $component) {
-                $contentType = $component->getAttribute("contentType");
-                if ($contentType == "video") {
-                    $videoComponentFound = true;
-                }
-                if ($contentType == "audio") {
-                    $audioComponentFound = true;
-                }
-            }
-        }
 
 
         //Continuation of adaptationset-level checks
@@ -111,22 +96,16 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
         $adaptationMimeType = $adaptationSet->getAttribute("mimeType");
 
         if (
-            $adaptationContentType == 'video' || $videoComponentFound ||
+            $adaptationContentType == 'video' || 
             $videoFound || strpos($adaptationMimeType, 'video') !== false
         ) {
             $hasVideoService = true;
-            $this->dvbVideoChecks($adaptationSet, $representations, $i, $videoComponentFound);
-            if ($audioComponentFound) {
-                $this->dvbAudioChecks($adaptationSet, $representations, $i, $audioComponentFound);
-            }
+            $this->dvbVideoChecks($adaptationSet, $representations, $i, false);
         } elseif (
-            $adaptationContentType == 'audio' || $audioComponentFound ||
+            $adaptationContentType == 'audio' ||
             $audioFound || strpos($adaptationMimeType, 'audio') !== false
         ) {
-            $this->dvbAudioChecks($adaptationSet, $representations, $i, $audioComponentFound);
-            if ($videoComponentFound) {
-                $this->dvbVideoChecks($adaptationSet, $representations, $i, $videoComponentFound);
-            }
+            $this->dvbAudioChecks($adaptationSet, $representations, $i, false);
             $audioAdaptations[] = $adaptationSet;
         } else {
             $this->dvbSubtitleChecks($adaptationSet, $representations, $i);

@@ -140,20 +140,8 @@ foreach ($representations as $representation) {
     $subRepresentations = $representation->getElementsByTagName('SubRepresentation');
     foreach ($subRepresentations as $subRepresentation) {
         $subRepresentationCodecs[] = $subRepresentation->getAttribute('codecs');
-
-        if ($videoComponentFound) {
-            if (in_array($subRepresentation->getAttribute('contentComponent'), $ids)) {
-                $this->videoBandwidth[] = (
-                  $representation->getAttribute('bandwidth') != '') ?
-                  (float)($representation->getAttribute('bandwidth')) :
-                  (float)($representation->getAttribute('bandwidth')
-                );
-            }
-        }
     }
-    if (!$videoComponentFound) {
-        $this->videoBandwidth[] = (float)($representation->getAttribute('bandwidth'));
-    }
+    $this->videoBandwidth[] = (float)($representation->getAttribute('bandwidth'));
 }
 
 ## Information from this part is used for Section 5.1 AVC codecs
