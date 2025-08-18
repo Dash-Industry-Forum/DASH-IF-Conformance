@@ -219,11 +219,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/checkDVBValidRelative.php';
     }
 
-    private function dvbMetricReporting()
-    {
-        include 'impl/dvbMetricReporting.php';
-    }
-
     private function checkAssetIdentifiers($assets1, $assets2)
     {
         return include 'impl/checkAssetIdentifiers.php';
@@ -262,24 +257,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         $periodNumber
     ) {
         include 'impl/hbbAudioChannelCheck.php';
-    }
-
-
-    private function checkValidProbability($val)
-    {
-        if ($val == '') {
-            return true;
-        }
-        if ((string) (int) $val !== $val) {
-            return false;
-        }
-        if ($val > 1000) {
-            return false;
-        }
-        if ($val < 1) {
-            return false;
-        }
-        return true;
     }
 
     private function avcCodecValidForDVB($codec)

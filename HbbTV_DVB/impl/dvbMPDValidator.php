@@ -50,9 +50,6 @@ $logger->test(
 
 $this->checkDVBValidRelative();
 
-## Verifying the DVB Metric reporting mechanism according to Section 10.12.3
-$this->dvbMetricReporting();
-
 $this->periodCount = 0;
 
 $hasVideoService = false;

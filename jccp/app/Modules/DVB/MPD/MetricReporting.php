@@ -46,18 +46,19 @@ class MetricReporting
         $reportingElements = $metricElement->getElementsByTagName('Reporting');
 
         foreach ($reportingElements as $reportingIndex => $reportingElement) {
+            if (
+                $reportingElement->getAttribute('schemeIdUri') != 'urn:dvb:dash:reporting:2014' ||
+                $reportingElement->getAttribute('value') != '1'
+            ) {
+                continue;
+            }
             $this->validateReportingURL($reportingIndex, $reportingElement);
+            $this->validateProbability($reportingIndex, $reportingElement);
         }
     }
 
     private function validateReportingURL(int $reportingIndex, \DOMElement $reportingElement): void
     {
-        if (
-            $reportingElement->getAttribute('schemeIdUri') != 'urn:dvb:dash:reporting:2014' ||
-            $reportingElement->getAttribute('value') != '1'
-        ) {
-            return;
-        }
 
         $reportingUrl = $reportingElement->getAttribute('reportingUrl');
 
@@ -82,6 +83,34 @@ class MetricReporting
             severity: "FAIL",
             pass_message: "Absolute HTTP(S) URL detected for reporting at index $reportingIndex",
             fail_message: "Relative HTTP(S) URL detected for reporting at index $reportingIndex",
+        );
+    }
+
+    private function validateProbability(int $reportingIndex, \DOMElement $reportingElement): void
+    {
+        $probability = $reportingElement->getAttribute('probability');
+
+        // Probability has a default value, and is optional, so we only validate if it is present
+        if ($probability == '') {
+            return;
+        }
+
+        $probabilityInteger = (int) $probability;
+
+        // Make sure the provided value contains only digits
+        $validProbability = (string)$probabilityInteger == $probability;
+
+        if ($probabilityInteger > 1000 || $probabilityInteger < 1) {
+            $validProbability = false;
+        }
+
+        $this->v141reporter->test(
+            section: "Section 10.12.3.3",
+            test: "Probability - if present - is required to be an integer between 1 and 1000",
+            result: $validProbability,
+            severity: "FAIL",
+            pass_message: "Valid probability value for reporting at index $reportingIndex",
+            fail_message: "Invalid probability value for reporting at index $reportingIndex",
         );
     }
 }
