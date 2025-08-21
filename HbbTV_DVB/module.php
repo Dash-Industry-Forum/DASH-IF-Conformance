@@ -136,7 +136,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     public function hookMPD()
     {
         parent::hookMPD();
-        $this->profileSpecificMediaTypesReport();
         $this->crossProfileCheck();
 
         if ($this->DVBEnabled) {
@@ -146,11 +145,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         if ($this->HbbTvEnabled) {
             $this->hbbMPDValidator();
         }
-    }
-
-    private function profileSpecificMediaTypesReport()
-    {
-        include 'impl/profileSpecificMediaTypesReport.php';
     }
 
     private function crossProfileCheck()

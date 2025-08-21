@@ -64,6 +64,7 @@ class MPD extends Module
         //NOTE: Removed checks for 'Associated' adaptation sets, as everything is declared optional
         //      in v141, as well as described by a different spec
         //NOTE: Removed xlink checks, as they depended on a non-existent global
+        //NOTE: Removed checks that were related to profileSpecificMPD, as they did not really check anything.
 
         new Profiles()->validateProfiles();
         new Dimensions()->validateDimensions();
