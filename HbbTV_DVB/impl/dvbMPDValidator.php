@@ -46,5 +46,3 @@ $logger->test(
     "Valid 'xlink:href' found",
     "Invalid 'xlink:href' found in: " . $xlinkNotValidValue
 );
-
-$this->dvbAssociatedAdaptationSetsCheck();

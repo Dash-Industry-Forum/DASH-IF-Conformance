@@ -179,21 +179,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         return include 'impl/MPDUtility/computeTimerange.php';
     }
 
-    private function checkAssetIdentifiers($assets1, $assets2)
-    {
-        return include 'impl/checkAssetIdentifiers.php';
-    }
-
-    private function dvbAssociatedAdaptationSetsCheck()
-    {
-        include 'impl/dvbAssociatedAdaptationSetsCheck.php';
-    }
-
-    private function checkAdaptationSetIds($periodId1, $periodId2)
-    {
-        include 'impl/checkAdaptationSetIds.php';
-    }
-
     private function hbbMPDValidator()
     {
         include 'impl/hbbMPDValidator.php';
