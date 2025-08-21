@@ -140,7 +140,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         $this->crossProfileCheck();
 
         if ($this->DVBEnabled) {
-            $this->dvbMPDValidator();
             $this->dvbMpdAnchorCheck();
         }
 
@@ -157,11 +156,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     private function crossProfileCheck()
     {
         include 'impl/crossProfileCheck.php';
-    }
-
-    private function dvbMPDValidator()
-    {
-        include 'impl/dvbMPDValidator.php';
     }
 
     private function mpdTimingInfo()
