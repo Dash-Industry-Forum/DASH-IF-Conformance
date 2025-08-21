@@ -169,11 +169,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         return include 'impl/mpdTimingInfo.php';
     }
 
-    private function dvbSubtitleChecks($adaptation, $representations, $i)
-    {
-        include 'impl/dvbSubtitleChecks.php';
-    }
-
     private function dvbMpdAnchorCheck()
     {
         include 'impl/dvbMpdAnchorCheck.php';
@@ -182,11 +177,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     private function computeTimerange($timeRange)
     {
         return include 'impl/MPDUtility/computeTimerange.php';
-    }
-
-    private function dvbContentProtection($adaptation, $representations, $i, $cenc)
-    {
-        include 'impl/dvbContentProtection.php';
     }
 
     private function fallbackOperationChecks($audioAdaptations)

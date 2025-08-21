@@ -63,19 +63,6 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
     $adaptationSets = $node->getElementsByTagName('AdaptationSet');
     $adaptationSetCount = $adaptationSets->length;
 
-    for ($i = 0; $i < $adaptationSetCount; $i++) {
-        $adaptationSet = $adaptationSets->item($i);
-
-
-        $representations = $adaptationSet->getElementsByTagName("Representation");
-
-
-
-        $this->dvbSubtitleChecks($adaptationSet, $representations, $i);
-
-        $this->dvbContentProtection($adaptationSet, $representations, $i, $cencAttribute);
-    }
-
     //NOTE: Only if audio
     $this->fallbackOperationChecks(array());
 }

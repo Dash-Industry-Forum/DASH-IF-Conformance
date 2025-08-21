@@ -19,7 +19,9 @@ use App\Modules\DVB\MPD\PeriodConstraints;
 use App\Modules\DVB\MPD\MetricReporting;
 use App\Modules\DVB\MPD\VideoChecks;
 use App\Modules\DVB\MPD\AudioChecks;
+use App\Modules\DVB\MPD\SubtitleChecks;
 use App\Modules\DVB\MPD\BandwidthChecks;
+use App\Modules\DVB\MPD\ContentProtectionChecks;
 
 class MPD extends Module
 {
@@ -68,7 +70,9 @@ class MPD extends Module
         new MetricReporting()->validateMetricReporting();
         new VideoChecks()->validateVideo();
         new AudioChecks()->validateAudio();
+        new SubtitleChecks()->validateSubtitles();
         new BandwidthChecks()->validateBandwidth();
+        new ContentProtectionChecks()->validateContentProtection();
 
         //TODO Move font checks to validateSubtitles() only!
     }
