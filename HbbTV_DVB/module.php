@@ -126,13 +126,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/mpdUpdateConstraintsWithinAdaptationSet.php';
     }
 
-
-    public function hookBeforeMPD()
-    {
-        parent::hookBeforeMPD();
-        include_once 'impl/beforeMPD.php';
-    }
-
     public function hookMPD()
     {
         parent::hookMPD();
