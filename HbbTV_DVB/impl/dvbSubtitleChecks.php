@@ -14,10 +14,7 @@ if (strpos($adaptationCodecs, 'stpp') !== false) {
 }
 
 $ids = array();
-$accesiblities = $adaptation->getElementsByTagName("Accessibility");
 
-
-$roles = $adaptation->getElementsByTagName("Role");
 
 $contentComponents = $adaptation->getElementsByTagName("ContentComponent");
 $hasContentComponent = !empty($contentComponents);

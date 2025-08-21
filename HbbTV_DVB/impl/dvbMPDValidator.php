@@ -1,6 +1,5 @@
 <?php
 
-global $main_audios;
 global $onRequest_array, $xlink_not_valid_array;
 
 global $logger, $mpdHandler;
