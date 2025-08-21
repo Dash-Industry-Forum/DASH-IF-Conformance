@@ -14,25 +14,10 @@ if (strpos($adaptationCodecs, 'stpp') !== false) {
 }
 
 $ids = array();
-$hohAccessibility = false;
 $accesiblities = $adaptation->getElementsByTagName("Accessibility");
-foreach ($accesiblities as $accessibility) {
-    if (
-        $accessibility->getAttribute('schemeIdUri') == 'urn:tva:metadata:cs:AudioPurposeCS:2007' &&
-        $accessibility->getAttribute('value') == '2'
-    ) {
-        $hohAccessibility = true;
-    }
-}
 
-$hohRole = false;
 
 $roles = $adaptation->getElementsByTagName("Role");
-foreach ($roles as $role) {
-    if ($role->getAttribute('schemeIdUri') == 'urn:mpeg:dash:role:2011' && $role->getAttribute('value') == 'main') {
-        $hohRole = true;
-    }
-}
 
 $contentComponents = $adaptation->getElementsByTagName("ContentComponent");
 $hasContentComponent = !empty($contentComponents);
@@ -91,12 +76,6 @@ foreach ($essentialProperties as $property) {
     $essentialMimeTypes[] = (($property->getAttribute('dvb:mimeType') != '') ?
       $property->getAttribute('dvb:mimeType') :
       $property->getAttribute('mimeType'));
-}
-
-if ($hohAccessibility && $hohRole) {
-    if ($adaptataion->getAttribute('lang') != '') {
-        $this->hohSubtitleLanguages[] = $adaptation->getAttribute('lang');
-    }
 }
 
 $representationIndex = 0;

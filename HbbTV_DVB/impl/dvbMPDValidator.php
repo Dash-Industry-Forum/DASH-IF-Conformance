@@ -1,6 +1,6 @@
 <?php
 
-global $main_audios, $hoh_subtitle_lang;
+global $main_audios;
 global $onRequest_array, $xlink_not_valid_array;
 
 global $logger, $mpdHandler;
@@ -79,31 +79,6 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
 
     //NOTE: Only if audio
     $this->fallbackOperationChecks(array());
-
-    if ($this->mainAudioFound && !empty($hoh_subtitle_lang)) {
-        $mainLanguage = array();
-        foreach ($main_audios as $main_audio) {
-            if ($main_audio->getAttribute('lang') != '') {
-                $mainLanguage[] = $main_audio->getAttribute('lang');
-            }
-        }
-
-        foreach ($hoh_subtitle_lang as $hoh_lang) {
-            if (!empty($mainLanguages)) {
-                $logger->test(
-                    "HbbTV-DVB DASH Validation Requirements",
-                    "DVB: Section 7.1.2",
-                    "According to Table 11, when hard of hearing subtitle type is signalled the " .
-                    "@lang attribute of the subtitle representation SHALL be the same as the " .
-                    "main audio for the programme",
-                    in_array($hoh_lang, $main_lang),
-                    "FAIL",
-                    "Attributes match for period $this->periodCount",
-                    "Attributes don't match for period $this->periodCount",
-                );
-            }
-        }
-    }
 }
 
 $this->dvbAssociatedAdaptationSetsCheck();
