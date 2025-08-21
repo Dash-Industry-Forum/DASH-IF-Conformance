@@ -57,6 +57,8 @@ class MPD extends Module
         );
 
         //NOTE: All 'ContentComponent' checks have been removed, as they're no longer in the spec.
+        //NOTE: Removed 'validRelative' checks (e.g. v141 - 11.9.5) as they were both invalid and
+        //      incompatible with the spec
 
         new Profiles()->validateProfiles();
         new Dimensions()->validateDimensions();

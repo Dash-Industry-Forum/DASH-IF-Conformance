@@ -48,7 +48,6 @@ $logger->test(
     "Invalid 'xlink:href' found in: " . $xlinkNotValidValue
 );
 
-$this->checkDVBValidRelative();
 
 $this->periodCount = 0;
 

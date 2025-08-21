@@ -66,7 +66,8 @@ class BandwidthChecks
                     );
                 } else {
                     foreach ($representations['subtitle'] as $subtitleRepresentation) {
-                        $totalBandwidth = $combinedBandwidth + intval($subtitleRepresentation->getAttribute('bandwidth'));
+                        $totalBandwidth = $combinedBandwidth +
+                                          intval($subtitleRepresentation->getAttribute('bandwidth'));
                         $this->v141reporter->test(
                             section: "Section 11.3.0",
                             test: "If the service being delivered is a video service, then audio should be 20% " .

@@ -194,11 +194,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/fallbackOperationChecks.php';
     }
 
-    private function checkDVBValidRelative()
-    {
-        include 'impl/checkDVBValidRelative.php';
-    }
-
     private function checkAssetIdentifiers($assets1, $assets2)
     {
         return include 'impl/checkAssetIdentifiers.php';
