@@ -61,52 +61,25 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
     }
     $this->periodCount++;
 
-    $this->adaptationAudioCount = 0;
-    $this->mainAudios = array();
-
     // Adaptation Sets within each Period
     $adaptationSets = $node->getElementsByTagName('AdaptationSet');
     $adaptationSetCount = $adaptationSets->length;
 
-    $audioAdaptations = array();
     for ($i = 0; $i < $adaptationSetCount; $i++) {
         $adaptationSet = $adaptationSets->item($i);
-        $audioFound = false;
-
-        /* Accidentally removed in previous commit, for each representation:
-            $mimeType = $representation->getAttribute("mimeType");
-                if (strpos($mimeType, "audio") !== false) {
-                    $audioFound = true;
-                }
-         */
 
 
         $representations = $adaptationSet->getElementsByTagName("Representation");
 
 
-        //Continuation of adaptationset-level checks
-        $adaptationContentType = $adaptationSet->getAttribute("contentType");
-        $adaptationMimeType = $adaptationSet->getAttribute("mimeType");
 
-        if (
-            $adaptationContentType == 'audio' ||
-            $audioFound || strpos($adaptationMimeType, 'audio') !== false
-        ) {
-            $this->dvbAudioChecks($adaptationSet, $representations, $i, false);
-            $audioAdaptations[] = $adaptationSet;
-        } else {
-            $this->dvbSubtitleChecks($adaptationSet, $representations, $i);
-        }
+        $this->dvbSubtitleChecks($adaptationSet, $representations, $i);
 
         $this->dvbContentProtection($adaptationSet, $representations, $i, $cencAttribute);
     }
 
-    //NOTE: Only if video
-    $this->streamBandwidthCheck();
-
-    if (count($audioAdaptations) > 1) {
-        $this->fallbackOperationChecks($audioAdaptations);
-    }
+    //NOTE: Only if audio
+    $this->fallbackOperationChecks(array());
 
     if ($this->mainAudioFound && !empty($hoh_subtitle_lang)) {
         $mainLanguage = array();

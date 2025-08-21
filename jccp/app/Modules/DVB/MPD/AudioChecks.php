@@ -39,6 +39,9 @@ class AudioChecks
                     continue;
                 }
                 $this->validateFontProperties($adaptationSet);
+                $this->validateAttributes($adaptationSet);
+
+
                 $this->validateDolbyChannelConfiguration($adaptationSet);
                 //NOTE: Removed DTS as they have been moved to a different spec
             }
@@ -162,5 +165,33 @@ class AudioChecks
             pass_message: "Valid for Period " . $period->path(),
             fail_message: "Invalid for Period " . $period->path(),
         );
+    }
+
+    private function validateAttributes(AdaptationSet $adaptationSet): void
+    {
+        //NOTE: This only applies to non-NGA streams.
+        $adaptationRoleCount = count($adaptationSet->getDOMElements('Role'));
+        foreach ($adaptationSet->allRepresentations() as $representation) {
+            foreach (['mimeType', 'codecs','audioSamplingRate'] as $attribute) {
+                $this->v141reporter->test(
+                    section: "Section 6.1.1",
+                    test: "All audio Representations [..] shall either define or inherit the elements and " .
+                          "attributes shown in Table 4.",
+                    result: $representation->getTransientAttribute($attribute) != '',
+                    severity: "FAIL",
+                    pass_message: "Attribute $attribute found for Representation " . $representation->path(),
+                    fail_message: "Attribute $attribute missing for Representation " . $representation->path(),
+                );
+            }
+            $this->v141reporter->test(
+                section: "Section 6.1.1",
+                test: "All audio Representations [..] shall either define or inherit the elements and " .
+                          "attributes shown in Table 4.",
+                result: $adaptationRoleCount > 0 || count($representation->getDOMElements('Role')) > 0,
+                severity: "FAIL",
+                pass_message: "Role element(s) found for Representation " . $representation->path(),
+                fail_message: "Role element(s) missing for Representation " . $representation->path(),
+            );
+        }
     }
 }

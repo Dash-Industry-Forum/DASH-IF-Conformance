@@ -164,16 +164,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/dvbMPDValidator.php';
     }
 
-    private function dvbEventChecks($eventStream)
-    {
-        include 'impl/dvbEventChecks.php';
-    }
-
-    private function dvbAudioChecks($adaptation, $representations, $i, $audioComponentFound)
-    {
-        include 'impl/dvbAudioChecks.php';
-    }
-
     private function mpdTimingInfo()
     {
         return include 'impl/mpdTimingInfo.php';
@@ -197,11 +187,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     private function dvbContentProtection($adaptation, $representations, $i, $cenc)
     {
         include 'impl/dvbContentProtection.php';
-    }
-
-    private function streamBandwidthCheck()
-    {
-        include 'impl/streamBandwidthCheck.php';
     }
 
     private function fallbackOperationChecks($audioAdaptations)

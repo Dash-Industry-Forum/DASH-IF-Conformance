@@ -144,4 +144,13 @@ class Representation
         $profileList = explode(',', $this->getTransientAttribute('profiles'));
         return in_array($profile, $profileList);
     }
+
+
+    /**
+     * @return \DOMNodeList<\DOMElement>
+     **/
+    public function getDOMElements(string $tagName): ?\DOMNodeList
+    {
+        return $this->dom->getElementsByTagName($tagName);
+    }
 }

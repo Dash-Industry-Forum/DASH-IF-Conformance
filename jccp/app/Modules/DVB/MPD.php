@@ -10,6 +10,7 @@ use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Interfaces\Module;
+//Module checks
 use App\Modules\DVB\MPD\TLSBitrate;
 use App\Modules\DVB\MPD\Dimensions;
 use App\Modules\DVB\MPD\Profiles;
@@ -18,6 +19,7 @@ use App\Modules\DVB\MPD\PeriodConstraints;
 use App\Modules\DVB\MPD\MetricReporting;
 use App\Modules\DVB\MPD\VideoChecks;
 use App\Modules\DVB\MPD\AudioChecks;
+use App\Modules\DVB\MPD\BandwidthChecks;
 
 class MPD extends Module
 {
@@ -64,6 +66,7 @@ class MPD extends Module
         new MetricReporting()->validateMetricReporting();
         new VideoChecks()->validateVideo();
         new AudioChecks()->validateAudio();
+        new BandwidthChecks()->validateBandwidth();
 
         //TODO Move font checks to validateSubtitles() only!
     }
