@@ -150,11 +150,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/hbbMPDValidator.php';
     }
 
-    private function hbbVideoRepresentationChecks($adaptation, $adaptationNumber, $periodNumber)
-    {
-        include 'impl/hbbVideoRepresentationChecks.php';
-    }
-
     private function hbbAudioRepresentationChecks($adaptation, $adaptationNumber, $periodNumber)
     {
         include 'impl/hbbAudioRepresentationChecks.php';
