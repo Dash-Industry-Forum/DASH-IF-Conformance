@@ -157,55 +157,5 @@ foreach ($mpdHandler->getDom()->childNodes as $node) {
             $this->hbbAudioRepresentationChecks($adaptationSet, $adaptationCount, $this->periodCount);
         }
     }
-
-
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "HbbTV: Section E.2.2",
-        "The MPD has a maximum of 64 periods after xlink resolution",
-        $this->adaptationSetCount <= 64,
-        "FAIL",
-        "$this->adaptationSetCount adaptation sets found in period $this->periodCount",
-        "$this->adaptationSetCount adaptation sets found in period $this->periodCount"
-    );
-
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "HbbTV: Section E.2.2",
-        "There shall be at least one video Adaptation Set per Period in an MPD",
-        $this->adaptationVideoCount,
-        "FAIL",
-        "$this->adaptationVideoCount video adaptation sets found in period $this->periodCount",
-        "No video adaptation sets found in period $this->periodCount"
-    );
-
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "HbbTV: Section E.2.2",
-        "If there is more than one video AdaptationSet, exactly one shall be labelled with Role@value 'main'",
-        $this->adaptationVideoCount <= 1 || $this->mainVideoFound == 1,
-        "FAIL",
-        "1 or less video adaptations found in period $this->periodCount, or exactly one is labeled 'main'",
-        "Invalid video adaptationset configuration found found in period $this->periodCount"
-    );
-
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "HbbTV: Section E.2.2",
-        "If there is more than one audio AdaptationSet, exactly one shall be labelled with Role@value 'main'",
-        $this->adaptationAudioCount <= 1 || $this->mainAudioFound == 1,
-        "FAIL",
-        "1 or less audio adaptations found in period $this->periodCount, or exactly one is labeled 'main'",
-        "Invalid audio adaptationset configuration found found in period $this->periodCount"
-    );
 }
 
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "HbbTV: Section E.2.2",
-    "There shall be no more than 16 Representations per Adaptatation Set  in an MPD",
-    $this->periodCount <= 16,
-    "FAIL",
-    "Found $this->periodCount representations",
-    "Found $this->periodCount representations"
-);
