@@ -136,7 +136,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     public function hookMPD()
     {
         parent::hookMPD();
-        $this->crossProfileCheck();
 
         if ($this->DVBEnabled) {
             $this->dvbMpdAnchorCheck();
@@ -145,11 +144,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         if ($this->HbbTvEnabled) {
             $this->hbbMPDValidator();
         }
-    }
-
-    private function crossProfileCheck()
-    {
-        include 'impl/crossProfileCheck.php';
     }
 
     private function mpdTimingInfo()
