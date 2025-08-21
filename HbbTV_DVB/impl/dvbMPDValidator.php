@@ -47,24 +47,4 @@ $logger->test(
     "Invalid 'xlink:href' found in: " . $xlinkNotValidValue
 );
 
-
-$this->periodCount = 0;
-
-
-$cencAttribute = $mpdHandler->getDom()->getAttribute("xmlns:cenc");
-
-foreach ($mpdHandler->getDom()->childNodes as $node) {
-    if ($node->nodeName != 'Period') {
-        continue;
-    }
-    $this->periodCount++;
-
-    // Adaptation Sets within each Period
-    $adaptationSets = $node->getElementsByTagName('AdaptationSet');
-    $adaptationSetCount = $adaptationSets->length;
-
-    //NOTE: Only if audio
-    $this->fallbackOperationChecks(array());
-}
-
 $this->dvbAssociatedAdaptationSetsCheck();

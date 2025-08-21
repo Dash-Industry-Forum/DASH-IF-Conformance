@@ -179,11 +179,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         return include 'impl/MPDUtility/computeTimerange.php';
     }
 
-    private function fallbackOperationChecks($audioAdaptations)
-    {
-        include 'impl/fallbackOperationChecks.php';
-    }
-
     private function checkAssetIdentifiers($assets1, $assets2)
     {
         return include 'impl/checkAssetIdentifiers.php';

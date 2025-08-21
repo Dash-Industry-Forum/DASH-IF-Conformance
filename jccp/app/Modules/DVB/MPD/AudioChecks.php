@@ -33,18 +33,21 @@ class AudioChecks
     {
         $mpdCache = app(MPDCache::class);
         foreach ($mpdCache->allPeriods() as $period) {
+            $audioAdaptationSetById = [];
             $this->validateRoles($period);
             foreach ($period->allAdaptationSets() as $adaptationSet) {
                 if ($adaptationSet->getAttribute('contentType') != 'audio') {
                     continue;
                 }
+                $audioAdaptationSetById[$adaptationSet->getAttribute('id')] = $adaptationSet;
+
                 $this->validateFontProperties($adaptationSet);
                 $this->validateAttributes($adaptationSet);
-
 
                 $this->validateDolbyChannelConfiguration($adaptationSet);
                 //NOTE: Removed DTS as they have been moved to a different spec
             }
+            $this->validateFallback($audioAdaptationSetById);
         }
     }
 
@@ -192,6 +195,33 @@ class AudioChecks
                 pass_message: "Role element(s) found for Representation " . $representation->path(),
                 fail_message: "Role element(s) missing for Representation " . $representation->path(),
             );
+        }
+    }
+
+    /**
+     * @param array<string, AdaptationSet> $audioAdaptationSetById;
+     **/
+    private function validateFallback(array $audioAdaptationSetById): void
+    {
+        // TODO: Re-add check for same role in fallback as in base
+        foreach ($audioAdaptationSetById as $adaptationSet) {
+            $supplementalProperties = $adaptationSet->getDOMElements('SupplementalProperty');
+            foreach ($supplementalProperties as $supplementalProperty) {
+                if ($supplementalProperty->getAttribute('schemeIdUri') != 'urn:dvb:dash:fallback_adaptation_set:2014') {
+                    continue;
+                }
+
+                $this->v141reporter->test(
+                    section: "Section 6.6.3",
+                    test: "[.. A fallback set shall have] @value attribute qual to the @id [.. the base set]",
+                    result: array_key_exists($supplementalProperty->getAttribute('value'), $audioAdaptationSetById),
+                    severity: "FAIL",
+                    pass_message: "Corresponding AdaptationSet found for fallback AdapationSet " .
+                                  $adaptationSet->path(),
+                    fail_message: "Corresponding AdaptationSet not found for fallback AdapationSet " .
+                                  $adaptationSet->path(),
+                );
+            }
         }
     }
 }
