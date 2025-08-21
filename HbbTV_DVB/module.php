@@ -137,10 +137,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     {
         parent::hookMPD();
 
-        if ($this->DVBEnabled) {
-            $this->dvbMpdAnchorCheck();
-        }
-
         if ($this->HbbTvEnabled) {
             $this->hbbMPDValidator();
         }
@@ -149,11 +145,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     private function mpdTimingInfo()
     {
         return include 'impl/mpdTimingInfo.php';
-    }
-
-    private function dvbMpdAnchorCheck()
-    {
-        include 'impl/dvbMpdAnchorCheck.php';
     }
 
     private function computeTimerange($timeRange)

@@ -65,6 +65,7 @@ class MPD extends Module
         //      in v141, as well as described by a different spec
         //NOTE: Removed xlink checks, as they depended on a non-existent global
         //NOTE: Removed checks that were related to profileSpecificMPD, as they did not really check anything.
+        //NOTE: Removed anchor keys checks as they are not in v141, but described in a different spec.
 
         new Profiles()->validateProfiles();
         new Dimensions()->validateDimensions();
