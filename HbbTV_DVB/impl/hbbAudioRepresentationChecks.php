@@ -23,39 +23,10 @@ $logger->test(
     "Invalid codecs in $codecs found for adaptation set $adaptationNumber, period $periodNumber"
 );
 
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "HbbTV Secion E.2.3",
-    "The profile-specific MPD shall provide @lang information inherited by all Representations",
-    $language != null,
-    "FAIL",
-    "Valid lang found for adaptation set $adaptationNumber, period $periodNumber",
-    "No lang found for adaptation set $adaptationNumber, period $periodNumber"
-);
 
 $i = 0;
 foreach ($representations as $representation) {
     $i++;
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "HbbTV Secion E.2.3",
-        "The profile-specific MPD shall provide @audioSamplingRate information for all Representations",
-        $samplingRate != null || $representation->getAttribute('audioSamplingRate') != null,
-        "FAIL",
-        "Valid audioSamplingRate found for representation $i, adaptation set $adaptationNumber, period $periodNumber",
-        "No audioSamplingRate found for representation $i, adaptation set $adaptationNumber, period $periodNumber"
-    );
-    if ($roleValue == "commentary" && $accessibilityValue == 1) {
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "HbbTV Secion E.2.4",
-            "For receiver mix audio description the associated audio stream shall use dependencyId",
-            $representation->getAttribute('dependencyId') != null,
-            "FAIL",
-            "dependencyId used for representation $i, adaptation set $adaptationNumber, period $periodNumber",
-            "dependencyId not used for representation $i, adaptation set $adaptationNumber, period $periodNumber"
-        );
-    }
 
     if ($codecs == null) {
         $representationCodecs = $representation->getAttribute('codecs');
@@ -75,15 +46,6 @@ foreach ($representations as $representation) {
         $this->hbbAudioChannelCheck($channelConfigurations, $codecs, $i, $adaptationNumber, $periodNumber);
     } else {
         $channelConfig = $representation->getElementsByTagName('AudioChannelConfiguration');
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "HbbTV Secion E.2.3",
-            "The profile-specific MPD shall provide AudioChannelConfiguration for all Representations",
-            $channelConfig->length > 0,
-            "FAIL",
-            "Configuration found for representation $i, adaptation set $adaptationNumber, period $periodNumber",
-            "Configuration not found for representation $i, adaptation set $adaptationNumber, period $periodNumber",
-        );
 
         if ($channelConfig->length > 0) {
             $this->hbbAudioChannelCheck($channelConfigurations, $codecs, $i, $adaptationNumber, $periodNumber);
