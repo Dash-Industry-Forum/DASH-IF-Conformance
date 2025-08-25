@@ -55,11 +55,22 @@ class SpecManager
 
     public function validate(): void
     {
-        foreach ($this->manifestSpecs as $manifestSpec) {
-            if ($this->moduleStates[$manifestSpec->name]['enabled']) {
+        $runAtLeastOne = false;
+        do {
+            $runAtLeastOne = false;
+            foreach ($this->manifestSpecs as $manifestSpec) {
+                $state = &$this->moduleStates[$manifestSpec->name];
+                if ($state['run']) {
+                    continue;
+                }
+                if (!$state['enabled'] && !$state['dependency']) {
+                    continue;
+                }
                 $manifestSpec->validateMPD();
+                $state['run'] = true;
+                $runAtLeastOne = true;
             }
-        }
+        } while ($runAtLeastOne);
     }
 
     public function stateJSON(): string
