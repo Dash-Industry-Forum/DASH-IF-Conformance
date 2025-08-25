@@ -52,7 +52,7 @@ class SubReporter
             }
 
             $test = $result->getTest();
-            if (!array_key_exists($test, $res[$section]['checks'])){
+            if (!array_key_exists($test, $res[$section]['checks'])) {
                 $res[$section]['checks'][$test]  = [
                     'state' => 'PASS'
                 ];

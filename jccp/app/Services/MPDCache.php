@@ -23,6 +23,9 @@ class MPDCache
     {
         return Tracer::newSpan("Parse mpd")->measure(function () {
             $mpd = $this->getMPD();
+            if (!$mpd) {
+                return null;
+            }
             $doc = new \DOMDocument();
             $doc->loadXML($mpd);
 
@@ -52,12 +55,23 @@ class MPDCache
         if ($cachedUrl != session()->get('mpd')) {
             invalidate_mpd_cache();
         }
+        if (!session()->get('mpd')) {
+            return '';
+        }
         Cache::remember(cache_path(['mpd','url']), 3600, function () {
             return session()->get('mpd');
         });
         return Cache::remember(cache_path(['mpd','contents']), 3600, function () {
             return Tracer::newSpan("Retrieve mpd")->measure(function () {
-                return file_get_contents(session()->get('mpd'));
+                $contents = '';
+                try {
+                    $contents = file_get_contents(session()->get('mpd'));
+                } catch (\Exception $e) {
+                }
+                if ($contents === false) {
+                    return '';
+                }
+                return $contents;
             });
         });
     }
@@ -65,7 +79,11 @@ class MPDCache
     public function getBaseUrl(): string
     {
         $myBase = '';
-        $baseUrls = $this->getDom()->getElementsByTagName('BaseURL');
+        $dom = $this->getDom();
+        if (!$dom) {
+            return '';
+        }
+        $baseUrls = $dom->getElementsByTagName('BaseURL');
         if (count($baseUrls)) {
             $myBase = $baseUrls->item(0)->nodeValue;
         }

@@ -12,17 +12,14 @@ use App\Modules\DVB\MPD as DVBMpd;
 
 class ManifestDetails extends Component
 {
-    private $mpdCache;
-    private $reporter;
-    private $results;
+    private mixed $results;
 
-    public function __construct(){
-        $this->mpdCache = app(MPDCache::class);
-        $this->reporter = app(ModuleReporter::class);
+    public function __construct()
+    {
+        $reporter = app(ModuleReporter::class);
 
         new DVBMpd()->validateMPD();
-        $this->results = $this->reporter->serialize(true);
-
+        $this->results = $reporter->serialize(true);
     }
 
     /**
@@ -38,7 +35,8 @@ class ManifestDetails extends Component
         return view('livewire.manifest-details');
     }
 
-    public function slugify(String $input){
+    public function slugify(string $input): string
+    {
         return Str::of($input)->slug('_');
     }
 
@@ -47,14 +45,17 @@ class ManifestDetails extends Component
         return '';
     }
 
-    public function getSpecs(): array {
+    public function getSpecs(): array
+    {
         return array_keys($this->results['MPD']);
     }
-    public function getSections($spec): array {
+    public function getSections($spec): array
+    {
         return array_keys($this->results['MPD'][$spec]);
     }
 
-    public function getResults($spec): array {
+    public function getResults($spec): array
+    {
         return $this->results['MPD'][$spec];
     }
 
