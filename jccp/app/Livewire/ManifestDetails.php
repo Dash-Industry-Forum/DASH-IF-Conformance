@@ -45,16 +45,28 @@ class ManifestDetails extends Component
         return '';
     }
 
+    /**
+     * @return array<string>
+     **/
     public function getSpecs(): array
     {
         return array_keys($this->results['MPD']);
     }
-    public function getSections($spec): array
+
+
+    /**
+     * @return array<string>
+     **/
+    public function getSections(string $spec): array
     {
         return array_keys($this->results['MPD'][$spec]);
     }
 
-    public function getResults($spec): array
+
+    /**
+     * @return mixed
+     **/
+    public function getResults(string $spec): mixed
     {
         return $this->results['MPD'][$spec];
     }
