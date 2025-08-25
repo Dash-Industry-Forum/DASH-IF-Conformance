@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use App\Services\MPDCache;
+use App\Services\SpecManager;
 use App\Services\ModuleReporter;
 use App\Modules\DashIOP;
 use Illuminate\View\View;
@@ -43,6 +44,11 @@ class ManifestDetails extends Component
     public function getManifestChecks(): string
     {
         return '';
+    }
+
+    public function specManagerState(): string
+    {
+        return app(SpecManager::class)->stateJSON();
     }
 
     /**

@@ -30,7 +30,7 @@ class MPD extends Module
     public function __construct()
     {
         parent::__construct();
-        $this->name = "DASH-IF IOP Conformance";
+        $this->name = "DVB MPD Module";
 
         $reporter = app(ModuleReporter::class);
 
