@@ -4,6 +4,7 @@ namespace App\Services\Reporter;
 
 use Illuminate\Support\Facades\Log;
 use App\Services\Reporter\TestResult;
+use App\Services\SpecManager;
 
 class SubReporter
 {
@@ -14,6 +15,25 @@ class SubReporter
 
     public function __construct()
     {
+    }
+
+    public function dependencyCheck(
+        string $section,
+        string $test,
+        string $dependentModule,
+        string $dependentSpec,
+        string $dependentSection
+    ): bool {
+        $specManager = app(SpecManager::class);
+        $specManager->activateDependency($dependentModule);
+        return $this->test(
+            section: $section,
+            test: $test,
+            result: true,
+            severity: "DEPENDENT",
+            pass_message: "See $dependentSpec - $dependentSection",
+            fail_message: ""
+        );
     }
 
     public function test(

@@ -3,7 +3,6 @@
   <h4>SpecManager state</h4>
   <pre>{{ $this->specManagerState() }}</pre>
     <h4>Resolved Manifest</h4>
-    <pre>{{ \json_encode($this->getSpecs()) }}</pre>
 
 
   <div class="accordion" id="specAccordion">
@@ -30,5 +29,5 @@
 
   @endsession
 
-{{ $this->logs() }}
+    <pre>{{ $this->getFeatures() }}</pre>
 </div>

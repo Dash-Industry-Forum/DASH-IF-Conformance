@@ -27,7 +27,8 @@ class SpecManager
         foreach ($this->manifestSpecs as $manifestSpec) {
             $this->moduleStates[$manifestSpec->name] = [
                 'enabled' => false,
-                'dependent' => false
+                'dependency' => false,
+                'run' => false
             ];
         }
     }
@@ -45,6 +46,11 @@ class SpecManager
                 $moduleState['enabled'] = true;
             }
         }
+    }
+
+    public function activateDependency(string $moduleName): void
+    {
+        $this->moduleStates[$moduleName]['dependency']  = true;
     }
 
     public function validate(): void

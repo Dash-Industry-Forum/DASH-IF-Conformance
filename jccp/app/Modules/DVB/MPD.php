@@ -37,7 +37,8 @@ class MPD extends Module
     {
         parent::validateMPD();
 
-        $this->legacyreporter = &app(ModuleReporter::class)->context(new ReporterContext(
+        $reporter = app(ModuleReporter::class);
+        $this->legacyreporter = $reporter->context(new ReporterContext(
             "MPD",
             "DVB",
             "LEGACY",
@@ -50,7 +51,7 @@ class MPD extends Module
 
 
         $this->legacyreporter->test(
-            section: "Unkown",
+            section: "Unknown",
             test: "MPD@minimumUpdatePeriod SHOULD have a value of 1 second or higher",
             result: ($minimumUpdatePeriod != '' && timeParsing($minimumUpdatePeriod) < 1),
             severity: "WARN",

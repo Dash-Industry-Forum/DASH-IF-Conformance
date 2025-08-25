@@ -27,24 +27,20 @@ class MPD extends Module
     {
         parent::validateMPD();
 
-        $this->legacyreporter = &app(ModuleReporter::class)->context(new ReporterContext(
+        $reporter = app(ModuleReporter::class);
+        $this->legacyreporter = $reporter->context(new ReporterContext(
             "MPD",
             "HbbTV",
             "LEGACY",
             []
         ));
 
-        $mpdCache = app(MPDCache::class);
-
-        $minimumUpdatePeriod = $mpdCache->getAttribute('minimumUpdatePeriod');
-
-        $this->legacyreporter->test(
-            section: "Unkown",
-            test: "MPD@minimumUpdatePeriod SHOULD have a value of 1 second or higher",
-            result: ($minimumUpdatePeriod != '' && timeParsing($minimumUpdatePeriod) < 1),
-            severity: "WARN",
-            pass_message: "Check succeeded",
-            fail_message: "Check failed"
+        $this->legacyreporter->dependencyCheck(
+            section: "Unknown",
+            test: "Inherit DVB legacy checks",
+            dependentModule: "DVB MPD Module",
+            dependentSpec: "DVB - LEGACY",
+            dependentSection: "Unknown"
         );
     }
 }
