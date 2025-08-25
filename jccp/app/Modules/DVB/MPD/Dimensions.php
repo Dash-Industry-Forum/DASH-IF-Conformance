@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Cache;
 
 class Dimensions
 {
-
     //TODO: Add "before xlink" counterparts.
 
     //Private subreporters

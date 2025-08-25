@@ -43,28 +43,42 @@ class SubReporter
         $res = array();
 
         foreach ($this->results as $result) {
-            $c = $result->getSection() . " - " . $result->getTest();
-            if (!array_key_exists($c, $res)) {
-                $res[$c]  = array(
+            $section = $result->getSection();
+            if (!array_key_exists($section, $res)) {
+                $res[$section]  = [
+                    'checks' => [],
                     'state' => 'PASS'
-                );
+                ];
+            }
+
+            $test = $result->getTest();
+            if (!array_key_exists($test, $res[$section]['checks'])){
+                $res[$section]['checks'][$test]  = [
+                    'state' => 'PASS'
+                ];
                 if ($verbose) {
-                    $res[$c]['messages'] = array();
+                    $res[$section]['checks'][$test]['messages'] = array();
                 }
             }
 
+
             if ($verbose) {
-                $res[$c]['messages'][] = $result->getMessage();
+                $res[$section]['checks'][$test]['messages'][] = $result->getMessage();
             }
             if ($result->getSeverity() == "WARN") {
-                if ($res[$c]['state'] != "FAIL") {
-                    $res[$c]['state'] = "WARN";
+                if ($res[$section]['checks'][$test]['state'] != "FAIL") {
+                    $res[$section]['checks'][$test]['state'] = "WARN";
+                }
+                if ($res[$section]['state'] != "FAIL") {
+                    $res[$section]['state'] = "WARN";
                 }
             }
             if ($result->getSeverity() == "FAIL") {
-                $res[$c]['state'] = "FAIL";
+                $res[$section]['checks'][$test]['state'] = "FAIL";
+                $res[$section]['state'] = "FAIL";
             }
         }
+        ksort($res, SORT_NATURAL);
 
         return $res;
     }

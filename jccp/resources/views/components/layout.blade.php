@@ -4,10 +4,7 @@
       <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>DASH-IF Conformance Tool</title>
-  <link href="./css/bootstrap.min.css" rel="stylesheet">
-  <link href="./res/fontawesome/css/fontawesome.min.css" rel="stylesheet">
-  <link href="./res/fontawesome/css/solid.min.css" rel="stylesheet">
-  <link href="./css/custom.css" rel="stylesheet">
+  @vite(['resources/sass/app.scss', 'resources/js/app.js'])
   <style>
     body,
     #root {
@@ -26,9 +23,6 @@
           <livewire:session-stats />
         @endpersist
       <div style="display:flex">
-        @persist('sidemenu')
-          <livewire:sidebar/>
-        @endpersist
         <div>
         {{ $slot }}
         </div>

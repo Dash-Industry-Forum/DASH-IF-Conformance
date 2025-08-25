@@ -61,11 +61,11 @@ class ModuleReporter
                 $res[$ctx->element] = [];
             }
             if (!array_key_exists($specVersion, $res[$ctx->element])) {
-                $byElement[$specVersion] = [];
+                $res[$ctx->element][$specVersion] = [];
             }
 
-            $res[$ctx->element][$specVersion][] =
-             $this->reportByContext[$i]->byCheck($verbose);
+            $res[$ctx->element][$specVersion] = array_merge($res[$ctx->element][$specVersion],
+             $this->reportByContext[$i]->byCheck($verbose));
         }
 
 

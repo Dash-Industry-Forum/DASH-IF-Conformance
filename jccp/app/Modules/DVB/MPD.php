@@ -50,12 +50,12 @@ class MPD extends Module
         $minimumUpdatePeriod = $mpdCache->getAttribute('minimumUpdatePeriod');
 
         $this->legacyreporter->test(
-            "Unknown",
-            "MPD@minimumUpdatePeriod SHOULD have a value of 1 second or higher",
-            ($minimumUpdatePeriod != '' && timeParsing($minimumUpdatePeriod) < 1),
-            "WARN",
-            "Check succeeded",
-            "Check failed"
+            section: "Unkown",
+            test: "MPD@minimumUpdatePeriod SHOULD have a value of 1 second or higher",
+            result: ($minimumUpdatePeriod != '' && timeParsing($minimumUpdatePeriod) < 1),
+            severity: "WARN",
+            pass_message: "Check succeeded",
+            fail_message: "Check failed"
         );
 
         //NOTE: All 'ContentComponent' checks have been removed, as they're no longer in the spec.
