@@ -27,7 +27,7 @@ class SpecResults extends Component
                     'section' => $section,
                     'check' => $check,
                     'state' => $checkResults['state'],
-                    'messages' => implode('<br/>',$checkResults['messages'])
+                    'messages' => implode('<br/>', $checkResults['messages'])
                 ];
             }
         }

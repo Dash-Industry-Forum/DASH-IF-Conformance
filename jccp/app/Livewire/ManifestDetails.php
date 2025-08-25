@@ -11,9 +11,12 @@ use App\Modules\DashIOP;
 use Illuminate\View\View;
 use App\Modules\DVB\MPD as DVBMpd;
 
+
 class ManifestDetails extends Component
 {
     private mixed $results;
+
+    private string $selectedSpec = '';
 
     public function __construct()
     {
@@ -22,6 +25,9 @@ class ManifestDetails extends Component
         $specManager->enable('HbbTV MPD Module');
         $specManager->validate();
         $this->results = app(ModuleReporter::class)->serialize(true);
+        if ($this->selectedSpec == ''){
+            $this->selectSpec($this->getSpecs()[0]);
+        }
     }
 
     /**
@@ -31,6 +37,10 @@ class ManifestDetails extends Component
     protected $listeners = [
         'select-mpd' => '$refresh'
     ];
+
+    public function selectSpec(string $spec):void {
+        $this->selectedSpec = $spec;
+    }
 
     public function render(): View
     {
@@ -57,7 +67,9 @@ class ManifestDetails extends Component
      **/
     public function getSpecs(): array
     {
-        return array_keys($this->results['MPD']);
+        $keys = array_keys($this->results['MPD']);
+        sort($keys);
+        return $keys;
     }
 
 
@@ -91,5 +103,47 @@ class ManifestDetails extends Component
     public function logs(): string
     {
         return '';
+    }
+
+    public function transformResults(string $spec): array
+    {
+        $res = [];
+        if (!$spec){
+            return $res;
+        }
+
+        foreach ($this->results['MPD'][$spec] as $section => $sectionResults) {
+            foreach ($sectionResults['checks'] as $check => $checkResults) {
+                $res[] = [
+                    'section' => $section,
+                    'check' => $check,
+                    'state' => $checkResults['state'],
+                    'messages' => $checkResults['messages']
+                ];
+            }
+        }
+
+        usort($res,
+function ($lhs, $rhs) {
+    if ($lhs['state'] == $rhs['state']){
+        return 0;
+    }
+    if ($lhs['state'] == 'FAIL'){
+        return -1;
+    }
+    if ($rhs['state'] == 'FAIL'){
+        return 1;
+    }
+    if ($lhs['state'] == 'WARN'){
+        return -1;
+    }
+    if ($rhs['state'] == 'WARN'){
+        return 1;
+    }
+    return 0;
+
+});
+
+        return $res;
     }
 }

@@ -1,13 +1,11 @@
-<div>
-      <div style="display:flex">
-        <div>Session id</div>
-        <div>{{ session()->getId() }}</div>
-      </div>
-      <div style="display:flex">
-        <div>Session mpd</div>
-        <div>{{ session()->get('mpd') }}</div>
-      </div>
-
-
-      <button wire:click="resetSession">Reset Session</button>
+<div class="container">
+    <div class="row">
+      <div class="col">Session id</div>
+      <div class="col">{{ session()->getId() }}</div>
+    </div>
+    <div class="row">
+      <div class="col">Session mpd</div>
+      <div class="col">{{ session()->get('mpd') }}</div>
+    </div>
+    <button wire:click="resetSession">Reset Session</button>
 </div>

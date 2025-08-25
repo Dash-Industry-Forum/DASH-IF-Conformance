@@ -22,10 +22,8 @@
         @persist('session-stats')
           <livewire:session-stats />
         @endpersist
-      <div style="display:flex">
         <div>
         {{ $slot }}
         </div>
-      </div>
     </body>
 </html>
