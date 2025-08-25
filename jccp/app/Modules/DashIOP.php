@@ -17,7 +17,6 @@ class DashIOP extends Module
 
     public function MPDHook(): void
     {
-        parent::MPDHook();
         $logger = app(ModuleLogger::class);
 
         $mpdCache = app(MPDCache::class);
