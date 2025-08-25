@@ -11,7 +11,6 @@ use App\Modules\DashIOP;
 use Illuminate\View\View;
 use App\Modules\DVB\MPD as DVBMpd;
 
-
 class ManifestDetails extends Component
 {
     private mixed $results;
@@ -25,7 +24,7 @@ class ManifestDetails extends Component
         $specManager->enable('HbbTV MPD Module');
         $specManager->validate();
         $this->results = app(ModuleReporter::class)->serialize(true);
-        if ($this->selectedSpec == ''){
+        if ($this->selectedSpec == '') {
             $this->selectSpec($this->getSpecs()[0]);
         }
     }
@@ -38,7 +37,8 @@ class ManifestDetails extends Component
         'select-mpd' => '$refresh'
     ];
 
-    public function selectSpec(string $spec):void {
+    public function selectSpec(string $spec): void
+    {
         $this->selectedSpec = $spec;
     }
 
@@ -105,10 +105,13 @@ class ManifestDetails extends Component
         return '';
     }
 
+    /**
+     * @return array<array<string, mixed>>
+     **/
     public function transformResults(string $spec): array
     {
         $res = [];
-        if (!$spec){
+        if (!$spec) {
             return $res;
         }
 
@@ -123,26 +126,27 @@ class ManifestDetails extends Component
             }
         }
 
-        usort($res,
-function ($lhs, $rhs) {
-    if ($lhs['state'] == $rhs['state']){
-        return 0;
-    }
-    if ($lhs['state'] == 'FAIL'){
-        return -1;
-    }
-    if ($rhs['state'] == 'FAIL'){
-        return 1;
-    }
-    if ($lhs['state'] == 'WARN'){
-        return -1;
-    }
-    if ($rhs['state'] == 'WARN'){
-        return 1;
-    }
-    return 0;
-
-});
+        usort(
+            $res,
+            function ($lhs, $rhs) {
+                if ($lhs['state'] == $rhs['state']) {
+                    return 0;
+                }
+                if ($lhs['state'] == 'FAIL') {
+                    return -1;
+                }
+                if ($rhs['state'] == 'FAIL') {
+                    return 1;
+                }
+                if ($lhs['state'] == 'WARN') {
+                    return -1;
+                }
+                if ($rhs['state'] == 'WARN') {
+                    return 1;
+                }
+                return 0;
+            }
+        );
 
         return $res;
     }
