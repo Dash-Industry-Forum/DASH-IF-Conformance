@@ -13,11 +13,9 @@
         {{ $spec }}
       </button>
     </h2>
-    <div id="{{ $this->slugify($spec) }}" class="accordion-collapse collapse" data-bs-parent="#specAccordion">
+    <div id="{{ $this->slugify($spec) }}" class="accordion-collapse collapse show" data-bs-parent="#specAccordion">
       <div class="accordion-body">
-          @foreach ($this->getSections($spec) as $section)
-            <h4>{{ $section }}</h4>
-          @endforeach
+          <livewire:spec-results :specResults="$this->getResults($spec)" />
       </div>
     </div>
   </div>
