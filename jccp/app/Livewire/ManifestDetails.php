@@ -17,10 +17,11 @@ class ManifestDetails extends Component
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
 
-        new DVBMpd()->validateMPD();
-        $this->results = $reporter->serialize(true);
+        $specManager = app(SpecManager::class);
+        $specManager->enable('HbbTV MPD Module');
+        $specManager->validate();
+        $this->results = app(ModuleReporter::class)->serialize(true);
     }
 
     /**

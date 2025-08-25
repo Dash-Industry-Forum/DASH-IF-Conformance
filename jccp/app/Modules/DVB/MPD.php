@@ -32,22 +32,23 @@ class MPD extends Module
         parent::__construct();
         $this->name = "DVB MPD Module";
 
-        $reporter = app(ModuleReporter::class);
-
-        $this->legacyreporter = &$reporter->context(new ReporterContext(
-            "MPD",
-            "DVB",
-            "LEGACY",
-            []
-        ));
     }
 
     public function validateMPD(): void
     {
         parent::validateMPD();
+
+        $this->legacyreporter = &app(ModuleReporter::class)->context(new ReporterContext(
+            "MPD",
+            "DVB",
+            "LEGACY",
+            []
+        ));
+
         $mpdCache = app(MPDCache::class);
 
         $minimumUpdatePeriod = $mpdCache->getAttribute('minimumUpdatePeriod');
+
 
         $this->legacyreporter->test(
             section: "Unkown",

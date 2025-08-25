@@ -22,11 +22,4 @@ class Module
     public function validateMPD(): void
     {
     }
-
-    public function MPDHook(): void
-    {
-        $logger = app(ModuleLogger::class);
-        $logger->setModule($this->name);
-        $logger->setHook("MPD");
-    }
 }
