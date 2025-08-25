@@ -20,14 +20,17 @@ class TestResult
         $this->section = $section;
         $this->test = $test;
         $this->severity = $severity;
-        $msgLead = "✓";
+        $msgLead = "";
+        if ($severity == "PASS") {
+            $msgLead = "✓ ";
+        }
         if ($severity == "WARN") {
-            $msgLead = "!";
+            $msgLead = "! ";
         }
         if ($severity == "FAIL") {
-            $msgLead = "✗";
+            $msgLead = "✗ ";
         }
-        $this->message = "$msgLead $message";
+        $this->message = "$msgLead$message";
     }
 
     public function getSection(): string

@@ -23,16 +23,15 @@ class SubReporter
         string $dependentModule,
         string $dependentSpec,
         string $dependentSection
-    ): bool {
+    ): void {
         $specManager = app(SpecManager::class);
         $specManager->activateDependency($dependentModule);
-        return $this->test(
+
+        $this->results[] = new TestResult(
             section: $section,
             test: $test,
-            result: true,
             severity: "DEPENDENT",
-            pass_message: "See $dependentSpec - $dependentSection",
-            fail_message: ""
+            message: "$dependentSpec::$dependentSection"
         );
     }
 
@@ -96,6 +95,9 @@ class SubReporter
             if ($result->getSeverity() == "FAIL") {
                 $res[$section]['checks'][$test]['state'] = "FAIL";
                 $res[$section]['state'] = "FAIL";
+            }
+            if ($result->getSeverity() == "DEPENDENT") {
+                $res[$section]['checks'][$test]['state'] = "DEPENDENT";
             }
         }
         ksort($res, SORT_NATURAL);

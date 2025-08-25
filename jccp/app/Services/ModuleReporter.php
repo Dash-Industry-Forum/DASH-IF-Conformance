@@ -70,7 +70,47 @@ class ModuleReporter
             );
         }
 
+        $this->resolveDependencies($res);
 
         return $res;
+    }
+
+
+    /**
+     * @param array<array<mixed>> $serialized
+     **/
+    public function resolveDependencies(array &$serialized): void
+    {
+        foreach ($serialized as &$element) {
+            foreach ($element as &$module) {
+                foreach ($module as &$section) {
+                    foreach ($section['checks'] as &$check) {
+                        if ($check['state'] != "DEPENDENT") {
+                            continue;
+                        }
+                        $depArray = explode('::', $check['messages'][0]);
+
+                        if (!array_key_exists($depArray[0], $element)) {
+                            $check['messages'][] = "Unable to resolve dependent spec";
+                            $check['state'] = "FAIL";
+                        }
+                        if (!array_key_exists($depArray[1], $element[$depArray[0]])) {
+                            $check['messages'][] = "Unable to resolve dependent section";
+                            $check['state'] = "FAIL";
+                        }
+                        $dependentState = $element[$depArray[0]][$depArray[1]]['state'];
+                        $check['state'] = $dependentState;
+                        if ($dependentState == "WARN") {
+                            if ($section['state'] != "FAIL") {
+                                $section['state'] = "WARN";
+                            }
+                        }
+                        if ($dependentState == "FAIL") {
+                            $section['state'] = "FAIL";
+                        }
+                    }
+                }
+            }
+        }
     }
 }
