@@ -15,18 +15,26 @@
   @endforeach
   </ul>
   </div>
+  <table class="table table-striped">
+  <tr>
+    <th scope="col">State</th>
+    <th scope="col">Section</th>
+    <th scope="col">Statement</th>
+    <th scope="col">Messages</th>
+  </tr>
   @foreach ($this->transformResults($this->selectedSpec) as $check)
-    <div class="row">
-      <div class="col-1">{{ $check['state'] }}</div>
-      <div class="col-2">{{ $check['section'] }}</div>
-      <div class="col-5">{{ $check['check'] }}</div>
-      <div class="col-4">
+    <tr>
+      <td>{{ $check['state'] }}</td>
+      <td>{{ $check['section'] }}</td>
+      <td>{{ $check['check'] }}</td>
+      <td>
         @foreach ($check['messages'] as $msg)
             <div>{{ $msg }}</div>
         @endforeach
-      </div>
-    </div>
+      </td>
+    </tr>
   @endforeach
+  </table>
 
 
 
