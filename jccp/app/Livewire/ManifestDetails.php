@@ -4,11 +4,13 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use App\Services\MPDCache;
 use App\Services\SpecManager;
+use App\Services\SegmentManager;
+use App\Services\Downloader;
 use App\Services\ModuleReporter;
 use App\Modules\DashIOP;
-use Illuminate\View\View;
 use App\Modules\DVB\MPD as DVBMpd;
 
 class ManifestDetails extends Component
@@ -16,6 +18,8 @@ class ManifestDetails extends Component
     private mixed $results;
 
     private string $selectedSpec = '';
+
+    private array $segmentDebug;
 
     public function __construct()
     {
@@ -27,6 +31,9 @@ class ManifestDetails extends Component
         if ($this->selectedSpec == '') {
             $this->selectSpec($this->getSpecs()[0]);
         }
+
+        $segmentManager = new SegmentManager();
+        $this->segmentDebug = $segmentManager->getSegments(0, 0, 0);
     }
 
     /**
@@ -92,7 +99,7 @@ class ManifestDetails extends Component
 
     public function getFeatures(): mixed
     {
-        return \json_encode($this->results, JSON_PRETTY_PRINT);
+        return \json_encode($this->segmentDebug, JSON_PRETTY_PRINT);
     }
 
     public function segmentUrls(): mixed

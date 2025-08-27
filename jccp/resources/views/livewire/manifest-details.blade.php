@@ -40,5 +40,5 @@
 
   @endsession
 
-    <!--pre>{{ $this->getFeatures() }}</pre-->
+    <pre>{{ $this->getFeatures() }}</pre>
 </div>

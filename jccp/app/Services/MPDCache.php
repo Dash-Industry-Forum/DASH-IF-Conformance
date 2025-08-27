@@ -108,11 +108,12 @@ class MPDCache
 
     public function getPeriod(int $periodIndex): ?Period
     {
-        if ($periodIndex > $this->getPeriodCount()) {
+        $dom = $this->getDom();
+        if (!$dom || $periodIndex > $this->getPeriodCount()) {
             return null;
         }
         return new Period(
-            $this->getDom()->getElementsByTagName('Period')->item($periodIndex),
+            $dom->getElementsByTagName('Period')->item($periodIndex),
             $periodIndex
         );
     }

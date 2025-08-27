@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Process;
 use App\Services\MPDCache;
-use App\Services\Validators\MP4Box;
 
 class Downloader
 {
@@ -39,13 +38,24 @@ class Downloader
         return true;
     }
 
-    public function downloadSegments(int $periodIndex, int $adaptationSetIndex, int $representationIndex): void
+    /**
+     * @return array<string, array<string>>
+     **/
+    public function downloadSegments(int $periodIndex, int $adaptationSetIndex, int $representationIndex): array
     {
+        $segments = [
+            'init' => [],
+            'segments' => []
+        ];
+
         $representationDir = session_dir() . "${periodIndex}/${adaptationSetIndex}/${representationIndex}/";
 
         $mpdCache = app(MPDCache::class);
 
         $representation = $mpdCache->getRepresentation($periodIndex, $adaptationSetIndex, $representationIndex);
+        if (!$representation) {
+            return [];
+        }
 
 
         if (!file_exists($representationDir)) {
@@ -58,38 +68,14 @@ class Downloader
         if ($initUrl) {
             $initPath = "${representationDir}init.mp4";
             $this->downloadFile($initUrl, $initPath);
-            $this->analyseSegment($initPath, '', $representationDir, -1);
+            $segments['init'][] = $initPath;
         }
 
         foreach ($representation->segmentUrls() as $segmentIndex => $segmentUrl) {
             $segmentPath = "${representationDir}${segmentIndex}.mp4";
             $this->downloadFile($segmentUrl, $segmentPath);
-            $this->analyseSegment($initPath, $segmentPath, $representationDir, $segmentIndex);
+            $segments['segments'][] = $segmentPath;
         }
-    }
-
-    private function analyseSegment(
-        string $initPath,
-        string $segmentPath,
-        string $representationDir,
-        int $segmentIndex
-    ): bool {
-        if ($segmentPath == '') {
-            return app(MP4Box::class)->run($initPath);
-        }
-        if ($initPath == '') {
-            return app(MP4Box::class)->run($segmentPath);
-        }
-
-        //TODO Add error handling
-        $concatPath = "${representationDir}seg${segmentIndex}.mp4";
-        Process::run("cat ${initPath} ${segmentPath} > ${concatPath}");
-        $analyseResult = app(MP4Box::class)->run($concatPath);
-        if (!$analyseResult) {
-            return false;
-        }
-        Process::run("rm ${concatPath}");
-        Process::run("mv ${representationDir}seg${segmentIndex}_dump.xml ${representationDir}${segmentIndex}_dump.xml");
-        return true;
+        return $segments;
     }
 }
