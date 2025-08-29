@@ -40,9 +40,9 @@ class SpecManager
 
     private function registerMPDSpecs(): void
     {
-        //$this->manifestSpecs[] = new DVBManifest();
-        //$this->manifestSpecs[] = new HbbTVManifest();
-        //$this->manifestSpecs[] = new DVBSegments();
+        $this->manifestSpecs[] = new DVBManifest();
+        $this->manifestSpecs[] = new HbbTVManifest();
+        $this->manifestSpecs[] = new DVBSegments();
         $this->manifestSpecs[] = new WaveHLSInteropSegments();
     }
 

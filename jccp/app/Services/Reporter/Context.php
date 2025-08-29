@@ -25,7 +25,8 @@ class Context
         $this->context = $context;
     }
 
-    public function equals(Context $rhs): bool {
+    public function equals(Context $rhs): bool
+    {
         return $this->element == $rhs->element &&
                $this->spec == $rhs->spec &&
                $this->version == $rhs->version;

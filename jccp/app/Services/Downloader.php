@@ -44,54 +44,41 @@ class Downloader
     public function downloadSegments(int $periodIndex, int $adaptationSetIndex, int $representationIndex): array
     {
 
-        return Cache::remember(
-            cache_path(
-                [
-                  'segment',
-                  'paths',
-                  (string)$periodIndex,
-                  (string)$adaptationSetIndex,
-                  (string)$representationIndex
-                ]
-            ),
-            3600,
-            function () use ($periodIndex, $adaptationSetIndex, $representationIndex) {
 
-                $segments = [
-                'init' => [],
-                'segments' => []
-                ];
+        $segments = [
+        'init' => [],
+        'segments' => []
+        ];
 
-                $representationDir = session_dir() . "${periodIndex}/${adaptationSetIndex}/${representationIndex}/";
+        $representationDir = session_dir() . "${periodIndex}/${adaptationSetIndex}/${representationIndex}/";
 
-                $mpdCache = app(MPDCache::class);
+        $mpdCache = app(MPDCache::class);
 
-                $representation = $mpdCache->getRepresentation($periodIndex, $adaptationSetIndex, $representationIndex);
-                if (!$representation) {
-                    return $segments;
-                }
+        $representation = $mpdCache->getRepresentation($periodIndex, $adaptationSetIndex, $representationIndex);
+        if (!$representation) {
+            return $segments;
+        }
 
 
-                if (!file_exists($representationDir)) {
-                    mkdir($representationDir, 0777, true);
-                }
+        if (!file_exists($representationDir)) {
+            mkdir($representationDir, 0777, true);
+        }
 
 
-                $initUrl = $representation->initializationUrl();
-                $initPath = '';
-                if ($initUrl) {
-                    $initPath = "${representationDir}init.mp4";
-                    $this->downloadFile($initUrl, $initPath);
-                    $segments['init'][] = $initPath;
-                }
+        $initUrl = $representation->initializationUrl();
+        $initPath = '';
+        if ($initUrl) {
+            $initPath = "${representationDir}init.mp4";
+            $this->downloadFile($initUrl, $initPath);
+            $segments['init'][] = $initPath;
+        }
 
-                foreach ($representation->segmentUrls() as $segmentIndex => $segmentUrl) {
-                    $segmentPath = "${representationDir}${segmentIndex}.mp4";
-                    $this->downloadFile($segmentUrl, $segmentPath);
-                    $segments['segments'][] = $segmentPath;
-                }
-                return $segments;
-            }
-        );
+        foreach ($representation->segmentUrls() as $segmentIndex => $segmentUrl) {
+            Log::info("Found url $segmentUrl");
+            $segmentPath = "${representationDir}${segmentIndex}.mp4";
+            $this->downloadFile($segmentUrl, $segmentPath);
+            $segments['segments'][] = $segmentPath;
+        }
+        return $segments;
     }
 }

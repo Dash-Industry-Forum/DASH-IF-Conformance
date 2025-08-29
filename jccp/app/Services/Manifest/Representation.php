@@ -101,9 +101,10 @@ class Representation
                 $segmentTemplate->item(0)->getAttribute('media'),
                 $base
             )->toString();
+            //TODO: Fix identifiers properly
             $uriTemplate = str_replace(
-                array('$Bandwidth$','$Number$','$RepresentationID$','$Time$'),
-                array('{bandwidth}','{Number}','{RepresentationID}','{Time}'),
+                array('$Bandwidth$','$Number$','$Number%03d$','$RepresentationID$','$Time$'),
+                array('{bandwidth}','{Number}','{Number3d}','{RepresentationID}','{Time}'),
                 $segmentTemplateUrl
             );
             $startNumber = $segmentTemplate->item(0)->getAttribute('startNumber');
@@ -111,7 +112,11 @@ class Representation
                 $startNumber = 1;
             }
             for ($i = 0; $i < 5; $i++) {
-                $result[] = Uri::fromTemplate($uriTemplate, ['Number' => ($startNumber + $i)])->toString();
+                $result[] = Uri::fromTemplate($uriTemplate,[
+                    'Number' => ($startNumber + $i),
+                    'Number3d' => sprintf('%03d', ($startNumber + $i)),
+                    'RepresentationID' => $this->getId()
+                ])->toString();
             }
         }
 

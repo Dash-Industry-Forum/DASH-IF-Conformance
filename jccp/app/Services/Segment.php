@@ -65,11 +65,6 @@ class Segment
         return $resultPath;
     }
 
-    public function getSegments(int $periodIndex, int $adaptationSetIndex, int $representationIndex): void
-    {
-        $downloader = app(Downloader::class);
-        $segments = $downloader->downloadSegments($periodIndex, $adaptationSetIndex, $representationIndex);
-    }
 
     public function runAnalyzedFunction(string $funcName): mixed
     {
