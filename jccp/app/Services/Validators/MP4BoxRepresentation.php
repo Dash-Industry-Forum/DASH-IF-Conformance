@@ -164,6 +164,16 @@ class MP4BoxRepresentation
         return $res;
     }
 
+
+    /**
+     * @return array<float>
+     **/
+    public function getSegmentSizes(): array
+    {
+        //TODO: Implement!
+        return [];
+    }
+
     /**
      * @return array<float>
      **/

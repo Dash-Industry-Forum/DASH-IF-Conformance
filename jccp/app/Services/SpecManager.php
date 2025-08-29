@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use App\Modules\DVB\MPD as DVBManifest;
 use App\Modules\DVB\Segments as DVBSegments;
 use App\Modules\HbbTV\MPD as HbbTVManifest;
+use App\Modules\Wave\Segments as WaveHLSInteropSegments;
 use App\Interfaces\Module;
 use App\Services\SegmentManager;
 use App\Services\MPDCache;
@@ -39,9 +40,10 @@ class SpecManager
 
     private function registerMPDSpecs(): void
     {
-        $this->manifestSpecs[] = new DVBManifest();
-        $this->manifestSpecs[] = new HbbTVManifest();
-        $this->manifestSpecs[] = new DVBSegments();
+        //$this->manifestSpecs[] = new DVBManifest();
+        //$this->manifestSpecs[] = new HbbTVManifest();
+        //$this->manifestSpecs[] = new DVBSegments();
+        $this->manifestSpecs[] = new WaveHLSInteropSegments();
     }
 
     public function enable(string $moduleName): void

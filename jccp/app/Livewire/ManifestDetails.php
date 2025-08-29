@@ -30,8 +30,9 @@ class ManifestDetails extends Component
     {
 
         $specManager = app(SpecManager::class);
-        $specManager->enable('HbbTV MPD Module');
-        $specManager->enable('DVB Segments Module');
+//        $specManager->enable('HbbTV MPD Module');
+//        $specManager->enable('DVB Segments Module');
+        $specManager->enable('Wave HLS Interop Segments Module');
         $specManager->validate();
 
         $segmentManager = new SegmentManager();
@@ -41,7 +42,10 @@ class ManifestDetails extends Component
 
         $this->results = app(ModuleReporter::class)->serialize(true);
         if ($this->selectedSpec == '') {
-            $this->selectSpec($this->getSpecs()[0]);
+            $allSpecs = $this->getSpecs();
+            if (count($allSpecs) > 0) {
+                $this->selectSpec($allSpecs[0]);
+            }
         }
     }
 
@@ -83,12 +87,21 @@ class ManifestDetails extends Component
      **/
     public function getSpecs(): array
     {
-        $keys = array_unique(
-            array_merge(
+        $keys = [];
+        if (array_key_exists("MPD", $this->results)) {
+            $keys = array_merge(
+                $keys,
                 array_keys($this->results["MPD"]),
+            );
+        }
+
+        if (array_key_exists("Segments", $this->results)) {
+            $keys =            array_merge(
+                $keys,
                 array_keys($this->results["Segments"])
-            )
-        );
+            );
+        }
+        $keys = array_unique($keys);
 
         sort($keys);
         return $keys;
@@ -100,6 +113,9 @@ class ManifestDetails extends Component
      **/
     public function getSections(string $spec, string $element): array
     {
+        if (!array_key_exists($element, $this->results)) {
+            return [];
+        }
         return array_keys($this->results[$element][$spec]);
     }
 
@@ -136,6 +152,10 @@ class ManifestDetails extends Component
         if (!$spec) {
             return $res;
         }
+        if (!array_key_exists($element, $this->results)) {
+            return $res;
+        }
+
         if (!array_key_exists($spec, $this->results[$element])) {
             return $res;
         }

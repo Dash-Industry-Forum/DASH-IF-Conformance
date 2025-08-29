@@ -76,7 +76,7 @@ class Segment
         foreach ($this->analyzedRepresentations as $analysis) {
             try {
                 $result = call_user_func([$analysis, $funcName]);
-                if ($result) {
+                if ($result !== null) {
                     return $result;
                 }
             } catch (\Exception $e) {
