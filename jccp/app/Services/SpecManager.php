@@ -5,8 +5,11 @@ namespace App\Services;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use App\Modules\DVB\MPD as DVBManifest;
+use App\Modules\DVB\Segments as DVBSegments;
 use App\Modules\HbbTV\MPD as HbbTVManifest;
 use App\Interfaces\Module;
+use App\Services\SegmentManager;
+use App\Services\MPDCache;
 
 class SpecManager
 {
@@ -28,7 +31,8 @@ class SpecManager
             $this->moduleStates[$manifestSpec->name] = [
                 'enabled' => false,
                 'dependency' => false,
-                'run' => false
+                'run' => false,
+                'runSegments' => false
             ];
         }
     }
@@ -37,6 +41,7 @@ class SpecManager
     {
         $this->manifestSpecs[] = new DVBManifest();
         $this->manifestSpecs[] = new HbbTVManifest();
+        $this->manifestSpecs[] = new DVBSegments();
     }
 
     public function enable(string $moduleName): void
@@ -71,6 +76,40 @@ class SpecManager
                 $runAtLeastOne = true;
             }
         } while ($runAtLeastOne);
+    }
+
+    public function validateSegments(): void
+    {
+        $runAtLeastOne = false;
+        do {
+            $runAtLeastOne = false;
+            foreach ($this->manifestSpecs as $manifestSpec) {
+                $state = &$this->moduleStates[$manifestSpec->name];
+                if ($state['runSegments']) {
+                    continue;
+                }
+                if (!$state['enabled'] && !$state['dependency']) {
+                    continue;
+                }
+                $this->validateAllRepresentations($manifestSpec);
+                $state['runSegments'] = true;
+                $runAtLeastOne = true;
+            }
+        } while ($runAtLeastOne);
+    }
+
+    private function validateAllRepresentations(Module $module): void
+    {
+        $mpdCache = app(MPDCache::class);
+        $segmentManager = app(SegmentManager::class);
+        foreach ($mpdCache->allPeriods() as $period) {
+            foreach ($period->allAdaptationSets() as $adaptationSet) {
+                foreach ($adaptationSet->allRepresentations() as $representation) {
+                    $segments = $segmentManager->representationSegments($representation);
+                    $module->validateSegments($representation, $segments);
+                }
+            }
+        }
     }
 
     public function stateJSON(): string

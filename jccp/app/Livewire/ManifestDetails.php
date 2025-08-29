@@ -31,10 +31,13 @@ class ManifestDetails extends Component
 
         $specManager = app(SpecManager::class);
         $specManager->enable('HbbTV MPD Module');
+        $specManager->enable('DVB Segments Module');
         $specManager->validate();
 
         $segmentManager = new SegmentManager();
         $this->segmentDebug = $segmentManager->getSegments(0, 0, 0);
+
+        $specManager->validateSegments();
 
         $this->results = app(ModuleReporter::class)->serialize(true);
         if ($this->selectedSpec == '') {

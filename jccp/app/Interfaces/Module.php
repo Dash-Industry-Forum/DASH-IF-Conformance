@@ -3,6 +3,8 @@
 namespace App\Interfaces;
 
 use App\Services\ModuleLogger;
+use App\Services\Segment;
+use App\Services\Manifest\Representation;
 use Illuminate\Support\Facades\Log;
 
 class Module
@@ -20,6 +22,13 @@ class Module
     }
 
     public function validateMPD(): void
+    {
+    }
+
+    /**
+     * @param array<Segment> $segments
+     **/
+    public function validateSegments(Representation $representation, array $segments): void
     {
     }
 }

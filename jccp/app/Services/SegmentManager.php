@@ -7,11 +7,25 @@ use Illuminate\Support\Facades\Cache;
 use App\Services\Downloader;
 use App\Services\Segment;
 use App\Interfaces\Module;
+use App\Services\Manifest\Representation;
 
+//TODO : Make singleton
 class SegmentManager
 {
     public function __construct()
     {
+    }
+
+    /**
+     * @return array<Segment>
+     **/
+    public function representationSegments(Representation $representation): array
+    {
+        return $this->getSegments(
+            $representation->periodIndex,
+            $representation->adaptationSetIndex,
+            $representation->representationIndex
+        );
     }
 
     /**

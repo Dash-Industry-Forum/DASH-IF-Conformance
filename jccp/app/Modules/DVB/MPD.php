@@ -9,7 +9,9 @@ use App\Services\MPDCache;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
+use App\Services\Manifest\Representation;
 use App\Interfaces\Module;
+use App\Services\Segment;
 //Module checks
 use App\Modules\DVB\MPD\TLSBitrate;
 use App\Modules\DVB\MPD\Dimensions;
@@ -81,5 +83,12 @@ class MPD extends Module
         new ContentProtectionChecks()->validateContentProtection();
 
         //TODO Move font checks to validateSubtitles() only!
+    }
+
+    /**
+     * @param array<Segment> $segments
+     **/
+    public function validateSegments(Representation $representation, array $segments): void
+    {
     }
 }

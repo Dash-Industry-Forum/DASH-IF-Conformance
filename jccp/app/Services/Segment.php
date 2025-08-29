@@ -64,4 +64,18 @@ class Segment
         $downloader = app(Downloader::class);
         $segments = $downloader->downloadSegments($periodIndex, $adaptationSetIndex, $representationIndex);
     }
+
+    public function runAnalyzedFunction(string $funcName): mixed
+    {
+        foreach ($this->analyzedRepresentations as $analysis) {
+            try {
+                $result = call_user_func([$analysis, $funcName]);
+                if ($result) {
+                    return $result;
+                }
+            } catch (\Exception $e) {
+            }
+        }
+        return null;
+    }
 }

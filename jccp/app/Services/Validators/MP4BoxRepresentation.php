@@ -92,10 +92,13 @@ class MP4BoxRepresentation
         }
         if ($handlerType == 'vide') {
             $sampleDescriptionBoxes = $this->payload->getElementsByTagName("AVCSampleEntryBox");
-            if (count($sampleDescriptionBoxes) == 0) {
-                return null;
+            if (count($sampleDescriptionBoxes) > 0) {
+                return $sampleDescriptionBoxes->item(0)->getAttribute('Type');
             }
-            return $sampleDescriptionBoxes->item(0)->getAttribute('Type');
+            $sampleDescriptionBoxes = $this->payload->getElementsByTagName("HEVCSampleEntryBox");
+            if (count($sampleDescriptionBoxes) > 0) {
+                return $sampleDescriptionBoxes->item(0)->getAttribute('Type');
+            }
         }
         return null;
     }

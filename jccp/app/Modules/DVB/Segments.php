@@ -9,19 +9,9 @@ use App\Services\MPDCache;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
+use App\Services\Manifest\Representation;
+use App\Services\Segment;
 use App\Interfaces\Module;
-//Module checks
-use App\Modules\DVB\MPD\TLSBitrate;
-use App\Modules\DVB\MPD\Dimensions;
-use App\Modules\DVB\MPD\Profiles;
-use App\Modules\DVB\MPD\UTCTiming;
-use App\Modules\DVB\MPD\PeriodConstraints;
-use App\Modules\DVB\MPD\MetricReporting;
-use App\Modules\DVB\MPD\VideoChecks;
-use App\Modules\DVB\MPD\AudioChecks;
-use App\Modules\DVB\MPD\SubtitleChecks;
-use App\Modules\DVB\MPD\BandwidthChecks;
-use App\Modules\DVB\MPD\ContentProtectionChecks;
 
 class Segments extends Module
 {
@@ -34,5 +24,45 @@ class Segments extends Module
     public function validateMPD(): void
     {
         parent::validateMPD();
+    }
+
+    /**
+     * @param array<Segment> $segments
+     **/
+    public function validateSegments(Representation $representation, array $segments): void
+    {
+        foreach ($segments as $segmentIndex => $segment) {
+            if ($segmentIndex == 0) {
+                $this->validateInitialization($representation, $segment);
+            }
+            $this->validateSegment($segment);
+        }
+    }
+
+    private function validateInitialization(Representation $representation, Segment $segment): void
+    {
+        $sdType = $segment->runAnalyzedFunction('getSDType');
+        $validSdType = $sdType !== null;
+
+        $reporter = app(ModuleReporter::class);
+        $legacyreporter = $reporter->context(new ReporterContext(
+            "MPD",
+            "DVB",
+            "LEGACY - Segments",
+            []
+        ));
+
+        $legacyreporter->test(
+            section: "Unknown",
+            test: "The segment needs to contain a valid 'sdType'",
+            result: $validSdType,
+            severity: "FAIL",
+            pass_message: "Check succeeded for Representation " . $representation->path(),
+            fail_message: "Check failed for Representation " . $representation->path(),
+        );
+    }
+
+    private function validateSegment(Segment $segment): void
+    {
     }
 }
