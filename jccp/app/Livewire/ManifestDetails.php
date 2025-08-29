@@ -83,7 +83,13 @@ class ManifestDetails extends Component
      **/
     public function getSpecs(): array
     {
-        $keys = array_keys($this->results['MPD']);
+        $keys = array_unique(
+            array_merge(
+                array_keys($this->results["MPD"]),
+                array_keys($this->results["Segments"])
+            )
+        );
+
         sort($keys);
         return $keys;
     }
@@ -92,18 +98,18 @@ class ManifestDetails extends Component
     /**
      * @return array<string>
      **/
-    public function getSections(string $spec): array
+    public function getSections(string $spec, string $element): array
     {
-        return array_keys($this->results['MPD'][$spec]);
+        return array_keys($this->results[$element][$spec]);
     }
 
 
     /**
      * @return mixed
      **/
-    public function getResults(string $spec): mixed
+    public function getResults(string $spec, string $element): mixed
     {
-        return $this->results['MPD'][$spec];
+        return $this->results[$element][$spec];
     }
 
     public function getFeatures(): mixed
@@ -124,14 +130,17 @@ class ManifestDetails extends Component
     /**
      * @return array<array<string, mixed>>
      **/
-    public function transformResults(string $spec): array
+    public function transformResults(string $spec, string $element): array
     {
         $res = [];
         if (!$spec) {
             return $res;
         }
+        if (!array_key_exists($spec, $this->results[$element])) {
+            return $res;
+        }
 
-        foreach ($this->results['MPD'][$spec] as $section => $sectionResults) {
+        foreach ($this->results[$element][$spec] as $section => $sectionResults) {
             foreach ($sectionResults['checks'] as $check => $checkResults) {
                 $res[] = [
                     'section' => $section,

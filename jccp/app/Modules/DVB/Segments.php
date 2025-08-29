@@ -46,9 +46,9 @@ class Segments extends Module
 
         $reporter = app(ModuleReporter::class);
         $legacyreporter = $reporter->context(new ReporterContext(
-            "MPD",
+            "Segments",
             "DVB",
-            "LEGACY - Segments",
+            "LEGACY",
             []
         ));
 
@@ -60,6 +60,28 @@ class Segments extends Module
             pass_message: "Check succeeded for Representation " . $representation->path(),
             fail_message: "Check failed for Representation " . $representation->path(),
         );
+
+        if ($sdType == 'hev1') {
+            $legacyreporter->test(
+                section: "Unknown",
+                test: "This one only runs for 'hev1' type data",
+                result: $validSdType,
+                severity: "FAIL",
+                pass_message: "Check succeeded for Representation " . $representation->path(),
+                fail_message: "Check failed for Representation " . $representation->path(),
+            );
+        }
+
+        if ($sdType == 'mp4a') {
+            $legacyreporter->test(
+                section: "Unknown",
+                test: "This one only runs for 'mp4a' type data",
+                result: $validSdType,
+                severity: "FAIL",
+                pass_message: "Check succeeded for Representation " . $representation->path(),
+                fail_message: "Check failed for Representation " . $representation->path(),
+            );
+        }
     }
 
     private function validateSegment(Segment $segment): void
