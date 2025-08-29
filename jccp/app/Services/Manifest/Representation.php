@@ -112,7 +112,7 @@ class Representation
                 $startNumber = 1;
             }
             for ($i = 0; $i < 5; $i++) {
-                $result[] = Uri::fromTemplate($uriTemplate,[
+                $result[] = Uri::fromTemplate($uriTemplate, [
                     'Number' => ($startNumber + $i),
                     'Number3d' => sprintf('%03d', ($startNumber + $i)),
                     'RepresentationID' => $this->getId()

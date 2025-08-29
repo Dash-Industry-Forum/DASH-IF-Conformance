@@ -34,6 +34,7 @@ class Segments extends Module
      **/
     public function validateSegments(Representation $representation, array $segments): void
     {
+        new Bitrate()->validateBitrate($representation, $segments);
         foreach ($segments as $segmentIndex => $segment) {
             Log::info($segmentIndex . " " . $representation->path());
             if ($segmentIndex == 0) {
@@ -45,7 +46,6 @@ class Segments extends Module
 
     private function validateInitialization(Representation $representation, Segment $segment): void
     {
-        new Bitrate()->validateBitrate($representation, $segment);
         new TextComponentConstraints()->validateTextComponentConstraints($representation, $segment);
     }
 

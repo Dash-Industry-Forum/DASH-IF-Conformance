@@ -17,16 +17,16 @@
   </div>
   <table class="table table-striped">
     <tr>
-      <th scope="col">State</th>
-      <th scope="col">Section</th>
-      <th scope="col">Statement</th>
+      <th class="col-1" scope="col">State</th>
+      <th class="col-2" scope="col">Section</th>
+      <th class="col-4" scope="col">Statement</th>
       <th scope="col">Messages</th>
     </tr>
     @foreach ($this->transformResults($this->selectedSpec, "Segments") as $check)
       <tr>
-        <td>{{ $check['state'] }}</td>
-        <td>{{ $check['section'] }}</td>
-        <td>{{ $check['check'] }}</td>
+        <td class="col-1">{{ $check['state'] }}</td>
+        <td class="col-2">{{ $check['section'] }}</td>
+        <td class="col-4">{{ $check['check'] }}</td>
         <td>
           @foreach ($check['messages'] as $msg)
             <div>{{ $msg }}</div>
@@ -51,16 +51,16 @@
   </div>
   <table class="table table-striped">
     <tr>
-      <th scope="col">State</th>
-      <th scope="col">Section</th>
-      <th scope="col">Statement</th>
+      <th class="col-1" scope="col">State</th>
+      <th class="col-2" scope="col">Section</th>
+      <th class="col-4" scope="col">Statement</th>
       <th scope="col">Messages</th>
     </tr>
     @foreach ($this->transformResults($this->selectedSpec, "MPD") as $check)
       <tr>
-        <td>{{ $check['state'] }}</td>
-        <td>{{ $check['section'] }}</td>
-        <td>{{ $check['check'] }}</td>
+        <td class="col-1">{{ $check['state'] }}</td>
+        <td class="col-2">{{ $check['section'] }}</td>
+        <td class="col-4">{{ $check['check'] }}</td>
         <td>
           @foreach ($check['messages'] as $msg)
             <div>{{ $msg }}</div>

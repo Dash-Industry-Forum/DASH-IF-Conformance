@@ -46,7 +46,7 @@ class SubReporter
         $this->results[] = new TestResult(
             section: $section,
             test: $test,
-            severity: ($result ? "PASS" : $severity),
+            severity: ($result ? ($severity == "INFO" ? "INFO" : "PASS") : $severity),
             message: ($result ? $pass_message : $fail_message),
         );
         Log::info("We now have " . count($this->results) . " results");

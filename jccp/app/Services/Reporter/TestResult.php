@@ -24,6 +24,9 @@ class TestResult
         if ($severity == "PASS") {
             $msgLead = "✓ ";
         }
+        if ($severity == "INFO") {
+            $msgLead = "🛈 ";
+        }
         if ($severity == "WARN") {
             $msgLead = "! ";
         }

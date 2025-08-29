@@ -13,7 +13,7 @@ use App\Services\Validators\MP4BoxRepresentation;
 class Segment
 {
     private string $initPath = '';
-    private string $segmentPath = '';
+    public readonly string $segmentPath;
     private string $representationDir = '';
     private int $segmentIndex;
 
