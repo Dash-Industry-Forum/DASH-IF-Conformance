@@ -54,7 +54,7 @@ class Downloader
 
         $representation = $mpdCache->getRepresentation($periodIndex, $adaptationSetIndex, $representationIndex);
         if (!$representation) {
-            return [];
+            return $segments;
         }
 
 

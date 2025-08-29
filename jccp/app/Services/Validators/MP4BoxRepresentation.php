@@ -5,9 +5,22 @@ namespace App\Services\Validators;
 class MP4BoxRepresentation
 {
     public ?\DOMElement $payload;
-    public function __construct()
+    public function __construct(string $filePath)
     {
         // TODO: Re-inherit from 'generic' parent
+        $contents = file_get_contents($filePath);
+
+            $doc = new \DOMDocument();
+            $doc->loadXML($mpd);
+
+
+            $rootNodes = $doc->getElementsByTagName('ISOBaseMediaFileTrace');
+            if ($rootNodes->length == 0) {
+                Log::error("Unexpected content in xml");
+                return null;
+            }
+
+            $this->payload = $rootNodes->item(0);
     }
 
     public function getBoxNameTree(): ?Boxes\NameOnlyNode
