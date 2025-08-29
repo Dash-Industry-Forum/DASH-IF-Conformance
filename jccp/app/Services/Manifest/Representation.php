@@ -4,6 +4,7 @@ namespace App\Services\Manifest;
 
 use League\Uri\Uri;
 use App\Services\MPDCache;
+use Illuminate\Support\Facades\Log;
 
 class Representation
 {
@@ -75,10 +76,11 @@ class Representation
      */
     public function segmentUrls(): array
     {
-        $result = array(
-        );
+        //TODO This function isn't anywhere near done yet
+        $result = [];
 
         $base = $this->getBaseUrl();
+        Log::info("Base: $base");
 
         $segmentBase = $this->dom->getElementsByTagName('SegmentBase');
         if (count($segmentBase)) {
@@ -96,11 +98,16 @@ class Representation
         }
 
         $segmentTemplate = $this->dom->getElementsByTagName("SegmentTemplate");
+        if (!count($segmentTemplate)) {
+            $segmentTemplate = app(MPDCache::class)->getAdaptationSet($this->periodIndex, $this->adaptationSetIndex)
+                                   ->getDOMElements('SegmentTemplate');
+        }
         if (count($segmentTemplate)) {
             $segmentTemplateUrl = Uri::fromBaseUri(
                 $segmentTemplate->item(0)->getAttribute('media'),
                 $base
             )->toString();
+            Log::info("Segment url: " . $segmentTemplateUrl);
             //TODO: Fix identifiers properly
             $uriTemplate = str_replace(
                 array('$Bandwidth$','$Number$','$Number%03d$','$RepresentationID$','$Time$'),

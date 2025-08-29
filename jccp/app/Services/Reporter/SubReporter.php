@@ -49,8 +49,6 @@ class SubReporter
             severity: ($result ? ($severity == "INFO" ? "INFO" : "PASS") : $severity),
             message: ($result ? $pass_message : $fail_message),
         );
-        Log::info("We now have " . count($this->results) . " results");
-
         return $result;
     }
 

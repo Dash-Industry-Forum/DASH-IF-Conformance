@@ -23,7 +23,6 @@ class ModuleReporter
 
     public function &context(Context $context): SubReporter
     {
-        Log::info("Known contexts before: " . implode(',', $this->knownContexts()));
         $key = array_find_key($this->contextList, function (Context $value) use ($context) {
             return $value->equals($context);
         });
