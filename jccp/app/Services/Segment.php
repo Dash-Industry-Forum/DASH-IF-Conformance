@@ -38,6 +38,12 @@ class Segment
 
     public function analyseGPAC(): string
     {
+
+        $resultPath = $this->representationDir . $this->segmentIndex . "_dump.xml";
+        if (file_exists($resultPath)) {
+            return $resultPath;
+        }
+
         Log::info("Analyze with gpac: " . $this->initPath . " // " . $this->segmentPath);
 
         //TODO Add error handling
@@ -54,9 +60,9 @@ class Segment
         }
         Process::run("rm " . $concatPath);
         Process::run("mv " . $this->representationDir . "seg" . $this->segmentIndex . "_dump.xml " .
-                             $this->representationDir . $this->segmentIndex . "_dump.xml");
+                             $resultPath);
 
-        return $this->representationDir . $this->segmentIndex . "_dump.xml";
+        return $resultPath;
     }
 
     public function getSegments(int $periodIndex, int $adaptationSetIndex, int $representationIndex): void

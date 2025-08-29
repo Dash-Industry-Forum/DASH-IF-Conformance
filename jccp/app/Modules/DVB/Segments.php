@@ -47,8 +47,8 @@ class Segments extends Module
         $reporter = app(ModuleReporter::class);
         $legacyreporter = $reporter->context(new ReporterContext(
             "Segments",
-            "DVB",
             "LEGACY",
+            "DVB",
             []
         ));
 

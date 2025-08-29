@@ -20,8 +20,8 @@ class TLSBitrate
         $reporter = app(ModuleReporter::class);
         $this->legacyreporter = &$reporter->context(new ReporterContext(
             "MPD",
-            "DVB",
             "LEGACY",
+            "DVB",
             []
         ));
     }

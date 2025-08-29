@@ -30,8 +30,8 @@ class MPD extends Module
         $reporter = app(ModuleReporter::class);
         $this->legacyreporter = $reporter->context(new ReporterContext(
             "MPD",
-            "HbbTV",
             "LEGACY",
+            "HbbTV",
             []
         ));
 
@@ -39,7 +39,7 @@ class MPD extends Module
             section: "Unknown",
             test: "Inherit DVB legacy checks",
             dependentModule: "DVB MPD Module",
-            dependentSpec: "DVB - LEGACY",
+            dependentSpec: "LEGACY - DVB",
             dependentSection: "Unknown"
         );
     }

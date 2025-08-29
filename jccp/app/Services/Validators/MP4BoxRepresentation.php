@@ -9,7 +9,6 @@ class MP4BoxRepresentation
     public ?\DOMElement $payload;
     public function __construct(string $filePath)
     {
-        Log::info("Constructing form $filePath");
         // TODO: Re-inherit from 'generic' parent
         $contents = file_get_contents($filePath);
 
@@ -25,7 +24,6 @@ class MP4BoxRepresentation
 
 
         $this->payload = $rootNodes->item(0);
-        Log::info("Succesfully created MP4BoxRepresentation");
     }
 
     public function getBoxNameTree(): ?Boxes\NameOnlyNode

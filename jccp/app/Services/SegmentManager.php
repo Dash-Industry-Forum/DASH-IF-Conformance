@@ -40,7 +40,6 @@ class SegmentManager
 
         $segments = [];
         foreach ($segmentFiles['segments'] as $segmentIdx => $segment) {
-            Log::info("Segment $segment");
             $seg = new Segment(
                 init: count($segmentFiles['init']) ? $segmentFiles['init'][0] : '',
                 segment: $segment,
