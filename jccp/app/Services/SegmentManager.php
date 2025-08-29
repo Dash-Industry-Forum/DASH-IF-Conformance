@@ -14,6 +14,9 @@ class SegmentManager
     {
     }
 
+    /**
+     * @return array<Segment>
+     **/
     public function getSegments(int $periodIndex, int $adaptationSetIndex, int $representationIndex): array
     {
         $representationDir = session_dir() . "${periodIndex}/${adaptationSetIndex}/${representationIndex}/";
@@ -30,7 +33,6 @@ class SegmentManager
                 representationDir: $representationDir,
                 segmentIndex: $segmentIdx
             );
-            $seg->analyseGPAC();
             $segments[] = $seg;
         }
 

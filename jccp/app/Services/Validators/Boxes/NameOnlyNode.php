@@ -28,7 +28,7 @@ class NameOnlyNode
     /**
      * @return array<NameOnlyNode>
      **/
-    public function filterChildrenRecursive(string $filter) : array
+    public function filterChildrenRecursive(string $filter): array
     {
         $res = array();
         foreach ($this->children as $child) {

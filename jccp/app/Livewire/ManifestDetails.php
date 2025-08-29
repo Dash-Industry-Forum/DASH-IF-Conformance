@@ -12,6 +12,8 @@ use App\Services\Downloader;
 use App\Services\ModuleReporter;
 use App\Modules\DashIOP;
 use App\Modules\DVB\MPD as DVBMpd;
+//
+use App\Services\Segment;
 
 class ManifestDetails extends Component
 {
@@ -19,6 +21,9 @@ class ManifestDetails extends Component
 
     private string $selectedSpec = '';
 
+    /**
+     * @var array<Segment> $segmentDebug;
+     **/
     private array $segmentDebug;
 
     public function __construct()
@@ -27,13 +32,14 @@ class ManifestDetails extends Component
         $specManager = app(SpecManager::class);
         $specManager->enable('HbbTV MPD Module');
         $specManager->validate();
+
+        $segmentManager = new SegmentManager();
+        $this->segmentDebug = $segmentManager->getSegments(0, 0, 0);
+
         $this->results = app(ModuleReporter::class)->serialize(true);
         if ($this->selectedSpec == '') {
             $this->selectSpec($this->getSpecs()[0]);
         }
-
-        $segmentManager = new SegmentManager();
-        $this->segmentDebug = $segmentManager->getSegments(0, 0, 0);
     }
 
     /**
