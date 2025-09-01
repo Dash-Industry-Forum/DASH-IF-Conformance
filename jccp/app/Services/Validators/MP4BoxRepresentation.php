@@ -133,7 +133,7 @@ class MP4BoxRepresentation
         $res = null;
         if ($this->payload) {
             $sinfBoxes = $this->payload->getElementsByTagName('ProtectionSchemeInfoBox');
-            if (count($sinfBoxes) == 1) {
+            if (count($sinfBoxes) >= 1) {
                 $sinfBox = $sinfBoxes->item(0);
                 $res = new Boxes\SINFBox();
 

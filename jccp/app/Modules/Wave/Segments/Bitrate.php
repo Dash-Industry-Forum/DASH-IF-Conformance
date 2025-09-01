@@ -44,8 +44,8 @@ class Bitrate
     {
 
         Log::info($representation->path());
-        $segmentSizes = [];//= $segment->runAnalyzedFunction('getSegmentSizes');
-        $segmentDurations = [];//= $segment->runAnalyzedFunction('getSegmentDurations');
+        $segmentSizes = [];
+        $segmentDurations = [];
         $segmentBitrates = [];
 
         $totalDuration = 0;
@@ -54,7 +54,7 @@ class Bitrate
             $segmentSize =  filesize($segment->segmentPath);
             $segmentSizes[] = $segmentSize;
             $totalSize += $segmentSize;
-            $durations = $segment->runAnalyzedFunction('getSegmentDurations');
+            $durations = $segment->getSegmentDurations();
             if (!empty($durations) && $durations[0] > 0) {
                 $segmentDurations[] = $durations[0];
                 $totalDuration += $durations[0];

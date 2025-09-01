@@ -58,12 +58,6 @@ class ModuleWaveHLSInterop extends ModuleInterface
             'addressableMediaObject',
             ValidatorFlags::PreservesOrder
         );
-        $validatorWrapper->analyzeSingle(
-            $thisRepresentation,
-            $this,
-            'bitrate'
-        );
-
         //Section 4.3 - Encrypted Media Presentations
         $validatorWrapper->analyzeSingle(
             $thisRepresentation,
@@ -113,11 +107,6 @@ class ModuleWaveHLSInterop extends ModuleInterface
     public function addressableMediaObject($representation)
     {
         return include 'impl/addressableMediaObject.php';
-    }
-
-    public function bitrate($representation)
-    {
-        return include 'impl/bitrate.php';
     }
 
     public function encryptionScheme($representation)

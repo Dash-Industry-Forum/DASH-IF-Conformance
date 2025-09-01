@@ -41,7 +41,7 @@ class Segments extends Module
 
     private function validateInitialization(Representation $representation, Segment $segment): void
     {
-        $sdType = $segment->runAnalyzedFunction('getSDType');
+        $sdType = $segment->getSampleDescriptor();
         $validSdType = $sdType !== null;
 
         $reporter = app(ModuleReporter::class);

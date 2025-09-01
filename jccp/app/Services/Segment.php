@@ -9,6 +9,7 @@ use App\Interfaces\Module;
 use Illuminate\Support\Facades\Process;
 use App\Services\Validators\MP4Box;
 use App\Services\Validators\MP4BoxRepresentation;
+use App\Services\Validators\Boxes;
 
 class Segment
 {
@@ -66,7 +67,7 @@ class Segment
     }
 
 
-    public function runAnalyzedFunction(string $funcName): mixed
+    private function runAnalyzedFunction(string $funcName): mixed
     {
         foreach ($this->analyzedRepresentations as $analysis) {
             try {
@@ -75,8 +76,32 @@ class Segment
                     return $result;
                 }
             } catch (\Exception $e) {
+                Log::error("Caught exception: " . $e->getMessage());
             }
         }
         return null;
+    }
+
+    /**
+     * @return array<float>
+     * **/
+    public function getSegmentDurations(): ?array
+    {
+        return $this->runAnalyzedFunction('getSegmentDurations');
+    }
+
+    public function getProtectionScheme(): ?Boxes\SINFBox
+    {
+        return $this->runAnalyzedFunction('getProtectionScheme');
+    }
+
+    public function getSampleDescriptor(): ?string
+    {
+        return $this->runAnalyzedFunction('getSDType');
+    }
+
+    public function getHandlerType(): ?string
+    {
+        return $this->runAnalyzedFunction('getHandlerType');
     }
 }
