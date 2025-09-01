@@ -58,13 +58,6 @@ class ModuleWaveHLSInterop extends ModuleInterface
             'addressableMediaObject',
             ValidatorFlags::PreservesOrder
         );
-        //Section 4.3 - Encrypted Media Presentations
-        $validatorWrapper->analyzeSingle(
-            $thisRepresentation,
-            $this,
-            'encryptionScheme',
-            ValidatorFlags::CanExtractEncryption
-        );
 
         //Section 4.4 - Presentation Splicing
         $validatorWrapper->analyzeSingle(
@@ -107,11 +100,6 @@ class ModuleWaveHLSInterop extends ModuleInterface
     public function addressableMediaObject($representation)
     {
         return include 'impl/addressableMediaObject.php';
-    }
-
-    public function encryptionScheme($representation)
-    {
-        return include 'impl/encryptionScheme.php';
     }
 
     public function trackRoles($representation)

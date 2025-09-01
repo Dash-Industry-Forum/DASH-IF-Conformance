@@ -16,6 +16,7 @@ use App\Interfaces\Module;
 use App\Modules\Wave\Segments\TextComponentConstraints;
 use App\Modules\Wave\Segments\Bitrate;
 use App\Modules\Wave\Segments\EncryptionScheme;
+use App\Modules\Wave\Segments\SegmentEncryption;
 
 class Segments extends Module
 {
@@ -41,7 +42,7 @@ class Segments extends Module
             if ($segmentIndex == 0) {
                 $this->validateInitialization($representation, $segment);
             }
-            $this->validateSegment($segment);
+            $this->validateSegment($representation, $segment);
         }
     }
 
@@ -51,7 +52,8 @@ class Segments extends Module
         new EncryptionScheme()->validateEncryptionScheme($representation, $segment);
     }
 
-    private function validateSegment(Segment $segment): void
+    private function validateSegment(Representation $representation, Segment $segment): void
     {
+        new SegmentEncryption()->validateSegmentEncryption($representation, $segment);
     }
 }

@@ -83,8 +83,8 @@ class Segment
     }
 
     /**
-     * @return array<float>
-     * **/
+     * @return ?array<float>
+     **/
     public function getSegmentDurations(): ?array
     {
         return $this->runAnalyzedFunction('getSegmentDurations');
@@ -103,5 +103,26 @@ class Segment
     public function getHandlerType(): ?string
     {
         return $this->runAnalyzedFunction('getHandlerType');
+    }
+
+    public function getSampleAuxiliaryInformation(): ?Boxes\SampleAuxiliaryInformation
+    {
+        return $this->runAnalyzedFunction('getSampleAuxiliaryInformation');
+    }
+
+    /**
+     * @return ?array<Boxes\PSSHBox>
+     **/
+    public function getPSSHBoxes(): ?array
+    {
+        return $this->runAnalyzedFunction('getPSSHBoxes');
+    }
+
+    /**
+     * @return ?array<Boxes\SENCBox>
+     **/
+    public function getSENCBoxes(): ?array
+    {
+        return $this->runAnalyzedFunction('getSENCBoxes');
     }
 }
