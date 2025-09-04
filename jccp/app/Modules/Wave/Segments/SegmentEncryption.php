@@ -44,13 +44,17 @@ class SegmentEncryption
     {
         $pssh = $segment->getPSSHBoxes();
 
+        if (!$pssh) {
+            return;
+        }
+
         $singlePSSH = $this->waveReporter->test(
             section: $this->section,
             test: "Any individual CMAF Segment SHALL have a single encryption key and Initialization Vector",
-            result: $pssh && count($pssh) == 1,
+            result: count($pssh) == 1,
             severity: "FAIL",
             pass_message: $representation->path() . " - Single 'pssh' box in segment",
-            fail_message: $representation->path() . " - " . ($pssh ? count($pssh) : 0 ) . " 'pssh' boxes in segment",
+            fail_message: $representation->path() . " - " . count($pssh) . " 'pssh' boxes in segment",
         );
 
         if ($singlePSSH) {
@@ -68,6 +72,10 @@ class SegmentEncryption
     private function validateSENC(Representation $representation, Segment $segment): void
     {
         $senc = $segment->getSENCBoxes();
+
+        if (!$senc) {
+            return;
+        }
         $totalIvSize = 0;
         foreach ($senc as $sencBox) {
             foreach ($sencBox->ivSizes as $size) {
