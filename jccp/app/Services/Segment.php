@@ -143,4 +143,12 @@ class Segment
     {
         return $this->runAnalyzedFunction('getSampleDuration');
     }
+
+    /**
+     * @return array<Boxes\KINDBox>
+     **/
+    public function getKindBoxes(): ?array
+    {
+        return $this->runAnalyzedFunction('getKindBoxes');
+    }
 }

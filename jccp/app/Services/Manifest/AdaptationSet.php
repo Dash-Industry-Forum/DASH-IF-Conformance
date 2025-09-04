@@ -101,4 +101,17 @@ class AdaptationSet
     {
         return $this->dom->getElementsByTagName($tagName);
     }
+
+    /**
+     * @return \DOMNodeList<\DOMElement>
+     **/
+    public function getTransientDOMElements(string $tagName): ?\DOMNodeList
+    {
+        $myElements = $this->getDOMElements($tagName);
+        if ($myElements) {
+            return $myElements;
+        }
+        return app(MPDCache::class)->getPeriod($this->periodIndex)
+                                   ->getDOMElements($tagName);
+    }
 }

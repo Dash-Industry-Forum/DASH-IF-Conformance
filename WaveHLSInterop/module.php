@@ -76,12 +76,6 @@ class ModuleWaveHLSInterop extends ModuleInterface
             ValidatorFlags::CanExtractEncryption
         );
         
-        //Section 4.7 - Carriage of Track Roles
-        $validatorWrapper->analyzeSingle(
-            $thisRepresentation,
-            $this,
-            'trackRoles'
-        );
     }
 
 
@@ -93,11 +87,6 @@ class ModuleWaveHLSInterop extends ModuleInterface
     public function addressableMediaObject($representation)
     {
         return include 'impl/addressableMediaObject.php';
-    }
-
-    public function trackRoles($representation)
-    {
-        return include 'impl/trackRoles.php';
     }
 
     public function timedEventData($representation)

@@ -18,6 +18,7 @@ use App\Modules\Wave\Segments\Bitrate;
 use App\Modules\Wave\Segments\EncryptionScheme;
 use App\Modules\Wave\Segments\SegmentEncryption;
 use App\Modules\Wave\Segments\SplicingPoints;
+use App\Modules\Wave\Segments\TrackRoles;
 
 class Segments extends Module
 {
@@ -52,6 +53,7 @@ class Segments extends Module
     {
         new TextComponentConstraints()->validateTextComponentConstraints($representation, $segment);
         new EncryptionScheme()->validateEncryptionScheme($representation, $segment);
+        new TrackRoles()->validateTrackRoles($representation, $segment);
     }
 
     private function validateSegment(Representation $representation, Segment $segment): void
