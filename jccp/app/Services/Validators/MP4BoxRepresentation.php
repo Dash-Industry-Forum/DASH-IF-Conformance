@@ -421,7 +421,7 @@ class MP4BoxRepresentation
         return $boxes->item($index);
     }
 
-    public function getSampleDuration(): float|null
+    public function getSampleDuration(): ?float
     {
         if (!$this->payload) {
             return null;

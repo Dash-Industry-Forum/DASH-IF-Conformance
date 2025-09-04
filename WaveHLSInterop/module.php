@@ -59,13 +59,6 @@ class ModuleWaveHLSInterop extends ModuleInterface
             ValidatorFlags::PreservesOrder
         );
 
-        //Section 4.4 - Presentation Splicing
-        $validatorWrapper->analyzeSingle(
-            $thisRepresentation,
-            $this,
-            'splicingPoints',
-            ValidatorFlags::PreservesOrder
-        );
         
         //Section 4.5 - Carriage of Timed EventData
         $validatorWrapper->analyzeSingle(
@@ -110,11 +103,6 @@ class ModuleWaveHLSInterop extends ModuleInterface
     public function timedEventData($representation)
     {
         return include 'impl/timedEventData.php';
-    }
-
-    public function splicingPoints($representation)
-    {
-        return include 'impl/splicingPoints.php';
     }
 
     public function keyRotation($representation)

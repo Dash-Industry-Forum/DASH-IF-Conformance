@@ -17,6 +17,7 @@ use App\Modules\Wave\Segments\TextComponentConstraints;
 use App\Modules\Wave\Segments\Bitrate;
 use App\Modules\Wave\Segments\EncryptionScheme;
 use App\Modules\Wave\Segments\SegmentEncryption;
+use App\Modules\Wave\Segments\SplicingPoints;
 
 class Segments extends Module
 {
@@ -37,6 +38,7 @@ class Segments extends Module
     public function validateSegments(Representation $representation, array $segments): void
     {
         new Bitrate()->validateBitrate($representation, $segments);
+        new SplicingPoints()->validateSegmentDurations($representation, $segments);
         foreach ($segments as $segmentIndex => $segment) {
             Log::info($segmentIndex . " " . $representation->path());
             if ($segmentIndex == 0) {
@@ -55,5 +57,6 @@ class Segments extends Module
     private function validateSegment(Representation $representation, Segment $segment): void
     {
         new SegmentEncryption()->validateSegmentEncryption($representation, $segment);
+        new SplicingPoints()->validateSplicingPoints($representation, $segment);
     }
 }

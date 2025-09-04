@@ -85,6 +85,14 @@ class Segment
     /**
      * @return ?array<float>
      **/
+    public function getFragmentDurations(): ?array
+    {
+        return $this->runAnalyzedFunction('getFragmentDurations');
+    }
+
+    /**
+     * @return ?array<float>
+     **/
     public function getSegmentDurations(): ?array
     {
         return $this->runAnalyzedFunction('getSegmentDurations');
@@ -124,5 +132,15 @@ class Segment
     public function getSENCBoxes(): ?array
     {
         return $this->runAnalyzedFunction('getSENCBoxes');
+    }
+
+    public function getBoxNameTree(): ?Boxes\NameOnlyNode
+    {
+        return $this->runAnalyzedFunction('getBoxNameTree');
+    }
+
+    public function getSampleDuration(): ?float
+    {
+        return $this->runAnalyzedFunction('getSampleDuration');
     }
 }
