@@ -19,6 +19,7 @@ use App\Modules\Wave\Segments\EncryptionScheme;
 use App\Modules\Wave\Segments\SegmentEncryption;
 use App\Modules\Wave\Segments\SplicingPoints;
 use App\Modules\Wave\Segments\TrackRoles;
+use App\Modules\Wave\Segments\TimedEventData;
 
 class Segments extends Module
 {
@@ -40,6 +41,7 @@ class Segments extends Module
     {
         new Bitrate()->validateBitrate($representation, $segments);
         new SplicingPoints()->validateSegmentDurations($representation, $segments);
+        new TimedEventData()->validateTimedEventdata($representation, $segments);
         foreach ($segments as $segmentIndex => $segment) {
             Log::info($segmentIndex . " " . $representation->path());
             if ($segmentIndex == 0) {

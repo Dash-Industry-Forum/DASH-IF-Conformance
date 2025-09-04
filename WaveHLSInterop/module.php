@@ -60,13 +60,6 @@ class ModuleWaveHLSInterop extends ModuleInterface
         );
 
         
-        //Section 4.5 - Carriage of Timed EventData
-        $validatorWrapper->analyzeSingle(
-            $thisRepresentation,
-            $this,
-            'timedEventData',
-            ValidatorFlags::PreservesOrder
-        );
 
         //Section 4.6 - Rotation of Encryption Keys
         $validatorWrapper->analyzeSingle(
@@ -87,11 +80,6 @@ class ModuleWaveHLSInterop extends ModuleInterface
     public function addressableMediaObject($representation)
     {
         return include 'impl/addressableMediaObject.php';
-    }
-
-    public function timedEventData($representation)
-    {
-        return include 'impl/timedEventData.php';
     }
 
     public function keyRotation($representation)

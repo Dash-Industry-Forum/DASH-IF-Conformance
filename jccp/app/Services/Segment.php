@@ -151,4 +151,20 @@ class Segment
     {
         return $this->runAnalyzedFunction('getKindBoxes');
     }
+
+    /**
+     * @return array<Boxes\EventMessage>
+     **/
+    public function getEmsgBoxes(): ?array
+    {
+        return $this->runAnalyzedFunction('getEmsgBoxes');
+    }
+
+    /**
+     * @return array<string>
+     **/
+    public function getTopLevelBoxNames(): array
+    {
+        return $this->runAnalyzedFunction('getTopLevelBoxNames');
+    }
 }
