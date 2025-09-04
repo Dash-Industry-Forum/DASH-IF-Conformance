@@ -167,4 +167,9 @@ class Segment
     {
         return $this->runAnalyzedFunction('getTopLevelBoxNames');
     }
+
+    public function getSampleDescription(): ?Boxes\SampleDescription
+    {
+        return $this->runAnalyzedFunction('getSampleDescription');
+    }
 }

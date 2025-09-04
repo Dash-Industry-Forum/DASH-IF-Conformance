@@ -46,12 +46,6 @@ class ModuleWaveHLSInterop extends ModuleInterface
           $mpdHandler->getSelectedRepresentation()
         );
 
-        //Section 4.1  - Basic On-Demand and Live Streaming
-        $validatorWrapper->analyzeSingle(
-            $thisRepresentation,
-            $this,
-            'textComponentConstraints'
-        );
         $validatorWrapper->analyzeSingle(
             $thisRepresentation,
             $this,
@@ -71,11 +65,6 @@ class ModuleWaveHLSInterop extends ModuleInterface
         
     }
 
-
-    public function textComponentConstraints($representation)
-    {
-        return include 'impl/textComponentConstraints.php';
-    }
 
     public function addressableMediaObject($representation)
     {
