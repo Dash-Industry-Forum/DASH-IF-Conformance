@@ -46,13 +46,6 @@ class ModuleWaveHLSInterop extends ModuleInterface
           $mpdHandler->getSelectedRepresentation()
         );
 
-        $validatorWrapper->analyzeSingle(
-            $thisRepresentation,
-            $this,
-            'addressableMediaObject',
-            ValidatorFlags::PreservesOrder
-        );
-
         
 
         //Section 4.6 - Rotation of Encryption Keys
@@ -63,12 +56,6 @@ class ModuleWaveHLSInterop extends ModuleInterface
             ValidatorFlags::CanExtractEncryption
         );
         
-    }
-
-
-    public function addressableMediaObject($representation)
-    {
-        return include 'impl/addressableMediaObject.php';
     }
 
     public function keyRotation($representation)
