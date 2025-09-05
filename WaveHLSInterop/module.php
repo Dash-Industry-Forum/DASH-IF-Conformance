@@ -48,20 +48,8 @@ class ModuleWaveHLSInterop extends ModuleInterface
 
         
 
-        //Section 4.6 - Rotation of Encryption Keys
-        $validatorWrapper->analyzeSingle(
-            $thisRepresentation,
-            $this,
-            'keyRotation',
-            ValidatorFlags::CanExtractEncryption
-        );
-        
     }
 
-    public function keyRotation($representation)
-    {
-        return include 'impl/keyRotation.php';
-    }
 }
 
 $modules[] = new ModuleWaveHLSInterop();

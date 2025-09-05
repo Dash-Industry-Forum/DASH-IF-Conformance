@@ -172,4 +172,20 @@ class Segment
     {
         return $this->runAnalyzedFunction('getSampleDescription');
     }
+
+    /**
+     * @return array<Boxes\SampleGroupDescription>
+     **/
+    public function getSeigDescriptionGroups(): ?array
+    {
+        return $this->runAnalyzedFunction('getSeigDescriptionGroups');
+    }
+
+    /**
+     * @return array<Boxes\SampleGroup>
+     **/
+    public function getSampleGroups(): ?array
+    {
+        return $this->runAnalyzedFunction('getSampleGroups');
+    }
 }

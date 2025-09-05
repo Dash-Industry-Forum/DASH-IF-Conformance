@@ -21,6 +21,7 @@ use App\Modules\Wave\Segments\SplicingPoints;
 use App\Modules\Wave\Segments\TrackRoles;
 use App\Modules\Wave\Segments\TimedEventData;
 use App\Modules\Wave\Segments\AddressableMediaObject;
+use App\Modules\Wave\Segments\KeyRotation;
 
 class Segments extends Module
 {
@@ -64,5 +65,6 @@ class Segments extends Module
         new SegmentEncryption()->validateSegmentEncryption($representation, $segment);
         new SplicingPoints()->validateSplicingPoints($representation, $segment);
         new AddressableMediaObject()->validateAddressableMediaObject($representation, $segment);
+        new KeyRotation()->validateKeyRotation($representation, $segment);
     }
 }
