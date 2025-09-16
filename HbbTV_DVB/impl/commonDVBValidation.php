@@ -9,38 +9,6 @@ $adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPerio
 $representation = $adaptation['Representation'][$mpdHandler->getSelectedRepresentation()];
 
 ## Check on the support of the provided codec
-// MPD part
-$codecs = $adaptation['codecs'];
-if ($codecs == '') {
-    $codecs = $representation['codecs'];
-}
-
-if ($codecs != '') {
-    $codecs_arr = explode(',', $codecs);
-
-    $unsupportedCodecs = '';
-    foreach ($codecs_arr as $codec) {
-        if (
-            strpos($codec, 'avc') === false && strpos($codec, 'hev1') === false && strpos($codec, 'hvc1') === false &&
-            strpos($codec, 'mp4a') === false && strpos($codec, 'ec-3') === false && strpos($codec, 'ac-4') === false &&
-            strpos($codec, 'dtsc') === false && strpos($codec, 'dtsh') === false && strpos($codec, 'dtse') === false &&
-            strpos($codec, 'dtsl') === false && strpos($codec, 'stpp') === false
-        ) {
-            $unsupportedCodecs .= "$codec ";
-        }
-    }
-
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "DVB: Section 'Codec information'",
-        "The codecs found in the MPD should be supported by the specification",
-        $unsupportedCodecs == '',
-        "WARN",
-        "All found codecs supported",
-        "Codecs '" . $unsupportedCodecs . "' not supported"
-    );
-}
-
 // Segment part
 $hdlrBoxes = $xmlRepresentation->getElementsByTagName('hdlr');
 $logger->test(

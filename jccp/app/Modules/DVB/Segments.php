@@ -14,6 +14,7 @@ use App\Services\Segment;
 use App\Interfaces\Module;
 ## Segment checks
 use App\Modules\DVB\Segments\Resolution;
+use App\Modules\DVB\Segments\Codecs;
 
 class Segments extends Module
 {
@@ -37,6 +38,7 @@ class Segments extends Module
             if ($segmentIndex == 0) {
                 $this->validateInitialization($representation, $segment);
                 new Resolution()->validateResolution($representation, $segment);
+                new Codecs()->validateCodecs($representation, $segment);
             }
             $this->validateSegment($segment);
         }

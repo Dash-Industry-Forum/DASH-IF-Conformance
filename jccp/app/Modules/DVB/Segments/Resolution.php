@@ -35,7 +35,7 @@ class Resolution
     {
         $validResolutions = [];
         $scanType = $representation->getTransientAttribute('scanType');
-        if ($scanType == ''){
+        if ($scanType == '') {
             $scanType = 'progressive';
         }
         if ($scanType == 'progressive') {
