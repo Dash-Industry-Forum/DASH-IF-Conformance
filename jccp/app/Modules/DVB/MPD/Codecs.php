@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\DVB\Segments;
+namespace App\Modules\DVB\MPD;
 
 use App\Services\MPDCache;
 use App\Services\Manifest\Representation;
@@ -13,7 +13,6 @@ use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-// TODO This is actually a manifest check
 class Codecs
 {
     //Private subreporters
@@ -23,7 +22,7 @@ class Codecs
     {
         $reporter = app(ModuleReporter::class);
         $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "Segments",
+            "MPD",
             "LEGACY",
             "DVB",
             []
@@ -31,7 +30,7 @@ class Codecs
     }
 
     //Public validation functions
-    public function validateCodecs(Representation $representation, Segment $segment): void
+    public function validateCodecs(Representation $representation): void
     {
         $validCodecs = [
             'avc', 'hev1', 'hvc1',
@@ -43,8 +42,8 @@ class Codecs
 
         foreach (explode(',', $codecs) as $codec) {
             $isValidCodec = false;
-            foreach($validCodecs as $validCodec){
-                if (str_starts_with($codec, $validCodec)){
+            foreach ($validCodecs as $validCodec) {
+                if (str_starts_with($codec, $validCodec)) {
                     $isValidCodec = true;
                     break;
                 }

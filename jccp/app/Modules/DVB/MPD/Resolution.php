@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\DVB\Segments;
+namespace App\Modules\DVB\MPD;
 
 use App\Services\MPDCache;
 use App\Services\Manifest\Representation;
@@ -13,7 +13,6 @@ use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-// TODO This is actually a manifest check
 class Resolution
 {
     //Private subreporters
@@ -23,7 +22,7 @@ class Resolution
     {
         $reporter = app(ModuleReporter::class);
         $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "Segments",
+            "MPD",
             "LEGACY",
             "DVB",
             []
@@ -31,7 +30,7 @@ class Resolution
     }
 
     //Public validation functions
-    public function validateResolution(Representation $representation, Segment $segment): void
+    public function validateResolution(Representation $representation): void
     {
         $validResolutions = [];
         $scanType = $representation->getTransientAttribute('scanType');

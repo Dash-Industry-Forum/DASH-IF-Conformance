@@ -37,8 +37,6 @@ class Segments extends Module
         foreach ($segments as $segmentIndex => $segment) {
             if ($segmentIndex == 0) {
                 $this->validateInitialization($representation, $segment);
-                new Resolution()->validateResolution($representation, $segment);
-                new Codecs()->validateCodecs($representation, $segment);
             }
             $this->validateSegment($segment);
         }

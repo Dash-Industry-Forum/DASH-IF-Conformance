@@ -24,6 +24,8 @@ use App\Modules\DVB\MPD\AudioChecks;
 use App\Modules\DVB\MPD\SubtitleChecks;
 use App\Modules\DVB\MPD\BandwidthChecks;
 use App\Modules\DVB\MPD\ContentProtectionChecks;
+use App\Modules\DVB\MPD\Resolution;
+use App\Modules\DVB\MPD\Codecs;
 
 class MPD extends Module
 {
@@ -81,6 +83,16 @@ class MPD extends Module
         new SubtitleChecks()->validateSubtitles();
         new BandwidthChecks()->validateBandwidth();
         new ContentProtectionChecks()->validateContentProtection();
+
+        foreach ($mpdCache->allPeriods() as $period) {
+            foreach ($period->allAdaptationSets() as $adaptationSet) {
+                foreach ($adaptationSet->allRepresentations() as $representation) {
+                    new Resolution()->validateResolution($representation);
+                    new Codecs()->validateCodecs($representation);
+                }
+            }
+        }
+
 
         //TODO Move font checks to validateSubtitles() only!
     }
