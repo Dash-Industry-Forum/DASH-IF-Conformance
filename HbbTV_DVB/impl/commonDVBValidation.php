@@ -289,16 +289,6 @@ if (
         "" . $xmlRepresentation->getElementsByTagName('sidx')->length . " sidx boxes found"
     );
 
-    $segmentCount = count(glob("$repDir/*")) - count(glob("$repDir/*", GLOB_ONLYDIR));
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "DVB: Section 4.3 (For On Demand Profile)",
-        "Each representation SHALL have only 1 Segment",
-        $segmentCount == 1,
-        "FAIL",
-        "1 segment found",
-        "$segmentCount segments found"
-    );
 }
 
 // Section 4.3 on traf box count in moof boxes
