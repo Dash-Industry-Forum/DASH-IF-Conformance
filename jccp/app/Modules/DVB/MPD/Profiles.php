@@ -72,16 +72,15 @@ class Profiles
                 fail_message: $representation->path() . " Neither or both profile(s) detected"
             );
 
-            if ($onDemandProfile){
-
-            $this->v141reporter->test(
-                section: "Section 4.3",
-                test: "[Conforming to clause 4.2.6 ...] Each representation shall have only one segment",
-                result: $representation->initializationUrl() === null && count($representation->segmentUrls()) == 1,
-                severity: "FAIL",
-                pass_message: $representation->path() . " A single, self-initialzing segment found",
-                fail_message: $representation->path() . " Either an initializationUrl or multiple segments found",
-            );
+            if ($onDemandProfile) {
+                $this->v141reporter->test(
+                    section: "Section 4.3",
+                    test: "[Conforming to clause 4.2.6 ...] Each representation shall have only one segment",
+                    result: $representation->initializationUrl() === null && count($representation->segmentUrls()) == 1,
+                    severity: "FAIL",
+                    pass_message: $representation->path() . " A single, self-initialzing segment found",
+                    fail_message: $representation->path() . " Either an initializationUrl or multiple segments found",
+                );
             }
         }
     }
