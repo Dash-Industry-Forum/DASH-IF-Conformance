@@ -205,11 +205,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/commonHbbTVValidation.php';
     }
 
-    private function resolutionCheck($adaptation, $representation)
-    {
-        return include 'impl/resolutionCheck.php';
-    }
-
     private function segmentTimingCommon($xmlRepresentation)
     {
         include 'impl/segmentTimingCommon.php';

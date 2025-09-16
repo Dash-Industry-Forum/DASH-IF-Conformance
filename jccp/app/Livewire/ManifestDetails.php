@@ -32,7 +32,7 @@ class ManifestDetails extends Component
         $specManager = app(SpecManager::class);
         $specManager->enable('HbbTV MPD Module');
         $specManager->enable('DVB Segments Module');
-        $specManager->enable('Wave HLS Interop Segments Module');
+        //$specManager->enable('Wave HLS Interop Segments Module');
         $specManager->validate();
 
         $segmentManager = new SegmentManager();

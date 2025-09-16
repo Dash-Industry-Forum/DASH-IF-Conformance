@@ -8,19 +8,6 @@ $adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPerio
                                         ['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
 $representation = $adaptation['Representation'][$mpdHandler->getSelectedRepresentation()];
 
-## Report on any resolutions used that are not in the tables of resoultions in 10.3 of the DVB DASH specification
-$resolutionResult = $this->resolutionCheck($adaptation, $representation);
-
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "DVB: Section 'Codec information'",
-    "The resolution should be in the table of resolutions in 10.3",
-    $resolutionResult[0] != false,
-    "INFO",
-    "Resolution found",
-    "Resolution " . $resolutionResult[1] . " and " . $resolutionResult[2] . " not in table"
-);
-
 ## Check on the support of the provided codec
 // MPD part
 $codecs = $adaptation['codecs'];
