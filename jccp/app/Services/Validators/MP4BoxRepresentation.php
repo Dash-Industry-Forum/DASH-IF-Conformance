@@ -524,4 +524,25 @@ class MP4BoxRepresentation
         }
         return $res;
     }
+
+    /**
+     * TODO: Make this return a valid object rather than raw array
+     * @return array<string, string>
+     **/
+    public function getHEVCConfiguration(): array
+    {
+        $res = [];
+        if (!$this->payload) {
+            return $res;
+        }
+        $hevcDecoderRecords = $this->payload->getElementsByTagName('HEVCDecoderConfigurationRecord');
+        if (count($hevcDecoderRecords) == 0) {
+            return $res;
+        }
+        foreach ($hevcDecoderRecords->item(0)->getAttributeNames() as $attName) {
+            $res[$attName] = $hevcDecoderRecords->item(0)->getAttribute($attName);
+        }
+
+        return $res;
+    }
 }

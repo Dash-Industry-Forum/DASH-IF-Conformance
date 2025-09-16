@@ -26,24 +26,6 @@ if (!count($hdlrBoxes)) {
 $hdlrType = $hdlrBoxes->item(0)->getAttribute('handler_type');
 $sdType = $xmlRepresentation->getElementsByTagName("$hdlrType" . '_sampledescription')->item(0)->getAttribute('sdType');
 
-
-$segmentCodecUnsupported = (
-    strpos($sdType, 'avc') === false && strpos($sdType, 'hev1') === false && strpos($sdType, 'hvc1') === false &&
-    strpos($sdType, 'mp4a') === false && strpos($sdType, 'ec-3') === false && strpos($sdType, 'ac-4') === false &&
-    strpos($sdType, 'dtsc') === false && strpos($sdType, 'dtsh') === false && strpos($sdType, 'dtse') === false &&
-    strpos($sdType, 'dtsl') === false && strpos($sdType, 'stpp') === false && strpos($sdType, 'enc') === false
-);
-
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "DVB: Section 'Codec information'",
-    "The codecs found in the Segment should be supported by the specification",
-    !$segmentCodecUnsupported,
-    "FAIL",
-    "All found codecs supported",
-    "Segment codec '" . $sdType . "' not supported"
-);
-
 $originalFormat = '';
 if (strpos($sdType, 'enc') !== false) {
     $sinfBoxes = $xmlRepresentation->getElementsByTagName('sinf');
@@ -77,87 +59,6 @@ if (strpos($sdType, 'avc') !== false || strpos($originalFormat, 'avc') !== false
             "Valid level used",
             "Invalid level $level_idc used"
         );
-    }
-} elseif (
-    strpos($sdType, 'hev1') !== false ||
-          strpos($sdType, 'hvc1') !== false ||
-          strpos($originalFormat, 'hev1') !== false ||
-          strpos($originalFormat, 'hvc1') !== false
-) {
-    $width = (int)$xmlRepresentation->getElementsByTagName(
-        "$hdlrType" . '_sampledescription'
-    )->item(0)->getAttribute('width');
-    $height = (int)$xmlRepresentation->getElementsByTagName(
-        "$hdlrType" . '_sampledescription'
-    )->item(0)->getAttribute('height');
-
-    $nalUnits = $xmlRepresentation->getElementsByTagName('NALUnit');
-    foreach ($nalUnits as $nalUnit) {
-        $nalUnitType = $nalUnit->parentNode->getAttribute('nalUnitType');
-        if ($nalUnitType != '33') {
-            continue;
-        }
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 'Codec information'",
-            "Tier used for HEVC codec in Segment must be supported by the specification Section 5.2.3",
-            $nalUnit->getAttribute('gen_tier_flag') == '0',
-            "FAIL",
-            "Valid tier used",
-            "Invalid level used: " . $nalUnit->getAttribute('gen_tier_flag')
-        );
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 'Codec information'",
-            "Bit depth used for HEVC codec in Segment must be supported by the specification Section 5.2.3",
-            $nalUnit->getAttribute('bit_depth_luma_minus8') == 0 ||
-            $nalUnit->getAttribute('bit_depth_luma_minus8') == 2,
-            "FAIL",
-            "Valid bit depth used",
-            "Invalid bit depth used: " . $nalUnit->getAttribute('bit_depth_luma_minus8')
-        );
-
-        if ($width <= 1920 && $height <= 1080) {
-            $logger->test(
-                "HbbTV-DVB DASH Validation Requirements",
-                "DVB: Section 'Codec information'",
-                "Profile used for HEVC codec in Segment must be supported by the specification Section 5.2.3",
-                $nalUnit->getAttribute('gen_profile_idc') == '1' || $nalUnit->getAttribute('gen_profile_idc') == '2',
-                "FAIL",
-                "Valid profile used",
-                "Invalid profile used: " . $nalUnit->getAttribute('gen_profile_idc')
-            );
-            $logger->test(
-                "HbbTV-DVB DASH Validation Requirements",
-                "DVB: Section 'Codec information'",
-                "Level used for HEVC codec in Segment must be supported by the specification Section 5.2.3",
-                (int)$nalUnit->getAttribute('sps_max_sub_layers_minus1') != 0 ||
-                (int)$nalUnit->getAttribute('gen_level_idc') <= 123,
-                "FAIL",
-                "Valid level used",
-                "Invalid level used: " . $nalUnit->getAttribute('gen_level_idc')
-            );
-        } elseif ($width > 1920 && $height > 1080) {
-            $logger->test(
-                "HbbTV-DVB DASH Validation Requirements",
-                "DVB: Section 'Codec information'",
-                "Profile used for HEVC codec in Segment must be supported by the specification Section 5.2.3",
-                $nalUnit->getAttribute('gen_profile_idc') == '2',
-                "FAIL",
-                "Valid profile used",
-                "Invalid profile used: " . $nalUnit->getAttribute('gen_profile_idc')
-            );
-            $logger->test(
-                "HbbTV-DVB DASH Validation Requirements",
-                "DVB: Section 'Codec information'",
-                "Level used for HEVC codec in Segment must be supported by the specification Section 5.2.3",
-                (int)$nalUnit->getAttribute('sps_max_sub_layers_minus1') != 0 ||
-                (int)$nalUnit->getAttribute('gen_level_idc') <= 153,
-                "FAIL",
-                "Valid level used",
-                "Invalid level used: " . $nalUnit->getAttribute('gen_level_idc')
-            );
-        }
     }
 }
 ##

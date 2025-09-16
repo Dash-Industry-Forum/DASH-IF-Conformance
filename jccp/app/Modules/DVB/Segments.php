@@ -13,7 +13,6 @@ use App\Services\Manifest\Representation;
 use App\Services\Segment;
 use App\Interfaces\Module;
 ## Segment checks
-use App\Modules\DVB\Segments\Resolution;
 use App\Modules\DVB\Segments\Codecs;
 
 class Segments extends Module
@@ -44,25 +43,7 @@ class Segments extends Module
 
     private function validateInitialization(Representation $representation, Segment $segment): void
     {
-        $sdType = $segment->getSampleDescriptor();
-        $validSdType = $sdType !== null;
-
-        $reporter = app(ModuleReporter::class);
-        $legacyreporter = $reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "DVB",
-            []
-        ));
-
-        $legacyreporter->test(
-            section: "Unknown",
-            test: "The segment needs to contain a valid 'sdType'",
-            result: $validSdType,
-            severity: "FAIL",
-            pass_message: "Check succeeded for Representation " . $representation->path(),
-            fail_message: "Check failed for Representation " . $representation->path(),
-        );
+        new Codecs()->validateCodecs($representation, $segment);
     }
 
     private function validateSegment(Segment $segment): void

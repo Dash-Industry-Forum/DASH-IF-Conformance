@@ -188,4 +188,22 @@ class Segment
     {
         return $this->runAnalyzedFunction('getSampleGroups');
     }
+
+    /**
+     * @return array<string,string>
+     **/
+    public function getHEVCConfiguration(): ?array
+    {
+        return $this->runAnalyzedFunction('getHEVCConfiguration');
+    }
+
+    public function getWidth(): ?int
+    {
+        return $this->runAnalyzedFunction('getWidth');
+    }
+
+    public function getHeight(): ?int
+    {
+        return $this->runAnalyzedFunction('getHeight');
+    }
 }
