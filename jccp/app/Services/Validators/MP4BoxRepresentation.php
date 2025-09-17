@@ -97,6 +97,10 @@ class MP4BoxRepresentation
             if (count($sampleDescriptionBoxes) > 0) {
                 return $sampleDescriptionBoxes->item(0)->getAttribute('Type');
             }
+            $sampleDescriptionBoxes = $this->payload->getElementsByTagName("MPEGVisualSampleDescriptionBox");
+            if (count($sampleDescriptionBoxes) > 0) {
+                return $sampleDescriptionBoxes->item(0)->getAttribute('Type');
+            }
         }
         return null;
     }
@@ -541,6 +545,27 @@ class MP4BoxRepresentation
         }
         foreach ($hevcDecoderRecords->item(0)->getAttributeNames() as $attName) {
             $res[$attName] = $hevcDecoderRecords->item(0)->getAttribute($attName);
+        }
+
+        return $res;
+    }
+
+    /**
+     * TODO: Make this return a valid object rather than raw array
+     * @return array<string, string>
+     **/
+    public function getAVCConfiguration(): array
+    {
+        $res = [];
+        if (!$this->payload) {
+            return $res;
+        }
+        $avcDecoderRecords = $this->payload->getElementsByTagName('AVCDecoderConfigurationRecord');
+        if (count($avcDecoderRecords) == 0) {
+            return $res;
+        }
+        foreach ($avcDecoderRecords->item(0)->getAttributeNames() as $attName) {
+            $res[$attName] = $avcDecoderRecords->item(0)->getAttribute($attName);
         }
 
         return $res;

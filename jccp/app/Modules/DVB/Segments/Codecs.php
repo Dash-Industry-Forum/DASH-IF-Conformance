@@ -48,16 +48,16 @@ class Codecs
             return;
         }
 
-        $this->validateSDType($representation, $sdType);
 
         // We use format to either contain the sdtype, or inferred sdtype from encrypted streams
         $format = $sdType;
-        if (str_starts_with($sdType, 'env')) {
+        if (str_starts_with($sdType, 'enc')) {
             $sinfBox = $segment->getProtectionScheme();
             if ($sinfBox) {
                 $format = $sinfBox->originalFormat;
             }
         }
+        $this->validateSDType($representation, $sdType, $format);
 
         if (str_starts_with($format, 'avc')) {
             $this->validateAVC($representation, $segment);
@@ -70,6 +70,27 @@ class Codecs
     //
     private function validateAVC(Representation $representation, Segment $segment): void
     {
+        $configuration = $segment->getAVCConfiguration();
+
+        $this->legacyReporter->test(
+            section: $this->section,
+            test: 'Profile used for AVC must be suported by the specification',
+            result: $configuration['AVCProfileIndication'] == '100',
+            severity: "FAIL",
+            pass_message: $representation->path() . " Profile valid",
+            fail_message: $representation->path() . " Profile of " .
+                          $configuration['AVCProfileIndication'] . " not valid"
+        );
+
+        $level = $configuration['AVCLevelIndication'];
+        $this->legacyReporter->test(
+            section: $this->section,
+            test: 'Level used for AVC must be suported by the specification',
+            result: $level == '30' || $level == '32' || $level == '40' || $level == '41',
+            severity: "FAIL",
+            pass_message: $representation->path() . " Level valid",
+            fail_message: $representation->path() . " Level of $level not valid"
+        );
     }
 
     private function validateHEVC(Representation $representation, Segment $segment): void
@@ -126,7 +147,7 @@ class Codecs
         );
     }
 
-    private function validateSDType(Representation $representation, string $sdType): void
+    private function validateSDType(Representation $representation, string $sdType, string $resolved): void
     {
         // NOTE: This is the same as the MPD, with the addition of 'enc' for encrypted streams
         $validCodecs = [
@@ -137,12 +158,17 @@ class Codecs
             'enc'
         ];
         $isValidSDType = false;
+        $isValidResolvedType = false;
         foreach ($validCodecs as $validCodec) {
             if (str_starts_with($sdType, $validCodec)) {
                 $isValidSDType = true;
-                break;
+            }
+            if (str_starts_with($resolved, $validCodec)) {
+                $isValidResolvedType = true;
             }
         }
+
+
         $this->legacyReporter->test(
             section: $this->section,
             test: 'The codec should be supported by the specification',
@@ -151,5 +177,17 @@ class Codecs
             pass_message: $representation->path() . " Codec $sdType in list of valid codecs",
             fail_message: $representation->path() . " Codec $sdType not in list of valid codecs",
         );
+
+        if (str_starts_with($sdType, 'enc')){
+        $this->legacyReporter->test(
+            section: $this->section,
+            test: 'The codec should be supported by the specification',
+            result: true,
+            severity: "INFO",
+            pass_message: $representation->path() . " Original format $resolved is " .
+                          ($isValidResolvedType ? "also" : "not") ." in list of valid codecs",
+            fail_message: '',
+        );
+        }
     }
 }

@@ -197,6 +197,14 @@ class Segment
         return $this->runAnalyzedFunction('getHEVCConfiguration');
     }
 
+    /**
+     * @return array<string,string>
+     **/
+    public function getAVCConfiguration(): ?array
+    {
+        return $this->runAnalyzedFunction('getAVCConfiguration');
+    }
+
     public function getWidth(): ?int
     {
         return $this->runAnalyzedFunction('getWidth');
