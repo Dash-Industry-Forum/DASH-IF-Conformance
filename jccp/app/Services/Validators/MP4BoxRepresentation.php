@@ -183,6 +183,7 @@ class MP4BoxRepresentation
      **/
     public function getSegmentDurations(): array
     {
+        //TODO Get duration if no 'subsegments' exist (from mvex?)
         $res = array();
         if ($this->payload) {
             $sidxBoxes = $this->payload->getElementsByTagName('SegmentIndexBox');
@@ -191,9 +192,8 @@ class MP4BoxRepresentation
                 $references = $sidxBox->getElementsByTagName('Reference');
                 $thisDuration = 0;
                 foreach ($references as $reference) {
-                    $thisDuration += floatval($reference->getAttribute('duration'));
+                    $res[] = (floatval($reference->getAttribute('duration')) / $timescale);
                 }
-                $res[] = ($thisDuration / $timescale);
             }
         }
         return $res;

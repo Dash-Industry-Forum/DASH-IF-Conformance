@@ -34,25 +34,28 @@ class BoxCount
     //Public validation functions
     public function validateBoxCount(Representation $representation, Segment $segment): void
     {
-        $isOnDemand = $representation->hasProfile("urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014");
 
         $boxTree = $segment->getBoxNameTree();
-        Log::info("BoxTree: " . print_r($boxTree->filterChildrenRecursive('moof'), true));
 
         $moofBoxes = $boxTree->filterChildrenRecursive('moof');
+        $validTraf = true;
         foreach ($moofBoxes as $moofBox) {
             $trafBoxes = $moofBox->filterChildrenRecursive('traf');
-
-            $this->v141Reporter->test(
-                section: $this->section,
-                test: "The 'moof' box shall contain only one 'traf' box",
-                result: count($trafBoxes) == 1,
-                severity: "FAIL",
-                pass_message: $representation->path() . " Single 'traf' box in 'moof'",
-                fail_message: $representation->path() . " " . count($trafBoxes) . " 'traf' boxes found in 'moof'"
-            );
+            if (count($trafBoxes) != 1) {
+                $validTraf = false;
+                break;
+            }
         }
+        $this->v141Reporter->test(
+            section: $this->section,
+            test: "The 'moof' box shall contain only one 'traf' box",
+            result: $validTraf,
+            severity: "FAIL",
+            pass_message: $representation->path() . " Single 'traf' box in each 'moof'",
+            fail_message: $representation->path() . " Multiple of no 'traf' boxes in at least one 'moof'"
+        );
 
+        $isOnDemand = $representation->hasProfile("urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014");
         if ($isOnDemand) {
             $sidxBoxes = $boxTree->filterChildrenRecursive('sidx');
             $this->v141Reporter->test(

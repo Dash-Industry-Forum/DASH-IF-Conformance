@@ -259,19 +259,6 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
          sizeof(array_unique($subsegmentSignaling)) == 1 &&
          in_array(0, $subsegmentSignaling))
     ) {
-        if ($hdlrType == 'vide' || $hdlrType == 'soun') {
-            $logger->test(
-                "HbbTV-DVB DASH Validation Requirements",
-                "DVB: Section 4.5",
-                "Where subsegments are not signalled, each video and each audio segment SHALL have a duration " .
-                "of not more than 15 seconds",
-                $segmentDuration <= 15,
-                "FAIL",
-                "Duration of segment " . ($j + 1) . " in bounds",
-                "Duration of segment " . ($j + 1) . " not in bounds (is $segmentDuration)",
-            );
-        }
-
         $logger->test(
             "HbbTV-DVB DASH Validation Requirements",
             "DVB: Section 4.5",
@@ -284,19 +271,6 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
     } elseif (!empty($subsegmentSignaling) && !in_array(0, $subsegmentSignaling)) {
         $referenceCount = $subsegmentSignaling[$sidxIndex];
         $cumulativeSubsegmentDuration += $segmentDuration;
-
-        if ($hdlrType == 'vide' || $hdlrType == 'soun') {
-            $logger->test(
-                "HbbTV-DVB DASH Validation Requirements",
-                "DVB: Section 4.5",
-                "Where subsegments are not signalled, each video and each audio segment SHALL have a duration " .
-                "of not more than 15 seconds",
-                $segmentDuration <= 15,
-                "FAIL",
-                "Duration of segment " . ($j + 1) . " in bounds",
-                "Duration of segment " . ($j + 1) . " not in bounds (is $segmentDuration)",
-            );
-        }
 
         $subsegmentSignaling[$sidxIndex] = $referenceCount - 1;
         if ($subsegmentSignaling[$sidxIndex] == 0) {
@@ -336,18 +310,6 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
     } else {
         $referenceCount = $subsegmentSignaling[$sidxIndex];
         if ($referenceCount == 0) {
-            if ($hdlrType == 'vide' || $hdlrType == 'soun') {
-                $logger->test(
-                    "HbbTV-DVB DASH Validation Requirements",
-                    "DVB: Section 4.5",
-                    "Where subsegments are not signalled, each video and each audio segment SHALL have a duration " .
-                    "of not more than 15 seconds",
-                    $segmentDuration <= 15,
-                    "FAIL",
-                    "Duration of segment " . ($j + 1) . " in bounds",
-                    "Duration of segment " . ($j + 1) . " not in bounds (is $segmentDuration)",
-                );
-            }
 
             $logger->test(
                 "HbbTV-DVB DASH Validation Requirements",
@@ -363,18 +325,6 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
         } else {
             $subsegmentSignaling[$sidxIndex] = $referenceCount - 1;
             $cumulativeSubsegmentDuration += $segmentDuration;
-            if ($hdlrType == 'vide' || $hdlrType == 'soun') {
-                $logger->test(
-                    "HbbTV-DVB DASH Validation Requirements",
-                    "DVB: Section 4.5",
-                    "Where subsegments are not signalled, each video and each audio segment SHALL have a duration " .
-                    "of not more than 15 seconds",
-                    $segmentDuration <= 15,
-                    "FAIL",
-                    "Duration of segment " . ($j + 1) . " in bounds",
-                    "Duration of segment " . ($j + 1) . " not in bounds (is $segmentDuration)",
-                );
-            }
 
             if ($subsegmentSignaling[$sidxIndex] == 0) {
                 $sidxIndex++;
