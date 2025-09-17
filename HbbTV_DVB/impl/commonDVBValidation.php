@@ -34,35 +34,6 @@ if (strpos($sdType, 'enc') !== false) {
     }
 }
 
-if (strpos($sdType, 'avc') !== false || strpos($originalFormat, 'avc') !== false) {
-    $nalUnits = $xmlRepresentation->getElementsByTagName('NALUnit');
-    foreach ($nalUnits as $nalUnit) {
-        if (hexdec($nalUnit->getAttribute('nal_type')) != 7) {
-            continue;
-        }
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 'Codec information'",
-            "Profile used for AVC codec in Segment must be supported by the specification",
-            $nalUnit->getAttribute('profile_idc') == 100,
-            "FAIL",
-            "Valid profile used",
-            "Invalid profile " . $nalUnit->getAttribute('profile_idc') . " used"
-        );
-        $level_idc = $nalUnit->getElementsByTagName('comment')->item(0)->getAttribute('level_idc');
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 'Codec information'",
-            "Level used for AVC codec in Segment must be supported by the specification",
-            $level_idc == 30 || $level_idc == 41 || $level_idc == 32 || $level_idc == 40,
-            "FAIL",
-            "Valid level used",
-            "Invalid level $level_idc used"
-        );
-    }
-}
-##
-
 ## Subtitle checks
 if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] == 'application/mp4') {
     if ($adaptation['codecs'] == 'stpp' || $representation['codecs'] == 'stpp') {
@@ -263,49 +234,6 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
 }
 
 ## Segment checks
-// Section 4.3 on on-demand profile periods containing sidx boxes
-//
-$representationProfiles = $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()]
-                                                    [$mpdHandler->getSelectedAdaptationSet()]
-                                                    [$mpdHandler->getSelectedRepresentation()];
-if (
-    strpos(
-        $representationProfiles,
-        'urn:mpeg:dash:profile:isoff-on-demand:2011'
-    ) !== false
-    ||
-    strpos(
-        $representationProfiles,
-        'urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014'
-    ) !== false
-) {
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "DVB: Section 'Segments'",
-        "The segment for an \"On Demand Profile\" shall contain only 1 sidx box (Section 4.3)",
-        $xmlRepresentation->getElementsByTagName('sidx')->length == 1,
-        "FAIL",
-        "1 sidx bound found",
-        "" . $xmlRepresentation->getElementsByTagName('sidx')->length . " sidx boxes found"
-    );
-
-}
-
-// Section 4.3 on traf box count in moof boxes
-$moofBoxes = $xmlRepresentation->getElementsByTagName('moof');
-foreach ($moofBoxes as $moofBox) {
-    $trafCount = $moofBox->getElementsByTagName('traf')->length;
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "DVB: Section 4.3",
-        "The 'moof' box SHALL contain only one 'traf' box",
-        $trafCount == 1,
-        "FAIL",
-        "1 'traf' box found",
-        "$trafCount 'traf' boxes found"
-    );
-}
-
 // Section 4.5 on segment and subsegment durations
 $sidxBoxes = $xmlRepresentation->getElementsByTagName('sidx');
 $subsegmentSignaling = array();

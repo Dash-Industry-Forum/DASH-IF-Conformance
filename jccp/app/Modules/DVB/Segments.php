@@ -14,6 +14,7 @@ use App\Services\Segment;
 use App\Interfaces\Module;
 ## Segment checks
 use App\Modules\DVB\Segments\Codecs;
+use App\Modules\DVB\Segments\BoxCount;
 
 class Segments extends Module
 {
@@ -37,7 +38,7 @@ class Segments extends Module
             if ($segmentIndex == 0) {
                 $this->validateInitialization($representation, $segment);
             }
-            $this->validateSegment($segment);
+            $this->validateSegment($representation, $segment);
         }
     }
 
@@ -46,7 +47,8 @@ class Segments extends Module
         new Codecs()->validateCodecs($representation, $segment);
     }
 
-    private function validateSegment(Segment $segment): void
+    private function validateSegment(Representation $representation, Segment $segment): void
     {
+        new BoxCount()->validateBoxCount($representation, $segment);
     }
 }

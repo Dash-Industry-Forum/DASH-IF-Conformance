@@ -178,16 +178,16 @@ class Codecs
             fail_message: $representation->path() . " Codec $sdType not in list of valid codecs",
         );
 
-        if (str_starts_with($sdType, 'enc')){
-        $this->legacyReporter->test(
-            section: $this->section,
-            test: 'The codec should be supported by the specification',
-            result: true,
-            severity: "INFO",
-            pass_message: $representation->path() . " Original format $resolved is " .
-                          ($isValidResolvedType ? "also" : "not") ." in list of valid codecs",
-            fail_message: '',
-        );
+        if (str_starts_with($sdType, 'enc')) {
+            $this->legacyReporter->test(
+                section: $this->section,
+                test: 'The codec should be supported by the specification',
+                result: true,
+                severity: "INFO",
+                pass_message: $representation->path() . " Original format $resolved is " .
+                          ($isValidResolvedType ? "also" : "not") . " in list of valid codecs",
+                fail_message: '',
+            );
         }
     }
 }
