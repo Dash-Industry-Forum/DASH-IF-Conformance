@@ -3,11 +3,13 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Illuminate\View\View;
 use App\Services\SpecManager;
 use App\Services\ModuleReporter;
 
 class MpdResults extends Component
 {
+    private mixed $results;
     private string $selectedSpec = '';
 
     public function __construct()
@@ -28,7 +30,7 @@ class MpdResults extends Component
         }
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.mpd-results');
     }
@@ -56,24 +58,52 @@ class MpdResults extends Component
         $this->selectedSpec = $spec;
     }
 
+    private function resultsForSpec(string $spec): mixed
+    {
+        if (!$spec) {
+            return null;
+        }
+        if (!array_key_exists("MPD", $this->results)) {
+            return null;
+        }
+        if (!array_key_exists($spec, $this->results["MPD"])) {
+            return null;
+        }
+        return $this->results["MPD"][$spec];
+    }
+
+    public function getSpecResult(string $spec): string
+    {
+        $specResults = $this->resultsForSpec($spec);
+        if (!$specResults){
+            return "";
+        }
+        $res = "✓";
+        foreach ($specResults as $section => $sectionResults) {
+            foreach ($sectionResults['checks'] as $check => $checkResults) {
+                if ($checkResults['state'] == "FAIL"){
+                    return "✗";
+                }
+                if ($checkResults['state'] == "WARN"){
+                    $res =  "!";
+                }
+
+            }
+        }
+        return $res;
+    }
+
     /**
      * @return array<array<string, mixed>>
      **/
     public function transformResults(string $spec): array
     {
         $res = [];
-        if (!$spec) {
+        $specResults = $this->resultsForSpec($spec);
+        if (!$specResults){
             return $res;
         }
-        if (!array_key_exists("MPD", $this->results)) {
-            return $res;
-        }
-
-        if (!array_key_exists($spec, $this->results["MPD"])) {
-            return $res;
-        }
-
-        foreach ($this->results["MPD"][$spec] as $section => $sectionResults) {
+        foreach ($specResults as $section => $sectionResults) {
             foreach ($sectionResults['checks'] as $check => $checkResults) {
                 $res[] = [
                     'section' => $section,

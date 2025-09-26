@@ -10,6 +10,7 @@
     @else
           <span class="nav-link" wire:click="selectSpec('{{$spec}}')">
     @endif
+            {{ $this->getSpecResult($spec) }}
             {{ $spec }}
           </span>
         </li>
