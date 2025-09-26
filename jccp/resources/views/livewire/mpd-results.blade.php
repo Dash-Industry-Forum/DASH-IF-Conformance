@@ -1,13 +1,6 @@
-<div class="container">
-  @session('mpd')
-  <h4>SpecManager state</h4>
-  <pre>{{ $this->specManagerState() }}</pre>
+<div>
+  <h4>Manifest Checks</h4>
 
-  <livewire:mpd-results />
-
-
-
-    <h4>Segment Checks</h4>
   <div>
     <ul class="nav">
       @foreach ($this->getSpecs() as $spec)
@@ -26,7 +19,7 @@
       <th class="col-4" scope="col">Statement</th>
       <th scope="col">Messages</th>
     </tr>
-    @foreach ($this->transformResults($this->selectedSpec, "Segments") as $check)
+    @foreach ($this->transformResults($this->selectedSpec) as $check)
       <tr>
         <td class="col-1">{{ $check['state'] }}</td>
         <td class="col-2">{{ $check['section'] }}</td>
@@ -39,5 +32,4 @@
       </tr>
     @endforeach
   </table>
-  @endsession
 </div>
