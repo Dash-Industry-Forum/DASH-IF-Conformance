@@ -2,10 +2,14 @@
   <h4>Manifest Checks</h4>
 
   <div>
-    <ul class="nav">
+    <ul class="nav nav-tabs">
       @foreach ($this->getSpecs() as $spec)
         <li class="nav-item">
+    @if ($this->selectedSpec == $spec)
+          <span class="nav-link active" wire:click="selectSpec('{{$spec}}')">
+    @else
           <span class="nav-link" wire:click="selectSpec('{{$spec}}')">
+    @endif
             {{ $spec }}
           </span>
         </li>
