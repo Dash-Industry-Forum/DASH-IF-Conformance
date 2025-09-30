@@ -11,9 +11,11 @@ class MpdResults extends Component
 {
     private mixed $results;
     private string $selectedSpec = '';
+    public string $section;
 
-    public function __construct()
+    public function mount(string $section)
     {
+        $this->section = $section;
 
         $specManager = app(SpecManager::class);
         $specManager->enable('HbbTV MPD Module');
@@ -41,10 +43,10 @@ class MpdResults extends Component
     public function getSpecs(): array
     {
         $keys = [];
-        if (array_key_exists("MPD", $this->results)) {
+        if (array_key_exists($this->section, $this->results)) {
             $keys = array_merge(
                 $keys,
-                array_keys($this->results["MPD"]),
+                array_keys($this->results[$this->section]),
             );
         }
         $keys = array_unique($keys);
@@ -63,13 +65,13 @@ class MpdResults extends Component
         if (!$spec) {
             return null;
         }
-        if (!array_key_exists("MPD", $this->results)) {
+        if (!array_key_exists($this->section, $this->results)) {
             return null;
         }
-        if (!array_key_exists($spec, $this->results["MPD"])) {
+        if (!array_key_exists($spec, $this->results[$this->section])) {
             return null;
         }
-        return $this->results["MPD"][$spec];
+        return $this->results[$this->section][$spec];
     }
 
     public function getSpecResult(string $spec): string

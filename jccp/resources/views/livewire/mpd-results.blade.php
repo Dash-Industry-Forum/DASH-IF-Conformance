@@ -1,5 +1,5 @@
 <div>
-  <h4>Manifest Checks</h4>
+  <h4>{{ $this->section }} Checks</h4>
 
   <div>
     <ul class="nav nav-tabs">
