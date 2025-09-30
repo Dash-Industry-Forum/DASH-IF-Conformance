@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\Attributes\On;
 use Illuminate\View\View;
 use App\Services\SpecManager;
 use App\Services\ModuleReporter;
@@ -11,7 +12,7 @@ use App\Services\Segment;
 
 class MpdResults extends Component
 {
-    private mixed $results;
+    private mixed $results = [];
     private string $selectedSpec = '';
     public string $section;
 
@@ -24,6 +25,12 @@ class MpdResults extends Component
     {
         $this->section = $section;
 
+        $this->refresh();
+    }
+
+    #[On('spec-selection-changed')]
+    public function refresh(): void
+    {
         $specManager = app(SpecManager::class);
         if ($this->section == "MPD") {
             $specManager->validate();
@@ -69,6 +76,7 @@ class MpdResults extends Component
     public function selectSpec(string $spec): void
     {
         $this->selectedSpec = $spec;
+        $this->refresh();
     }
 
     private function resultsForSpec(string $spec): mixed

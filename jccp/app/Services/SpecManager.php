@@ -20,7 +20,7 @@ class SpecManager
     private array $manifestSpecs = [];
 
     /**
-     * @var array<string, array<mixed>> $moduleStates
+     * @var array<string, array<string,boolean>> $moduleStates
      **/
     private array $moduleStates = [];
 
@@ -30,7 +30,7 @@ class SpecManager
 
         foreach ($this->manifestSpecs as $manifestSpec) {
             $this->moduleStates[$manifestSpec->name] = [
-                'enabled' => false,
+                'enabled' => Cache::has(cache_path(['spec', $manifestSpec->name])),
                 'dependency' => false,
                 'run' => false,
                 'runSegments' => false
@@ -46,13 +46,17 @@ class SpecManager
         $this->manifestSpecs[] = new WaveHLSInteropSegments();
     }
 
-    public function enable(string $moduleName): void
+    public function toggle(string $moduleName): void
     {
-        foreach ($this->moduleStates as $name => &$moduleState) {
-            if ($name == $moduleName) {
-                $moduleState['enabled'] = true;
-            }
+        $cachePath = cache_path(['spec', $moduleName]);
+        if (Cache::has($cachePath)) {
+            Cache::forget($cachePath);
+        } else {
+            Cache::put($cachePath, 'enabled');
         }
+        $this->moduleStates[$moduleName]['enabled'] = Cache::has($cachePath);
+        $this->validate();
+        $this->validateSegments();
     }
 
     public function activateDependency(string $moduleName): void
@@ -119,7 +123,21 @@ class SpecManager
      **/
     public function specNames(): array
     {
-        return [];
+        return array_map(fn($spec): string => $spec->name, $this->manifestSpecs);
+    }
+
+    public function specState(string $spec): string
+    {
+        $state = $this->moduleStates[$spec];
+        if ($state) {
+            if ($state['enabled']) {
+                return "Enabled";
+            }
+            if ($state['dependency']) {
+                return "Dependency";
+            }
+        }
+        return "Disabled";
     }
 
     public function stateJSON(): string
