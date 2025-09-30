@@ -24,6 +24,21 @@ class TestCase
         $this->skipReason = "🛈 " . $skipReason;
     }
 
+    public function pathAdd(
+        bool $result,
+        string $severity,
+        string $path,
+        string $pass_message,
+        string $fail_message
+    ): bool {
+        return $this->add(
+            result: $result,
+            severity: $severity,
+            pass_message: "$path - $pass_message",
+            fail_message: "$path - $fail_message"
+        );
+    }
+
     public function add(
         bool $result,
         string $severity,

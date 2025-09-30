@@ -9,17 +9,45 @@ use App\Services\MPDCache;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
+use App\Services\Reporter\TestCase;
 
 class Schematron
 {
+    //TODO Move to module
     private string $schemaPath;
     private SubReporter $schematronReporter;
 
+    private TestCase $xlinkCase;
+    private TestCase $mpdCase;
+    private TestCase $schematronRunCase;
+
     public function __construct()
     {
+        $this->registerChecks();
+    }
+
+    public function registerChecks(): void
+    {
         $reporter = app(ModuleReporter::class);
-        $schematronContext = new ReporterContext("MPD", "Schematron", "", array());
-        $this->schematronReporter = &$reporter->context($schematronContext);
+        $this->schematronReporter = &$reporter->context(new ReporterContext("MPD", "Schematron", "", array()));
+
+        $this->xlinkCase = $this->schematronReporter->add(
+            section: "",
+            test: "xlink resolution SHALL be succesful",
+            skipReason: "Unable to run schematron"
+        );
+
+        $this->mpdCase = $this->schematronReporter->add(
+            section: "",
+            test: "MPD Validation SHALL be succesful",
+            skipReason: "Unable to run schematron"
+        );
+
+        $this->schematronRunCase = $this->schematronReporter->add(
+            section: "",
+            test: "Schematron Validation SHALL run succesfully",
+            skipReason: "Unable to run schematron"
+        );
     }
 
     public function getValidatorOutput(): string
@@ -131,13 +159,15 @@ class Schematron
 
             foreach ($textComponents as $textComponent) {
                 //Always false, as we're parsing failed assertions
-                $this->schematronReporter->test(
-                    $testLocation,
-                    $testDescription,
-                    false,
-                    "FAIL",
-                    "",
-                    $textComponent->nodeValue
+                $this->schematronReporter->add(
+                    section: $testLocation,
+                    test: $testDescription,
+                    skipReason: ''
+                )->add(
+                    result: false,
+                    severity: "FAIL",
+                    pass_message: "",
+                    fail_message: $textComponent->nodeValue
                 );
             }
         }
@@ -158,35 +188,29 @@ class Schematron
 
 
         if (!$validatorOutput) {
-            $logger->validatorMessage("Validator was unable to run");
+            return;
         }
 
 
-        $this->schematronReporter->test(
-            "",
-            "Resolve XLink",
-            strpos($validatorOutput, 'XLink resolving successful') !== false,
-            "FAIL",
-            "XLink resolving succesful",
-            "XLink resolving failed"
+        $this->xlinkCase->add(
+            result: strpos($validatorOutput, 'XLink resolving successful') !== false,
+            severity: "FAIL",
+            pass_message: "XLink resolving succesful",
+            fail_message: "XLink resolving failed"
         );
 
-        $this->schematronReporter->test(
-            "",
-            "MPD Validation",
-            strpos($validatorOutput, 'MPD validation successful') !== false,
-            "FAIL",
-            "MPD validation succesful",
-            "MPD validation failed"
+        $this->mpdCase->add(
+            result: strpos($validatorOutput, 'MPD validation successful') !== false,
+            severity: "FAIL",
+            pass_message: "MPD validation succesful",
+            fail_message: "MPD validation failed"
         );
 
-        $this->schematronReporter->test(
-            "",
-            "Schematron Validation",
-            strpos($validatorOutput, 'Schematron validation successful') !== false,
-            "FAIL",
-            "Schematron validation succesful",
-            "Schematron validation failed"
+        $this->schematronRunCase->add(
+            result: strpos($validatorOutput, 'Schematron validation successful') !== false,
+            severity: "FAIL",
+            pass_message: "Schematron validation succesful",
+            fail_message: "Schematron validation failed"
         );
     }
     private function findOrDownloadSchema(): void

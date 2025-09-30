@@ -8,6 +8,7 @@ use App\Services\Segment;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
+use App\Services\Reporter\TestCase;
 use App\Services\Validators\Boxes;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +21,15 @@ class TrackRoles
 
     private string $section = '4.7.2 - Carriage of Track Role';
 
+    private TestCase $kindCase;
+    private TestCase $roleNameCase;
+
     public function __construct()
+    {
+        $this->registerChecks();
+    }
+
+    private function registerChecks(): void
     {
         $reporter = app(ModuleReporter::class);
         $this->waveReporter = &$reporter->context(new ReporterContext(
@@ -29,6 +38,17 @@ class TrackRoles
             "Final",
             []
         ));
+
+        $this->kindCase = $this->waveReporter->add(
+            section: $this->section,
+            test: "Track roles SHALL be stored in one or more 'kind' boxes [..]",
+            skipReason: "No track role found in MPD and no 'kind' boxes found"
+        );
+        $this->roleNameCase = $this->waveReporter->add(
+            section: $this->section,
+            test: "Track roles SHALL be representaed by the DASH Role scheme when possible",
+            skipReason: "No 'kind' boxes found"
+        );
     }
 
     //Public validation functions
@@ -56,26 +76,20 @@ class TrackRoles
                 }
             }
 
-            $this->waveReporter->test(
-                section: $this->section,
-                test: "Track roles SHALL be stored in one or more 'kind' boxes [..]",
+            $this->kindCase->pathAdd(
                 result: $foundInMPD,
                 severity: "FAIL",
-                pass_message: $representation->path() . " - Kind box with scheme " .
-                          $kindBox->schemeURI . " reflected in MPD",
-                fail_message: $representation->path() . " - Kind box with scheme " .
-                          $kindBox->schemeURI . " not reflected in MPD",
+                path: $representation->path() . "-init",
+                pass_message: "Box with scheme $kindBox->schemeURI reflected in MPD",
+                fail_message: "Box with scheme $kindBox->schemeURI not reflected in MPD",
             );
 
-            $this->waveReporter->test(
-                section: $this->section,
-                test: "Track roles SHALL be representaed by the DASH Role scheme when possible",
+            $this->roleNameCase->pathAdd(
                 result: $kindBox->schemeURI == "urn:mpeg:dash:role:2011",
                 severity: "WARN",
-                pass_message: $representation->path() . " - Kind box with scheme " .
-                              $kindBox->schemeURI . " has expected scheme",
-                fail_message: $representation->path() . " - Kind box with scheme " .
-                              $kindBox->schemeURI . " does not have the expected scheme",
+                path: $representation->path() . "-init",
+                pass_message: "Box with scheme $kindBox->schemeURI has expected scheme",
+                fail_message: "Box with scheme $kindBox->schemeURI does not have the expected scheme",
             );
         }
 
@@ -91,15 +105,12 @@ class TrackRoles
                 }
             }
 
-            $this->waveReporter->test(
-                section: $this->section,
-                test: "Track roles SHALL be stored in one or more 'kind' boxes [..]",
+            $this->kindCase->pathAdd(
                 result: $foundInKind,
                 severity: "FAIL",
-                pass_message: $representation->path() . " - MPD Role with scheme " .
-                          $mpdRole['scheme'] . " reflected in a 'kind' box",
-                fail_message: $representation->path() . " - MPD Role with scheme " .
-                          $mpdRole['scheme'] . " not reflected in a 'kind' box",
+                path: $representation->path() . "-init",
+                pass_message: "MPD Role with scheme " . $mpdRole['scheme'] . " reflected in a 'kind' box",
+                fail_message: "MPD Role with scheme " . $mpdRole['scheme'] . " not reflected in a 'kind' box",
             );
         }
     }

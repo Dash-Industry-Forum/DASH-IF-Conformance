@@ -8,6 +8,7 @@ use App\Services\Segment;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
+use App\Services\Reporter\TestCase;
 use App\Services\Validators\Boxes;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
@@ -18,12 +19,14 @@ class TimedEventData
     //Private subreporters
     private SubReporter $waveReporter;
 
-    private string $section = '4.5.2 - Carriage of Timed Event Data';
-
-    private string $emsgExplanation = "All 'emsg' boxes inserted [..] after the start of the first CMAF chunk " .
-        "SHALL be repeated before the first chunk of the next segment";
+    private TestCase $emsgCase;
 
     public function __construct()
+    {
+        $this->registerChecks();
+    }
+
+    private function registerChecks(): void
     {
         $reporter = app(ModuleReporter::class);
         $this->waveReporter = &$reporter->context(new ReporterContext(
@@ -32,6 +35,13 @@ class TimedEventData
             "Final",
             []
         ));
+
+        $this->emsgCase = $this->waveReporter->add(
+            section: '4.5.2 - Carriage of Timed Event Data',
+            test: "All 'emsg' boxes inserted [..] after the start of the first CMAF chunk " .
+                  "SHALL be repeated before the first chunk of the next segment",
+            skipReason: "No 'emsg' boxes found"
+        );
     }
 
     //Public validation functions
@@ -43,20 +53,20 @@ class TimedEventData
         $activeSegment = false;
         $expectRepeat = [];
         foreach ($segments as $segmentIndex => $segment) {
+            $activeSegment = false;
             $emsgNum = -1;
             $emsgBoxes = $segment->getEmsgBoxes();
             $topLevelBoxes = $segment->getTopLevelBoxNames();
             foreach ($topLevelBoxes as $boxName) {
                 if ($boxName == 'moof') {
                     foreach ($expectRepeat as $expected) {
-                        $this->waveReporter->test(
-                            section: $this->section,
-                            test: $this->emsgExplanation,
+                        $this->emsgCase->pathAdd(
                             result: false,
                             severity: "FAIL",
+                            path: $representation->path() . "-$segmentIndex",
                             pass_message: "",
-                            fail_message: $representation->path() . " - EmsgBox with time " .
-                              $expected->presentationTime . " no repeated in segment $segmentIndex",
+                            fail_message: " EmsgBox with time " .
+                              $expected->presentationTime . " not repeated",
                         );
                     }
                 }
@@ -79,6 +89,15 @@ class TimedEventData
                     //We don't expect repetitions, so this is fine.
                     continue;
                 }
+
+                $this->emsgCase->pathAdd(
+                    result: true,
+                    severity: "FAIL",
+                    path: $representation->path() . "-$segmentIndex",
+                    pass_message: " EmsgBox with time " .
+                      $emsgBoxes[$emsgNum]->presentationTime . " repeated",
+                    fail_message: "",
+                );
 
                 $diffExpect = array_udiff(
                     $expectRepeat,
