@@ -25,14 +25,10 @@ use App\Modules\Wave\Segments\KeyRotation;
 
 class Segments extends Module
 {
-    private SplicingPoints $splicingValidator;
-
     public function __construct()
     {
         parent::__construct();
         $this->name = "Wave HLS Interop Segments Module";
-
-        $this->splicingValidator = new SplicingPoints();
     }
 
 
@@ -46,7 +42,7 @@ class Segments extends Module
      **/
     public function validateSegments(Representation $representation, array $segments): void
     {
-        $this->splicingValidator->validateSegmentDurations($representation, $segments);
+        new SplicingPoints()->validateSegmentDurations($representation, $segments);
         new Bitrate()->validateBitrate($representation, $segments);
         new TimedEventData()->validateTimedEventdata($representation, $segments);
         foreach ($segments as $segmentIndex => $segment) {
@@ -68,7 +64,7 @@ class Segments extends Module
     private function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
         new SegmentEncryption()->validateSegmentEncryption($representation, $segment, $segmentIndex);
-        $this->splicingValidator->validateSplicingPoints($representation, $segment, $segmentIndex);
+        new SplicingPoints()->validateSplicingPoints($representation, $segment, $segmentIndex);
         new AddressableMediaObject()->validateAddressableMediaObject($representation, $segment, $segmentIndex);
         new KeyRotation()->validateKeyRotation($representation, $segment, $segmentIndex);
     }

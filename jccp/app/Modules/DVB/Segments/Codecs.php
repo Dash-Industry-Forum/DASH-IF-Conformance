@@ -7,6 +7,7 @@ use App\Services\Manifest\Representation;
 use App\Services\Segment;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
+use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Interfaces\Module;
@@ -19,6 +20,16 @@ class Codecs
     private SubReporter $legacyReporter;
 
     private string $section = 'Codec information';
+    private string $noAVC = "No AVC stream found";
+    private string $noHEVC = "No HEVC stream found";
+
+    private TestCase $codecCase;
+    private TestCase $avcProfileCase;
+    private TestCase $avcLevelCase;
+    private TestCase $hevcTierCase;
+    private TestCase $hevcBitDepthCase;
+    private TestCase $hevcLevelCase;
+    private TestCase $hevcProfileCase;
 
     public function __construct()
     {
@@ -29,21 +40,48 @@ class Codecs
             "DVB",
             []
         ));
+
+        $this->codecCase = $this->legacyReporter->add(
+            section: $this->section,
+            test: 'The codec should be supported by the specification',
+            skipReason: "No valid sample descriptor found"
+        );
+        $this->avcProfileCase = $this->legacyReporter->add(
+            section: $this->section,
+            test: 'Profile used for AVC must be suported by the specification',
+            skipReason: $this->noAVC
+        );
+        $this->avcLevelCase = $this->legacyReporter->add(
+            section: $this->section,
+            test: 'Level used for AVC must be suported by the specification',
+            skipReason: $this->noAVC
+        );
+        $this->hevcTierCase = $this->legacyReporter->add(
+            section: $this->section,
+            test: 'Tier used for HEVC must be suported by the specification',
+            skipReason: $this->noHEVC
+        );
+        $this->hevcBitDepthCase = $this->legacyReporter->add(
+            section: $this->section,
+            test: 'Bit depth used for HEVC must be suported by the specification',
+            skipReason: $this->noHEVC
+        );
+        $this->hevcProfileCase = $this->legacyReporter->add(
+            section: $this->section,
+            test: 'Profile used for HEVC must be suported by the specification',
+            skipReason: $this->noHEVC
+        );
+        $this->hevcLevelCase = $this->legacyReporter->add(
+            section: $this->section,
+            test: 'Level used for HEVC must be suported by the specification',
+            skipReason: $this->noHEVC
+        );
     }
 
     //Public validation functions
     public function validateCodecs(Representation $representation, Segment $segment): void
     {
         $sdType = $segment->getSampleDescriptor();
-        $this->legacyReporter->test(
-            section: "Internal",
-            test: "The segment needs to contain a valid sample descriptor ('sdType')",
-            result: $sdType !== null,
-            severity: "FAIL",
-            pass_message: $representation->path() . " Found ${sdType} sample descriptor",
-            fail_message: $representation->path() . " No sample descriptor found",
-        );
-
         if ($sdType === null) {
             return;
         }
@@ -72,24 +110,21 @@ class Codecs
     {
         $configuration = $segment->getAVCConfiguration();
 
-        $this->legacyReporter->test(
-            section: $this->section,
-            test: 'Profile used for AVC must be suported by the specification',
+        $this->avcProfileCase->pathAdd(
             result: $configuration['AVCProfileIndication'] == '100',
             severity: "FAIL",
-            pass_message: $representation->path() . " Profile valid",
-            fail_message: $representation->path() . " Profile of " .
-                          $configuration['AVCProfileIndication'] . " not valid"
+            path: $representation->path() . "-init",
+            pass_message: "Profile valid",
+            fail_message: "Profile value of " . $configuration['AVCProfileIndication'] . " not valid"
         );
 
         $level = $configuration['AVCLevelIndication'];
-        $this->legacyReporter->test(
-            section: $this->section,
-            test: 'Level used for AVC must be suported by the specification',
+        $this->avcLevelCase->pathAdd(
             result: $level == '30' || $level == '32' || $level == '40' || $level == '41',
             severity: "FAIL",
-            pass_message: $representation->path() . " Level valid",
-            fail_message: $representation->path() . " Level of $level not valid"
+            path: $representation->path() . "-init",
+            pass_message: "Level valid",
+            fail_message: "Level value of $level not valid"
         );
     }
 
@@ -97,20 +132,18 @@ class Codecs
     {
         $configuration = $segment->getHEVCConfiguration();
 
-        $this->legacyReporter->test(
-            section: $this->section,
-            test: 'Tier used for HEVC must be suported by the specification in Section 5.2.3',
+        $this->hevcTierCase->pathAdd(
             result: $configuration['tier_flag'] == '0',
             severity: "FAIL",
+            path: $representation->path() . "-init",
             pass_message: $representation->path() . " Tier valid",
             fail_message: $representation->path() . " Tier of " . $configuration['tier_flag'] . " not valid"
         );
 
-        $this->legacyReporter->test(
-            section: $this->section,
-            test: 'Bit depth used for HEVC must be suported by the specification in Section 5.2.3',
+        $this->hevcBitDepthCase->pathAdd(
             result: $configuration['luma_bit_depth'] == '8' || $configuration['luma_bit_depth'] == '10',
             severity: "FAIL",
+            path: $representation->path() . "-init",
             pass_message: $representation->path() . " Bit depth valid",
             fail_message: $representation->path() . " Bit depth of " . $configuration['luma_bit_depth'] . " not valid"
         );
@@ -125,24 +158,22 @@ class Codecs
 
         $profileValid = $configuration['profile_idc'] == '2' || ($lowRes && $configuration['profile_idc'] == '1');
 
-        $this->legacyReporter->test(
-            section: $this->section,
-            test: 'Profile used depth used for HEVC must be suported by the specification in Section 5.2.3',
+        $this->hevcProfileCase->pathAdd(
             result: $profileValid,
             severity: "FAIL",
-            pass_message: $representation->path() . " Profile valid",
-            fail_message: $representation->path() . " Profile of " . $configuration['profile_idc'] . " not valid " .
+            path: $representation->path() . "-init",
+            pass_message: "Profile valid",
+            fail_message: "Profile value of " . $configuration['profile_idc'] . " not valid " .
                           "for a " . ($lowRes ? "Low" : "High") . " resolution stream"
         );
 
         $levelValid = intval($configuration['level_idc']) <= ($lowRes ? 123 : 153);
-        $this->legacyReporter->test(
-            section: $this->section,
-            test: 'Level used depth used for HEVC must be suported by the specification in Section 5.2.3',
+        $this->hevcLevelCase->pathAdd(
             result: $levelValid,
             severity: "FAIL",
-            pass_message: $representation->path() . " Level valid",
-            fail_message: $representation->path() . " Level of " . $configuration['level_idc'] . " not valid " .
+            path: $representation->path() . "-init",
+            pass_message: "Level valid",
+            fail_message: "Level value of " . $configuration['level_idc'] . " not valid " .
                           "for a " . ($lowRes ? "Low" : "High") . " resolution stream"
         );
     }
@@ -169,22 +200,20 @@ class Codecs
         }
 
 
-        $this->legacyReporter->test(
-            section: $this->section,
-            test: 'The codec should be supported by the specification',
+        $this->codecCase->pathAdd(
             result: $isValidSDType,
             severity: "WARN",
-            pass_message: $representation->path() . " Codec $sdType in list of valid codecs",
-            fail_message: $representation->path() . " Codec $sdType not in list of valid codecs",
+            path: $representation->path() . "-init",
+            pass_message: "Codec $sdType in list of valid codecs",
+            fail_message: "Codec $sdType not in list of valid codecs",
         );
 
         if (str_starts_with($sdType, 'enc')) {
-            $this->legacyReporter->test(
-                section: $this->section,
-                test: 'The codec should be supported by the specification',
+            $this->codecCase->pathAdd(
                 result: true,
                 severity: "INFO",
-                pass_message: $representation->path() . " Original format $resolved is " .
+                path: $representation->path() . "-init",
+                pass_message: "Original format $resolved is " .
                           ($isValidResolvedType ? "also" : "not") . " in list of valid codecs",
                 fail_message: '',
             );

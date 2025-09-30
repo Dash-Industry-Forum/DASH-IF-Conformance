@@ -7,6 +7,7 @@ use App\Services\Manifest\Representation;
 use App\Services\Segment;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
+use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Interfaces\Module;
@@ -18,7 +19,7 @@ class Durations
     //Private subreporters
     private SubReporter $v141Reporter;
 
-    private string $section = 'Section 4.5';
+    private TestCase $durationCase;
 
     public function __construct()
     {
@@ -29,10 +30,16 @@ class Durations
             "v1.4.1",
             []
         ));
+
+        $this->durationCase = $this->v141Reporter->add(
+            section: '4.5',
+            test: 'Each subsegment shall have a duration of not more than 15 seconds',
+            skipReason: ''
+        );
     }
 
     //Public validation functions
-    public function validateDurations(Representation $representation, Segment $segment): void
+    public function validateDurations(Representation $representation, Segment $segment, int $segmentIndex): void
     {
         //TODO Check only for audio/video
 
@@ -46,22 +53,20 @@ class Durations
             }
         }
 
-        $this->v141Reporter->test(
-            section: $this->section,
-            test: "Each subsegment shall have a duration of not more than 15 seconds",
+        $this->durationCase->pathAdd(
             result: $validDurations,
             severity: "FAIL",
-            pass_message: $representation->path() . " All durations are <= 15 seconds",
-            fail_message: $representation->path() . " At least one segment duration > 15 seconds"
+            path: $representation->path() . "-$segmentIndex",
+            pass_message: "All durations valid",
+            fail_message: "At least one above threshold"
         );
 
         if (!$validDurations) {
-            $this->v141Reporter->test(
-                section: $this->section,
-                test: "Each subsegment shall have a duration of not more than 15 seconds",
+            $this->durationCase->pathAdd(
                 result: true,
                 severity: "INFO",
-                pass_message: $representation->path() . " Found durations: " . implode(',', $segmentDurations),
+                path: $representation->path() . "-$segmentIndex",
+                pass_message: "Found durations: " . implode(',', $segmentDurations),
                 fail_message: "",
             );
         }

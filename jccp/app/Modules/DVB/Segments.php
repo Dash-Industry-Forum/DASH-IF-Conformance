@@ -39,7 +39,7 @@ class Segments extends Module
             if ($segmentIndex == 0) {
                 $this->validateInitialization($representation, $segment);
             }
-            $this->validateSegment($representation, $segment);
+            $this->validateSegment($representation, $segment, $segmentIndex);
         }
     }
 
@@ -48,9 +48,9 @@ class Segments extends Module
         new Codecs()->validateCodecs($representation, $segment);
     }
 
-    private function validateSegment(Representation $representation, Segment $segment): void
+    private function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
-        new BoxCount()->validateBoxCount($representation, $segment);
-        new Durations()->validateDurations($representation, $segment);
+        new BoxCount()->validateBoxCount($representation, $segment, $segmentIndex);
+        new Durations()->validateDurations($representation, $segment, $segmentIndex);
     }
 }

@@ -7,6 +7,7 @@ use App\Services\Manifest\Representation;
 use App\Services\Segment;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
+use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Interfaces\Module;
@@ -18,7 +19,8 @@ class BoxCount
     //Private subreporters
     private SubReporter $v141Reporter;
 
-    private string $section = 'Section 4.3';
+    private TestCase $trafCase;
+    private TestCase $sidxCase;
 
     public function __construct()
     {
@@ -29,16 +31,28 @@ class BoxCount
             "v1.4.1",
             []
         ));
+
+        $this->trafCase = $this->v141Reporter->add(
+            section: 'Section 4.3',
+            test: "The 'moof' box shall contain only one 'traf' box",
+            skipReason: ''
+        );
+        $this->sidxCase = $this->v141Reporter->add(
+            section: 'Section 4.3',
+            test: "The segment shall contain only one 'sidx' box",
+            skipReason: 'Stream does not match on-demand profile in section 4.2.6'
+        );
     }
 
     //Public validation functions
-    public function validateBoxCount(Representation $representation, Segment $segment): void
+    public function validateBoxCount(Representation $representation, Segment $segment, int $segmentIndex): void
     {
 
         $boxTree = $segment->getBoxNameTree();
 
         $moofBoxes = $boxTree->filterChildrenRecursive('moof');
         $validTraf = true;
+        $trafCount = 0;
         foreach ($moofBoxes as $moofBox) {
             $trafBoxes = $moofBox->filterChildrenRecursive('traf');
             if (count($trafBoxes) != 1) {
@@ -46,25 +60,23 @@ class BoxCount
                 break;
             }
         }
-        $this->v141Reporter->test(
-            section: $this->section,
-            test: "The 'moof' box shall contain only one 'traf' box",
+        $this->trafCase->pathAdd(
             result: $validTraf,
             severity: "FAIL",
-            pass_message: $representation->path() . " Single 'traf' box in each 'moof'",
-            fail_message: $representation->path() . " Multiple of no 'traf' boxes in at least one 'moof'"
+            path: $representation->path() . "-$segmentIndex",
+            pass_message: "All 'moof' box(es) valid",
+            fail_message: "At least one 'moof' box invalid",
         );
 
         $isOnDemand = $representation->hasProfile("urn:dvb:dash:profile:dvb-dash:isoff-ext-on-demand:2014");
         if ($isOnDemand) {
             $sidxBoxes = $boxTree->filterChildrenRecursive('sidx');
-            $this->v141Reporter->test(
-                section: $this->section,
-                test: "[.. conforming to clause 4.2.6] The segment shall contain ony one single 'sidx' box",
+            $this->sidxCase->pathAdd(
                 result: count($sidxBoxes) == 1,
                 severity: "FAIL",
-                pass_message: $representation->path() . " Single 'sidx' in segment",
-                fail_message: $representation->path() . " " . count($sidxBoxes) . " 'sidx' boxes in segment"
+                path: $representation->path() . "-$segmentIndex",
+                pass_message: "1 'sidx' found",
+                fail_message: count($sidxBoxes) . " 'sidx' boxes found"
             );
         }
     }
