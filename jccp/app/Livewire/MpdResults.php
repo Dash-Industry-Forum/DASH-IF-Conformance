@@ -6,6 +6,7 @@ use Livewire\Component;
 use Illuminate\View\View;
 use App\Services\SpecManager;
 use App\Services\ModuleReporter;
+use App\Services\SegmentManager;
 
 class MpdResults extends Component
 {
@@ -22,6 +23,11 @@ class MpdResults extends Component
         $specManager->enable('DVB Segments Module');
         //$specManager->enable('Wave HLS Interop Segments Module');
         $specManager->validate();
+        if ($this->section == "Segments"){
+        $segmentManager = new SegmentManager();
+        $this->segmentDebug = $segmentManager->getSegments(0, 0, 0);
+        $specManager->validateSegments();
+        }
 
         $this->results = app(ModuleReporter::class)->serialize(true);
         if ($this->selectedSpec == '') {
