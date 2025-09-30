@@ -1,7 +1,6 @@
 <div class="container">
+  <livewire:spec-manager />
   @session('mpd')
-  <h4>SpecManager state</h4>
-  <pre>{{ $this->specManagerState() }}</pre>
 
   <div class="bg-body-secondary" style="padding: 10px">
       <div class="accordion accordion-flush" id="resultsAccordion">

@@ -19,14 +19,13 @@ class MpdResults extends Component
         $this->section = $section;
 
         $specManager = app(SpecManager::class);
-        $specManager->enable('HbbTV MPD Module');
-        $specManager->enable('DVB Segments Module');
-        //$specManager->enable('Wave HLS Interop Segments Module');
-        $specManager->validate();
+        if ($this->section == "MPD"){
+            $specManager->validate();
+        }
         if ($this->section == "Segments"){
-        $segmentManager = new SegmentManager();
-        $this->segmentDebug = $segmentManager->getSegments(0, 0, 0);
-        $specManager->validateSegments();
+            $segmentManager = new SegmentManager();
+            $this->segmentDebug = $segmentManager->getSegments(0, 0, 0);
+            $specManager->validateSegments();
         }
 
         $this->results = app(ModuleReporter::class)->serialize(true);

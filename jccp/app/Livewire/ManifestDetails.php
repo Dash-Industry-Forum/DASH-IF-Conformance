@@ -5,12 +5,6 @@ namespace App\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
-use App\Services\MPDCache;
-use App\Services\SpecManager;
-use App\Services\Downloader;
-use App\Services\ModuleReporter;
-use App\Modules\DashIOP;
-use App\Modules\DVB\MPD as DVBMpd;
 //
 use App\Services\Segment;
 
@@ -19,20 +13,12 @@ class ManifestDetails extends Component
     private array $sections = ['MPD', 'Segments'];
 
     /**
-     * @var array<Segment> $segmentDebug;
+     * @var array<Segment> $egmentDebug;
      **/
     private array $segmentDebug;
 
     public function __construct()
     {
-
-        $specManager = app(SpecManager::class);
-        $specManager->enable('HbbTV MPD Module');
-        $specManager->enable('DVB Segments Module');
-        //$specManager->enable('Wave HLS Interop Segments Module');
-        $specManager->validate();
-
-
     }
 
     /**
@@ -55,10 +41,6 @@ class ManifestDetails extends Component
 
 
 
-    public function specManagerState(): string
-    {
-        return app(SpecManager::class)->stateJSON();
-    }
 
 
 

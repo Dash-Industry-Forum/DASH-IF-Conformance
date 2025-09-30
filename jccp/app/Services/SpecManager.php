@@ -114,6 +114,13 @@ class SpecManager
         }
     }
 
+    /**
+     * @return array<string>
+     **/
+    public function specNames(): array {
+        return [];
+    }
+
     public function stateJSON(): string
     {
         return \json_encode($this->moduleStates, JSON_PRETTY_PRINT);
