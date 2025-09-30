@@ -5,20 +5,20 @@ namespace App\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+
 //
-use App\Services\Segment;
 
 class ManifestDetails extends Component
 {
-    private array $sections = ['MPD', 'Segments'];
-
     /**
-     * @var array<Segment> $egmentDebug;
+     * @var array<string> $sections;
      **/
-    private array $segmentDebug;
+    public array $sections;
+
 
     public function __construct()
     {
+        $this->sections = ['MPD', 'Segments'];
     }
 
     /**
@@ -29,25 +29,8 @@ class ManifestDetails extends Component
         'select-mpd' => '$refresh'
     ];
 
-    public function selectSpec(string $spec): void
-    {
-        $this->selectedSpec = $spec;
-    }
-
     public function render(): View
     {
         return view('livewire.manifest-details');
     }
-
-
-
-
-
-
-    public function getFeatures(): mixed
-    {
-        return \json_encode($this->segmentDebug, JSON_PRETTY_PRINT);
-    }
-
-
 }

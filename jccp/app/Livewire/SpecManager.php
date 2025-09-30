@@ -2,11 +2,13 @@
 
 namespace App\Livewire;
 
+use Illuminate\View\View;
+//
 use Livewire\Component;
 
 class SpecManager extends Component
 {
-    public function render()
+    public function render(): View
     {
         return view('livewire.spec-manager');
     }

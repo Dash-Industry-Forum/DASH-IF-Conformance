@@ -117,7 +117,8 @@ class SpecManager
     /**
      * @return array<string>
      **/
-    public function specNames(): array {
+    public function specNames(): array
+    {
         return [];
     }
 

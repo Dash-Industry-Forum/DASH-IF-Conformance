@@ -7,6 +7,7 @@ use Illuminate\View\View;
 use App\Services\SpecManager;
 use App\Services\ModuleReporter;
 use App\Services\SegmentManager;
+use App\Services\Segment;
 
 class MpdResults extends Component
 {
@@ -14,15 +15,20 @@ class MpdResults extends Component
     private string $selectedSpec = '';
     public string $section;
 
-    public function mount(string $section)
+    /**
+     * @var array<Segment> $segmentDebug;
+     **/
+    private array $segmentDebug;
+
+    public function mount(string $section): void
     {
         $this->section = $section;
 
         $specManager = app(SpecManager::class);
-        if ($this->section == "MPD"){
+        if ($this->section == "MPD") {
             $specManager->validate();
         }
-        if ($this->section == "Segments"){
+        if ($this->section == "Segments") {
             $segmentManager = new SegmentManager();
             $this->segmentDebug = $segmentManager->getSegments(0, 0, 0);
             $specManager->validateSegments();
@@ -82,19 +88,18 @@ class MpdResults extends Component
     public function getSpecResult(string $spec): string
     {
         $specResults = $this->resultsForSpec($spec);
-        if (!$specResults){
+        if (!$specResults) {
             return "";
         }
         $res = "✓";
         foreach ($specResults as $section => $sectionResults) {
             foreach ($sectionResults['checks'] as $check => $checkResults) {
-                if ($checkResults['state'] == "FAIL"){
+                if ($checkResults['state'] == "FAIL") {
                     return "✗";
                 }
-                if ($checkResults['state'] == "WARN"){
+                if ($checkResults['state'] == "WARN") {
                     $res =  "!";
                 }
-
             }
         }
         return $res;
@@ -107,7 +112,7 @@ class MpdResults extends Component
     {
         $res = [];
         $specResults = $this->resultsForSpec($spec);
-        if (!$specResults){
+        if (!$specResults) {
             return $res;
         }
         foreach ($specResults as $section => $sectionResults) {
@@ -144,5 +149,10 @@ class MpdResults extends Component
         );
 
         return $res;
+    }
+
+    public function getSegmentDebug(): mixed
+    {
+        return \json_encode($this->segmentDebug, JSON_PRETTY_PRINT);
     }
 }
