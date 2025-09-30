@@ -69,7 +69,7 @@ class Segments extends Module
     {
         new SegmentEncryption()->validateSegmentEncryption($representation, $segment, $segmentIndex);
         $this->splicingValidator->validateSplicingPoints($representation, $segment, $segmentIndex);
-        new AddressableMediaObject()->validateAddressableMediaObject($representation, $segment);
+        new AddressableMediaObject()->validateAddressableMediaObject($representation, $segment, $segmentIndex);
         new KeyRotation()->validateKeyRotation($representation, $segment, $segmentIndex);
     }
 }
