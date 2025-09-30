@@ -7,6 +7,7 @@ use App\Services\Manifest\Period;
 use App\Services\Manifest\AdaptationSet;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
+use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
@@ -17,6 +18,11 @@ class VideoChecks
     //Private subreporters
     private SubReporter $v141reporter;
 
+    private TestCase $fontCase;
+    private TestCase $attributeCase;
+    private TestCase $scanTypeCase;
+    private TestCase $frameRateCase;
+
     public function __construct()
     {
         $reporter = app(ModuleReporter::class);
@@ -26,6 +32,28 @@ class VideoChecks
             "v1.4.1",
             ["document" => "ETSI TS 103 285"]
         ));
+
+        $this->fontCase = $this->v141reporter->add(
+            section: "Section 7.2.1.1",
+            test: "A fontdownload descriptor SHALL only be placed in AdaptationSets containing subtitles",
+            skipReason: "",
+        );
+        $this->attributeCase = $this->v141reporter->add(
+            section: 'Section 4.4',
+            test: 'Elements and attributes are expected to be present [..] to enable selection and switching.',
+            skipReason: "No video track found"
+        );
+        $this->scanTypeCase = $this->v141reporter->add(
+            section: "Section 4.4",
+            test: "@scanType SHALL be present [..] if interlaced pictures are used in any [..representation]",
+            skipReason: "No video track found"
+        );
+
+        $this->frameRateCase = $this->v141reporter->add(
+            section: "Section 11.2.2",
+            test: "The frame rates used should be integer multiples of eachother",
+            skipReason: "No video track, or a single video track found"
+        );
     }
 
     //Public validation functions
@@ -49,6 +77,7 @@ class VideoChecks
     //Private helper functions
     private function validateFontProperties(AdaptationSet $adaptationSet): void
     {
+        //TODO Move font checks to validateSubtitles() only!
         $hasDownloadableFont = false;
         foreach ($adaptationSet->getDOMElements('SupplementalProperty') as $propertyElement) {
             if ($this->isFontProperty($propertyElement)) {
@@ -60,13 +89,12 @@ class VideoChecks
                 $hasDownloadableFont = true;
             }
         }
-        $this->v141reporter->test(
-            section: "Section 7.2.1.1",
-            test: "A fontdownload descriptor SHALL only be placed in AdaptationSets containing subtitles",
+        $this->fontCase->pathAdd(
             result: !$hasDownloadableFont,
             severity: "FAIL",
-            pass_message: "No downloadable fonts found for AdaptationSet " . $adaptationSet->path(),
-            fail_message: "At least one downloadable font found for AdaptationSet " . $adaptationSet->path(),
+            path: $adaptationSet->path(),
+            pass_message: "No downloadable fonts found",
+            fail_message: "At least one downloadable font found",
         );
     }
 
@@ -78,64 +106,55 @@ class VideoChecks
 
     private function validateAttributePresence(AdaptationSet $adaptationSet): void
     {
-        $section = 'Section 4.4';
-        $test = 'Elements and attributes are expected to be present for certain Adaptation Sets and Representations ' .
-                'to enable suitable initial selection and switching.';
-        $resultMessage = "in AdaptationSet or all Representations for AdaptationSet " . $adaptationSet->path();
+        $resultMessage = "present, or present in all children";
 
         /** WIDTH **/
-        $this->v141reporter->test(
-            section: $section,
-            test: $test,
+        $this->attributeCase->pathAdd(
             result: $adaptationSet->getAttribute('maxWidth') != '' ||
                     $adaptationSet->getAttribute('width') != '',
             severity: "WARN",
-            pass_message: "Either @maxWidth or @width found for AdaptationSet " . $adaptationSet->path(),
-            fail_message: "Neither @maxWidth nor @width found for AdaptationSet " . $adaptationSet->path(),
+            path: $adaptationSet->path(),
+            pass_message: "Either @maxWidth or @width found",
+            fail_message: "Neither @maxWidth nor @width found",
         );
 
-        $this->v141reporter->test(
-            section: $section,
-            test: $test,
+        $this->attributeCase->pathAdd(
+            path: $adaptationSet->path(),
             result: $this->attributeInAdaptationOrAllRepresentations('width', $adaptationSet),
             severity: "FAIL",
             pass_message: "@width $resultMessage",
-            fail_message: "Missing at least one @width $resultMessage",
+            fail_message: "Missing at least one @width",
         );
 
         /** HEIGHT **/
-        $this->v141reporter->test(
-            section: $section,
-            test: $test,
+        $this->attributeCase->pathAdd(
+            path: $adaptationSet->path(),
             result: $adaptationSet->getAttribute('maxHeight') != '' ||
                     $adaptationSet->getAttribute('height') != '',
             severity: "WARN",
-            pass_message: "Either @maxHeight or @height found for AdaptationSet " . $adaptationSet->path(),
-            fail_message: "Neither @maxHeight nor @height found for AdaptationSet " . $adaptationSet->path(),
+            pass_message: "Either @maxHeight or @height found",
+            fail_message: "Neither @maxHeight nor @height found"
         );
 
-        $this->v141reporter->test(
-            section: $section,
-            test: $test,
+        $this->attributeCase->pathAdd(
+            path: $adaptationSet->path(),
             result: $this->attributeInAdaptationOrAllRepresentations('height', $adaptationSet),
             severity: "FAIL",
             pass_message: "@height $resultMessage",
-            fail_message: "Missing at least one @height $resultMessage",
+            fail_message: "Missing at least one @height",
         );
 
         /** FRAME RATE **/
-        $this->v141reporter->test(
-            section: $section,
-            test: $test,
+        $this->attributeCase->pathAdd(
+            path: $adaptationSet->path(),
             result: $adaptationSet->getAttribute('maxFrameRate') != '' ||
                     $adaptationSet->getAttribute('frameRate') != '',
             severity: "WARN",
-            pass_message: "Either @maxFrameRate or @frameRate found for AdaptationSet " . $adaptationSet->path(),
-            fail_message: "Neither @maxFrameRate nor @frameRate found for AdaptationSet " . $adaptationSet->path(),
+            pass_message: "Either @maxFrameRate or @frameRate found",
+            fail_message: "Neither @maxFrameRate nor @frameRate found",
         );
-        $this->v141reporter->test(
-            section: $section,
-            test: $test,
+        $this->attributeCase->pathAdd(
+            path: $adaptationSet->path(),
             result: $this->attributeInAdaptationOrAllRepresentations('frameRate', $adaptationSet),
             severity: "FAIL",
             pass_message: "@frameRate $resultMessage",
@@ -143,13 +162,12 @@ class VideoChecks
         );
 
         /** PICTURE ASPECT RATIO **/
-        $this->v141reporter->test(
-            section: $section,
-            test: $test,
+        $this->attributeCase->pathAdd(
+            path: $adaptationSet->path(),
             result: $adaptationSet->getAttribute('par') != '',
             severity: "WARN",
-            pass_message: "@par found for AdaptationSet " . $adaptationSet->path(),
-            fail_message: "@par not found for AdaptationSet " . $adaptationSet->path(),
+            pass_message: "@par found",
+            fail_message: "@par not found",
         );
 
 
@@ -186,13 +204,12 @@ class VideoChecks
             }
         }
 
-        $this->v141reporter->test(
-            section: "Section 4.4",
-            test: "@scanType SHALL be present in all Representations, if interlaced pictures are used in any of them",
+        $this->scanTypeCase->pathAdd(
+            path: $adaptationSet->path(),
             result: !$hasInterlaced || $allHaveScanType,
             severity: "FAIL",
-            pass_message: "Scan types valid for AdaptationSet " . $adaptationSet->path(),
-            fail_message: "At least one missing scan type for AdaptationSet " . $adaptationSet->path(),
+            pass_message: "Scan type signalling valid",
+            fail_message: "At least one missing scan type",
         );
     }
 
@@ -221,15 +238,12 @@ class VideoChecks
                     $compareFrameRate % $baseFrameRate
                 );
 
-                $this->v141reporter->test(
-                    section: "Section 11.2.2",
-                    test: "The frame rates used should be integer multiples of eachother",
+                $this->frameRateCase->pathAdd(
+                    path: $adaptationSet->path(),
                     result: $remainder == 0,
                     severity: "WARN",
-                    pass_message: "Exact multiples at indexes $baseIndex and $compareIndex are for AdaptationSet " .
-                          $adaptationSet->path(),
-                    fail_message: "No exact multiples at indexes $baseIndex and $compareIndex are for AdaptationSet " .
-                          $adaptationSet->path(),
+                    pass_message: "Indices $baseIndex and $compareIndex are valid",
+                    fail_message: "Indices $baseIndex and $compareIndex are not valid",
                 );
             }
         }

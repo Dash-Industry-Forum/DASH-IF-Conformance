@@ -6,6 +6,7 @@ use App\Services\MPDCache;
 use App\Services\Manifest\Period;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
+use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
@@ -14,6 +15,10 @@ use Illuminate\Support\Facades\Cache;
 class TLSBitrate
 {
     private SubReporter $legacyreporter;
+
+    private TestCase $sdCase;
+    private TestCase $uhdCase;
+    private TestCase $hfrCase;
 
     public function __construct()
     {
@@ -24,6 +29,24 @@ class TLSBitrate
             "DVB",
             []
         ));
+
+        $this->sdCase = $this->legacyreporter->add(
+            section: "Bitrate information",
+            test: "Terminal which does not support UHD video (max 12 Mbit/s)",
+            skipReason: "No TLS stream"
+        );
+
+        $this->uhdCase = $this->legacyreporter->add(
+            section: "Bitrate information",
+            test: "Terminal which does not support UHD, but not UHD HFR video (max 39 Mbit/s)",
+            skipReason: "No TLS stream"
+        );
+
+        $this->hfrCase = $this->legacyreporter->add(
+            section: "Bitrate information",
+            test: "Terminal which does supports UHD HFR video (max 51 Mbit/s)",
+            skipReason: "No TLS stream"
+        );
     }
 
     public function validateTLSBitrate(): void
@@ -53,7 +76,7 @@ class TLSBitrate
 
         foreach ($period->allAdaptationSets() as $adaptationSet) {
             foreach ($adaptationSet->allRepresentations() as $representation) {
-                $representationId = $representation->getAttribute('id');
+                $representationId = $representation->path();
                 $representationBandwith = $representation->getAttribute('bandwidth');
                 $context = '';
                 switch ($representation->getTransientAttribute('mimeType')) {
@@ -75,7 +98,7 @@ class TLSBitrate
 
         foreach (['video', 'audio','subtitle'] as $context) {
             if (count($res[$context]) == 0) {
-                $res[$context]["No $context"] = 0;
+                $res[$context]["None"] = 0;
             }
         }
 
@@ -100,40 +123,38 @@ class TLSBitrate
                     ]);
                     $totalBandWidthMessage = "Total: " . number_format($totalBandwidth / 1000000, 2) . "Mbit/s";
 
-                    $combinationMessage = implode(", ", [
-                        "V:" . $vRepId,
-                        "A:" . $aRepId,
-                        "S:" . $sRepId
+                    $combinationMessage = implode(" + ", [
+                        $vRepId,
+                        $aRepId,
+                        $sRepId
                     ]);
 
-                    $msgPrefix = "Period " . $period->path() . " ($combinationMessage)";
-                    $inBoundsMessage = "$msgPrefix within bounds: $totalBandWidthMessage: $bandWidthMessage";
-                    $exceedsMessage = "$msgPrefix exceeds bounds: $totalBandWidthMessage: $bandWidthMessage";
+                    $msgPrefix = "[$combinationMessage]";
+                    $inBoundsMessage = "within bounds";
+                    $exceedsMessage = "exceeds bounds";
 
 
-                    $this->legacyreporter->test(
-                        "Unknown",
-                        "Bitrate checks for terminal that does support UHD HFR video (max 51 Mbit/s)",
-                        $totalBandwidth <= 51000000,
-                        "WARN",
-                        $inBoundsMessage,
-                        $exceedsMessage
+                    $this->hfrCase->pathAdd(
+                        path: $msgPrefix,
+                        result: $totalBandwidth <= 51000000,
+                        severity: "WARN",
+                        pass_message: $inBoundsMessage,
+                        fail_message: $exceedsMessage
                     );
-                    $this->legacyreporter->test(
-                        "Unknown",
-                        "Bitrate checks for terminal that does support UHD video, but not HFR video (max 39 Mbit/s)",
-                        $totalBandwidth <= 39000000,
-                        "WARN",
-                        $inBoundsMessage,
-                        $exceedsMessage
+                    $this->uhdCase->pathAdd(
+                        path: $msgPrefix,
+                        result: $totalBandwidth <= 39000000,
+                        severity: "WARN",
+                        pass_message: $inBoundsMessage,
+                        fail_message: $exceedsMessage
                     );
-                    $this->legacyreporter->test(
-                        "Unknown",
-                        "Bitrate checks for terminal that does not support UHD video (max 12 Mbit/s)",
-                        $totalBandwidth <= 12000000,
-                        "WARN",
-                        $inBoundsMessage,
-                        $exceedsMessage
+
+                    $this->sdCase->pathAdd(
+                        path: $msgPrefix,
+                        result: $totalBandwidth <= 12000000,
+                        severity: "WARN",
+                        pass_message: $inBoundsMessage,
+                        fail_message: $exceedsMessage
                     );
                 }
             }
