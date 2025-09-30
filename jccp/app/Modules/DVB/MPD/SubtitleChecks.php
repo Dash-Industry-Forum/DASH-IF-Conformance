@@ -7,6 +7,7 @@ use App\Services\Manifest\Period;
 use App\Services\Manifest\AdaptationSet;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
+use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
@@ -17,6 +18,8 @@ class SubtitleChecks
     //Private subreporters
     private SubReporter $v141reporter;
 
+    private TestCase $codecCase;
+
     public function __construct()
     {
         $reporter = app(ModuleReporter::class);
@@ -26,6 +29,12 @@ class SubtitleChecks
             "v1.4.1",
             ["document" => "ETSI TS 103 285"]
         ));
+
+        $this->codecCase = $this->v141reporter->add(
+            section: "Section 7.1.1",
+            test: "The @codecs attribute shall begin with 'stpp' to indicate the use of XML subtitles",
+            skipReason: "No text track found"
+        );
     }
 
     //Public validation functions
@@ -43,13 +52,12 @@ class SubtitleChecks
 
                 $codecs = $adaptationSet->getAttribute('codecs');
 
-                $this->v141reporter->test(
-                    section: "Section 7.1.1",
-                    test: "The @codecs attribute shall begin with 'stpp' to indicate the use of XML subtitles",
+                $this->codecCase->pathAdd(
+                    path: $adaptationSet->path(),
                     result: str_starts_with($codecs, 'stpp'),
                     severity: "FAIL",
-                    pass_message: "Valid @codecs '$codecs' for AdaptationSet " . $adaptationSet->path(),
-                    fail_message: "Invalid @codecs '$codecs' for AdaptationSet " . $adaptationSet->path(),
+                    pass_message: "Valid @codecs '$codecs'",
+                    fail_message: "Invalid @codecs '$codecs'",
                 );
             }
         }
