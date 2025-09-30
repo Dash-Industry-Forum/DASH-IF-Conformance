@@ -8,6 +8,7 @@ use App\Services\Segment;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
+use App\Services\Reporter\TestCase;
 use App\Services\Validators\Boxes;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
@@ -20,12 +21,13 @@ class EncryptionScheme
 
     private string $section = '4.3.2 - Encrypted Media Presentations';
 
-    private string $schemeExplanation = "The common encryption `cbcs` scheme SHALL be used for encryption";
-    private string $ivExplanation = "Constant 16-byte Initialization Vectors SHALL be used";
-    private string $alternativeSchemeExplanation = "For every `cbcs` encrypted component, [.. an alternative using " .
-        "the 'cenc' scheme MAY be produced]";
-    private string $alternativeIvExplanation = "Constant 8-byte Initialization Vectors SHALL be used for 'cenc' " .
-        "encrypted material";
+    private TestCase $cbcsCase;
+    private TestCase $cbcsIVCase;
+    private TestCase $cencCase;
+    private TestCase $cencIVCase;
+    private TestCase $saioCase;
+    private TestCase $videoPatternCase;
+    private TestCase $audioPatternCase;
 
 
     public function __construct()
@@ -37,6 +39,42 @@ class EncryptionScheme
             "Final",
             []
         ));
+
+        $this->cbcsCase = $this->waveReporter->add(
+            section: $this->section,
+            test: "The common encryption `cbcs` scheme SHALL be used for encryption",
+            skipReason: "No 'cbcs encrypted tracks found"
+        );
+        $this->cbcsIVCase = $this->waveReporter->add(
+            section: $this->section,
+            test: "Constant 16-byte Initialization Vectors SHALL be used",
+            skipReason: "No 'cbcs encrypted tracks found"
+        );
+        $this->cencCase = $this->waveReporter->add(
+            section: $this->section,
+            test: "An alternative using the `cenc` scheme MAY be produced",
+            skipReason: "No 'cenc' encrypted tracks found"
+        );
+        $this->cencIVCase = $this->waveReporter->add(
+            section: $this->section,
+            test: "Constant 8-byte Initialization Vectors SHALL be used for 'cenc' encrypted material",
+            skipReason: "No 'cenc' encrypted tracks found"
+        );
+        $this->saioCase = $this->waveReporter->add(
+            section: $this->section,
+            test: "Sample auxiliary information, if present, SHALL be addressed by [.. a 'saio' box]",
+            skipReason: "The stream is not encrypted"
+        );
+        $this->videoPatternCase = $this->waveReporter->add(
+            section: $this->section,
+            test: "Video components SHALL be encrypted with a 1:9 pattern",
+            skipReason: "No encrypted video streams found"
+        );
+        $this->audioPatternCase = $this->waveReporter->add(
+            section: $this->section,
+            test: "Audio components SHALL be encrypted with a 10:0 pattern",
+            skipReason: "No encrypted audio streams found"
+        );
     }
 
     //Public validation functions
@@ -44,28 +82,7 @@ class EncryptionScheme
     {
         $protectionScheme = $segment->getProtectionScheme();
 
-        if (!$protectionScheme) {
-            $this->waveReporter->test(
-                section: $this->section,
-                test: $this->schemeExplanation,
-                result: true,
-                severity: "INFO",
-                pass_message: $representation->path() . " - No available protectionScheme, we are " .
-                              "going to assume it is not encrypted",
-                fail_message: "",
-            );
-            return;
-        }
-
-        if (!$protectionScheme->encryption->isEncrypted) {
-            $this->waveReporter->test(
-                section: $this->section,
-                test: $this->schemeExplanation,
-                result: true,
-                severity: "INFO",
-                pass_message: $representation->path() . " - Explicitly marked as not encrypted",
-                fail_message: "",
-            );
+        if (!$protectionScheme || !$protectionScheme->encryption->isEncrypted) {
             return;
         }
 
@@ -83,14 +100,13 @@ class EncryptionScheme
     ): void {
         $auxiliaryInformation = $segment->getSampleAuxiliaryInformation();
 
-            $this->waveReporter->test(
-                section: $this->section,
-                test: "Sample auxiliary information, if present, SHALL be addressed by [.. a 'saio' box]",
-                result: $auxiliaryInformation != null,
-                severity: "INFO",
-                pass_message: $representation->path() . " - 'saio' box found",
-                fail_message: $representation->path() . " - 'saio' box not found",
-            );
+        $this->saioCase->pathAdd(
+            result: $auxiliaryInformation != null,
+            severity: "INFO",
+            path: $representation->path() . "-init",
+            pass_message: "'saio' box found",
+            fail_message: "'saio' box not found",
+        );
     }
 
 
@@ -105,24 +121,22 @@ class EncryptionScheme
         $handlerType = $segment->getHandlerType();
 
         if ($handlerType == "vide") {
-            $this->waveReporter->test(
-                section: $this->section,
-                test: "[..] video components SHALL be encrypted with a 1:9 pattern",
+            $this->videoPatternCase->pathAdd(
                 result: $encryptionInfo->cryptByteBlock > 0 &&
                         $encryptionInfo->cryptByteBlock * 9 == $encryptionInfo->skipByteBlock,
                 severity: "FAIL",
-                pass_message: $representation->path() . " - Correct pattern detected",
-                fail_message: $representation->path() . " - Incorrect pattern detected: " .
+                path: $representation->path() . "-init",
+                pass_message: "Correct pattern detected",
+                fail_message: "Incorrect pattern detected: " .
                               $encryptionInfo->cryptByteBlock . ":" . $encryptionInfo->skipByteBlock
             );
         }
         if ($handlerType == "soun") {
-            $this->waveReporter->test(
-                section: $this->section,
-                test: "[..] audio components SHALL be encrypted with a 10:0 pattern",
+            $this->audioPatternCase->pathAdd(
                 result: $encryptionInfo->cryptByteBlock > 0 &&
                         $encryptionInfo->skipByteBlock == 0,
                 severity: "FAIL",
+                path: $representation->path() . "-init",
                 pass_message: $representation->path() . " - Correct pattern detected",
                 fail_message: $representation->path() . " - Incorrect pattern detected: " .
                               $encryptionInfo->cryptByteBlock . ":" . $encryptionInfo->skipByteBlock
@@ -141,13 +155,12 @@ class EncryptionScheme
         } elseif ($protectionScheme->scheme->schemeType == 'cenc') {
             $this->validateCENC($representation, $segment, $protectionScheme);
         } else {
-            $this->waveReporter->test(
-                section: $this->section,
-                test: $this->schemeExplanation,
+            $this->cbcsCase->pathAdd(
                 result: false,
                 severity: "FAIL",
+                path: $representation->path() . "-init",
                 pass_message: "",
-                fail_message: $representation->path() . " - Invalid '" . $protectionScheme->scheme->schemeType . "' " .
+                fail_message: "'" . $protectionScheme->scheme->schemeType . "' " .
                               "encryption scheme found",
             );
         }
@@ -158,20 +171,18 @@ class EncryptionScheme
         Segment $segment,
         Boxes\SINFBox $protectionScheme
     ): void {
-        $this->waveReporter->test(
-            section: $this->section,
-            test: $this->schemeExplanation,
+        $this->cbcsCase->pathAdd(
             result: true,
             severity: "PASS",
-            pass_message: $representation->path() . " - 'cbcs' encryption scheme found",
+            path: $representation->path() . "-init",
+            pass_message: "'cbcs' encryption scheme found",
             fail_message: "",
         );
 
-        $this->waveReporter->test(
-            section: $this->section,
-            test: $this->ivExplanation,
+        $this->cbcsIVCase->pathAdd(
             result: $protectionScheme->encryption->ivSize == 16 && $protectionScheme->encryption->iv,
             severity: "FAIL",
+            path: $representation->path() . "-init",
             pass_message: $representation->path() . " - Constant 16-byte IV found",
             fail_message: $representation->path() . " - Constant 16-byte IV not found",
         );
@@ -183,20 +194,18 @@ class EncryptionScheme
         Boxes\SINFBox $protectionScheme
     ): void {
         //TODO: Implement check that ensures 'cbcs' encrypted variant exists
-        $this->waveReporter->test(
-            section: $this->section,
-            test: $this->alternativeSchemeExplanation,
+        $this->cencCase->pathAdd(
             result: true,
             severity: "PASS",
-            pass_message: $representation->path() . " - 'cenc' encryption scheme found",
+            path: $representation->path() . "-init",
+            pass_message: "'cenc' encryption scheme found",
             fail_message: "",
         );
 
-        $this->waveReporter->test(
-            section: $this->section,
-            test: $this->alternativeIvExplanation,
+        $this->cencIVCase->pathAdd(
             result: $protectionScheme->encryption->ivSize == 8 && $protectionScheme->encryption->iv,
             severity: "FAIL",
+            path: $representation->path() . "-init",
             pass_message: $representation->path() . " - Constant 8-byte IV found",
             fail_message: $representation->path() . " - Constant 8-byte IV not found",
         );

@@ -66,7 +66,7 @@ class SegmentEncryption
 
         $keyCount = 0;
 
-        foreach ($pssh as $psshBox){
+        foreach ($pssh as $psshBox) {
             $keyCount += count($psshBox->keys);
         }
 

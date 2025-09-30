@@ -8,6 +8,7 @@ use App\Services\Segment;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
+use App\Services\Reporter\TestCase;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
@@ -18,10 +19,9 @@ class KeyRotation
     //Private subreporters
     private SubReporter $waveReporter;
 
-    private string $section = '4.6.2 - Rotation of Encryption Keys';
 
-    private string $baseExplanation = "CMAF Segments [.. with differing encryption keys] SHALL provide";
-
+    private TestCase $sgbpCase;
+    private TestCase $psshCase;
 
     public function __construct()
     {
@@ -32,10 +32,22 @@ class KeyRotation
             "Final",
             []
         ));
+
+        $this->sgbpCase = $this->waveReporter->add(
+            section: '4.6.2 - Rotation of Encryption Keys',
+            test: "CMAF Segments [.. with differing encryption keys] SHALL provide an 'sbgp' box [..]",
+            skipReason: "No 'seig' boxes found"
+        );
+
+        $this->psshCase = $this->waveReporter->add(
+            section: '4.6.2 - Rotation of Encryption Keys',
+            test: "CMAF Segments [.. with differing encryption keys] SHALL provide a 'pssh' box [..]",
+            skipReason: "No 'seig' boxes found"
+        );
     }
 
     //Public validation functions
-    public function validateKeyRotation(Representation $representation, Segment $segment): void
+    public function validateKeyRotation(Representation $representation, Segment $segment, int $segmentIndex): void
     {
 
         $seigBoxes = $segment->getSeigDescriptionGroups();
@@ -45,13 +57,12 @@ class KeyRotation
             return;
         }
 
-        $this->waveReporter->test(
-            section: $this->section,
-            test: $this->baseExplanation . " an 'sbgp' box [..]",
+        $this->sgbpCase->pathAdd(
             result: count($seigBoxes) == count($sampleGroups),
             severity: "FAIL",
-            pass_message: $representation->path() . " - Equal amount of 'seig' and 'sbgp' boxes",
-            fail_message: $representation->path() . " - Not equal amount of 'seig' and 'sbgp' boxes",
+            path: $representation->path() . "-$segmentIndex",
+            pass_message: "Equal amount of 'seig' and 'sbgp' boxes",
+            fail_message: "Not equal amount of 'seig' and 'sbgp' boxes",
         );
 
         $psshBoxes = $segment->getPSSHBoxes();
@@ -78,13 +89,12 @@ class KeyRotation
 
 
 
-        $this->waveReporter->test(
-            section: $this->section,
-            test: $this->baseExplanation . " if present in the CMAF header: 'pssh' boxes [..]",
+        $this->psshCase->pathAdd(
             result: !$anyDuplicate || empty($missingReplacements),
             severity: "FAIL",
-            pass_message: $representation->path() . " - All 'pssh' either unique, or all replacements found",
-            fail_message: $representation->path() . " - Expected replacement 'pssh' boxes for " .
+            path: $representation->path() . "-$segmentIndex",
+            pass_message: "All 'pssh' either unique, or all replacements found",
+            fail_message: "Expected replacement 'pssh' boxes for " .
                           implode(',', $missingReplacements)
         );
     }
