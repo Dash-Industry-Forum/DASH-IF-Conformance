@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 
 //
 
@@ -18,8 +19,15 @@ class ManifestDetails extends Component
 
     public function __construct()
     {
+        $this->refresh();
+    }
+
+    #[On('mpd-selected')]
+    public function refresh(): void
+    {
         $this->sections = ['MPD', 'Segments'];
     }
+
 
     /**
      * This is a laravel-specific type, so we ignore it

@@ -19,11 +19,8 @@
     </head>
     <body>
       <livewire:navigation />
-        @persist('session-stats')
-          <livewire:session-stats />
-        @endpersist
-        <div>
+      <div>
         {{ $slot }}
-        </div>
+      </div>
     </body>
 </html>

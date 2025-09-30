@@ -1,5 +1,14 @@
 <div class="container">
-<input type="text" wire:model.live="mpd">
-<button wire:click="process">Process</button>
-
+  <div class="row">
+  <div class="input-group mb-3 col-12">
+     <span class="input-group-text">Manifest URL</span>
+     @session('mpd')
+     <input disabled type="text" class="form-control" wire:model.live="mpd">
+     <button class="btn btn-outline-danger" type="button" wire:click="clearSession">Clear</button>
+     @else
+     <input type="text" class="form-control" wire:model.live="mpd">
+     <button class="btn btn-outline-secondary" type="button" wire:click="process">Process</button>
+     @endsession
+  </div>
+  </div>
 </div>

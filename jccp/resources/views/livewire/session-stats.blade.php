@@ -7,5 +7,5 @@
       <div class="col">Session mpd</div>
       <div class="col">{{ session()->get('mpd') }}</div>
     </div>
-    <button wire:click="resetSession">Reset Session</button>
+    <button wire:click="clearSession">Reset Session</button>
 </div>

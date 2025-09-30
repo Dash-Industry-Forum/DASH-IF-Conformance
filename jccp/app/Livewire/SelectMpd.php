@@ -13,8 +13,15 @@ class SelectMpd extends Component
     public function process(): void
     {
         session()->put('mpd', $this->mpd);
-        $this->dispatch('select-mpd');
+        $this->dispatch('mpd-selected');
     }
+
+    public function clearSession(): mixed
+    {
+        session()->invalidate();
+        return redirect('/');
+    }
+
 
     public function render(): View
     {
