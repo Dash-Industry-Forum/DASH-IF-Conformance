@@ -21,6 +21,8 @@ class ManifestDetails extends Component
 
     private string $selectedSpec = '';
 
+    private array $sections = ['MPD', 'Segments'];
+
     /**
      * @var array<Segment> $segmentDebug;
      **/
