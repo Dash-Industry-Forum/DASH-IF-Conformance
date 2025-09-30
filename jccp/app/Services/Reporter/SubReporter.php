@@ -4,6 +4,7 @@ namespace App\Services\Reporter;
 
 use Illuminate\Support\Facades\Log;
 use App\Services\Reporter\TestResult;
+use App\Services\Reporter\TestCase;
 use App\Services\SpecManager;
 
 class SubReporter
@@ -12,6 +13,11 @@ class SubReporter
      * @var array<int, TestResult> $results
     **/
     public array $results = [];
+
+    /**
+     * @var array<TestCase> $cases
+    **/
+    public array $cases = [];
 
     public function __construct()
     {
@@ -35,6 +41,20 @@ class SubReporter
         );
     }
 
+    public function &add(
+        string $section,
+        string $test,
+        string $skipReason
+    ): TestCase {
+        $this->cases[] = new TestCase(
+            section: $section,
+            test: $test,
+            skipReason: $skipReason
+        );
+
+        return $this->cases[array_key_last($this->cases)];
+    }
+
     public function test(
         string $section,
         string $test,
@@ -43,15 +63,13 @@ class SubReporter
         string $pass_message,
         string $fail_message
     ): bool {
-        $this->results[] = new TestResult(
+        $tempCase = $this->add(
             section: $section,
             test: $test,
-            severity: ($result ? ($severity == "INFO" ? "INFO" : "PASS") : $severity),
-            message: ($result ? $pass_message : $fail_message),
+            skipReason: ''
         );
-        return $result;
+        return $tempCase->add($result, $severity, $pass_message, $fail_message);
     }
-
 
     /**
      * @return array<mixed>
@@ -60,45 +78,52 @@ class SubReporter
     {
         $res = array();
 
-        foreach ($this->results as $result) {
-            $section = $result->getSection();
+        foreach ($this->cases as $case) {
+            $section = $case->section;
             if (!array_key_exists($section, $res)) {
                 $res[$section]  = [
-                    'checks' => [],
-                    'state' => 'PASS'
+                'checks' => [],
+                'state' => 'SKIP'
                 ];
             }
 
-            $test = $result->getTest();
+            $test = $case->test;
             if (!array_key_exists($test, $res[$section]['checks'])) {
                 $res[$section]['checks'][$test]  = [
-                    'state' => 'PASS'
+                    'state' => 'SKIP',
+                    'messages' => [$case->skipReason]
                 ];
+            }
+            foreach ($case->results as $result) {
+                if ($res[$section]['checks'][$test]['state'] == "SKIP") {
+                    $res[$section]['checks'][$test]['state'] = "PASS";
+                    $res[$section]['checks'][$test]['messages'] = [];
+                }
+                if ($res[$section]['state'] == "SKIP") {
+                    $res[$section]['state'] = "PASS";
+                }
+
                 if ($verbose) {
-                    $res[$section]['checks'][$test]['messages'] = array();
+                    $res[$section]['checks'][$test]['messages'][] = $result->getMessage();
                 }
-            }
-
-
-            if ($verbose) {
-                $res[$section]['checks'][$test]['messages'][] = $result->getMessage();
-            }
-            if ($result->getSeverity() == "WARN") {
-                if ($res[$section]['checks'][$test]['state'] != "FAIL") {
-                    $res[$section]['checks'][$test]['state'] = "WARN";
+                if ($result->getSeverity() == "WARN") {
+                    if ($res[$section]['checks'][$test]['state'] != "FAIL") {
+                        $res[$section]['checks'][$test]['state'] = "WARN";
+                    }
+                    if ($res[$section]['state'] != "FAIL") {
+                        $res[$section]['state'] = "WARN";
+                    }
                 }
-                if ($res[$section]['state'] != "FAIL") {
-                    $res[$section]['state'] = "WARN";
+                if ($result->getSeverity() == "FAIL") {
+                    $res[$section]['checks'][$test]['state'] = "FAIL";
+                    $res[$section]['state'] = "FAIL";
                 }
-            }
-            if ($result->getSeverity() == "FAIL") {
-                $res[$section]['checks'][$test]['state'] = "FAIL";
-                $res[$section]['state'] = "FAIL";
-            }
-            if ($result->getSeverity() == "DEPENDENT") {
-                $res[$section]['checks'][$test]['state'] = "DEPENDENT";
+                if ($result->getSeverity() == "DEPENDENT") {
+                    $res[$section]['checks'][$test]['state'] = "DEPENDENT";
+                }
             }
         }
+
         ksort($res, SORT_NATURAL);
 
         return $res;

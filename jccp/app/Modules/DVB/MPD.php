@@ -9,6 +9,7 @@ use App\Services\MPDCache;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
+use App\Services\Reporter\TestCase;
 use App\Services\Manifest\Representation;
 use App\Interfaces\Module;
 use App\Services\Segment;
@@ -31,16 +32,18 @@ class MPD extends Module
 {
     private SubReporter $legacyreporter;
 
+    private TestCase $minimumUpdateCase;
+
     public function __construct()
     {
         parent::__construct();
         $this->name = "DVB MPD Module";
+
+        $this->registerChecks();
     }
 
-    public function validateMPD(): void
+    private function registerChecks(): void
     {
-        parent::validateMPD();
-
         $reporter = app(ModuleReporter::class);
         $this->legacyreporter = $reporter->context(new ReporterContext(
             "MPD",
@@ -49,14 +52,23 @@ class MPD extends Module
             []
         ));
 
+        $this->minimumUpdateCase = $this->legacyreporter->add(
+            section: "Unkown",
+            test: "MPD@minimumUpdatePeriod SHOULD have a value of 1 second or higher",
+            skipReason: ''
+        );
+    }
+
+    public function validateMPD(): void
+    {
+        parent::validateMPD();
+
+
         $mpdCache = app(MPDCache::class);
 
         $minimumUpdatePeriod = $mpdCache->getAttribute('minimumUpdatePeriod');
 
-
-        $this->legacyreporter->test(
-            section: "Unknown",
-            test: "MPD@minimumUpdatePeriod SHOULD have a value of 1 second or higher",
+        $this->minimumUpdateCase->add(
             result: ($minimumUpdatePeriod != '' && timeParsing($minimumUpdatePeriod) < 1),
             severity: "WARN",
             pass_message: "Check succeeded",
@@ -84,11 +96,14 @@ class MPD extends Module
         new BandwidthChecks()->validateBandwidth();
         new ContentProtectionChecks()->validateContentProtection();
 
+        $resolutionChecker = new Resolution();
+        $codecChecker = new Codecs();
+
         foreach ($mpdCache->allPeriods() as $period) {
             foreach ($period->allAdaptationSets() as $adaptationSet) {
                 foreach ($adaptationSet->allRepresentations() as $representation) {
-                    new Resolution()->validateResolution($representation);
-                    new Codecs()->validateCodecs($representation);
+                    $resolutionChecker->validateResolution($representation);
+                    $codecChecker->validateCodecs($representation);
                 }
             }
         }
