@@ -8,6 +8,7 @@ use App\Services\Segment;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
+use App\Services\Reporter\TestCase;
 use App\Services\Validators\Boxes;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
@@ -18,10 +19,14 @@ class TextComponentConstraints
     //Private subreporters
     private SubReporter $waveReporter;
 
-    private string $section = '4.1.2 - Basic On-Demand and Live Streaming';
-    private string $explanation = 'Text components SHALL be packaged in ISMC1, ISMC1.1 or WebVTT Tracks';
+    private TestCase $packageCase;
 
     public function __construct()
+    {
+        $this->registerChecks();
+    }
+
+    private function registerChecks(): void
     {
         $reporter = app(ModuleReporter::class);
         $this->waveReporter = &$reporter->context(new ReporterContext(
@@ -30,6 +35,12 @@ class TextComponentConstraints
             "Final",
             []
         ));
+
+        $this->packageCase = $this->waveReporter->add(
+            section: '4.1.2 - Basic On-Demand and Live Streaming',
+            test:'Text components SHALL be packaged in ISMC1, ISMC1.1 or WebVTT Tracks',
+            skipReason: 'No text components found'
+        );
     }
 
     //Public validation functions
@@ -57,13 +68,12 @@ class TextComponentConstraints
         Boxes\STPPBox $sampleDescription
     ): void {
         $ismcNamespace = str_contains($sampleDescription->namespace, 'http://www.w3.org/ns/ttml');
-        $this->waveReporter->test(
-            section: $this->section,
-            test: $this->explanation,
+        $this->packageCase->pathAdd(
             result: $ismcNamespace,
             severity: "FAIL",
-            pass_message: $representation->path() . " - Has ismc namespace",
-            fail_message: $representation->path() . " - Invalid namespace : " . $sampleDescription->namespace,
+            path: $representation->path() . "-init",
+            pass_message: "Has ismc namespace",
+            fail_message: "Invalid namespace: " . $sampleDescription->namespace,
         );
 
         $ismc1Location =  str_contains(
@@ -74,14 +84,12 @@ class TextComponentConstraints
             $sampleDescription->schemaLocation,
             'http://www.w3.org/ns/ttml/profile/ismc1.1/text'
         );
-        $this->waveReporter->test(
-            section: $this->section,
-            test: $this->explanation,
+        $this->packageCase->pathAdd(
             result: $ismc1Location || $ismc11Location,
             severity: "FAIL",
-            pass_message: $representation->path() . " - Has ISMC1 or ISMC1.1 Schema location",
-            fail_message: $representation->path() . " - Invalid schema location : " .
-                          $sampleDescription->schemaLocation,
+            path: $representation->path() . "-init",
+            pass_message: "Has ISMC1 or ISMC1.1 Schema location",
+            fail_message: "Invalid schema location : " . $sampleDescription->schemaLocation,
         );
 
         $mimeTypeTTML = str_contains($sampleDescription->auxiliaryMimeTypes, 'application/ttml+xml');
@@ -92,14 +100,12 @@ class TextComponentConstraints
         $isIm2t = $ismc11Location &&
               $hasCodecs &&
               str_contains($sampleDescription->auxiliaryMimeTypes, 'im2t');
-        $this->waveReporter->test(
-            section: $this->section,
-            test: $this->explanation,
+        $this->packageCase->pathAdd(
             result:  $mimeTypeTTML && ($isIm1t || $isIm2t),
             severity: "FAIL",
-            pass_message: $representation->path() . " - With allowed mimetype",
-            fail_message: $representation->path() . " - Invalid mimetype: " .
-                          $sampleDescription->auxiliaryMimeTypes,
+            path: $representation->path() . "-init",
+            pass_message: "With allowed mimetype",
+            fail_message: "Invalid mimetype: " . $sampleDescription->auxiliaryMimeTypes,
         );
     }
 
@@ -108,14 +114,12 @@ class TextComponentConstraints
         Segment $segment,
         Boxes\SampleDescription $sampleDescription
     ): void {
-        $this->waveReporter->test(
-            section: $this->section,
-            test: $this->explanation,
+        $this->packageCase->pathAdd(
             result:  $sampleDescription->codec == 'wvtt',
             severity: "FAIL",
-            pass_message: $representation->path() . " - WebVTT track detected",
-            fail_message: $representation->path() . " - Textt rack detected, but signalled as " .
-                          $sampleDescription->codec,
+            path: $representation->path() . "-init",
+            pass_message: "WebVTT track detected",
+            fail_message: "Text track detected, but signalled as " . $sampleDescription->codec,
         );
     }
 }

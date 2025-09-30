@@ -8,6 +8,7 @@ use App\Services\Segment;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
+use App\Services\Reporter\TestCase;
 use App\Services\Validators\Boxes;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
@@ -18,7 +19,8 @@ class SegmentEncryption
     //Private subreporters
     private SubReporter $waveReporter;
 
-    private string $section = '4.3.2 - Encrypted Media Presentations';
+    private TestCase $psshCase;
+    private TestCase $ivCase;
 
     public function __construct()
     {
@@ -29,18 +31,32 @@ class SegmentEncryption
             "Final",
             []
         ));
+
+        $this->psshCase = $this->waveReporter->add(
+            section: '4.3.2 - Encrypted Media Presentations',
+            test: "Any individual CMAF Segment SHALL have a single encryption key",
+            skipReason: 'Stream is not encrypted'
+        );
+        $this->ivCase = $this->waveReporter->add(
+            section: '4.3.2 - Encrypted Media Presentations',
+            test: "Any individual CMAF Segment SHALL have a single Initialization Vector",
+            skipReason: 'Stream is not encrypted'
+        );
     }
 
     //Public validation functions
-    public function validateSegmentEncryption(Representation $representation, Segment $segment): void
-    {
+    public function validateSegmentEncryption(
+        Representation $representation,
+        Segment $segment,
+        int $segmentIndex
+    ): void {
 
-        $this->validatePSSH($representation, $segment);
-        $this->validateSENC($representation, $segment);
+        $this->validatePSSH($representation, $segment, $segmentIndex);
+        $this->validateSENC($representation, $segment, $segmentIndex);
     }
 
     //Private helper functions
-    private function validatePSSH(Representation $representation, Segment $segment): void
+    private function validatePSSH(Representation $representation, Segment $segment, int $segmentIndex): void
     {
         $pssh = $segment->getPSSHBoxes();
 
@@ -48,28 +64,22 @@ class SegmentEncryption
             return;
         }
 
-        $singlePSSH = $this->waveReporter->test(
-            section: $this->section,
-            test: "Any individual CMAF Segment SHALL have a single encryption key and Initialization Vector",
-            result: count($pssh) == 1,
-            severity: "FAIL",
-            pass_message: $representation->path() . " - Single 'pssh' box in segment",
-            fail_message: $representation->path() . " - " . count($pssh) . " 'pssh' boxes in segment",
-        );
+        $keyCount = 0;
 
-        if ($singlePSSH) {
-            $this->waveReporter->test(
-                section: $this->section,
-                test: "Any individual CMAF Segment SHALL have a single encryption key and Initialization Vector",
-                result: count($pssh[0]->keys) == 1,
-                severity: "FAIL",
-                pass_message: $representation->path() . " - Single key in 'pssh' box",
-                fail_message: $representation->path() . " - " . count($pssh[0]->keys) . " keys in 'pssh' box",
-            );
+        foreach ($pssh as $psshBox){
+            $keyCount += count($psshBox->keys);
         }
+
+        $this->psshCase->pathAdd(
+            result: $keyCount == 1,
+            severity: "FAIL",
+            path: $representation->path() . "-$segmentIndex",
+            pass_message: "1 encryption key",
+            fail_message: "$keyCount encryption keys",
+        );
     }
 
-    private function validateSENC(Representation $representation, Segment $segment): void
+    private function validateSENC(Representation $representation, Segment $segment, int $segmentIndex): void
     {
         $senc = $segment->getSENCBoxes();
 
@@ -83,13 +93,12 @@ class SegmentEncryption
             }
         }
 
-        $this->waveReporter->test(
-            section: $this->section,
-            test: "Any individual CMAF Segment SHALL have a single encryption key and Initialization Vector",
+        $this->ivCase->pathAdd(
             result: $totalIvSize == 0,
             severity: "FAIL",
-            pass_message: $representation->path() . " - None of the samples contains an indvidual IV",
-            fail_message: $representation->path() . " - At least one sample has an individual IV"
+            path: $representation->path() . "-$segmentIndex",
+            pass_message: "No individual IV found",
+            fail_message: $totalIvSize . " bytes of indiviual IV's found"
         );
     }
 }

@@ -25,11 +25,16 @@ use App\Modules\Wave\Segments\KeyRotation;
 
 class Segments extends Module
 {
+    private SplicingPoints $splicingValidator;
+
     public function __construct()
     {
         parent::__construct();
         $this->name = "Wave HLS Interop Segments Module";
+
+        $this->splicingValidator = new SplicingPoints();
     }
+
 
     public function validateMPD(): void
     {
@@ -41,15 +46,15 @@ class Segments extends Module
      **/
     public function validateSegments(Representation $representation, array $segments): void
     {
+        $this->splicingValidator->validateSegmentDurations($representation, $segments);
         new Bitrate()->validateBitrate($representation, $segments);
-        new SplicingPoints()->validateSegmentDurations($representation, $segments);
         new TimedEventData()->validateTimedEventdata($representation, $segments);
         foreach ($segments as $segmentIndex => $segment) {
             Log::info($segmentIndex . " " . $representation->path());
             if ($segmentIndex == 0) {
                 $this->validateInitialization($representation, $segment);
             }
-            $this->validateSegment($representation, $segment);
+            $this->validateSegment($representation, $segment, $segmentIndex);
         }
     }
 
@@ -60,10 +65,10 @@ class Segments extends Module
         new TrackRoles()->validateTrackRoles($representation, $segment);
     }
 
-    private function validateSegment(Representation $representation, Segment $segment): void
+    private function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
-        new SegmentEncryption()->validateSegmentEncryption($representation, $segment);
-        new SplicingPoints()->validateSplicingPoints($representation, $segment);
+        new SegmentEncryption()->validateSegmentEncryption($representation, $segment, $segmentIndex);
+        $this->splicingValidator->validateSplicingPoints($representation, $segment, $segmentIndex);
         new AddressableMediaObject()->validateAddressableMediaObject($representation, $segment);
         new KeyRotation()->validateKeyRotation($representation, $segment);
     }

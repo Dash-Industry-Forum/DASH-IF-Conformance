@@ -8,6 +8,7 @@ use App\Services\Segment;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
+use App\Services\Reporter\TestCase;
 use App\Services\Validators\Boxes;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
@@ -18,9 +19,15 @@ class SplicingPoints
     //Private subreporters
     private SubReporter $waveReporter;
 
-    private string $section = '4.4.2 - Presentation Splicing';
+    private TestCase $fragmentBoundaryCase;
+    private TestCase $fragmentDurationCase;
 
     public function __construct()
+    {
+        $this->registerChecks();
+    }
+
+    private function registerChecks(): void
     {
         $reporter = app(ModuleReporter::class);
         $this->waveReporter = &$reporter->context(new ReporterContext(
@@ -29,10 +36,22 @@ class SplicingPoints
             "Final",
             []
         ));
+
+        $this->fragmentBoundaryCase = $this->waveReporter->add(
+            section: '4.4.2 - Presentation Splicing',
+            test: "CMAF Fragment boundaries SHALL be created at all splice points.",
+            skipReason: "Unable to parse segments"
+        );
+
+        $this->fragmentDurationCase = $this->waveReporter->add(
+            section: '4.4.2 - Presentation Splicing',
+            test: "CMAF Fragment [duration difference] SHALL be within one ISOBMFF sample duration",
+            skipReason: 'Single fragment'
+        );
     }
 
     //Public validation functions
-    public function validateSplicingPoints(Representation $representation, Segment $segment): void
+    public function validateSplicingPoints(Representation $representation, Segment $segment, int $segmentIndex): void
     {
 
         $boxTree = $segment->getBoxNameTree();
@@ -42,13 +61,12 @@ class SplicingPoints
 
         $moofBoxes = $boxTree->filterChildrenRecursive('moof');
 
-        $this->waveReporter->test(
-            section: $this->section,
-            test: "CMAF Fragment boundaries SHALL be created at all splice points.",
+        $this->fragmentBoundaryCase->pathAdd(
             result: count($moofBoxes) == 1,
             severity: "FAIL",
-            pass_message: $representation->path() . " - Single 'moof' box in segment",
-            fail_message: $representation->path() . " - " . count($moofBoxes) . " 'moof' boxes in segment",
+            path: $representation->path() . "-$segmentIndex",
+            pass_message: "Single 'moof' box",
+            fail_message: count($moofBoxes) . " 'moof' boxes",
         );
     }
 
@@ -65,19 +83,26 @@ class SplicingPoints
 
         $sampleDuration = $segments[0]->getSampleDuration();
 
+        $this->fragmentDurationCase->pathAdd(
+            result: true,
+            severity: "INFO",
+            path: $representation->path(),
+            pass_message: "Calculated sample duration: " . number_format($sampleDuration, 3),
+            fail_message: "",
+        );
+
         for ($i = 0; $i < $segmentCount - 1; $i++) {
             $fragmentDurationCurrent = array_sum($segments[$i]->getFragmentDurations());
             $fragmentDurationNext = array_sum($segments[$i + 1]->getFragmentDurations());
 
-            $this->waveReporter->test(
-                section: $this->section,
-                test: "CMAF Fragment [...] SHALL be within one ISOBMFF sample duration",
+            $this->fragmentDurationCase->pathAdd(
                 result: abs($fragmentDurationNext - $fragmentDurationCurrent) <= $sampleDuration,
                 severity: "FAIL",
-                pass_message: $representation->path() .
-                              " - Duration difference for segment and next within sample duration",
-                fail_message: $representation->path() .
-                              " - Duration difference for segment and next not within sample duration",
+                path: $representation->path() . "-$i",
+                pass_message: "Difference with next segment valid",
+                fail_message: "Difference of " .
+                              number_format(abs($fragmentDurationNext - $fragmentDurationCurrent), 3) .
+                              " with next segment not valid",
             );
         }
     }
