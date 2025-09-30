@@ -1,4 +1,7 @@
 <div>
+  @empty($this->getSpecs())
+    <div class="alert alert-info">No {{ $this->section }} checks enabled</div>
+  @else
   <div>
     <ul class="nav nav-tabs">
       @foreach ($this->getSpecs() as $spec)
@@ -35,4 +38,5 @@
       </tr>
     @endforeach
   </table>
+  @endempty
 </div>

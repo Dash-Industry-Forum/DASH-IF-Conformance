@@ -6,8 +6,8 @@ use Livewire\Component;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
-
 //
+use App\Services\ModuleReporter;
 
 class ManifestDetails extends Component
 {
@@ -28,14 +28,10 @@ class ManifestDetails extends Component
         $this->sections = ['MPD', 'Segments'];
     }
 
-
-    /**
-     * This is a laravel-specific type, so we ignore it
-     * @phpstan-ignore missingType.property
-     **/
-    protected $listeners = [
-        'select-mpd' => '$refresh'
-    ];
+    public function isOpenSection(string $spec): bool
+    {
+        return $this->sections[0] == $spec;
+    }
 
     public function render(): View
     {
