@@ -6,6 +6,7 @@ use App\Services\MPDCache;
 use App\Services\Manifest\Period;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
+use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
@@ -16,6 +17,9 @@ class EventChecks
     //Private subreporters
     private SubReporter $v141reporter;
 
+    private TestCase $presentationTimeCase;
+    private TestCase $xmlCase;
+
     public function __construct()
     {
         $reporter = app(ModuleReporter::class);
@@ -25,6 +29,18 @@ class EventChecks
             "v1.4.1",
             ["document" => "ETSI TS 103 285"]
         ));
+
+        $this->presentationTimeCase = $this->v141reporter->add(
+            section: "Section 9.1.2.1",
+            test: "Events SHALL have @presentationTime set",
+            skipReason: 'No TV Anytime events found'
+        );
+
+        $this->xmlCase = $this->v141reporter->add(
+            section: "Section 9.1.2.1",
+            test: "The event data shall be valid XML, either escaped or place in a CDATA section",
+            skipReason: 'No TV Anytime events found'
+        );
     }
 
     //Public validation functions
@@ -44,12 +60,12 @@ class EventChecks
             return;
         }
 
-        foreach ($eventStreams as $eventStream) {
-            $this->validateTVAnytimeEventStream($period, $eventStream);
+        foreach ($eventStreams as $streamIdx => $eventStream) {
+            $this->validateTVAnytimeEventStream($period, $eventStream, $streamIdx);
         }
     }
 
-    private function validateTVAnytimeEventStream(Period $period, \DOMElement $eventStream): void
+    private function validateTVAnytimeEventStream(Period $period, \DOMElement $eventStream, int $streamIdx): void
     {
         if (
             $eventStream->getAttribute('schemeIdUri') != 'urn:dvb:iptv:cpm:2014' ||
@@ -59,13 +75,12 @@ class EventChecks
         }
 
         foreach ($eventStream->getElementsByTagName('Event') as $eventIdx => $event) {
-            $this->v141reporter->test(
-                section: "Section 9.1.2.1",
-                test: "Events associated with [this stream] SHALL have @presentationTime set",
+            $this->presentationTimeCase->pathAdd(
+                path: $period->path() . "-Event@$streamIdx::$eventIdx",
                 result: $event->getAttribute('presentationTime') != '',
                 severity: "FAIL",
-                pass_message: "Presentation time for event $eventIdx is set in Period " . $period->path(),
-                fail_message: "Presentation time for event $eventIdx not set in Period " . $period->path(),
+                pass_message: "Presentation time set",
+                fail_message: "Presentation time not set"
             );
 
             if ($event->nodeValue == '') {
@@ -77,14 +92,12 @@ class EventChecks
             $eventDocument = new \DOMDocument();
             $loadResult = $eventDocument->loadXML($eventXML);
 
-            $this->v141reporter->test(
-                section: "Section 9.1.2.1",
-                test: "In order to carry XML structured data within the string value of an MPD Event element, " .
-                "the data shall be escaped or placed in a CDATA section in accordance with the XML specification 1.0",
+            $this->xmlCase->pathAdd(
+                path: $period->path() . "-Event@$streamIdx::$eventIdx",
                 result: $loadResult,
                 severity: "FAIL",
-                pass_message: "Parsed valid XML for event $eventIdx in Period " . $period->path(),
-                fail_message: "Invalid XML for event $eventIdx in Period " . $period->path(),
+                pass_message: "Valid XML",
+                fail_message: "Invalid XML"
             );
 
             //TODO: Re-enable check for TVAnytime broadcast messages.

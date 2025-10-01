@@ -6,6 +6,7 @@ use App\Services\MPDCache;
 use App\Services\Manifest\Period;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
+use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
@@ -16,6 +17,9 @@ class MetricReporting
     //Private subreporters
     private SubReporter $v141reporter;
 
+    private TestCase $urlCase;
+    private TestCase $probabilityCase;
+
     public function __construct()
     {
         $reporter = app(ModuleReporter::class);
@@ -25,6 +29,17 @@ class MetricReporting
             "v1.4.1",
             ["document" => "ETSI TS 103 285"]
         ));
+
+        $this->urlCase = $this->v141reporter->add(
+            section: "Section 10.12.3.3",
+            test: "Reporting URL is required to be an absolute HTTP(S) url",
+            skipReason: "No reporting elements found"
+        );
+        $this->probabilityCase = $this->v141reporter->add(
+            section: "Section 10.12.3.4",
+            test: "Probability - if present - is required to be an integer between 1 and 1000",
+            skipReason: "No reporting elements found"
+        );
     }
 
     //Public validation functions
@@ -62,27 +77,24 @@ class MetricReporting
 
         $reportingUrl = $reportingElement->getAttribute('reportingUrl');
 
-        $this->v141reporter->test(
-            section: "Section 10.12.3.3",
-            test: "Reporting URL is required to be an absolute HTTP(S) url",
-            result: $reportingUrl != '',
-            severity: "FAIL",
-            pass_message: "URL Field present for reporting at index $reportingIndex",
-            fail_message: "No or empty URL Field for reporting at index $reportingIndex",
-        );
-
-        if ($reportingUrl == '') {
+        if (
+            !$this->urlCase->pathAdd(
+                path: "Reporting@$reportingIndex",
+                result: $reportingUrl != '',
+                severity: "FAIL",
+                pass_message: "@reportingUrl found",
+                fail_message: "No or empty @reportingUrl",
+            )
+        ) {
             return;
         }
 
-
-        $this->v141reporter->test(
-            section: "Section 10.12.3.3",
-            test: "Reporting URL is required to be an absolute HTTP(S) isAbsoluteURL",
+        $this->urlCase->pathAdd(
+            path: "Reporting@$reportingIndex",
             result: isAbsoluteURL($reportingUrl),
             severity: "FAIL",
-            pass_message: "Absolute HTTP(S) URL detected for reporting at index $reportingIndex",
-            fail_message: "Relative HTTP(S) URL detected for reporting at index $reportingIndex",
+            pass_message: "@reportingUrl is absolute",
+            fail_message: "@reportingUrl is relative",
         );
     }
 
@@ -92,6 +104,13 @@ class MetricReporting
 
         // Probability has a default value, and is optional, so we only validate if it is present
         if ($probability == '') {
+            $this->probabilityCase->pathAdd(
+                path: "Reporting@$reportingIndex",
+                result: true,
+                severity: "INFO",
+                pass_message: "No probability present",
+                fail_message: ""
+            );
             return;
         }
 
@@ -104,13 +123,12 @@ class MetricReporting
             $validProbability = false;
         }
 
-        $this->v141reporter->test(
-            section: "Section 10.12.3.4",
-            test: "Probability - if present - is required to be an integer between 1 and 1000",
+        $this->probabilityCase->pathAdd(
+            path: "Reporting@$reportingIndex",
             result: $validProbability,
             severity: "FAIL",
-            pass_message: "Valid probability value for reporting at index $reportingIndex",
-            fail_message: "Invalid probability value for reporting at index $reportingIndex",
+            pass_message: "Valid probability value",
+            fail_message: "Invalid probability value $probability"
         );
     }
 }

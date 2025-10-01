@@ -57,7 +57,8 @@ class Profiles
         $dvbDash2014MPD = $mpdCache->profileSpecificMPD("urn:dvb:dash:profile:dvb-dash:2014");
         $dvbDash2017MPD = $mpdCache->profileSpecificMPD("urn:dvb:dash:profile:dvb-dash:2017");
 
-        $this->profileCase->add(
+        $this->profileCase->pathAdd(
+            path: "MPD",
             result: $dvbDash2014MPD?->isValid() || $dvbDash2017MPD?->isValid(),
             severity: "FAIL",
             pass_message: "At least one profile detected",
