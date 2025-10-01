@@ -31,33 +31,12 @@ use App\Modules\DVB\MPD\Codecs;
 
 class MPD extends Module
 {
-    private SubReporter $legacyreporter;
-
     private TestCase $minimumUpdateCase;
 
     public function __construct()
     {
         parent::__construct();
         $this->name = "DVB MPD Module";
-
-        $this->registerChecks();
-    }
-
-    private function registerChecks(): void
-    {
-        $reporter = app(ModuleReporter::class);
-        $this->legacyreporter = $reporter->context(new ReporterContext(
-            "MPD",
-            "LEGACY",
-            "DVB",
-            []
-        ));
-
-        $this->minimumUpdateCase = $this->legacyreporter->add(
-            section: "Unkown",
-            test: "MPD@minimumUpdatePeriod SHOULD have a value of 1 second or higher",
-            skipReason: ''
-        );
     }
 
     public function validateMPD(): void
@@ -69,6 +48,17 @@ class MPD extends Module
 
         $minimumUpdatePeriod = $mpdCache->getAttribute('minimumUpdatePeriod');
 
+        $reporter = app(ModuleReporter::class);
+        $this->minimumUpdateCase = $reporter->context(new ReporterContext(
+            "MPD",
+            "LEGACY",
+            "DVB",
+            []
+        ))->add(
+            section: "Unkown",
+            test: "MPD@minimumUpdatePeriod SHOULD have a value of 1 second or higher",
+            skipReason: ''
+        );
         $this->minimumUpdateCase->add(
             result: ($minimumUpdatePeriod != '' && timeParsing($minimumUpdatePeriod) < 1),
             severity: "WARN",
