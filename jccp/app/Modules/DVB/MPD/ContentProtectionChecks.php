@@ -7,6 +7,7 @@ use App\Services\Manifest\Period;
 use App\Services\Manifest\AdaptationSet;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
+use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
@@ -17,6 +18,8 @@ class ContentProtectionChecks
     //Private subreporters
     private SubReporter $v141reporter;
 
+    private TestCase $contentProtectionCase;
+
     public function __construct()
     {
         $reporter = app(ModuleReporter::class);
@@ -26,6 +29,12 @@ class ContentProtectionChecks
             "v1.4.1",
             ["document" => "ETSI TS 103 285"]
         ));
+
+        $this->contentProtectionCase = $this->v141reporter->add(
+            section: "Section 8.3",
+            test: "ContentProtection descriptor(s) shall be placed at the AdaptationSet level",
+            skipReason: "No ContentProtection descriptor found"
+        );
     }
 
     //Public validation functions
@@ -37,35 +46,23 @@ class ContentProtectionChecks
         $mpdCache = app(MPDCache::class);
         foreach ($mpdCache->allPeriods() as $period) {
             foreach ($period->allAdaptationSets() as $adaptationSet) {
-                $protectionElements = $this->extractValidProtection($adaptationSet);
-                if (count($protectionElements) == 0) {
-                    continue;
-                }
+                $this->extractValidProtection($adaptationSet);
             }
         }
     }
 
-    /**
-     * @return array<\DOMElement>
-     **/
-    private function extractValidProtection(AdaptationSet $adaptationSet): array
+    private function extractValidProtection(AdaptationSet $adaptationSet): void
     {
-        $res = [];
         $protectionElements = $adaptationSet->getDOMElements('ContentProtection');
-        foreach ($protectionElements as $protectionElement) {
+        foreach ($protectionElements as $elementIdx => $protectionElement) {
             $validLocation = $protectionElement->parentNode->nodeName == 'AdaptationSet';
-            $this->v141reporter->test(
-                section: "Section 8.3",
-                test: "[..] the ContentProtection descriptor shall be placed at the AdaptationSet level",
+            $this->contentProtectionCase->pathAdd(
+                path: $adaptationSet->path() . "@$elementIdx",
                 result: $validLocation,
                 severity: "FAIL",
-                pass_message: "Valid ContentProtection location found for AdaptationSet " . $adaptationSet->path(),
-                fail_message: "Invalid ContentProtection location found for AdaptationSet " . $adaptationSet->path(),
+                pass_message: "Valid location",
+                fail_message: "Invalid parent - " . $protectionElement->parentNode->nodeName,
             );
-            if ($validLocation) {
-                $res[] = $protectionElement;
-            }
         }
-        return $res;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Modules\DVB\MPD;
 use App\Services\MPDCache;
 use App\Services\Manifest\Period;
 use App\Services\ModuleReporter;
+use App\Services\Reporter\TestCase;
 use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Interfaces\Module;
@@ -18,6 +19,11 @@ class Dimensions
     //Private subreporters
     private SubReporter $v141reporter;
 
+    private TestCase $sizeCase;
+    private TestCase $periodCountCase;
+    private TestCase $adaptationSetCountCase;
+    private TestCase $representationCountCase;
+
     public function __construct()
     {
         $reporter = app(ModuleReporter::class);
@@ -27,21 +33,43 @@ class Dimensions
             "v1.4.1",
             ["document" => "ETSI TS 103 285"]
         ));
+
+        $this->sizeCase = $this->v141reporter->add(
+            section: "Section 4.5",
+            test: "The MPD size SHALL NOT exceed 256 Kbytes",
+            skipReason: "No MPD"
+        );
+        $this->periodCountCase = $this->v141reporter->add(
+            section: "Section 4.5",
+            test: "The MPD has a maximum of 64 periods",
+            skipReason: "No MPD"
+        );
+        $this->adaptationSetCountCase = $this->v141reporter->add(
+            section: "Section 4.5",
+            test: "Each Period has a maximum of 16 Adaptation Sets",
+            skipReason: "No Period found"
+        );
+        $this->representationCountCase = $this->v141reporter->add(
+            section: "Section 4.5",
+            test: "Each Adaptation Set has a maximum of 16 Representations",
+            skipReason: "No Adaptation Set found"
+        );
     }
 
     //Public validation functions
     public function validateDimensions(): void
     {
-        ///TODO Make this a remember function
-        $resolved = Cache::get(cache_path(['mpd', 'resolved']));
+        //TODO: Build 'after xlink' variants
 
-        $this->v141reporter->test(
-            "Section 4.5",
-            "The MPD size after xlink resolution SHALL NOT exceed 256 Kbytes",
-            $resolved && strlen($resolved) <= 1024 * 256,
-            "FAIL",
-            "MPD Size in bounds",
-            ($resolved ? "MPD too large" : "No resolved MPD found")
+        $mpdCache = app(MPDCache::class);
+
+        $mpdSize = strlen($mpdCache->getMPD());
+
+        $this->sizeCase->add(
+            result: $mpdSize <= 1024 * 256,
+            severity: "FAIL",
+            pass_message: "MPD size valid",
+            fail_message: "MPD size too large ($mpdSize)"
         );
 
         $this->validateCounts();
@@ -53,34 +81,30 @@ class Dimensions
         $mpdCache = app(MPDCache::class);
 
         $allPeriods = $mpdCache->allPeriods();
-        $this->v141reporter->test(
-            "Section 4.5",
-            "The MPD has a maximum of 64 periods after xlink resolution",
-            count($allPeriods) <= 64,
-            "FAIL",
-            count($allPeriods) . " periods in MPD",
-            count($allPeriods) . " periods in MPD"
+        $this->periodCountCase->add(
+            result: count($allPeriods) <= 64,
+            severity: "FAIL",
+            pass_message: count($allPeriods) . " Period(s)",
+            fail_message: count($allPeriods) . " Periods",
         );
 
         foreach ($allPeriods as $period) {
             $adaptationSets = $period->allAdaptationSets();
-            $this->v141reporter->test(
-                "Section 4.5",
-                "The MPD has a maximum of 16 adaptation sets per period",
-                count($adaptationSets) <= 16,
-                "FAIL",
-                count($adaptationSets) . " adaptation set(s) in period " . $period->path(),
-                count($adaptationSets) . " adaptation sets in period " . $period->path()
+            $this->adaptationSetCountCase->pathAdd(
+                path: $period->path(),
+                result: count($adaptationSets) <= 16,
+                severity: "FAIL",
+                pass_message: count($adaptationSets) . " Adaptation set(s)",
+                fail_message: count($adaptationSets) . " Adaptation sets",
             );
             foreach ($adaptationSets as $adaptationSet) {
                 $representations = $adaptationSet->allRepresentations();
-                $this->v141reporter->test(
-                    "Section 4.5",
-                    "The MPD has a maximum of 16 representations per adaptation sets",
-                    count($representations) <= 16,
-                    "FAIL",
-                    count($representations) . " representation(s) in adaptation set " . $adaptationSet->path(),
-                    count($representations) . " representations in adaptation set " . $adaptationSet->path()
+                $this->representationCountCase->pathAdd(
+                    path: $adaptationSet->path(),
+                    result: count($representations) <= 16,
+                    severity: "FAIL",
+                    pass_message: count($representations) . " Representation(s)",
+                    fail_message: count($representations) . " Representations",
                 );
             }
         }
