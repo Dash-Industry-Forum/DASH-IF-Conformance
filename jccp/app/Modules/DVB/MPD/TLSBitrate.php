@@ -116,13 +116,6 @@ class TLSBitrate
                 foreach ($bandwidth['subtitle'] as $sRepId => $sRepBandwidth) {
                     $totalBandwidth = $vRepBandwidth + $aRepBandwidth + $sRepBandwidth;
 
-                    $bandWidthMessage = implode(", ", [
-                        "V@" . number_format($vRepBandwidth / 1000000, 2) . "Mbit/s",
-                        "A@" . number_format($aRepBandwidth / 1000000, 2) . "Mbit/s",
-                        "S@" . number_format($sRepBandwidth / 1000000, 2) . "Mbit/s"
-                    ]);
-                    $totalBandWidthMessage = "Total: " . number_format($totalBandwidth / 1000000, 2) . "Mbit/s";
-
                     $combinationMessage = implode(" + ", [
                         $vRepId,
                         $aRepId,

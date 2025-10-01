@@ -7,6 +7,7 @@ use App\Services\Manifest\Representation;
 use App\Services\Segment;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
+use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Interfaces\Module;
@@ -18,6 +19,8 @@ class Codecs
     //Private subreporters
     private SubReporter $legacyReporter;
 
+    private TestCase $codecCase;
+
     public function __construct()
     {
         $reporter = app(ModuleReporter::class);
@@ -27,6 +30,12 @@ class Codecs
             "DVB",
             []
         ));
+
+        $this->codecCase = $this->legacyReporter->add(
+            section: 'Codec Information',
+            test: 'The codec should be supported by the specification',
+            skipReason: "No representation found",
+        );
     }
 
     //Public validation functions
@@ -48,13 +57,12 @@ class Codecs
                     break;
                 }
             }
-            $this->legacyReporter->test(
-                section: 'Codec Information',
-                test: 'The codec should be supported by the specification',
+            $this->codecCase->pathAdd(
+                path: $representation->path(),
                 result: $isValidCodec,
                 severity: "WARN",
-                pass_message: $representation->path() . " Codec $codec in list of valid codecs",
-                fail_message: $representation->path() . " Codec $codec not in list of valid codecs",
+                pass_message: "Valid codec",
+                fail_message: "Invalid codec - $codec"
             );
         }
     }

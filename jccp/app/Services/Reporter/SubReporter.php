@@ -55,22 +55,6 @@ class SubReporter
         return $this->cases[array_key_last($this->cases)];
     }
 
-    public function test(
-        string $section,
-        string $test,
-        bool $result,
-        string $severity,
-        string $pass_message,
-        string $fail_message
-    ): bool {
-        $tempCase = $this->add(
-            section: $section,
-            test: $test,
-            skipReason: ''
-        );
-        return $tempCase->add($result, $severity, $pass_message, $fail_message);
-    }
-
     /**
      * @return array<mixed>
      **/

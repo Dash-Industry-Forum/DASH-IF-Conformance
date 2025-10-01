@@ -7,6 +7,7 @@ use App\Services\Manifest\Period;
 use App\Services\Manifest\Representation;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
+use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
@@ -17,6 +18,8 @@ class BandwidthChecks
     //Private subreporters
     private SubReporter $v141reporter;
 
+    private TestCase $audioPercentageCase;
+
     public function __construct()
     {
         $reporter = app(ModuleReporter::class);
@@ -26,6 +29,12 @@ class BandwidthChecks
             "v1.4.1",
             ["document" => "ETSI TS 103 285"]
         ));
+
+        $this->audioPercentageCase = $this->v141reporter->add(
+            section: "Section 11.3.0",
+            test: "Audio should be 20% or less of the total stream bandwith",
+            skipReason: "Not a video service"
+        );
     }
 
     //Public validation functions
@@ -53,33 +62,33 @@ class BandwidthChecks
 
                 $combinedBandwidth = $videoBandwidth + $audioBandwidth;
                 if (count($representations['subtitle']) == 0) {
-                    $this->v141reporter->test(
-                        section: "Section 11.3.0",
-                        test: "If the service being delivered is a video service, then audio should be 20% " .
-                              "or less of the total stream bandwidth",
+                    $combinationMessage = implode(" + ", [
+                        $videoRepresentation->path(),
+                        $audioRepresentation->path(),
+                    ]);
+                    $this->audioPercentageCase->pathAdd(
+                        path: $period->path(),
                         result: $audioBandwidth <= 0.2 * $combinedBandwidth,
                         severity: "WARN",
-                        pass_message: "Valid combination of video " . $videoRepresentation->path() .
-                                      " and audio " . $audioRepresentation->path(),
-                        fail_message: "Invalid combination of video " . $videoRepresentation->path() .
-                                      " and audio " . $audioRepresentation->path(),
+                        pass_message: "[$combinationMessage] - Valid",
+                        fail_message: "[$combinationMessage] - Invalid",
                     );
                 } else {
                     foreach ($representations['subtitle'] as $subtitleRepresentation) {
                         $totalBandwidth = $combinedBandwidth +
                                           intval($subtitleRepresentation->getAttribute('bandwidth'));
-                        $this->v141reporter->test(
-                            section: "Section 11.3.0",
-                            test: "If the service being delivered is a video service, then audio should be 20% " .
-                                  "or less of the total stream bandwidth",
+
+                        $combinationMessage = implode(" + ", [
+                            $videoRepresentation->path(),
+                            $audioRepresentation->path(),
+                            $subtitleRepresentation->path(),
+                        ]);
+                        $this->audioPercentageCase->pathAdd(
+                            path: $period->path(),
                             result: $audioBandwidth <= 0.2 * $totalBandwidth,
                             severity: "WARN",
-                            pass_message: "Valid combination of video " . $videoRepresentation->path() .
-                                      ", audio " . $audioRepresentation->path() .
-                                      ", and subtitle " . $subtitleRepresentation->path(),
-                            fail_message: "Invalid combination of video " . $videoRepresentation->path() .
-                                      ",audio " . $audioRepresentation->path() .
-                                      ", and subtitle " . $subtitleRepresentation->path(),
+                            pass_message: "[$combinationMessage] - Valid",
+                            fail_message: "[$combinationMessage] - Invalid",
                         );
                     }
                 }
