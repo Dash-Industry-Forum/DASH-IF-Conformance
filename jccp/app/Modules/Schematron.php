@@ -102,7 +102,7 @@ class Schematron extends Module
         Process::run($schematronCommand);
 
         //Make sure we cache our schematron code
-        Cache::remember(cache_path(['mpd','schematron']), 10, function () use ($sessionDir) {
+        Cache::remember(cache_path(['mpd','schematron']), 3600, function () use ($sessionDir) {
             return file_get_contents($sessionDir . "schematron.xml");
         });
     }
@@ -137,11 +137,11 @@ class Schematron extends Module
         $mpdValidatorOutput = $validatorResult->output();
 
         //Cache resolved
-        Cache::remember(cache_path(['mpd','resolved']), 10, function () use ($sessionDir) {
+        Cache::remember(cache_path(['mpd','resolved']), 3600, function () use ($sessionDir) {
             return file_get_contents($sessionDir . "resolved.xml");
         });
 
-        Cache::remember(cache_path(['validator','output']), 10, function () use ($mpdValidatorOutput) {
+        Cache::remember(cache_path(['validator','output']), 3600, function () use ($mpdValidatorOutput) {
             $javaRemoved = str_replace("[java]", "", $mpdValidatorOutput);
             $xlinkOffset = strpos($javaRemoved, "Start XLink resolving");
             return substr($javaRemoved, $xlinkOffset);
