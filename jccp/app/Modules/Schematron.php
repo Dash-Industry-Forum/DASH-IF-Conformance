@@ -1,21 +1,24 @@
 <?php
 
-namespace App\Services;
+namespace App\Modules;
 
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Cache;
+use App\Interfaces\Module;
 use App\Services\ModuleLogger;
 use App\Services\MPDCache;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Reporter\TestCase;
+use Illuminate\Support\Facades\Log;
 
-class Schematron
+class Schematron extends Module
 {
     //TODO Move to module
     private string $schemaPath;
     private SubReporter $schematronReporter;
+    private SubReporter $globalReporter;
 
     private TestCase $xlinkCase;
     private TestCase $mpdCase;
@@ -23,31 +26,41 @@ class Schematron
 
     public function __construct()
     {
+        parent::__construct();
+        $this->name = "Global Module";
         $this->registerChecks();
     }
 
     public function registerChecks(): void
     {
         $reporter = app(ModuleReporter::class);
+        $this->globalReporter = &$reporter->context(new ReporterContext("MPD", "Global", "", array()));
         $this->schematronReporter = &$reporter->context(new ReporterContext("MPD", "Schematron", "", array()));
 
-        $this->xlinkCase = $this->schematronReporter->add(
+        $this->xlinkCase = $this->globalReporter->add(
             section: "",
             test: "xlink resolution SHALL be succesful",
             skipReason: "Unable to run schematron"
         );
 
-        $this->mpdCase = $this->schematronReporter->add(
+        $this->mpdCase = $this->globalReporter->add(
             section: "",
             test: "MPD Validation SHALL be succesful",
             skipReason: "Unable to run schematron"
         );
 
-        $this->schematronRunCase = $this->schematronReporter->add(
+        $this->schematronRunCase = $this->globalReporter->add(
             section: "",
             test: "Schematron Validation SHALL run succesfully",
             skipReason: "Unable to run schematron"
         );
+    }
+
+    public function validateMPD(): void
+    {
+        parent::validateMPD();
+        $this->validateSchematron();
+        $this->validate();
     }
 
     public function getValidatorOutput(): string
@@ -69,7 +82,7 @@ class Schematron
 
     private function runSchematron(): void
     {
-        echo "Running Schematron!\n";
+        Log::info("Running Schematron!");
         $sessionDir = session_dir();
         if (!Cache::get(cache_path(['mpd','resolved']))) {
             $this->runValidator();
@@ -155,6 +168,7 @@ class Schematron
         foreach ($failedAssertions as $failedAssertion) {
             $testLocation = $failedAssertion->getAttribute('location');
             $testDescription = $failedAssertion->getAttribute('test');
+            $testRole = $failedAssertion->getAttribute('role');
             $textComponents = $failedAssertion->getElementsByTagNameNS($namespace, 'text');
 
             foreach ($textComponents as $textComponent) {
@@ -165,7 +179,7 @@ class Schematron
                     skipReason: ''
                 )->add(
                     result: false,
-                    severity: "FAIL",
+                    severity: $testRole == "warn" ? "WARN" : "FAIL",
                     pass_message: "",
                     fail_message: $textComponent->nodeValue
                 );

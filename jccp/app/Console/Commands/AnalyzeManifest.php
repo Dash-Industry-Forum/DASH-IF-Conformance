@@ -8,7 +8,7 @@ use Keepsuit\LaravelOpenTelemetry\Facades\Tracer;
 use App\Services\ModuleReporter;
 use App\Services\ModuleLogger;
 use App\Services\MPDCache;
-use App\Services\Schematron;
+use App\Modules\Schematron;
 use App\Services\Downloader;
 use App\Modules\DVB\MPD as DVBMpd;
 

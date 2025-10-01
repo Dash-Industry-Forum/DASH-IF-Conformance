@@ -67,9 +67,16 @@ class MpdResults extends Component
                 array_keys($this->results[$this->section]),
             );
         }
-        $keys = array_unique($keys);
 
+        //Sort alphabetically, but make sure global and schematron are always first if they exist
         sort($keys);
+        if (in_array("Schematron - ", $keys)) {
+            array_unshift($keys, "Schematron - ");
+        }
+        if (in_array("Global - ", $keys)) {
+            array_unshift($keys, "Global - ");
+        }
+        $keys = array_unique($keys);
         return $keys;
     }
 

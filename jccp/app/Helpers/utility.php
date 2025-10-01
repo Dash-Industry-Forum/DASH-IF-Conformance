@@ -24,7 +24,6 @@ if (!function_exists('session_dir')) {
 if (!function_exists('invalidate_mpd_cache')) {
     function invalidate_mpd_cache(): void
     {
-        echo "Invalidating cache elemnts!\n";
         Cache::forget(cache_path(['validator','output']));
         Cache::forget(cache_path(['mpd','resolved']));
         Cache::forget(cache_path(['mpd','url']));

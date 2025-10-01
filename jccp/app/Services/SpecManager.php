@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use App\Modules\Schematron;
 use App\Modules\DVB\MPD as DVBManifest;
 use App\Modules\DVB\Segments as DVBSegments;
 use App\Modules\HbbTV\MPD as HbbTVManifest;
@@ -28,6 +29,10 @@ class SpecManager
     {
         $this->registerMPDSpecs();
 
+        //Always enable schematron
+        $cachePath = cache_path(['spec', 'Global Module']);
+        Cache::put($cachePath, 'enabled');
+
         foreach ($this->manifestSpecs as $manifestSpec) {
             $this->moduleStates[$manifestSpec->name] = [
                 'enabled' => Cache::has(cache_path(['spec', $manifestSpec->name])),
@@ -40,6 +45,7 @@ class SpecManager
 
     private function registerMPDSpecs(): void
     {
+        $this->manifestSpecs[] = new Schematron();
         $this->manifestSpecs[] = new DVBManifest();
         $this->manifestSpecs[] = new HbbTVManifest();
         $this->manifestSpecs[] = new DVBSegments();
@@ -48,6 +54,9 @@ class SpecManager
 
     public function toggle(string $moduleName): void
     {
+        if ($moduleName == "Global Module") {
+            return;
+        }
         $cachePath = cache_path(['spec', $moduleName]);
         if (Cache::has($cachePath)) {
             Cache::forget($cachePath);
