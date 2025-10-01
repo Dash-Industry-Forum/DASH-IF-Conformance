@@ -6,8 +6,13 @@
      <input disabled type="text" class="form-control" wire:model.live="mpd">
      <button class="btn btn-outline-danger" type="button" wire:click="clearSession">Clear</button>
      @else
+     @session('process-consent')
      <input type="text" class="form-control" wire:model.live="mpd">
      <button class="btn btn-outline-secondary" type="button" wire:click="process">Process</button>
+     @else
+     <input type="text" class="form-control" wire:model.live="mpd" disabled>
+     <button class="btn btn-outline-secondary" type="button" wire:click="process" disabled>Process</button>
+     @endsession
      @endsession
   </div>
   </div>
