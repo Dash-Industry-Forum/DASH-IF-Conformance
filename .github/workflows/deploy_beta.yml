@@ -29,6 +29,7 @@ jobs:
         with:
           push: true
           tags: ghcr.io/${{ env.REPOSITORY_LC }}:beta
+          context: ./
           file: ./jccp/Dockerfile
           build-args: |
             SHORT_SHA:${{ github.sha }}
