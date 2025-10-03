@@ -9,6 +9,8 @@ jobs:
   deploy_beta:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v5
       - name: Convert repository name to lower case
         run: |
           echo REPOSITORY_LC=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
