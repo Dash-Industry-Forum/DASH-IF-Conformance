@@ -36,7 +36,7 @@ jobs:
             export CR_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
             echo $CR_GITHUB_TOKEN | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
             docker pull ghcr.io/${{ env.REPOSITORY_LC }}:beta
-            docker run --name beta --env SHORT_SHA=$( echo ${{ github.sha }} | cut -c 1-7 ) -d -p 8002:8000 --restart unless-stopped ghcr.io/${{ env.REPOSITORY_LC }}:beta
+            docker run --name beta --env SHORT_SHA=$( echo ${{ github.sha }} | cut -c 1-7 ) -d -p 8002:80 --restart unless-stopped ghcr.io/${{ env.REPOSITORY_LC }}:beta
           host: ${{ secrets.HOST }}
           user: ${{ secrets.USER }}
           key: ${{ secrets.PRIVATE_KEY }}
