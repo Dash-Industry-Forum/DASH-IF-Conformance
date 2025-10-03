@@ -99,7 +99,11 @@ class Schematron extends Module
             "-xsl:${validatorPath}/schematron/output/val_schema.xsl"
         ]);
 
-        Process::run($schematronCommand);
+        $schematronResult = Process::run($schematronCommand);
+
+        if (!$schematronResult->successful()){
+            return;
+        }
 
         //Make sure we cache our schematron code
         Cache::remember(cache_path(['mpd','schematron']), 3600, function () use ($sessionDir) {
@@ -133,6 +137,10 @@ class Schematron extends Module
 
 
         $validatorResult = Process::run($validatorCommand);
+
+        if (!$validatorResult->successful()){
+            return;
+        }
 
         $mpdValidatorOutput = $validatorResult->output();
 

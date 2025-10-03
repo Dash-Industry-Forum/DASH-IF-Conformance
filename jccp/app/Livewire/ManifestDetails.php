@@ -8,6 +8,7 @@ use Illuminate\View\View;
 use Livewire\Attributes\On;
 //
 use App\Services\ModuleReporter;
+use App\Services\MPDCache;
 
 class ManifestDetails extends Component
 {
@@ -36,5 +37,15 @@ class ManifestDetails extends Component
     public function render(): View
     {
         return view('livewire.manifest-details');
+    }
+
+    public function show(): bool {
+        if (!session()->get('mpd')){
+            return false;
+        }
+        $mpdCache = app(MPDCache::class);
+        $mpdCache->getMPD();
+        return $mpdCache->error == '';
+
     }
 }

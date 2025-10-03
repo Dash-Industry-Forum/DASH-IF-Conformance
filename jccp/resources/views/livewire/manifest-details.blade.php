@@ -1,6 +1,6 @@
 <div class="container">
+  @if ($this->show())
   <livewire:spec-manager />
-  @session('mpd')
 
   <div class="bg-body-secondary" style="padding: 10px">
       <div class="accordion accordion-flush" id="resultsAccordion">
@@ -27,5 +27,5 @@
         @endforeach
       </div>
   </div>
-  @endsession
+  @endif
 </div>

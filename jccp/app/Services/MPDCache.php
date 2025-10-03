@@ -14,6 +14,7 @@ use App\Services\Manifest\ProfileSpecificMPD;
 class MPDCache
 {
     private ?\DOMElement $domCache = null;
+    public string $error = '';
 
     public function __construct()
     {
@@ -61,7 +62,7 @@ class MPDCache
         Cache::remember(cache_path(['mpd','url']), 3600, function () {
             return session()->get('mpd');
         });
-        return Cache::remember(cache_path(['mpd','contents']), 3600, function () {
+        $res = Cache::remember(cache_path(['mpd','contents']), 3600, function () {
             return Tracer::newSpan("Retrieve mpd")->measure(function () {
                 $contents = '';
                 try {
@@ -74,6 +75,10 @@ class MPDCache
                 return $contents;
             });
         });
+        if ($res == ''){
+            $this->error = "Unable to retrieve MPD";
+        }
+        return $res;
     }
 
     public function getBaseUrl(): string
