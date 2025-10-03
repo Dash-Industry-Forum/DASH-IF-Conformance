@@ -14,7 +14,6 @@ jobs:
           echo REPOSITORY_LC=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
-        working-directory: ./jccp
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -24,6 +23,7 @@ jobs:
         with:
           push: true
           tags: ghcr.io/${{ env.REPOSITORY_LC }}:beta
+          file: ./jccp/Dockerfile
           build-args: |
             SHORT_SHA:${{ github.sha }}
       - name: Login to production server and deploy
