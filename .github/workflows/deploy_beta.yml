@@ -20,7 +20,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN  }}
       - name: Composer install
         run: |
-          cd jccp
+          cd ./jccp
           composer install
       - name: Build and push
         uses: docker/build-push-action@v2
