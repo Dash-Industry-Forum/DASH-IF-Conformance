@@ -23,3 +23,7 @@ yarn-error.log
 /.zed
 build
 reference
+
+**/caddy
+frankenphp
+frankenphp-worker.php

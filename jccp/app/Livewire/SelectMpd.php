@@ -4,8 +4,8 @@ namespace App\Livewire;
 
 use App\Services\MPDHandler;
 use Livewire\Component;
-use Illuminate\View\View;
 use Livewire\Attributes\On;
+use Illuminate\View\View;
 
 class SelectMpd extends Component
 {

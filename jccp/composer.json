@@ -13,6 +13,7 @@
         "arifhp86/laravel-clear-expired-cache-file": "^1.0",
         "keepsuit/laravel-opentelemetry": "^1.5",
         "laravel/framework": "^12.0",
+        "laravel/octane": "^2.12",
         "laravel/tinker": "^2.10.1",
         "laravel/ui": "^4.6",
         "league/uri": "^7.0",
