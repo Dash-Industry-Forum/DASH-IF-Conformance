@@ -19,6 +19,9 @@ Route::get('/statistics', function () {
 Route::get('/faq', function () {
     return view('faq');
 });
+Route::get('/terms', function () {
+    return view('terms');
+});
 
 Route::get('/mpd', [ManifestController::class, 'retrieve']);
 

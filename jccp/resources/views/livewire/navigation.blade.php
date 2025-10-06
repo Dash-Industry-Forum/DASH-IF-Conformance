@@ -18,6 +18,9 @@
         <li class="nav-item">
           <a class="nav-link" href="/faq" wire:navigate>FAQ</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/terms" wire:navigate>Terms & Conditions</a>
+        </li>
       </ul>
     </div>
     </div>
