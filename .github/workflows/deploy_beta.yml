@@ -26,8 +26,7 @@ jobs:
           composer install
           npm i
           npm run build
-          cp .env.example .env
-          sed -i 's|http://|https://|g' .env 
+          cp env_production.example .env
           php artisan key:generate
           php artisan migrate
       - name: Build and push
