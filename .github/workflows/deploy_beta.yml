@@ -27,6 +27,7 @@ jobs:
           npm i
           npm run build
           cp .env.example .env
+          sed -i 's|http://|https://|g' .env 
           php artisan key:generate
           php artisan migrate
       - name: Build and push
