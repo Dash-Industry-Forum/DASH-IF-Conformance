@@ -35,6 +35,7 @@ jobs:
           push: true
           tags: ghcr.io/${{ env.REPOSITORY_LC }}:beta
           context: ./jccp
+          target: jccp
           build-args: |
             SHORT_SHA:${{ github.sha }}
       - name: Login to production server and deploy
