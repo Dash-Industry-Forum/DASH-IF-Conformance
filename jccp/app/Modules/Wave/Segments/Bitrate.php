@@ -59,7 +59,12 @@ class Bitrate
         $totalDuration = 0;
         $totalSize = 0;
         foreach ($segments as $segment) {
-            $segmentSize =  filesize($segment->segmentPath);
+            $segmentSize =  0;
+            try {
+                $segmentSize = filesize($segment->segmentPath);
+            } catch (\Exception $e) {
+                Log::error($e);
+            }
             $segmentSizes[] = $segmentSize;
             $totalSize += $segmentSize;
             $durations = $segment->getSegmentDurations();

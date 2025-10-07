@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use App\Services\Downloader;
 use App\Services\Segment;
+use App\Services\MPDCache;
 use App\Interfaces\Module;
 use App\Services\Manifest\Representation;
 
@@ -26,6 +27,40 @@ class SegmentManager
             $representation->adaptationSetIndex,
             $representation->representationIndex
         );
+    }
+
+    public function queuedStatus(): int
+    {
+        return $this->segmentCount() - $this->downloadedSegmentCount();
+    }
+
+    private function downloadedSegmentCount(): int
+    {
+        $directoryIterator = new \RecursiveDirectoryIterator(session_dir());
+        $recursiveIterator = new \RecursiveIteratorIterator($directoryIterator);
+        $regexIter = new \RegexIterator($recursiveIterator, '/^.+\.mp4$/i', \RecursiveRegexIterator::GET_MATCH);
+        $files = [];
+        foreach ($regexIter as $file) {
+            $files[] = $file;
+        }
+        return count($files);
+    }
+
+    public function segmentCount(): int
+    {
+        $segmentCount = 0;
+
+        $mpdCache = app(MPDCache::class);
+        foreach ($mpdCache->allPeriods() as $period) {
+            foreach ($period->allAdaptationSets() as $adaptationSet) {
+                foreach ($adaptationSet->allRepresentations() as $representation) {
+                    $segmentCount += $representation->initializationUrl() ? 1 : 0;
+                    $segmentCount += count($representation->segmentUrls());
+                }
+            }
+        }
+
+        return $segmentCount;
     }
 
     /**

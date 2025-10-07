@@ -1,5 +1,6 @@
 <div class="container">
   @if ($this->show())
+  <livewire:segment-queue />
   <livewire:spec-manager />
 
   <div class="bg-body-secondary" style="padding: 10px">

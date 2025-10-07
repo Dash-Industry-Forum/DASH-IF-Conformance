@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Process;
 use App\Services\MPDCache;
+use App\Jobs\DownloadSegment;
 
 class Downloader
 {
@@ -15,27 +16,17 @@ class Downloader
         if (file_exists($targetPath) && !$force) {
             return true;
         }
-        $fp = fopen($targetPath, "w+");
-        if (!$fp) {
+
+
+        if (file_exists("${targetPath}.queued")) {
             return false;
         }
 
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-        CURLOPT_URL => $url,
-        CURLOPT_FAILONERROR => true,
-        CURLOPT_SSL_VERIFYPEER => false,
-        CURLOPT_TIMEOUT => 500,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_CONNECTTIMEOUT => 0,
-        CURLOPT_USERAGENT => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)',
-        CURLOPT_FILE => $fp
-        ));
+        touch("${targetPath}.queued");
 
-        curl_exec($curl);
-        fclose($fp);
+        DownloadSegment::dispatch($url, $targetPath);
 
-        return true;
+        return false;
     }
 
     /**

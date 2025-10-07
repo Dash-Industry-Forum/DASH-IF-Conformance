@@ -24,4 +24,5 @@ COPY --from=builder /gpac/bin/gcc/* /usr/bin/
 ENV SERVER_NAME=:80
 COPY . /app
 
+CMD /bin/bash /app/queue_wrapper.sh
 

@@ -22,7 +22,7 @@ class Segment
      * //TODO Change mixed with correct parent class
      * @var array<mixed> $analyzedRepresentations;
      **/
-    private array $analyzedRepresentations;
+    private array $analyzedRepresentations = [];
     public function __construct(string $init, string $segment, string $representationDir, int $segmentIndex)
     {
         $this->initPath = $init;
@@ -46,6 +46,10 @@ class Segment
         }
 
         Log::info("Analyze with gpac: " . $this->initPath . " // " . $this->segmentPath);
+
+        if (!file_exists($this->initPath) && !file_exists($this->segmentPath)) {
+            return '';
+        }
 
         //TODO Add error handling
         $concatPath = $this->representationDir . "seg" . $this->segmentIndex . ".mp4";
