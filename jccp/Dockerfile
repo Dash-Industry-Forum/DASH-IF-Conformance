@@ -8,12 +8,9 @@ RUN install-php-extensions \
 
 FROM base AS builder
 
-RUN apt-get update && apt install -y  build-essential pkg-config g++ git cmake yasm
+RUN apt-get update && apt install -y  build-essential pkg-config g++ git cmake yasm zlib1g-dev
 
-RUN cd / && git clone https://github.com/gpac/gpac.git
-
-RUN apt-get update && apt install -y zlib1g-dev
-RUN cd /gpac && ./configure && make
+RUN cd / && git clone https://github.com/gpac/gpac.git && cd /gpac && ./configure && make -j
 
 
 FROM base AS jccp
