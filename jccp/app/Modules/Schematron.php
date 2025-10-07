@@ -18,11 +18,13 @@ class Schematron extends Module
     //TODO Move to module
     private string $schemaPath;
     private SubReporter $schematronReporter;
-    private SubReporter $globalReporter;
+    //private SubReporter $globalReporter;
 
+    /*
     private TestCase $xlinkCase;
     private TestCase $mpdCase;
     private TestCase $schematronRunCase;
+     */
 
     public function __construct()
     {
@@ -34,9 +36,10 @@ class Schematron extends Module
     public function registerChecks(): void
     {
         $reporter = app(ModuleReporter::class);
-        $this->globalReporter = &$reporter->context(new ReporterContext("MPD", "Global", "", array()));
+        //$this->globalReporter = &$reporter->context(new ReporterContext("MPD", "Global", "", array()));
         $this->schematronReporter = &$reporter->context(new ReporterContext("MPD", "Schematron", "", array()));
 
+        /*
         $this->xlinkCase = $this->globalReporter->add(
             section: "",
             test: "xlink resolution SHALL be succesful",
@@ -54,6 +57,7 @@ class Schematron extends Module
             test: "Schematron Validation SHALL run succesfully",
             skipReason: "Unable to run schematron"
         );
+         */
     }
 
     public function validateMPD(): void
@@ -136,6 +140,7 @@ class Schematron extends Module
         $sessionDir = session_dir();
 
         file_put_contents($sessionDir . "manifest.mpd", app(MPDCache::class)->getMPD());
+        return;
 
         $mpdXml = simplexml_load_string('<mpdresult><xlink>No Result</xlink>' .
         '<schema>No Result</schema><schematron>No Result</schematron></mpdresult>');
@@ -158,7 +163,8 @@ class Schematron extends Module
         $validatorResult = Process::run($validatorCommand);
 
         if (!$validatorResult->successful()) {
-            $this->globalReporter->add(
+/*
+  $this->globalReporter->add(
                 section: "Conformance Tool",
                 test: "MPD Validator shall be able to run",
                 skipReason: ""
@@ -168,6 +174,7 @@ class Schematron extends Module
                 pass_message: "",
                 fail_message: "Stderr: " . $validatorResult->errorOutput()
             );
+ */
 
             return;
         }
@@ -244,6 +251,7 @@ class Schematron extends Module
         }
 
 
+        /*
         $this->xlinkCase->add(
             result: strpos($validatorOutput, 'XLink resolving successful') !== false,
             severity: "FAIL",
@@ -264,6 +272,7 @@ class Schematron extends Module
             pass_message: "Schematron validation succesful",
             fail_message: "Schematron validation failed"
         );
+         */
     }
     private function findOrDownloadSchema(): void
     {
