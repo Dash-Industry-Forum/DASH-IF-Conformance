@@ -75,7 +75,7 @@ class MPDCache
                 return $contents;
             });
         });
-        if ($res == ''){
+        if ($res == '') {
             $this->error = "Unable to retrieve MPD";
         }
         return $res;

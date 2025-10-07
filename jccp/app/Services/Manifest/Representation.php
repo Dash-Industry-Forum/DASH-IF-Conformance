@@ -118,7 +118,7 @@ class Representation
             if (!$startNumber) {
                 $startNumber = 1;
             }
-            for ($i = 0; $i < 5; $i++) {
+            for ($i = 0; $i < 2; $i++) {
                 $result[] = Uri::fromTemplate($uriTemplate, [
                     'Number' => ($startNumber + $i),
                     'Number3d' => sprintf('%03d', ($startNumber + $i)),

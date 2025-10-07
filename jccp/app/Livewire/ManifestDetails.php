@@ -39,13 +39,13 @@ class ManifestDetails extends Component
         return view('livewire.manifest-details');
     }
 
-    public function show(): bool {
-        if (!session()->get('mpd')){
+    public function show(): bool
+    {
+        if (!session()->get('mpd')) {
             return false;
         }
         $mpdCache = app(MPDCache::class);
         $mpdCache->getMPD();
         return $mpdCache->error == '';
-
     }
 }

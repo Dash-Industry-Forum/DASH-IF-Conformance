@@ -15,9 +15,9 @@ class SelectMpd extends Component
 
     public function process(): void
     {
-        if ($this->mpd == ''){
+        if ($this->mpd == '') {
             $this->error = "Please provide a url";
-        }else{
+        } else {
             $this->error = '';
             session()->put('mpd', $this->mpd);
             $this->dispatch('mpd-selected');
@@ -40,11 +40,12 @@ class SelectMpd extends Component
         return $this->clearSession();
     }
 
-    public function mpdError(): ?string {
-        if ($this->error){
+    public function mpdError(): ?string
+    {
+        if ($this->error) {
             return $this->error;
         }
-        if (!session()->get('mpd')){
+        if (!session()->get('mpd')) {
             return null;
         }
         $mpdCache = app(MPDCache::class);

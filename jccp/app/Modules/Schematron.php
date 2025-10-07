@@ -88,20 +88,39 @@ class Schematron extends Module
             $this->runValidator();
         }
 
-        $validatorPath = __DIR__ . "/../../../DASH/mpdvalidator";
+        $validatorPath = base_path() . "/schematron";
         $schematronCommand = implode(" ", [
             "java",
             "-jar",
-            "${validatorPath}/saxon9he.jar",
+            "${validatorPath}/saxon12he.jar",
             "-versionmsg:off",
-            "-s:${sessionDir}/resolved.xml",
+            "-s:${sessionDir}/manifest.mpd",
             "-o:${sessionDir}/schematron.xml",
             "-xsl:${validatorPath}/schematron/output/val_schema.xsl"
         ]);
 
         $schematronResult = Process::run($schematronCommand);
 
-        if (!$schematronResult->successful()){
+
+            $schematronCase = $this->schematronReporter->add(
+                section: "Conformance Tool",
+                test: "Schematron shall be able to run",
+                skipReason: ''
+            );
+            $schematronCase->add(
+                result: $schematronResult->successful(),
+                severity: "FAIL",
+                pass_message: "",
+                fail_message: "Stdout: " . $schematronResult->output()
+            );
+            $schematronCase->add(
+                result: $schematronResult->successful(),
+                severity: "FAIL",
+                pass_message: "",
+                fail_message: "Stderr: " . $schematronResult->errorOutput()
+            );
+
+        if (!$schematronResult->successful()) {
             return;
         }
 
@@ -122,7 +141,7 @@ class Schematron extends Module
         '<schema>No Result</schema><schematron>No Result</schematron></mpdresult>');
         $mpdXml->asXML($sessionDir . "mpdresult.xml");
 
-        $validatorPath = __DIR__ . "/../../../DASH/mpdvalidator";
+        $validatorPath = base_path() . "/schematron";
         $this->findOrDownloadSchema();
 
         $validatorCommand = implode(" ", [
@@ -138,7 +157,18 @@ class Schematron extends Module
 
         $validatorResult = Process::run($validatorCommand);
 
-        if (!$validatorResult->successful()){
+        if (!$validatorResult->successful()) {
+            $this->globalReporter->add(
+                section: "Conformance Tool",
+                test: "MPD Validator shall be able to run",
+                skipReason: ""
+            )->add(
+                result: false,
+                severity: "FAIL",
+                pass_message: "",
+                fail_message: "Stderr: " . $validatorResult->errorOutput()
+            );
+
             return;
         }
 
