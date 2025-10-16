@@ -38,6 +38,8 @@ jobs:
         with:
           push: true
           tags: ghcr.io/${{ env.REPOSITORY_LC }}:${{inputs.docker_tag}}
+          build-args: |
+            SHORT_SHA:${{ github.sha }}
       - name: Login to production server and deploy
         uses: fifsky/ssh-action@v0.0.6
         with:

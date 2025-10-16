@@ -43,7 +43,7 @@ if ($isAvc) {
         "DASH-IF IOP 4.3",
         "Section 6.2.5.2",
         "For AVC video data, if the @bitstreamswitching flag is set to true, all Representations SHALL include " .
-        "Initialitization Segment containing 'avcC' box",
+        "Initialization Segment containing 'avcC' box",
         $codecBoxes->length > 0,
         "FAIL",
         $codecBoxes->length . " 'avcC' boxes found for Period $selectedPeriod Adaptation Set $selectedAdaptation " .
@@ -68,7 +68,7 @@ if ($isAvc) {
             "DASH-IF IOP 4.3",
             "Section 6.2.5.2",
             "For AVC video data, if the @bitstreamswitching flag is set to true, all Representations " .
-            "SHALL include Initialitization Segment containing 'avcC' box containing Decoder Configuration " .
+            "SHALL include Initialization Segment containing 'avcC' box containing Decoder Configuration " .
             "Record containing SPS and PPS NALs",
             $spsFound && $ppsFound,
             "FAIL",
@@ -98,7 +98,7 @@ if ($isHevc) {
         "DASH-IF IOP 4.3",
         "Section 6.2.5.2",
         "For HEVC video data, if the @bitstreamswitching flag is set to true, all Representations SHALL include " .
-        "Initialitization Segment containing 'hvcC' box",
+        "Initialization Segment containing 'hvcC' box",
         $codecBoxes->length > 0,
         "FAIL",
         $codecBoxes->length . " 'hvcC' boxes found for Period $selectedPeriod Adaptation Set $selectedAdaptation " .
@@ -127,7 +127,7 @@ if ($isHevc) {
             "DASH-IF IOP 4.3",
             "Section 6.2.5.2",
             "For HEVC video data, if the @bitstreamswitching flag is set to true, all Representations " .
-            "SHALL include Initialitization Segment containing 'hvcC' box containing Decoder Configuration " .
+            "SHALL include Initialization Segment containing 'hvcC' box containing Decoder Configuration " .
             "Record containing SPS, PPS and VPS NALs",
             $spsFound && $ppsFound && $vpsFound,
             "FAIL",

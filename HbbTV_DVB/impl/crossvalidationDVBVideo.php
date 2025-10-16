@@ -62,10 +62,10 @@ foreach ($representation1 as $key1 => $val1) {
 
 // Frame rate
 $frameRateGroup1 = array('25', '25/1', '50', '50/1');
-$frameRateGroup2 = array('30/1001', '60/1001');
+$frameRateGroup2 = array('30000/1001', '60000/1001');
 $frameRateGroup3 = array('30', '30/1', '60', '60/1');
 $frameRateGroup4 = array('24', '24/1', '48', '48/1');
-$frameRateGroup5 = array('24/1001');
+$frameRateGroup5 = array('24000/1001');
 $frameRate1 = $representation1['frameRate'];
 $frameRate2 = $representation2['frameRate'];
 

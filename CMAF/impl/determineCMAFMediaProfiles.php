@@ -1,6 +1,6 @@
 <?php
 
-global $logger;
+global $logger, $mpdHandler;
 
 $compatibleBrands = $xml->getElementsByTagName("ftyp")->item(0)->getAttribute("compatibleBrands");
 $hdlrType = $xml->getElementsByTagName("hdlr")->item(0)->getAttribute("handler_type");

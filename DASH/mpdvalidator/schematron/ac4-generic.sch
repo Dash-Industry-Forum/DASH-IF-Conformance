@@ -27,14 +27,14 @@
 			<let name="md_compat" value="$cod[4]"/>
 
 			<!-- TS 103190-1, F.1.2.1 -->
-			<report test="$bs_ver = '00' and @mimeType != ('audio/mp4','video/mp4')">The value of the mimeType attribute shall be set to 'audio/mp4' or 'video/mp4'.</report>
+			<assert test="$bs_ver != '00' or @mimeType != ('audio/mp4','video/mp4')">The value of the mimeType attribute shall be set to 'audio/mp4' or 'video/mp4'.</assert>
 			<!-- TS 103190-2, G.2.6 -->
-			<report test="matches($codecs, 'ac-4\.(01|02)','i') and not(@audioSamplingRate)">@audioSamplingRate shall be set to the sampling frequency derived from the parameters fs_index and
-				dsi_sf_multiplier, contained in ac4_dsi_v1.</report>
+			<assert test="not(matches($codecs, 'ac-4\.(01|02)','i')) or @audioSamplingRate">@audioSamplingRate shall be set to the sampling frequency derived from the parameters fs_index and
+				dsi_sf_multiplier, contained in ac4_dsi_v1.</assert>
 			<!-- TS 103190-2, G.2.7 -->
-			<report test="$bs_ver = ('01','02') and @mimeType != 'audio/mp4'">The value of the mimeType attribute shall be set to 'audio/mp4'.</report>
+			<assert test="$bs_ver != ('01','02') or @mimeType = 'audio/mp4'">The value of the mimeType attribute shall be set to 'audio/mp4'.</assert>
 			<!-- TS 103190-2, G.2.8 -->
-			<report test="$bs_ver = ('01','02') and @startWithSAP != '1'">The @startWithSAP value shall be set to '1'.</report>
+			<assert test="$bs_ver != ('01','02') or @startWithSAP = '1'">The @startWithSAP value shall be set to '1'.</assert>
 		</rule>
 	</pattern>
 
@@ -50,8 +50,8 @@
 		<title>Role element for AC-4</title>
 		<rule context="dash:Role[matches(dlb:getNearestCodecString(.), 'ac-4\.00')]">
 			<!-- TS 103 190-1 F.1.3.1 -->
-			<report test="@schemeIdUri = 'urn:mpeg:dash:role:2011' and
-				not(@value = ('main','alternate','commentary','dub'))">The value of Role (role) shall be main, alternate, commentary.</report>
+			<assert test="@schemeIdUri != 'urn:mpeg:dash:role:2011' or
+				@value = ('main','alternate','commentary','dub')">The value of Role (role) shall be main, alternate, commentary.</assert>
 		</rule>
 	</pattern>
 
@@ -70,17 +70,17 @@
 			
 			<!-- AC-4 Representations should contain or inherit exactly one AudioChannelConfiguration descriptor -->
 			<!-- TS 103 190-1, F.1.2.3 -->
-			<report test="count(ancestor::*/dash:AudioChannelConfiguration[@schemeIdUri = ($NSDLB_acc2014,$NSMPEG_acc)]) &gt; 1" role="warn">
+			<assert test="count(ancestor::*/dash:AudioChannelConfiguration[@schemeIdUri = ($NSDLB_acc2014,$NSMPEG_acc)]) &lt;= 1" role="warn">
 				<xsl:text>It is recommended to use exactly one AudioChannelConfiguration element with a schemeIdURI of </xsl:text>
 				<value-of select="$NSDLB_acc2014"/> or <value-of select="$NSMPEG_acc"/>
-			</report>
+			</assert>
 
 			<!-- TS 103 190-1, F.1.4.1 -->
 			<assert test="matches(@value,'^[0-9a-fA-F]{4}$')">The value element shall contain a four-digit hexadecimal representation of the 16-bit field which describes
 				the channel assignment of the referenced AC-4 elementary stream</assert>
 			<let name="val6" value="concat('00',@value)"/>
 			<let name="x" value="dlb:dlb2mpg($val6)"/>
-			<report test="$x != 0">Use &lt;<name/> schemeIdUri="<value-of select="$NSMPEG_acc"/>" value="<value-of select="$x"/>"/&gt;</report>
+			<assert test="$x = 0">Use &lt;<name/> schemeIdUri="<value-of select="$NSMPEG_acc"/>" value="<value-of select="$x"/>"/&gt;</assert>
 		</rule>
 	</pattern>
 
@@ -90,19 +90,19 @@
 		<!-- check that only specified schemeIdUris are used -->
 		<!-- TS 103 190-2, G.2.5 -->
 		<rule context="dash:AudioChannelConfiguration[matches(dlb:getNearestCodecString(.),'ac-4\.(01|02)')][not(@schemeIdUri = ($NSDLB_acc2015,$NSMPEG_acc))]">
-			<report test="true()" role="warn">
+			<assert test="false()" role="warn">
 				Unspecified schemeIdUri in AudioChannelConfiguration element
-			</report>
+			</assert>
 		</rule>
 
 		<rule context="dash:AudioChannelConfiguration[matches(dlb:getNearestCodecString(.),'ac-4\.(01|02)')][@schemeIdUri eq $NSDLB_acc2015]">
 			<!-- TS 103 190-2, G.2.5 -->
 			<!-- AC-4 Representations should contain or inherit exactly one AudioChannelConfiguration descriptor -->
-			<report test="count(ancestor::*/dash:AudioChannelConfiguration[@schemeIdUri = ($NSDLB_acc2015,$NSMPEG_acc)]) &gt; 1" role="warn">
+			<assert test="count(ancestor::*/dash:AudioChannelConfiguration[@schemeIdUri = ($NSDLB_acc2015,$NSMPEG_acc)]) &lt;= 1" role="warn">
 				<xsl:text>It is recommended to use exactly one AudioChannelConfiguration element with a schemeIdURI of </xsl:text>
 				<xsl:text></xsl:text>
 				<value-of select="$NSDLB_acc2015"/> or <value-of select="$NSMPEG_acc"/>
-			</report>
+			</assert>
 
 			<!-- TS 103 190-2, G.3.1 -->
 			<!-- AudioChannelConfiguration descriptors with schemeIDUri tag:dolby.com,2014:dash:audio_channel_configuration:2011 shall be of certain format -->
@@ -111,18 +111,18 @@
 
 			<!-- TS 103 190-2, G.2.5 -->
 			<let name="x" value="dlb:dlb2mpg(@value)"/>
-			<report test="$x != 0">For all AC-4 channel configurations that are mappable to the MPEG channel configuration scheme, the scheme described by
-				@schemeIdUri="urn:mpeg:mpegB:cicp:ChannelConfiguration" shall be used</report>
+			<assert test="$x = 0">For all AC-4 channel configurations that are mappable to the MPEG channel configuration scheme, the scheme described by
+				@schemeIdUri="urn:mpeg:mpegB:cicp:ChannelConfiguration" shall be used</assert>
 		</rule>
 
 		<rule context="dash:AudioChannelConfiguration[matches(dlb:getNearestCodecString(.),'ac-4\.(01|02)')][@schemeIdUri eq $NSMPEG_acc]">
 			<!-- TS 103 190-2, G.2.5 -->
 			<!-- AC-4 Representations should contain or inherit exactly one AudioChannelConfiguration descriptor -->
-			<report test="count(ancestor::*/dash:AudioChannelConfiguration[@schemeIdUri = ($NSDLB_acc2015,$NSMPEG_acc)]) &gt; 1" role="warn">
+			<assert test="count(ancestor::*/dash:AudioChannelConfiguration[@schemeIdUri = ($NSDLB_acc2015,$NSMPEG_acc)]) &lt;= 1" role="warn">
 				<xsl:text>It is recommended to use exactly one AudioChannelConfiguration element with a schemeIdURI of </xsl:text>
 				<xsl:text></xsl:text>
 				<value-of select="$NSDLB_acc2015"/> or <value-of select="$NSMPEG_acc"/>
-			</report>
+			</assert>
 
 			<!-- TS 103 190-2, G.3.2 -->
 			<!-- AudioChannelConfiguration descriptors with schemeIDUri urn:mpeg:mpegB:cicp:ChannelConfiguration shall be of certain format -->

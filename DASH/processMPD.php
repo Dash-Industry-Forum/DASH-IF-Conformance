@@ -64,7 +64,7 @@ function process_MPD($parseSegments = false, $autoDetect = false, $detailedSegme
 
     if ($parseSegments) {
         fwrite(STDERR, "Parsing segments\n");
-        parseSegments();
+        parseSegments($detailedSegmentOutput);
     } else {
         fwrite(STDERR, "Not parsing segments\n");
     }
@@ -99,7 +99,7 @@ function handleLiveMpdChecks()
     }
 }
 
-function parseSegments()
+function parseSegments($detailedSegmentOutput = true)
 {
     global $mpdHandler, $logger, $modules;
 

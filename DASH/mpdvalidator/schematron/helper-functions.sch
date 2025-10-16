@@ -16,6 +16,14 @@
         <xsl:value-of select="$c/ancestor-or-self::*/@codecs[1]"/>
     </xsl:function>
 
+    <!-- check whether a given element is signaled as included in a given profile
+         by checking profile strings of the element including its ancestors -->
+    <xsl:function name="dlb:isProfile" as="xs:boolean">
+        <xsl:param name="context"/>
+        <xsl:param name="profile"/>
+        <xsl:value-of select="some $p in $context/ancestor-or-self::*/@profiles satisfies $profile = tokenize($p,',')"/>
+    </xsl:function>
+
     <!-- check if the applicable @codecs parameter contains a certain string -->
     <xsl:function name="dlb:isAdaptationSetType" as="xs:boolean">
         <xsl:param name="x" as="element()"/>

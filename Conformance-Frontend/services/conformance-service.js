@@ -182,15 +182,16 @@ const ConformanceService = (function () {
 						.indexOf('>');
 					xmlEnd = info.length - xmlEnd;
 					let xmlString = info.substring(xmlStart, xmlEnd);
+					xmlString = xmlString.replaceAll(/svrl:/gi, 'svrl_');
 					xmlString = `<results>${xmlString}</results>`;
 					const parser = new DOMParser();
 					const xml = parser.parseFromString(xmlString, 'text/xml');
 					const xmlTestResults = Array.from(
-						xml.querySelectorAll('svrl:failed-assert'),
+						xml.querySelectorAll('svrl_failed-assert'),
 					);
 					for (const [index, xmlTestResult] of xmlTestResults.entries()) {
 						const xmlMessages = Array.from(
-							xmlTestResult.querySelectorAll('svrl:text'),
+							xmlTestResult.querySelectorAll('svrl_text'),
 						);
 						let messages = xmlMessages.map(
 							xmlMessage => xmlMessage.textContent,

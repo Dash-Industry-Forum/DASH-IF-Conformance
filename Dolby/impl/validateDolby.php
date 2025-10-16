@@ -1,27 +1,20 @@
 <?php
 
-global $session, $logger, $mpdHandler;
+global $logger, $mpdHandler;
 
 $period = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()];
 $adaptationSet = $period['AdaptationSet'][$mpdHandler->getSelectedAdaptationSet()];
-$representation = $adaptationSet['Representation'][$mpdHandler->getSelectedRepresentation()];
+$repInfo = $adaptationSet['Representation'][$mpdHandler->getSelectedRepresentation()];
 
-$codecs = ($adaptationSet['codecs'] == null) ? $representation['codecs'] : $adaptationSet['codecs'];
+$codecs = ($adaptationSet['codecs'] == null) ? $repInfo['codecs'] : $adaptationSet['codecs'];
 $isDolby = ($codecs != null) && (
   (substr($codecs, 0, 4) == "ac-3") ||
   (substr($codecs, 0, 4) == "ec-3") ||
   (substr($codecs, 0, 4) == "ac-4")
 );
 
-$mimeType = $representation['mimeType'];
-if (!$mimeType) {
-    $mimeType = $adaptationSet['mimeType'];
-}
+$mimeType = $repInfo['mimeType'] ?? $adaptationSet['mimeType'];
 
 if ($isDolby && $mimeType == 'audio/mp4') {
-    $atomXml = $session->getSelectedRepresentationDir();
-    $xml = DASHIF\Utility\parseDOM("$atomXml/atomInfo.xml", 'atomlist');
-    if ($xml) {
-        $this->compareTocWithDac4($xml);
-    }
+    $this->compareTocWithDac4($representation);
 }
