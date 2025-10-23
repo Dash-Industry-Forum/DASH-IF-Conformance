@@ -19,7 +19,6 @@ if ($xmlRepresentation) {
     }
 
     $this->segmentTimingCommon($xmlRepresentation);
-    $this->bitrateReport($xmlRepresentation);
     $segmentDurationName = $this->segmentDurationChecks();
     if ($period_timing_info["duration"] !== '' && $period_timing_info["duration"] !== 0) {
         $checks = $this->segmentToPeriodDurationCheck($xmlRepresentation);
@@ -34,9 +33,3 @@ if ($xmlRepresentation) {
         );
     }
 }
-
-
-$this->addOrRemoveImages('REMOVE');
-$hbbtv_string_info = "<img id=\"segmentReport\" src=\"$segmentDurationName\" width=\"650\" height=\"350\">" .
-                     "<img id=\"bitrateReport\" src=\"$bitrate_report_name\" width=\"650\" height=\"350\"/>\n";
-$this->addOrRemoveImages('ADD', $hbbtv_string_info);

@@ -11,8 +11,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     private $audioBandwidth;
     private $subtitleBandwidth;
     private $associativity;
-    private $hasJPGraph;
-    private $hasJPBarGraph;
 
     public function __construct()
     {
@@ -29,8 +27,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         $this->HbbTvEnabled = false;
         $this->DVBEnabled = false;
 
-        $this->hasJPGraph = false;//include_once __DIR__ . '/../external/jpgraph/src/jpgraph.php';
-        $this->hasJPBarGraph = false;//include_once __DIR__ . '/../external/jpgraph/src/jpgraph_bar.php';
     }
     public function isEnabled()
     {
@@ -166,7 +162,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     public function hookBeforeAdaptationSet()
     {
         parent::hookBeforeAdaptationSet();
-        $this->addOrRemoveImages('REMOVE');
     }
 
     public function hookAdaptationSet()
@@ -178,11 +173,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     private function representationValidation()
     {
         return include 'impl/representationValidation.php';
-    }
-
-    private function addOrRemoveImages($request)
-    {
-        include 'impl/addOrRemoveImages.php';
     }
 
     private function flags()
@@ -208,11 +198,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     private function segmentTimingCommon($xmlRepresentation)
     {
         include 'impl/segmentTimingCommon.php';
-    }
-
-    private function bitrateReport($xmlRepresentation)
-    {
-        return include 'impl/bitrateReport.php';
     }
 
     private function segmentDurationChecks()
