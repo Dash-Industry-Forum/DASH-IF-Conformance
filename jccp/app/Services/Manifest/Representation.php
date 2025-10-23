@@ -127,6 +127,10 @@ class Representation
             }
         }
 
+        if (count($result) == 0 && $base != '') {
+            $result[] = $base;
+        }
+
 
         return $result;
     }

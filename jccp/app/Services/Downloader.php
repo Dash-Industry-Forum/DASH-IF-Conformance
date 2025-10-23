@@ -64,6 +64,9 @@ class Downloader
             $segments['init'][] = $initPath;
         }
 
+        //TODO: Make sure we download with a representative segment extension
+        //      This also relates to the function where we detect whether a
+        //      segment has been downloaded
         foreach ($representation->segmentUrls() as $segmentIndex => $segmentUrl) {
             Log::info("Found url $segmentUrl");
             $segmentPath = "${representationDir}${segmentIndex}.mp4";

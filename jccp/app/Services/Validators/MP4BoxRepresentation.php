@@ -604,10 +604,10 @@ class MP4BoxRepresentation
         $avcDecoderRecords = $this->payload->getElementsByTagName('AVCDecoderConfigurationRecord');
         if (count($avcDecoderRecords)) {
             foreach ($avcDecoderRecords as $avcDecoderRecord) {
-                if (count($avcDecoderRecord->getElementsByTagName('PictureParameterSet')) > 0){
+                if (count($avcDecoderRecord->getElementsByTagName('PictureParameterSet')) > 0) {
                     $hasPPS = true;
                 }
-                if (count($avcDecoderRecord->getElementsByTagName('SequenceParameterSet')) > 0){
+                if (count($avcDecoderRecord->getElementsByTagName('SequenceParameterSet')) > 0) {
                     $hasSPS = true;
                 }
             }
