@@ -13,6 +13,7 @@ use App\Services\Manifest\Representation;
 use App\Services\Segment;
 use App\Interfaces\Module;
 ## Segment checks
+use App\Modules\DVB\Segments\LegacyCodecs;
 use App\Modules\DVB\Segments\Codecs;
 use App\Modules\DVB\Segments\BoxCount;
 use App\Modules\DVB\Segments\Durations;
@@ -46,6 +47,7 @@ class Segments extends Module
 
     private function validateInitialization(Representation $representation, Segment $segment): void
     {
+        new LegacyCodecs()->validateCodecs($representation, $segment);
         new Codecs()->validateCodecs($representation, $segment);
     }
 

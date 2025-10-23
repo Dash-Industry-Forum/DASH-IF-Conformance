@@ -593,4 +593,26 @@ class MP4BoxRepresentation
 
         return $res;
     }
+
+    public function AVCConfigurationHasSPSPPS(): bool
+    {
+        if (!$this->payload) {
+            return false;
+        }
+        $hasPPS = false;
+        $hasSPS = false;
+        $avcDecoderRecords = $this->payload->getElementsByTagName('AVCDecoderConfigurationRecord');
+        if (count($avcDecoderRecords)) {
+            foreach ($avcDecoderRecords as $avcDecoderRecord) {
+                if (count($avcDecoderRecord->getElementsByTagName('PictureParameterSet')) > 0){
+                    $hasPPS = true;
+                }
+                if (count($avcDecoderRecord->getElementsByTagName('SequenceParameterSet')) > 0){
+                    $hasSPS = true;
+                }
+            }
+        }
+
+        return $hasPPS && $hasSPS;
+    }
 }

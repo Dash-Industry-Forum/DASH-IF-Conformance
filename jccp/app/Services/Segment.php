@@ -217,6 +217,12 @@ class Segment
         return $this->runAnalyzedFunction('getAVCConfiguration');
     }
 
+    public function AVCConfigurationHasSPSPPS(): bool
+    {
+        return $this->runAnalyzedFunction('AVCConfigurationHasSPSPPS');
+    }
+
+
     public function getWidth(): ?int
     {
         return $this->runAnalyzedFunction('getWidth');

@@ -233,55 +233,6 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
     }
 }
 
-// Section 5.1.2 on AVC content's sample entry type
-if ($hdlrType == 'vide' && strpos($sdType, 'avc') !== false) {
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "DVB: Section 5.1.2",
-        "Content SHOULD be offered using Inband storage for SPS/PPS i.e. sample entries 'avc3' and 'avc4'",
-        $sdType == 'avc3' || $sdType == 'avc4',
-        "WARN",
-        "Valid sample description '$sdType' found",
-        "Invalid sample description '$sdType' found"
-    );
-
-    $sampleDescription = $xmlRepresentation->getElementsByTagName("$hdlrType" . '_sampledescription')->item(0);
-    $nalUnits = $sampleDescription->getElementsByTagName('NALUnit');
-    $spsFound = false;
-    $ppsFound = false;
-    foreach ($nalUnits as $nalUnit) {
-        if (hexdec($nalUnit->getAttribute('nal_type')) == 7) {
-            $spsFound = true;
-        }
-        if (hexdec($nalUnit->getAttribute('nal_type')) == 8) {
-            $ppsFound = true;
-        }
-    }
-    // in AVC3 this data goes in the first sample of every fragment (i.e. the first sample in each mdat box).
-    if ($sdType != 'avc3') {
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 5.1.2",
-            "All information necessary to decode any Segment chosen from the Representation SHALL " .
-            "be provided in the initialization Segment",
-            $spsFound,
-            "FAIL",
-            "SPS found",
-            "SPS not found"
-        );
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 5.1.2",
-            "All information necessary to decode any Segment chosen from the Representation SHALL " .
-            "be provided in the initialization Segment",
-            $ppsFound,
-            "FAIL",
-            "PPS found",
-            "PPS not found"
-        );
-    }
-}
-
 // Section 4.5 on subtitle segment sizes
 if ($hdlrType == 'subt') {
     $validSegmentSizes = true;
