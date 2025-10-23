@@ -35,7 +35,7 @@ class MPD extends Module
             []
         ));
 
-        $this->legacyreporter->dependencyCheck(
+        $this->legacyreporter->dependencyAdd(
             section: "Unknown",
             test: "Inherit DVB legacy checks",
             dependentModule: "DVB MPD Module",

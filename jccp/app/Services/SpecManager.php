@@ -8,6 +8,7 @@ use App\Modules\Schematron;
 use App\Modules\DVB\MPD as DVBManifest;
 use App\Modules\DVB\Segments as DVBSegments;
 use App\Modules\HbbTV\MPD as HbbTVManifest;
+use App\Modules\HbbTV\Segments as HbbTVSegments;
 use App\Modules\Wave\Segments as WaveHLSInteropSegments;
 use App\Interfaces\Module;
 use App\Services\SegmentManager;
@@ -49,6 +50,7 @@ class SpecManager
         $this->manifestSpecs[] = new DVBManifest();
         $this->manifestSpecs[] = new HbbTVManifest();
         $this->manifestSpecs[] = new DVBSegments();
+        $this->manifestSpecs[] = new HbbTVSegments();
         $this->manifestSpecs[] = new WaveHLSInteropSegments();
     }
 

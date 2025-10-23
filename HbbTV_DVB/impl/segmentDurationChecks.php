@@ -134,26 +134,6 @@ if (!empty($MPDDurationSeconds_array)) {
 $sessionDir = $session->getDir();
 $durationArrayString = implode(',', $segment_duration_array);
 
-
-
-if ($this->hasJPGraph && $this->hasJPBarGraph) {
-    $segmentDuration = $segment_duration_array;
-    if (!$segmentDuration->len) {
-        $segmentDuration[] = 0;
-    }
-    $location = "$repDir/segmentDurations.png";
-
-    $graph = new Graph();
-    $graph->title->set("Segment duration report");
-    $graph->SetScale("textlin");
-
-    $p1 = new BarPlot($segmentDuration);
-    $graph->Add($p1);
-
-    $graph->Stroke($location);
-}
-
-
 // Check if the average segment duration is consistent with that of the duration information in the MPD
 $segmentCount = sizeof($segment_duration_array);
 $averageSegmentDuration = (array_sum($segment_duration_array) ) / ($segmentCount);
@@ -169,5 +149,3 @@ if ($MPDDurationSeconds != 'Not_Set') {
         "Average segment duration not consistent with MPD"
     );
 }
-
-return $representationLocation . '_.png';

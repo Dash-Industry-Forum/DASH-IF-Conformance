@@ -45,8 +45,12 @@ class TestCase
         string $pass_message,
         string $fail_message
     ): bool {
+        $passResult = $severity;
+        if ($passResult != "INFO" && $passResult != "DEPENDENCY") {
+            $passResult = "PASS";
+        }
         $this->results[] = new TestResult(
-            severity: ($result ? ($severity == "INFO" ? "INFO" : "PASS") : $severity),
+            severity: ($result ? $passResult : $severity),
             message: ($result ? $pass_message : $fail_message),
         );
         return $result;

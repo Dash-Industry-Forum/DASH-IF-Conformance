@@ -23,22 +23,20 @@ class SubReporter
     {
     }
 
-    public function dependencyCheck(
+    public function &dependencyAdd(
         string $section,
         string $test,
         string $dependentModule,
         string $dependentSpec,
         string $dependentSection
-    ): void {
-        $specManager = app(SpecManager::class);
-        $specManager->activateDependency($dependentModule);
-
-        $this->results[] = new TestResult(
-            section: $section,
-            test: $test,
-            severity: "DEPENDENT",
-            message: "$dependentSpec::$dependentSection"
+    ): TestCase {
+        $this->cases[] = new TestCase(
+            section: "Dependencies", // $dependentSpec,
+            test: "{$dependentSpec}::${dependentSection}",
+            skipReason: ""
         );
+
+        return $this->cases[array_key_last($this->cases)];
     }
 
     public function &add(
@@ -102,8 +100,8 @@ class SubReporter
                     $res[$section]['checks'][$test]['state'] = "FAIL";
                     $res[$section]['state'] = "FAIL";
                 }
-                if ($result->getSeverity() == "DEPENDENT") {
-                    $res[$section]['checks'][$test]['state'] = "DEPENDENT";
+                if ($result->getSeverity() == "DEPENDENCY") {
+                    $res[$section]['checks'][$test]['state'] = "DEPENDENCY";
                 }
             }
         }

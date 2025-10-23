@@ -19,7 +19,7 @@ if ($xmlRepresentation) {
     }
 
     $this->segmentTimingCommon($xmlRepresentation);
-    $segmentDurationName = $this->segmentDurationChecks();
+    $this->segmentDurationChecks();
     if ($period_timing_info["duration"] !== '' && $period_timing_info["duration"] !== 0) {
         $checks = $this->segmentToPeriodDurationCheck($xmlRepresentation);
         $logger->test(

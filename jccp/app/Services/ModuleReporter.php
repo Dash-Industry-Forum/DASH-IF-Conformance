@@ -84,19 +84,21 @@ class ModuleReporter
         foreach ($serialized as &$element) {
             foreach ($element as &$module) {
                 foreach ($module as &$section) {
-                    foreach ($section['checks'] as &$check) {
-                        if ($check['state'] != "DEPENDENT") {
+                    foreach ($section['checks'] as $statement => &$check) {
+                        if ($check['state'] != "DEPENDENCY") {
                             continue;
                         }
-                        $depArray = explode('::', $check['messages'][0]);
+                        $depArray = explode('::', $statement);//check['messages'][0]);
 
                         if (!array_key_exists($depArray[0], $element)) {
-                            $check['messages'][] = "Unable to resolve dependent spec";
+                            $check['messages'][] = "✗ Unable to resolve dependent spec";
                             $check['state'] = "FAIL";
+                            continue;
                         }
                         if (!array_key_exists($depArray[1], $element[$depArray[0]])) {
-                            $check['messages'][] = "Unable to resolve dependent section";
+                            $check['messages'][] = "✗ Unable to resolve dependent section";
                             $check['state'] = "FAIL";
+                            continue;
                         }
                         $dependentState = $element[$depArray[0]][$depArray[1]]['state'];
                         $check['state'] = $dependentState;
