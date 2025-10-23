@@ -259,30 +259,12 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
          sizeof(array_unique($subsegmentSignaling)) == 1 &&
          in_array(0, $subsegmentSignaling))
     ) {
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 4.5",
-            "Segment duration SHALL be at least 1 second except for the last segment of a Period",
-            $segmentDuration >= 1,
-            "FAIL",
-            "Duration of segment " . ($j + 1) . " is at least 1 second",
-            "Duration of segment " . ($j + 1) . " is less than 1 second",
-        );
     } elseif (!empty($subsegmentSignaling) && !in_array(0, $subsegmentSignaling)) {
         $referenceCount = $subsegmentSignaling[$sidxIndex];
         $cumulativeSubsegmentDuration += $segmentDuration;
 
         $subsegmentSignaling[$sidxIndex] = $referenceCount - 1;
         if ($subsegmentSignaling[$sidxIndex] == 0) {
-            $logger->test(
-                "HbbTV-DVB DASH Validation Requirements",
-                "DVB: Section 4.5",
-                "Segment duration SHALL be at least 1 second except for the last segment of a Period",
-                $cumulativeSubsegmentDuration >= 1,
-                "FAIL",
-                "Duration of segment " . ($j + 1) . " is at least 1 second",
-                "Duration of segment " . ($j + 1) . " is less than 1 second",
-            );
 
             $sidxIndex++;
             $cumulativeSubsegmentDuration = 0;
@@ -311,15 +293,6 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
         $referenceCount = $subsegmentSignaling[$sidxIndex];
         if ($referenceCount == 0) {
 
-            $logger->test(
-                "HbbTV-DVB DASH Validation Requirements",
-                "DVB: Section 4.5",
-                "Segment duration SHALL be at least 1 second except for the last segment of a Period",
-                $segmentDuration >= 1,
-                "FAIL",
-                "Duration of segment " . ($j + 1) . " is at least 1 second",
-                "Duration of segment " . ($j + 1) . " is less than 1 second",
-            );
 
             $sidxIndex++;
         } else {
@@ -328,15 +301,6 @@ for ($j = 0; $j < $moofBoxCount - 1; $j++) {
 
             if ($subsegmentSignaling[$sidxIndex] == 0) {
                 $sidxIndex++;
-                $logger->test(
-                    "HbbTV-DVB DASH Validation Requirements",
-                    "DVB: Section 4.5",
-                    "Segment duration SHALL be at least 1 second except for the last segment of a Period",
-                    $cumulativeSubsegmentDuration >= 1,
-                    "FAIL",
-                    "Duration of segment " . ($j + 1) . " is at least 1 second",
-                    "Duration of segment " . ($j + 1) . " is less than 1 second",
-                );
 
                 $cumulativeSubsegmentDuration = 0;
             }

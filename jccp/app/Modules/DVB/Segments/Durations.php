@@ -20,6 +20,7 @@ class Durations
     private SubReporter $v141Reporter;
 
     private TestCase $durationCase;
+    private TestCase $minDurationCase;
 
     public function __construct()
     {
@@ -36,13 +37,63 @@ class Durations
             test: 'Each subsegment shall have a duration of not more than 15 seconds',
             skipReason: ''
         );
+        /
+        //TODO Actual check is 960ms
+        $this->minDurationCase = $this->v141Reporter->add(
+            section: '4.5',
+            test: 'Each subsegment shall be at least 1 second',
+            skipReason: ''
+        );
     }
 
     //Public validation functions
     public function validateDurations(Representation $representation, Segment $segment, int $segmentIndex): void
     {
         //TODO Check only for audio/video
+        $this->validateDurationLowerBound($representation, $segment, $segmentIndex);
+        $this->validateDurationUpperBound($representation, $segment, $segmentIndex);
+    }
 
+    private function validateDurationLowerBound(
+        Representation $representation,
+        Segment $segment,
+        int $segmentIndex
+    ): void {
+        //TODO Check whether not last segment in period
+        $segmentDurations = $segment->getSegmentDurations();
+        $validDurations = true;
+        if (count($segmentDurations)) {
+            foreach ($segmentDurations as $segmentDuration) {
+                if ($segmentDuration < 1) {
+                    $validDurations = false;
+                }
+            }
+        }
+
+        $this->minDurationCase->pathAdd(
+            result: $validDurations,
+            severity: "FAIL",
+            path: $representation->path() . "-$segmentIndex",
+            pass_message: "All durations valid",
+            fail_message: "At least one under threshold"
+        );
+
+        if (!$validDurations) {
+            $this->minDurationCase->pathAdd(
+                result: true,
+                severity: "INFO",
+                path: $representation->path() . "-$segmentIndex",
+                pass_message: "Found durations: " . implode(',', $segmentDurations),
+                fail_message: "",
+            );
+        }
+    }
+
+    private function validateDurationUpperBound(
+        Representation $representation,
+        Segment $segment,
+        int $segmentIndex
+    ): void {
         $segmentDurations = $segment->getSegmentDurations();
         $validDurations = true;
         if (count($segmentDurations)) {

@@ -17,7 +17,6 @@ class SegmentQueue extends Component
     {
         $segmentManager = app(SegmentManager::class);
         return $segmentManager->segmentCount() - $segmentManager->queuedStatus();
-
     }
 
     public function segmentCount(): int
