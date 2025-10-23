@@ -95,6 +95,14 @@ class Segment
     }
 
     /**
+     * @return array<?string>
+     **/
+    public function getSegmentSAPTypes(): array
+    {
+        return $this->runAnalyzedFunction('getSegmentSAP');
+    }
+
+    /**
      * @return ?array<float>
      **/
     public function getSegmentDurations(): ?array

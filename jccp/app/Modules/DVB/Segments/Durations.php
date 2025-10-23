@@ -37,7 +37,7 @@ class Durations
             test: 'Each subsegment shall have a duration of not more than 15 seconds',
             skipReason: ''
         );
-        /
+
         //TODO Actual check is 960ms
         $this->minDurationCase = $this->v141Reporter->add(
             section: '4.5',

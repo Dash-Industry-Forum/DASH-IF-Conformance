@@ -179,6 +179,29 @@ class MP4BoxRepresentation
     }
 
     /**
+     * @return array<?string>
+     **/
+    public function getSegmentSAP(): array
+    {
+        //TODO Get SAP if no 'subsegments'
+        $res = array();
+        if ($this->payload) {
+            $sidxBoxes = $this->payload->getElementsByTagName('SegmentIndexBox');
+            foreach ($sidxBoxes as $sidxBox) {
+                $references = $sidxBox->getElementsByTagName('Reference');
+                foreach ($references as $reference) {
+                    if ($reference->getAttribute('startsWithSAP') == '1') {
+                        $res[] = $reference->getAttribute('SAP_type');
+                    } else {
+                        $res[] = null;
+                    }
+                }
+            }
+        }
+        return $res;
+    }
+
+    /**
      * @return array<float>
      **/
     public function getSegmentDurations(): array
