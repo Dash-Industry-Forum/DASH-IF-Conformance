@@ -128,7 +128,6 @@ class MP4BoxRepresentation
                     break;
             }
         }
-
         return $result;
     }
 

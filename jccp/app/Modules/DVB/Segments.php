@@ -18,6 +18,7 @@ use App\Modules\DVB\Segments\Codecs;
 use App\Modules\DVB\Segments\BoxCount;
 use App\Modules\DVB\Segments\Durations;
 use App\Modules\DVB\Segments\SAPTypes;
+use App\Modules\DVB\Segments\Subtitle;
 
 class Segments extends Module
 {
@@ -56,5 +57,6 @@ class Segments extends Module
         new BoxCount()->validateBoxCount($representation, $segment, $segmentIndex);
         new Durations()->validateDurations($representation, $segment, $segmentIndex);
         new SAPTypes()->validateSAPTypes($representation, $segment, $segmentIndex);
+        new Subtitle()->validateSubtitles($representation, $segment, $segmentIndex);
     }
 }

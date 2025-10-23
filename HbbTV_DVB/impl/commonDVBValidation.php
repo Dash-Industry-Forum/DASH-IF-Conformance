@@ -37,40 +37,6 @@ if (strpos($sdType, 'enc') !== false) {
 ## Subtitle checks
 if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] == 'application/mp4') {
     if ($adaptation['codecs'] == 'stpp' || $representation['codecs'] == 'stpp') {
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 'Subtitles'",
-            "For subtitle media, handler type in the Initialization Segment SHALL be \"subt\"",
-            $hdlrType == "subt",
-            "FAIL",
-            "Valid handler type found",
-            "Invalid handler type \"$hdlrType\" found"
-        );
-
-
-        $stpp = $xmlRepresentation->getElementsByTagName('stpp');
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 'Subtitles'",
-            "For subtitle media, sample entry type SHALL be \"stpp (XMLSubtitleSampleEntry)\"",
-            $stpp->length > 0,
-            "FAIL",
-            "stpp found",
-            "stpp not found"
-        );
-
-        if ($stpp->length > 0) {
-            $logger->test(
-                "HbbTV-DVB DASH Validation Requirements",
-                "DVB: Section 'Subtitles'",
-                "For subtitle media, namespaces SHALL be listed in the sample entry",
-                $stpp->item(0)->getAttribute('namespace') != '',
-                "FAIL",
-                "Namespace element listed in first stpp item",
-                "Namespace element not listed in first stpp item"
-            );
-        }
-
         ## EBU TECH 3381 - Section 5 - Layout check
         if (in_array('video', $mediaTypes)) {
             $tkhd = $xmlRepresentation->getElementsByTagName('tkhd')->item(0);
@@ -79,7 +45,6 @@ if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] 
                 "DVB: Section 'Subtitles'",
                 "EBU TECH 3381 Section 5- When the subtitle track is associated with a video object the width and " .
                 "height of the subtitle track SHOULD NOT be set",
-                "For subtitle media, sample entry type SHALL be \"stpp (XMLSubtitleSampleEntry)\"",
                 (int)($tkhd->getAttribute('width')) == 0 && (int)($tkhd->getAttribute('height')) == 0,
                 "WARN",
                 "Width and height not set",
