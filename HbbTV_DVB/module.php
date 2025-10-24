@@ -230,10 +230,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/crossvalidationHbbTV.php';
     }
 
-    private function initializationSegmentCommonCheck($files)
-    {
-        include 'impl/inititializationSegmentCommonCheck.php';
-    }
 
     private function dvbPeriodContinousAdaptationSetsCheck()
     {

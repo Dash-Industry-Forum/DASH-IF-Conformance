@@ -40,7 +40,6 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
             }
         }
     }
-    $this->initializationSegmentCommonCheck($files);
     if ($this->DVBEnabled) {
         $this->dvbPeriodContinousAdaptationSetsCheck();
     }
