@@ -2,7 +2,6 @@
 
 global $mpdHandler, $session;
 
-$this->contentProtectionReport();
 $adaptations = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPeriod()]['AdaptationSet'];
 for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationIndex++) {
     $loc = $session->getAdaptationDir($mpdHandler->getSelectedPeriod(), $adaptationIndex);

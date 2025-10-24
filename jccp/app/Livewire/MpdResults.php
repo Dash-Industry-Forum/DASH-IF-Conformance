@@ -35,7 +35,7 @@ class MpdResults extends Component
         if ($this->section == "MPD") {
             $specManager->validate();
         }
-        if ($this->section == "Segments") {
+        if ($this->section == "Segments" || $this->section == "CrossValidation") {
             $segmentManager = new SegmentManager();
             $this->segmentDebug = $segmentManager->getSegments(0, 0, 0);
             $specManager->validateSegments();

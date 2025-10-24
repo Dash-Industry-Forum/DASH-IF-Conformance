@@ -26,7 +26,7 @@ class ManifestDetails extends Component
     #[On('mpd-selected')]
     public function refresh(): void
     {
-        $this->sections = ['MPD', 'Segments'];
+        $this->sections = ['MPD', 'Segments', 'CrossValidation'];
     }
 
     public function isOpenSection(string $spec): bool

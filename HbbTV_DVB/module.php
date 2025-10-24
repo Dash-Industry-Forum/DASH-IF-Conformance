@@ -235,11 +235,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/inititializationSegmentCommonCheck.php';
     }
 
-    private function contentProtectionReport()
-    {
-        include 'impl/contentProtectionReport.php';
-    }
-
     private function dvbPeriodContinousAdaptationSetsCheck()
     {
         include 'impl/dvbPeriodContinousAdaptationSetsCheck.php';

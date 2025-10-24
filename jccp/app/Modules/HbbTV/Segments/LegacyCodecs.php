@@ -81,7 +81,7 @@ class LegacyCodecs
         if (str_starts_with($format, 'avc')) {
             $this->validateAVC($representation, $segment);
         }
-        if (str_starts_with($format, 'mp4a')){
+        if (str_starts_with($format, 'mp4a')) {
             $this->validateAudio($representation, $segment);
         }
     }

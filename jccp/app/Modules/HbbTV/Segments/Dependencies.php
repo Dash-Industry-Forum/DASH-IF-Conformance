@@ -19,8 +19,10 @@ class Dependencies
 {
     //Private subreporters
     private SubReporter $legacyReporter;
+    private SubReporter $crosslegacyReporter;
     private TestCase $dependentDurationCase;
     private TestCase $dependentVideoInitCase;
+    private TestCase $dependentProtectionCase;
 
     public function __construct()
     {
@@ -29,7 +31,7 @@ class Dependencies
         $reporter = app(ModuleReporter::class);
         $this->legacyReporter = &$reporter->context(new ReporterContext(
             "Segments",
-            "LEGACY",
+            "Legacy",
             "HbbTV",
             []
         ));
@@ -46,6 +48,19 @@ class Dependencies
             dependentModule: "DVB Segments Module",
             dependentSpec: "DVB - v1.4.1",
             dependentSection: "5.1.2"
+        );
+        $this->crosslegacyReporter = &$reporter->context(new ReporterContext(
+            "CrossValidation",
+            "Legacy",
+            "HbbTV",
+            []
+        ));
+        $this->dependentProtectionCase = $this->crosslegacyReporter->dependencyAdd(
+            section: "DRM",
+            test: "Inherit DVB legacy checks",
+            dependentModule: "DVB Segments Module",
+            dependentSpec: "Legacy - DVB",
+            dependentSection: "DRM"
         );
     }
 
@@ -64,6 +79,13 @@ class Dependencies
             result: true,
             severity: "DEPENDENCY",
             pass_message: "Segment initialization needs to adhere to DVB",
+            fail_message: ""
+        );
+        $this->dependentProtectionCase->pathAdd(
+            path: $representation->path(),
+            result: true,
+            severity: "DEPENDENCY",
+            pass_message: "Segment protection needs to adhere to DVB",
             fail_message: ""
         );
     }
