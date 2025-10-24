@@ -14,9 +14,6 @@ if ($xmlRepresentation) {
         );
         $this->commonDVBValidation($xmlRepresentation, $mediaTypes);
     }
-    if ($this->HbbTvEnabled) {
-        $this->commonHbbTVValidation($xmlRepresentation);
-    }
 
     $this->segmentTimingCommon($xmlRepresentation);
     $this->segmentDurationChecks();

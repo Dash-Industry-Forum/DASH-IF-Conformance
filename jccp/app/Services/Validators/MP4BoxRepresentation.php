@@ -576,6 +576,27 @@ class MP4BoxRepresentation
      * TODO: Make this return a valid object rather than raw array
      * @return array<string, string>
      **/
+    public function getAudioConfiguration(): array
+    {
+        $res = [];
+        if (!$this->payload) {
+            return $res;
+        }
+        $audioRecords = $this->payload->getElementsByTagName('MPEGAudioSampleDescriptionBox');
+        if (count($audioRecords) == 0) {
+            return $res;
+        }
+        foreach ($audioRecords->item(0)->getAttributeNames() as $attName) {
+            $res[$attName] = $audioRecords->item(0)->getAttribute($attName);
+        }
+
+        return $res;
+    }
+
+    /**
+     * TODO: Make this return a valid object rather than raw array
+     * @return array<string, string>
+     **/
     public function getAVCConfiguration(): array
     {
         $res = [];

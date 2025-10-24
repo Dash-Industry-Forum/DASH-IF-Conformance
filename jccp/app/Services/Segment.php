@@ -212,6 +212,14 @@ class Segment
     /**
      * @return array<string,string>
      **/
+    public function getAudioConfiguration(): ?array
+    {
+        return $this->runAnalyzedFunction('getAudioConfiguration');
+    }
+
+    /**
+     * @return array<string,string>
+     **/
     public function getAVCConfiguration(): ?array
     {
         return $this->runAnalyzedFunction('getAVCConfiguration');
