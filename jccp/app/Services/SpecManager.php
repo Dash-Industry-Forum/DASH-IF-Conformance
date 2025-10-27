@@ -11,6 +11,7 @@ use App\Modules\HbbTV\MPD as HbbTVManifest;
 use App\Modules\HbbTV\Segments as HbbTVSegments;
 use App\Modules\Wave\Segments as WaveHLSInteropSegments;
 use App\Interfaces\Module;
+use App\Services\Manifest\Period;
 use App\Services\SegmentManager;
 use App\Services\MPDCache;
 
@@ -126,6 +127,20 @@ class SpecManager
                     $segments = $segmentManager->representationSegments($representation);
                     $module->validateSegments($representation, $segments);
                 }
+            }
+        }
+        $this->validateMultiPeriod($module, $mpdCache->allPeriods());
+    }
+
+    /**
+     * @param array<Period> $periods
+     **/
+    private function validateMultiPeriod(Module $module, array $periods): void
+    {
+        $periodCount = count($periods);
+        for ($first = 0; $first < $periodCount; $first++) {
+            for ($second = $first + 1; $second < $periodCount; $second++) {
+                $module->validateMultiPeriod($periods[$first], $periods[$second]);
             }
         }
     }

@@ -4,6 +4,7 @@ namespace App\Interfaces;
 
 use App\Services\ModuleLogger;
 use App\Services\Segment;
+use App\Services\Manifest\Period;
 use App\Services\Manifest\Representation;
 use App\Services\Manifest\AdaptationSet;
 use Illuminate\Support\Facades\Log;
@@ -34,6 +35,10 @@ class Module
     }
 
     public function validateCrossAdaptationSet(AdaptationSet $adaptationSet): void
+    {
+    }
+
+    public function validateMultiPeriod(Period $firstPeriod, Period $secondPeriod): void
     {
     }
 }

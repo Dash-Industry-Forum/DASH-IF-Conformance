@@ -9,6 +9,7 @@ use App\Services\MPDCache;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
+use App\Services\Manifest\Period;
 use App\Services\Manifest\AdaptationSet;
 use App\Services\Manifest\Representation;
 use App\Services\Segment;
@@ -21,6 +22,7 @@ use App\Modules\DVB\Segments\Durations;
 use App\Modules\DVB\Segments\SAPTypes;
 use App\Modules\DVB\Segments\Subtitle;
 use App\Modules\DVB\Segments\ContentProtection;
+use App\Modules\DVB\Segments\ContinuousPeriods;
 
 class Segments extends Module
 {
@@ -33,6 +35,11 @@ class Segments extends Module
     public function validateMPD(): void
     {
         parent::validateMPD();
+    }
+
+    public function validateMultiPeriod(Period $firstPeriod, Period $secondPeriod): void
+    {
+        new ContinuousPeriods()->validateContinuity($firstPeriod, $secondPeriod);
     }
 
     public function validateCrossAdaptationSet(AdaptationSet $adaptationSet): void

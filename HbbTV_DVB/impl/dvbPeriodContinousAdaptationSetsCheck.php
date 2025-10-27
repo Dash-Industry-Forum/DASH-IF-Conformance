@@ -1,6 +1,6 @@
 <?php
 
-global $session, $mpdHandler, $associativity, $logger;
+global $session, $mpdHandler, $logger;
 
 $periods = $mpdHandler->getFeatures()['Period'];
 $periodCount = sizeof($periods);
@@ -31,24 +31,7 @@ for ($i = 0; $i < $periodCount; $i++) {
                         continue;
                     }
 
-                    ## Period continuous adaptation sets are signalled.
-                    ## Start checking for conformity according to Section 10.5.2.3
-                    // Check associativity
-                    $logger->test(
-                        "HbbTV-DVB DASH Validation Requirements",
-                        "DVB: Section 10.5.2.3",
-                        "If Adaptation Sets in two different Periods are period continuous, then Adaptation Sets " .
-                        "with the value of their @id attribute set to AID in the first and subsequent Periods SHALL " .
-                        "be associated as defined in clause 10.5.2.3",
-                        in_array("$i $a1 $j $a2", $associativity),
-                        "FAIL",
-                        "Associated values found for Adaptation $a1 period $i, and Adaptation $a2 period $j",
-                        "Associated values not found for Adaptation $a1 period $i, and Adaptation $a2 period $j"
-                    );
                     // EPT1 comparisons within the Adaptation Sets
-                    if ($i != 0) {
-                        continue;
-                    }
                     $EPT1 = array();
                     $representations1 = $adaptation1['Representation'];
                     for ($thisRep = 0; $thisRep < sizeof($representations1); $thisRep++) {
