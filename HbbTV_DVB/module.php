@@ -229,17 +229,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     {
         include 'impl/crossvalidationHbbTV.php';
     }
-
-
-    private function dvbPeriodContinousAdaptationSetsCheck()
-    {
-        include 'impl/dvbPeriodContinousAdaptationSetsCheck.php';
-    }
-
-    private function segmentTimingInfo($xmlRepresentation)
-    {
-        return include 'impl/segmentTimingInfo.php';
-    }
 }
 
 $modules[] = new ModuleHbbTVDVB();

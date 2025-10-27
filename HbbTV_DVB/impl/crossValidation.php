@@ -40,9 +40,4 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
             }
         }
     }
-    if ($this->DVBEnabled) {
-        $this->dvbPeriodContinousAdaptationSetsCheck();
-    }
-
-    $this->addOrRemoveImages('REMOVE');
 }

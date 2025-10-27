@@ -240,4 +240,9 @@ class Segment
     {
         return $this->runAnalyzedFunction('getHeight');
     }
+
+    public function getEPT(): ?int
+    {
+        return $this->runAnalyzedFunction('getEPT');
+    }
 }

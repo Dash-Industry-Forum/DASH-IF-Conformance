@@ -635,4 +635,37 @@ class MP4BoxRepresentation
 
         return $hasPPS && $hasSPS;
     }
+
+    public function getEPT(): ?int
+    {
+        if (!$this->payload) {
+            return null;
+        }
+
+
+        $videoEPT = null;
+        $naluSamples = $this->payload->getElementsByTagName('NALUSamples');
+        if (count($naluSamples) > 0) {
+            $samples = $naluSamples->item(0)->getElementsByTagName('Sample');
+            if (count($samples) > 0) {
+                $videoEPT = intval($samples->item(0)->getAttribute('DTS'));
+            }
+        }
+        $audioEPT = null;
+        $nhntSamples = $this->payload->getElementsByTagName('NHNTStream');
+        if (count($nhntSamples) > 0) {
+            $samples = $nhntSamples->item(0)->getElementsByTagName('NHNTSample');
+            if (count($samples) > 0) {
+                $audioEPT = intval($samples->item(0)->getAttribute('DTS'));
+            }
+        }
+
+        if ($videoEPT) {
+            if ($audioEPT) {
+                return min($videoEPT, $audioEPT);
+            }
+            return $videoEPT;
+        }
+        return $audioEPT;
+    }
 }
