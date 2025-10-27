@@ -159,6 +159,12 @@ class MpdResults extends Component
                 if ($rhs['state'] == 'WARN') {
                     return 1;
                 }
+                if ($lhs['state'] == 'PASS') {
+                    return -1;
+                }
+                if ($rhs['state'] == 'PASS') {
+                    return 1;
+                }
                 return 0;
             }
         );

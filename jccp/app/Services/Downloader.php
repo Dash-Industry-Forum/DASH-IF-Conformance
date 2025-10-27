@@ -57,6 +57,7 @@ class Downloader
 
 
         $initUrl = $representation->initializationUrl();
+        Log::info("Init URL: $initUrl");
         $initPath = '';
         if ($initUrl) {
             $initPath = "${representationDir}init.mp4";

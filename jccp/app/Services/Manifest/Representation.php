@@ -58,6 +58,10 @@ class Representation
         ///\TODO Add segmentlist variant (based on example_G4)
 
         $segmentTemplate = $this->dom->getElementsByTagName("SegmentTemplate");
+        if (!count($segmentTemplate)) {
+            $segmentTemplate = app(MPDCache::class)->getAdaptationSet($this->periodIndex, $this->adaptationSetIndex)
+                                   ->getDOMElements('SegmentTemplate');
+        }
         if (count($segmentTemplate)) {
             $segmentTemplateUrl = Uri::fromBaseUri(
                 $segmentTemplate->item(0)->getAttribute('initialization'),
@@ -65,8 +69,6 @@ class Representation
             )->toString();
             return Uri::fromBaseUri($segmentTemplateUrl, $base)->toString();
         }
-
-
 
         return null;
     }
@@ -114,6 +116,14 @@ class Representation
                 array('{bandwidth}','{Number}','{Number3d}','{RepresentationID}','{Time}'),
                 $segmentTemplateUrl
             );
+
+
+            $segmentTimeline = $segmentTemplate->item(0)->getElementsByTagName('SegmentTimeline');
+            if (count($segmentTimeline)) {
+                return $this->timelineUrls($segmentTimeline->item(0), $uriTemplate);
+            }
+
+
             $startNumber = $segmentTemplate->item(0)->getAttribute('startNumber');
             if (!$startNumber) {
                 $startNumber = 1;
@@ -122,7 +132,7 @@ class Representation
                 $result[] = Uri::fromTemplate($uriTemplate, [
                     'Number' => ($startNumber + $i),
                     'Number3d' => sprintf('%03d', ($startNumber + $i)),
-                    'RepresentationID' => $this->getId()
+                    'RepresentationID' => $this->getId(),
                 ])->toString();
             }
         }
@@ -133,6 +143,37 @@ class Representation
 
 
         return $result;
+    }
+
+
+    /**
+     * @return array<string>
+     */
+    private function timelineUrls(\DOMElement $timeline, string $template): array
+    {
+        $urls = [];
+        $time = 0;
+        $segmentElements = $timeline->getElementsByTagName('S');
+        foreach ($segmentElements as $segmentElement) {
+            $repeats = 1;
+            if ($segmentElement->getAttribute('r') != '') {
+                $repeats = intval($segmentElement->getAttribute('r'));
+            }
+            for ($r = 0; $r < $repeats; $r++) {
+                $urls[] = Uri::fromTemplate($template, [
+                    'RepresentationID' => $this->getId(),
+                    'Time' => $time
+                ])->toString();
+                $time += intval($segmentElement->getAttribute('d'));
+                if (count($urls) > 3) {
+                    break;
+                }
+            }
+            if (count($urls) > 3) {
+                break;
+            }
+        }
+        return $urls;
     }
 
     public function getId(): string
