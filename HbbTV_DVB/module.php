@@ -122,14 +122,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/mpdUpdateConstraintsWithinAdaptationSet.php';
     }
 
-    public function hookMPD()
-    {
-        parent::hookMPD();
-
-        if ($this->HbbTvEnabled) {
-            $this->hbbMPDValidator();
-        }
-    }
 
     private function mpdTimingInfo()
     {
@@ -141,10 +133,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         return include 'impl/MPDUtility/computeTimerange.php';
     }
 
-    private function hbbMPDValidator()
-    {
-        include 'impl/hbbMPDValidator.php';
-    }
 
     public function hookBeforeRepresentation()
     {
