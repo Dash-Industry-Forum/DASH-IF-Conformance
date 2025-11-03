@@ -47,14 +47,12 @@ class MPDHandler
         $this->schematronIssuesReport = null;
         $this->segmentUrls = array();
 
-        $this->load();
         $this->parseXML();
         if ($this->mpd) {
             $this->features = $this->recursiveExtractFeatures($this->dom);
             $this->extractProfiles();
             $this->runSchematron();
             $this->validateSchematron();
-            $this->loadSegmentUrls();
         }
     }
 
@@ -63,7 +61,7 @@ class MPDHandler
     {
         $tmpMpd = $this->mpd;
         if (!$content) {
-            $this->load();
+          return;
         } else {
             $this->mpd = $content;
         }
@@ -76,7 +74,6 @@ class MPDHandler
         if (!$content) {
             $this->runSchematron();
             $this->validateSchematron();
-            $this->loadSegmentUrls();
         }
         return true;
     }
@@ -86,84 +83,12 @@ class MPDHandler
         return include 'impl/MPDHandler/getEarliestUpdate.php';
     }
 
-    public function getPeriodAttribute($idx, $attr): string | null
-    {
-        if (!array_key_exists($attr, $this->features["Period"][$idx])) {
-            return null;
-        }
-        return $this->features["Period"][$idx][$attr];
-    }
-
-    public function getAdaptationSetAttribute($idx, $aIdx, $attr): string | null
-    {
-        $adaptationSetFeatures = $this->features["Period"][$idx]["AdaptationSet"][$aIdx];
-        if (!array_key_exists($attr, $adaptationSetFeatures)) {
-            return null;
-        }
-        return $adaptationSetFeatures[$attr];
-    }
-    public function getAdaptationSetChild($idx, $aIdx, $childName)
-    {
-        $adaptationSetFeatures = $this->features["Period"][$idx]["AdaptationSet"][$aIdx];
-        if (!array_key_exists($childName, $adaptationSetFeatures)) {
-            return null;
-        }
-        return $adaptationSetFeatures[$childName];
-    }
-    public function getRepresentationAttribute($idx, $aIdx, $rIdx, $attr): string | null
-    {
-        $representationFeatures = $this->features["Period"][$idx]["AdaptationSet"][$aIdx]['Representation'][$rIdx];
-        if (!array_key_exists($attr, $representationFeatures)) {
-            return null;
-        }
-        return $representationFeatures[$attr];
-    }
-
-
-    public function downloadAll($assemble = true)
-    {
-        include 'impl/MPDHandler/downloadAll.php';
-    }
-
-    private function assembleSingle($source, $assembly, $sizeFile, $index)
-    {
-        include 'impl/MPDHandler/assembleSingle.php';
-    }
-
-    public function downloadSegment($target, $url)
-    {
-        include 'impl/MPDHandler/downloadSegment.php';
-    }
 
     public function internalSegmentUrls()
     {
         return $this->segmentUrls;
     }
 
-
-    public function loadSegmentUrls()
-    {
-        return include 'impl/MPDHandler/loadSegmentUrls.php';
-    }
-
-    public function getRoles($period, $adaptation)
-    {
-        return include 'impl/MPDHandler/getRoles.php';
-    }
-
-    public function getPeriodIds()
-    {
-        return include 'impl/MPDHandler/getPeriodIds.php';
-    }
-
-    public function getAdaptationSetIds($periodId)
-    {
-        return include 'impl/MPDHandler/getAdaptationSetIds.php';
-    }
-    public function getRepresentationIds($periodId, $adaptationSetId)
-    {
-        return include 'impl/MPDHandler/getRepresentationIds.php';
-    }
 
 
     public function selectPeriod($period)
@@ -250,74 +175,9 @@ class MPDHandler
         include 'impl/MPDHandler/getDurationsForAllPeriods.php';
     }
 
-    public function getPeriodBaseUrl($periodIndex = null)
-    {
-
-        return include 'impl/MPDHandler/getPeriodBaseUrl.php';
-    }
-
-    public function getSegmentUrls($periodIndex = null)
-    {
-        return include 'impl/MPDHandler/getSegmentUrls.php';
-    }
-
-    public function getFrameRate(
-        $periodIndex = null,
-        $adaptationIndex = null,
-        $representationIndex = null
-    ) {
-        return include 'impl/MPDHandler/getFrameRate.php';
-    }
-
-    public function getContentType(
-        $periodIndex = null,
-        $adaptationIndex = null,
-        $representationIndex = null
-    ) {
-        return include 'impl/MPDHandler/getContentType.php';
-    }
 
 
 
-    private function computeTiming(
-        $presentationDuration,
-        $segmentAccess,
-        $segmentAccessType
-    ) {
-        return include 'impl/MPDHandler/computeTiming.php';
-    }
-
-    private function computeDynamicIntervals(
-        $adaptationSetId,
-        $representationId,
-        $segmentAccess,
-        $segmentTimings,
-        $segmentCount
-    ) {
-        return include 'impl/MPDHandler/computeDynamicIntervals.php';
-    }
-
-
-    private function computeUrls(
-        $representation,
-        $adaptationSetId,
-        $representationId,
-        $segmentAccess,
-        $segmentInfo,
-        $baseUrl
-    ) {
-        return include 'impl/MPDHandler/computeUrls.php';
-    }
-
-    private function load()
-    {
-        include 'impl/MPDHandler/load.php';
-    }
-
-    private function parseXML()
-    {
-        include 'impl/MPDHandler/parseXML.php';
-    }
 
     public function getUrl()
     {
@@ -343,31 +203,5 @@ class MPDHandler
     {
         return $this->features;
     }
-    public function getFeature($featureName)
-    {
-        if (!array_key_exists($featureName, $this->features)) {
-            return null;
-        }
-        return $this->features[$featureName];
-    }
 
-    protected function setFeatures($features)
-    {
-        $this->features = $features;
-    }
-
-    public function getProfiles()
-    {
-        return $this->profiles;
-    }
-
-    public function getAllPeriodFeatures()
-    {
-        return $this->features['Period'];
-    }
-
-    public function getCurrentPeriodFeatures()
-    {
-        return $this->features['Period'][$this->selectedPeriod];
-    }
 }
