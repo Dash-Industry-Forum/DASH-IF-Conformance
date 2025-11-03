@@ -113,12 +113,6 @@ function nextElementSibling($node)
     return $node;
 }
 
-function timeParsing($var)
-{
-    return include 'impl/MPDUtility/timeParsing.php';
-}
-
-
 function checkYearMonth($str)
 {
     $y = str_replace("P", "", $str);
