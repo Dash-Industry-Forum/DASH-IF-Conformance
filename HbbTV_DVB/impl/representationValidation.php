@@ -14,7 +14,4 @@ if ($xmlRepresentation) {
         );
         $this->commonDVBValidation($xmlRepresentation, $mediaTypes);
     }
-
-    $this->segmentTimingCommon($xmlRepresentation);
-    $this->segmentDurationChecks();
 }

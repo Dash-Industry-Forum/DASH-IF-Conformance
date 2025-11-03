@@ -122,12 +122,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/mpdUpdateConstraintsWithinAdaptationSet.php';
     }
 
-
-    private function mpdTimingInfo()
-    {
-        return include 'impl/mpdTimingInfo.php';
-    }
-
     public function hookBeforeRepresentation()
     {
         parent::hookBeforeRepresentation();
@@ -153,16 +147,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     private function commonDVBValidation($xmlRepresentation, $mediaTypes)
     {
         include 'impl/commonDVBValidation.php';
-    }
-
-    private function segmentTimingCommon($xmlRepresentation)
-    {
-        include 'impl/segmentTimingCommon.php';
-    }
-
-    private function segmentDurationChecks()
-    {
-        return include 'impl/segmentDurationChecks.php';
     }
 }
 
