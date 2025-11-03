@@ -22,6 +22,10 @@ class AudioChecks
     private TestCase $dolbyCase;
     private TestCase $roleCase;
     private TestCase $attributeCase;
+    private TestCase $mimeTypeAttributeCase;
+    private TestCase $codecAttributeCase;
+    private TestCase $samplingRateAttributeCase;
+    private TestCase $configurationElementCase;
     private TestCase $fallbackCase;
 
     public function __construct()
@@ -52,6 +56,26 @@ class AudioChecks
         $this->attributeCase = $this->v141reporter->add(
             section: "Section 6.1.1",
             test: "All audio Representations SHALL have the attributes and elements in Table 4",
+            skipReason: "No audio Representation found"
+        );
+        $this->mimeTypeAttributeCase = $this->v141reporter->add(
+            section: "Section 6.1.1",
+            test: "@mimeType SHALL be common for all audio Representations within an AdaptationSet",
+            skipReason: "No audio Representation found"
+        );
+        $this->codecAttributeCase = $this->v141reporter->add(
+            section: "Section 6.1.1",
+            test: "@codec SHOULD be common for all audio Representations within an Adapation Set",
+            skipReason: "No audio Representation found"
+        );
+        $this->samplingRateAttributeCase = $this->v141reporter->add(
+            section: "Section 6.1.1",
+            test: "@audioSamplingRate SHOULD be common for all audio Representations within an Adapation Set",
+            skipReason: "No audio Representation found"
+        );
+        $this->configurationElementCase = $this->v141reporter->add(
+            section: "Section 6.1.1",
+            test: "AudioChannelConfiguration SHOULD be common for all audio Representations within an Adapation Set",
             skipReason: "No audio Representation found"
         );
         $this->fallbackCase = $this->v141reporter->add(
@@ -179,9 +203,20 @@ class AudioChecks
 
     private function validateAttributes(AdaptationSet $adaptationSet): void
     {
+
+        $attributeValues = [
+            'mimeType' => [],
+            'codecs' => [],
+            'audioSamplingRate' => [],
+        ];
+
+        $audioChannelConfiguration = null;
+        $equalAudioChannelConfiguration = true;
+
         //NOTE: This only applies to non-NGA streams.
         foreach ($adaptationSet->allRepresentations() as $representation) {
             foreach (['mimeType', 'codecs','audioSamplingRate'] as $attribute) {
+                $values[$attribute][] = $representation->getTransientAttribute($attribute);
                 $this->attributeCase->pathAdd(
                     path: $representation->path(),
                     result: $representation->getTransientAttribute($attribute) != '',
@@ -190,15 +225,68 @@ class AudioChecks
                     fail_message: "'@$attribute' missing",
                 );
             }
-                $this->attributeCase->pathAdd(
-                    path: $representation->path(),
-                    result: count($adaptationSet->getDOMElements('Role')) > 0 ||
-                          count($representation->getDOMElements('Role')) > 0,
-                    severity: "FAIL",
-                    pass_message: "Role element(s) found",
-                    fail_message: "No role element found"
-                );
+            $this->attributeCase->pathAdd(
+                path: $representation->path(),
+                result: count($adaptationSet->getDOMElements('Role')) > 0 ||
+                      count($representation->getDOMElements('Role')) > 0,
+                severity: "FAIL",
+                pass_message: "Role element(s) found",
+                fail_message: "No role element found"
+            );
+            $this->attributeCase->pathAdd(
+                path: $representation->path(),
+                result: count($adaptationSet->getDOMElements('AudioChannelConfiguration')) > 0 ||
+                      count($representation->getDOMElements('AudioChannelConfiguration')) > 0,
+                severity: "FAIL",
+                pass_message: "AudioChannelConfiguration element(s) found",
+                fail_message: "No AudioChannelConfiguration element found"
+            );
+
+            if (!$audioChannelConfiguration) {
+                $configurations = $representation->getDOMElements('AudioChannelConfiguration');
+                if (count($configurations)) {
+                    $audioChannelConfiguration = $configurations->item(0);
+                }
+            } else {
+                $configurations = $representation->getDOMElements('AudioChannelConfiguration');
+                if (count($configurations)) {
+                    if (!$audioChannelConfiguration->isEqualNode($configurations->item(0))) {
+                        $equalAudioChannelConfiguration = false;
+                    }
+                } else {
+                    $equalAudioChannelConfiguration = false;
+                }
+            }
         }
+
+        $this->mimeTypeAttributeCase->pathAdd(
+            path: $adaptationSet->path(),
+            result: count(array_unique($attributeValues['mimeType'])) == 1,
+            severity: "FAIL",
+            pass_message: "@mimeType identical for all representations",
+            fail_message: "@mimeType not identical for all representations",
+        );
+        $this->codecAttributeCase->pathAdd(
+            path: $adaptationSet->path(),
+            result: count(array_unique($attributeValues['codecs'])) == 1,
+            severity: "WARN",
+            pass_message: "@codecs identical for all representations",
+            fail_message: "@codecs not identical for all representations",
+        );
+        $this->samplingRateAttributeCase->pathAdd(
+            path: $adaptationSet->path(),
+            result: count(array_unique($attributeValues['audioSamplingRate'])) == 1,
+            severity: "WARN",
+            pass_message: "@audioSamplingRate identical for all representations",
+            fail_message: "@audioSamplingRate not identical for all representations",
+        );
+        $this->configurationElementCase->pathAdd(
+            path: $adaptationSet->path(),
+            result: $equalAudioChannelConfiguration,
+            severity: "WARN",
+            pass_message: "AudioChannelConfiguration identical for all representations",
+            fail_message: "AudioChannelConfiguration not identical for all representations",
+        );
     }
 
     /**

@@ -60,12 +60,19 @@ class SwitchableRepresentation
     {
         $this->validateGeneric($adaptationSet);
         $this->validateVideo($adaptationSet);
+        $this->validateAudio($adaptationSet);
     }
 
     //Private Helper Functions
     public function validateVideo(AdaptationSet $adaptationSet): void
     {
         //NOTE: Removed some incorrect player video requirements in this commit, do these need to be re-implemented?
+    }
+
+    public function validateAudio(AdaptationSet $adaptationSet): void
+    {
+        //TODO: Re-implement 2.0/5.1 configuration check from this commit
+        //NOTE: Removed no-longer accurate DTS Frame duration check in this commit
     }
 
     public function validateGeneric(AdaptationSet $adaptationSet): void

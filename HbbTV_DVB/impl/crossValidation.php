@@ -28,15 +28,6 @@ for ($adaptationIndex = 0; $adaptationIndex < sizeof($adaptations); $adaptationI
                         $index2
                     );
                 }
-                if ($this->DVBEnabled) {
-                    $this->crossValidationDVB(
-                        $xmlDom1,
-                        $xmlDom2,
-                        $adaptationIndex,
-                        $index1,
-                        $index2
-                    );
-                }
             }
         }
     }
