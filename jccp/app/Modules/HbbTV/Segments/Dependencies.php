@@ -23,6 +23,7 @@ class Dependencies
     private TestCase $dependentDurationCase;
     private TestCase $dependentVideoInitCase;
     private TestCase $dependentProtectionCase;
+    private TestCase $dependentInitializationCase;
 
     public function __construct()
     {
@@ -62,6 +63,13 @@ class Dependencies
             dependentSpec: "Legacy - DVB",
             dependentSection: "DRM"
         );
+        $this->dependentInitializationCase = $this->crosslegacyReporter->dependencyAdd(
+            section: "DRM",
+            test: "Inherit DVB legacy checks",
+            dependentModule: "DVB Segments Module",
+            dependentSpec: "DVB - v1.4.1",
+            dependentSection: "4.3"
+        );
     }
 
     //Public validation functions
@@ -86,6 +94,13 @@ class Dependencies
             result: true,
             severity: "DEPENDENCY",
             pass_message: "Segment protection needs to adhere to DVB",
+            fail_message: ""
+        );
+        $this->dependentInitializationCase->pathAdd(
+            path: $representation->path(),
+            result: true,
+            severity: "DEPENDENCY",
+            pass_message: "Segment initialization needs to adhere to DVB",
             fail_message: ""
         );
     }

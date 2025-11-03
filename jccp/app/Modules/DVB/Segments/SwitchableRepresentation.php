@@ -30,8 +30,8 @@ class SwitchableRepresentation
         $reporter = app(ModuleReporter::class);
         $this->v141Reporter = &$reporter->context(new ReporterContext(
             "CrossValidation",
-            "A DVB",
-            "v.1.4.1",
+            "DVB",
+            "v1.4.1",
             []
         ));
 

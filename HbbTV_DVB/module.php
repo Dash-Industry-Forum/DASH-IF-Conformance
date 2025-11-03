@@ -159,17 +159,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         return $this->representationValidation();
     }
 
-    public function hookBeforeAdaptationSet()
-    {
-        parent::hookBeforeAdaptationSet();
-    }
-
-    public function hookAdaptationSet()
-    {
-        parent::hookAdaptationSet();
-        $this->crossValidation();
-    }
-
     private function representationValidation()
     {
         return include 'impl/representationValidation.php';
@@ -203,17 +192,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     private function segmentToPeriodDurationCheck($xmlRepresentation)
     {
         return include 'impl/segmentToPeriodDurationCheck.php';
-    }
-
-    private function crossValidation()
-    {
-        include 'impl/crossValidation.php';
-    }
-
-
-    private function crossValidationHbbTV($xmlDom1, $xmlDom2, $adaptationIndex, $xmlIndex1, $xmldIndex2)
-    {
-        include 'impl/crossvalidationHbbTV.php';
     }
 }
 
