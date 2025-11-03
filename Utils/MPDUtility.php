@@ -81,10 +81,6 @@ function mpdProfilesContainsAtLeastOne($profiles)
     return profileListContainsAtLeastOne($mpdHandler->getDom()->getAttribute('profiles'), $profiles);
 }
 
-function mediaTypes()
-{
-    return include 'impl/MPDUtility/mediaTypes.php';
-}
 
 function recursive_generate($node, &$domDocument, &$domElement, $profile)
 {

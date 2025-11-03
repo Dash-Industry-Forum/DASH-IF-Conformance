@@ -11,28 +11,8 @@ $representation = $adaptation['Representation'][$mpdHandler->getSelectedRepresen
 ## Check on the support of the provided codec
 // Segment part
 $hdlrBoxes = $xmlRepresentation->getElementsByTagName('hdlr');
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "Conformance-Internal",
-    "Representation is expected to contain (at least one) `hdlr` box",
-    count($hdlrBoxes),
-    "WARN",
-    "`hdlr` box found",
-    "No `hdlr` box found, skipping further checks"
-);
-if (!count($hdlrBoxes)) {
-    return;
-}
 $hdlrType = $hdlrBoxes->item(0)->getAttribute('handler_type');
-$sdType = $xmlRepresentation->getElementsByTagName("$hdlrType" . '_sampledescription')->item(0)->getAttribute('sdType');
 
-$originalFormat = '';
-if (strpos($sdType, 'enc') !== false) {
-    $sinfBoxes = $xmlRepresentation->getElementsByTagName('sinf');
-    if ($sinfBoxes->length != 0) {
-        $originalFormat = $sinfBoxes->item(0)->getElementsByTagName('frma')->item(0)->getAttribute('originalFormat');
-    }
-}
 
 ## Subtitle checks
 if ($adaptation['mimeType'] == 'application/mp4' || $representation['mimeType'] == 'application/mp4') {

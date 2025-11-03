@@ -217,4 +217,32 @@ class MPDCache
 
         return $result;
     }
+
+    /**
+     * @return array<string>
+     **/
+    public function getMediaTypes(): array
+    {
+        $mediaTypes = [];
+
+        foreach ($this->allPeriods() as $period) {
+            foreach ($period->allAdaptationSets() as $adaptationSet) {
+                foreach ($adaptationSet->allRepresentations() as $representation) {
+                    $contentType = $representation->getTransientAttribute('contentType');
+                    $mimeType = $representation->getTransientAttribute('mimeType');
+                    if ($contentType == 'video' || strpos($mimeType, 'video') !== false) {
+                        $mediaTypes[] = 'video';
+                    }
+                    if ($contentType == 'audio' || strpos($mimeType, 'audio') !== false) {
+                        $mediaTypes[] = 'audio';
+                    }
+                    if ($contentType == 'text' || strpos($mimeType, 'application') !== false) {
+                        $mediaTypes[] = 'subtitle';
+                    }
+                }
+            }
+        }
+
+        return array_unique($mediaTypes);
+    }
 }
