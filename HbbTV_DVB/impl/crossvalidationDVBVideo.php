@@ -8,56 +8,8 @@ $representation2 = $adaptation['Representation'][$xmlIndex2];
 
 $equalRepresentationCount = (sizeof($representation1) == sizeof($representation2));
 
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "DVB: Section 10.4",
-    "Players SHALL support seamless switching between video Representations",
-    $equalRepresentationCount,
-    "PASS",
-    "Adaptation $adaptationIndex: " .
-    "representations $xmlIndex1 and $xmlIndex2 contain the same attributes",
-    "Adaptation $adaptationIndex:  " .
-    "representations $xmlIndex1 and $xmlIndex2 contain a different amount of attributes"
-);
 if (!$equalRepresentationCount) {
     return;
-}
-
-foreach ($representation1 as $key1 => $val1) {
-    if (is_array($val1)) {
-        continue;
-    }
-    $logger->test(
-        "HbbTV-DVB DASH Validation Requirements",
-        "DVB: Section 10.4",
-        "Players SHALL support seamless switching between video Representations",
-        array_key_exists($key1, $representation2),
-        "PASS",
-        "Adaptation $adaptationIndex: attribute $key1 found in both" .
-        "representations $xmlIndex1 and $xmlIndex2",
-        "Adaptation $adaptationIndex: attribute $key1 found in " .
-        "representations $xmlIndex1 but not in $xmlIndex2"
-    );
-    if (array_key_exists($key1, $representation2)) {
-        if (
-            $key1 != 'bandwidth' && $key1 != 'id' && $key1 != 'frameRate' &&
-            $key1 != 'width' && $key1 != 'height' && $key1 != 'codecs'
-        ) {
-            $val2 = $representation2[$key1];
-            $logger->test(
-                "HbbTV-DVB DASH Validation Requirements",
-                "DVB: Section 10.4",
-                "Players SHALL support seamless switching between audio Representations which differ only in " .
-                "frame rate, bit rate, profile and/or level, and resolution",
-                $val1 == $val2,
-                "PASS",
-                "Adaptation $adaptationIndex: attribute $key1 values match between " .
-                "representations $xmlIndex1 and $xmlIndex2",
-                "Adaptation $adaptationIndex: attribute $key1 values differ between  " .
-                "representations $xmlIndex1 and $xmlIndex2"
-            );
-        }
-    }
 }
 
 // Frame rate
