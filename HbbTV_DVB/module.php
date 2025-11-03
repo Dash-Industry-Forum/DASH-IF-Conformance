@@ -220,11 +220,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         include 'impl/crossvalidationDVBAudio.php';
     }
 
-    private function crossValidationDVBVideo($xmlDom1, $xmlDom2, $adaptationIndex, $xmlIndex1, $xmldIndex2)
-    {
-        include 'impl/crossvalidationDVBVideo.php';
-    }
-
     private function crossValidationHbbTV($xmlDom1, $xmlDom2, $adaptationIndex, $xmlIndex1, $xmldIndex2)
     {
         include 'impl/crossvalidationHbbTV.php';

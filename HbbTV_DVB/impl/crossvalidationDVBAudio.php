@@ -6,56 +6,6 @@ $adaptation = $mpdHandler->getFeatures()['Period'][$mpdHandler->getSelectedPerio
 $representation1 = $adaptation['Representation'][$xmlIndex1];
 $representation2 = $adaptation['Representation'][$xmlIndex2];
 
-$equalRepresentationCount = (sizeof($representation1) == sizeof($representation2));
-
-$logger->test(
-    "HbbTV-DVB DASH Validation Requirements",
-    "DVB: Section 10.4",
-    "Players SHALL support seamless switching between audio Representations which only differ in bit rate",
-    $equalRepresentationCount,
-    "PASS",
-    "Adaptation $adaptationIndex: " .
-    "representations $xmlIndex1 and $xmlIndex2 contain the same attributes",
-    "Adaptation $adaptationIndex:  " .
-    "representations $xmlIndex1 and $xmlIndex2 contain a different amount of attributes"
-);
-if ($equalRepresentationCount) {
-    foreach ($representation1 as $key1 => $val1) {
-        if (is_array($val1)) {
-            continue;
-        }
-        $logger->test(
-            "HbbTV-DVB DASH Validation Requirements",
-            "DVB: Section 10.4",
-            "Players SHALL support seamless switching between audio Representations which " .
-            "only differ in bit rate",
-            array_key_exists($key1, $representation2),
-            "PASS",
-            "Adaptation $adaptationIndex: attribute $key1 found in both" .
-            "representations $xmlIndex1 and $xmlIndex2",
-            "Adaptation $adaptationIndex: attribute $key1 found in " .
-            "representations $xmlIndex1 but not in $xmlIndex2"
-        );
-        if (array_key_exists($key1, $representation2)) {
-            if ($key1 != 'bandwidth' && $key1 != 'id') {
-                $val2 = $representation2[$key1];
-                $logger->test(
-                    "HbbTV-DVB DASH Validation Requirements",
-                    "DVB: Section 10.4",
-                    "Players SHALL support seamless switching between audio Representations which " .
-                    "only differ in bit rate",
-                    $val1 == $val2,
-                    "PASS",
-                    "Adaptation $adaptationIndex: attribute $key1 values match between " .
-                    "representations $xmlIndex1 and $xmlIndex2",
-                    "Adaptation $adaptationIndex: attribute $key1 values differ between  " .
-                    "representations $xmlIndex1 and $xmlIndex2"
-                );
-            }
-        }
-    }
-}
-
 ## Section 6.1.1 Table 3 cross-checks for audio representations
 // @mimeType
 $adaptationMimetype = $adaptation['mimeType'];

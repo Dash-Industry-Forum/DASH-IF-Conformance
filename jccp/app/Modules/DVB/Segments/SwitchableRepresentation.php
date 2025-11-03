@@ -65,7 +65,7 @@ class SwitchableRepresentation
     //Private Helper Functions
     public function validateVideo(AdaptationSet $adaptationSet): void
     {
-        //NOTE: Removed some player video requirements in this commit, do these need to be re-implemented?
+        //NOTE: Removed some incorrect player video requirements in this commit, do these need to be re-implemented?
     }
 
     public function validateGeneric(AdaptationSet $adaptationSet): void

@@ -14,8 +14,3 @@ $hdlrType2 = $hdlr2->getAttribute('handler_type');
 if ($hdlrType1 == 'soun' && $hdlrType2 == 'soun') {
     $this->crossValidationDVBAudio($xmlDom1, $xmlDom2, $adaptationIndex, $xmlIndex1, $xmldIndex2);
 }
-
-## Section 10.4 check for video switching
-if ($hdlrType1 == 'vide' && $hdlrType2 == 'vide') {
-    $this->crossValidationDVBVideo($xmlDom1, $xmlDom2, $adaptationIndex, $xmlIndex1, $xmldIndex2);
-}

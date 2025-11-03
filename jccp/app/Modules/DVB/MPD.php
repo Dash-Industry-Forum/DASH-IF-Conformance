@@ -74,6 +74,7 @@ class MPD extends Module
         //NOTE: Removed xlink checks, as they depended on a non-existent global
         //NOTE: Removed checks that were related to profileSpecificMPD, as they did not really check anything.
         //NOTE: Removed anchor keys checks as they are not in v141, but described in a different spec.
+        //TODO: Re-implement player compatibility checks from this commit
 
         new Profiles()->validateProfiles();
         new Dimensions()->validateDimensions();
