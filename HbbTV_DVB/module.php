@@ -150,7 +150,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     {
         parent::hookBeforeRepresentation();
         $this->flags();
-        return $this->isSubtitle();
     }
 
     public function hookRepresentation()
@@ -167,11 +166,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     private function flags()
     {
         include 'impl/flags.php';
-    }
-
-    private function isSubtitle()
-    {
-        return include 'impl/isSubtitle.php';
     }
 
     private function commonDVBValidation($xmlRepresentation, $mediaTypes)
