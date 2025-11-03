@@ -170,11 +170,6 @@ class ModuleHbbTVDVB extends ModuleInterface
     {
         return include 'impl/segmentDurationChecks.php';
     }
-
-    private function segmentToPeriodDurationCheck($xmlRepresentation)
-    {
-        return include 'impl/segmentToPeriodDurationCheck.php';
-    }
 }
 
 $modules[] = new ModuleHbbTVDVB();
