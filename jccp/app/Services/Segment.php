@@ -86,6 +86,11 @@ class Segment
         return null;
     }
 
+    public function getTrackId(): ?int
+    {
+        return $this->runAnalyzedFunction('getTrackIdFromTKHD');
+    }
+
     /**
      * @return ?array<float>
      **/

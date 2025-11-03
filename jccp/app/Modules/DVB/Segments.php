@@ -23,6 +23,7 @@ use App\Modules\DVB\Segments\SAPTypes;
 use App\Modules\DVB\Segments\Subtitle;
 use App\Modules\DVB\Segments\ContentProtection;
 use App\Modules\DVB\Segments\ContinuousPeriods;
+use App\Modules\DVB\Segments\SwitchableRepresentation;
 
 class Segments extends Module
 {
@@ -45,6 +46,7 @@ class Segments extends Module
     public function validateCrossAdaptationSet(AdaptationSet $adaptationSet): void
     {
         new ContentProtection()->validateContentProtection($adaptationSet);
+        new SwitchableRepresentation()->validateSwitchableRepresentations($adaptationSet);
     }
 
     /**

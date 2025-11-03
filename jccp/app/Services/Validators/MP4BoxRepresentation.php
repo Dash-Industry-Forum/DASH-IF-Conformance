@@ -351,6 +351,17 @@ class MP4BoxRepresentation
         return $result;
     }
 
+    public function getTrackIdFromTKHD(): ?int
+    {
+        if (!$this->payload) {
+            return null;
+        }
+        $boxes = $this->payload->getElementsByTagName('TrackHeaderBox');
+        if (!count($boxes)) {
+            return null;
+        }
+        return intval($boxes->item(0)->getAttribute('TrackID'));
+    }
 
     public function getTrackId(string $boxName, int $index): ?int
     {

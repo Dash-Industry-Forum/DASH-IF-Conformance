@@ -31,7 +31,7 @@ class ContinuousPeriods
         $reporter = app(ModuleReporter::class);
         $this->v141Reporter = &$reporter->context(new ReporterContext(
             "Segments",
-            "A DVB",
+            "DVB",
             "v1.4.1",
             []
         ));
