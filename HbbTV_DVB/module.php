@@ -128,12 +128,6 @@ class ModuleHbbTVDVB extends ModuleInterface
         return include 'impl/mpdTimingInfo.php';
     }
 
-    private function computeTimerange($timeRange)
-    {
-        return include 'impl/MPDUtility/computeTimerange.php';
-    }
-
-
     public function hookBeforeRepresentation()
     {
         parent::hookBeforeRepresentation();
