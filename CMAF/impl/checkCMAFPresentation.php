@@ -195,61 +195,6 @@ for ($adaptationSetIndex = 0; $adaptationSetIndex < $adaptationCount; $adaptatio
                         }
                     }
                 }
-                if ($cmfhdProfile) {
-                    $logger->test(
-                        "CMAF",
-                        "Section A.1.2",
-                        "All CMAF Tracks SHALL NOT contain encrypted Samples or a TrackEncryptionBox",
-                        $xml->getElementsByTagName('tenc')->length == 0,
-                        "FAIL",
-                        "Switching Set $adaptationSetIndex  Track $id has no encryption",
-                        "Switching Set $adaptationSetIndex  Track $id has encryption"
-                    );
-                }
-                if ($cmfhdcProfile) {
-                    if ($xml->getElementsByTagName('tenc')->length > 0) {
-                        $encryptedCounter = $encryptedCounter + 1;
-                        $schm = $xml->getElementsByTagName('schm');
-                        if ($schm->length) {
-                            $logger->test(
-                                "CMAF",
-                                "Section A.1.3",
-                                "Any CMAF Switching Set that is encrypted SHALL be available in 'cenc' " .
-                                "Common Encryption scheme",
-                                $schm->item(0)->getAttribute('scheme') == 'cenc',
-                                "FAIL",
-                                "Switching Set $adaptationSetIndex  Track $id has 'cenc' encryption",
-                                "Switching Set $adaptationSetIndex  Track $id has '" .
-                                $schm->item(0)->getAttribute('scheme') . "' encryption instead"
-                            );
-                        }
-                        if ($this->encryptedSwitchingSetFound = 0 && $encryptedCounter == $filecount) {
-                            $this->encryptedSwitchingSetFound = 1;
-                        }
-                    }
-                }
-                if ($cmfhdsProfile) {
-                    if ($xml->getElementsByTagName('tenc')->length > 0) {
-                        $encryptedCounter = $encryptedCounter + 1;
-                        $schm = $xml->getElementsByTagName('schm');
-                        if ($schm->length) {
-                            $logger->test(
-                                "CMAF",
-                                "Section A.1.4",
-                                "Any CMAF Switching Set that is encrypted SHALL be available in 'cbcs' ",
-                                "Common Encryption scheme",
-                                $schm->item(0)->getAttribute('scheme') == 'cenc',
-                                "FAIL",
-                                "Switching Set $adaptationSetIndex  Track $id has 'cbcs' encryption",
-                                "Switching Set $adaptationSetIndex  Track $id has '" .
-                                $schm->item(0)->getAttribute('scheme') . "' encryption instead"
-                            );
-                        }
-                        if ($this->encryptedSwitchingSetFound = 0 && $encryptedCounter == $filecount) {
-                            $this->encryptedSwitchingSetFound = 1;
-                        }
-                    }
-                }
             }
         }
     }

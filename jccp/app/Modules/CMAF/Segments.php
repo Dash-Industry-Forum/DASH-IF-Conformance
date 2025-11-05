@@ -17,6 +17,7 @@ use App\Interfaces\Module;
 ## Segment checks
 use App\Modules\CMAF\Segments\CompositionTimes;
 use App\Modules\CMAF\Segments\MetaData;
+use App\Modules\CMAF\Segments\EncryptionProfile;
 use App\Modules\CMAF\Segments\SegmentIndex;
 use App\Modules\CMAF\Segments\VideoMediaProfile;
 use App\Modules\CMAF\Segments\AudioMediaProfile;
@@ -41,6 +42,7 @@ class Segments extends Module
 
     public function validateCrossAdaptationSet(AdaptationSet $adaptationSet): void
     {
+        //TODO: Re-implement identical boxes checks from this commit
         new VideoMediaProfile()->validateVideoMediaProfiles($adaptationSet);
         new AudioMediaProfile()->validateAudioMediaProfiles($adaptationSet);
         new SubtitleMediaProfile()->validateSubtitleMediaProfiles($adaptationSet);
@@ -68,5 +70,6 @@ class Segments extends Module
         new CompositionTimes()->validateCompositionTimes($representation, $segment, $segmentIndex);
         new MetaData()->validateMetaData($representation, $segment, $segmentIndex);
         new SegmentIndex()->validateSegmentIndex($representation, $segment, $segmentIndex);
+        new EncryptionProfile()->validateEncryptionProfile($representation, $segment, $segmentIndex);
     }
 }
