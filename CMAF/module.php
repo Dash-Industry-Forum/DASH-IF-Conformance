@@ -190,22 +190,6 @@ class ModuleCMAF extends ModuleInterface
         return include 'impl/checkCMAFMessages.php';
     }
 
-    private function getAudioTrackMediaProfile($mpParameters)
-    {
-        return include 'impl/getAudioTrackMediaProfile.php';
-    }
-
-    private function getSubtitleTrackMediaProfile($mpParameters)
-    {
-        return include 'impl/getSubtitleTrackMediaProfile.php';
-    }
-
-    private function determineCMAFMediaProfiles($xml)
-    {
-        return include 'impl/determineCMAFMediaProfiles.php';
-    }
-
-
     private function createString()
     {
         return include 'impl/createString.php';
@@ -234,11 +218,6 @@ class ModuleCMAF extends ModuleInterface
     private function getNALUnit($nalArray)
     {
         return include 'impl/getNalUnit.php';
-    }
-
-    private function checkMediaProfiles($representation1, $representation2)
-    {
-        include 'impl/checkMediaProfiles.php';
     }
 
     private function checkHeaders($xml1, $xml2, $id1, $id2, $currentAdaptionDir, $index, $path)

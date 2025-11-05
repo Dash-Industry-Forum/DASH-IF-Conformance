@@ -33,7 +33,6 @@ for ($i = 0; $i < $filecount - 1; $i++) { //iterate over files
         if ($xml1 && $xml2) {
             $this->checkHeaders($xml1, $xml2, $id1, $id2, $adaptationDirectory, $ind, $path); //start comparing
             $this->compareHevc($xml1, $xml2, $id1, $id2);
-            $this->checkMediaProfiles($i, $j);
             $this->compareRest($xml1, $xml2, $id1, $id2);
         }
 

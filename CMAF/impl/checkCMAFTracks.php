@@ -395,10 +395,6 @@ if ($contentProtectionLength > 0 && $dash264 == true) {
     );
 }
 
-$this->mediaProfiles[$mpdHandler->getSelectedPeriod()][$mpdHandler->getSelectedAdaptationSet()]
-  [$mpdHandler->getSelectedRepresentation()]['cmafMediaProfile'] = "__REWRITTEN__";
-
-
 $logger->test(
     "CMAF",
     "Section 7.3.2.2",

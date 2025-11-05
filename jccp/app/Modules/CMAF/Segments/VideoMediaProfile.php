@@ -49,6 +49,7 @@ class VideoMediaProfile
     //Public validation functions
     public function validateVideoMediaProfiles(AdaptationSet $adaptationSet): void
     {
+        //TODO: Only if video
         $signalledBrands = [];
 
         $segmentManager = app(SegmentManager::class);

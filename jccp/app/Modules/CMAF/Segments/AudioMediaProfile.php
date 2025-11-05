@@ -49,6 +49,7 @@ class AudioMediaProfile
     //Public validation functions
     public function validateAudioMediaProfiles(AdaptationSet $adaptationSet): void
     {
+        //TODO: Only if audio
         $signalledBrands = [];
 
         $segmentManager = app(SegmentManager::class);

@@ -43,6 +43,7 @@ class SubtitleMediaProfile
     //Public validation functions
     public function validateSubtitleMediaProfiles(AdaptationSet $adaptationSet): void
     {
+        //TODO: Only if subtitle
         $signalledBrands = [];
 
         $segmentManager = app(SegmentManager::class);
