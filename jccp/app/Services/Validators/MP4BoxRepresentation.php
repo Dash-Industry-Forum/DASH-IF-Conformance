@@ -678,13 +678,35 @@ class MP4BoxRepresentation
         }
         $naluEntries = $this->payload->getElementsByTagName('NALU');
         foreach ($naluEntries as $naluEntry) {
-            if ($naluEntry->getAttribute('type') != "SequenceParameterSet" && $naluEntry->getAttribute('type') != "Sequence Parameter Set") {
+            if (
+                $naluEntry->getAttribute('type') != "SequenceParameterSet" &&
+                $naluEntry->getAttribute('type') != "Sequence Parameter Set"
+            ) {
                 continue;
             }
             foreach ($naluEntry->getAttributeNames() as $attName) {
                 $res[$attName] = $naluEntry->getAttribute($attName);
             }
             break;
+        }
+        return $res;
+    }
+
+    /**
+     * TODO: Make this return a valid object rather than raw array
+     * @return array<string, string>
+     **/
+    public function getAACConfiguration(): array
+    {
+        $res = [];
+        if (!$this->payload) {
+            return $res;
+        }
+        $nhntEntries = $this->payload->getElementsByTagName('NHNTStream');
+        if (count($nhntEntries)) {
+            foreach ($nhntEntries->item(0)->getAttributeNames() as $attName) {
+                $res[$attName] = $nhntEntries->item(0)->getAttribute($attName);
+            }
         }
         return $res;
     }

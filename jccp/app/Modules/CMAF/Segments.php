@@ -19,6 +19,7 @@ use App\Modules\CMAF\Segments\CompositionTimes;
 use App\Modules\CMAF\Segments\MetaData;
 use App\Modules\CMAF\Segments\SegmentIndex;
 use App\Modules\CMAF\Segments\VideoMediaProfile;
+use App\Modules\CMAF\Segments\AudioMediaProfile;
 
 class Segments extends Module
 {
@@ -40,6 +41,7 @@ class Segments extends Module
     public function validateCrossAdaptationSet(AdaptationSet $adaptationSet): void
     {
         new VideoMediaProfile()->validateVideoMediaProfiles($adaptationSet);
+        new AudioMediaProfile()->validateAudioMediaProfiles($adaptationSet);
     }
 
     /**

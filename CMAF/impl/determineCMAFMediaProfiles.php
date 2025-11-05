@@ -9,31 +9,7 @@ if ($hdlrType == 'vide') {
     return "__REWRITTEN__";
 }
 if ($hdlrType == 'soun') {
-    $mediaProfileParameters = $this->CMAFMediaProfileAttributesAudio;
-    $audioSampleDescription = $xml->getElementsByTagName("soun_sampledescription")->item(0);
-    $sdType = $audioSampleDescription->getAttribute("sdType");
-    if ($sdType == "mp4a") {
-        $mediaProfileParameters['codec'] = "AAC";
-        $decoderSpecificInfo = $audioSampleDescription->getElementsByTagName("DecoderSpecificInfo")->item(0);
-        $mediaProfileParameters['sampleRate'] = $audioSampleDescription->getAttribute('sampleRate');
-        $mediaProfileParameters['profile'] = hexdec($decoderSpecificInfo->getAttribute("audioObjectType"));
-        $mediaProfileParameters['channels'] = hexdec($decoderSpecificInfo->getAttribute("channelConfig"));
-
-        if (strpos($compatibleBrands, "caaa") !== false) {
-            $mediaProfileParameters['brand'] = "caaa";
-        } elseif (strpos($compatibleBrands, "caac")) {
-            $mediaProfileParameters['brand'] = "caac";
-        }
-
-        $iodsODBoxes = $xml->getElementsByTagName("iods_OD");
-        if ($iodsODBoxes->length > 0) {
-            $iodsComment = $iodsODBoxes->getAttribute("Comment");
-            if ($iodsComment !== null) {
-                $mediaProfileParameters['level'] == str_replace("audio profile/level is ", "", $iodsComment);
-            }
-        }
-    }
-    return $this->getAudioTrackMediaProfile($mediaProfileParameters);
+    return "__REWRITTEN__";
 }
 if ($hdlrType == 'text') {
     $mediaProfileParameters = $this->CMAFMediaProfileAttributesSubtitle;

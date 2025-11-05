@@ -4,6 +4,7 @@ namespace App\Modules\CMAF\Segments;
 
 use App\Services\MPDCache;
 use App\Services\Manifest\AdaptationSet;
+use App\Services\Manifest\Representation;
 use App\Services\Segment;
 use App\Services\SegmentManager;
 use App\Services\ModuleReporter;
@@ -41,7 +42,7 @@ class VideoMediaProfile
         $this->brandCase = $this->cmafReporter->add(
             section: 'Section A.2 / B.5',
             test: "If a CMAF brand is signalled, it SHALL correspond with the table",
-            skipReason: 'No video switching set found'
+            skipReason: 'No cmaf brands signalled'
         );
     }
 
@@ -57,7 +58,7 @@ class VideoMediaProfile
 
             $highestBrand = '____'; // Unknown;
             if (count($segmentList)) {
-                $highestBrand = $this->validateAndDetermineBrand($segmentList[0]);
+                $highestBrand = $this->validateAndDetermineBrand($representation, $segmentList[0]);
             }
             $signalledBrands[] = $highestBrand; // Unknown
         }
@@ -72,22 +73,22 @@ class VideoMediaProfile
     }
 
     //Private helper functions
-    private function validateAndDetermineBrand(Segment $segment): string
+    private function validateAndDetermineBrand(Representation $representation, Segment $segment): string
     {
         $sdType = $segment->getSampleDescriptor();
 
         if ($sdType == 'avc1' || $sdType == 'avc3') {
-            return $this->validateAndDetermineBrandAVC($segment);
+            return $this->validateAndDetermineBrandAVC($representation, $segment);
         }
         if ($sdType == 'hev1' || $sdType == 'hvc1') {
-            return $this->validateAndDetermineBrandHEVC($segment);
+            return $this->validateAndDetermineBrandHEVC($representation, $segment);
         }
 
 
         return '____'; // Unknown
     }
 
-    private function validateAndDetermineBrandAVC(Segment $segment): string
+    private function validateAndDetermineBrandAVC(Representation $representation, Segment $segment): string
     {
         $brands = $segment->getBrands();
 
@@ -96,6 +97,7 @@ class VideoMediaProfile
         if (in_array('cfsd', $brands)) {
             $highestBrand = 'cfsd';
             $this->validateAVCParameters(
+                representation: $representation,
                 segment: $segment,
                 brand: 'cfsd',
                 targetProfile: "100",
@@ -111,6 +113,7 @@ class VideoMediaProfile
         if (in_array('cfhd', $brands)) {
             $highestBrand = 'cfhd';
             $this->validateAVCParameters(
+                representation: $representation,
                 segment: $segment,
                 brand: 'cfhd',
                 targetProfile: "100",
@@ -126,6 +129,7 @@ class VideoMediaProfile
         if (in_array('chdf', $brands)) {
             $highestBrand = 'chdf';
             $this->validateAVCParameters(
+                representation: $representation,
                 segment: $segment,
                 brand: 'chdf',
                 targetProfile: "100",
@@ -140,7 +144,7 @@ class VideoMediaProfile
         }
         return $highestBrand;
     }
-    private function validateAndDetermineBrandHEVC(Segment $segment): string
+    private function validateAndDetermineBrandHEVC(Representation $representation, Segment $segment): string
     {
         $brands = $segment->getBrands();
 
@@ -149,6 +153,7 @@ class VideoMediaProfile
         if (in_array('chhd', $brands)) {
             $highestBrand = 'chhd';
             $this->validateHEVCParameters(
+                representation: $representation,
                 segment: $segment,
                 brand: 'chhd',
                 targetProfile:["Main"],
@@ -164,6 +169,7 @@ class VideoMediaProfile
         if (in_array('chh1', $brands)) {
             $highestBrand = 'chh1';
             $this->validateHEVCParameters(
+                representation: $representation,
                 segment: $segment,
                 brand: 'chh1',
                 targetProfile:["Main10"],
@@ -179,6 +185,7 @@ class VideoMediaProfile
         if (in_array('cud8', $brands)) {
             $highestBrand = 'cud8';
             $this->validateHEVCParameters(
+                representation: $representation,
                 segment: $segment,
                 brand: 'cud8',
                 targetProfile:["Main8"],
@@ -194,6 +201,7 @@ class VideoMediaProfile
         if (in_array('cud1', $brands)) {
             $highestBrand = 'cud1';
             $this->validateHEVCParameters(
+                representation: $representation,
                 segment: $segment,
                 brand: 'cud1',
                 targetProfile:["Main10"],
@@ -209,6 +217,7 @@ class VideoMediaProfile
         if (in_array('chr1', $brands)) {
             $highestBrand = 'chr1';
             $this->validateHEVCParameters(
+                representation: $representation,
                 segment: $segment,
                 brand: 'chr1',
                 targetProfile:["Main10"],
@@ -230,6 +239,7 @@ class VideoMediaProfile
      * @param array<string> $validMatrixCoefficients
      **/
     private function validateAVCParameters(
+        Representation $representation,
         Segment $segment,
         string $brand,
         string $targetProfile,
@@ -256,6 +266,7 @@ class VideoMediaProfile
         }
 
         $this->validateParameters(
+            representation: $representation,
             segment: $segment,
             brand: $brand,
             targetProfile: [$targetProfile],
@@ -284,6 +295,7 @@ class VideoMediaProfile
      * @param array<string> $targetProfile
      **/
     private function validateHEVCParameters(
+        Representation $representation,
         Segment $segment,
         string $brand,
         array $targetProfile,
@@ -300,10 +312,10 @@ class VideoMediaProfile
         $spsConfiguration = $segment->getSPSConfiguration();
 
         $signalledProfile = 'Other';
-        if ($hevcConfiguration["profile_idc"] == "1"){
+        if ($hevcConfiguration["profile_idc"] == "1") {
             $signalledProfile = "Main";
         }
-        if ($hevcConfiguration["profile_idc"] == "2"){
+        if ($hevcConfiguration["profile_idc"] == "2") {
             $signalledProfile = "Main10";
         }
 
@@ -322,7 +334,7 @@ class VideoMediaProfile
         //As tier is only hevc based, we handle it separately
         //NOTE: Has always been hardcoded to a value of 0
         $this->brandCase->pathAdd(
-            path: $segment->segmentPath,
+            path: $representation->path() . "-init",
             result: $hevcConfiguration["tier_flag"] == "0",
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to tier_flag",
@@ -330,6 +342,7 @@ class VideoMediaProfile
         );
 
         $this->validateParameters(
+            representation: $representation,
             segment: $segment,
             brand: $brand,
             targetProfile: $targetProfile,
@@ -358,6 +371,7 @@ class VideoMediaProfile
      * @param array<string> $targetProfile
      **/
     private function validateParameters(
+        Representation $representation,
         Segment $segment,
         string $brand,
         array $targetProfile,
@@ -380,15 +394,15 @@ class VideoMediaProfile
         //NOTE: Should we keep supporting colourPrimaries, transferCharacteristics and matrixCoefficients?
 
         $this->brandCase->pathAdd(
-            path: $segment->segmentPath,
-            result: in_array($signalledProfile,$targetProfile),
+            path: $representation->path() . "-init",
+            result: in_array($signalledProfile, $targetProfile),
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to targetProfile",
             fail_message: "Signalled brand $brand but does not conform to targetProfile",
         );
 
         $this->brandCase->pathAdd(
-            path: $segment->segmentPath,
+            path: $$representation->path() . "-init",
             result: $signalledLevel <= $maxLevel,
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to maximum level",
@@ -397,21 +411,21 @@ class VideoMediaProfile
 
 
         $this->brandCase->pathAdd(
-            path: $segment->segmentPath,
+            path: $$representation->path() . "-init",
             result: in_array($signalledColourPrimaries, $validColourPrimaries),
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to colour primaries",
             fail_message: "Signalled brand $brand does not conform to colour primaries",
         );
         $this->brandCase->pathAdd(
-            path: $segment->segmentPath,
+            path: $$representation->path() . "-init",
             result: in_array($signalledTransferCharacteristics, $validTransferCharacteristics),
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to transfer characteristics",
             fail_message: "Signalled brand $brand does not conform to transfer characteristics",
         );
         $this->brandCase->pathAdd(
-            path: $segment->segmentPath,
+            path: $$representation->path() . "-init",
             result: in_array($signalledMatrixCoefficients, $validMatrixCoefficients),
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to matrix coefficients",
@@ -419,21 +433,21 @@ class VideoMediaProfile
         );
 
         $this->brandCase->pathAdd(
-            path: $segment->segmentPath,
+            path: $$representation->path() . "-init",
             result: $segment->getHeight() < $maxHeight,
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to maximum height",
             fail_message: "Signalled brand $brand exceeds maximum height",
         );
         $this->brandCase->pathAdd(
-            path: $segment->segmentPath,
+            path: $$representation->path() . "-init",
             result: $segment->getWidth() < $maxWidth,
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to maximum height",
             fail_message: "Signalled brand $brand exceeds maximum height",
         );
         $this->brandCase->pathAdd(
-            path: $segment->segmentPath,
+            path: $$representation->path() . "-init",
             result: $signalledFrameRate < $maxFrameRate,
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to maximum frameRate",

@@ -252,6 +252,14 @@ class Segment
     {
         return $this->runAnalyzedFunction('getSPSConfiguration');
     }
+    /**
+     * @return array<string,string>
+     **/
+    public function getAACConfiguration(): ?array
+    {
+        return $this->runAnalyzedFunction('getAACConfiguration');
+    }
+
 
     public function AVCConfigurationHasSPSPPS(): bool
     {
