@@ -402,7 +402,7 @@ class VideoMediaProfile
         );
 
         $this->brandCase->pathAdd(
-            path: $$representation->path() . "-init",
+            path: $representation->path() . "-init",
             result: $signalledLevel <= $maxLevel,
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to maximum level",
@@ -411,21 +411,21 @@ class VideoMediaProfile
 
 
         $this->brandCase->pathAdd(
-            path: $$representation->path() . "-init",
+            path: $representation->path() . "-init",
             result: in_array($signalledColourPrimaries, $validColourPrimaries),
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to colour primaries",
             fail_message: "Signalled brand $brand does not conform to colour primaries",
         );
         $this->brandCase->pathAdd(
-            path: $$representation->path() . "-init",
+            path: $representation->path() . "-init",
             result: in_array($signalledTransferCharacteristics, $validTransferCharacteristics),
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to transfer characteristics",
             fail_message: "Signalled brand $brand does not conform to transfer characteristics",
         );
         $this->brandCase->pathAdd(
-            path: $$representation->path() . "-init",
+            path: $representation->path() . "-init",
             result: in_array($signalledMatrixCoefficients, $validMatrixCoefficients),
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to matrix coefficients",
@@ -433,21 +433,21 @@ class VideoMediaProfile
         );
 
         $this->brandCase->pathAdd(
-            path: $$representation->path() . "-init",
+            path: $representation->path() . "-init",
             result: $segment->getHeight() < $maxHeight,
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to maximum height",
             fail_message: "Signalled brand $brand exceeds maximum height",
         );
         $this->brandCase->pathAdd(
-            path: $$representation->path() . "-init",
+            path: $representation->path() . "-init",
             result: $segment->getWidth() < $maxWidth,
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to maximum height",
             fail_message: "Signalled brand $brand exceeds maximum height",
         );
         $this->brandCase->pathAdd(
-            path: $$representation->path() . "-init",
+            path: $representation->path() . "-init",
             result: $signalledFrameRate < $maxFrameRate,
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to maximum frameRate",

@@ -20,6 +20,7 @@ use App\Modules\CMAF\Segments\MetaData;
 use App\Modules\CMAF\Segments\SegmentIndex;
 use App\Modules\CMAF\Segments\VideoMediaProfile;
 use App\Modules\CMAF\Segments\AudioMediaProfile;
+use App\Modules\CMAF\Segments\SubtitleMediaProfile;
 
 class Segments extends Module
 {
@@ -42,6 +43,7 @@ class Segments extends Module
     {
         new VideoMediaProfile()->validateVideoMediaProfiles($adaptationSet);
         new AudioMediaProfile()->validateAudioMediaProfiles($adaptationSet);
+        new SubtitleMediaProfile()->validateSubtitleMediaProfiles($adaptationSet);
     }
 
     /**

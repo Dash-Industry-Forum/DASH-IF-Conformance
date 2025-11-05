@@ -121,7 +121,7 @@ class AudioMediaProfile
         $aacConfiguration = $segment->getAACConfiguration();
 
         $this->brandCase->pathAdd(
-            path: $$representation->path() . "-init",
+            path: $representation->path() . "-init",
             result: $aacConfiguration['sampleRate'] <= $maxSampleRate,
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to maximum sample rate",
@@ -129,7 +129,7 @@ class AudioMediaProfile
         );
 
         $this->brandCase->pathAdd(
-            path: $$representation->path() . "-init",
+            path: $representation->path() . "-init",
             result: $aacConfiguration['numChannels'] <= $maxChannels,
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to maximum channel count",
@@ -137,7 +137,7 @@ class AudioMediaProfile
         );
 
         $this->brandCase->pathAdd(
-            path: $$representation->path() . "-init",
+            path: $representation->path() . "-init",
             result: in_array($aacConfiguration['objectTypeIndication'], $allowedObjectTypes),
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to allowed object types",
