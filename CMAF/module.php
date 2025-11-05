@@ -4,13 +4,6 @@ namespace DASHIF;
 
 class ModuleCMAF extends ModuleInterface
 {
-    private $CMAFMediaProfileAttributesVideo;
-    private $CMAFMediaProfileAttributesAudio;
-    private $CMAFMediaProfileAttributesSubtitle;
-    private $careAboutFtyp;
-    private $careAboutElst;
-    private $careAboutMdhd;
-    private $boxList;
     private $cfhdSwitchingSetFound;
     private $caadSwitchingSetFound;
     private $encryptedSwitchingSetFound;
@@ -118,22 +111,6 @@ class ModuleCMAF extends ModuleInterface
     private function checkCMAFMessages($representationDirectory)
     {
         return include 'impl/checkCMAFMessages.php';
-    }
-
-    private function getNALArray($hvcC, $type)
-    {
-        return include 'impl/getNalArray.php';
-    }
-
-    private function getNALUnit($nalArray)
-    {
-        return include 'impl/getNalUnit.php';
-    }
-
-
-    private function compareHevc($xml1, $xml2, $id1, $id2)
-    {
-        include 'impl/compareHevc.php';
     }
 
     private function compareRest($xml1, $xml2, $id1, $id2)

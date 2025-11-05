@@ -31,7 +31,6 @@ for ($i = 0; $i < $filecount - 1; $i++) { //iterate over files
         $path = $adaptationDirectory  . '/' . $namePart1 . "_vs_" . $namePart2 . ".xml";
 
         if ($xml1 && $xml2) {
-            $this->compareHevc($xml1, $xml2, $id1, $id2);
             $this->compareRest($xml1, $xml2, $id1, $id2);
         }
 
