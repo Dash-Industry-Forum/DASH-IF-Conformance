@@ -43,6 +43,7 @@ class Segments extends Module
 
     public function validateCrossAdaptationSet(AdaptationSet $adaptationSet): void
     {
+        //NOTE: Removed some comparison checks as we download only a subset of the fragments
         //TODO: Re-implement identical boxes checks from this commit
         new VideoMediaProfile()->validateVideoMediaProfiles($adaptationSet);
         new AudioMediaProfile()->validateAudioMediaProfiles($adaptationSet);

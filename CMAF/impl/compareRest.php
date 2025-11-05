@@ -22,56 +22,6 @@ $logger->test(
 $moofCount1 = $xml1->getElementsByTagName('moof')->length;
 $moofCount2 = $xml2->getElementsByTagName('moof')->length;
 
-$logger->test(
-    "CMAF",
-    "Section 7.3.4.1",
-    "A CMAF Switching Set SHALL contain the same number of CMAF Fragments",
-    $moofCount1 == $moofCount2,
-    "FAIL",
-    "Fragment count identical between representation $id1 and $id2",
-    "Fragment count not identical between representation $id1 and $id2",
-);
-
-//Check all Tracks have same ISOBMFF defined duration.
-if ($xml1->getElementsByTagName('mehd')->length && $xml2->getElementsByTagName('mehd')->length) {
-    $mehdBox1 = $xml1->getElementsByTagName('mehd')->item(0);
-    $mehdDuration1 = $mehdBox1->getAttribute('fragmentDuration');
-    $mehdBox2 = $xml2->getElementsByTagName('mehd')->item(0);
-    $mehdDuration2 = $mehdBox2->getAttribute('fragmentDuration');
-
-    $logger->test(
-        "CMAF",
-        "Section 7.3.4.1",
-        "A CMAF Switching Set SHALL have the same duration",
-        $mehdDuration1 == $mehdDuration2,
-        "FAIL",
-        "Duration identical between representation $id1 and $id2",
-        "Duration not identical between representation $id1 and $id2",
-    );
-} else { //added according to change in FDIS.
-    $lastTFDT1 = $xml1->getElementsByTagName('tfdt')->item($moofCount1 - 1);
-    $lastTFDT2 = $xml2->getElementsByTagName('tfdt')->item($moofCount2 - 1);
-
-    $lastDecodeTime1 = $lastTFDT1->getAttribute('baseMediaDecodeTime');
-    $lastDecodeTime2 = $lastTFDT2->getAttribute('baseMediaDecodeTime');
-
-    $lastTrun1 = $xml1->getElementsByTagName('trun')->item($moofCount1 - 1);
-    $lastTrun2 = $xml2->getElementsByTagName('trun')->item($moofCount2 - 1);
-
-    $cumulativeSampleDuration1 = $lastTrun1->getAttribute('cummulatedSampleDuration');
-    $cumulativeSampleDuration2 = $lastTrun2->getAttribute('cummulatedSampleDuration');
-
-    $logger->test(
-        "CMAF",
-        "Section 7.3.4.1",
-        "A CMAF Switching Set SHALL have the same duration",
-        $lastDecodeTime1 + $cumulativeSampleDuration1 == $lastDecodeTime2 + $cumulativeSampleDuration2,
-        "FAIL",
-        "Duration identical between representation $id1 and $id2",
-        "Duration not identical between representation $id1 and $id2",
-    );
-}
-
 //Check base decode time of Tracks.
 $tfdtBoxes1 = $xml1->getElementsByTagName('tfdt');
 $tfdtBaseMediaDecodeTime1 = $tfdtBoxes1->item(0)->getAttribute('baseMediaDecodeTime');
