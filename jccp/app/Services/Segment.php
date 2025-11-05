@@ -125,6 +125,14 @@ class Segment
         return $this->runAnalyzedFunction('getSDType');
     }
 
+    /**
+     * @return array<string>
+     **/
+    public function getBrands(): array
+    {
+        return $this->runAnalyzedFunction('getBrands');
+    }
+
     public function getHandlerType(): ?string
     {
         return $this->runAnalyzedFunction('getHandlerType');
@@ -180,6 +188,14 @@ class Segment
     /**
      * @return array<string>
      **/
+    public function getSIDXReferenceTypes(): array
+    {
+        return $this->runAnalyzedFunction('getSIDXReferenceTypes');
+    }
+
+    /**
+     * @return array<string>
+     **/
     public function getTopLevelBoxNames(): array
     {
         return $this->runAnalyzedFunction('getTopLevelBoxNames');
@@ -228,6 +244,13 @@ class Segment
     public function getAVCConfiguration(): ?array
     {
         return $this->runAnalyzedFunction('getAVCConfiguration');
+    }
+    /**
+     * @return array<string,string>
+     **/
+    public function getSPSConfiguration(): ?array
+    {
+        return $this->runAnalyzedFunction('getSPSConfiguration');
     }
 
     public function AVCConfigurationHasSPSPPS(): bool

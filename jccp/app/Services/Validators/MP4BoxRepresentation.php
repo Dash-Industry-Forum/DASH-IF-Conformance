@@ -75,6 +75,29 @@ class MP4BoxRepresentation
         return $handlerBoxes->item(0)->getAttribute('hdlrType');
     }
 
+    /**
+     * @return array<string>
+     **/
+    public function getBrands(): array
+    {
+        if (!$this->payload) {
+            return [];
+        }
+
+        $ftyp = $this->payload->getElementsByTagName('FileTypeBox');
+        if (!count($ftyp)) {
+            return [];
+        }
+
+        $brandList = [$ftyp->item(0)->getAttribute('MajorBrand')];
+
+        foreach ($ftyp->item(0)->getElementsByTagName('BrandEntry') as $minorBrand) {
+            $brandList[] = $minorBrand->getAttribute("AlternateBrand");
+        }
+
+        return $brandList;
+    }
+
     public function getSDType(): ?string
     {
         if (!$this->payload) {
@@ -175,6 +198,24 @@ class MP4BoxRepresentation
     {
         //TODO: Implement!
         return [];
+    }
+
+    /**
+     * @return array<string>
+     **/
+    public function getSIDXReferenceTypes(): array
+    {
+        $res = array();
+        if ($this->payload) {
+            $sidxBoxes = $this->payload->getElementsByTagName('SegmentIndexBox');
+            foreach ($sidxBoxes as $sidxBox) {
+                $references = $sidxBox->getElementsByTagName('Reference');
+                foreach ($references as $reference) {
+                    $res[] = $reference->getAttribute('type');
+                }
+            }
+        }
+        return $res;
     }
 
     /**
@@ -622,6 +663,29 @@ class MP4BoxRepresentation
             $res[$attName] = $avcDecoderRecords->item(0)->getAttribute($attName);
         }
 
+        return $res;
+    }
+
+    /**
+     * TODO: Make this return a valid object rather than raw array
+     * @return array<string, string>
+     **/
+    public function getSPSConfiguration(): array
+    {
+        $res = [];
+        if (!$this->payload) {
+            return $res;
+        }
+        $naluEntries = $this->payload->getElementsByTagName('NALU');
+        foreach ($naluEntries as $naluEntry) {
+            if ($naluEntry->getAttribute('type') != "SequenceParameterSet" && $naluEntry->getAttribute('type') != "Sequence Parameter Set") {
+                continue;
+            }
+            foreach ($naluEntry->getAttributeNames() as $attName) {
+                $res[$attName] = $naluEntry->getAttribute($attName);
+            }
+            break;
+        }
         return $res;
     }
 

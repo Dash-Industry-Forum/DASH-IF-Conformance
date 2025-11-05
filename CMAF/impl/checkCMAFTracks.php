@@ -38,43 +38,8 @@ $noErrorInTrack = true;
 $id = $adaptationSet['Representation'][$mpdHandler->getSelectedAdaptationSet()]['id'];
 $moofBoxes = $xml->getElementsByTagName('moof');
 $moofBoxesCount = $moofBoxes->length;
-$thfdBoxes = $xml->getElementsByTagName('tfhd');
 $trunBoxes = $xml->getElementsByTagName('trun');
 $tfdtBoxes = $xml->getElementsByTagName('tfdt');
-
-// 'trun' version check for CMAF video tracks
-$adaptationMimeType = $adaptationSet['mimeType'];
-$representationMimeType = $adaptationSet['Representation'][$mpdHandler->getSelectedAdaptationSet()]['mimeType'];
-if (strpos($representationMimeType, 'video') !== false || strpos($adaptationMimeType, 'video') !== false) {
-    $currentProfile = $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()]
-                                                [$mpdHandler->getSelectedAdaptationSet()]
-                                                [$mpdHandler->getSelectedRepresentation()];
-    if (strpos($currentProfile, 'urn:mpeg:dash:profile:isoff-live:2011') !== false) {
-        for ($j = 0; $j < $moofBoxesCount; $j++) {
-            $trunVersion = $trunBoxes->item($j)->getAttribute('version');
-            $logger->test(
-                "CMAF",
-                "Section 7.7.3 - check 'cmf2'",
-                "For video CMAF tracks not contained in Track Files, Version 1 SHALL be used",
-                $trunVersion == "1",
-                "FAIL",
-                "Representation $id, track $j valid",
-                "Representation $id, track $j uses $trunVersion instead",
-            );
-        }
-    }
-
-    $elstBoxes = $xml->getElementsByTagName('elst');
-    $logger->test(
-        "CMAF",
-        "Section 7.7.2 - check 'cmf2'",
-        "For video CMAF tracks, the EditListBox SHALL NOT be present",
-        $elstBoxes->length == 0,
-        "FAIL",
-        "Representation $id valid",
-        "Representation $id has an 'elst' box",
-    );
-}
 
 // 'subs' presence check for TTML image subtitle track with media profile 'im1i'
 $representationCodecs = $adaptationSet['Representation'][$mpdHandler->getSelectedRepresentation()]['codec'];
@@ -203,47 +168,6 @@ if ($elstBoxes->length > 0 && $hdlrType == 'vide') {
         "Representation $id not valid"
     );
 }
-
-$metaBoxes = $xml->getElementsByTagName('meta');
-$metaBoxAtFileLevel = false;
-if ($metaBoxes->length) {
-    foreach ($metaBoxes as $metaIndex => $metaBox) {
-        if ($metaBox->parentNode->nodeName == 'atomlist') {
-            $metaBoxAtFileLevel = true;
-            break;
-        }
-    }
-}
-
-$logger->test(
-    "CMAF",
-    "Section 7.5.2",
-    "When Metadata carried in MetaBox is present, it SHALL NOT occur at the file level",
-    !$metaBoxAtFileLevel,
-    "FAIL",
-    "Representation $id valid",
-    "Representation $id not valid"
-);
-
-$udtaBoxes = $xml->getElementsByTagName('udta');
-$udtaBoxAtFileLevel = false;
-if ($udtaBoxes->length > 0) {
-    foreach ($udtaBoxes as $udtaIndex => $udtaBox) {
-        if ($udtaBox->parentNode->nodeName == 'atomlist') {
-            $udtaBoxAtFileLevel = true;
-            break;
-        }
-    }
-}
-$logger->test(
-    "CMAF",
-    "Section 7.5.2",
-    "When Metadata carried in UserDataBox is present, it SHALL NOT occur at the file level",
-    !$udtaBoxAtFileLevel,
-    "FAIL",
-    "Representation $id valid",
-    "Representation $id not valid"
-);
 
 $videoSampleDescription = $xml->getElementsByTagName('vide_sampledescription');
 if ($videoSampleDescription->length > 0) {
@@ -469,29 +393,6 @@ if ($contentProtectionLength > 0 && $dash264 == true) {
         "Valid for representation / track $id",
         "Not valid for representation / track $id",
     );
-}
-
-//Segment Index box check.
-$sidxBoxes = $xml->getElementsByTagName('sidx');
-if ($sidxBoxes->length > 0) {
-    for ($j = 0; $j < $sidxBoxes->length; $j++) {
-        $sidxBox = $sidxBoxes->item($j);
-        $referenceCount = $sidxBox->getAttribute('referenceCount');
-        $syncSampleError = 0;
-        for ($z = 0; $z < $referenceCount; $z++) {
-            $referenceType = $sidxBox->getAttribute('reference_type_' . ($z + 1));
-            $logger->test(
-                "CMAF",
-                "Section 7.3.3.3",
-                "If SegmentIndexBoxes exist, each subsegment referenced in the SegmentIndexBox SHALL be a single " .
-                "CMAF Fragment contained in the CMAF Track File",
-                $referenceType == 0,
-                "FAIL",
-                "Valid for representation / track $id, segment $z",
-                "Not valid for representation / track $id, segment $z",
-            );
-        }
-    }
 }
 
 $cmafMediaProfilesResult = $this->determineCMAFMediaProfiles($xml);

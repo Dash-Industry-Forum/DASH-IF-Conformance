@@ -200,29 +200,11 @@ class ModuleCMAF extends ModuleInterface
         return include 'impl/getSubtitleTrackMediaProfile.php';
     }
 
-    private function getVideoTrackMediaProfile($mpParameters)
-    {
-        return include 'impl/getVideoTrackMediaProfile.php';
-    }
-
     private function determineCMAFMediaProfiles($xml)
     {
         return include 'impl/determineCMAFMediaProfiles.php';
     }
 
-    private function determineVideoProfileValidity(
-        $mpParameters,
-        $section,
-        $tableSection,
-        $validColorPrimaries,
-        $validTransferCharacteristics,
-        $validMatrixCoefficients,
-        $maxHeight,
-        $maxWidth,
-        $maxFrameRate
-    ) {
-        return include 'impl/determineVideoProfileValidity.php';
-    }
 
     private function createString()
     {

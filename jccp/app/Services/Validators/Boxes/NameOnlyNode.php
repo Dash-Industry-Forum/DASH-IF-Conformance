@@ -15,6 +15,7 @@ class NameOnlyNode
         $this->name = $xmlNode->tagName;
         if ($xmlNode->getAttribute('Type')) {
             $this->name = $xmlNode->getAttribute('Type');
+            $this->version = $xmlNode->getAttribute('Version');
         }
         $child = $xmlNode->firstElementChild;
         while ($child != null) {
@@ -42,6 +43,7 @@ class NameOnlyNode
         return $res;
     }
     public string $name;
+    public string $version;
     /**
      * @var array<NameOnlyNode> $children
      **/
