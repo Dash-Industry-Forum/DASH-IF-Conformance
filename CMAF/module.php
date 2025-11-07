@@ -51,18 +51,6 @@ class ModuleCMAF extends ModuleInterface
         $this->checkSwitchingSets();
     }
 
-    public function hookAdaptationSet()
-    {
-        parent::hookAdaptationSet();
-        $this->checkAlignedSwitchingSets();
-    }
-
-
-    private function checkAlignedSwitchingSets()
-    {
-        include 'impl/checkAlignedSwitchingSets.php';
-    }
-
     private function compareRest($xml1, $xml2, $id1, $id2)
     {
         include 'impl/compareRest.php';

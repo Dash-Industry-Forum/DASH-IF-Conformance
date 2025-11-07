@@ -41,6 +41,8 @@ class Segments extends Module
         parent::validateMPD();
     }
 
+    //NOTE: Removed all chekcs w.r.t switching set alignment in this commit
+
     public function validateMultiPeriod(Period $firstPeriod, Period $secondPeriod): void
     {
     }
