@@ -23,6 +23,7 @@ class VideoMediaProfile
 
     private TestCase $profileCase;
     private TestCase $brandCase;
+    private TestCase $cfhdCase;
 
     public function __construct()
     {
@@ -44,6 +45,11 @@ class VideoMediaProfile
             test: "If a CMAF brand is signalled, it SHALL correspond with the table",
             skipReason: 'No cmaf brands signalled'
         );
+        $this->cfhdCase = $this->cmafReporter->add(
+            section: 'Section A.1.2/A.1.3/A.1.4',
+            test: "Video adaptation sets SHALL include at least one 'cfhd' representation",
+            skipReason: 'No video track found with CMAF profile found'
+        );
     }
 
     //Public validation functions
@@ -54,11 +60,15 @@ class VideoMediaProfile
 
         $segmentManager = app(SegmentManager::class);
 
+        $hasCFHD = false;
         foreach ($adaptationSet->allRepresentations() as $representation) {
             $segmentList = $segmentManager->representationSegments($representation);
 
             $highestBrand = '____'; // Unknown;
             if (count($segmentList)) {
+                if (in_array('cfhd', $segmentList[0]->getBrands())) {
+                    $hasCFHD = true;
+                }
                 $highestBrand = $this->validateAndDetermineBrand($representation, $segmentList[0]);
             }
             $signalledBrands[] = $highestBrand; // Unknown
@@ -70,6 +80,14 @@ class VideoMediaProfile
             path: $adaptationSet->path(),
             pass_message: "All representations signal the same highest brand",
             fail_message: "Not all representations signal the same highest brand"
+        );
+
+        $this->cfhdCase->pathAdd(
+            result: $hasCFHD,
+            severity: "FAIL",
+            path: $adaptationSet->path(),
+            pass_message: "At least one 'cfhd' track found",
+            fail_message: "No 'cfhd' tracks found"
         );
     }
 

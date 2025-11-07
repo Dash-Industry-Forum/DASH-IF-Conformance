@@ -79,23 +79,27 @@ class EncryptionProfile
     public function validateCMFHDC(Representation $representation, Segment $segment, int $segmentIndex): void
     {
         $protectionScheme = $segment->getProtectionScheme();
-        $this->cmfhdcCase->pathAdd(
-            path: $representation->path() . "-$segmentIndex",
-            result: $protectionScheme && $protectionScheme->scheme->schemeType == 'cenc',
-            severity: "FAIL",
-            pass_message: "'cenc' encrypted track",
-            fail_message: "Otherwise encrypted track",
-        );
+        if ($protectionScheme) {
+            $this->cmfhdcCase->pathAdd(
+                path: $representation->path() . "-$segmentIndex",
+                result: $protectionScheme->scheme->schemeType == 'cenc',
+                severity: "FAIL",
+                pass_message: "'cenc' encrypted track",
+                fail_message: "Otherwise encrypted track",
+            );
+        }
     }
     public function validateCMFHDS(Representation $representation, Segment $segment, int $segmentIndex): void
     {
         $protectionScheme = $segment->getProtectionScheme();
-        $this->cmfhdsCase->pathAdd(
-            path: $representation->path() . "-$segmentIndex",
-            result: $protectionScheme && $protectionScheme->scheme->schemeType == 'cbcs',
-            severity: "FAIL",
-            pass_message: "'cbcs' encrypted track",
-            fail_message: "Otherwise encrypted track",
-        );
+        if ($protectionScheme) {
+            $this->cmfhdsCase->pathAdd(
+                path: $representation->path() . "-$segmentIndex",
+                result: $protectionScheme->scheme->schemeType == 'cbcs',
+                severity: "FAIL",
+                pass_message: "'cbcs' encrypted track",
+                fail_message: "Otherwise encrypted track",
+            );
+        }
     }
 }

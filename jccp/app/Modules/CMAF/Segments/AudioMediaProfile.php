@@ -23,6 +23,7 @@ class AudioMediaProfile
 
     private TestCase $profileCase;
     private TestCase $brandCase;
+    private TestCase $caacCase;
 
     public function __construct()
     {
@@ -44,6 +45,11 @@ class AudioMediaProfile
             test: "If a CMAF brand is signalled, it SHALL correspond with the table",
             skipReason: 'No cmaf brands signalled'
         );
+        $this->caacCase = $this->cmafReporter->add(
+            section: 'Section A.1.2/A.1.3/A.1.4',
+            test: "Audio adaptation sets SHALL include at least one 'caac' representation",
+            skipReason: 'No audio track found with CMAF profile found'
+        );
     }
 
     //Public validation functions
@@ -54,11 +60,15 @@ class AudioMediaProfile
 
         $segmentManager = app(SegmentManager::class);
 
+        $hasCAAC = false;
         foreach ($adaptationSet->allRepresentations() as $representation) {
             $segmentList = $segmentManager->representationSegments($representation);
 
             $highestBrand = '____'; // Unknown;
             if (count($segmentList)) {
+                if (in_array('caac', $segmentList[0]->getBrands())) {
+                    $hasCAAC = true;
+                }
                 $highestBrand = $this->validateAndDetermineBrand($representation, $segmentList[0]);
             }
             $signalledBrands[] = $highestBrand; // Unknown
@@ -70,6 +80,14 @@ class AudioMediaProfile
             path: $adaptationSet->path(),
             pass_message: "All representations signal the same highest brand",
             fail_message: "Not all representations signal the same highest brand"
+        );
+
+        $this->caacCase->pathAdd(
+            result: $hasCAAC,
+            severity: "FAIL",
+            path: $adaptationSet->path(),
+            pass_message: "At least one 'caac' track found",
+            fail_message: "No 'caac' tracks found"
         );
     }
 

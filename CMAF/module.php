@@ -77,11 +77,6 @@ class ModuleCMAF extends ModuleInterface
         return include 'impl/caacMediaProfileConformance.php';
     }
 
-    private function cfhdMediaProfileConformance($xml)
-    {
-        return include 'impl/cfhdMediaProfileConformance.php';
-    }
-
 
     private function checkAlignedSwitchingSets()
     {

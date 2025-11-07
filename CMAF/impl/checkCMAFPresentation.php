@@ -171,30 +171,6 @@ for ($adaptationSetIndex = 0; $adaptationSetIndex < $adaptationCount; $adaptatio
                     }
                 }
 
-                //Check profile conformance
-                if ($cmfhdProfile || $cmfhdcProfile || $cmfhdsProfile) {
-                    if ($hdlrType == 'vide') {
-                        $videoFound = 1;
-                        if (!$this->cfhdMediaProfileConformance($xml)) {
-                            break;
-                        }
-                        $videoCounter = $videoCounter + 1;
-
-                        if ($this->cfhdSwitchingSetFound = 0 && $videoCounter == $filecount) {
-                            $this->cfhdSwitchingSetFound = 1;
-                        }
-                    } elseif ($hdlrType == 'soun') {
-                        $audioFound = 1;
-                        if (!$this->caacMediaProfileConformance($xml)) {
-                            break;
-                        }
-                        $audioCounter = $audioCounter + 1;
-
-                        if ($this->caacSwitchingSetFound = 0 && $audioCounter == $filecount) {
-                            $this->caacSwitchingSetFound = 1;
-                        }
-                    }
-                }
             }
         }
     }
@@ -266,28 +242,6 @@ if ($presentationDuration && !empty($trackDurArray)) {
 }
 
 if ($cmfhdProfile || $cmfhdcProfile || $cmfhdsProfile) {
-    if ($videoFound) {
-        $logger->test(
-            "CMAF",
-            "Section A.1.2/A.1.3/A.1.4",
-            "If containing video, SHALL include at least one Switching Set constrained to the 'cfhd' Media Profile",
-            $this->cfhdSwitchingSetFound,
-            "FAIL",
-            "'cfhd' compatible set found",
-            "'cfhd' compatible set not found"
-        );
-    }
-    if ($audioFound) {
-        $logger->test(
-            "CMAF",
-            "Section A.1.2/A.1.3/A.1.4",
-            "If containing audio, SHALL include at least one Switching Set constrained to the 'caac' Media Profile",
-            $this->caacSwitchingSetFound,
-            "FAIL",
-            "'caac' compatible set found",
-            "'caac' compatible set not found"
-        );
-    }
     if ($subtitleFound) {
         $subtitleLanguagesCount = count(subtitles);
         for ($z = 0; $z < $subtitleLanguagesCount; $z++) {
@@ -305,14 +259,3 @@ if ($cmfhdProfile || $cmfhdcProfile || $cmfhdsProfile) {
     }
 }
 
-if ($cmfhdcProfile || $cmfhdsProfile) {
-    $logger->test(
-        "CMAF",
-        "Section A.1.3/A.1.4",
-        "At least one CMAF Switching Set SHALL be encrypted",
-        $this->encryptedSwitchingSetFound,
-        "FAIL",
-        "Encrypted switching set found",
-        "No encrypted switching set found"
-    );
-}
