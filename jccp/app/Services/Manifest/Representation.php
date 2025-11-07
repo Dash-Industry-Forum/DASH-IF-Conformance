@@ -31,6 +31,12 @@ class Representation
         return "$this->periodIndex::$this->adaptationSetIndex::$this->representationIndex";
     }
 
+    public function getAdaptationSet(): AdaptationSet
+    {
+        $mpdCache = app(MPDCache::class);
+        return $mpdCache->getPeriod($this->periodIndex)->getAdaptationSet($this->adaptationSetIndex);
+    }
+
     public function getBaseUrl(): string
     {
         $myBase = '';

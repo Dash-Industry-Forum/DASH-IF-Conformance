@@ -25,6 +25,7 @@ class Initialization
     private TestCase $hevcCase;
     private TestCase $hevcColourCase;
     private TestCase $audioCase;
+    private TestCase $decryptionCase;
 
     public function __construct()
     {
@@ -56,6 +57,11 @@ class Initialization
             test: "Each Audio CMAF Fragment SHALL be independently accessible",
             skipReason: "No Audio track found"
         );
+        $this->decryptionCase = $this->cmafReporter->add(
+            section: 'Section 7.3.2.4',
+            test: "Each encrypted Fragment SHALL be independently decryptable",
+            skipReason: "No encrypted track found"
+        );
     }
 
     //Public validation functions
@@ -74,11 +80,39 @@ class Initialization
         if ($segment->getHandlerType() == "soun") {
             $this->validateAudioInitialization($representation, $segment);
         }
+
+        if ($representation->hasProfile("http://dashif.org/guidelines/dash264")) {
+            $this->validateDecryption($representation, $segment);
+        }
     }
 
 
 
     //Private helper functions
+    private function validateDecryption(Representation $representation, Segment $segment): void
+    {
+        $contentProtection = $representation->getDomElements('ContentProtection');
+        if (!count($contentProtection)) {
+            $contentProtection = $representation->getAdaptationSet()->getDomElements('ContentProtection');
+        }
+
+        if (!count($contentProtection)) {
+            return;
+        }
+
+        $sencBoxes = $segment->getSencBoxes();
+        $moofBoxes = $segment->boxAccess()->moof();
+
+        //TODO: Check whether this is still correct
+        $this->decryptionCase->pathAdd(
+            path: $representation->path() . "-init",
+            result: count($moofBoxes) == count($sencBoxes),
+            severity: "FAIL",
+            pass_message: "Found decryption Configuration",
+            fail_message: "Unable to find decryption Configuration",
+        );
+    }
+
     private function validateAudioInitialization(Representation $representation, Segment $segment): void
     {
         $audioConfiguration = $segment->getAudioConfiguration();

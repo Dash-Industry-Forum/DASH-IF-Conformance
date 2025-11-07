@@ -60,6 +60,7 @@ class Segments extends Module
      **/
     public function validateSegments(Representation $representation, array $segments): void
     {
+        //TODO: Re-implement cmaf messages when ISOValidator is re-supported
         new Durations()->validateDurations($representation, $segments);
         foreach ($segments as $segmentIndex => $segment) {
             if ($segmentIndex == 0) {

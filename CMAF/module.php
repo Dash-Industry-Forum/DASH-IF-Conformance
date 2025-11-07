@@ -108,11 +108,6 @@ class ModuleCMAF extends ModuleInterface
         include 'impl/checkAlignedSwitchingSets.php';
     }
 
-    private function checkCMAFMessages($representationDirectory)
-    {
-        return include 'impl/checkCMAFMessages.php';
-    }
-
     private function compareRest($xml1, $xml2, $id1, $id2)
     {
         include 'impl/compareRest.php';
