@@ -74,4 +74,12 @@ class BoxAccess
     {
         return $this->runAnalyzedFunction('tfdtBoxes');
     }
+
+    /**
+     * @return array<Boxes\COLRBox>
+     **/
+    public function colr(): array
+    {
+        return $this->runAnalyzedFunction('colrBoxes');
+    }
 }

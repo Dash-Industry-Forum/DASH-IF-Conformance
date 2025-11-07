@@ -120,6 +120,28 @@ class MP4BoxRepresentation
     }
 
     /**
+     * @return array<Boxes\COLRBox>
+     **/
+    public function colrBoxes(): array
+    {
+        if (!$this->payload) {
+            return [];
+        }
+        $res = [];
+        $colrBoxes = $this->payload->getElementsByTagName('ColourInformationBox');
+        foreach ($colrBoxes as $colrBox) {
+            $colr = new Boxes\COLRBox();
+            $colr->colourType = $colrBox->getAttribute("colour_type");
+            $colr->colourPrimaries = $colrBox->getAttribute("colour_primaries");
+            $colr->transferCharacteristics = $colrBox->getAttribute("transfer_characteristics");
+            $colr->matrixCoefficients = $colrBox->getAttribute("matrix_coefficients");
+            $colr->fullRange = $colrBox->getAttribute("full_range_flag") == "1";
+            $res[] = $colr;
+        }
+        return $res;
+    }
+
+    /**
      * @return array<Boxes\SIDXBox>
      **/
     public function sidxBoxes(): array

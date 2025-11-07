@@ -75,8 +75,7 @@ class Durations
             $index = 0;
             $allValid = true;
             while ($index < count($allReferences)) {
-
-                if ($tfdtBoxes[$index]->decodeTime != $currentOffset){
+                if ($tfdtBoxes[$index]->decodeTime != $currentOffset) {
                     $allValid = false;
                     break;
                 }

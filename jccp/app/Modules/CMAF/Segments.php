@@ -26,6 +26,7 @@ use App\Modules\CMAF\Segments\AudioMediaProfile;
 use App\Modules\CMAF\Segments\SubtitleMediaProfile;
 use App\Modules\CMAF\Segments\HEVCComparison;
 use App\Modules\CMAF\Segments\Durations;
+use App\Modules\CMAF\Segments\Initialization;
 
 class Segments extends Module
 {
@@ -70,6 +71,7 @@ class Segments extends Module
 
     private function validateInitialization(Representation $representation, Segment $segment): void
     {
+        new Initialization()->validateInitialization($representation, $segment);
     }
 
     private function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
