@@ -62,6 +62,7 @@ class CompositionTimes
             fail_message: "None or mixed elements found"
         );
         if (count($elstBoxes) && !$trunV1) {
+            //TODO: Validate earliestCompositionTime
             $this->offsetCase->pathAdd(
                 result: true,
                 severity: "INFO",

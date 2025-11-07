@@ -53,17 +53,6 @@ class ModuleCMAF extends ModuleInterface
         $additional_flags .= " -cmaf";
     }
 
-    public function hookRepresentation()
-    {
-        parent::hookRepresentation();
-        $this->checkCMAFTracks();
-    }
-
-    private function checkCMAFTracks()
-    {
-        include 'impl/checkCMAFTracks.php';
-    }
-
     public function hookBeforeAdaptationSet()
     {
         parent::hookBeforeAdaptationSet();
