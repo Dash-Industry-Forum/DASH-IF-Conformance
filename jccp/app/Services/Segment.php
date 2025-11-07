@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Process;
 use App\Services\Validators\MP4Box;
 use App\Services\Validators\MP4BoxRepresentation;
 use App\Services\Validators\Boxes;
+use App\Services\Segment\BoxAccess;
 
 class Segment
 {
@@ -68,6 +69,11 @@ class Segment
                              $resultPath);
 
         return $resultPath;
+    }
+
+    public function boxAccess(): BoxAccess
+    {
+        return new BoxAccess($this->analyzedRepresentations);
     }
 
 

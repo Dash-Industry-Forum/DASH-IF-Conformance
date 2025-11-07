@@ -63,6 +63,71 @@ class MP4BoxRepresentation
         return $boxNames;
     }
 
+    /**
+     * @return array<Boxes\MOOFBox>
+     **/
+    public function moofBoxes(): array
+    {
+        if (!$this->payload) {
+            return [];
+        }
+        $res = [];
+        $moofBoxes = $this->payload->getElementsByTagName('MovieFragmentBox');
+        foreach ($moofBoxes as $moofBox) {
+            $moof = new Boxes\MOOFBox();
+            $moof->boxSize = intval($moofBox->getAttribute('Size'));
+            $moof->sequenceNumber = intval($moofBox->getAttribute('FragmentSequenceNumber'));
+            $res[] = $moof;
+        }
+        return $res;
+    }
+
+    /**
+     * @return array<Boxes\TRUNBox>
+     **/
+    public function trunBoxes(): array
+    {
+        if (!$this->payload) {
+            return [];
+        }
+        $res = [];
+        $trunBoxes = $this->payload->getElementsByTagName('TrackRunBox');
+        foreach ($trunBoxes as $trunBox) {
+            $trun = new Boxes\TRUNBox();
+            $trun->sampleCount = intval($trunBox->getAttribute('SampleCount'));
+            $trun->dataOffset = intval($trunBox->getAttribute('DataOffset'));
+            $res[] = $trun;
+        }
+        return $res;
+    }
+
+    /**
+     * @return array<Boxes\SIDXBox>
+     **/
+    public function sidxBoxes(): array
+    {
+        if (!$this->payload) {
+            return [];
+        }
+        $res = [];
+        $sidxBoxes = $this->payload->getElementsByTagName('SegmentIndexBox');
+        foreach ($sidxBoxes as $sidxBox) {
+            $sidx = new Boxes\SIDXBox();
+            foreach ($sidxBox->getElementsByTagName('Reference') as $reference) {
+                $sidxReference = new Boxes\SIDXReference();
+                $sidxReference->referenceType = $reference->getAttribute('type');
+                $sidxReference->size = intval($reference->getAttribute('size'));
+                $sidxReference->duration = intval($reference->getAttribute('duration'));
+                $sidxReference->startsWithSAP = $reference->getAttribute("startsWithSAP") == "1";
+                $sidxReference->sapType = $reference->getAttribute("SAP_type");
+                $sidxReference->sapDeltaTime = intval($reference->getAttribute("SAPDeltaTime"));
+                $sidx->references[] = $sidxReference;
+            }
+            $res[] = $sidx;
+        }
+        return $res;
+    }
+
     public function getHandlerType(): ?string
     {
         if (!$this->payload) {

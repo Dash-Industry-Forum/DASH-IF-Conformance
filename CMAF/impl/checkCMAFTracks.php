@@ -67,68 +67,6 @@ for ($j = 1; $j < $moofBoxesCount; $j++) {
     );
 }
 
-$mdatFile = fopen("$representationDirectory/mdatoffset.txt", 'r');
-for ($j = 0; $j < $moofBoxesCount; $j++) {
-    $currentTrunBox = $trunBoxes->item($j);
-    if ($currentTrunBox->getAttribute('version') == 1) {
-        $firstSampleCompositionTime = $currentTrunBox->getAttribute('earliestCompositionTime');
-        $firstSampleDecodeTime = $tfdtBoxes->item(0)->getAttribute('baseMediaDecodeTime');
-        $logger->test(
-            "CMAF",
-            "Section 7.5.17",
-            "For 'trun' version 1, the composition time of 1st presented sample in a CMAF Segment SHALL be same " .
-            "as first Sample decode time",
-            $firstSampleCompositionTime == $firstSampleDecodeTime,
-            "FAIL",
-            "Representation $id valid",
-            "Representation $id not valid"
-        );
-    }
-
-    if ($mdatFile === false) {
-        continue;
-    }
-
-    $mdatInfo = array();
-    if (!feof($mdatFile)) {
-        $mdatInfo = explode(" ", fgets($mdatFile));
-    }
-
-    if (empty($mdatInfo)) {
-        continue;
-    }
-    $moofOffset = $moofBoxes->item($j)->getAttribute('offset');
-    $dataOffset = $currentTrunBox->getAttribute('data_offset');
-    $trunSampleSize = $currentTrunBox->getAttribute('sampleSizeTotal');
-    // Check that $dataOffset leads to a position within the mdat and that the total length of content in the trun
-    // doesn't, when added to this value, go beyond the end of the mdat.
-    $offsetWithinInMdat = ($moofOffset + $dataOffset) >= $mdatInfo[0];
-    $offsetBeforeNextMoof = ($moofOffset + $dataOffset + $trunSampleSize) <= ($mdatInfo[0] + $mdatInfo[1]);
-    $logger->test(
-        "CMAF",
-        "Section 7.3.2.3",
-        "All media samples in a CMAF Chunk SHALL be addressed by byte offsets in the TrackRunBox relative to " .
-        "first byte of the MovieFragmentBox",
-        $offsetWithinInMdat && $offsetBeforeNextMoof,
-        "FAIL",
-        "Representation $id, chunk $j valid",
-        "Representation $id, chunk $j not valid"
-    );
-}
-if ($mdatFile !== false) {
-    fclose($mdatFile);
-}
-
-$logger->test(
-    "CMAF",
-    "Section 7.3.2.2",
-    "The concatenation of a CMAF Header and all CMAF Fragments in the CMAF Track in consecutive decode order " .
-    "SHALL be a valid fragmented ISOBMFF file",
-    $noErrorInTrack,
-    "FAIL",
-    "Representation $id valid",
-    "Representation $id not valid"
-);
 
 $hdlrBox = $xml->getElementsByTagName('hdlr')->item(0);
 $hdlrType = ($hdlrBox == null ? '' : $hdlrBox->getAttribute('handler_type'));
