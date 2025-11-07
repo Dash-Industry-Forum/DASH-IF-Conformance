@@ -49,6 +49,7 @@ class Segments extends Module
     {
         //NOTE: Removed some comparison checks as we download only a subset of the fragments
         //TODO: Re-implement identical boxes checks from this commit
+        //TODO: Re-implement earliestPresentationTime and duration checks for tracks
         new VideoMediaProfile()->validateVideoMediaProfiles($adaptationSet);
         new AudioMediaProfile()->validateAudioMediaProfiles($adaptationSet);
         new SubtitleMediaProfile()->validateSubtitleMediaProfiles($adaptationSet);

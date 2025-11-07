@@ -4,10 +4,6 @@ namespace DASHIF;
 
 class ModuleCMAF extends ModuleInterface
 {
-    private $cfhdSwitchingSetFound;
-    private $caadSwitchingSetFound;
-    private $encryptedSwitchingSetFound;
-
     private $mediaTypes;
     private $mediaProfiles;
 
@@ -15,10 +11,6 @@ class ModuleCMAF extends ModuleInterface
     {
         parent::__construct();
         $this->name = "CMAF";
-
-        $this->cfhdSwitchingSetFound = 0;
-        $this->caadSwitchingSetFound = 0;
-        $this->encryptedSwitchingSetFound = 0;
     }
 
     protected function addCLIArguments()
@@ -62,19 +54,7 @@ class ModuleCMAF extends ModuleInterface
     public function hookAdaptationSet()
     {
         parent::hookAdaptationSet();
-        $this->checkCMAFPresentation();
         $this->checkAlignedSwitchingSets();
-    }
-
-    private function checkCMAFPresentation()
-    {
-        include 'impl/checkCMAFPresentation.php';
-    }
-
-
-    private function caacMediaProfileConformance($xml)
-    {
-        return include 'impl/caacMediaProfileConformance.php';
     }
 
 
