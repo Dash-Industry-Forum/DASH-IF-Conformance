@@ -52,18 +52,6 @@ for ($adaptationSetIndex = 0; $adaptationSetIndex < $adaptationCount; $adaptatio
             $xml = DASHIF\Utility\parseDOM($filename, 'atomlist');
             $id = $adaptationSet['Representation'][$i]['id'];
 
-            $cmfhdProfile = strpos(
-                $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()][$adaptationSetIndex][$i],
-                'urn:mpeg:cmaf:presentation_profile:cmfhd:2017'
-            );
-            $cmfhdcProfile = strpos(
-                $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()][$adaptationSetIndex][$i],
-                'urn:mpeg:cmaf:presentation_profile:cmfhdc:2017'
-            );
-            $cmfhdsProfile = strpos(
-                $mpdHandler->getProfiles()[$mpdHandler->getSelectedPeriod()][$adaptationSetIndex][$i],
-                'urn:mpeg:cmaf:presentation_profile:cmfhds:2017'
-            );
 
             if ($xml) {
                 //Check Section 7.3.4 conformance
@@ -174,27 +162,6 @@ for ($adaptationSetIndex = 0; $adaptationSetIndex < $adaptationCount; $adaptatio
             }
         }
     }
-
-    //Check for subtitle conformance of Section A.1
-    if ($cmfhdProfile || $cmfhdcProfile || $cmfhdsProfile) {
-        if (strpos($adaptationSet['mimeType'], "application/ttml+xml")) {
-            $subtitleFound = 1;
-            $adaptationSetCodecs = $adaptationSet['codecs'];
-            $lang = $adaptationSet['language'];
-            if ($lang != 0) {
-                if (empty($subtitles)) {
-                    $subtitles = array($lang => 0);
-                } else {
-                    if (!array_key_exists($lang, $subtitles)) {
-                        $subtitles[$lang] = 0;
-                    }
-                }
-                if (strpos($adaptationSetCodecs, "im1t")) {
-                    $subtitles[$lang] = 1;
-                }
-            }
-        }
-    }
 }
 
 $logger->test(
@@ -238,24 +205,6 @@ if ($presentationDuration && !empty($trackDurArray)) {
             "Track $y within bounds",
             "Track $y exceeds bounds"
         );
-    }
-}
-
-if ($cmfhdProfile || $cmfhdcProfile || $cmfhdsProfile) {
-    if ($subtitleFound) {
-        $subtitleLanguagesCount = count(subtitles);
-        for ($z = 0; $z < $subtitleLanguagesCount; $z++) {
-            $logger->test(
-                "CMAF",
-                "Section A.1.2/A.1.3/A.1.4",
-                "If containing subtitles, SHALL include at least one Switching Set for each language and role in " .
-                "the 'im1t' Media Profile",
-                $subtitles[$z] == 1,
-                "FAIL",
-                "Valid for subtitle $z",
-                "Not valid for subtitle $z"
-            );
-        }
     }
 }
 

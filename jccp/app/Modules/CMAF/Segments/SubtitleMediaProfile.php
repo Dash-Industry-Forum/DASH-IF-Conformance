@@ -43,16 +43,21 @@ class SubtitleMediaProfile
     //Public validation functions
     public function validateSubtitleMediaProfiles(AdaptationSet $adaptationSet): void
     {
+        //TODO: Check if all languages exist
         //TODO: Only if subtitle
         $signalledBrands = [];
 
         $segmentManager = app(SegmentManager::class);
 
+        $hasIm1t = false;
         foreach ($adaptationSet->allRepresentations() as $representation) {
             $segmentList = $segmentManager->representationSegments($representation);
 
             $highestBrand = '____'; // Unknown;
             if (count($segmentList)) {
+                if (in_array('im1t', $segmentList[0]->getBrands())) {
+                    $hasIm1t = true;
+                }
                 $highestBrand = $this->validateAndDetermineBrand($representation, $segmentList[0]);
             }
             $signalledBrands[] = $highestBrand; // Unknown
