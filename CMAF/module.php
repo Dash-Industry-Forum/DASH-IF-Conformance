@@ -63,7 +63,6 @@ class ModuleCMAF extends ModuleInterface
     {
         parent::hookAdaptationSet();
         $this->checkCMAFPresentation();
-        $this->checkSelectionSet();
         $this->checkAlignedSwitchingSets();
     }
 
@@ -72,10 +71,6 @@ class ModuleCMAF extends ModuleInterface
         include 'impl/checkCMAFPresentation.php';
     }
 
-    private function getSelectionSets()
-    {
-        return include 'impl/getSelectionSets.php';
-    }
 
     private function caacMediaProfileConformance($xml)
     {
@@ -87,10 +82,6 @@ class ModuleCMAF extends ModuleInterface
         return include 'impl/cfhdMediaProfileConformance.php';
     }
 
-    private function checkSelectionSet()
-    {
-        include 'impl/checkSelectionSet.php';
-    }
 
     private function checkAlignedSwitchingSets()
     {
