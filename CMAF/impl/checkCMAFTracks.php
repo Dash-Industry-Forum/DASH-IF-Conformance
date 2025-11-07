@@ -39,34 +39,6 @@ $id = $adaptationSet['Representation'][$mpdHandler->getSelectedAdaptationSet()][
 $moofBoxes = $xml->getElementsByTagName('moof');
 $moofBoxesCount = $moofBoxes->length;
 $trunBoxes = $xml->getElementsByTagName('trun');
-$tfdtBoxes = $xml->getElementsByTagName('tfdt');
-
-for ($j = 1; $j < $moofBoxesCount; $j++) {
-    $previousFragmentSampleDuration = $trunBoxes->item($j - 1)->getAttribute('cummulatedSampleDuration');
-    $previousFragmentDecodeTime = $tfdtBoxes->item($j - 1)->getAttribute('baseMediaDecodeTime');
-    $currentFragmentDecodeTime = $tfdtBoxes->item($j)->getAttribute('baseMediaDecodeTime');
-
-    $noErrorInTrack &= $logger->test(
-        "CMAF",
-        "Section 7.3.2.2",
-        "Each CMAF Fragment in a CMAF Track SHALL have baseMediaDecodeTime equal to the sum of all prior " .
-            "Fragment durations added to the first Fragment's baseMediaDecodeTime",
-        $currentFragmentDecodeTime == $previousFragmentDecodeTime + $previousFragmentSampleDuration,
-        "FAIL",
-        "Representation $id Fragment $j valid",
-        "Representation $id Fragment $j does not have a valid baseMediaDecodeTime"
-    );
-    $noErrorInTrack &= $logger->test(
-        "CMAF",
-        "Section 7.3.2.3",
-        "CMAF Chunks in a CMAF Track SHALL NOT overlap or have gaps in decode time",
-        $currentFragmentDecodeTime == $previousFragmentDecodeTime + $previousFragmentSampleDuration,
-        "FAIL",
-        "Representation $id Fragment $j valid",
-        "Representation $id Fragment $j has an overlap or gap"
-    );
-}
-
 
 $hdlrBox = $xml->getElementsByTagName('hdlr')->item(0);
 $hdlrType = ($hdlrBox == null ? '' : $hdlrBox->getAttribute('handler_type'));

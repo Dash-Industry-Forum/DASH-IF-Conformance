@@ -102,6 +102,24 @@ class MP4BoxRepresentation
     }
 
     /**
+     * @return array<Boxes\TFDTBox>
+     **/
+    public function tfdtBoxes(): array
+    {
+        if (!$this->payload) {
+            return [];
+        }
+        $res = [];
+        $tfdtBoxes = $this->payload->getElementsByTagName('TrackFragmentBaseMediaDecodeTimeBox');
+        foreach ($tfdtBoxes as $tfdtBox) {
+            $tfdt = new Boxes\TFDTBox();
+            $tfdt->decodeTime = intval($tfdtBox->getAttribute('baseMediaDecodeTime'));
+            $res[] = $tfdt;
+        }
+        return $res;
+    }
+
+    /**
      * @return array<Boxes\SIDXBox>
      **/
     public function sidxBoxes(): array

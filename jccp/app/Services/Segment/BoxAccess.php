@@ -66,4 +66,12 @@ class BoxAccess
     {
         return $this->runAnalyzedFunction('sidxBoxes');
     }
+
+    /**
+     * @return array<Boxes\TFDTBox>
+     **/
+    public function tfdt(): array
+    {
+        return $this->runAnalyzedFunction('tfdtBoxes');
+    }
 }

@@ -25,6 +25,7 @@ use App\Modules\CMAF\Segments\VideoMediaProfile;
 use App\Modules\CMAF\Segments\AudioMediaProfile;
 use App\Modules\CMAF\Segments\SubtitleMediaProfile;
 use App\Modules\CMAF\Segments\HEVCComparison;
+use App\Modules\CMAF\Segments\Durations;
 
 class Segments extends Module
 {
@@ -58,6 +59,7 @@ class Segments extends Module
      **/
     public function validateSegments(Representation $representation, array $segments): void
     {
+        new Durations()->validateDurations($representation, $segments);
         foreach ($segments as $segmentIndex => $segment) {
             if ($segmentIndex == 0) {
                 $this->validateInitialization($representation, $segment);
