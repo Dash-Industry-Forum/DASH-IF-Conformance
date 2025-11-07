@@ -41,25 +41,6 @@ $moofBoxesCount = $moofBoxes->length;
 $trunBoxes = $xml->getElementsByTagName('trun');
 $tfdtBoxes = $xml->getElementsByTagName('tfdt');
 
-// 'subs' presence check for TTML image subtitle track with media profile 'im1i'
-$representationCodecs = $adaptationSet['Representation'][$mpdHandler->getSelectedRepresentation()]['codec'];
-if (strpos($representationCodecs, 'im1i') !== false) {
-    for ($j = 0; $j < $moofBoxesCount; $j++) {
-        $moofBox = $moofBoxes[$j];
-        $subsBoxes = $moofBox->getElementsByTagName('subs');
-        $logger->test(
-            "CMAF",
-            "Section 7.5.20",
-            "Each CMAF fragment in a TTML image subtitle track of CMAF media profile 'im1i' SHALL " .
-            "contain a SubSampleInformationBox in the TrackFragmentBox",
-            $subsBoxes->length,
-            "FAIL",
-            "Representation $id Fragment $j valid",
-            "Representation $id Fragment $j has no SubSampleInformation"
-        );
-    }
-}
-
 for ($j = 1; $j < $moofBoxesCount; $j++) {
     $previousFragmentSampleDuration = $trunBoxes->item($j - 1)->getAttribute('cummulatedSampleDuration');
     $previousFragmentDecodeTime = $tfdtBoxes->item($j - 1)->getAttribute('baseMediaDecodeTime');

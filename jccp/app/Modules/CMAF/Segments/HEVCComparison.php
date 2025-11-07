@@ -113,14 +113,17 @@ class HEVCComparison
     /**
      * @param array<array<string>> $spsComparisonResults
      **/
-    private function addSPSComparison(Representation $representation, Segment $segment, array &$spsComparisonResults): void
-    {
+    private function addSPSComparison(
+        Representation $representation,
+        Segment $segment,
+        array &$spsComparisonResults
+    ): void {
         $spsConfiguration = $segment->getSPSConfiguration();
         foreach (array_keys($spsComparisonResults) as $attribute) {
-            if (in_array($attribute, $spsConfiguration)){
-            $spsComparisonResults[$attribute][] = $spsConfiguration[$attribute];
-            }else{
-            $spsComparisonResults[$attribute][] = '';
+            if (in_array($attribute, $spsConfiguration)) {
+                $spsComparisonResults[$attribute][] = $spsConfiguration[$attribute];
+            } else {
+                $spsComparisonResults[$attribute][] = '';
             }
         }
     }

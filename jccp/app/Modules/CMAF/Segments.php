@@ -17,6 +17,7 @@ use App\Interfaces\Module;
 ## Segment checks
 use App\Modules\CMAF\Segments\CompositionTimes;
 use App\Modules\CMAF\Segments\MetaData;
+use App\Modules\CMAF\Segments\Subtitles;
 use App\Modules\CMAF\Segments\EncryptionProfile;
 use App\Modules\CMAF\Segments\SegmentIndex;
 use App\Modules\CMAF\Segments\VideoMediaProfile;
@@ -74,5 +75,6 @@ class Segments extends Module
         new MetaData()->validateMetaData($representation, $segment, $segmentIndex);
         new SegmentIndex()->validateSegmentIndex($representation, $segment, $segmentIndex);
         new EncryptionProfile()->validateEncryptionProfile($representation, $segment, $segmentIndex);
+        new Subtitles()->validateSubtitleSegment($representation, $segment, $segmentIndex);
     }
 }

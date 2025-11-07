@@ -202,6 +202,12 @@ class Representation
         return in_array($profile, $profileList);
     }
 
+    public function hasCodec(string $codec): bool
+    {
+        $codecList = explode(',', $this->getTransientAttribute('codecs'));
+        return in_array($codec, $codecList);
+    }
+
 
     /**
      * @return \DOMNodeList<\DOMElement>
