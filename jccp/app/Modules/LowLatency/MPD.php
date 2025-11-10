@@ -15,6 +15,7 @@ use App\Interfaces\Module;
 use App\Services\Segment;
 //Module checks
 use App\Modules\LowLatency\MPD\ServiceDescription;
+use App\Modules\LowLatency\MPD\UTCTiming;
 
 class MPD extends Module
 {
@@ -44,6 +45,7 @@ class MPD extends Module
         );
 
         new ServiceDescription()->validateServiceDescription();
+        new UTCTiming()->validateUTCTiming();
     }
 
     private function initializeChecks(): void
