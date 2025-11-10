@@ -54,7 +54,7 @@ class Miscellaneous
             $segmentList = $segmentManager->representationSegments($representation);
             if (count($segmentList)) {
                 $hdlrTypes[] = $segmentList[0]->getHandlerType();
-            }else{
+            } else {
                 $hdlrTypes[] = 'UNKNOWN';
             }
         }

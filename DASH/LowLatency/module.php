@@ -51,8 +51,6 @@ class ModuleDASHLowLatency extends ModuleInterface
         parent::hookMPD();
 
 
-        $this->validateProfiles();
-        $this->validateServiceDescription();
         $this->validateUTCTiming();
         $this->validateLeapSecondInformation();
     }
@@ -194,15 +192,6 @@ class ModuleDASHLowLatency extends ModuleInterface
         return include 'impl/validateEmsg.php';
     }
 
-
-    private function validateProfiles()
-    {
-        include 'impl/validateProfiles.php';
-    }
-    private function validateServiceDescription()
-    {
-        include 'impl/validateServiceDescription.php';
-    }
     private function validateUTCTiming()
     {
         include 'impl/validateUTCTiming.php';

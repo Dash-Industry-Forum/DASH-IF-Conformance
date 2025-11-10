@@ -11,6 +11,7 @@ use App\Modules\HbbTV\MPD as HbbTVManifest;
 use App\Modules\HbbTV\Segments as HbbTVSegments;
 use App\Modules\Wave\Segments as WaveHLSInteropSegments;
 use App\Modules\CMAF\Segments as CMAFSegments;
+use App\Modules\LowLatency\MPD as LowLatencyManifest;
 use App\Interfaces\Module;
 use App\Services\Manifest\Period;
 use App\Services\SegmentManager;
@@ -55,6 +56,7 @@ class SpecManager
         $this->manifestSpecs[] = new HbbTVSegments();
         $this->manifestSpecs[] = new WaveHLSInteropSegments();
         $this->manifestSpecs[] = new CMAFSegments();
+        $this->manifestSpecs[] = new LowLatencyManifest();
     }
 
     public function toggle(string $moduleName): void
