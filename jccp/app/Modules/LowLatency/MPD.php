@@ -16,6 +16,7 @@ use App\Services\Segment;
 //Module checks
 use App\Modules\LowLatency\MPD\ServiceDescription;
 use App\Modules\LowLatency\MPD\UTCTiming;
+use App\Modules\LowLatency\MPD\LeapSecond;
 
 class MPD extends Module
 {
@@ -46,6 +47,7 @@ class MPD extends Module
 
         new ServiceDescription()->validateServiceDescription();
         new UTCTiming()->validateUTCTiming();
+        new LeapSecond()->validateLeapSecond();
     }
 
     private function initializeChecks(): void

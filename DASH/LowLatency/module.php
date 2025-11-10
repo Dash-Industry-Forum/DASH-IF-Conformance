@@ -51,8 +51,6 @@ class ModuleDASHLowLatency extends ModuleInterface
         parent::hookMPD();
 
 
-        $this->validateLeapSecondInformation();
-    }
 
     public function hookAdaptationSet()
     {
@@ -189,11 +187,6 @@ class ModuleDASHLowLatency extends ModuleInterface
         $infoFileAdaptation
     ) {
         return include 'impl/validateEmsg.php';
-    }
-
-    private function validateLeapSecondInformation()
-    {
-        include 'impl/validateLeapSecondInformation.php';
     }
 }
 
