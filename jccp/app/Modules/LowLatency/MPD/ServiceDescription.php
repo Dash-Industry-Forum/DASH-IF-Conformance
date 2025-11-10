@@ -56,13 +56,22 @@ class ServiceDescription
         }
 
         //NOTE: These checks used to run once per period, but no period data was used, so moved to MPD-level
+        $atLeastOneValid = false;
         foreach ($serviceDescriptions as $descriptionIndex => $serviceDescription) {
-            $this->validateSingleDescription($serviceDescription, $descriptionIndex);
+            $atLeastOneValid |= $this->validateSingleDescription($serviceDescription, $descriptionIndex);
+        }
+        if (!$atLeastOneValid) {
+            $this->presentCase->add(
+                result: false,
+                severity: "FAIL",
+                pass_message: "",
+                fail_message: "No valid ServiceDescription elements found"
+            );
         }
     }
 
     //Private helper functions
-    private function validateSingleDescription(\DOMElement $serviceDescription, int $descriptionIndex): void
+    private function validateSingleDescription(\DOMElement $serviceDescription, int $descriptionIndex): bool
     {
         $latencyElements = $serviceDescription->getElementsByTagName('Latency');
         if (count($latencyElements) == 0) {
@@ -73,11 +82,11 @@ class ServiceDescription
                 pass_message: "",
                 fail_message: "Missing Latency information"
             );
-            return;
+            return false;
         }
 
-            $hasLatencyTarget = false;
-            $hasLatencyOptional = false;
+        $hasLatencyTarget = false;
+        $hasLatencyOptional = false;
         foreach ($latencyElements as $latencyElement) {
             if ($latencyElement->getAttribute('target') != '') {
                 $hasLatencyTarget = true;
@@ -94,50 +103,51 @@ class ServiceDescription
                 pass_message: "",
                 fail_message: "Incomplete Latency information"
             );
-            return;
+            return false;
         }
 
-            $this->presentCase->pathAdd(
-                path: "ServiceDescription $descriptionIndex",
-                result: true,
-                severity: "PASS",
-                pass_message: "Valid ServiceDescription",
-                fail_message: ""
-            );
+        $this->presentCase->pathAdd(
+            path: "ServiceDescription $descriptionIndex",
+            result: true,
+            severity: "PASS",
+            pass_message: "Valid ServiceDescription",
+            fail_message: ""
+        );
 
 
-            //Optional elements
-            $this->presentCase->pathAdd(
-                path: "ServiceDescription $descriptionIndex",
-                result: $hasLatencyOptional,
-                severity: "INFO",
-                pass_message: "Optional Latency information available",
-                fail_message: "Optional Latency information not available",
-            );
+        //Optional elements
+        $this->presentCase->pathAdd(
+            path: "ServiceDescription $descriptionIndex",
+            result: $hasLatencyOptional,
+            severity: "INFO",
+            pass_message: "Optional Latency information available",
+            fail_message: "Optional Latency information not available",
+        );
 
-            $playbackSpeeds = $serviceDescription->getElementsByTagName('PlaybackSpeed');
-            $completePlaybackSpeedInfo = false;
+        $playbackSpeeds = $serviceDescription->getElementsByTagName('PlaybackSpeed');
+        $completePlaybackSpeedInfo = false;
         foreach ($playbackSpeeds as $playbackSpeed) {
             if ($playbackSpeed->getAttribute('max') != '' && $playbackSpeed->getAttribute('min') != '') {
                 $completePlaybackSpeedInfo = true;
             }
         }
 
-            $this->presentCase->pathAdd(
-                path: "ServiceDescription $descriptionIndex",
-                result: $completePlaybackSpeedInfo,
-                severity: "INFO",
-                pass_message: "Optional PlaybackSpeed information available",
-                fail_message: "Optional PlaybackSpeed information not available",
-            );
+        $this->presentCase->pathAdd(
+            path: "ServiceDescription $descriptionIndex",
+            result: $completePlaybackSpeedInfo,
+            severity: "INFO",
+            pass_message: "Optional PlaybackSpeed information available",
+            fail_message: "Optional PlaybackSpeed information not available",
+        );
 
-            $scopeElements = $serviceDescription->getElementsByTagName('Scope');
-            $this->presentCase->pathAdd(
-                path: "ServiceDescription $descriptionIndex",
-                result: count($scopeElements) > 0,
-                severity: "INFO",
-                pass_message: "Optional Scope information available",
-                fail_message: "Optional Scope information not available",
-            );
+        $scopeElements = $serviceDescription->getElementsByTagName('Scope');
+        $this->presentCase->pathAdd(
+            path: "ServiceDescription $descriptionIndex",
+            result: count($scopeElements) > 0,
+            severity: "INFO",
+            pass_message: "Optional Scope information available",
+            fail_message: "Optional Scope information not available",
+        );
+        return true;
     }
 }
