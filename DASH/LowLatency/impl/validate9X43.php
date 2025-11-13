@@ -20,136 +20,6 @@ foreach ($representations as $representationId => $representation) {
     );
     $segmentAccessInfo[$representationId] = $segmentTemplateCombined;
 
-    // Bullet 1
-    if ($representation['ProducerReferenceTime'] != null) {
-        $producerReferenceTimes = $representation['ProducerReferenceTime'];
-    }
-
-    $validProducerReferenceTime = false;
-    $acceptedProducerReferenceTimes = array();
-    $producerReferenceTimeIds = array();
-    foreach ($producerReferenceTimes as $producerReferenceTime) {
-        $referenceType = $producerReferenceTime["type"];
-        if ($referenceType != null && $referenceType != 'encoder' && $referenceType != 'captured') {
-            continue;
-        }
-
-        $utcTimingValid = false;
-        $utcTiming = $producerReferenceTime['UTCTiming'];
-        foreach ($this->utcTimingInfo as $utcTimingMPD) {
-            if ($utcTiming != null) {
-                if (nodes_equal($utcTiming[0], $utcTimingMPD)) {
-                    $utcTimingValid = true;
-                    break;
-                }
-            }
-        }
-        if (!$utcTimingValid) {
-            continue;
-        }
-
-        $presentationTimeOffset = 0;
-        if ($segmentTemplateCombined != null && $segmentTemplateCombined[0]['presentationTimeOffset'] != null) {
-            $presentationTimeOffset = $segmentTemplateCombined[0]['presentationTimeOffset'];
-        }
-        if ($producerReferenceTime['presentationTime'] != $presentationTimeOffset) {
-            continue;
-        }
-
-        $availabilityStartTime = $mpdHandler->getFeatures()['availabilityStartTime'];
-        if ($availabilityStartTime != null) {
-            if (
-                (
-                  DASHIF\Utility\timeParsing($availabilityStartTime) -
-                  DASHIF\Utility\timeParsing($producerReferenceTime['wallClockTime'])
-                ) != (int) ($producerReferenceTime['presentationTime'])
-            ) {
-                continue;
-            }
-        }
-
-        $producerReferenceTimeIds[] = $producerReferenceTime['id'];
-
-        $acceptedProducerReferenceTimes[] = $producerReferenceTime;
-    }
-
-    foreach ($acceptedProducerReferenceTimes as $referenceTime) {
-        $indexes = array_keys($producerReferenceTime_ids, $referenceTime['id']);
-        $producerReferenceTimeInbandPresent = false;
-        if (sizeof($indexes) == 1) {
-            $validProducerReferenceTime = true;
-
-            if ($producerReferenceTime['inband'] != null) {
-                $producerReferenceTimeInbandPresent = true;
-            }
-
-            break;
-        }
-    }
-    $logger->test(
-        "DASH-IF IOP CR Low Latency Live",
-        "Section 9.X.4.3",
-        "A low latency Adaptation Set SHALL include at least one ProducerReferenceTime element with a unique " .
-        "@id, a @type of \'encoder\' or \'captured\', a UTCTiming identical to the one in the MPD, a " .
-        "@wallClockTime equal to @presentationTime and a @presentationTime equal to @presentationTimeOffset " .
-        "if present or 0 otherwise",
-        $validProducerReferenceTime,
-        "FAIL",
-        "Corresponding element found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-        ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1),
-        "No corresponding element found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-        ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
-    );
-
-    if (!$validProducerReferenceTime) {
-        $validRepPoints[$representationId] = false;
-    } else {
-      ///\Correctness Check says information, spec says shall
-        $logger->test(
-            "DASH-IF IOP CR Low Latency Live",
-            "Section 9.X.4.3",
-            "A low latency Adaptation Set SHALL include at least one ProducerReferenceTime element where @inband " .
-            "may be set to TRUE or FALSE",
-            !$producerReferenceTimeInbandPresent,
-            "WARN",
-            "Corresponding element found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-            ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1),
-            "No corresponding element found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-            ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
-        );
-    }
-
-    $validSegmentTemplate = true;
-    if ($segmentTemplateCombined == null) {
-        $validSegmentTemplate = false;
-    } else {
-        $check1 = $segmentTemplateCombined[0]['duration'] != null &&
-          strpos($segmentTemplateCombined[0]['media'], '$Number') !== false;
-        $check2 = $segmentTemplateCombined[0]['SegmentTimeline'] != null &&
-          strpos($segmentTemplateCombined[0]['media'], '$Number') !== false &&
-          strpos($segmentTemplateCombined[0]['media'], '$Time') !== false;
-        if (!($check1 || $check2)) {
-            $validSegmentTemplate = false;
-        }
-    }
-    // Bullet 3
-    $logger->test(
-        "DASH-IF IOP CR Low Latency Live",
-        "Section 9.X.4.3",
-        'A low latency Adaptation Set SHALL include either SegmentTemplate@duration and SegmentTemplate@media with ' .
-        '$Number$ or SegmentTimeline and SegmentTemplate@media with $Number$ and $Time$',
-        $validSegmentTemplate,
-        "FAIL",
-        "Corresponding Template found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-        ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1),
-        "No corresponding Template found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-        ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
-    );
-
-    if (!$validSegmentTemplate) {
-        $validRepPoints[$representationId] = false;
-    }
-
     // Bullet 4
     $validInbandEventStreamPresent = false;
     if ($representation['InbandEventStream'] != null) {
@@ -157,7 +27,7 @@ foreach ($representations as $representationId => $representation) {
     }
     $logger->test(
         "DASH-IF IOP CR Low Latency Live",
-        "Section 9.X.4.3",
+        "Section 9.X.4.2",
         "Inband Event Streams carrying MPD validity expiration events as defined in clause 4.5 SHOULD be present",
         $inbandEventStreams != null,
         "WARN",
@@ -172,7 +42,7 @@ foreach ($representations as $representationId => $representation) {
             if ($inbandEventStream['schemeIdUri'] == 'urn:mpeg:dash:event:2012') {
                 $logger->test(
                     "DASH-IF IOP CR Low Latency Live",
-                    "Section 9.X.4.3",
+                    "Section 9.X.4.2",
                     "If Inband Event Streams carrying MPD validity expiration events as defined in clause 4.5 " .
                     "is used, the @value SHALL be set to 1",
                     $inbandEventStream['value'] == 1,

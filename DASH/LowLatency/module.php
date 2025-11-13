@@ -49,7 +49,7 @@ class ModuleDASHLowLatency extends ModuleInterface
     public function hookMPD()
     {
         parent::hookMPD();
-
+    }
 
 
     public function hookAdaptationSet()

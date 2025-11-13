@@ -17,6 +17,8 @@ use App\Services\Segment;
 use App\Modules\LowLatency\MPD\ServiceDescription;
 use App\Modules\LowLatency\MPD\UTCTiming;
 use App\Modules\LowLatency\MPD\LeapSecond;
+use App\Modules\LowLatency\MPD\ProducerReferenceTime;
+use App\Modules\LowLatency\MPD\SegmentURL;
 
 class MPD extends Module
 {
@@ -48,6 +50,8 @@ class MPD extends Module
         new ServiceDescription()->validateServiceDescription();
         new UTCTiming()->validateUTCTiming();
         new LeapSecond()->validateLeapSecond();
+        new ProducerReferenceTime()->validateProducerReferenceTime();
+        new SegmentURL()->validateSegmentURL();
     }
 
     private function initializeChecks(): void
