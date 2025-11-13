@@ -19,6 +19,7 @@ use App\Modules\LowLatency\MPD\UTCTiming;
 use App\Modules\LowLatency\MPD\LeapSecond;
 use App\Modules\LowLatency\MPD\ProducerReferenceTime;
 use App\Modules\LowLatency\MPD\SegmentURL;
+use App\Modules\LowLatency\MPD\InbandEventStream;
 
 class MPD extends Module
 {
@@ -52,6 +53,7 @@ class MPD extends Module
         new LeapSecond()->validateLeapSecond();
         new ProducerReferenceTime()->validateProducerReferenceTime();
         new SegmentURL()->validateSegmentURL();
+        new InbandEventStream()->validateInbandEventStream();
     }
 
     private function initializeChecks(): void

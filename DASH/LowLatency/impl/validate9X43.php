@@ -12,66 +12,6 @@ $producerReferenceTimes = $adaptationSet['ProducerReferenceTime'];
 $inbandEventStreams = $adaptationSet['InbandEventStream'];
 
 $representations = $adaptationSet['Representation'];
-foreach ($representations as $representationId => $representation) {
-    $validRepPoints[$representationId] = true;
-    $segmentTemplateCombined = DASHIF\Utility\mergeSegmentAccess(
-        $segmentTemplateCombined,
-        $representation['SegmentTemplate']
-    );
-    $segmentAccessInfo[$representationId] = $segmentTemplateCombined;
-
-    // Bullet 4
-    $validInbandEventStreamPresent = false;
-    if ($representation['InbandEventStream'] != null) {
-        $inbandEventStreams = $representation['InbandEventStream'];
-    }
-    $logger->test(
-        "DASH-IF IOP CR Low Latency Live",
-        "Section 9.X.4.2",
-        "Inband Event Streams carrying MPD validity expiration events as defined in clause 4.5 SHOULD be present",
-        $inbandEventStreams != null,
-        "WARN",
-        "Inband Event Stream found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-        ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1),
-        "Inband event stream not found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-        ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
-    );
-    if ($inbandEventStreams != null) {
-        foreach ($inbandEventStreams as $inbandEventStream) {
-          ///\Correctness these checks do not match the spec
-            if ($inbandEventStream['schemeIdUri'] == 'urn:mpeg:dash:event:2012') {
-                $logger->test(
-                    "DASH-IF IOP CR Low Latency Live",
-                    "Section 9.X.4.2",
-                    "If Inband Event Streams carrying MPD validity expiration events as defined in clause 4.5 " .
-                    "is used, the @value SHALL be set to 1",
-                    $inbandEventStream['value'] == 1,
-                    "WARN",
-                    "Valid inband Event Stream found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-                    ' Adaptation Set ' . ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1),
-                    "Valid inband event stream not found in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-                    ' Adaptation Set ' . ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
-                );
-                if ($inbandEventStream['value'] == '1') {
-                    $validInbandEventStreamPresent = true;
-                    break;
-                }
-            }
-        }
-
-        $logger->test(
-            "DASH-IF IOP CR Low Latency Live",
-            "Section 9.X.4.3",
-            "Inband Event Streams carrying MPD validity expiration events as defined in clause 4.5 SHOULD be present",
-            $validInbandEventStreamPresent,
-            "WARN",
-            "Inband Event Stream found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-            ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1),
-            "Inband event stream not found in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-            ($adaptationSetId + 1) . ' or Represetation ' . ($representationId + 1)
-        );
-    }
-}
 
 $isLowLatencyAdaptation =  (sizeof(array_unique($validRepPoints)) == 1 && $validRepPoints[0] == true);
 
