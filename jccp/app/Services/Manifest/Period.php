@@ -31,9 +31,9 @@ class Period
     public function getBaseUrl(): string
     {
         $myBase = '';
-        $baseUrls = $this->dom->getElementsByTagName('BaseURL');
+        $baseUrls = dom_direct_children_by_tag_name($this->dom, 'BaseURL');
         if (count($baseUrls)) {
-            $myBase = $baseUrls->item(0)->nodeValue;
+            $myBase = $baseUrls[0]->nodeValue;
         }
         return Uri::fromBaseUri(
             $myBase,

@@ -1,5 +1,22 @@
 <?php
 
+if (!function_exists('dom_direct_children')) {
+    /**
+     * @return array<\DomNode>
+     **/
+    function dom_direct_children_by_tag_name(\DomElement $dom, string $name): array
+    {
+        $res = [];
+        foreach ($dom->childNodes as $child) {
+            if ($child->nodeName == $name) {
+                $res[] = $child;
+            }
+        }
+        return $res;
+    }
+
+}
+
 if (!function_exists('cli_or_session')) {
     function cli_or_session(): string
     {

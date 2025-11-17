@@ -63,11 +63,6 @@ class ModuleDASHLowLatency extends ModuleInterface
     $decode_times = array();
          */
 
-        $this->validateCross();
-    }
-
-    private function validateCross()
-    {
         $this->validateAdaptationSets();
     }
 
@@ -90,16 +85,6 @@ class ModuleDASHLowLatency extends ModuleInterface
         $adaptationGroupName
     ) {
         include 'impl/validate9X43.php';
-    }
-    private function validate9X44(
-        $adaptationSet,
-        $adaptationSetId,
-        $isLowLatency,
-        $segmentAccessInfo,
-        $infoFileAdaptation,
-        $logger
-    ) {
-        return include 'impl/validate9X44.php';
     }
 
     private function validate9X45(

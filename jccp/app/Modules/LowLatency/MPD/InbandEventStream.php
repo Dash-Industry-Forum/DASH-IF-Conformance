@@ -52,20 +52,21 @@ class InbandEventStream
         $mpdCache = app(MPDCache::class);
         foreach ($mpdCache->allPeriods() as $period) {
             foreach ($period->allAdaptationSets() as $adaptationSet) {
-                foreach($adaptationSet->allRepresentations() as $representation){
+                foreach ($adaptationSet->allRepresentations() as $representation) {
                     $this->validateForRepresentation($representation);
                 }
             }
         }
     }
-    public function validateForRepresentation(Representation $representation): void {
+    public function validateForRepresentation(Representation $representation): void
+    {
         $isPresent = false;
 
 
         $inBandStreams = $representation->getDOMElements('InbandEventStream');
 
-        foreach ($inBandStreams as $streamIndex => $inBandStream){
-            if ($inBandStream->getAttribute('schemeIdUri') != 'urn:mpeg:dash:event:2012'){
+        foreach ($inBandStreams as $streamIndex => $inBandStream) {
+            if ($inBandStream->getAttribute('schemeIdUri') != 'urn:mpeg:dash:event:2012') {
                 continue;
             }
             $isPresent = true;
@@ -77,8 +78,6 @@ class InbandEventStream
                 pass_message: "Correct value found",
                 fail_message: "Incorrect value found",
             );
-
-
         }
 
         $this->presentCase->pathAdd(

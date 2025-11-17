@@ -12,6 +12,7 @@ use App\Modules\HbbTV\Segments as HbbTVSegments;
 use App\Modules\Wave\Segments as WaveHLSInteropSegments;
 use App\Modules\CMAF\Segments as CMAFSegments;
 use App\Modules\LowLatency\MPD as LowLatencyManifest;
+use App\Modules\LowLatency\Segments as LowLatencySegments;
 use App\Interfaces\Module;
 use App\Services\Manifest\Period;
 use App\Services\SegmentManager;
@@ -52,11 +53,12 @@ class SpecManager
         $this->manifestSpecs[] = new Schematron();
         $this->manifestSpecs[] = new DVBManifest();
         $this->manifestSpecs[] = new HbbTVManifest();
+        $this->manifestSpecs[] = new LowLatencyManifest();
+        $this->manifestSpecs[] = new CMAFSegments();
         $this->manifestSpecs[] = new DVBSegments();
         $this->manifestSpecs[] = new HbbTVSegments();
+        $this->manifestSpecs[] = new LowLatencySegments();
         $this->manifestSpecs[] = new WaveHLSInteropSegments();
-        $this->manifestSpecs[] = new CMAFSegments();
-        $this->manifestSpecs[] = new LowLatencyManifest();
     }
 
     public function toggle(string $moduleName): void

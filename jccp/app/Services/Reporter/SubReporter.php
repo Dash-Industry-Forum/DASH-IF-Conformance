@@ -28,12 +28,13 @@ class SubReporter
         string $test,
         string $dependentModule,
         string $dependentSpec,
-        string $dependentSection
+        string $dependentSection,
+        string $skipReason = '',
     ): TestCase {
         $this->cases[] = new TestCase(
-            section: "Dependencies", // $dependentSpec,
+            section: $section,
             test: "{$dependentSpec}::${dependentSection}",
-            skipReason: ""
+            skipReason: $skipReason
         );
 
         return $this->cases[array_key_last($this->cases)];

@@ -4,63 +4,6 @@ global $mpdHandler, $first_option, $second_option, $presentation_times, $decode_
 
 $representations = $adaptationSet['Representation'];
 
-// Test first option
-foreach ($representations as $representationId => $representation) {
-    $firstOptionPoints[$representationId] = 1;
-    $maxSegmentDuration = $first_option['maxSegmentDuration'][$representationId];
-    $target = $first_option['target'][$representationId];
-
-    $targetLatencyFound = $logger->test(
-        "DASH-IF IOP CR Low Latency Live",
-        "Section 9.X.4.5",
-        "For Adaptation Set that contains more than one Representation, the maximum segment duration SHALL be " .
-        "smaller than the signaled target latency",
-        $target != null,
-        "INFO",
-        "Target latency element found for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
-        ($adaptationSetId + 1) . " Representation $representationId",
-        "Target latency element not found for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
-        ($adaptationSetId + 1) . " Representation $representationId",
-    );
-    if (!$targetLatencyFound) {
-        $firstOptionPoints[$representationId]--;
-        continue;
-    }
-    $durationLessThanTarget = $logger->test(
-        "DASH-IF IOP CR Low Latency Live",
-        "Section 9.X.4.5",
-        "For Adaptation Set that contains more than one Representation, the maximum segment duration SHALL be " .
-        "smaller than the signaled target latency",
-        $maxSegmentDuration < $target,
-        "INFO",
-        "Maximum segment duration smaller than target for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-        ' Adaptation ' . ($adaptationSetId + 1) . " Representation $representationId",
-        "Maximum segment duration not smaller than target for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-        ' Adaptation ' . ($adaptationSetId + 1) . " Representation $representationId",
-    );
-    if (!$durationLessThanTarget) {
-        $firstOptionPoints[$representationId]--;
-    }
-    $logger->test(
-        "DASH-IF IOP CR Low Latency Live",
-        "Section 9.X.4.5",
-        "For Adaptation Set that contains more than one Representation, the maximum segment duration SHOULD be " .
-        "smaller than half of the signaled target latency",
-        $maxSegmentDuration < ($target * 0.5),
-        "INFO",
-        "Maximum segment duration smaller than half of target for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-        ' Adaptation ' . ($adaptationSetId + 1) . " Representation $representationId",
-        "Maximum segment duration larger than half of target for Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-        ' Adaptation ' . ($adaptationSetId + 1) . " Representation $representationId",
-    );
-}
-
-$validFirstOption = false;
-if (sizeof(array_unique($firstOptionPoints)) == 1 && $firstOptionPoints[0] == 1) {
-    $validFirstOption = true;
-}
-
-
 // Test second option
 // Lowest bw Representations
 $validLowestBandwidthFound = false;

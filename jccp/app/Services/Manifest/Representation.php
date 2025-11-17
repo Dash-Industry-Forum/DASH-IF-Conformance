@@ -40,16 +40,13 @@ class Representation
     public function getBaseUrl(): string
     {
         $myBase = '';
-        $baseUrls = $this->dom->getElementsByTagName('BaseURL');
+        $baseUrls = dom_direct_children_by_tag_name($this->dom, 'BaseURL');
         if (count($baseUrls)) {
-            $myBase = $baseUrls->item(0)->nodeValue;
+            $myBase = $baseUrls[0]->nodeValue;
         }
         return Uri::fromBaseUri(
             $myBase,
-            app(MPDCache::class)->getAdaptationSet(
-                $this->periodIndex,
-                $this->adaptationSetIndex
-            )->getBaseUrl()
+            $this->getAdaptationSet()->getBaseUrl()
         )->toString();
     }
 
@@ -107,15 +104,14 @@ class Representation
 
         $segmentTemplate = $this->dom->getElementsByTagName("SegmentTemplate");
         if (!count($segmentTemplate)) {
-            $segmentTemplate = app(MPDCache::class)->getAdaptationSet($this->periodIndex, $this->adaptationSetIndex)
-                                   ->getDOMElements('SegmentTemplate');
+            $segmentTemplate = $this->getAdaptationSet()->getDOMElements('SegmentTemplate');
         }
         if (count($segmentTemplate)) {
             $segmentTemplateUrl = Uri::fromBaseUri(
                 $segmentTemplate->item(0)->getAttribute('media'),
                 $base
             )->toString();
-            Log::info("Segment url: " . $segmentTemplateUrl);
+            Log::info("Template url: " . $segmentTemplateUrl);
             //TODO: Fix identifiers properly
             $uriTemplate = str_replace(
                 array('$Bandwidth$','$Number$','$Number%03d$','$RepresentationID$','$Time$'),
@@ -135,11 +131,14 @@ class Representation
                 $startNumber = 1;
             }
             for ($i = 0; $i < 5; $i++) {
-                $result[] = Uri::fromTemplate($uriTemplate, [
+                $filledTemplate =
+                    Uri::fromTemplate($uriTemplate, [
                     'Number' => ($startNumber + $i),
                     'Number3d' => sprintf('%03d', ($startNumber + $i)),
                     'RepresentationID' => $this->getId(),
                 ])->toString();
+                Log::info("Segment url: " . $filledTemplate);
+                $result[] = $filledTemplate;
             }
         }
 
