@@ -60,7 +60,7 @@ class MPD extends Module
             skipReason: ''
         );
         $this->minimumUpdateCase->add(
-            result: ($minimumUpdatePeriod != '' && timeParsing($minimumUpdatePeriod) > 1),
+            result: ($minimumUpdatePeriod != '' && timeParsing($minimumUpdatePeriod) >= 1),
             severity: "WARN",
             pass_message: "Check succeeded",
             fail_message: "Check failed"
