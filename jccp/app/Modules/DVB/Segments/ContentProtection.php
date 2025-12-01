@@ -92,7 +92,7 @@ class ContentProtection
     private function validateInitializationSegment(Representation $representation, Segment $segment): void
     {
         $psshSystems = [];
-        $psshBoxes = $segment->getPSSHBoxes();
+        $psshBoxes = $segment->boxAccess()->pssh();
         if (count($psshBoxes) == 0) {
             $this->psshCase->pathAdd(
                 result: count($this->psshMissingFromMPD) == 0,

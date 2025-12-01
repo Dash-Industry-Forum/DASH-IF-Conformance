@@ -62,7 +62,7 @@ class TrackRoles
             ];
         }
 
-        $kindBoxes = $segment->getKindBoxes();
+        $kindBoxes = $segment->boxAccess()->kind();
 
         foreach ($kindBoxes as $kindBox) {
             $foundInMPD = false;

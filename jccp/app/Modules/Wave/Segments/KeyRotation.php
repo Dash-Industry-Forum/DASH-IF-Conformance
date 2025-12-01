@@ -49,9 +49,10 @@ class KeyRotation
     //Public validation functions
     public function validateKeyRotation(Representation $representation, Segment $segment, int $segmentIndex): void
     {
+        $boxAccess = $segment->boxAccess();
 
-        $seigBoxes = $segment->getSeigDescriptionGroups();
-        $sampleGroups = $segment->getSampleGroups();
+        $seigBoxes = $boxAccess->seig();
+        $sampleGroups = $boxAccess->sgbp();
 
         if (empty($seigBoxes)) {
             return;
@@ -65,7 +66,7 @@ class KeyRotation
             fail_message: "Not equal amount of 'seig' and 'sbgp' boxes",
         );
 
-        $psshBoxes = $segment->getPSSHBoxes();
+        $psshBoxes = $boxAccess->pssh();
 
         $psshSystems = [];
 

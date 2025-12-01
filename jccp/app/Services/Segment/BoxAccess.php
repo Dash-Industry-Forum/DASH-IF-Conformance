@@ -82,4 +82,52 @@ class BoxAccess
     {
         return $this->runAnalyzedFunction('colrBoxes');
     }
+
+    /**
+     * @return array<Boxes\PSSHBox>
+     **/
+    public function pssh(): array
+    {
+        return $this->runAnalyzedFunction('getPSSHBoxes');
+    }
+
+    /**
+     * @return array<Boxes\SENCBox>
+     **/
+    public function senc(): array
+    {
+        return $this->runAnalyzedFunction('getSENCBoxes');
+    }
+
+    /**
+     * @return array<Boxes\KINDBox>
+     **/
+    public function kind(): array
+    {
+        return $this->runAnalyzedFunction('getKindBoxes');
+    }
+
+    /**
+     * @return array<Boxes\EventMessage>
+     **/
+    public function emsg(): array
+    {
+        return $this->runAnalyzedFunction('getEmsgBoxes');
+    }
+
+    /**
+     * @return array<Boxes\SampleGroupDescription>
+     **/
+    public function seig(): array
+    {
+        return $this->runAnalyzedFunction('getSeigDescriptionGroups');
+    }
+
+    /**
+     * @return array<Boxes\SampleGroup>
+     **/
+    public function sgbp(): array
+    {
+        return $this->runAnalyzedFunction('getSampleGroups');
+    }
 }

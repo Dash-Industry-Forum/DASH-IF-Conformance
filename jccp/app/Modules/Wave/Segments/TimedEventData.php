@@ -55,7 +55,7 @@ class TimedEventData
         foreach ($segments as $segmentIndex => $segment) {
             $activeSegment = false;
             $emsgNum = -1;
-            $emsgBoxes = $segment->getEmsgBoxes();
+            $emsgBoxes = $segment->boxAccess()->emsg();
             $topLevelBoxes = $segment->getTopLevelBoxNames();
             foreach ($topLevelBoxes as $boxName) {
                 if ($boxName == 'moof') {

@@ -18,6 +18,7 @@ class Segment
     public readonly string $segmentPath;
     private string $representationDir = '';
     private int $segmentIndex;
+    private string $codec = '';
 
     /**
      * //TODO Change mixed with correct parent class
@@ -41,6 +42,14 @@ class Segment
     public function analyseGPAC(): string
     {
 
+        if (file_exists($this->initPath)) {
+            $this->fillCodecFromGPAC($this->initPath);
+        } elseif (file_exists($this->segmentPath)) {
+            $this->fillCodecFromGPAC($this->segmentPath);
+        }
+
+
+
         $resultPath = $this->representationDir . $this->segmentIndex . "_dump.xml";
         if (file_exists($resultPath)) {
             return $resultPath;
@@ -56,19 +65,43 @@ class Segment
         $concatPath = $this->representationDir . "seg" . $this->segmentIndex . ".mp4";
         Process::run("cat " . $this->initPath . " " . $this->segmentPath . " > ${concatPath}");
 
-
-
-
-
         $analyseResult = app(MP4Box::class)->run($concatPath);
         if (!$analyseResult) {
             return '';
         }
+
+
+
         Process::run("rm " . $concatPath);
         Process::run("mv " . $this->representationDir . "seg" . $this->segmentIndex . "_dump.xml " .
                              $resultPath);
 
         return $resultPath;
+    }
+
+    private function fillCodecFromGPAC(string $filePath): void
+    {
+        $mp4BoxInfo = app(MP4Box::class)->info($filePath);
+
+        $lines = explode("\n", $mp4BoxInfo);
+
+        foreach ($lines as $line) {
+            if (strpos($line, 'RFC6381') === false) {
+                continue;
+            }
+
+            $codecOffset = strpos($line, ": ");
+            if ($codecOffset === false) {
+                continue;
+            }
+
+            $this->codec = substr($line, $codecOffset + 2);
+        }
+    }
+
+    public function getCodec(): string
+    {
+        return $this->codec;
     }
 
     public function boxAccess(): BoxAccess
@@ -149,22 +182,6 @@ class Segment
         return $this->runAnalyzedFunction('getSampleAuxiliaryInformation');
     }
 
-    /**
-     * @return ?array<Boxes\PSSHBox>
-     **/
-    public function getPSSHBoxes(): ?array
-    {
-        return $this->runAnalyzedFunction('getPSSHBoxes');
-    }
-
-    /**
-     * @return ?array<Boxes\SENCBox>
-     **/
-    public function getSENCBoxes(): ?array
-    {
-        return $this->runAnalyzedFunction('getSENCBoxes');
-    }
-
     public function getBoxNameTree(): ?Boxes\NameOnlyNode
     {
         return $this->runAnalyzedFunction('getBoxNameTree');
@@ -173,22 +190,6 @@ class Segment
     public function getSampleDuration(): ?float
     {
         return $this->runAnalyzedFunction('getSampleDuration');
-    }
-
-    /**
-     * @return array<Boxes\KINDBox>
-     **/
-    public function getKindBoxes(): ?array
-    {
-        return $this->runAnalyzedFunction('getKindBoxes');
-    }
-
-    /**
-     * @return array<Boxes\EventMessage>
-     **/
-    public function getEmsgBoxes(): ?array
-    {
-        return $this->runAnalyzedFunction('getEmsgBoxes');
     }
 
     /**
@@ -212,21 +213,6 @@ class Segment
         return $this->runAnalyzedFunction('getSampleDescription');
     }
 
-    /**
-     * @return array<Boxes\SampleGroupDescription>
-     **/
-    public function getSeigDescriptionGroups(): ?array
-    {
-        return $this->runAnalyzedFunction('getSeigDescriptionGroups');
-    }
-
-    /**
-     * @return array<Boxes\SampleGroup>
-     **/
-    public function getSampleGroups(): ?array
-    {
-        return $this->runAnalyzedFunction('getSampleGroups');
-    }
 
     /**
      * @return array<string,string>
@@ -286,5 +272,13 @@ class Segment
     public function getEPT(): ?int
     {
         return $this->runAnalyzedFunction('getEPT');
+    }
+
+    /**
+     * @return array<Boxes\NALSample>
+     **/
+    public function getNalSamples(): array
+    {
+        return $this->runAnalyzedFunction('getNalSamples');
     }
 }

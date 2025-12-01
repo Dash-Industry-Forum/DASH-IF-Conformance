@@ -100,8 +100,9 @@ class Initialization
             return;
         }
 
-        $sencBoxes = $segment->getSencBoxes();
-        $moofBoxes = $segment->boxAccess()->moof();
+        $boxAccess = $segment->boxAccess();
+        $sencBoxes = $boxAccess->senc();
+        $moofBoxes = $boxAccess->moof();
 
         //TODO: Check whether this is still correct
         $this->decryptionCase->pathAdd(

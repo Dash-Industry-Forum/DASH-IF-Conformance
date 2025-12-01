@@ -20,4 +20,10 @@ class MP4Box extends ValidatorInterface
         $result = Process::run("MP4Box -dxml ${filePath}");
         return $result->exitCode() == 0;
     }
+
+    public function info(string $filePath): string
+    {
+        $result = Process::run("MP4Box -info ${filePath}");
+        return $result->errorOutput();
+    }
 }

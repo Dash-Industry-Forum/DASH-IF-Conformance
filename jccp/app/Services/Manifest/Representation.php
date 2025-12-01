@@ -70,7 +70,17 @@ class Representation
                 $segmentTemplate->item(0)->getAttribute('initialization'),
                 $base
             )->toString();
-            return Uri::fromBaseUri($segmentTemplateUrl, $base)->toString();
+
+            $uriTemplate = str_replace(
+                array('$RepresentationID$'),
+                array('{RepresentationID}'),
+                $segmentTemplateUrl
+            );
+            $url = Uri::fromTemplate($uriTemplate, [
+                    'RepresentationID' => $this->getId(),
+                ])->toString();
+
+            return Uri::fromBaseUri($url, $base)->toString();
         }
 
         return null;
@@ -130,7 +140,7 @@ class Representation
             if (!$startNumber) {
                 $startNumber = 1;
             }
-            for ($i = 0; $i < 5; $i++) {
+            for ($i = 0; $i < 50; $i++) {
                 $filledTemplate =
                     Uri::fromTemplate($uriTemplate, [
                     'Number' => ($startNumber + $i),
@@ -160,6 +170,9 @@ class Representation
         $time = 0;
         $segmentElements = $timeline->getElementsByTagName('S');
         foreach ($segmentElements as $segmentElement) {
+            if ($segmentElement->getAttribute('t') != '') {
+                $time = intval($segmentElement->getAttribute('t'));
+            }
             $repeats = 1;
             if ($segmentElement->getAttribute('r') != '') {
                 $repeats = intval($segmentElement->getAttribute('r'));

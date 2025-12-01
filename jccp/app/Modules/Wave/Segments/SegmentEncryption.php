@@ -58,9 +58,9 @@ class SegmentEncryption
     //Private helper functions
     private function validatePSSH(Representation $representation, Segment $segment, int $segmentIndex): void
     {
-        $pssh = $segment->getPSSHBoxes();
+        $pssh = $segment->boxAccess()->pssh();
 
-        if (!$pssh) {
+        if (count($pssh) == 0) {
             return;
         }
 
@@ -81,9 +81,9 @@ class SegmentEncryption
 
     private function validateSENC(Representation $representation, Segment $segment, int $segmentIndex): void
     {
-        $senc = $segment->getSENCBoxes();
+        $senc = $segment->boxAccess()->senc();
 
-        if (!$senc) {
+        if (count($senc) == 0) {
             return;
         }
         $totalIvSize = 0;

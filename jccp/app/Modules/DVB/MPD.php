@@ -23,6 +23,7 @@ use App\Modules\DVB\MPD\MetricReporting;
 use App\Modules\DVB\MPD\VideoChecks;
 use App\Modules\DVB\MPD\AudioChecks;
 use App\Modules\DVB\MPD\EventChecks;
+use App\Modules\DVB\MPD\SCTEChecks;
 use App\Modules\DVB\MPD\SubtitleChecks;
 use App\Modules\DVB\MPD\BandwidthChecks;
 use App\Modules\DVB\MPD\ContentProtectionChecks;
@@ -88,6 +89,7 @@ class MPD extends Module
         new BandwidthChecks()->validateBandwidth();
         new ContentProtectionChecks()->validateContentProtection();
         new EventChecks()->validateEvents();
+        new SCTEChecks()->validateSCTE();
 
         $resolutionChecker = new Resolution();
         $codecChecker = new Codecs();

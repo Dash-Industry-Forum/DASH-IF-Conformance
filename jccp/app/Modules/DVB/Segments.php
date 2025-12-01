@@ -17,6 +17,7 @@ use App\Interfaces\Module;
 ## Segment checks
 use App\Modules\DVB\Segments\LegacyCodecs;
 use App\Modules\DVB\Segments\Codecs;
+use App\Modules\DVB\Segments\CrossCodecs;
 use App\Modules\DVB\Segments\BoxCount;
 use App\Modules\DVB\Segments\Durations;
 use App\Modules\DVB\Segments\SAPTypes;
@@ -24,6 +25,10 @@ use App\Modules\DVB\Segments\Subtitle;
 use App\Modules\DVB\Segments\ContentProtection;
 use App\Modules\DVB\Segments\ContinuousPeriods;
 use App\Modules\DVB\Segments\SwitchableRepresentation;
+use App\Modules\DVB\Segments\BitStream;
+use App\Modules\DVB\Segments\AVS3BitStream;
+use App\Modules\DVB\Segments\CrossAudio;
+use App\Modules\DVB\Segments\SEILocations;
 
 class Segments extends Module
 {
@@ -68,6 +73,10 @@ class Segments extends Module
     {
         new LegacyCodecs()->validateCodecs($representation, $segment);
         new Codecs()->validateCodecs($representation, $segment);
+        new BitStream()->validateBitStream($representation, $segment);
+        new AVS3BitStream()->validateBitStream($representation, $segment);
+        new CrossCodecs()->validateCodec($representation, $segment);
+        new CrossAudio()->validateAudioParameters($representation, $segment);
     }
 
     private function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
@@ -76,5 +85,6 @@ class Segments extends Module
         new Durations()->validateDurations($representation, $segment, $segmentIndex);
         new SAPTypes()->validateSAPTypes($representation, $segment, $segmentIndex);
         new Subtitle()->validateSubtitles($representation, $segment, $segmentIndex);
+        new SEILocations()->validateSEILocations($representation, $segment, $segmentIndex);
     }
 }

@@ -229,6 +229,10 @@ class MP4BoxRepresentation
             if (count($sampleDescriptionBoxes) > 0) {
                 return $sampleDescriptionBoxes->item(0)->getAttribute('Type');
             }
+            $sampleDescriptionBoxes = $this->payload->getElementsByTagName("VVCSampleEntryBox");
+            if (count($sampleDescriptionBoxes) > 0) {
+                return $sampleDescriptionBoxes->item(0)->getAttribute('Type');
+            }
         }
         return null;
     }
@@ -869,5 +873,31 @@ class MP4BoxRepresentation
             return $videoEPT;
         }
         return $audioEPT;
+    }
+
+    /**
+     * @return array<Boxes\NALSample>
+     **/
+    public function getNalSamples(): array
+    {
+        $res = [];
+        $naluSamples = $this->payload->getElementsByTagName('NALUSamples');
+        foreach ($naluSamples as $naluSample) {
+            $samples = $naluSample->getElementsByTagName('Sample');
+            foreach ($samples as $sample) {
+                $singleSample = new Boxes\NALSample();
+
+                foreach ($sample->getElementsByTagName('NALU') as $nalUnit) {
+                    $unit = new Boxes\NALUnit();
+                    $unit->size = intval($nalUnit->getAttribute('size'));
+                    $unit->code = intval($nalUnit->getAttribute('code'));
+                    $unit->type = $nalUnit->getAttribute('type');
+                    $singleSample->units[] = $unit;
+                }
+                $res[] = $singleSample;
+            }
+        }
+
+        return $res;
     }
 }

@@ -34,8 +34,12 @@ class Context
 
     public function toString(): string
     {
-        print_r($this->context);
         return "$this->element - $this->spec ($this->version)";
+    }
+
+    public function printContext(): void
+    {
+        print_r($this->context);
     }
 
     public function getElement(): string

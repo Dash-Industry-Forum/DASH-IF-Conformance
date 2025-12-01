@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Log;
 class Schematron extends Module
 {
     //TODO Move to module
-    private string $schemaPath;
+    //private string $schemaPath;
     private SubReporter $schematronReporter;
     //private SubReporter $globalReporter;
 
@@ -142,6 +142,7 @@ class Schematron extends Module
         file_put_contents($sessionDir . "manifest.mpd", app(MPDCache::class)->getMPD());
         return;
 
+        /*
         $mpdXml = simplexml_load_string('<mpdresult><xlink>No Result</xlink>' .
         '<schema>No Result</schema><schematron>No Result</schematron></mpdresult>');
         $mpdXml->asXML($sessionDir . "mpdresult.xml");
@@ -163,7 +164,6 @@ class Schematron extends Module
         $validatorResult = Process::run($validatorCommand);
 
         if (!$validatorResult->successful()) {
-/*
   $this->globalReporter->add(
                 section: "Conformance Tool",
                 test: "MPD Validator shall be able to run",
@@ -174,7 +174,6 @@ class Schematron extends Module
                 pass_message: "",
                 fail_message: "Stderr: " . $validatorResult->errorOutput()
             );
- */
 
             return;
         }
@@ -191,6 +190,7 @@ class Schematron extends Module
             $xlinkOffset = strpos($javaRemoved, "Start XLink resolving");
             return substr($javaRemoved, $xlinkOffset);
         });
+*/
     }
 
     public function validateSchematron(): void
@@ -274,6 +274,7 @@ class Schematron extends Module
         );
          */
     }
+    /*
     private function findOrDownloadSchema(): void
     {
     //\TODO Rewrite function
@@ -363,4 +364,5 @@ class Schematron extends Module
         chmod($saveTo, 0777);
         $this->schemaPath = $saveTo;
     }
+     */
 }
