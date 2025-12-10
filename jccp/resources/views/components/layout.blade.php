@@ -20,7 +20,7 @@
     <body>
       <livewire:navigation />
       <div class="alert alert-info">
-        <b>This version is currently in <strong>alpha</strong> state.</b>
+        <b>This version is currently in <strong>beta</strong> state.</b>
         <div>
             Many checks and elements have not been ported yet, if you need them, please use the <a href="https://conformance.dashif.org/">Stable version</a> instead.
         </div>
