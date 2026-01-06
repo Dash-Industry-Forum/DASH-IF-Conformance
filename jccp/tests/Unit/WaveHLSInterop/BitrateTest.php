@@ -1,66 +1,15 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\WaveHLSInterop;
 
 use Tests\TestCase;
-use App\Modules\Wave\Segments\Bitrate;
+//
 use App\Services\ModuleReporter;
-use App\Services\Segment;
 use App\Services\Manifest\Representation;
+//
+use App\Modules\Wave\Segments\Bitrate;
 
-enum BitRateTestCase
-{
-    case INVALID;
-    case Valid1;
-    case Valid2;
-    case Invalid1;
-    case Invalid2;
-}
-
-
-class MockSegment extends Segment
-{
-    private BitRateTestCase $case;
-    public function __construct(BitRateTestCase $testCase)
-    {
-        $this->case = $testCase;
-    }
-
-    public function getSize(): int
-    {
-        switch ($this->case) {
-            case BitRateTestCase::Valid1:
-                return 1000;
-            case BitRateTestCase::Valid2:
-                return 2000;
-            case BitRateTestCase::Invalid1:
-                return 2000;
-            case BitRateTestCase::Invalid2:
-                return 2000;
-        }
-        return 0;
-    }
-
-    /**
-     * @return array<float>
-     **/
-    public function getSegmentDurations(): array
-    {
-        switch ($this->case) {
-            case BitRateTestCase::Valid1:
-                return [1];
-            case BitRateTestCase::Valid2:
-                return [2];
-            case BitRateTestCase::Invalid1:
-                return [1];
-            case BitRateTestCase::Invalid2:
-                return [0];
-        }
-        return [];
-    }
-}
-
-class WaveHLSBitrateTest extends TestCase
+class BitrateTest extends TestCase
 {
     /**
      * A basic unit test example.
@@ -105,8 +54,8 @@ class WaveHLSBitrateTest extends TestCase
 
         $bitrate = new Bitrate();
         $bitrate->validateBitrate($this->mockRepresentation, [
-            new MockSegment(BitRateTestCase::Valid1),
-            new MockSegment(BitRateTestCase::Valid2),
+            new BitrateSegment(BitrateEnum::Valid1),
+            new BitrateSegment(BitrateEnum::Valid2),
         ]);
 
         $this->assertEquals($reporter->verdict(), "PASS");
@@ -118,9 +67,9 @@ class WaveHLSBitrateTest extends TestCase
 
         $bitrate = new Bitrate();
         $bitrate->validateBitrate($this->mockRepresentation, [
-            new MockSegment(BitRateTestCase::Valid1),
-            new MockSegment(BitRateTestCase::Valid2),
-            new MockSegment(BitRateTestCase::Invalid1),
+            new BitrateSegment(BitrateEnum::Valid1),
+            new BitrateSegment(BitrateEnum::Valid2),
+            new BitrateSegment(BitrateEnum::Invalid1),
         ]);
 
         $this->assertEquals($reporter->verdict(), "FAIL");
@@ -132,9 +81,9 @@ class WaveHLSBitrateTest extends TestCase
 
         $bitrate = new Bitrate();
         $bitrate->validateBitrate($this->mockRepresentation, [
-            new MockSegment(BitRateTestCase::Valid1),
-            new MockSegment(BitRateTestCase::Valid2),
-            new MockSegment(BitRateTestCase::Invalid2),
+            new BitrateSegment(BitrateEnum::Valid1),
+            new BitrateSegment(BitrateEnum::Valid2),
+            new BitrateSegment(BitrateEnum::Invalid2),
         ]);
 
         $this->assertEquals($reporter->verdict(), "FAIL");
