@@ -88,7 +88,21 @@ class ModuleCTAWAVE extends ModuleInterface
     public function hookPeriod()
     {
         parent::hookPeriod();
-        return $this->CTABaselineSpliceChecks();
+$this->checkSequentialSwitchingSetMediaProfile();
+$this->checkDiscontinuousSplicePoints();
+$this->checkEncryptionChangeSplicePoint();
+$this->checkSampleEntryChangeSplicePoint();
+$this->checkDefaultKIDChangeSplicePoint();
+$this->checkPictureAspectRatioSplicePoint();
+$this->checkFrameRateSplicePoint();
+$this->checkAudioChannelSplicePoint();
+
+
+$this->checkSequentialSwitchingSetAV();
+
+//Call the CMFHD Baseline constraints.
+$this->checkCMFHDBaselineConstraints();
+
     }
 
     private function waveProgramChecks()
