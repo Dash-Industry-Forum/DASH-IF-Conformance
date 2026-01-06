@@ -39,6 +39,17 @@ class Segment
         }
     }
 
+    public function getSize(): int
+    {
+        $segmentSize = 0;
+        try {
+            $segmentSize = filesize($this->segmentPath);
+        } catch (\Exception $e) {
+            Log::error($e);
+        }
+        return $segmentSize;
+    }
+
     public function analyseGPAC(): string
     {
 
@@ -147,9 +158,9 @@ class Segment
     }
 
     /**
-     * @return ?array<float>
+     * @return array<float>
      **/
-    public function getSegmentDurations(): ?array
+    public function getSegmentDurations(): array
     {
         return $this->runAnalyzedFunction('getSegmentDurations');
     }

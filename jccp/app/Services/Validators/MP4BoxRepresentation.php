@@ -4,7 +4,7 @@ namespace App\Services\Validators;
 
 use Illuminate\Support\Facades\Log;
 
-class MP4BoxRepresentation
+class MP4BoxRepresentation extends RepresentationInterface
 {
     public ?\DOMElement $payload;
     public function __construct(string $filePath)

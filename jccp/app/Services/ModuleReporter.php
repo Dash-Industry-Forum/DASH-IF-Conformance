@@ -46,6 +46,25 @@ class ModuleReporter
         return $result;
     }
 
+    public function verdict(): string
+    {
+        $verdict = "PASS";
+
+        foreach ($this->reportByContext as $key => $context) {
+            switch ($context->verdict()) {
+                case "FAIL":
+                    return "FAIL";
+                case "WARN":
+                    $verdict = "WARN";
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return $verdict;
+    }
+
     /**
      * @return array<array<mixed>>
      **/

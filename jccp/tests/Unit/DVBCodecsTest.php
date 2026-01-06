@@ -11,7 +11,7 @@ class DVBCodecsTest extends TestCase
     /**
      * A basic unit test example.
      */
-    public function test_example(): void
+    public function testExample(): void
     {
 
         $reporter = app(ModuleReporter::class);

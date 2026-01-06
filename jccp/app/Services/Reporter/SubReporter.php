@@ -10,17 +10,30 @@ use App\Services\SpecManager;
 class SubReporter
 {
     /**
-     * @var array<int, TestResult> $results
-    **/
-    public array $results = [];
-
-    /**
      * @var array<TestCase> $cases
     **/
     public array $cases = [];
 
     public function __construct()
     {
+    }
+
+    public function verdict(): string
+    {
+        $verdict = "PASS";
+
+        foreach ($this->cases as $case) {
+            foreach ($case->results as $testResult) {
+                if ($testResult == "FAIL") {
+                    return "FAIL";
+                }
+                if ($testResult == "WARN") {
+                    $verdict = "WARN";
+                }
+            }
+        }
+
+        return $verdict;
     }
 
     public function &dependencyAdd(
