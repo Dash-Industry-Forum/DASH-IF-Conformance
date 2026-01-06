@@ -24,10 +24,10 @@ class SubReporter
 
         foreach ($this->cases as $case) {
             foreach ($case->results as $testResult) {
-                if ($testResult == "FAIL") {
+                if ($testResult->getSeverity() == "FAIL") {
                     return "FAIL";
                 }
-                if ($testResult == "WARN") {
+                if ($testResult->getSeverity() == "WARN") {
                     $verdict = "WARN";
                 }
             }
