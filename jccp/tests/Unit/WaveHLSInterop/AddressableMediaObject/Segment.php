@@ -18,7 +18,8 @@ class Segment extends \App\Services\Segment
     /**
      * @return array<string>
      **/
-    public function getTopLevelBoxNames(): array {
+    public function getTopLevelBoxNames(): array
+    {
         switch ($this->case) {
             case CaseEnum::Valid:
                 return ['sidx','moof'];

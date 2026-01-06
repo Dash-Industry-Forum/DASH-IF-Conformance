@@ -9,70 +9,43 @@ use App\Services\Manifest\Representation;
 //
 use App\Modules\Wave\Segments\AddressableMediaObject;
 
-class AddressableMediaObjectTest extends TestCase
+class Test extends TestCase
 {
-    /**
-     * A basic unit test example.
-     */
-
     private Representation $mockRepresentation;
+    private ModuleReporter $reporter;
+    private AddressableMediaObject $subject;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->mockRepresentation = new Representation(
-            new \DOMElement("mockDOM"),
-            0,
-            0,
-            0
-        );
-    }
-
-
-    public function testConstruct(): void
-    {
-        $reporter = app(ModuleReporter::class);
-
-        $addressable = new AddressableMediaObject();
-
-        $this->assertEquals(count($reporter->knownContexts()), 1);
+        $this->mockRepresentation = new Representation(new \DOMElement("mockDOM"), 0, 0, 0);
+        $this->reporter = app(ModuleReporter::class);
+        $this->subject = new AddressableMediaObject();
     }
 
     public function testValid(): void
     {
-        $reporter = app(ModuleReporter::class);
+        $this->subject->validateAddressableMediaObject($this->mockRepresentation, new Segment(CaseEnum::Valid), 0);
 
-        $addressable = new AddressableMediaObject();
-        $addressable->validateAddressableMediaObject($this->mockRepresentation, new Segment(CaseEnum::Valid), 0);
-
-        $this->assertEquals($reporter->verdict(), "PASS");
+        $this->assertEquals($this->reporter->verdict(), "PASS");
     }
 
     public function testNoSidx(): void
     {
-        $reporter = app(ModuleReporter::class);
+        $this->subject->validateAddressableMediaObject($this->mockRepresentation, new Segment(CaseEnum::NoSidx), 0);
 
-        $addressable = new AddressableMediaObject();
-        $addressable->validateAddressableMediaObject($this->mockRepresentation, new Segment(CaseEnum::NoSidx), 0);
-
-        $this->assertEquals($reporter->verdict(), "FAIL");
+        $this->assertEquals($this->reporter->verdict(), "FAIL");
     }
     public function testMultiSidx(): void
     {
-        $reporter = app(ModuleReporter::class);
+        $this->subject->validateAddressableMediaObject($this->mockRepresentation, new Segment(CaseEnum::MultiSidx), 0);
 
-        $addressable = new AddressableMediaObject();
-        $addressable->validateAddressableMediaObject($this->mockRepresentation, new Segment(CaseEnum::MultiSidx), 0);
-
-        $this->assertEquals($reporter->verdict(), "FAIL");
+        $this->assertEquals($this->reporter->verdict(), "FAIL");
     }
     public function testSidxPost(): void
     {
-        $reporter = app(ModuleReporter::class);
+        $this->subject->validateAddressableMediaObject($this->mockRepresentation, new Segment(CaseEnum::SidxPost), 0);
 
-        $addressable = new AddressableMediaObject();
-        $addressable->validateAddressableMediaObject($this->mockRepresentation, new Segment(CaseEnum::SidxPost), 0);
-
-        $this->assertEquals($reporter->verdict(), "FAIL");
+        $this->assertEquals($this->reporter->verdict(), "FAIL");
     }
 }

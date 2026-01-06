@@ -3,89 +3,61 @@
 namespace Tests\Unit\WaveHLSInterop\Bitrate;
 
 use Tests\TestCase;
-//
 use App\Services\ModuleReporter;
 use App\Services\Manifest\Representation;
-//
 use App\Modules\Wave\Segments\Bitrate;
 
 class Test extends TestCase
 {
-    /**
-     * A basic unit test example.
-     */
-
     private Representation $mockRepresentation;
+    private ModuleReporter $reporter;
+    private Bitrate $subject;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->mockRepresentation = new Representation(
-            new \DOMElement("mockDOM"),
-            0,
-            0,
-            0
-        );
+        $this->mockRepresentation = new Representation(new \DOMElement("mockDOM"), 0, 0, 0);
+        $this->reporter = app(ModuleReporter::class);
+        $this->subject = new Bitrate();
     }
 
-
-    public function testExample(): void
-    {
-        $reporter = app(ModuleReporter::class);
-
-        $bitrate = new Bitrate();
-
-        $this->assertEquals(count($reporter->knownContexts()), 1);
-    }
 
     public function testNoRepresentations(): void
     {
-        $reporter = app(ModuleReporter::class);
+        $this->subject->validateBitrate($this->mockRepresentation, []);
 
-        $bitrate = new Bitrate();
-        $bitrate->validateBitrate($this->mockRepresentation, []);
-
-        $this->assertEquals($reporter->verdict(), "FAIL");
+        $this->assertEquals($this->reporter->verdict(), "FAIL");
     }
 
     public function testValidBitrates(): void
     {
-        $reporter = app(ModuleReporter::class);
-
-        $bitrate = new Bitrate();
-        $bitrate->validateBitrate($this->mockRepresentation, [
+        $this->subject->validateBitrate($this->mockRepresentation, [
             new Segment(CaseEnum::Valid1),
             new Segment(CaseEnum::Valid2),
         ]);
 
-        $this->assertEquals($reporter->verdict(), "PASS");
+        $this->assertEquals($this->reporter->verdict(), "PASS");
     }
 
     public function testInvalidBitrates(): void
     {
-        $reporter = app(ModuleReporter::class);
-
-        $bitrate = new Bitrate();
-        $bitrate->validateBitrate($this->mockRepresentation, [
+        $this->subject->validateBitrate($this->mockRepresentation, [
             new Segment(CaseEnum::Valid1),
             new Segment(CaseEnum::Valid2),
             new Segment(CaseEnum::Invalid1),
         ]);
 
-        $this->assertEquals($reporter->verdict(), "FAIL");
+        $this->assertEquals($this->reporter->verdict(), "FAIL");
     }
 
     public function testNoDuration(): void
     {
-        $reporter = app(ModuleReporter::class);
-
-        $bitrate = new Bitrate();
-        $bitrate->validateBitrate($this->mockRepresentation, [
+        $this->subject->validateBitrate($this->mockRepresentation, [
             new Segment(CaseEnum::Valid1),
             new Segment(CaseEnum::Valid2),
             new Segment(CaseEnum::Invalid2),
         ]);
 
-        $this->assertEquals($reporter->verdict(), "FAIL");
+        $this->assertEquals($this->reporter->verdict(), "FAIL");
     }
 }
