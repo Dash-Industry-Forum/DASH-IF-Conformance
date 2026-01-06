@@ -50,7 +50,7 @@ class ModuleReporter
     {
         $verdict = "PASS";
 
-        foreach ($this->reportByContext as $key => $context) {
+        foreach ($this->reportByContext as $context) {
             switch ($context->verdict()) {
                 case "FAIL":
                     return "FAIL";

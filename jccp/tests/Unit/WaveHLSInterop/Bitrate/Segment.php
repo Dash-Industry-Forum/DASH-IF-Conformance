@@ -1,17 +1,16 @@
 <?php
 
-namespace Tests\Unit\WaveHLSInterop;
+namespace Tests\Unit\WaveHLSInterop\Bitrate;
 
 use Tests\TestCase;
 use App\Modules\Wave\Segments\Bitrate;
 use App\Services\ModuleReporter;
-use App\Services\Segment;
 use App\Services\Manifest\Representation;
 
-class BitrateSegment extends Segment
+class Segment extends \App\Services\Segment
 {
-    private BitrateEnum $case;
-    public function __construct(BitrateEnum $testCase)
+    private CaseEnum $case;
+    public function __construct(CaseEnum $testCase)
     {
         $this->case = $testCase;
     }
@@ -19,13 +18,13 @@ class BitrateSegment extends Segment
     public function getSize(): int
     {
         switch ($this->case) {
-            case BitrateEnum::Valid1:
+            case CaseEnum::Valid1:
                 return 1000;
-            case BitrateEnum::Valid2:
+            case CaseEnum::Valid2:
                 return 2000;
-            case BitrateEnum::Invalid1:
+            case CaseEnum::Invalid1:
                 return 2000;
-            case BitrateEnum::Invalid2:
+            case CaseEnum::Invalid2:
                 return 2000;
         }
         return 0;
@@ -37,13 +36,13 @@ class BitrateSegment extends Segment
     public function getSegmentDurations(): array
     {
         switch ($this->case) {
-            case BitrateEnum::Valid1:
+            case CaseEnum::Valid1:
                 return [1];
-            case BitrateEnum::Valid2:
+            case CaseEnum::Valid2:
                 return [2];
-            case BitrateEnum::Invalid1:
+            case CaseEnum::Invalid1:
                 return [1];
-            case BitrateEnum::Invalid2:
+            case CaseEnum::Invalid2:
                 return [0];
         }
         return [];

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\WaveHLSInterop;
+namespace Tests\Unit\WaveHLSInterop\Bitrate;
 
 use Tests\TestCase;
 //
@@ -9,7 +9,7 @@ use App\Services\Manifest\Representation;
 //
 use App\Modules\Wave\Segments\Bitrate;
 
-class BitrateTest extends TestCase
+class Test extends TestCase
 {
     /**
      * A basic unit test example.
@@ -54,8 +54,8 @@ class BitrateTest extends TestCase
 
         $bitrate = new Bitrate();
         $bitrate->validateBitrate($this->mockRepresentation, [
-            new BitrateSegment(BitrateEnum::Valid1),
-            new BitrateSegment(BitrateEnum::Valid2),
+            new Segment(CaseEnum::Valid1),
+            new Segment(CaseEnum::Valid2),
         ]);
 
         $this->assertEquals($reporter->verdict(), "PASS");
@@ -67,9 +67,9 @@ class BitrateTest extends TestCase
 
         $bitrate = new Bitrate();
         $bitrate->validateBitrate($this->mockRepresentation, [
-            new BitrateSegment(BitrateEnum::Valid1),
-            new BitrateSegment(BitrateEnum::Valid2),
-            new BitrateSegment(BitrateEnum::Invalid1),
+            new Segment(CaseEnum::Valid1),
+            new Segment(CaseEnum::Valid2),
+            new Segment(CaseEnum::Invalid1),
         ]);
 
         $this->assertEquals($reporter->verdict(), "FAIL");
@@ -81,9 +81,9 @@ class BitrateTest extends TestCase
 
         $bitrate = new Bitrate();
         $bitrate->validateBitrate($this->mockRepresentation, [
-            new BitrateSegment(BitrateEnum::Valid1),
-            new BitrateSegment(BitrateEnum::Valid2),
-            new BitrateSegment(BitrateEnum::Invalid2),
+            new Segment(CaseEnum::Valid1),
+            new Segment(CaseEnum::Valid2),
+            new Segment(CaseEnum::Invalid2),
         ]);
 
         $this->assertEquals($reporter->verdict(), "FAIL");

@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Unit\WaveHLSInterop;
+namespace Tests\Unit\WaveHLSInterop\Bitrate;
 
-enum BitrateEnum
+enum CaseEnum
 {
     case INVALID;
     case Valid1;
