@@ -11,6 +11,7 @@ class SIDXBox
 
     public string $referenceId;
     public int $timescale;
+    public int $earliestPresentationTime;
 
     /**
      * @var array<SIDXReference> $references;

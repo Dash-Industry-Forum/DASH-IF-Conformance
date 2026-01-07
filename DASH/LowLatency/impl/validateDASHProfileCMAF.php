@@ -55,16 +55,7 @@ foreach ($representations as $representationId => $representation) {
         ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
     );
 
-    $validSelfInitializingSegment = $this->validateSelfInitializingSegment(
-        $adaptationSet,
-        $adaptationSetId,
-        $representation,
-        $representationId,
-        $segmentAccessRepresentation,
-        $infoFileAdapt,
-        $xml,
-        $logger
-    );
+    $validSelfInitializingSegment = true;
 
     $validCMAFSegment = true;
     $tfdtBoxes = $xml->getElementsByTagName('tfdt');

@@ -76,17 +76,6 @@ class ModuleDASHLowLatency extends ModuleInterface
         include 'impl/validate9X42.php';
     }
 
-    private function validate9X43(
-        $period,
-        $adaptationSet,
-        $adaptationSetId,
-        $infoFileAdaptation,
-        $audioPresent,
-        $adaptationGroupName
-    ) {
-        include 'impl/validate9X43.php';
-    }
-
     private function validate9X45(
         $adaptationSet,
         $adaptationSetId,
@@ -123,24 +112,9 @@ class ModuleDASHLowLatency extends ModuleInterface
         include 'impl/validateSegmentTemplate.php';
     }
 
-    private function checkSegment($adaptationSetId, $representationId, $segmentDurations)
-    {
-        return include 'impl/checkSegment.php';
-    }
-
     private function readInfoFile($adaptationSet, $adaptationSetId)
     {
         return include 'impl/readInfoFile.php';
-    }
-    private function validateSelfInitializingSegment(
-        $adaptationSetId,
-        $representationId,
-        $segmentAccessRepresentation,
-        $infoFileAdaptation,
-        $xml,
-        $logger
-    ) {
-        include 'impl/validateSelfInitializingSegment.php';
     }
 
     private function validateSegmentTimeline(

@@ -155,6 +155,7 @@ class MP4BoxRepresentation extends RepresentationInterface
             $sidx = new Boxes\SIDXBox();
             $sidx->referenceId = $sidxBox->getAttribute('reference_ID');
             $sidx->timescale = intval($sidxBox->getAttribute('timescale'));
+            $sidx->earliestPresentationTime = intval($sidxBox->getAttribute('earliest_presentation_time'));
             foreach ($sidxBox->getElementsByTagName('Reference') as $reference) {
                 $sidxReference = new Boxes\SIDXReference();
                 $sidxReference->referenceType = $reference->getAttribute('type');

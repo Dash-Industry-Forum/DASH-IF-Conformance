@@ -11,6 +11,7 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
+use App\Services\Validators\Boxes\SIDXBox;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
@@ -24,6 +25,16 @@ class SelfInitializingSidx
     private TestCase $locationCase;
     private TestCase $referenceCase;
     private TestCase $timescaleCase;
+    private TestCase $eptCase;
+    private TestCase $moofCountCase;
+
+    private TestCase $referenceTypeCase;
+    private TestCase $referenceStartSAPCase;
+    private TestCase $referenceSAPTypeCase;
+    private TestCase $referenceDeltaTimeCase;
+
+    private TestCase $decodeTimeCase;
+    private TestCase $brandCase;
 
     public function __construct()
     {
@@ -54,6 +65,51 @@ class SelfInitializingSidx
         $this->timescaleCase = $this->legacyReporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "The 'sidx' box timescale SHALL be identical to the one in the 'mdhd' box",
+            skipReason: "No self-initializing segment",
+        );
+        $this->eptCase = $this->legacyReporter->add(
+            section: '9.X.4.5 => MPEG-DASH 8.X.3',
+            test: "The 'sidx' box earliest presentation time SHALL match the segment EPT",
+            skipReason: "No self-initializing segment",
+        );
+        $this->moofCountCase = $this->legacyReporter->add(
+            section: '9.X.4.5 => MPEG-DASH 8.X.3',
+            test: "The 'sidx' box reference count SHALL match the number of 'mmof' boxes",
+            skipReason: "No self-initializing segment",
+        );
+
+
+        $this->referenceTypeCase = $this->legacyReporter->add(
+            section: '9.X.4.5 => MPEG-DASH 8.X.3',
+            test: "The 'sidx' box reference_type shall be set to 0",
+            skipReason: "No self-initializing segment",
+        );
+        $this->referenceStartSAPCase = $this->legacyReporter->add(
+            section: '9.X.4.5 => MPEG-DASH 8.X.3',
+            test: "The 'sidx' box startwithsap shall be set to 1",
+            skipReason: "No self-initializing segment",
+        );
+        $this->referenceSAPTypeCase = $this->legacyReporter->add(
+            section: '9.X.4.5 => MPEG-DASH 8.X.3',
+            test: "The 'sidx' box sapType shall be set to 1 or 2",
+            skipReason: "No self-initializing segment",
+        );
+        $this->referenceDeltaTimeCase = $this->legacyReporter->add(
+            section: '9.X.4.5 => MPEG-DASH 8.X.3',
+            test: "The 'sidx' box sapDeltaTime shall be set to 0",
+            skipReason: "No self-initializing segment",
+        );
+
+
+        //Derived from old code, different wording
+        $this->decodeTimeCase = $this->legacyReporter->add(
+            section: '9.X.4.5 => MPEG-DASH 8.X.3',
+            test: "The baseMediaDecodeTime shall be 0",
+            skipReason: "No self-initializing segment",
+        );
+        $this->brandCase = $this->legacyReporter->add(
+            section: '9.X.4.5 => MPEG-DASH 8.X.3',
+            test: "The list of compatible brands SHALL contain 'dash'",
             skipReason: "No self-initializing segment",
         );
     }
@@ -105,6 +161,96 @@ class SelfInitializingSidx
             severity: "FAIL",
             pass_message: "Reference ID matched track ID",
             fail_message: "Reference ID does not match track ID",
+        );
+
+
+        $this->eptCase->pathAdd(
+            path: $representation->path() . "-init",
+            result: $sidxBoxes[0]->earliestPresentationTime == $segment->getEPT(),
+            severity: "FAIL",
+            pass_message: "Earliest presentation time matches",
+            fail_message: "Earliest presentation time mismatched",
+        );
+
+        $this->moofCountCase->pathAdd(
+            path: $representation->path() . "-init",
+            result: count($sidxBoxes[0]->references) == count($segment->boxAccess()->moof()),
+            severity: "FAIL",
+            pass_message: "Matched counts",
+            fail_message: "Mismatched counts",
+        );
+
+        $this->validateReferences($representation, $segment, $sidxBoxes[0]);
+
+        $tfdt = $segment->boxAccess()->tfdt();
+        if (!empty($tfdt)) {
+            $this->decodeTimeCase->pathAdd(
+                path: $representation->path() . "-init",
+                result: $tfdt[0]->decodeTime == 0,
+                severity: "FAIL",
+                pass_message: "Valid baseMediaDecodeTime",
+                fail_message: "Invalid baseMediaDecodeTime",
+            );
+        }
+
+        $brands = $segment->getBrands();
+        $this->brandCase->pathAdd(
+            path: $representation->path() . "-init",
+            result: in_array('dash', $brands),
+            severity: "FAIL",
+            pass_message: "'dash' brand found",
+            fail_message: "'dash' brand not found",
+        );
+    }
+
+    private function validateReferences(Representation $representation, Segment $segment, SIDXBox $sidx): void
+    {
+        $validReferenceTypes = true;
+        $validStartWithSAP = true;
+        $validSAPType = true;
+        $validDelta = true;
+        foreach ($sidx->references as $reference) {
+            if ($reference->referenceType != "0") {
+                $validReferenceTypes = false;
+            }
+            if (!$reference->startsWithSAP) {
+                $validStartWithSAP = false;
+            }
+            if ($reference->sapType != "1" && $reference->sapType != "2") {
+                $validSAPType = false;
+            }
+            if ($reference->sapDeltaTime > 0) {
+                $validDelta = false;
+            }
+        }
+
+        $this->referenceTypeCase->pathAdd(
+            path: $representation->path() . "-init",
+            result: $validReferenceTypes,
+            severity: "FAIL",
+            pass_message: "Valid for all references",
+            fail_message: "At least one invalid reference",
+        );
+        $this->referenceStartSAPCase->pathAdd(
+            path: $representation->path() . "-init",
+            result: $validStartWithSAP,
+            severity: "FAIL",
+            pass_message: "Valid for all references",
+            fail_message: "At least one invalid reference",
+        );
+        $this->referenceSAPTypeCase->pathAdd(
+            path: $representation->path() . "-init",
+            result: $validSAPType,
+            severity: "FAIL",
+            pass_message: "Valid for all references",
+            fail_message: "At least one invalid reference",
+        );
+        $this->referenceDeltaTimeCase->pathAdd(
+            path: $representation->path() . "-init",
+            result: $validDelta,
+            severity: "FAIL",
+            pass_message: "Valid for all references",
+            fail_message: "At least one invalid reference",
         );
     }
 
