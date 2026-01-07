@@ -18,6 +18,7 @@ use App\Interfaces\Module;
 use App\Modules\LowLatency\Segments\SegmentOrChunked;
 use App\Modules\LowLatency\Segments\ChunkedCrossAdaptation;
 use App\Modules\LowLatency\Segments\DASHProfile;
+use App\Modules\LowLatency\Segments\SelfInitializingSidx;
 
 class Segments extends Module
 {
@@ -47,6 +48,7 @@ class Segments extends Module
     public function validateSegments(Representation $representation, array $segments): void
     {
         new SegmentOrChunked()->validateSegmentOrChunked($representation, $segments);
+        new SelfInitializingSidx()->validateSidx($representation, $segments);
         foreach ($segments as $segmentIndex => $segment) {
             if ($segmentIndex == 0) {
                 $this->validateInitialization($representation, $segment);

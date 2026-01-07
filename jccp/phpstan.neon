@@ -7,7 +7,6 @@ parameters:
     paths:
         - app/
         - resources/
-        - tests/
 
     scanDirectories:
         - vendor

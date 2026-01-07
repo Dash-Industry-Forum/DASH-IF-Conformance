@@ -183,6 +183,11 @@ class Segment
         return $this->runAnalyzedFunction('getBrands');
     }
 
+    public function getTimeScale(): int
+    {
+        return $this->runAnalyzedFunction('getTimeScale');
+    }
+
     public function getHandlerType(): ?string
     {
         return $this->runAnalyzedFunction('getHandlerType');

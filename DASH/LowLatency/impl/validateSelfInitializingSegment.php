@@ -34,75 +34,15 @@ $initialTestCount = $logger->testCountCurrentHook();
 $sidxBoxes = $xml->getElementsByTagName('sidx');
 $moofBoxes = $xml->getElementsByTagName('moof');
 
-$returnValue = $logger->test(
-    "DASH-IF IOP CR Low Latency Live",
-    "Section 9.X.4.5 (As part of MPEG-DASH 8.X.3 referenced in 8.X.4)",
-    "If the media is contained in a Self-Initializing Segment, " .
-    "then exactly one sidx box SHALL be used",
-    $sidxBoxes->length == 1,
-    "PASS",
-    "One sidx box in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
-    ' Representation ' . ($representationId + 1),
-    "Multiple sidx boxes in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-    ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
-) && $returnValue;
-
 if ($sidx_boxes->length == 0) {
     return $returnValue;
 }
 
 
 $sidxBox0 = $sidxBoxes->item(0);
-$moofBox0 = $moofBoxes->item(0);
 
-$returnValue = $logger->test(
-    "DASH-IF IOP CR Low Latency Live",
-    "Section 9.X.4.5 (As part of MPEG-DASH 8.X.3 referenced in 8.X.4)",
-    "If the media is contained in a Self-Initializing Segment, " .
-    "then sidx box SHALL be placed before any moof boxes",
-    $sidxBox0->getAttribute('offset') <= $moofBox0->getAttribute('offset'),
-    "PASS",
-    "sidx box before moof in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-    ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-    "sidx box not before first moof in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' .
-    ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
-) && $returnValue;
-
-$referenceID = $sidxBox0->getAttribute('referenceID');
-$trackID = $xml->getElementsByTagName('tkhd')->item(0)->getAttribute('trackID');
-
-$returnValue = $logger->test(
-    "DASH-IF IOP CR Low Latency Live",
-    "Section 9.X.4.5 (As part of MPEG-DASH 8.X.3 referenced in 8.X.4)",
-    "If the media is contained in a Self-Initializing Segment, " .
-    "then sidx box reference_ID SHALL be the trackID of the CMAF track",
-    $referenceID == $trackID,
-    "PASS",
-    "sidx box reference ($referenceId) matches track id ($trackID) in Period " .
-    ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
-    ' Representation ' . ($representationId + 1),
-    "sidx box reference ($referenceId) does not match track id ($trackID) in Period " .
-    ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
-    ' Representation ' . ($representationId + 1),
-) && $returnValue;
-
-$sidxTimescale = $sidxBox0->getAttribute('timeScale');
 $mdhdTimescale = $xml->getElementsByTagName('mdhd')->item(0)->getAttribute('timescale');
 
-$returnValue = $logger->test(
-    "DASH-IF IOP CR Low Latency Live",
-    "Section 9.X.4.5 (As part of MPEG-DASH 8.X.3 referenced in 8.X.4)",
-    "If the media is contained in a Self-Initializing Segment, " .
-    "then sidx box timescale SHALL be identical to the timescale of the mdhd box of the CMAF track",
-    $sidxTimescale == $mdhdTimescale,
-    "PASS",
-    "sidx box timescale ($sidxTimescale) matches mdhd timescale ($mdhdTimescale) in Period " .
-    ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
-    ' Representation ' . ($representationId + 1),
-    "sidx box timescale ($sidxTimescale) does not match mdhd timescale ($mdhdTimescale) in Period " .
-    ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation Set ' . ($adaptationSetId + 1) .
-    ' Representation ' . ($representationId + 1),
-) && $returnValue;
 
 $returnValue = $logger->test(
     "DASH-IF IOP CR Low Latency Live",

@@ -9,6 +9,9 @@ class SIDXBox
         $this->references = [];
     }
 
+    public string $referenceId;
+    public int $timescale;
+
     /**
      * @var array<SIDXReference> $references;
      **/

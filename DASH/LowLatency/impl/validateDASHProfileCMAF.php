@@ -21,73 +21,7 @@ foreach ($representations as $representationId => $representation) {
         continue;
     }
 
-    $tencs = $xml->getElementsByTagName('tenc');
-    if ($tencs->length > 0) {
-        $tenc = $tencs->item(0);
-        $contentProtections = ($representation['ContentProtection'] != null) ?
-          $representation['ContentProtection'] : $adaptationSet['ContentProtection'];
-
-        $validContentProtection = ($contentProtections != null);
-        if ($validContentProtection) {
-            $validContentProtection = false;
-            foreach ($contentProtections as $contentProtection) {
-                if ($contentProtection['schemeIdUri'] == 'urn:mpeg:dash:mp4protection:2011') {
-                    if ($contentProtection['value'] != 'cenc' && $contentProtection['value'] != 'cbcs') {
-                        continue;
-                    }
-                    if ($contentProtection['cenc:default_KID'] == null) {
-                        $validContentProtection = true;
-                    } elseif ($contentProtection['cenc:default_KID'] == $tenc->getAttribute('default_KID')) {
-                        $validContentProtectionFound = true;
-                    }
-                } else {
-                    $cenc_default_KID = $contentProtection['cenc:default_KID'];
-                    $cenc_pssh = $contentProtection['cenc:pssh'];
-                    $psshs = $xml->getElementsByTagName('pssh');
-
-                    $checkDefaultKID = ($cenc_default_KID == null ||
-                      $cenc_default_KID == $tenc->getAttribute('default_KID'));
-                    $checkPSSH = ($cenc_pssh == null || ($psshs->length > 0 &&
-                      $cenc_pssh == $psshs->item(0)->getAttribute('systemID')));
-
-                    if ($checkDefaultKID && $checkPSSH) {
-                        $validContentProtection = true;
-                    }
-                }
-
-                if ($validContentProtection) {
-                    break;
-                }
-            }
-        }
-        $logger->test(
-            "DASH-IF IOP CR Low Latency Live",
-            "Section 9.X.4.5 (As part of MPEG-DASH 8.X.4)",
-            "If the content is protected a ContentProtection element SHALL be present and set appropriately",
-            $validContentProtection,
-            "FAIL",
-            "Content protection set and valid in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
-            ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-            "Content protection either not set or not valid in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-            ' Adaptation ' . ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
-        );
-    }
-
     $segmentAccessRepresentation = $segmentAccessInfo[$representationId][0];
-
-    $timescaleMPD = $segmentAccessRepresentation['timescale'];
-    $timescaleHeader = $xml->getElementsByTagName('mdhd')->item(0)->getAttribute('timescale');
-    $logger->test(
-        "DASH-IF IOP CR Low Latency Live",
-        "Section 9.X.4.5 (As part of MPEG-DASH 8.X.4)",
-        "The @timescale in Representation SHALL be set to the timescale of Media Header Box ('mdhd') of the CMAF Track",
-        $timescaleMPD == null || $timescaleMPD == $timescaleHeader,
-        "FAIL",
-        "MPD and Header timescales are equal in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
-        ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1),
-        "MPD and Header timescales are not equal in Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
-        ($adaptationSetId + 1) . ' Representation ' . ($representationId + 1)
-    );
 
     if ($segmentAccessRepresentation['SegmentTimeline'] != null) {
         $this->validateSegmentTimeline(
@@ -255,17 +189,5 @@ foreach ($representations as $representationId => $representation) {
         );
     }
 }
-
-$logger->test(
-    "DASH-IF IOP CR Low Latency Live",
-    "Section 9.X.4.5 (As part of MPEG-DASH 8.X.4)",
-    "Either segmentAlignment or subsegmentAlignment SHALL be set",
-    $adaptationSet['segmentAlignment'] != null || $adaptationSet['subsegmentAlignment'] != null,
-    "FAIL",
-    "Valid for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
-    ($adaptationSetId + 1),
-    "Neither found for Period " . ($mpdHandler->getSelectedPeriod() + 1) . ' Adaptation ' .
-    ($adaptationSetId + 1)
-);
 
 return $dashConformsToCmafFrag;

@@ -153,6 +153,8 @@ class MP4BoxRepresentation extends RepresentationInterface
         $sidxBoxes = $this->payload->getElementsByTagName('SegmentIndexBox');
         foreach ($sidxBoxes as $sidxBox) {
             $sidx = new Boxes\SIDXBox();
+            $sidx->referenceId = $sidxBox->getAttribute('reference_ID');
+            $sidx->timescale = intval($sidxBox->getAttribute('timescale'));
             foreach ($sidxBox->getElementsByTagName('Reference') as $reference) {
                 $sidxReference = new Boxes\SIDXReference();
                 $sidxReference->referenceType = $reference->getAttribute('type');
@@ -606,6 +608,19 @@ class MP4BoxRepresentation extends RepresentationInterface
             return null;
         }
         return $boxes->item($index);
+    }
+
+    public function getTimeScale(): int
+    {
+        $timescale = 1000;
+        if ($this->payload) {
+            $mdhdBoxes = $this->payload->getElementsByTagName('MediaHeaderBox');
+            if (count($mdhdBoxes)) {
+                $timescale = $mdhdBoxes->item(0)->getAttribute('TimeScale');
+            }
+        }
+
+        return $timescale;
     }
 
     public function getSampleDuration(): ?float
