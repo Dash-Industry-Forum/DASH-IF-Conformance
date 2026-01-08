@@ -65,6 +65,7 @@ class SegmentTiming
         );
         //TODO: Validate 'consecutive' decode time for all CMAF fragments
         //      without gaps
+        //      removed another related check in this commit
     }
 
     //Public validation functions

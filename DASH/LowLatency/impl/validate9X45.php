@@ -5,15 +5,6 @@ global $mpdHandler;
 $representations = $adaptationSet['Representation'];
 foreach ($representations as $representationId => $representation) {
     $chunkedAdaptationPoints[$representationId] = 3;
-
-    $chunkOverlapWithinRep = $this->validateTimingsWithinRepresentation(
-        $adaptationSet,
-        $adaptationSetId,
-        $representationId,
-        $infoFileAdapt,
-        $logger
-    );
-
     // Bullet 8 info collect
     $resyncs = ($representation['Resync'] != null) ? $representation['Resync'] : $adaptationSet['Resync'];
     $this->secondOption['bandwidth'][$representationId] = $representation['bandwidth'];
