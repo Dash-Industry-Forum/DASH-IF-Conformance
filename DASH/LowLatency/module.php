@@ -55,15 +55,6 @@ class ModuleDASHLowLatency extends ModuleInterface
     public function hookAdaptationSet()
     {
         parent::hookAdaptationSet();
-        /*
-    $maxSegmentDurations = array();
-    $first_option = array();
-    $second_option = array();
-    $presentation_times = array();
-    $decode_times = array();
-         */
-
-        $this->validateAdaptationSets();
     }
 
     private function validateAdaptationSets()
@@ -92,10 +83,5 @@ class ModuleDASHLowLatency extends ModuleInterface
         return include 'impl/validate9X45Extended.php';
     }
 
-    private function readInfoFile($adaptationSet, $adaptationSetId)
-    {
-        return include 'impl/readInfoFile.php';
-    }
-}
 
   $modules[] = new moduleDASHLowLatency();
