@@ -107,14 +107,6 @@ class ModuleDASHLowLatency extends ModuleInterface
         include 'impl/validateTimingsWithinRepresentation.php';
     }
 
-    private function validateEmsg(
-        $adaptationSet,
-        $adaptationSetId,
-        $representationId,
-        $infoFileAdaptation
-    ) {
-        return include 'impl/validateEmsg.php';
-    }
 }
 
   $modules[] = new moduleDASHLowLatency();

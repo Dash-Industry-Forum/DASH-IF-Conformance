@@ -275,6 +275,5 @@ class DASHProfile
             pass_message: "Event message stream singnalled",
             fail_message: "Event message stream not singnalled",
         );
-
     }
 }

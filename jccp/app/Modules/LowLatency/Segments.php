@@ -20,6 +20,7 @@ use App\Modules\LowLatency\Segments\ChunkedCrossAdaptation;
 use App\Modules\LowLatency\Segments\DASHProfile;
 use App\Modules\LowLatency\Segments\SelfInitializingSidx;
 use App\Modules\LowLatency\Segments\SegmentTiming;
+use App\Modules\LowLatency\Segments\EventMessages;
 
 class Segments extends Module
 {
@@ -49,6 +50,7 @@ class Segments extends Module
     ///NOTE: Removed checks that are dependent on ISOSegmentValidator error output in this commit
     public function validateSegments(Representation $representation, array $segments): void
     {
+        new EventMessages()->validateEventMessages($representation);
         new SegmentOrChunked()->validateSegmentOrChunked($representation, $segments);
         new SelfInitializingSidx()->validateSidx($representation, $segments);
         new SegmentTiming()->validateTimings($representation, $segments);

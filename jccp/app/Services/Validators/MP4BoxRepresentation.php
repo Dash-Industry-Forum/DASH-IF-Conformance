@@ -675,14 +675,14 @@ class MP4BoxRepresentation extends RepresentationInterface
     /**
      * @return array<Boxes\SampleGroupDescription>
      **/
-    public function getSeigDescriptionGroups(): ?array
+    public function getSeigDescriptionGroups(): array
     {
         if (!$this->payload) {
-            return null;
+            return [];
         }
         $sgpdBoxes = $this->payload->getElementsByTagName('SampleGroupDescriptionBox');
         if (!count($sgpdBoxes)) {
-            return null;
+            return [];
         }
         $res = array();
         foreach ($sgpdBoxes as $sgpdBox) {
@@ -707,14 +707,14 @@ class MP4BoxRepresentation extends RepresentationInterface
     /**
      * @return array<Boxes\SampleGroup>
      **/
-    public function getSampleGroups(): ?array
+    public function getSampleGroups(): array
     {
         if (!$this->payload) {
-            return null;
+            return [];
         }
         $sbgpBoxes = $this->payload->getElementsByTagName('SampleGroupBox');
         if (!count($sbgpBoxes)) {
-            return null;
+            return [];
         }
         $res = array();
         foreach ($sbgpBoxes as $sbgpBox) {
