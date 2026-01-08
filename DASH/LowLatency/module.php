@@ -102,31 +102,10 @@ class ModuleDASHLowLatency extends ModuleInterface
         return include 'impl/validateDASHProfileCMAF.php';
     }
 
-    private function validateSegmentTemplate(
-        $adaptationSetId,
-        $representationId,
-        $segmentAccessRepresentation,
-        $infoFileAdaptation,
-        $logger
-    ) {
-        include 'impl/validateSegmentTemplate.php';
-    }
 
     private function readInfoFile($adaptationSet, $adaptationSetId)
     {
         return include 'impl/readInfoFile.php';
-    }
-
-    private function validateSegmentTimeline(
-        $adaptationSet,
-        $adaptationSetId,
-        $representation,
-        $representationId,
-        $segmentAccessRepresentation,
-        $infoFileAdaptation,
-        $logger
-    ) {
-        include 'impl/validateSegmentTimeline.php';
     }
 
     private function validateTimingsWithinRepresentation(

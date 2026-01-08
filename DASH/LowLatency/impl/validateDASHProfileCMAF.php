@@ -23,26 +23,6 @@ foreach ($representations as $representationId => $representation) {
 
     $segmentAccessRepresentation = $segmentAccessInfo[$representationId][0];
 
-    if ($segmentAccessRepresentation['SegmentTimeline'] != null) {
-        $this->validateSegmentTimeline(
-            $adaptationSet,
-            $adaptationSetId,
-            $representation,
-            $representationId,
-            $segmentAccessRepresentation,
-            $infoFileAdapt,
-            $logger
-        );
-    } else {
-        $this->validateSegmentTemplate(
-            $adaptationSetId,
-            $representationId,
-            $segmentAccessRepresentation,
-            $infoFileAdapt,
-            $logger
-        );
-    }
-
     $logger->test(
         "DASH-IF IOP CR Low Latency Live",
         "Section 9.X.4.5 (As part of MPEG-DASH 8.X.3 referenced in 8.X.4)",
@@ -59,6 +39,7 @@ foreach ($representations as $representationId => $representation) {
 
     $validCMAFSegment = true;
     $tfdtBoxes = $xml->getElementsByTagName('tfdt');
+
     for ($i = 1; $i < $tfdtBoxes->length; $i++) {
         $tfdtPreviousDecodeTime = $tfdtBoxes->item($i - 1)->getAttribute('baseMediaDecodeTime');
         $tfdtDecodeTime = $tfdtBoxes->item($i)->getAttribute('baseMediaDecodeTime');

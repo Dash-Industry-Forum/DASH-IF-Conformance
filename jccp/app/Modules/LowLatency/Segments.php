@@ -19,6 +19,7 @@ use App\Modules\LowLatency\Segments\SegmentOrChunked;
 use App\Modules\LowLatency\Segments\ChunkedCrossAdaptation;
 use App\Modules\LowLatency\Segments\DASHProfile;
 use App\Modules\LowLatency\Segments\SelfInitializingSidx;
+use App\Modules\LowLatency\Segments\SegmentTiming;
 
 class Segments extends Module
 {
@@ -49,6 +50,7 @@ class Segments extends Module
     {
         new SegmentOrChunked()->validateSegmentOrChunked($representation, $segments);
         new SelfInitializingSidx()->validateSidx($representation, $segments);
+        new SegmentTiming()->validateTimings($representation, $segments);
         foreach ($segments as $segmentIndex => $segment) {
             if ($segmentIndex == 0) {
                 $this->validateInitialization($representation, $segment);

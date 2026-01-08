@@ -164,6 +164,7 @@ class Representation
     /**
      * @return array<string>
      */
+    ///TODO Implement negative repeats
     private function timelineUrls(\DOMElement $timeline, string $template): array
     {
         $urls = [];
@@ -175,7 +176,7 @@ class Representation
             }
             $repeats = 1;
             if ($segmentElement->getAttribute('r') != '') {
-                $repeats = intval($segmentElement->getAttribute('r'));
+                $repeats = intval($segmentElement->getAttribute('r')) + 1;
             }
             for ($r = 0; $r < $repeats; $r++) {
                 $urls[] = Uri::fromTemplate($template, [
