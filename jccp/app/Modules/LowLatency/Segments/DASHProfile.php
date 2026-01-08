@@ -28,6 +28,7 @@ class DASHProfile
     private TestCase $encryptionCase;
     private TestCase $timescaleCase;
     private TestCase $alignmentCase;
+    private TestCase $eventCase;
 
     public function __construct()
     {
@@ -80,6 +81,11 @@ class DASHProfile
             test: "Either segmentAlignment or subsegmentAlignment SHALL be set",
             skipReason: "No representation found",
         );
+        $this->eventCase = $this->legacyReporter->add(
+            section: '9.X.4.5 => MPEG-DASH 8.X.3',
+            test: "Event message streams MAY be signalled with InbandEventStream elements",
+            skipReason: "No representation found",
+        );
     }
 
     //Public validation functions
@@ -92,6 +98,7 @@ class DASHProfile
         $this->validateProtection($representation, $segment);
         $this->validateTimescale($representation, $segment);
         $this->validateAlignment($representation, $segment);
+        $this->validateEventMessages($representation, $segment);
     }
 
     //Private helper functions
@@ -257,5 +264,17 @@ class DASHProfile
             pass_message: "Signalling found",
             fail_message: "Signalling not found",
         );
+    }
+
+    private function validateEventMessages(Representation $representation, Segment $segment): void
+    {
+        $this->eventCase->pathAdd(
+            path: $representation->path() . "-init",
+            result: !empty($representation->getTransientDOMElements('InbandEventStream')),
+            severity: "INFO",
+            pass_message: "Event message stream singnalled",
+            fail_message: "Event message stream not singnalled",
+        );
+
     }
 }

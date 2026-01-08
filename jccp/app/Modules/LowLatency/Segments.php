@@ -46,6 +46,7 @@ class Segments extends Module
     /**
      * @param array<Segment> $segments
      **/
+    ///NOTE: Removed checks that are dependent on ISOSegmentValidator error output in this commit
     public function validateSegments(Representation $representation, array $segments): void
     {
         new SegmentOrChunked()->validateSegmentOrChunked($representation, $segments);

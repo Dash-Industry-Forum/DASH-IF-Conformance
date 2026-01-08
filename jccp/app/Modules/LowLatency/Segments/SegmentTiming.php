@@ -63,6 +63,8 @@ class SegmentTiming
             test: "The 'd' attribute SHALL correspond to the duration of the corresponding segment",
             skipReason: "No SegmentTimeline found",
         );
+        //TODO: Validate 'consecutive' decode time for all CMAF fragments
+        //      without gaps
     }
 
     //Public validation functions

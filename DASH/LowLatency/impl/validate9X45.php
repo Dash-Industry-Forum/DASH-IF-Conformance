@@ -2,33 +2,6 @@
 
 global $mpdHandler;
 
-// Bullet 2
-$dashSegCmafFrag = true;
-
-$cmafDash = $this->validateDASHProfileCMAF(
-    $adaptationSet,
-    $adaptationSetId,
-    $segmentAccessInfo,
-    $infoFileAdapt,
-    $logger
-);
-
-$logger->test(
-    "DASH-IF IOP CR Low Latency Live",
-    "Section 9.X.4.5",
-    "Each Segment SHALL conform to a CMAF Fragment",
-    sizeof(array_unique($cmafDash)) == 1 && $cmafDash[0] == true,
-    "FAIL",
-    "All segments conform in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-    ' Adaptation ' . ($adaptationSetId + 1),
-    "Not all segments conform in Period " . ($mpdHandler->getSelectedPeriod() + 1) .
-    ' Adaptation ' . ($adaptationSetId + 1)
-);
-
-if (!(sizeof(array_unique($cmafDash)) == 1 && $cmafDash[0] == true)) {
-    $dashSegCmafFrag = false;
-}
-
 $representations = $adaptationSet['Representation'];
 foreach ($representations as $representationId => $representation) {
     $chunkedAdaptationPoints[$representationId] = 3;

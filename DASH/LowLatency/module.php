@@ -92,17 +92,6 @@ class ModuleDASHLowLatency extends ModuleInterface
         return include 'impl/validate9X45Extended.php';
     }
 
-    private function validateDASHProfileCMAF(
-        $adaptationSet,
-        $adaptationSetId,
-        $segmentAccessInfo,
-        $infoFileAdaptation,
-        $logger
-    ) {
-        return include 'impl/validateDASHProfileCMAF.php';
-    }
-
-
     private function readInfoFile($adaptationSet, $adaptationSetId)
     {
         return include 'impl/readInfoFile.php';
