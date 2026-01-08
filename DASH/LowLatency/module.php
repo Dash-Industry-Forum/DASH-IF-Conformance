@@ -62,11 +62,6 @@ class ModuleDASHLowLatency extends ModuleInterface
         include 'impl/validateAdaptationSets.php';
     }
 
-    private function validate9X42($adaptationSet, $adaptationSetId, $isLowLatency)
-    {
-        include 'impl/validate9X42.php';
-    }
-
     private function validate9X45(
         $adaptationSet,
         $adaptationSetId,
