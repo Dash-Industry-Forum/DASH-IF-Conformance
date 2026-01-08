@@ -21,6 +21,7 @@ use App\Modules\LowLatency\Segments\DASHProfile;
 use App\Modules\LowLatency\Segments\SelfInitializingSidx;
 use App\Modules\LowLatency\Segments\SegmentTiming;
 use App\Modules\LowLatency\Segments\EventMessages;
+use App\Modules\LowLatency\Segments\ResyncCrossAdaptation;
 
 class Segments extends Module
 {
@@ -41,6 +42,7 @@ class Segments extends Module
 
     public function validateCrossAdaptationSet(AdaptationSet $adaptationSet): void
     {
+        new ResyncCrossAdaptation()->validateResyncCrossAdaptations($adaptationSet);
         new ChunkedCrossAdaptation()->validateChunkedCrossAdaptation($adaptationSet);
     }
 
