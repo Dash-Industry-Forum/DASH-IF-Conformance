@@ -29,7 +29,7 @@ jobs:
           npm i
           npm run build
           cp env_production.example .env
-          echo "BUILD_VERSION=\"`git describe --tags ${{ github.sha }}`\"" >> .env
+          echo "BUILD_VERSION=\"`git describe --tags`\"" >> .env
           echo "BUILD_COMMIT=\"${{ github.sha }}\"" >> .env
           php artisan key:generate
           php artisan migrate
