@@ -40,38 +40,41 @@ function NavigationBar() {
         color: "white",
       },
       className: "main-navigation",
-      children: [
-        {
-          className: "container-xl d-flex flex-row align-items-center",
-          children: [
-            {
+      children: [{
+        className: "container-xl d-flex flex-row align-items-center",
+        children: [{
+            style: {
+              backgroundColor: "white",
+              width: "fit-content",
+              height: "fit-content",
+              borderRadius: "0.3em",
+            },
+            children: [{
+              element: "img",
+              src: "./res/Dash2.png",
               style: {
-                backgroundColor: "white",
-                width: "fit-content",
-                height: "fit-content",
-                borderRadius: "0.3em",
+                height: "3em",
               },
-              children: [
-                {
-                  element: "img",
-                  src: "./res/Dash2.png",
-                  style: {
-                    height: "3em",
-                  },
-                },
-              ],
-            },
-            {
-              element: "span",
-              className: "fw-semibold fs-4 ms-2 me-3",
-              text: "Conformance Tool",
-            },
-            {
-              id: buttonsElementId,
-            },
-          ],
-        },
-      ],
+            }, ],
+          },
+          {
+            children: [{
+                element: "div",
+                className: "fw-semibold fs-4 ms-2 me-3",
+                text: "Conformance Tool",
+              },
+              {
+                element: "div",
+                className: "fw-medium fs-6 ms-2 me-3",
+                text: "v2.3.1",
+              }
+            ]
+          },
+          {
+            id: buttonsElementId,
+          },
+        ],
+      }, ],
     });
     UI.replaceElement(_rootElementId, navigationBar);
     renderButtons(buttonsElementId);
@@ -86,24 +89,26 @@ function NavigationBar() {
       children: locations.map((location) => ({
         element: "li",
         className: "nav-item",
-        children: [
-          {
-            element: "a",
-            className:
-              "nav-link" + (activeLocation === location.id ? " active" : ""),
-            href: "#",
-            onclick: (event) => {
-              handleLocationChange(location.id);
-              event.preventDefault();
-            },
-            children: [
-              location.icon
-                ? { element: "i", className: location.icon + " me-2" }
-                : null,
-              { element: "span", text: location.text },
-            ],
+        children: [{
+          element: "a",
+          className: "nav-link" + (activeLocation === location.id ? " active" : ""),
+          href: "#",
+          onclick: (event) => {
+            handleLocationChange(location.id);
+            event.preventDefault();
           },
-        ],
+          children: [
+            location.icon ? {
+              element: "i",
+              className: location.icon + " me-2"
+            } :
+            null,
+            {
+              element: "span",
+              text: location.text
+            },
+          ],
+        }, ],
       })),
     });
     UI.replaceElement(elementId, buttons);
