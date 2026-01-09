@@ -5,7 +5,11 @@
     </a>
     <div class="navbar-brand">
       <div>Conformance Tool</div>
-      <div style="font-size: 0.7em">{{ env('BUILD_VERSION', 'Unkown version') }}</div>
+      <div style="font-size: 0.7em">
+        <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/commit/{{ env('BUILD_COMMIT', '')}}" target="_blank">
+            {{ env('BUILD_VERSION', 'Unkown version') }}
+        </a>
+      </div>
     </div>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
