@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with: 
+          fetch-tags: true
       - name: Convert repository name to lower case
         run: |
           echo REPOSITORY_LC=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
@@ -27,6 +29,8 @@ jobs:
           npm i
           npm run build
           cp env_production.example .env
+          echo "BUILD_VERSION=\"`git describe --tags ${{ github.sha }}`\"" >> .env
+          echo "BUILD_COMMIT=\"${{ github.sha }}\"" >> .env
           php artisan key:generate
           php artisan migrate
       - name: Build and push
