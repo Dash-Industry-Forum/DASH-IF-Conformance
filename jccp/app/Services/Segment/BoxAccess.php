@@ -44,6 +44,14 @@ class BoxAccess
     }
 
     /**
+     * @return array<Boxes\ELSTBox>
+     **/
+    public function elst(): array
+    {
+        return $this->runAnalyzedFunction('elstBoxes');
+    }
+
+    /**
      * @return array<Boxes\MOOFBox>
      **/
     public function moof(): array

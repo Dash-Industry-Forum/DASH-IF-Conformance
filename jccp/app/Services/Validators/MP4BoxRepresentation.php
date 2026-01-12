@@ -96,6 +96,7 @@ class MP4BoxRepresentation extends RepresentationInterface
             $trun = new Boxes\TRUNBox();
             $trun->sampleCount = intval($trunBox->getAttribute('SampleCount'));
             $trun->dataOffset = intval($trunBox->getAttribute('DataOffset'));
+            $trun->earliestCompositionTime = $trunBox->getAttribute('EarliestCompositionTime');
             $res[] = $trun;
         }
         return $res;
@@ -451,6 +452,22 @@ class MP4BoxRepresentation extends RepresentationInterface
     }
 
     /**
+     * @return array<Boxes\ELSTBox>
+     **/
+    ///TODO: Actually retrieve data
+    public function elstBoxes(): ?array
+    {
+        $res = array();
+        if ($this->payload) {
+            $emsgBoxes = $this->payload->getElementsByTagName('EditListBox');
+            foreach ($emsgBoxes as $emsgBox) {
+                $res[] = new Boxes\ELSTBox();
+            }
+        }
+        return $res;
+    }
+
+    /**
      * @return array<Boxes\EventMessage>
      **/
     public function getEmsgBoxes(): ?array
@@ -745,6 +762,27 @@ class MP4BoxRepresentation extends RepresentationInterface
         foreach ($hevcDecoderRecords->item(0)->getAttributeNames() as $attName) {
             $res[$attName] = $hevcDecoderRecords->item(0)->getAttribute($attName);
         }
+        $res['_hasSPS'] = "0";
+        $res['_hasPPS'] = "0";
+        $res['_hasVPS'] = "0";
+
+        foreach ($hevcDecoderRecords->item(0)->getElementsByTagName('ParameterSetArray') as $psArray) {
+            if (!count($psArray->getElementsByTagName('ParameterSet'))) {
+                continue;
+            }
+            switch ($psArray->getAttribute('nalu_type')) {
+                case '32':
+                    $res['_hasSPS'] = "1";
+                    break;
+                case '33':
+                    $res['_hasPPS'] = "1";
+                    break;
+                case '34':
+                    $res['_hasVPS'] = "1";
+                    break;
+            }
+        }
+
 
         return $res;
     }
@@ -787,6 +825,8 @@ class MP4BoxRepresentation extends RepresentationInterface
         foreach ($avcDecoderRecords->item(0)->getAttributeNames() as $attName) {
             $res[$attName] = $avcDecoderRecords->item(0)->getAttribute($attName);
         }
+        $res['_hasSPS'] = count($avcDecoderRecords->item(0)->getElementsByTagName('SequenceParameterSet')) ? "1" : "0";
+        $res['_hasPPS'] = count($avcDecoderRecords->item(0)->getElementsByTagName('PictureParameterSet')) ? "1" : "0";
 
         return $res;
     }

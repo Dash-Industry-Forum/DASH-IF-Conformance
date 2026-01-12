@@ -8,8 +8,10 @@ class TRUNBox
     {
         $this->sampleCount = 0;
         $this->dataOffset = 0;
+        $this->earliestCompositionTime = '';
     }
 
     public int $sampleCount;
     public int $dataOffset;
+    public string $earliestCompositionTime;
 }
