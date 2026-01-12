@@ -13,6 +13,7 @@ use App\Modules\Wave\Segments as WaveHLSInteropSegments;
 use App\Modules\CMAF\Segments as CMAFSegments;
 use App\Modules\LowLatency\MPD as LowLatencyManifest;
 use App\Modules\LowLatency\Segments as LowLatencySegments;
+use App\Modules\IOP\MPD as IOPManifest;
 use App\Interfaces\Module;
 use App\Services\Manifest\Period;
 use App\Services\SegmentManager;
@@ -54,6 +55,7 @@ class SpecManager
         $this->manifestSpecs[] = new DVBManifest();
         $this->manifestSpecs[] = new HbbTVManifest();
         $this->manifestSpecs[] = new LowLatencyManifest();
+        $this->manifestSpecs[] = new IOPManifest();
         $this->manifestSpecs[] = new CMAFSegments();
         $this->manifestSpecs[] = new DVBSegments();
         $this->manifestSpecs[] = new HbbTVSegments();
