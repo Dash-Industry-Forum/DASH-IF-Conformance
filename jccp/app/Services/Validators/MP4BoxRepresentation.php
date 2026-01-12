@@ -956,4 +956,22 @@ class MP4BoxRepresentation extends RepresentationInterface
 
         return $res;
     }
+
+    /**
+     * @return array<Boxes\AC4DSI>
+     **/
+    //TODO: Implement
+    public function getAC4DSI(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return array<Boxes\AC4TOC>
+     **/
+    //TODO: Implement
+    public function getAC4TOC(): array
+    {
+        return [];
+    }
 }

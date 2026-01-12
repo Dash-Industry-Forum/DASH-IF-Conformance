@@ -1,6 +1,6 @@
 <?php
 
-namespace DASHIF\Boxes;
+namespace App\Services\Validators\Boxes;
 
 class AC4TOC
 {

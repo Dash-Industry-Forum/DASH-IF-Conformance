@@ -138,4 +138,20 @@ class BoxAccess
     {
         return $this->runAnalyzedFunction('getSampleGroups');
     }
+
+    /**
+     * @return array<Boxes\AC4DSI>
+     **/
+    public function ac4DSI(): array
+    {
+        return $this->runAnalyzedFunction('getAC4DSI');
+    }
+
+    /**
+     * @return array<Boxes\AC4TOC>
+     **/
+    public function ac4TOC(): array
+    {
+        return $this->runAnalyzedFunction('getAC4TOC');
+    }
 }

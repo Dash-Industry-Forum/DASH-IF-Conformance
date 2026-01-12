@@ -79,7 +79,7 @@ class CrossAdaptation
                 $videoProfiles[] = intval($avcc['profile_idc']);
 
                 $elst = $segmentList[0]->boxAccess()->elst();
-                if (count($elst)){
+                if (count($elst)) {
                     $editLists[] = $elst;
                 }
             }
@@ -90,7 +90,7 @@ class CrossAdaptation
                 $videoProfiles[] = intval($hvcc['profile_idc']);
 
                 $elst = $segmentList[0]->boxAccess()->elst();
-                if (count($elst)){
+                if (count($elst)) {
                     $editLists[] = $elst;
                 }
             }
@@ -142,7 +142,5 @@ class CrossAdaptation
             pass_message: "Edit list not present, or present in all supported video tracks",
             fail_message: "Edit list present, but missing from at least one supported video track",
         );
-
-
     }
 }

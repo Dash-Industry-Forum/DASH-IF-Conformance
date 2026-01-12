@@ -15,6 +15,7 @@ use App\Modules\LowLatency\MPD as LowLatencyManifest;
 use App\Modules\LowLatency\Segments as LowLatencySegments;
 use App\Modules\IOP\MPD as IOPManifest;
 use App\Modules\IOP\Segments as IOPSegments;
+use App\Modules\Dolby\Segments as DolbySegments;
 use App\Interfaces\Module;
 use App\Services\Manifest\Period;
 use App\Services\SegmentManager;
@@ -63,6 +64,7 @@ class SpecManager
         $this->manifestSpecs[] = new IOPSegments();
         $this->manifestSpecs[] = new CMAFSegments();
         $this->manifestSpecs[] = new WaveHLSInteropSegments();
+        $this->manifestSpecs[] = new DolbySegments();
     }
 
     public function toggle(string $moduleName): void
