@@ -66,7 +66,7 @@ function NavigationBar() {
               {
                 element: "div",
                 className: "fw-medium fs-6 ms-2 me-3",
-                text: "v2.3.1",
+                text: "v2.4.1",
               }
             ]
           },
