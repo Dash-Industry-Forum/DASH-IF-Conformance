@@ -34,6 +34,10 @@ class Module
     {
     }
 
+    public function validatePeriod(Period $period): void
+    {
+    }
+
     public function validateCrossAdaptationSet(AdaptationSet $adaptationSet): void
     {
     }

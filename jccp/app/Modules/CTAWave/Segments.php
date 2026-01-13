@@ -19,6 +19,7 @@ use App\Modules\CTAWave\Segments\SplicingPoints;
 use App\Modules\CTAWave\Segments\VideoProfile;
 use App\Modules\CTAWave\Segments\AudioProfile;
 use App\Modules\CTAWave\Segments\SubtitleProfile;
+use App\Modules\CTAWave\Segments\PeriodEncryption;
 
 class Segments extends Module
 {
@@ -34,6 +35,11 @@ class Segments extends Module
     public function validateMPD(): void
     {
         parent::validateMPD();
+    }
+
+    public function validatePeriod(Period $period): void
+    {
+        new PeriodEncryption()->validatePeriodEncryption($period);
     }
 
     public function validateMultiPeriod(Period $firstPeriod, Period $secondPeriod): void

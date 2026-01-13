@@ -6,43 +6,12 @@ require_once __DIR__ . '/../Utils/moduleInterface.php';
 
 class ModuleCTAWAVE extends ModuleInterface
 {
-    private $mediaProfileAttributesAudio;
-    private $mediaProfileAttributesVideo;
-    private $mediaProfileAttributesSubtitle;
-    private $presentationProfile;
 
     public function __construct()
     {
         parent::__construct();
         $this->name = "CTA-WAVE";
 
-        $this->mediaProfileAttributesVideo = array(
-        "codec" => "",
-        "profile" => "",
-        "level" => "",
-        "height" => "",
-        "width" => "",
-        "framerate" => "",
-        "color_primaries" => "",
-        "transfer_char" => "",
-        "matrix_coeff" => "",
-        "tier" => "",
-        "brand" => "");
-
-        $this->mediaProfileAttributesAudio = array(
-        "codec" => "",
-        "profile" => "",
-        "level" => "",
-        "channels" => "",
-        "sampleRate" => "",
-        "brand" => "");
-
-        $this->mediaProfileAttributesSubtitle = array(
-        "codec" => "",
-        "mimeType" => "",
-        "mimeSubtype" => "",
-        "brand" => "");
-    }
 
     protected function addCLIArguments()
     {
@@ -85,20 +54,7 @@ class ModuleCTAWAVE extends ModuleInterface
     public function hookPeriod()
     {
         parent::hookPeriod();
-$this->checkSequentialSwitchingSetMediaProfile();
-$this->checkEncryptionChangeSplicePoint();
     }
-
-    private function checkSequentialSwitchingSetMediaProfile()
-    {
-        include 'impl/checkSequentialSwitchingSetMediaProfile.php';
-    }
-
-    private function checkEncryptionChangeSplicePoint()
-    {
-        include 'impl/checkEncryptionChangeSplicePoint.php';
-    }
-
 
     private function checkFragmentOverlapSplicePoint()
     {
@@ -106,10 +62,6 @@ $this->checkEncryptionChangeSplicePoint();
     }
 
 
-    private function fourCCEquivalent($mediaProfile)
-m   {
-        return include 'impl/fourCCEquivalent.php';
-    }
 }
 
-$modules[] = new ModuleCTAWAVE();
+$modules[] = new ModuleCTAWAVE()m

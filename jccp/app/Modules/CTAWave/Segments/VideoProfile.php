@@ -25,6 +25,7 @@ class VideoProfile
     private TestCase $validProfileCase;
     private TestCase $singleProfileCase;
     private TestCase $mandatoryProfileCase;
+    private TestCase $crossPeriodProfileCase;
 
     public function __construct()
     {
@@ -53,6 +54,11 @@ class VideoProfile
                   "include AVC (HD) Media profile",
             skipReason: "No corresponding adaptations"
         );
+        $this->crossPeriodProfileCase = $this->waveReporter->add(
+            section: "7.2.2",
+            test: "Sequential sets SHALL conform to the same CMAF profile",
+            skipReason: "Single period found",
+        );
     }
 
     //Public validation functions
@@ -64,6 +70,7 @@ class VideoProfile
         $segmentManager = app(SegmentManager::class);
         $foundProfiles = [];
         foreach ($adaptationSet->allRepresentations() as $representation) {
+            $segmentManager = app(SegmentManager::class);
             $segmentList = $segmentManager->representationSegments($representation);
 
             if (count($segmentList) == 0) {
@@ -97,9 +104,42 @@ class VideoProfile
             pass_message: "Mandatory profile found",
             fail_message: "Mandatory profile not found"
         );
+
+        $this->validateCrossPeriod($adaptationSet, $foundProfiles[0]);
     }
 
     //Private helper functions
+    private function validateCrossPeriod(AdaptationSet $adaptationSet, string $profile): void
+    {
+        $mpdCache = app(MPDCache::class);
+        $segmentManager = app(SegmentManager::class);
+
+        foreach ($mpdCache->allPeriods() as $period) {
+            if ($period->periodIndex <= $adaptationSet->periodIndex) {
+                continue;
+            }
+
+            $correspondingAdaptation = $period->getAdaptationSet($adaptationSet->adaptationSetIndex);
+            $firstCorrespondingRepresentation = $correspondingAdaptation->getRepresentation(0);
+
+            $segmentList = $segmentManager->representationSegments($firstCorrespondingRepresentation);
+
+            $correspondingProfile = $this->getProfile(
+                $firstCorrespondingRepresentation,
+                $segmentList
+            );
+
+            $this->crossPeriodProfileCase->pathAdd(
+                path: $adaptationSet->path() . " - " . $correspondingAdaptation->path(),
+                result: $profile == $correspondingProfile,
+                severity: "FAIL",
+                pass_message: "Profiles correspond",
+                fail_message: "Profiles do not correspond"
+            );
+        }
+    }
+
+
     /**
      * @param array<Segment> $segments
      **/

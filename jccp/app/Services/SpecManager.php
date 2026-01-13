@@ -135,6 +135,7 @@ class SpecManager
         $mpdCache = app(MPDCache::class);
         $segmentManager = app(SegmentManager::class);
         foreach ($mpdCache->allPeriods() as $period) {
+            $module->validatePeriod($period);
             foreach ($period->allAdaptationSets() as $adaptationSet) {
                 $module->validateCrossAdaptationSet($adaptationSet);
                 foreach ($adaptationSet->allRepresentations() as $representation) {
