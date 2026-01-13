@@ -81,7 +81,6 @@ class ModuleCTAWAVE extends ModuleInterface
     {
         parent::hookBeforeAdaptationSet();
         $this->CTACheckSelectionSet();
-        $this->CTACheckSingleInitSwitchingSet();
         $this->CTACheckPresentation();
     }
 
@@ -95,8 +94,6 @@ $this->checkEncryptionChangeSplicePoint();
 
 $this->checkSequentialSwitchingSetAV();
 
-//Call the CMFHD Baseline constraints.
-$this->checkCMFHDBaselineConstraints();
 
     }
 
@@ -105,19 +102,10 @@ $this->checkCMFHDBaselineConstraints();
         include 'impl/waveProgramChecks.php';
     }
 
-    private function checkCMFHDBaselineConstraints()
-    {
-        include 'impl/checkCMFHDBaselineConstraints.php';
-    }
 
     private function checkSequentialSwitchingSetAV()
     {
         include 'impl/checkSequentialSwitchingSetAv.php';
-    }
-
-    private function CTABaselineSpliceChecks()
-    {
-        include 'impl/ctaBaselineSpliceChecks.php';
     }
 
     private function checkSequentialSwitchingSetMediaProfile()
@@ -135,16 +123,6 @@ $this->checkCMFHDBaselineConstraints();
         include 'impl/checkEncryptionChangeSplicePoint.php';
     }
 
-    private function getEncrytionScheme($xml)
-    {
-        return include 'impl/getEncryptionScheme.php';
-    }
-
-
-    private function getSdType($xml)
-    {
-        return include 'impl/getSdType.php';
-    }
 
     private function checkFragmentOverlapSplicePoint()
     {
@@ -160,15 +138,7 @@ $this->checkCMFHDBaselineConstraints();
         include 'impl/CTACheckSelectionSet.php';
     }
 
-    private function getPresentationProfile($encryptedTrackFound, $cencSwSetFound, $cbcsSwSetFound)
-    {
-        return include 'impl/getPresentationProfile.php';
-    }
 
-    private function CTACheckSingleInitSwitchingSet()
-    {
-        include 'impl/CTACheckSingleInitSwitchingSet.php';
-    }
 
     private function fourCCEquivalent($mediaProfile)
     {
@@ -181,22 +151,6 @@ $this->checkCMFHDBaselineConstraints();
         $adaptationIndex
     ) {
         return include 'impl/checkAndGetConformingSubtitleProfile.php';
-    }
-
-    private function checkAndGetConformingAudioProfile(
-        $mediaProfileParameters,
-        $representationIndex,
-        $adaptationIndex
-    ) {
-        return include 'impl/checkAndGetConformingAudioProfile.php';
-    }
-
-    private function checkAndGetConformingVideoProfile(
-        $mediaProfileParameters,
-        $representationIndex,
-        $adaptationIndex
-    ) {
-        return include 'impl/checkAndGetConformingVideoProfile.php';
     }
 
     private function getMediaProfile($xml, $hdlrType, $representationIndex, $adaptationIndex)

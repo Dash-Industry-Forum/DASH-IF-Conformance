@@ -17,7 +17,7 @@ use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class AudioProfile
+class SubtitleProfile
 {
     //Private subreporters
     private SubReporter $waveReporter;
@@ -36,8 +36,8 @@ class AudioProfile
         ));
 
         $this->validProfileCase = $this->waveReporter->add(
-            section: '4.3.1',
-            test: "Each WAVE audio Media profile SHALL conform to normative ref. listed in Table 1",
+            section: '4.4.1',
+            test: "Each WAVE Subitle Media profile SHALL conform to normative ref. listed in Table 1",
             skipReason: "No video track found",
         );
         $this->singleProfileCase = $this->waveReporter->add(
@@ -48,9 +48,12 @@ class AudioProfile
     }
 
     //Public validation functions
-    public function validateAudioProfile(AdaptationSet $adaptationSet): void
+    public function validateSubtitleProfile(AdaptationSet $adaptationSet): void
     {
-        if ($adaptationSet->getAttribute('mimeType') != 'audio/mp4') {
+        if (
+            $adaptationSet->getAttribute('mimeType') == 'audio/mp4' ||
+            $adaptationSet->getAttribute('mimeType') == 'video/mp4'
+        ) {
             return;
         }
         $segmentManager = app(SegmentManager::class);
@@ -76,10 +79,10 @@ class AudioProfile
         }
         $this->singleProfileCase->pathAdd(
             path: $adaptationSet->path(),
-            result: count(array_unique($foundProfiles)) == 1 && $foundProfiles[0] != '',
+            result:  count(array_unique($foundProfiles)) == 1 && $foundProfiles[0] != '',
             severity: "FAIL",
-            pass_message: "Audio conforms to a single approved profile",
-            fail_message: "Audio does not conform to a single approved profile",
+            pass_message: "Subtitles conforms to a single approved profile",
+            fail_message: "Subtitles do not conform to a single approved profile",
         );
     }
 
@@ -92,37 +95,28 @@ class AudioProfile
         $sdType = $segments[0]->getSampleDescriptor();
 
 
-        if ($sdType == 'mp4a') {
-            return $this->getAACProfile($representation, $segments);
+        if ($sdType != 'stpp') {
+            $this->validProfileCase->pathAdd(
+                path: $representation->path(),
+                result: false,
+                severity: "FAIL",
+                pass_message: "",
+                fail_message: "Unsupported Sample description $sdType"
+            );
+            return '';
         }
+
+        //todo Check mimetype in a correct way
+
+        $codecs = $representation->getTransientAttribute('codecs');
 
         $mediaProfile = '';
 
-        if ($sdType == "ec-3" || $sdType == "ac-3") {
-            $mediaProfile = 'Enhanced_AC-3';
+        if (strpos($codecs, 'im1t') !== false) {
+            $mediaProfile = 'TTML_IMSC1_Text';
         }
-
-        if ($sdType == "ac-4") {
-            //TODO: Handle whatever level was in this commit
-            $mediaProfile = 'AC-4_SingleStream';
-        }
-
-        if ($sdType == 'mhm1') {
-            //TODO: Handle whatever profile was in this commit
-            //TODO: Parse channel count from MPEG-H
-            $validSampleRate = intval($representation->getAttribute('sampleRate')) <= 48000;
-            if (!$validSampleRate) {
-                $this->validProfileCase->pathAdd(
-                    path: $representation->path(),
-                    result: false,
-                    severity: "FAIL",
-                    pass_message: "",
-                    fail_message: "MPEG-H - Unsupported sampleRate"
-                );
-                return '';
-            }
-
-            $mediaProfile = 'MPEG-H_SingleStream';
+        if (strpos($codecs, 'im1i') !== false) {
+            $mediaProfile = 'TTML_IMSC1_Image';
         }
 
         $this->validProfileCase->pathAdd(
@@ -131,52 +125,6 @@ class AudioProfile
             severity: "FAIL",
             pass_message: "$mediaProfile",
             fail_message: "Unsupported sample descriptor $sdType"
-        );
-        return $mediaProfile;
-    }
-
-    /**
-     * @param array<Segment> $segments
-     **/
-    private function getAACProfile(Representation $representation, array $segments): string
-    {
-
-        $validSampleRate = intval($representation->getAttribute('sampleRate')) <= 48000;
-        if (!$validSampleRate) {
-            $this->validProfileCase->pathAdd(
-                path: $representation->path(),
-                result: false,
-                severity: "FAIL",
-                pass_message: "",
-                fail_message: "AAC - Unsupported sampleRate"
-            );
-            return '';
-        }
-
-        $config = $segments[0]->getAudioConfiguration();
-        $channelConfig = array_key_exists('Channels', $config) ? $config['Channels'] : '';
-
-        $mediaProfile = '';
-        if (in_array($channelConfig, ['1','2'])) {
-            //TODO: check whatever level and profile is from this commit
-
-            if (in_array('caaa', $segments[0]->getBrands())) {
-                $mediaProfile = 'Adaptive_AAC_Core';
-            } else {
-                $mediaProfile = 'AAC_Core';
-            }
-        } elseif (in_array($channelConfig, ['5','6','7','12','14'])) {
-            //TODO: check whatever profile was is this commit
-            $mediaProfile = 'AAC_MultiChannel';
-        }
-
-
-        $this->validProfileCase->pathAdd(
-            path: $representation->path(),
-            result: $mediaProfile != '',
-            severity: "FAIL",
-            pass_message: "AAC - $mediaProfile",
-            fail_message: "AAC - Unsupported channel configuration $channelConfig"
         );
         return $mediaProfile;
     }

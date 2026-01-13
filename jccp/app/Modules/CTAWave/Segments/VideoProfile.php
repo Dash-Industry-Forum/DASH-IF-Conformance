@@ -23,6 +23,7 @@ class VideoProfile
     private SubReporter $waveReporter;
 
     private TestCase $validProfileCase;
+    private TestCase $singleProfileCase;
 
     public function __construct()
     {
@@ -34,11 +35,15 @@ class VideoProfile
             []
         ));
 
-        //Disallowed changes
         $this->validProfileCase = $this->waveReporter->add(
             section: '4.2.1',
             test: "Each WAVE video Media profile SHALL conform to normative ref. listed in Table 1",
             skipReason: "No video track found",
+        );
+        $this->singleProfileCase = $this->waveReporter->add(
+            section: '4.1',
+            test: "Wave content SHALL include one or more switch sets conforming to at least one approved CMAF profile",
+            skipReason: "No corresponding adaptations"
         );
     }
 
@@ -66,6 +71,17 @@ class VideoProfile
             }
             $foundProfiles[] = $this->getProfile($representation, $segmentList);
         }
+
+        if (count($foundProfiles) == 0) {
+            return;
+        }
+        $this->singleProfileCase->pathAdd(
+            path: $adaptationSet->path(),
+            result: count(array_unique($foundProfiles)) == 1 && $foundProfiles[0] != '',
+            severity: "FAIL",
+            pass_message: "Video conforms to a single approved profile",
+            fail_message: "Video does not conform to a single approved profile",
+        );
     }
 
     //Private helper functions

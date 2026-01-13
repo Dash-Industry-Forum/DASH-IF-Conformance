@@ -18,9 +18,11 @@ use App\Interfaces\Module;
 use App\Modules\CTAWave\Segments\SplicingPoints;
 use App\Modules\CTAWave\Segments\VideoProfile;
 use App\Modules\CTAWave\Segments\AudioProfile;
+use App\Modules\CTAWave\Segments\SubtitleProfile;
 
 class Segments extends Module
 {
+    //NOTE: Removed what was basically a non-check for CMFHD content in this commit
     public function __construct()
     {
         parent::__construct();
@@ -42,6 +44,7 @@ class Segments extends Module
     {
         new VideoProfile()->validateVideoProfile($adaptationSet);
         new AudioProfile()->validateAudioProfile($adaptationSet);
+        new SubtitleProfile()->validateSubtitleProfile($adaptationSet);
     }
 
     /**

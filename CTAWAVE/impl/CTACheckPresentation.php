@@ -107,7 +107,6 @@ for ($adaptationIndex = 0; $adaptationIndex < $adaptationCount; $adaptationIndex
 }
 
 
-$presentationProfileArray = array();
 $conforms = false;
 if ($videoSelectionSetFound) {
     $conforms = $logger->test(
@@ -121,10 +120,6 @@ if ($videoSelectionSetFound) {
         "Switching set not found"
     );
 
-    array_push(
-        $presentationProfileArray,
-        $this->getPresentationProfile($encryptedTrackFound, $cencSwSetFound, $cbcsSwSetFound)
-    );
 }
 if ($audioSelectionSetFound) {
     $conforms = $logger->test(
@@ -138,10 +133,6 @@ if ($audioSelectionSetFound) {
         "Switching set not found"
     );
 
-    array_push(
-        $presentationProfileArray,
-        $this->getPresentationProfile($encryptedTrackFound, $cencSwSetFound, $cbcsSwSetFound)
-    );
 }
 if ($subtitleSelectionSetFound) {
     $conforms = $logger->test(
@@ -154,27 +145,4 @@ if ($subtitleSelectionSetFound) {
         "Switching set found",
         "Switching set not found"
     );
-    array_push(
-        $presentationProfileArray,
-        $this->getPresentationProfile($encryptedTrackFound, $cencSwSetFound, $cbcsSwSetFound)
-    );
 }
-
-
-$presentationProfile = "";
-if (count(array_unique($presentationProfileArray)) === 1) {
-    $presentationProfile = $presentationProfileArray[0];
-}
-if (in_array("", $presentationProfileArray)) {
-    $presentationProfile = "";
-}
-
-
-if ($presentationProfile != "" && $conforms) {
-    $logger->message("Stream found to conform to a CMAF Presentation Profile: $presentationProfile");
-}
-
-$this->presentationProfile = $presentationProfile;
-
-
-return $presentationProfile;
