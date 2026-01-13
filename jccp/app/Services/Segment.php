@@ -19,6 +19,8 @@ class Segment
     private string $representationDir = '';
     private int $segmentIndex;
     private string $codec = '';
+    private string $profile = '';
+    private string $level = '';
 
     /**
      * //TODO Change mixed with correct parent class
@@ -54,9 +56,9 @@ class Segment
     {
 
         if (file_exists($this->initPath)) {
-            $this->fillCodecFromGPAC($this->initPath);
+            $this->fillInfoFromGPAC($this->initPath);
         } elseif (file_exists($this->segmentPath)) {
-            $this->fillCodecFromGPAC($this->segmentPath);
+            $this->fillInfoFromGPAC($this->segmentPath);
         }
 
 
@@ -90,29 +92,45 @@ class Segment
         return $resultPath;
     }
 
-    private function fillCodecFromGPAC(string $filePath): void
+    private function fillInfoFromGPAC(string $filePath): void
     {
         $mp4BoxInfo = app(MP4Box::class)->info($filePath);
 
         $lines = explode("\n", $mp4BoxInfo);
 
         foreach ($lines as $line) {
-            if (strpos($line, 'RFC6381') === false) {
-                continue;
-            }
+            if (strpos($line, 'RFC6381') !== false) {
+                $codecOffset = strpos($line, ": ");
+                if ($codecOffset === false) {
+                    continue;
+                }
 
-            $codecOffset = strpos($line, ": ");
-            if ($codecOffset === false) {
-                continue;
+                $this->codec = substr($line, $codecOffset + 2);
             }
-
-            $this->codec = substr($line, $codecOffset + 2);
+            $profilePos = strpos($line, 'Profile ');
+            if ($profilePos !== false) {
+                $profile = substr($line, $profilePos + 8);
+                $this->profile = substr($profile, 0, strpos($profile, ' '));
+            }
+            $levelPos = strpos($line, 'Level ');
+            if ($levelPos !== false) {
+                $level = substr($line, $levelPos + 6);
+                $this->level = substr($level, 0, strpos($level, ' '));
+            }
         }
     }
 
     public function getCodec(): string
     {
         return $this->codec;
+    }
+    public function getProfile(): string
+    {
+        return $this->profile;
+    }
+    public function getLevel(): string
+    {
+        return $this->level;
     }
 
     public function boxAccess(): BoxAccess

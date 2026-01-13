@@ -9,18 +9,6 @@ $level = $mediaProfileParameters['level'];
 $profile = $mediaProfileParameters['profile'];
 
 if ($codec == "AAC") {
-    $validSampleRate = $logger->test(
-        "CTAWAVE",
-        "WAVE Content Spec 2018Ed-Section 4.3.1",
-        "Each WAVE audio Media Profile SHALL conform to normative ref. listed in Table 2",
-        $sampleRate <= 48000,
-        "FAIL",
-        "Valid sample rate for track $representationIndex of switching set $adaptationIndex",
-        "Invalid sample rate for track $representationIndex of switching set $adaptationIndex",
-    );
-    if (!$validSampleRate) {
-        return "unknown";
-    }
     if (in_array($channels, array(1, 2))) {
         //Level is checked here , however level can not be found always from the atom xml as the
         //IODS atom is not always present in the track.

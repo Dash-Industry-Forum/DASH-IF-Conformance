@@ -91,11 +91,6 @@ class ModuleCTAWAVE extends ModuleInterface
 $this->checkSequentialSwitchingSetMediaProfile();
 $this->checkDiscontinuousSplicePoints();
 $this->checkEncryptionChangeSplicePoint();
-$this->checkSampleEntryChangeSplicePoint();
-$this->checkDefaultKIDChangeSplicePoint();
-$this->checkPictureAspectRatioSplicePoint();
-$this->checkFrameRateSplicePoint();
-$this->checkAudioChannelSplicePoint();
 
 
 $this->checkSequentialSwitchingSetAV();
@@ -145,49 +140,15 @@ $this->checkCMFHDBaselineConstraints();
         return include 'impl/getEncryptionScheme.php';
     }
 
-    private function checkSampleEntryChangeSplicePoint()
-    {
-        include 'impl/checkSampleEntryChangeSplicePoint.php';
-    }
 
     private function getSdType($xml)
     {
         return include 'impl/getSdType.php';
     }
 
-    private function checkDefaultKIDChangeSplicePoint()
-    {
-        include 'impl/checkDefaultKIDChangeSplicePoint.php';
-    }
-
-    private function checkTrackIDChangeSplicePoint()
-    {
-        include 'impl/checkTrackIDChangeSplicePoint.php';
-    }
-
-    private function checkTimeScaleChangeSplicePoint()
-    {
-        include 'impl/checkTimeScaleChangeSplicePoint.php';
-    }
-
     private function checkFragmentOverlapSplicePoint()
     {
         include 'impl/checkFragmentOverlapSplicePoint.php';
-    }
-
-    private function checkPictureAspectRatioSplicePoint()
-    {
-        include 'impl/checkPictureAspectRatioSlicePoint.php';
-    }
-
-    private function checkFrameRateSplicePoint()
-    {
-        include 'impl/checkFrameRateSplicePoint.php';
-    }
-
-    private function checkAudioChannelSplicePoint()
-    {
-        return include 'impl/checkAudioChannelSplicePoint.php';
     }
 
     private function CTACheckPresentation($adaptationCount = null, $periodIndex = null)
