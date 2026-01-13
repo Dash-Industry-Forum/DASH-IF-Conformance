@@ -9,7 +9,7 @@ use App\Modules\DVB\MPD as DVBManifest;
 use App\Modules\DVB\Segments as DVBSegments;
 use App\Modules\HbbTV\MPD as HbbTVManifest;
 use App\Modules\HbbTV\Segments as HbbTVSegments;
-use App\Modules\Wave\Segments as WaveHLSInteropSegments;
+use App\Modules\WaveHLSInterop\Segments as WaveHLSInteropSegments;
 use App\Modules\CMAF\Segments as CMAFSegments;
 use App\Modules\LowLatency\MPD as LowLatencyManifest;
 use App\Modules\LowLatency\Segments as LowLatencySegments;

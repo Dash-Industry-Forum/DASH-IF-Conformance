@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Wave\Segments;
+namespace App\Modules\WaveHLSInterop\Segments;
 
 use App\Services\MPDCache;
 use App\Services\Manifest\Representation;

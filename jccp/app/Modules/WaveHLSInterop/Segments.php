@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Wave;
+namespace App\Modules\WaveHLSInterop;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
@@ -13,15 +13,15 @@ use App\Services\Manifest\Representation;
 use App\Services\Segment;
 use App\Interfaces\Module;
 //Module checks
-use App\Modules\Wave\Segments\TextComponentConstraints;
-use App\Modules\Wave\Segments\Bitrate;
-use App\Modules\Wave\Segments\EncryptionScheme;
-use App\Modules\Wave\Segments\SegmentEncryption;
-use App\Modules\Wave\Segments\SplicingPoints;
-use App\Modules\Wave\Segments\TrackRoles;
-use App\Modules\Wave\Segments\TimedEventData;
-use App\Modules\Wave\Segments\AddressableMediaObject;
-use App\Modules\Wave\Segments\KeyRotation;
+use App\Modules\WaveHLSInterop\Segments\TextComponentConstraints;
+use App\Modules\WaveHLSInterop\Segments\Bitrate;
+use App\Modules\WaveHLSInterop\Segments\EncryptionScheme;
+use App\Modules\WaveHLSInterop\Segments\SegmentEncryption;
+use App\Modules\WaveHLSInterop\Segments\SplicingPoints;
+use App\Modules\WaveHLSInterop\Segments\TrackRoles;
+use App\Modules\WaveHLSInterop\Segments\TimedEventData;
+use App\Modules\WaveHLSInterop\Segments\AddressableMediaObject;
+use App\Modules\WaveHLSInterop\Segments\KeyRotation;
 
 class Segments extends Module
 {
