@@ -87,16 +87,6 @@ class ModuleCTAWAVE extends ModuleInterface
         parent::hookPeriod();
 $this->checkSequentialSwitchingSetMediaProfile();
 $this->checkEncryptionChangeSplicePoint();
-
-
-$this->checkSequentialSwitchingSetAV();
-
-
-    }
-
-    private function checkSequentialSwitchingSetAV()
-    {
-        include 'impl/checkSequentialSwitchingSetAv.php';
     }
 
     private function checkSequentialSwitchingSetMediaProfile()
@@ -117,7 +107,7 @@ $this->checkSequentialSwitchingSetAV();
 
 
     private function fourCCEquivalent($mediaProfile)
-    {
+m   {
         return include 'impl/fourCCEquivalent.php';
     }
 }
