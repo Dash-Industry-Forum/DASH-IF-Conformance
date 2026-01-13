@@ -24,6 +24,7 @@ class AudioProfile
 
     private TestCase $validProfileCase;
     private TestCase $singleProfileCase;
+    private TestCase $mandatoryProfileCase;
 
     public function __construct()
     {
@@ -43,6 +44,13 @@ class AudioProfile
         $this->singleProfileCase = $this->waveReporter->add(
             section: '4.1',
             test: "Wave content SHALL include one or more switch sets conforming to at least one approved CMAF profile",
+            skipReason: "No corresponding adaptations"
+        );
+        //NOTE: This check seems very conflicting with the above one....
+        $this->mandatoryProfileCase = $this->waveReporter->add(
+            section: '5 ',
+            test: "If an audio track is included, the conforming (presentation will at least " .
+                  "include AAC (Core) Media profile",
             skipReason: "No corresponding adaptations"
         );
     }
@@ -80,6 +88,13 @@ class AudioProfile
             severity: "FAIL",
             pass_message: "Audio conforms to a single approved profile",
             fail_message: "Audio does not conform to a single approved profile",
+        );
+        $this->mandatoryProfileCase->pathAdd(
+            path: $adaptationSet->path(),
+            result: in_array('AAC_Core', $foundProfiles),
+            severity: "FAIL",
+            pass_message: "Mandatory profile found",
+            fail_message: "Mandatory profile not found"
         );
     }
 

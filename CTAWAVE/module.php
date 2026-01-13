@@ -80,8 +80,6 @@ class ModuleCTAWAVE extends ModuleInterface
     public function hookBeforeAdaptationSet()
     {
         parent::hookBeforeAdaptationSet();
-        $this->CTACheckSelectionSet();
-        $this->CTACheckPresentation();
     }
 
     public function hookPeriod()
@@ -128,16 +126,6 @@ $this->checkSequentialSwitchingSetAV();
     {
         include 'impl/checkFragmentOverlapSplicePoint.php';
     }
-
-    private function CTACheckPresentation($adaptationCount = null, $periodIndex = null)
-    {
-        return include 'impl/CTACheckPresentation.php';
-    }
-    private function CTACheckSelectionSet()
-    {
-        include 'impl/CTACheckSelectionSet.php';
-    }
-
 
 
     private function fourCCEquivalent($mediaProfile)

@@ -24,6 +24,7 @@ class SubtitleProfile
 
     private TestCase $validProfileCase;
     private TestCase $singleProfileCase;
+    private TestCase $mandatoryProfileCase;
 
     public function __construct()
     {
@@ -37,12 +38,19 @@ class SubtitleProfile
 
         $this->validProfileCase = $this->waveReporter->add(
             section: '4.4.1',
-            test: "Each WAVE Subitle Media profile SHALL conform to normative ref. listed in Table 1",
+            test: "Each WAVE Subtitle Media profile SHALL conform to normative ref. listed in Table 1",
             skipReason: "No video track found",
         );
         $this->singleProfileCase = $this->waveReporter->add(
             section: '4.1',
             test: "Wave content SHALL include one or more switch sets conforming to at least one approved CMAF profile",
+            skipReason: "No corresponding adaptations"
+        );
+        //NOTE: This check seems very conflicting with the above one....
+        $this->mandatoryProfileCase = $this->waveReporter->add(
+            section: '5 ',
+            test: "If a subtitle track is included, the conforming (presentation will at least " .
+                  "include TTML Text Media profile",
             skipReason: "No corresponding adaptations"
         );
     }
@@ -83,6 +91,13 @@ class SubtitleProfile
             severity: "FAIL",
             pass_message: "Subtitles conforms to a single approved profile",
             fail_message: "Subtitles do not conform to a single approved profile",
+        );
+        $this->mandatoryProfileCase->pathAdd(
+            path: $adaptationSet->path(),
+            result: in_array('TTML_IMSC1_Text', $foundProfiles),
+            severity: "FAIL",
+            pass_message: "Mandatory profile found",
+            fail_message: "Mandatory profile not found"
         );
     }
 
