@@ -23,6 +23,7 @@ use App\Modules\CTAWave\Segments\SubtitleProfile;
 class Segments extends Module
 {
     //NOTE: Removed what was basically a non-check for CMFHD content in this commit
+    //NOTE: Removed info-only check for discontinuity of BaseMediaDecode time in thisi commit
     public function __construct()
     {
         parent::__construct();
