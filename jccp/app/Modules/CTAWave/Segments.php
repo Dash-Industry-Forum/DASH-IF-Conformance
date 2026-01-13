@@ -25,6 +25,8 @@ class Segments extends Module
 {
     //NOTE: Removed what was basically a non-check for CMFHD content in this commit
     //NOTE: Removed info-only check for discontinuity of BaseMediaDecode time in thisi commit
+    //NOTE: Removed overlap/gap checks in this commit, as these can only be done if we'd donload
+    //      all available segments
     public function __construct()
     {
         parent::__construct();

@@ -107,9 +107,6 @@ class AudioProfile
     }
 
     //Private helper functions
-    /**
-     * @param array<Segment> $segments
-     **/
     private function validateCrossPeriod(AdaptationSet $adaptationSet, string $profile): void
     {
         $mpdCache = app(MPDCache::class);
@@ -139,6 +136,10 @@ class AudioProfile
             );
         }
     }
+
+    /**
+     * @param array<Segment> $segments
+     **/
     private function getProfile(Representation $representation, array $segments): string
     {
         $sdType = $segments[0]->getSampleDescriptor();
