@@ -40,7 +40,7 @@ class ContentProtection
         $reporter = app(ModuleReporter::class);
         $this->v141Reporter = &$reporter->context(new ReporterContext(
             "CrossValidation",
-            "Legacy",
+            "LEGACY",
             "DVB",
             []
         ));

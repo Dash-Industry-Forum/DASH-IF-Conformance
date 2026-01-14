@@ -46,7 +46,6 @@ class Segments extends Module
         new Bitrate()->validateBitrate($representation, $segments);
         new TimedEventData()->validateTimedEventdata($representation, $segments);
         foreach ($segments as $segmentIndex => $segment) {
-            Log::info($segmentIndex . " " . $representation->path());
             if ($segmentIndex == 0) {
                 $this->validateInitialization($representation, $segment);
             }

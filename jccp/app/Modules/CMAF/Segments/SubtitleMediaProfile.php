@@ -28,7 +28,7 @@ class SubtitleMediaProfile
         $reporter = app(ModuleReporter::class);
         $this->cmafReporter = &$reporter->context(new ReporterContext(
             "Segments",
-            "Legacy",
+            "LEGACY",
             "CMAF",
             []
         ));

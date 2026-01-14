@@ -27,7 +27,6 @@ class DownloadSegment implements ShouldQueue
      */
     public function handle(): void
     {
-        Log::info("Dispatch found for url $this->url");
         $fp = fopen($this->targetPath, "w+");
         if (!$fp) {
             Log::error("Unable to open targetPath $this->targetPath");

@@ -51,7 +51,6 @@ class Bitrate
     public function validateBitrate(Representation $representation, array $segments): void
     {
 
-        Log::info($representation->path());
         $segmentSizes = [];
         $segmentDurations = [];
         $segmentBitrates = [];

@@ -57,7 +57,6 @@ class Downloader
 
 
         $initUrl = $representation->initializationUrl();
-        Log::info("Init URL: $initUrl");
         $initPath = '';
         if ($initUrl) {
             $initPath = "${representationDir}init.mp4";
@@ -69,7 +68,6 @@ class Downloader
         //      This also relates to the function where we detect whether a
         //      segment has been downloaded
         foreach ($representation->segmentUrls() as $segmentIndex => $segmentUrl) {
-            Log::info("Found url $segmentUrl");
             $segmentPath = "${representationDir}${segmentIndex}.mp4";
             $this->downloadFile($segmentUrl, $segmentPath);
             $segments['segments'][] = $segmentPath;

@@ -86,7 +86,6 @@ class Schematron extends Module
 
     private function runSchematron(): void
     {
-        Log::info("Running Schematron!");
         $sessionDir = session_dir();
         if (!Cache::get(cache_path(['mpd','resolved']))) {
             $this->runValidator();

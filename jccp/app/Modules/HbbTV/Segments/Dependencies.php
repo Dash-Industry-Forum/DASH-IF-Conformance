@@ -32,7 +32,7 @@ class Dependencies
         $reporter = app(ModuleReporter::class);
         $this->legacyReporter = &$reporter->context(new ReporterContext(
             "Segments",
-            "Legacy",
+            "LEGACY",
             "HbbTV",
             []
         ));
@@ -52,7 +52,7 @@ class Dependencies
         );
         $this->crosslegacyReporter = &$reporter->context(new ReporterContext(
             "CrossValidation",
-            "Legacy",
+            "LEGACY",
             "HbbTV",
             []
         ));
@@ -60,7 +60,7 @@ class Dependencies
             section: "DRM",
             test: "Inherit DVB legacy checks",
             dependentModule: "DVB Segments Module",
-            dependentSpec: "Legacy - DVB",
+            dependentSpec: "LEGACY - DVB",
             dependentSection: "DRM"
         );
         $this->dependentInitializationCase = $this->crosslegacyReporter->dependencyAdd(

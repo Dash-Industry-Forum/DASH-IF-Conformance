@@ -45,7 +45,7 @@ class ChunkedAdaptation
             section: '9.X.4.5',
             test: "Each Segment SHALL Conform to a CMAF Fragment",
             dependentModule: "CMAF Segments Module",
-            dependentSpec: "Legacy - CMAF",
+            dependentSpec: "LEGACY - CMAF",
             dependentSection: "Section 7.3.2.3",
             skipReason: "No Chunked Adaptation Set Found",
         );

@@ -210,7 +210,6 @@ class MPDCache
                         continue;
                     }
                     $result->representations[] = $representation;
-                    Log::info("Added representation " . $representation->path() . " for profile $profile");
                 }
             }
         }

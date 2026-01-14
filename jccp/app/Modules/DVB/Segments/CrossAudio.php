@@ -89,7 +89,6 @@ class CrossAudio
             $representationChannelConfig =
                 $representation->getAdaptationSet()->getDOMElements('AudioChannelConfiguration');
         }
-        Log::info(print_r($representationChannelConfig, true));
         foreach ($representationChannelConfig as $channelConfig) {
             if (
                 $channelConfig->getAttribute('schemeIdUri') ==

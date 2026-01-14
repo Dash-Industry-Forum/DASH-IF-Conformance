@@ -30,7 +30,6 @@ class ModuleLogger
     public function __construct(string $id = '', string $module = '', string $hook = '')
     {
         $this->id = $id;
-        Log::info("Construct!");
         if ($module) {
             $this->setModule($module);
         }

@@ -94,6 +94,45 @@ class ModuleReporter
         return $res;
     }
 
+    /**
+     * @return array<string, array<string, string>>
+     **/
+    public function asTable(): array
+    {
+        $res = [];
+
+        $serialized = $this->serialize(true);
+
+        foreach ($serialized as $element => $specResults) {
+            foreach ($specResults as $spec => $results) {
+                $res[$spec][$element] = $this->getSpecResult($spec, $results);
+            }
+        }
+
+        ksort($res);
+        return $res;
+    }
+
+    /**
+     * @param array<mixed> $results
+     **/
+    public function getSpecResult(string $spec, array $results): string
+    {
+        $res = "✓";
+        foreach ($results as $section => $sectionResults) {
+            foreach ($sectionResults['checks'] as $check => $checkResults) {
+                if ($checkResults['state'] == "FAIL") {
+                    return "✗";
+                }
+                if ($checkResults['state'] == "WARN") {
+                    $res =  "!";
+                }
+            }
+        }
+        return $res;
+    }
+
+
 
     /**
      * @param array<array<mixed>> $serialized

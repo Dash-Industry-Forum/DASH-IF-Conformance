@@ -68,7 +68,6 @@ class Segment
             return $resultPath;
         }
 
-        Log::info("Analyze with gpac: " . $this->initPath . " // " . $this->segmentPath);
 
         if (!file_exists($this->initPath) && !file_exists($this->segmentPath)) {
             return '';

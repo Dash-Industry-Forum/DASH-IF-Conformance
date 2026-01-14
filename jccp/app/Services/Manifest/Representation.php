@@ -95,7 +95,6 @@ class Representation
         $result = [];
 
         $base = $this->getBaseUrl();
-        Log::info("Base: $base");
 
         $segmentBase = $this->dom->getElementsByTagName('SegmentBase');
         if (count($segmentBase)) {
@@ -121,7 +120,6 @@ class Representation
                 $segmentTemplate->item(0)->getAttribute('media'),
                 $base
             )->toString();
-            Log::info("Template url: " . $segmentTemplateUrl);
             //TODO: Fix identifiers properly
             $uriTemplate = str_replace(
                 array('$Bandwidth$','$Number$','$Number%03d$','$RepresentationID$','$Time$'),
@@ -147,7 +145,6 @@ class Representation
                     'Number3d' => sprintf('%03d', ($startNumber + $i)),
                     'RepresentationID' => $this->getId(),
                 ])->toString();
-                Log::info("Segment url: " . $filledTemplate);
                 $result[] = $filledTemplate;
             }
         }

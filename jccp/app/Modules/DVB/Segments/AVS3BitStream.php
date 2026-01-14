@@ -218,14 +218,12 @@ class AVS3BitStream
         $supplementalProperties = $representation->getAdaptationSet()->getDOMElements('SupplementalProperty');
 
         $colrBoxes = $segment->boxAccess()->colr();
-        Log::info("AVS3 color" . print_r($colrBoxes, true));
 
         $colourPrimariesScheme = 'urn:avs:avs3:p6:2022:ColourPrimaries';
         $matrixCoefficientsScheme = 'urn:avs:avs3:p6:2022:MatrixCoefficients';
         $transferCharacteristicsScheme = 'urn:avs:avs3:p6:2022:TransferCharacteristics';
 
         foreach ($essentialProperties as $property) {
-            Log::info("EssentialProperty with scheme " . $property->getAttribute('schemeIdUri'));
             if ($property->getAttribute('schemeIdUri') == $colourPrimariesScheme) {
                 $this->avs3ColourPrimariesCase->pathAdd(
                     path: $representation->path() . "-init",
