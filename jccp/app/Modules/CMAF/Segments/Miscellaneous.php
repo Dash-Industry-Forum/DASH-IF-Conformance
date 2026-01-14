@@ -12,28 +12,27 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\AdaptationComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class Miscellaneous
+class Miscellaneous extends AdaptationComponent
 {
-    //Private subreporters
-    private SubReporter $cmafReporter;
-
     private TestCase $hdlrCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->cmafReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "CMAF",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "CMAF",
+                []
+            )
+        );
 
-        $this->hdlrCase = $this->cmafReporter->add(
+        $this->hdlrCase = $this->reporter->add(
             section: 'Section 7.3.4.1',
             test: "A CMAF switching set SHALL have only media type",
             skipReason: 'No video track found'
@@ -41,7 +40,7 @@ class Miscellaneous
     }
 
     //Public validation functions
-    public function validateMiscellaneous(AdaptationSet $adaptationSet): void
+    public function validateAdaptationSet(AdaptationSet $adaptationSet): void
     {
         $segmentManager = app(SegmentManager::class);
 

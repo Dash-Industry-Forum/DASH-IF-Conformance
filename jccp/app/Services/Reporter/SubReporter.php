@@ -36,6 +36,16 @@ class SubReporter
         return $verdict;
     }
 
+    public function store(): string
+    {
+        return serialize($this->cases);
+    }
+
+    public function restore(string $serialized): void
+    {
+        $this->cases = unserialize($serialized);
+    }
+
     public function &dependencyAdd(
         string $section,
         string $test,

@@ -13,6 +13,12 @@ use App\Services\Manifest\Representation;
 //TODO : Make singleton
 class SegmentManager
 {
+    /**
+     * @var array<string,array<Segment>> $loadedSegments;
+     **/
+    private array $loadedSegments = [];
+
+
     public function __construct()
     {
     }
@@ -22,11 +28,14 @@ class SegmentManager
      **/
     public function representationSegments(Representation $representation): array
     {
-        return $this->getSegments(
-            $representation->periodIndex,
-            $representation->adaptationSetIndex,
-            $representation->representationIndex
-        );
+        if (!array_key_exists($representation->path(), $this->loadedSegments)) {
+            $this->loadedSegments[$representation->path()] = $this->getSegments(
+                $representation->periodIndex,
+                $representation->adaptationSetIndex,
+                $representation->representationIndex
+            );
+        }
+        return $this->loadedSegments[$representation->path()];
     }
 
     public function queuedStatus(): int

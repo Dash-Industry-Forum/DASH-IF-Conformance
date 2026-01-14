@@ -7,45 +7,42 @@ use App\Services\Manifest\AdaptationSet;
 use App\Services\Manifest\Representation;
 use App\Services\Segment;
 use App\Services\SegmentManager;
-use App\Services\ModuleReporter;
-use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\AdaptationComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class AudioMediaProfile
+class AudioMediaProfile extends AdaptationComponent
 {
-    //Private subreporters
-    private SubReporter $cmafReporter;
-
     private TestCase $profileCase;
     private TestCase $brandCase;
     private TestCase $caacCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->cmafReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "CMAF",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "CMAF",
+                []
+            )
+        );
 
-        $this->profileCase = $this->cmafReporter->add(
+        $this->profileCase = $this->reporter->add(
             section: 'Section 7.3.4.1',
             test: "All CMAF audio tracks in a CMAF Switching Set SHALL conform to one CMAF Media Profile",
             skipReason: 'No audio switching set found'
         );
-        $this->brandCase = $this->cmafReporter->add(
+        $this->brandCase = $this->reporter->add(
             section: 'Section A.3',
             test: "If a CMAF brand is signalled, it SHALL correspond with the table",
             skipReason: 'No cmaf brands signalled'
         );
-        $this->caacCase = $this->cmafReporter->add(
+        $this->caacCase = $this->reporter->add(
             section: 'Section A.1.2/A.1.3/A.1.4',
             test: "Audio adaptation sets SHALL include at least one 'caac' representation",
             skipReason: 'No audio track found with CMAF profile found'
@@ -53,7 +50,7 @@ class AudioMediaProfile
     }
 
     //Public validation functions
-    public function validateAudioMediaProfiles(AdaptationSet $adaptationSet): void
+    public function validateAdaptationSet(AdaptationSet $adaptationSet): void
     {
         //TODO: Only if audio
         $signalledBrands = [];

@@ -10,40 +10,39 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\SegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class EncryptionProfile
+class EncryptionProfile extends SegmentComponent
 {
-    //Private subreporters
-    private SubReporter $cmafReporter;
-
     private TestCase $cmfhdCase;
     private TestCase $cmfhdcCase;
     private TestCase $cmfhdsCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->cmafReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "CMAF",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "CMAF",
+                []
+            )
+        );
 
-        $this->cmfhdCase = $this->cmafReporter->add(
+        $this->cmfhdCase = $this->reporter->add(
             section: 'Section A.1.2',
             test: "Tracks SHALL NOT contain a track encryption box",
             skipReason: "No 'cmfhd' track found"
         );
-        $this->cmfhdcCase = $this->cmafReporter->add(
+        $this->cmfhdcCase = $this->reporter->add(
             section: 'Section A.1.3',
             test: "Tracks SHALL be available in 'cenc' encryption",
             skipReason: "No 'cmfhdc' track found"
         );
-        $this->cmfhdsCase = $this->cmafReporter->add(
+        $this->cmfhdsCase = $this->reporter->add(
             section: 'Section A.1.4',
             test: "Tracks SHALL be available in 'cbcs' encryption",
             skipReason: "No 'cmfhds' track found"
@@ -51,7 +50,7 @@ class EncryptionProfile
     }
 
     //Public validation functions
-    public function validateEncryptionProfile(Representation $representation, Segment $segment, int $segmentIndex): void
+    public function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
 
         if ($representation->hasProfile("urn:mpeg:cmaf:representation_profile:cmfhd:2017")) {

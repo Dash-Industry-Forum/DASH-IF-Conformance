@@ -2,25 +2,14 @@
 
 namespace App\Modules\CMAF\Segments;
 
-use App\Services\MPDCache;
-use App\Services\Manifest\AdaptationSet;
 use App\Services\Manifest\Representation;
 use App\Services\Segment;
-use App\Services\SegmentManager;
-use App\Services\ModuleReporter;
-use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
-use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
+use App\Interfaces\ModuleComponents\InitSegmentComponent;
 
-class Initialization
+class Initialization extends InitSegmentComponent
 {
-    //Private subreporters
-    private SubReporter $cmafReporter;
-
     private TestCase $avcCase;
     private TestCase $hevcCase;
     private TestCase $hevcColourCase;
@@ -29,35 +18,37 @@ class Initialization
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->cmafReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "CMAF",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "CMAF",
+                []
+            )
+        );
 
-        $this->avcCase = $this->cmafReporter->add(
+        $this->avcCase = $this->reporter->add(
             section: 'Section 7.3.2.4',
             test: "Each AVC CMAF Fragment SHALL be independently accessible",
             skipReason: "No AVC track found"
         );
-        $this->hevcCase = $this->cmafReporter->add(
+        $this->hevcCase = $this->reporter->add(
             section: 'Section 7.3.2.4',
             test: "Each HEVC CMAF Fragment SHALL be independently accessible",
             skipReason: "No HEVC track found"
         );
-        $this->hevcColourCase = $this->cmafReporter->add(
+        $this->hevcColourCase = $this->reporter->add(
             section: 'Section 7.3.2.4',
             test: "The HEVCSampleEntry SHALL contain a 'colr' box with type 'nclx'",
             skipReason: "No 'hev1' track found"
         );
-        $this->audioCase = $this->cmafReporter->add(
+        $this->audioCase = $this->reporter->add(
             section: 'Section 7.3.2.4',
             test: "Each Audio CMAF Fragment SHALL be independently accessible",
             skipReason: "No Audio track found"
         );
-        $this->decryptionCase = $this->cmafReporter->add(
+        $this->decryptionCase = $this->reporter->add(
             section: 'Section 7.3.2.4',
             test: "Each encrypted Fragment SHALL be independently decryptable",
             skipReason: "No encrypted track found"
@@ -65,7 +56,7 @@ class Initialization
     }
 
     //Public validation functions
-    public function validateInitialization(Representation $representation, Segment $segment): void
+    public function validateInitSegment(Representation $representation, Segment $segment): void
     {
 
         $sdType = $segment->getSampleDescriptor();

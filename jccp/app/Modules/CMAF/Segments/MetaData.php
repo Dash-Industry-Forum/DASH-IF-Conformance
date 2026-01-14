@@ -10,34 +10,33 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\SegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class MetaData
+class MetaData extends SegmentComponent
 {
-    //Private subreporters
-    private SubReporter $cmafReporter;
-
     private TestCase $metaCase;
     private TestCase $udtaCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->cmafReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "CMAF",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "CMAF",
+                []
+            )
+        );
 
-        $this->metaCase = $this->cmafReporter->add(
+        $this->metaCase = $this->reporter->add(
             section: 'Section 7.5.2',
             test: "When metadata is carried in a 'meta' box, it SHALL NOT occur at the file level",
             skipReason: 'No video track found'
         );
-        $this->udtaCase = $this->cmafReporter->add(
+        $this->udtaCase = $this->reporter->add(
             section: 'Section 7.5.2',
             test: "When metadata is carried in a 'udta' box, it SHALL NOT occur at the file level",
             skipReason: 'No video track found'
@@ -45,7 +44,7 @@ class MetaData
     }
 
     //Public validation functions
-    public function validateMetaData(Representation $representation, Segment $segment, int $segmentIndex): void
+    public function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
 
         $boxList = $segment->getTopLevelBoxNames();

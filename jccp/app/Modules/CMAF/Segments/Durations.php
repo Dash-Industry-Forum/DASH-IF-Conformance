@@ -2,38 +2,28 @@
 
 namespace App\Modules\CMAF\Segments;
 
-use App\Services\MPDCache;
-use App\Services\Manifest\AdaptationSet;
 use App\Services\Manifest\Representation;
-use App\Services\Segment;
-use App\Services\SegmentManager;
-use App\Services\ModuleReporter;
-use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
-use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
+use App\Interfaces\ModuleComponents\SegmentListComponent;
 
-class Durations
+class Durations extends SegmentListComponent
 {
-    //Private subreporters
-    private SubReporter $cmafReporter;
-
     private TestCase $offsetCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->cmafReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "CMAF",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "CMAF",
+                []
+            )
+        );
 
-        $this->offsetCase = $this->cmafReporter->add(
+        $this->offsetCase = $this->reporter->add(
             section: 'Section 7.3.2.2',
             test: "baseMediaDecodeTime SHALL be equal to the sum of all prior segments",
             skipReason: "No valid track found"
@@ -42,10 +32,7 @@ class Durations
 
     //Public validation functions
 
-    /**
-     * @param array<Segment> $segments
-     **/
-    public function validateDurations(Representation $representation, array $segments): void
+    public function validateSegmentList(Representation $representation, array $segments): void
     {
         //TODO: Version that works without sidx boxes
         $currentOffset = 0;

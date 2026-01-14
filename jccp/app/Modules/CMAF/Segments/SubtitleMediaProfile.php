@@ -12,28 +12,27 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\AdaptationComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class SubtitleMediaProfile
+class SubtitleMediaProfile extends AdaptationComponent
 {
-    //Private subreporters
-    private SubReporter $cmafReporter;
-
     private TestCase $profileCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->cmafReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "CMAF",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "CMAF",
+                []
+            )
+        );
 
-        $this->profileCase = $this->cmafReporter->add(
+        $this->profileCase = $this->reporter->add(
             section: 'Section 7.3.4.1',
             test: "All CMAF subtitle tracks in a CMAF Switching Set SHALL conform to one CMAF Media Profile",
             skipReason: 'No subtitle switching set found'
@@ -41,7 +40,7 @@ class SubtitleMediaProfile
     }
 
     //Public validation functions
-    public function validateSubtitleMediaProfiles(AdaptationSet $adaptationSet): void
+    public function validateAdaptationSet(AdaptationSet $adaptationSet): void
     {
         //TODO: Check if all languages exist
         //TODO: Only if subtitle

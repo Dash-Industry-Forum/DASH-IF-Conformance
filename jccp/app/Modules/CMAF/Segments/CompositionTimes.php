@@ -10,28 +10,27 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\SegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class CompositionTimes
+class CompositionTimes extends SegmentComponent
 {
-    //Private subreporters
-    private SubReporter $cmafReporter;
-
     private TestCase $offsetCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->cmafReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "CMAF",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "CMAF",
+                []
+            )
+        );
 
-        $this->offsetCase = $this->cmafReporter->add(
+        $this->offsetCase = $this->reporter->add(
             section: 'Section 9.2.1',
             test: "Video tracks SHALL contain either 'trun' v1 or 'elst', but no both",
             skipReason: 'No video track found'
@@ -39,7 +38,7 @@ class CompositionTimes
     }
 
     //Public validation functions
-    public function validateCompositionTimes(Representation $representation, Segment $segment, int $segmentIndex): void
+    public function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
 
         $boxTree = $segment->getBoxNameTree();

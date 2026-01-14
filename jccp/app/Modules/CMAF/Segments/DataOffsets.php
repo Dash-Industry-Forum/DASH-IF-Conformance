@@ -12,28 +12,27 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\SegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class DataOffsets
+class DataOffsets extends SegmentComponent
 {
-    //Private subreporters
-    private SubReporter $cmafReporter;
-
     private TestCase $offsetCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->cmafReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "CMAF",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "CMAF",
+                []
+            )
+        );
 
-        $this->offsetCase = $this->cmafReporter->add(
+        $this->offsetCase = $this->reporter->add(
             section: 'Section 7.3.2.3',
             test: "All media samples in a CMAF chunk shall be addressed by byte offsets  in a 'trun' box",
             skipReason: "No valid track found"
@@ -41,7 +40,7 @@ class DataOffsets
     }
 
     //Public validation functions
-    public function validateDataOffsets(Representation $representation, Segment $segment, int $segmentIndex): void
+    public function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
         $sidxBoxes = $segment->boxAccess()->sidx();
         $moofBoxes = $segment->boxAccess()->moof();

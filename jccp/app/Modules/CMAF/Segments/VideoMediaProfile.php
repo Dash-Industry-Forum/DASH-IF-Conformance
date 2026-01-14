@@ -7,45 +7,42 @@ use App\Services\Manifest\AdaptationSet;
 use App\Services\Manifest\Representation;
 use App\Services\Segment;
 use App\Services\SegmentManager;
-use App\Services\ModuleReporter;
-use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\AdaptationComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class VideoMediaProfile
+class VideoMediaProfile extends AdaptationComponent
 {
-    //Private subreporters
-    private SubReporter $cmafReporter;
-
     private TestCase $profileCase;
     private TestCase $brandCase;
     private TestCase $cfhdCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->cmafReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "CMAF",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "CMAF",
+                []
+            )
+        );
 
-        $this->profileCase = $this->cmafReporter->add(
+        $this->profileCase = $this->reporter->add(
             section: 'Section 7.3.4.1',
             test: "All CMAF video tracks in a CMAF Switching Set SHALL conform to one CMAF Media Profile",
             skipReason: 'No video switching set found'
         );
-        $this->brandCase = $this->cmafReporter->add(
+        $this->brandCase = $this->reporter->add(
             section: 'Section A.2 / B.5',
             test: "If a CMAF brand is signalled, it SHALL correspond with the table",
             skipReason: 'No cmaf brands signalled'
         );
-        $this->cfhdCase = $this->cmafReporter->add(
+        $this->cfhdCase = $this->reporter->add(
             section: 'Section A.1.2/A.1.3/A.1.4',
             test: "Video adaptation sets SHALL include at least one 'cfhd' representation",
             skipReason: 'No video track found with CMAF profile found'
@@ -53,9 +50,9 @@ class VideoMediaProfile
     }
 
     //Public validation functions
-    public function validateVideoMediaProfiles(AdaptationSet $adaptationSet): void
+    public function validateAdaptationSet(AdaptationSet $adaptationSet): void
     {
-        //TODO: Only if video
+       //TODO: Only if video
         $signalledBrands = [];
 
         $segmentManager = app(SegmentManager::class);

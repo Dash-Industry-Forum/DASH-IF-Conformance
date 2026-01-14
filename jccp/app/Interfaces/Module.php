@@ -23,7 +23,6 @@ class Module
     public function __construct(string $name)
     {
         $this->name = $name;
-
     }
 
     public function isAutoDetected(): bool

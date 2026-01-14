@@ -18,7 +18,7 @@ class ResultsTable extends Component
         $this->refresh();
     }
 
-    public function render() : View
+    public function render(): View
     {
         return view('livewire.results-table');
     }
@@ -35,26 +35,28 @@ class ResultsTable extends Component
     }
 
 
-    public function getResult(string $section, string $element): string {
-        if (!array_key_exists($section,  $this->table)){
+    public function getResult(string $section, string $element): string
+    {
+        if (!array_key_exists($section, $this->table)) {
             return '';
         }
         $s = $this->table[$section];
-        if (!array_key_exists($element, $s)){
+        if (!array_key_exists($element, $s)) {
             return '';
         }
         return $s[$element];
     }
 
-    public function getResultClass(string $section, string $element): string {
+    public function getResultClass(string $section, string $element): string
+    {
         $result = $this->getResult($section, $element);
-        if ($result == '✗'){
+        if ($result == '✗') {
             return 'text-danger';
         }
-        if ($result == '!'){
+        if ($result == '!') {
             return 'text-warning';
         }
-        if ($result == '✓'){
+        if ($result == '✓') {
             return 'text-success';
         }
         return '';

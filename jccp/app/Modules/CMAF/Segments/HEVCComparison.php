@@ -12,34 +12,33 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\AdaptationComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class HEVCComparison
+class HEVCComparison extends AdaptationComponent
 {
-    //Private subreporters
-    private SubReporter $cmafReporter;
-
     private TestCase $spsCase;
     private TestCase $seiCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->cmafReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "CMAF",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "CMAF",
+                []
+            )
+        );
 
-        $this->spsCase = $this->cmafReporter->add(
+        $this->spsCase = $this->reporter->add(
             section: 'Section B.2.4',
             test: "CMAF Switching sets SHALL be constrained to include identical SPS information",
             skipReason: 'No HEVC switching set found'
         );
-        $this->seiCase = $this->cmafReporter->add(
+        $this->seiCase = $this->reporter->add(
             section: 'Section B.2.4',
             test: "CMAF Switching sets SHALL be constrained to include identical SEI nals",
             skipReason: 'No HEVC switching set found'
@@ -47,7 +46,7 @@ class HEVCComparison
     }
 
     //Public validation functions
-    public function validateHEVC(AdaptationSet $adaptationSet): void
+    public function validateAdaptationSet(AdaptationSet $adaptationSet): void
     {
         //TODO: Only if HEVC
         //TODO: Rename fields so they're not hardcoded ISOSegmentvalidator ones
