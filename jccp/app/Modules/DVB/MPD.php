@@ -36,8 +36,7 @@ class MPD extends Module
 
     public function __construct()
     {
-        parent::__construct();
-        $this->name = "DVB MPD Module";
+        parent::__construct("DVB MPD");
     }
 
     public function validateMPD(): void

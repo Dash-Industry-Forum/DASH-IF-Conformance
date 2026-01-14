@@ -29,8 +29,7 @@ class MPD extends Module
 
     public function __construct()
     {
-        parent::__construct();
-        $this->name = "Low Latency MPD Module";
+        parent::__construct("Low Latency MPD");
     }
 
     public function validateMPD(): void

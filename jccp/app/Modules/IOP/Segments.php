@@ -25,8 +25,7 @@ class Segments extends Module
 {
     public function __construct()
     {
-        parent::__construct();
-        $this->name = "IOP Segments Module";
+        parent::__construct("IOP Segments");
     }
 
     public function validateMPD(): void

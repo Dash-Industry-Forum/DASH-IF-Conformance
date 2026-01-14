@@ -27,8 +27,7 @@ class Segments extends Module
 {
     public function __construct()
     {
-        parent::__construct();
-        $this->name = "Low Latency Segments Module";
+        parent::__construct("Low Latency Segments");
     }
 
     public function validateMPD(): void

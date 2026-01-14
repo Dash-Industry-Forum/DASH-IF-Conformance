@@ -7,6 +7,9 @@ use App\Services\Segment;
 use App\Services\Manifest\Period;
 use App\Services\Manifest\Representation;
 use App\Services\Manifest\AdaptationSet;
+use Keepsuit\LaravelOpenTelemetry\Facades\Tracer;
+use OpenTelemetry\API\Trace\SpanInterface;
+use OpenTelemetry\Context\ScopeInterface;
 use Illuminate\Support\Facades\Log;
 
 class Module
@@ -14,8 +17,13 @@ class Module
     public string $name = '';
     public bool $autoDetected = false;
 
-    public function __construct()
+    private SpanInterface $mySpan;
+    private ScopeInterface $myScope;
+
+    public function __construct(string $name)
     {
+        $this->name = $name;
+
     }
 
     public function isAutoDetected(): bool
@@ -25,6 +33,17 @@ class Module
 
     public function validateMPD(): void
     {
+    }
+
+    public function activate(): void
+    {
+        $this->mySpan = Tracer::newSpan("Module - $this->name")->start();
+        $this->myScope = $this->mySpan->activate();
+    }
+    public function deactivate(): void
+    {
+        $this->myScope->detach();
+        $this->mySpan->end();
     }
 
     /**

@@ -28,8 +28,7 @@ class Schematron extends Module
 
     public function __construct()
     {
-        parent::__construct();
-        $this->name = "Global Module";
+        parent::__construct("Global Module");
         $this->registerChecks();
     }
 

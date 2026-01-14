@@ -29,8 +29,7 @@ class Segments extends Module
     //      all available segments
     public function __construct()
     {
-        parent::__construct();
-        $this->name = "CTAWave Segments Module";
+        parent::__construct("CTAWave Segments");
     }
 
 

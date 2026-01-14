@@ -23,8 +23,7 @@ class MPD extends Module
 {
     public function __construct()
     {
-        parent::__construct();
-        $this->name = "IOP MPD Module";
+        parent::__construct("IOP MPD");
     }
 
     public function validateMPD(): void

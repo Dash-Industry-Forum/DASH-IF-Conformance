@@ -103,7 +103,9 @@ class SpecManager
                 if (!$state['enabled'] && !$state['dependency']) {
                     continue;
                 }
+                $manifestSpec->activate();
                 $manifestSpec->validateMPD();
+                $manifestSpec->deactivate();
                 $state['run'] = true;
                 $runAtLeastOne = true;
             }
@@ -123,7 +125,9 @@ class SpecManager
                 if (!$state['enabled'] && !$state['dependency']) {
                     continue;
                 }
+                $manifestSpec->activate();
                 $this->validateAllRepresentations($manifestSpec);
+                $manifestSpec->deactivate();
                 $state['runSegments'] = true;
                 $runAtLeastOne = true;
             }

@@ -27,8 +27,7 @@ class Segments extends Module
 {
     public function __construct()
     {
-        parent::__construct();
-        $this->name = "Wave HLS Interop Segments Module";
+        parent::__construct("Wave HLS Interop Segments");
     }
 
 

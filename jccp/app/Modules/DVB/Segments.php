@@ -34,8 +34,7 @@ class Segments extends Module
 {
     public function __construct()
     {
-        parent::__construct();
-        $this->name = "DVB Segments Module";
+        parent::__construct("DVB Segments");
     }
 
     public function validateMPD(): void

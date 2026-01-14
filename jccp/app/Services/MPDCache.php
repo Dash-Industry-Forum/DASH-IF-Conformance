@@ -16,6 +16,7 @@ class MPDCache
     private ?\DOMElement $domCache = null;
     public string $error = '';
 
+
     public function __construct()
     {
     }

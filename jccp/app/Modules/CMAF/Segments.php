@@ -32,8 +32,7 @@ class Segments extends Module
 {
     public function __construct()
     {
-        parent::__construct();
-        $this->name = "CMAF Segments Module";
+        parent::__construct("CMAF Segments");
     }
 
     public function validateMPD(): void

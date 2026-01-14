@@ -21,8 +21,7 @@ class Segments extends Module
 {
     public function __construct()
     {
-        parent::__construct();
-        $this->name = "Dolby Segments Module";
+        parent::__construct("Dolby Segments");
     }
 
     public function validateMPD(): void
