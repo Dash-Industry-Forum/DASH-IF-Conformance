@@ -1,25 +1,29 @@
-<div class="container">
-  <div class="row">
-    <div class="col-6"></div>
-    <div class="col-2 text-center"><strong>MPD</strong></div>
-    <div class="col-2 text-center"><strong>Segments</strong></div>
-    <div class="col-2 text-center"><strong>CrossValidation</strong></div>
-  </div>
+<table class="container table table-striped">
+  <thead>
+  <tr class="row">
+    <th class="col-6"></th>
+    <th class="col-2 text-center">MPD</th>
+    <th class="col-2 text-center">Segments</th>
+    <th class="col-2 text-center">Cross Validation</th>
+  </tr>
+  </thead>
+  <tbody>
   @foreach ($this->table as $key => $tableSection)
-  <div class="row">
-    <div class="col-6">
+  <tr class="row">
+    <td class="col-6">
       {{$key}}
-    </div>
-    <div class="col-2 text-center {{ $this->getResultClass($key, 'MPD') }}">
+    </td>
+    <td class="col-2 text-center {{ $this->getResultClass($key, 'MPD') }}">
       {{ $this->getResult($key, 'MPD') }}
-    </div>
-    <div class="col-2 text-center {{ $this->getResultClass($key, 'Segments') }}">
+    </td>
+    <td class="col-2 text-center {{ $this->getResultClass($key, 'Segments') }}">
       {{ $this->getResult($key, 'Segments') }}
-    </div>
-    <div class="col-2 text-center {{ $this->getResultClass($key, 'CrossValidation') }}">
+    </td>
+    <td class="col-2 text-center {{ $this->getResultClass($key, 'CrossValidation') }}">
       {{ $this->getResult($key, 'CrossValidation') }}
-    </div>
-  </div>
+    </td>
+  </tr>
 
   @endforeach
-</div>
+  </tbody>
+</table>
