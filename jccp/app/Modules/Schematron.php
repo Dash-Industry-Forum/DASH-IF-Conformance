@@ -5,7 +5,6 @@ namespace App\Modules;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Cache;
 use App\Interfaces\Module;
-use App\Services\ModuleLogger;
 use App\Services\MPDCache;
 use App\Services\ModuleReporter;
 use App\Services\Reporter\SubReporter;
@@ -238,8 +237,6 @@ class Schematron extends Module
         ) {
             $this->runValidator();
         }
-
-        $logger = app(ModuleLogger::class);
 
         $validatorOutput = $this->getValidatorOutput();
 

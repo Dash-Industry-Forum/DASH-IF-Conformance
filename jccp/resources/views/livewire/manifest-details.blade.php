@@ -3,23 +3,8 @@
   <livewire:segment-queue />
   <livewire:spec-manager />
 
-  <div class="container">
-    <div class="row">
-      <div class="col-6"></div>
-      <div class="col-2"><strong>Manifest</strong></div>
-      <div class="col-2"><strong>Segments</strong></div>
-      <div class="col-2"><strong>CrossValidation</strong></div>
-    </div>
-    @foreach ($this->table as $key => $tableSection)
-    <div class="row">
-      <div class="col-6">{{$key}}</div>
-      <div class="col-2">{{ array_key_exists('MPD', $tableSection) ? $tableSection['MPD'] : '' }}</div>
-      <div class="col-2">{{ array_key_exists('Segments', $tableSection) ? $tableSection['Segments'] : '' }}</div>
-      <div class="col-2">{{ array_key_exists('CrossValidation', $tableSection) ? $tableSection['CrossValidation'] : '' }}</div>
-    </div>
+  <livewire:results-table />
 
-    @endforeach
-  </div>
 
   <div class="bg-body-secondary" style="padding: 10px">
       <div class="accordion accordion-flush" id="resultsAccordion">
