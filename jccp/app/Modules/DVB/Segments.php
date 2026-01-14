@@ -49,8 +49,8 @@ class Segments extends Module
 
     public function validateCrossAdaptationSet(AdaptationSet $adaptationSet): void
     {
-        new ContentProtection()->validateContentProtection($adaptationSet);
-        new SwitchableRepresentation()->validateSwitchableRepresentations($adaptationSet);
+        new ContentProtection()->withAdaptationSet($adaptationSet);
+        new SwitchableRepresentation()->withAdaptationSet($adaptationSet);
     }
 
     /**
@@ -70,20 +70,20 @@ class Segments extends Module
 
     private function validateInitialization(Representation $representation, Segment $segment): void
     {
-        new LegacyCodecs()->validateCodecs($representation, $segment);
-        new Codecs()->validateCodecs($representation, $segment);
-        new BitStream()->validateBitStream($representation, $segment);
-        new AVS3BitStream()->validateBitStream($representation, $segment);
-        new CrossCodecs()->validateCodec($representation, $segment);
-        new CrossAudio()->validateAudioParameters($representation, $segment);
+        new LegacyCodecs()->withInitSegment($representation, $segment);
+        new Codecs()->withInitSegment($representation, $segment);
+        new BitStream()->withInitSegment($representation, $segment);
+        new AVS3BitStream()->withInitSegment($representation, $segment);
+        new CrossCodecs()->withInitSegment($representation, $segment);
+        new CrossAudio()->withInitSegment($representation, $segment);
     }
 
     private function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
-        new BoxCount()->validateBoxCount($representation, $segment, $segmentIndex);
-        new Durations()->validateDurations($representation, $segment, $segmentIndex);
-        new SAPTypes()->validateSAPTypes($representation, $segment, $segmentIndex);
-        new Subtitle()->validateSubtitles($representation, $segment, $segmentIndex);
-        new SEILocations()->validateSEILocations($representation, $segment, $segmentIndex);
+        new BoxCount()->withSegment($representation, $segment, $segmentIndex);
+        new Durations()->withSegment($representation, $segment, $segmentIndex);
+        new SAPTypes()->withSegment($representation, $segment, $segmentIndex);
+        new Subtitle()->withSegment($representation, $segment, $segmentIndex);
+        new SEILocations()->withSegment($representation, $segment, $segmentIndex);
     }
 }

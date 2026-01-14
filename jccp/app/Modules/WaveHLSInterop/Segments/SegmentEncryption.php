@@ -11,33 +11,32 @@ use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Reporter\TestCase;
 use App\Services\Validators\Boxes;
 use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\SegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class SegmentEncryption
+class SegmentEncryption extends SegmentComponent
 {
-    //Private subreporters
-    private SubReporter $waveReporter;
-
     private TestCase $psshCase;
     private TestCase $ivCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->waveReporter = &$reporter->context(new ReporterContext(
+        parent::__construct(
+            self::class,
+            new ReporterContext(
             "Segments",
             "CTA-5005-A",
             "Final",
             []
         ));
 
-        $this->psshCase = $this->waveReporter->add(
+        $this->psshCase = $this->reporter->add(
             section: '4.3.2 - Encrypted Media Presentations',
             test: "Any individual CMAF Segment SHALL have a single encryption key",
             skipReason: 'Stream is not encrypted'
         );
-        $this->ivCase = $this->waveReporter->add(
+        $this->ivCase = $this->reporter->add(
             section: '4.3.2 - Encrypted Media Presentations',
             test: "Any individual CMAF Segment SHALL have a single Initialization Vector",
             skipReason: 'Stream is not encrypted'
@@ -45,11 +44,8 @@ class SegmentEncryption
     }
 
     //Public validation functions
-    public function validateSegmentEncryption(
-        Representation $representation,
-        Segment $segment,
-        int $segmentIndex
-    ): void {
+    public function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
+    {
 
         $this->validatePSSH($representation, $segment, $segmentIndex);
         $this->validateSENC($representation, $segment, $segmentIndex);

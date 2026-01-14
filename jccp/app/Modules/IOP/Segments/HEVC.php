@@ -11,34 +11,34 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
+use App\Interfaces\ModuleComponents\InitSegmentComponent;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class HEVC
+class HEVC extends InitSegmentComponent
 {
-    //Private subreporters
-    private SubReporter $legacyReporter;
-
     private TestCase $codecCase;
     private TestCase $hvccBoxCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "DASH-IF IOP",
-            "4.3",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "DASH-IF IOP",
+                "4.3",
+                []
+            )
+        );
 
-        $this->codecCase = $this->legacyReporter->add(
+        $this->codecCase = $this->reporter->add(
             section: '6.2.5.2',
             test: "All HEVC representations SHALL be encoded using hev1",
             skipReason: "@bitstreamSwitching flag not set, or no HEVC representation found",
         );
-        $this->hvccBoxCase = $this->legacyReporter->add(
+        $this->hvccBoxCase = $this->reporter->add(
             section: '6.2.5.2',
             test: "All HEVC representations SHALL include an 'hvcC' box containing SPS, PPS and VPS NALs",
             skipReason: "@bitstreamSwitching flag not set, or no HEVC representation found",
@@ -46,7 +46,7 @@ class HEVC
     }
 
     //Public validation functions
-    public function validateHEVC(Representation $representation, Segment $segment): void
+    public function validateInitSegment(Representation $representation, Segment $segment): void
     {
         if ($representation->getTransientAttribute('bitstreamSwitching') == '') {
             return;

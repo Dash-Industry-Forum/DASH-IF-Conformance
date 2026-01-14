@@ -12,39 +12,39 @@ use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\SegmentListComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class SegmentAdaptation
+class SegmentAdaptation extends SegmentListComponent
 {
-    //Private subreporters
-    private SubReporter $legacyReporter;
-
     private TestCase $moofCase;
     private TestCase $smdsCase;
     private TestCase $durationCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "Low Latency",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "Low Latency",
+                []
+            )
+        );
 
-        $this->moofCase = $this->legacyReporter->add(
+        $this->moofCase = $this->reporter->add(
             section: '9.X.4.4',
             test: "Each Segment SHOULD include only a single 'moof' box",
             skipReason: "No Segment Adaptation Set Found",
         );
-        $this->smdsCase = $this->legacyReporter->add(
+        $this->smdsCase = $this->reporter->add(
             section: '9.X.4.4',
             test: "A segment with a single 'moof' box may carry an 'smds' brand",
             skipReason: "No Segment with a single 'moof' box found",
         );
-        $this->durationCase = $this->legacyReporter->add(
+        $this->durationCase = $this->reporter->add(
             section: '9.X.4.4',
             test: "A segment SHALL NOT exceed 50% and SHOULD not exceed 30% of the tareget latency",
             skipReason: "No Segment Adaptation Set Found, or no target latency found",
@@ -55,16 +55,16 @@ class SegmentAdaptation
     /**
      * @param array<Segment> $segments
      **/
-    public function validateSegmentAdaptation(Representation $representation, array $segments): void
+    public function validateSegmentList(Representation $representation, array $segments): void
     {
         foreach ($segments as $segmentIndex => $segment) {
-            $this->validateSegment($representation, $segment, $segmentIndex);
+            $this->validateSingleSegment($representation, $segment, $segmentIndex);
             $this->validateDuration($representation, $segment, $segmentIndex);
         }
     }
 
     //Private helper functions
-    public function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
+    public function validateSingleSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
         $topLevelBoxes = $segment->getTopLevelBoxNames();
 

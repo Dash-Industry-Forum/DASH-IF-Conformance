@@ -11,27 +11,26 @@ use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Services\Reporter\TestCase;
 use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\SegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class AddressableMediaObject
+class AddressableMediaObject extends SegmentComponent
 {
-    //Private subreporters
-    private SubReporter $waveReporter;
-
     private TestCase $sidxCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->waveReporter = &$reporter->context(new ReporterContext(
+        parent::__construct(
+            self::class,
+            new ReporterContext(
             "Segments",
             "CTA-5005-A",
             "Final",
             []
         ));
 
-        $this->sidxCase = $this->waveReporter->add(
+        $this->sidxCase = $this->reporter->add(
             section: '4.1.2 - Basic On-Demand and Live Streaming',
             test: "CMAF Track Files [..] SHALL contain a single 'sidx' following the CMAF header " .
             "and preceding any CMAF fragments",
@@ -40,11 +39,8 @@ class AddressableMediaObject
     }
 
     //Public validation functions
-    public function validateAddressableMediaObject(
-        Representation $representation,
-        Segment $segment,
-        int $segmentIndex
-    ): void {
+    public function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
+    {
         $boxOrder = $segment->getTopLevelBoxNames();
 
         $sidxIndices = array_keys($boxOrder, 'sidx');

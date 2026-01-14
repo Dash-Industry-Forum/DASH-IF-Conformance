@@ -39,7 +39,7 @@ class Segments extends Module
 
     public function validateCrossAdaptationSet(AdaptationSet $adaptationSet): void
     {
-        new CrossAdaptation()->validateCrossAdaptation($adaptationSet);
+        new CrossAdaptation()->withAdaptationSet($adaptationSet);
     }
 
     /**
@@ -59,9 +59,9 @@ class Segments extends Module
 
     private function validateInitialization(Representation $representation, Segment $segment): void
     {
-        new AVC()->validateAVC($representation, $segment);
-        new HEVC()->validateHEVC($representation, $segment);
-        new Video()->validateVideo($representation, $segment);
+        new AVC()->withInitSegment($representation, $segment);
+        new HEVC()->withInitSegment($representation, $segment);
+        new Video()->withInitSegment($representation, $segment);
     }
 
     private function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void

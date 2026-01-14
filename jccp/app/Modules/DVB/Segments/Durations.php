@@ -10,36 +10,36 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
+use App\Interfaces\ModuleComponents\SegmentComponent;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class Durations
+class Durations extends SegmentComponent
 {
-    //Private subreporters
-    private SubReporter $v141Reporter;
-
     private TestCase $durationCase;
     private TestCase $minDurationCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->v141Reporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "DVB",
-            "v1.4.1",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "DVB",
+                "v1.4.1",
+                []
+            )
+        );
 
-        $this->durationCase = $this->v141Reporter->add(
+        $this->durationCase = $this->reporter->add(
             section: '4.5',
             test: 'Each subsegment shall have a duration of not more than 15 seconds',
             skipReason: ''
         );
 
         //TODO Actual check is 960ms
-        $this->minDurationCase = $this->v141Reporter->add(
+        $this->minDurationCase = $this->reporter->add(
             section: '4.5',
             test: 'Each subsegment shall be at least 1 second',
             skipReason: ''
@@ -47,7 +47,7 @@ class Durations
     }
 
     //Public validation functions
-    public function validateDurations(Representation $representation, Segment $segment, int $segmentIndex): void
+    public function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
         //TODO Check only for audio/video
         $this->validateDurationLowerBound($representation, $segment, $segmentIndex);

@@ -11,15 +11,12 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\InitSegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class DASHProfile
+class DASHProfile extends InitSegmentComponent
 {
-    //Private subreporters
-    private SubReporter $legacyReporter;
-
     private TestCase $codecCase;
     private TestCase $contentTypeCase;
     private TestCase $mimeTypeCase;
@@ -32,56 +29,58 @@ class DASHProfile
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "CrossValidation",
-            "LEGACY",
-            "Low Latency",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "CrossValidation",
+                "LEGACY",
+                "Low Latency",
+                []
+            )
+        );
 
         //TODO: Extract to different spec and create dependency
-        $this->contentTypeCase = $this->legacyReporter->add(
+        $this->contentTypeCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.4',
             test: "@contentType shall correspond with the hdlr type",
             skipReason: "No representation found",
         );
-        $this->mimeTypeCase = $this->legacyReporter->add(
+        $this->mimeTypeCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.4',
             test: "@mimeType SHALL be either '<@contentType>/mp4' or <#contentType>/mp4, profiles='cmfc'",
             skipReason: "No representation found",
         );
-        $this->maxWidthCase = $this->legacyReporter->add(
+        $this->maxWidthCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.4',
             test: "@maxWidth SHOULD correspond to the width in the 'tkhd' box",
             skipReason: "No video representation found",
         );
-        $this->maxHeightCase = $this->legacyReporter->add(
+        $this->maxHeightCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.4',
             test: "@maxHeight SHOULD correspond to the height in the 'tkhd' box",
             skipReason: "No video representation found",
         );
-        $this->codecCase = $this->legacyReporter->add(
+        $this->codecCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.4',
             test: "@codecs shall correspond with the sample descriptor type",
             skipReason: "No representation found",
         );
-        $this->encryptionCase = $this->legacyReporter->add(
+        $this->encryptionCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.4',
             test: "If the content is protected, a ContentProtection element SHALL be present and set appropriately",
             skipReason: "No protection found",
         );
-        $this->timescaleCase = $this->legacyReporter->add(
+        $this->timescaleCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.4',
             test: "@timescale SHALL correspond to the timescale in the 'mdhd' box",
             skipReason: "No representation found",
         );
-        $this->alignmentCase = $this->legacyReporter->add(
+        $this->alignmentCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.4',
             test: "Either segmentAlignment or subsegmentAlignment SHALL be set",
             skipReason: "No representation found",
         );
-        $this->eventCase = $this->legacyReporter->add(
+        $this->eventCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "Event message streams MAY be signalled with InbandEventStream elements",
             skipReason: "No representation found",
@@ -89,7 +88,7 @@ class DASHProfile
     }
 
     //Public validation functions
-    public function validateCMAFProfile(Representation $representation, Segment $segment): void
+    public function validateInitSegment(Representation $representation, Segment $segment): void
     {
         $this->validateContentType($representation, $segment);
         $this->validateMimeType($representation, $segment);

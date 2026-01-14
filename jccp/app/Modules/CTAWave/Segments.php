@@ -50,9 +50,9 @@ class Segments extends Module
 
     public function validateCrossAdaptationSet(AdaptationSet $adaptationSet): void
     {
-        new VideoProfile()->validateVideoProfile($adaptationSet);
-        new AudioProfile()->validateAudioProfile($adaptationSet);
-        new SubtitleProfile()->validateSubtitleProfile($adaptationSet);
+        new VideoProfile()->withAdaptationSet($adaptationSet);
+        new AudioProfile()->withAdaptationSet($adaptationSet);
+        new SubtitleProfile()->withAdaptationSet($adaptationSet);
     }
 
     /**

@@ -12,28 +12,27 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\AdaptationComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class ChunkedCrossAdaptation
+class ChunkedCrossAdaptation extends AdaptationComponent
 {
-    //Private subreporters
-    private SubReporter $legacyReporter;
-
     private TestCase $crossValidCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "Low Latency",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "Low Latency",
+                []
+            )
+        );
 
-        $this->crossValidCase = $this->legacyReporter->add(
+        $this->crossValidCase = $this->reporter->add(
             section: '9.X.4.5',
             test: "One of the following should hold",
             skipReason: "No Chunked Adaptation Set with multiple representations Found",
@@ -41,7 +40,7 @@ class ChunkedCrossAdaptation
     }
 
     //Public validation functions
-    public function validateChunkedCrossAdaptation(AdaptationSet $adaptationSet): void
+    public function validateAdaptationSet(AdaptationSet $adaptationSet): void
     {
         $segmentTemplates = $adaptationSet->getDOMElements('SegmentTemplate');
         if (!count($segmentTemplates)) {

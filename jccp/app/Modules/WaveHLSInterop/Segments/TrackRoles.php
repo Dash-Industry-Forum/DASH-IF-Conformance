@@ -10,15 +10,12 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Reporter\TestCase;
 use App\Services\Validators\Boxes;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\InitSegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class TrackRoles
+class TrackRoles extends InitSegmentComponent
 {
-    //Private subreporters
-    private SubReporter $waveReporter;
-
     private string $section = '4.7.2 - Carriage of Track Role';
 
     private TestCase $kindCase;
@@ -26,25 +23,21 @@ class TrackRoles
 
     public function __construct()
     {
-        $this->registerChecks();
-    }
-
-    private function registerChecks(): void
-    {
-        $reporter = app(ModuleReporter::class);
-        $this->waveReporter = &$reporter->context(new ReporterContext(
+        parent::__construct(
+            self::class,
+            new ReporterContext(
             "Segments",
             "CTA-5005-A",
             "Final",
             []
         ));
 
-        $this->kindCase = $this->waveReporter->add(
+        $this->kindCase = $this->reporter->add(
             section: $this->section,
             test: "Track roles SHALL be stored in one or more 'kind' boxes [..]",
             skipReason: "No track role found in MPD and no 'kind' boxes found"
         );
-        $this->roleNameCase = $this->waveReporter->add(
+        $this->roleNameCase = $this->reporter->add(
             section: $this->section,
             test: "Track roles SHALL be representaed by the DASH Role scheme when possible",
             skipReason: "No 'kind' boxes found"
@@ -52,7 +45,7 @@ class TrackRoles
     }
 
     //Public validation functions
-    public function validateTrackRoles(Representation $representation, Segment $segment): void
+    public function validateInitSegment(Representation $representation, Segment $segment): void
     {
         $roles = [];
         foreach ($representation->getTransientDOMElements('Role') as $roleElement) {

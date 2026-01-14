@@ -11,43 +11,41 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\AdaptationComponent;
 use App\Services\SegmentManager;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class SwitchableRepresentation
+class SwitchableRepresentation extends AdaptationComponent
 {
-    //Private subreporters
-    private SubReporter $v141Reporter;
-
     private TestCase $entryTypeCase;
     private TestCase $trackIdCase;
     private TestCase $keyIdCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->v141Reporter = &$reporter->context(new ReporterContext(
-            "CrossValidation",
-            "DVB",
-            "v1.4.1",
-            []
-        ));
-
-        $this->entryTypeCase = $this->v141Reporter->add(
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "CrossValidation",
+                "DVB",
+                "v1.4.1",
+                []
+            )
+        );
+        $this->entryTypeCase = $this->reporter->add(
             section: '4.3',
             test: "Initialization segment for Representations with an Adaptation Set SHALL have the same " .
                   "sample entry type",
             skipReason: 'No adaptationset(s) found'
         );
-        $this->trackIdCase = $this->v141Reporter->add(
+        $this->trackIdCase = $this->reporter->add(
             section: '4.3',
             test: "Initialization segment for Representations with an Adaptation Set SHALL have the same " .
                   "track_ID",
             skipReason: 'No adaptationset(s) found'
         );
-        $this->keyIdCase = $this->v141Reporter->add(
+        $this->keyIdCase = $this->reporter->add(
             section: '8.3',
             test: "Initialization segment for Representations with an Adaptation Set SHALL have the same " .
                   "default_KID",
@@ -56,7 +54,7 @@ class SwitchableRepresentation
     }
 
     //Public validation functions
-    public function validateSwitchableRepresentations(AdaptationSet $adaptationSet): void
+    public function validateAdaptationSet(AdaptationSet $adaptationSet): void
     {
         $this->validateGeneric($adaptationSet);
         $this->validateVideo($adaptationSet);

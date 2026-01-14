@@ -13,14 +13,12 @@ use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Services\Validators\Boxes\SIDXBox;
 use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\SegmentListComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class SegmentTiming
+class SegmentTiming extends SegmentListComponent
 {
-    //Private subreporters
-    private SubReporter $legacyReporter;
-
     private TestCase $templateDurationCase;
     private TestCase $repeatCase;
     private TestCase $chunkCountCase;
@@ -29,36 +27,38 @@ class SegmentTiming
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "CrossValidation",
-            "LEGACY",
-            "Low Latency",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "CrossValidation",
+                "LEGACY",
+                "Low Latency",
+                []
+            )
+        );
 
         //TODO: Extract to different spec and create dependency
-        $this->templateDurationCase = $this->legacyReporter->add(
+        $this->templateDurationCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "The tolerance for the EPT relative to the first stegment SHALL NOT exceed 50%",
             skipReason: "No SegmentTimeline found",
         );
-        $this->repeatCase = $this->legacyReporter->add(
+        $this->repeatCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "If an 'S' elements and it predecessor share the same duration, they SHOULD be combined",
             skipReason: "No SegmentTimeline found",
         );
-        $this->chunkCountCase = $this->legacyReporter->add(
+        $this->chunkCountCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "If each chunk is an addressable object, '@k SHALL be present in the SegmentTimeline",
             skipReason: "No SegmentTimeline found",
         );
-        $this->timelineEPTCase = $this->legacyReporter->add(
+        $this->timelineEPTCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "The 't' attribute SHALL correspond to the EPT of the corresponding segment",
             skipReason: "No SegmentTimeline found",
         );
-        $this->timelineDurationCase = $this->legacyReporter->add(
+        $this->timelineDurationCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "The 'd' attribute SHALL correspond to the duration of the corresponding segment",
             skipReason: "No SegmentTimeline found",
@@ -73,7 +73,7 @@ class SegmentTiming
     /**
      * @param array<Segment> $segments
      **/
-    public function validateTimings(Representation $representation, array $segments): void
+    public function validateSegmentList(Representation $representation, array $segments): void
     {
         $segmentTemplate = $representation->getTransientDOMElements('SegmentTemplate');
         if (!empty($segmentTemplate) && $segmentTemplate[0]) {

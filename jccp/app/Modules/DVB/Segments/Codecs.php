@@ -10,34 +10,33 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\InitSegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class Codecs
+class Codecs extends InitSegmentComponent
 {
-    //Private subreporters
-    private SubReporter $v141Reporter;
-
     private TestCase $inbandStorageCase;
     private TestCase $initCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->v141Reporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "DVB",
-            "v1.4.1",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "DVB",
+                "v1.4.1",
+                []
+            )
+        );
 
-        $this->inbandStorageCase = $this->v141Reporter->add(
+        $this->inbandStorageCase = $this->reporter->add(
             section: '5.1.2',
             test: "Content SHOULD be offered using 'avc3' or 'avc4'",
             skipReason: "No AVC stream found"
         );
-        $this->initCase = $this->v141Reporter->add(
+        $this->initCase = $this->reporter->add(
             section: '5.1.2',
             test: 'All information necessary to decode any Segment shall be provided in the init segment',
             skipReason: "No 'avc1' or 'avc2' stream found"
@@ -45,7 +44,7 @@ class Codecs
     }
 
     //Public validation functions
-    public function validateCodecs(Representation $representation, Segment $segment): void
+    public function validateInitSegment(Representation $representation, Segment $segment): void
     {
         $sdType = $segment->getSampleDescriptor();
         if ($sdType === null) {

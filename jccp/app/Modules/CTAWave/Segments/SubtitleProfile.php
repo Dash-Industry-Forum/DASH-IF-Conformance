@@ -14,14 +14,12 @@ use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Reporter\TestCase;
 use App\Services\Validators\Boxes;
 use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\AdaptationComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class SubtitleProfile
+class SubtitleProfile extends AdaptationComponent
 {
-    //Private subreporters
-    private SubReporter $waveReporter;
-
     private TestCase $validProfileCase;
     private TestCase $singleProfileCase;
     private TestCase $mandatoryProfileCase;
@@ -29,32 +27,34 @@ class SubtitleProfile
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->waveReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "WAVE Content Spec 2018Ed",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "WAVE Content Spec 2018Ed",
+                []
+            )
+        );
 
-        $this->validProfileCase = $this->waveReporter->add(
+        $this->validProfileCase = $this->reporter->add(
             section: '4.4.1',
             test: "Each WAVE Subtitle Media profile SHALL conform to normative ref. listed in Table 1",
             skipReason: "No video track found",
         );
-        $this->singleProfileCase = $this->waveReporter->add(
+        $this->singleProfileCase = $this->reporter->add(
             section: '4.1',
             test: "Wave content SHALL include one or more switch sets conforming to at least one approved CMAF profile",
             skipReason: "No corresponding adaptations"
         );
         //NOTE: This check seems very conflicting with the above one....
-        $this->mandatoryProfileCase = $this->waveReporter->add(
+        $this->mandatoryProfileCase = $this->reporter->add(
             section: '5 ',
             test: "If a subtitle track is included, the conforming (presentation will at least " .
                   "include TTML Text Media profile",
             skipReason: "No corresponding adaptations"
         );
-        $this->crossPeriodProfileCase = $this->waveReporter->add(
+        $this->crossPeriodProfileCase = $this->reporter->add(
             section: "7.2.2",
             test: "Sequential sets SHALL conform to the same CMAF profile",
             skipReason: "Single period found",
@@ -62,7 +62,7 @@ class SubtitleProfile
     }
 
     //Public validation functions
-    public function validateSubtitleProfile(AdaptationSet $adaptationSet): void
+    public function validateAdaptationSet(AdaptationSet $adaptationSet): void
     {
         if (
             $adaptationSet->getAttribute('mimeType') == 'audio/mp4' ||

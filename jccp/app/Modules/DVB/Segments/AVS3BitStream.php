@@ -11,14 +11,12 @@ use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\InitSegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class AVS3BitStream
+class AVS3BitStream extends InitSegmentComponent
 {
-    //Private subreporters
-    private SubReporter $v141Reporter;
-
     private TestCase $avs3ColourPrimariesCase;
     private TestCase $avs3MatrixCoefficientsCase;
     private TestCase $avs3TransferCharacteriticsCase;
@@ -27,38 +25,40 @@ class AVS3BitStream
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->v141Reporter = &$reporter->context(new ReporterContext(
-            "CrossValidation",
-            "DVB",
-            "v1.4.1",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "CrossValidation",
+                "DVB",
+                "v1.4.1",
+                []
+            )
+        );
 
-        $this->avs3ColourPrimariesCase = $this->v141Reporter->add(
+        $this->avs3ColourPrimariesCase = $this->reporter->add(
             section: '5.4.6',
             test: "The value of the signalled ColourPrimaries Property in the MPD SHALL match " .
                   "colour_primaries in the VUI'",
             skipReason: "No AVS3 stream found, or no ColourPrimaries property found"
         );
-        $this->avs3MatrixCoefficientsCase = $this->v141Reporter->add(
+        $this->avs3MatrixCoefficientsCase = $this->reporter->add(
             section: '5.4.6',
             test: "The value of the signalled MatrixCoefficients Property in the MPD SHALL match " .
                   "matrix_coefficients in the VUI'",
             skipReason: "No AVS3 stream found, or no MatrixCoefficients property found"
         );
-        $this->avs3TransferCharacteriticsCase = $this->v141Reporter->add(
+        $this->avs3TransferCharacteriticsCase = $this->reporter->add(
             section: '5.4.6',
             test: "The value of the signalled TransferCharacteristics Property in the MPD SHALL match " .
                   "transfer_characteristics in the VUI'",
             skipReason: "No AVS3 stream found, or no TransferCharacteristics property found"
         );
-        $this->avs3HLG10Case = $this->v141Reporter->add(
+        $this->avs3HLG10Case = $this->reporter->add(
             section: '5.4.7',
             test: "Use of HLG10 within in an AdapationSet shall be signalled according to this section",
             skipReason: "No AVS3 stream found"
         );
-        $this->avs3PQ10Case = $this->v141Reporter->add(
+        $this->avs3PQ10Case = $this->reporter->add(
             section: '5.4.8',
             test: "Use of PQ10 within in an AdapationSet shall be signalled according to this section",
             skipReason: "No AVS3 stream found"
@@ -66,7 +66,7 @@ class AVS3BitStream
     }
 
     //Public validation functions
-    public function validateBitStream(Representation $representation, Segment $segment): void
+    public function validateInitSegment(Representation $representation, Segment $segment): void
     {
         $this->validateSignalling($representation, $segment);
     }

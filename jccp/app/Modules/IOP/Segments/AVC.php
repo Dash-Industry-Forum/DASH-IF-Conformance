@@ -12,33 +12,33 @@ use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\InitSegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class AVC
+class AVC extends InitSegmentComponent
 {
-    //Private subreporters
-    private SubReporter $legacyReporter;
-
     private TestCase $codecCase;
     private TestCase $avccBoxCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "DASH-IF IOP",
-            "4.3",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "DASH-IF IOP",
+                "4.3",
+                []
+            )
+        );
 
-        $this->codecCase = $this->legacyReporter->add(
+        $this->codecCase = $this->reporter->add(
             section: '6.2.5.2',
             test: "All AVC representations SHALL be encoded using avc3",
             skipReason: "@bitstreamSwitching flag not set, or no AVC representation found",
         );
-        $this->avccBoxCase = $this->legacyReporter->add(
+        $this->avccBoxCase = $this->reporter->add(
             section: '6.2.5.2',
             test: "All AVC representations SHALL include an 'avcC' box containing SPS and PPS NALs",
             skipReason: "@bitstreamSwitching flag not set, or no AVC representation found",
@@ -46,7 +46,7 @@ class AVC
     }
 
     //Public validation functions
-    public function validateAVC(Representation $representation, Segment $segment): void
+    public function validateInitSegment(Representation $representation, Segment $segment): void
     {
         if ($representation->getTransientAttribute('bitstreamSwitching') == '') {
             return;

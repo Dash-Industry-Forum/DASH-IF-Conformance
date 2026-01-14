@@ -10,33 +10,27 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Reporter\TestCase;
 use App\Services\Validators\Boxes;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\SegmentListComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class TimedEventData
+class TimedEventData extends SegmentListComponent
 {
-    //Private subreporters
-    private SubReporter $waveReporter;
-
     private TestCase $emsgCase;
 
     public function __construct()
     {
-        $this->registerChecks();
-    }
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "CTA-5005-A",
+                "Final",
+                []
+            )
+        );
 
-    private function registerChecks(): void
-    {
-        $reporter = app(ModuleReporter::class);
-        $this->waveReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "CTA-5005-A",
-            "Final",
-            []
-        ));
-
-        $this->emsgCase = $this->waveReporter->add(
+        $this->emsgCase = $this->reporter->add(
             section: '4.5.2 - Carriage of Timed Event Data',
             test: "All 'emsg' boxes inserted [..] after the start of the first CMAF chunk " .
                   "SHALL be repeated before the first chunk of the next segment",
@@ -48,7 +42,7 @@ class TimedEventData
     /**
      * @param array<Segment> $segments
      **/
-    public function validateTimedEventdata(Representation $representation, array $segments): void
+    public function validateSegmentList(Representation $representation, array $segments): void
     {
         $activeSegment = false;
         $expectRepeat = [];

@@ -19,6 +19,7 @@ use App\Modules\Dolby\Segments as DolbySegments;
 use App\Modules\CTAWave\Segments as CTAWaveSegments;
 use App\Interfaces\Module;
 use App\Services\Manifest\Period;
+use App\Services\Manifest\Representation;
 use App\Services\SegmentManager;
 use App\Services\MPDCache;
 
@@ -33,6 +34,11 @@ class SpecManager
      * @var array<string, array<string,boolean>> $moduleStates
      **/
     private array $moduleStates = [];
+
+    /**
+     * @var array<string,array<Segment>> $allSegments
+     **/
+    private array $allSegments = [];
 
     public function __construct()
     {
@@ -134,17 +140,42 @@ class SpecManager
         } while ($runAtLeastOne);
     }
 
-    private function validateAllRepresentations(Module $module): void
+    private function loadAllSegments(): void
     {
+        if (count($this->allSegments)) {
+            return;
+        }
+
         $mpdCache = app(MPDCache::class);
         $segmentManager = app(SegmentManager::class);
+        foreach ($mpdCache->allPeriods() as $period) {
+            foreach ($period->allAdaptationSets() as $adaptationSet) {
+                foreach ($adaptationSet->allRepresentations() as $representation) {
+                    $this->allSegments[$representation->path()] = $segmentManager->representationSegments($representation);
+                }
+            }
+        }
+    }
+
+    /**
+     * @return array<Segment>
+     **/
+    public function getSegments(Representation $representation): array
+    {
+        $this->loadAllSegments();
+        return $this->allSegments[$representation->path()];
+    }
+
+    private function validateAllRepresentations(Module $module): void
+    {
+        $this->loadAllSegments();
+        $mpdCache = app(MPDCache::class);
         foreach ($mpdCache->allPeriods() as $period) {
             $module->validatePeriod($period);
             foreach ($period->allAdaptationSets() as $adaptationSet) {
                 $module->validateCrossAdaptationSet($adaptationSet);
                 foreach ($adaptationSet->allRepresentations() as $representation) {
-                    $segments = $segmentManager->representationSegments($representation);
-                    $module->validateSegments($representation, $segments);
+                    $module->validateSegments($representation, $this->getSegments($representation));
                 }
             }
         }

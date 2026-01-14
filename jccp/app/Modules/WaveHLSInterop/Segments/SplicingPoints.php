@@ -11,39 +11,34 @@ use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Reporter\TestCase;
 use App\Services\Validators\Boxes;
 use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\SegmentListComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class SplicingPoints
+class SplicingPoints extends SegmentListComponent
 {
-    //Private subreporters
-    private SubReporter $waveReporter;
-
     private TestCase $fragmentBoundaryCase;
     private TestCase $fragmentDurationCase;
 
     public function __construct()
     {
-        $this->registerChecks();
-    }
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "CTA-5005-A",
+                "Final",
+                []
+            )
+        );
 
-    private function registerChecks(): void
-    {
-        $reporter = app(ModuleReporter::class);
-        $this->waveReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "CTA-5005-A",
-            "Final",
-            []
-        ));
-
-        $this->fragmentBoundaryCase = $this->waveReporter->add(
+        $this->fragmentBoundaryCase = $this->reporter->add(
             section: '4.4.2 - Presentation Splicing',
             test: "CMAF Fragment boundaries SHALL be created at all splice points.",
             skipReason: "Unable to parse segments"
         );
 
-        $this->fragmentDurationCase = $this->waveReporter->add(
+        $this->fragmentDurationCase = $this->reporter->add(
             section: '4.4.2 - Presentation Splicing',
             test: "CMAF Fragment [duration difference] SHALL be within one ISOBMFF sample duration",
             skipReason: 'Single fragment'
@@ -51,7 +46,7 @@ class SplicingPoints
     }
 
     //Public validation functions
-    public function validateSplicingPoints(Representation $representation, Segment $segment, int $segmentIndex): void
+    public function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
 
         $boxTree = $segment->getBoxNameTree();
@@ -73,7 +68,7 @@ class SplicingPoints
     /**
      * @param array<Segment> $segments
      **/
-    public function validateSegmentDurations(Representation $representation, array $segments): void
+    public function validateSegmentList(Representation $representation, array $segments): void
     {
         $segmentCount = count($segments);
 

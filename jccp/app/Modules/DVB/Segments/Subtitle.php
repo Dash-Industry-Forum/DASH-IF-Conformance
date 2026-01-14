@@ -11,39 +11,39 @@ use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Services\Validators\Boxes;
+use App\Interfaces\ModuleComponents\SegmentComponent;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class Subtitle
+class Subtitle extends SegmentComponent
 {
-    //Private subreporters
-    private SubReporter $legacyReporter;
-
     private TestCase $handlerCase;
     private TestCase $stppCase;
     private TestCase $stppNamespaceCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "DVB",
-            []
-        ));
-        $this->handlerCase = $this->legacyReporter->add(
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "DVB",
+                []
+            )
+        );
+        $this->handlerCase = $this->reporter->add(
             section: 'Subtitles',
             test: "For subtitle media, handler SHALL be 'subt'",
             skipReason: "No Subtitle stream found"
         );
-        $this->stppCase = $this->legacyReporter->add(
+        $this->stppCase = $this->reporter->add(
             section: 'Subtitles',
             test: "Sample entry shall be 'stpp'",
             skipReason: "No Subtitle stream with sample description found"
         );
-        $this->stppNamespaceCase = $this->legacyReporter->add(
+        $this->stppNamespaceCase = $this->reporter->add(
             section: 'Subtitles',
             test: "Sample entry shall countain a namespace",
             skipReason: "No Subtitle stream with sample description found"
@@ -51,11 +51,8 @@ class Subtitle
     }
 
     //Public validation functions
-    public function validateSubtitles(
-        Representation $representation,
-        Segment $segment,
-        int $segmentIndex
-    ): void {
+    public function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
+    {
 
         if ($representation->getTransientAttribute('mimeType') != 'application/mp4') {
             return;

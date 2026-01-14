@@ -11,27 +11,27 @@ use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\InitSegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class CrossCodecs
+class CrossCodecs extends InitSegmentComponent
 {
-    //Private subreporters
-    private SubReporter $v141Reporter;
-
     private TestCase $codecCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->v141Reporter = &$reporter->context(new ReporterContext(
-            "CrossValidation",
-            "DVB",
-            "v1.4.1",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "CrossValidation",
+                "DVB",
+                "v1.4.1",
+                []
+            )
+        );
 
-        $this->codecCase = $this->v141Reporter->add(
+        $this->codecCase = $this->reporter->add(
             section: '5.x / 6.x',
             test: "For each representation, @codecs SHALL be match the codec derived from the segments",
             skipReason: "No media stream found"
@@ -39,7 +39,7 @@ class CrossCodecs
     }
 
     //Public validation functions
-    public function validateCodec(Representation $representation, Segment $segment): void
+    public function validateInitSegment(Representation $representation, Segment $segment): void
     {
         $segmentCodec = $segment->getCodec();
         $representationCodec = $representation->getTransientAttribute('codecs');

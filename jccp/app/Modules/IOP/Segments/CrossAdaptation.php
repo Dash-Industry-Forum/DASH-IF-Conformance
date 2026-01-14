@@ -12,40 +12,39 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\AdaptationComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class CrossAdaptation
+class CrossAdaptation extends AdaptationComponent
 {
-    //Private subreporters
-    private SubReporter $legacyReporter;
-
     private TestCase $levelCase;
     private TestCase $profileCase;
     private TestCase $editListCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "CrossValidation",
-            "DASH-IF IOP",
-            "4.3",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "CrossValidation",
+                "DASH-IF IOP",
+                "4.3",
+                []
+            )
+        );
 
-        $this->levelCase = $this->legacyReporter->add(
+        $this->levelCase = $this->reporter->add(
             section: '6.2.5.2',
             test: "The level of the adaptation set SHALL match the maximum of the corresponding representations",
             skipReason: "@bitstreamSwitching not set, or no supported video track found",
         );
-        $this->profileCase = $this->legacyReporter->add(
+        $this->profileCase = $this->reporter->add(
             section: '6.2.5.2',
             test: "The profile of the adaptation set SHALL match the maximum of the corresponding representations",
             skipReason: "@bitstreamSwitching not set, or no supported video track found",
         );
-        $this->editListCase = $this->legacyReporter->add(
+        $this->editListCase = $this->reporter->add(
             section: '6.2.5.2',
             test: "The edit list, if present in one, SHALL be present in all representations",
             skipReason: "@bitstreamSwitching not set, or no supported video track found",
@@ -54,7 +53,7 @@ class CrossAdaptation
     }
 
     //Public validation functions
-    public function validateCrossAdaptation(AdaptationSet $adaptationSet): void
+    public function validateAdaptationSet(AdaptationSet $adaptationSet): void
     {
         if ($adaptationSet->getTransientAttribute('bitstreamSwitching') == '') {
             //return;

@@ -41,9 +41,9 @@ class Segments extends Module
      **/
     public function validateSegments(Representation $representation, array $segments): void
     {
-        new SplicingPoints()->validateSegmentDurations($representation, $segments);
-        new Bitrate()->validateBitrate($representation, $segments);
-        new TimedEventData()->validateTimedEventdata($representation, $segments);
+        new SplicingPoints()->withSegmentList($representation, $segments);
+        new Bitrate()->withSegmentList($representation, $segments);
+        new TimedEventData()->withSegmentList($representation, $segments);
         foreach ($segments as $segmentIndex => $segment) {
             if ($segmentIndex == 0) {
                 $this->validateInitialization($representation, $segment);
@@ -54,16 +54,16 @@ class Segments extends Module
 
     private function validateInitialization(Representation $representation, Segment $segment): void
     {
-        new TextComponentConstraints()->validateTextComponentConstraints($representation, $segment);
-        new EncryptionScheme()->validateEncryptionScheme($representation, $segment);
-        new TrackRoles()->validateTrackRoles($representation, $segment);
+        new TextComponentConstraints()->withInitSegment($representation, $segment);
+        new EncryptionScheme()->withInitSegment($representation, $segment);
+        new TrackRoles()->withInitSegment($representation, $segment);
     }
 
     private function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
-        new SegmentEncryption()->validateSegmentEncryption($representation, $segment, $segmentIndex);
-        new SplicingPoints()->validateSplicingPoints($representation, $segment, $segmentIndex);
-        new AddressableMediaObject()->validateAddressableMediaObject($representation, $segment, $segmentIndex);
-        new KeyRotation()->validateKeyRotation($representation, $segment, $segmentIndex);
+        new SegmentEncryption()->withSegment($representation, $segment, $segmentIndex);
+        new SplicingPoints()->withSegment($representation, $segment, $segmentIndex);
+        new AddressableMediaObject()->withSegment($representation, $segment, $segmentIndex);
+        new KeyRotation()->withSegment($representation, $segment, $segmentIndex);
     }
 }

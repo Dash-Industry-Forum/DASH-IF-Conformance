@@ -10,34 +10,33 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\SegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class BoxCount
+class BoxCount extends SegmentComponent
 {
-    //Private subreporters
-    private SubReporter $v141Reporter;
-
     private TestCase $trafCase;
     private TestCase $sidxCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->v141Reporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "DVB",
-            "v1.4.1",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "DVB",
+                "v1.4.1",
+                []
+            )
+        );
 
-        $this->trafCase = $this->v141Reporter->add(
+        $this->trafCase = $this->reporter->add(
             section: 'Section 4.3',
             test: "The 'moof' box shall contain only one 'traf' box",
             skipReason: ''
         );
-        $this->sidxCase = $this->v141Reporter->add(
+        $this->sidxCase = $this->reporter->add(
             section: 'Section 4.3',
             test: "The segment shall contain only one 'sidx' box",
             skipReason: 'Stream does not match on-demand profile in section 4.2.6'
@@ -45,7 +44,7 @@ class BoxCount
     }
 
     //Public validation functions
-    public function validateBoxCount(Representation $representation, Segment $segment, int $segmentIndex): void
+    public function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
 
         $boxTree = $segment->getBoxNameTree();

@@ -11,14 +11,12 @@ use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Reporter\TestCase;
 use App\Services\Validators\Boxes;
 use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\InitSegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class EncryptionScheme
+class EncryptionScheme extends InitSegmentComponent
 {
-    //Private subreporters
-    private SubReporter $waveReporter;
-
     private string $section = '4.3.2 - Encrypted Media Presentations';
 
     private TestCase $cbcsCase;
@@ -32,45 +30,46 @@ class EncryptionScheme
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->waveReporter = &$reporter->context(new ReporterContext(
+        parent::__construct(
+            self::class,
+            new ReporterContext(
             "Segments",
             "CTA-5005-A",
             "Final",
             []
         ));
 
-        $this->cbcsCase = $this->waveReporter->add(
+        $this->cbcsCase = $this->reporter->add(
             section: $this->section,
             test: "The common encryption `cbcs` scheme SHALL be used for encryption",
             skipReason: "No 'cbcs encrypted tracks found"
         );
-        $this->cbcsIVCase = $this->waveReporter->add(
+        $this->cbcsIVCase = $this->reporter->add(
             section: $this->section,
             test: "Constant 16-byte Initialization Vectors SHALL be used",
             skipReason: "No 'cbcs encrypted tracks found"
         );
-        $this->cencCase = $this->waveReporter->add(
+        $this->cencCase = $this->reporter->add(
             section: $this->section,
             test: "An alternative using the `cenc` scheme MAY be produced",
             skipReason: "No 'cenc' encrypted tracks found"
         );
-        $this->cencIVCase = $this->waveReporter->add(
+        $this->cencIVCase = $this->reporter->add(
             section: $this->section,
             test: "Constant 8-byte Initialization Vectors SHALL be used for 'cenc' encrypted material",
             skipReason: "No 'cenc' encrypted tracks found"
         );
-        $this->saioCase = $this->waveReporter->add(
+        $this->saioCase = $this->reporter->add(
             section: $this->section,
             test: "Sample auxiliary information, if present, SHALL be addressed by [.. a 'saio' box]",
             skipReason: "The stream is not encrypted"
         );
-        $this->videoPatternCase = $this->waveReporter->add(
+        $this->videoPatternCase = $this->reporter->add(
             section: $this->section,
             test: "Video components SHALL be encrypted with a 1:9 pattern",
             skipReason: "No encrypted video streams found"
         );
-        $this->audioPatternCase = $this->waveReporter->add(
+        $this->audioPatternCase = $this->reporter->add(
             section: $this->section,
             test: "Audio components SHALL be encrypted with a 10:0 pattern",
             skipReason: "No encrypted audio streams found"
@@ -78,7 +77,7 @@ class EncryptionScheme
     }
 
     //Public validation functions
-    public function validateEncryptionScheme(Representation $representation, Segment $segment): void
+    public function validateInitSegment(Representation $representation, Segment $segment): void
     {
         $protectionScheme = $segment->getProtectionScheme();
 

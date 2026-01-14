@@ -11,14 +11,12 @@ use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\InitSegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class BitStream
+class BitStream extends InitSegmentComponent
 {
-    //Private subreporters
-    private SubReporter $v141Reporter;
-
     private TestCase $hevcSignallingCase;
     private TestCase $hevcColourPrimariesCase;
     private TestCase $hevcMatrixCoefficientsCase;
@@ -28,44 +26,46 @@ class BitStream
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->v141Reporter = &$reporter->context(new ReporterContext(
-            "CrossValidation",
-            "DVB",
-            "v1.4.1",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "CrossValidation",
+                "DVB",
+                "v1.4.1",
+                []
+            )
+        );
 
-        $this->hevcSignallingCase = $this->v141Reporter->add(
+        $this->hevcSignallingCase = $this->reporter->add(
             section: '5.2.2',
             test: "The value of the @codecs attribute shall be set in accordance with ISO/IEC 14496-15",
             skipReason: "No HEVC stream found"
         );
 
-        $this->hevcColourPrimariesCase = $this->v141Reporter->add(
+        $this->hevcColourPrimariesCase = $this->reporter->add(
             section: '5.2.2',
             test: "The value of the signalled ColourPrimaries Property in the MPD SHALL match " .
                   "colour_primaries in the VUI'",
             skipReason: "No HEVC stream found, or no ColourPrimaries property found"
         );
-        $this->hevcMatrixCoefficientsCase = $this->v141Reporter->add(
+        $this->hevcMatrixCoefficientsCase = $this->reporter->add(
             section: '5.2.2',
             test: "The value of the signalled MatrixCoefficients Property in the MPD SHALL match " .
                   "matrix_coefficients in the VUI'",
             skipReason: "No HEVC stream found, or no MatrixCoefficients property found"
         );
-        $this->hevcTransferCharacteriticsCase = $this->v141Reporter->add(
+        $this->hevcTransferCharacteriticsCase = $this->reporter->add(
             section: '5.2.2',
             test: "The value of the signalled TransferCharacteristics Property in the MPD SHALL match " .
                   "transfer_characteristics in the VUI'",
             skipReason: "No HEVC stream found, or no TransferCharacteristics property found"
         );
-        $this->hevcHLG10Case = $this->v141Reporter->add(
+        $this->hevcHLG10Case = $this->reporter->add(
             section: '5.2.6',
             test: "Use of HLG10 within in an AdapationSet shall be signalled according to this section",
             skipReason: "No HEVC stream found"
         );
-        $this->hevcPQ10Case = $this->v141Reporter->add(
+        $this->hevcPQ10Case = $this->reporter->add(
             section: '5.2.7',
             test: "Use of PQ10 within in an AdapationSet shall be signalled according to this section",
             skipReason: "No HEVC stream found"
@@ -73,7 +73,7 @@ class BitStream
     }
 
     //Public validation functions
-    public function validateBitStream(Representation $representation, Segment $segment): void
+    public function validateInitSegment(Representation $representation, Segment $segment): void
     {
         $this->validateSignalling($representation, $segment);
     }

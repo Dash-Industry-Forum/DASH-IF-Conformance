@@ -11,32 +11,26 @@ use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Reporter\TestCase;
 use App\Services\Validators\Boxes;
 use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\InitSegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class TextComponentConstraints
+class TextComponentConstraints extends InitSegmentComponent
 {
-    //Private subreporters
-    private SubReporter $waveReporter;
-
     private TestCase $packageCase;
 
     public function __construct()
     {
-        $this->registerChecks();
-    }
-
-    private function registerChecks(): void
-    {
-        $reporter = app(ModuleReporter::class);
-        $this->waveReporter = &$reporter->context(new ReporterContext(
+        parent::__construct(
+            self::class,
+            new ReporterContext(
             "Segments",
             "CTA-5005-A",
             "Final",
             []
         ));
 
-        $this->packageCase = $this->waveReporter->add(
+        $this->packageCase = $this->reporter->add(
             section: '4.1.2 - Basic On-Demand and Live Streaming',
             test:'Text components SHALL be packaged in ISMC1, ISMC1.1 or WebVTT Tracks',
             skipReason: 'No text components found'
@@ -44,7 +38,7 @@ class TextComponentConstraints
     }
 
     //Public validation functions
-    public function validateTextComponentConstraints(Representation $representation, Segment $segment): void
+    public function validateInitSegment(Representation $representation, Segment $segment): void
     {
         $sampleDescription = $segment->getSampleDescription();
 

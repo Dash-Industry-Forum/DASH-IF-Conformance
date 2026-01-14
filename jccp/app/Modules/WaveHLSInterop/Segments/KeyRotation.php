@@ -10,36 +10,33 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Reporter\TestCase;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\SegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class KeyRotation
+class KeyRotation extends SegmentComponent
 {
-    //Private subreporters
-    private SubReporter $waveReporter;
-
-
     private TestCase $sgbpCase;
     private TestCase $psshCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->waveReporter = &$reporter->context(new ReporterContext(
+        parent::__construct(
+            self::class,
+            new ReporterContext(
             "Segments",
             "CTA-5005-A",
             "Final",
             []
         ));
 
-        $this->sgbpCase = $this->waveReporter->add(
+        $this->sgbpCase = $this->reporter->add(
             section: '4.6.2 - Rotation of Encryption Keys',
             test: "CMAF Segments [.. with differing encryption keys] SHALL provide an 'sbgp' box [..]",
             skipReason: "No 'seig' boxes found"
         );
 
-        $this->psshCase = $this->waveReporter->add(
+        $this->psshCase = $this->reporter->add(
             section: '4.6.2 - Rotation of Encryption Keys',
             test: "CMAF Segments [.. with differing encryption keys] SHALL provide a 'pssh' box [..]",
             skipReason: "No 'seig' boxes found"
@@ -47,7 +44,7 @@ class KeyRotation
     }
 
     //Public validation functions
-    public function validateKeyRotation(Representation $representation, Segment $segment, int $segmentIndex): void
+    public function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
         $boxAccess = $segment->boxAccess();
 

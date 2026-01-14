@@ -13,14 +13,12 @@ use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Services\Validators\Boxes\SIDXBox;
 use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\SegmentListComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class SelfInitializingSidx
+class SelfInitializingSidx extends SegmentListComponent
 {
-    //Private subreporters
-    private SubReporter $legacyReporter;
-
     private TestCase $countCase;
     private TestCase $locationCase;
     private TestCase $referenceCase;
@@ -38,63 +36,65 @@ class SelfInitializingSidx
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "Low Latency",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "Low Latency",
+                []
+            )
+        );
 
         //TODO: Extract to different spec and create dependency
-        $this->countCase = $this->legacyReporter->add(
+        $this->countCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "Exactly one 'sidx' box shall be used",
             skipReason: "No self-initializing segment",
         );
-        $this->locationCase = $this->legacyReporter->add(
+        $this->locationCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "The 'sidx' box shall be placed before any 'moof' boxes",
             skipReason: "No self-initializing segment",
         );
-        $this->referenceCase = $this->legacyReporter->add(
+        $this->referenceCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "The 'sidx' box reference_ID SHALL be equal to the track id",
             skipReason: "No self-initializing segment",
         );
-        $this->timescaleCase = $this->legacyReporter->add(
+        $this->timescaleCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "The 'sidx' box timescale SHALL be identical to the one in the 'mdhd' box",
             skipReason: "No self-initializing segment",
         );
-        $this->eptCase = $this->legacyReporter->add(
+        $this->eptCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "The 'sidx' box earliest presentation time SHALL match the segment EPT",
             skipReason: "No self-initializing segment",
         );
-        $this->moofCountCase = $this->legacyReporter->add(
+        $this->moofCountCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "The 'sidx' box reference count SHALL match the number of 'mmof' boxes",
             skipReason: "No self-initializing segment",
         );
 
 
-        $this->referenceTypeCase = $this->legacyReporter->add(
+        $this->referenceTypeCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "The 'sidx' box reference_type shall be set to 0",
             skipReason: "No self-initializing segment",
         );
-        $this->referenceStartSAPCase = $this->legacyReporter->add(
+        $this->referenceStartSAPCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "The 'sidx' box startwithsap shall be set to 1",
             skipReason: "No self-initializing segment",
         );
-        $this->referenceSAPTypeCase = $this->legacyReporter->add(
+        $this->referenceSAPTypeCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "The 'sidx' box sapType shall be set to 1 or 2",
             skipReason: "No self-initializing segment",
         );
-        $this->referenceDeltaTimeCase = $this->legacyReporter->add(
+        $this->referenceDeltaTimeCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "The 'sidx' box sapDeltaTime shall be set to 0",
             skipReason: "No self-initializing segment",
@@ -102,12 +102,12 @@ class SelfInitializingSidx
 
 
         //Derived from old code, different wording
-        $this->decodeTimeCase = $this->legacyReporter->add(
+        $this->decodeTimeCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "The baseMediaDecodeTime shall be 0",
             skipReason: "No self-initializing segment",
         );
-        $this->brandCase = $this->legacyReporter->add(
+        $this->brandCase = $this->reporter->add(
             section: '9.X.4.5 => MPEG-DASH 8.X.3',
             test: "The list of compatible brands SHALL contain 'dash'",
             skipReason: "No self-initializing segment",
@@ -118,17 +118,17 @@ class SelfInitializingSidx
     /**
      * @param array<Segment> $segments
      **/
-    public function validateSidx(Representation $representation, array $segments): void
+    public function validateSegmentList(Representation $representation, array $segments): void
     {
         if (count($segments) != 1) {
             return;
         }
 
-        $this->validateSegment($representation, $segments[0]);
+        $this->validateSingleSegment($representation, $segments[0]);
     }
 
     //Private helper functions
-    private function validateSegment(Representation $representation, Segment $segment): void
+    private function validateSingleSegment(Representation $representation, Segment $segment): void
     {
         $sidxBoxes = $segment->boxAccess()->sidx();
 

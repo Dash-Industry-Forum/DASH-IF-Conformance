@@ -11,39 +11,39 @@ use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\InitSegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class CrossAudio
+class CrossAudio extends InitSegmentComponent
 {
-    //Private subreporters
-    private SubReporter $v141Reporter;
-
     private TestCase $mimeTypeCase;
     private TestCase $sampleRateCase;
     private TestCase $audioChannelCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->v141Reporter = &$reporter->context(new ReporterContext(
-            "CrossValidation",
-            "DVB",
-            "v1.4.1",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "CrossValidation",
+                "DVB",
+                "v1.4.1",
+                []
+            )
+        );
 
-        $this->mimeTypeCase = $this->v141Reporter->add(
+        $this->mimeTypeCase = $this->reporter->add(
             section: '6.1.1',
             test: "@mimeType SHALL match the mimetype derived from the segments",
             skipReason: "No audio stream found"
         );
-        $this->sampleRateCase = $this->v141Reporter->add(
+        $this->sampleRateCase = $this->reporter->add(
             section: '6.1.1',
             test: "@audioSamplingRate SHALL match the sample rate derived from the segments",
             skipReason: "No audio stream found"
         );
-        $this->audioChannelCase = $this->v141Reporter->add(
+        $this->audioChannelCase = $this->reporter->add(
             section: '6.1.1',
             test: "AudioChannelConfiguration SHALL match the configuration derived from the segments",
             skipReason: "No audio stream found"
@@ -51,7 +51,7 @@ class CrossAudio
     }
 
     //Public validation functions
-    public function validateAudioParameters(Representation $representation, Segment $segment): void
+    public function validateInitSegment(Representation $representation, Segment $segment): void
     {
         //We also want to check video tracks in MPD, as they may contain audio segments
         $this->validateMimeType($representation, $segment);

@@ -10,15 +10,12 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\InitSegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class LegacyCodecs
+class LegacyCodecs extends InitSegmentComponent
 {
-    //Private subreporters
-    private SubReporter $legacyReporter;
-
     private string $section = 'Codec information';
     private string $noAVC = "No AVC stream found";
     private string $noHEVC = "No HEVC stream found";
@@ -33,45 +30,47 @@ class LegacyCodecs
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "DVB",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "DVB",
+                []
+            )
+        );
 
-        $this->codecCase = $this->legacyReporter->add(
+        $this->codecCase = $this->reporter->add(
             section: $this->section,
             test: 'The codec should be supported by the specification',
             skipReason: "No valid sample descriptor found"
         );
-        $this->avcProfileCase = $this->legacyReporter->add(
+        $this->avcProfileCase = $this->reporter->add(
             section: $this->section,
             test: 'Profile used for AVC must be suported by the specification',
             skipReason: $this->noAVC
         );
-        $this->avcLevelCase = $this->legacyReporter->add(
+        $this->avcLevelCase = $this->reporter->add(
             section: $this->section,
             test: 'Level used for AVC must be suported by the specification',
             skipReason: $this->noAVC
         );
-        $this->hevcTierCase = $this->legacyReporter->add(
+        $this->hevcTierCase = $this->reporter->add(
             section: $this->section,
             test: 'Tier used for HEVC must be suported by the specification',
             skipReason: $this->noHEVC
         );
-        $this->hevcBitDepthCase = $this->legacyReporter->add(
+        $this->hevcBitDepthCase = $this->reporter->add(
             section: $this->section,
             test: 'Bit depth used for HEVC must be suported by the specification',
             skipReason: $this->noHEVC
         );
-        $this->hevcProfileCase = $this->legacyReporter->add(
+        $this->hevcProfileCase = $this->reporter->add(
             section: $this->section,
             test: 'Profile used for HEVC must be suported by the specification',
             skipReason: $this->noHEVC
         );
-        $this->hevcLevelCase = $this->legacyReporter->add(
+        $this->hevcLevelCase = $this->reporter->add(
             section: $this->section,
             test: 'Level used for HEVC must be suported by the specification',
             skipReason: $this->noHEVC
@@ -79,7 +78,7 @@ class LegacyCodecs
     }
 
     //Public validation functions
-    public function validateCodecs(Representation $representation, Segment $segment): void
+    public function validateInitSegment(Representation $representation, Segment $segment): void
     {
         $sdType = $segment->getSampleDescriptor();
         if ($sdType === null) {

@@ -12,14 +12,12 @@ use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\SegmentListComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class ChunkedAdaptation
+class ChunkedAdaptation extends SegmentListComponent
 {
-    //Private subreporters
-    private SubReporter $legacyReporter;
-
     //Depenedencies
     private TestCase $emsgCase;
     private TestCase $cmafCase;
@@ -32,16 +30,18 @@ class ChunkedAdaptation
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "Low Latency",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "Low Latency",
+                []
+            )
+        );
 
         //TODO: Update to reflect the correct section etc after implementation
-        $this->cmafCase = $this->legacyReporter->dependencyAdd(
+        $this->cmafCase = $this->reporter->dependencyAdd(
             section: '9.X.4.5',
             test: "Each Segment SHALL Conform to a CMAF Fragment",
             dependentModule: "CMAF Segments Module",
@@ -49,7 +49,7 @@ class ChunkedAdaptation
             dependentSection: "Section 7.3.2.3",
             skipReason: "No Chunked Adaptation Set Found",
         );
-        $this->emsgCase = $this->legacyReporter->dependencyAdd(
+        $this->emsgCase = $this->reporter->dependencyAdd(
             section: '9.X.4.5',
             test: "EMSG box constraints",
             dependentModule: "Wave HLS Interop Segments Module",
@@ -58,25 +58,25 @@ class ChunkedAdaptation
             skipReason: "No Chunked Adaptation Set Found",
         );
 
-        $this->moofCase = $this->legacyReporter->add(
+        $this->moofCase = $this->reporter->add(
             section: '9.X.4.5',
             test: "Each Segment MAY (and typically SHOULD) contain more than one CMAF chunk",
             skipReason: "No Chunked Adaptation Set Found",
         );
         //NOTE: This is a MPD check only
-        $this->resyncCase = $this->legacyReporter->add(
+        $this->resyncCase = $this->reporter->add(
             section: '9.X.4.5',
             test: "A Resync element SHOULD be assigned to each Representation",
             skipReason: "No Chunked Adaptation Set Found",
         );
         //NOTE: This is a MPD check only
-        $this->availabilityOffsetCase = $this->legacyReporter->add(
+        $this->availabilityOffsetCase = $this->reporter->add(
             section: '9.X.4.5',
             test: '@availabilityTimeOffset SHALL be present for each represention',
             skipReason: "No Chunked Adaptation Set Found",
         );
         //NOTE: This is a MPD check only
-        $this->availabilityCompleteCase = $this->legacyReporter->add(
+        $this->availabilityCompleteCase = $this->reporter->add(
             section: '9.X.4.5',
             test: "@availabilityTimeComple SHALL be present and set to 'FALSE' for each representation",
             skipReason: "No Chunked Adaptation Set Found",
@@ -87,7 +87,7 @@ class ChunkedAdaptation
     /**
      * @param array<Segment> $segments
      **/
-    public function validateChunkedAdaptation(Representation $representation, array $segments): void
+    public function validateSegmentList(Representation $representation, array $segments): void
     {
         $this->cmafCase->pathAdd(
             path: $representation->path(),
@@ -110,7 +110,7 @@ class ChunkedAdaptation
 
 
         foreach ($segments as $segmentIndex => $segment) {
-            $this->validateSegment($representation, $segment, $segmentIndex);
+            $this->validateSingleSegment($representation, $segment, $segmentIndex);
         }
     }
 
@@ -152,7 +152,7 @@ class ChunkedAdaptation
             fail_message: "No Resync element found",
         );
     }
-    private function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
+    private function validateSingleSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
 
         $topLevelBoxes = $segment->getTopLevelBoxNames();

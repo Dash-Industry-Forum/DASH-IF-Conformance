@@ -12,15 +12,12 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\AdaptationComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class ResyncCrossAdaptation
+class ResyncCrossAdaptation extends AdaptationComponent
 {
-    //Private subreporters
-    private SubReporter $legacyReporter;
-
     private TestCase $resyncPresentCase;
     private TestCase $resyncMarkerValidCase;
     private TestCase $resyncTypeValidCase;
@@ -31,35 +28,37 @@ class ResyncCrossAdaptation
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "Low Latency",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "Low Latency",
+                []
+            )
+        );
 
-        $this->resyncPresentCase = $this->legacyReporter->add(
+        $this->resyncPresentCase = $this->reporter->add(
             section: '9.X.4.5',
             test: "Resync element SHALL/SHOULD be present (conditional)",
             skipReason: "No representations found",
         );
-        $this->resyncTypeValidCase = $this->legacyReporter->add(
+        $this->resyncTypeValidCase = $this->reporter->add(
             section: '9.X.4.5',
             test: "Resync element type SHALL be valid",
             skipReason: "No resync element found",
         );
-        $this->resyncMarkerValidCase = $this->legacyReporter->add(
+        $this->resyncMarkerValidCase = $this->reporter->add(
             section: '9.X.4.5',
             test: "Resync element @marker SHALL be 'true'",
             skipReason: "No resync element found",
         );
-        $this->resyncDurationValidCase = $this->legacyReporter->add(
+        $this->resyncDurationValidCase = $this->reporter->add(
             section: '9.X.4.5',
             test: "Resync element @dT SHOULD be lower than half the latency, and SHALL not exceed the target latency",
             skipReason: "No resync element found",
         );
-        $this->qualityRankingCase = $this->legacyReporter->add(
+        $this->qualityRankingCase = $this->reporter->add(
             section: '9.X.4.5',
             test: "@qualityRanking should be used",
             skipReason: "No representation found",
@@ -67,7 +66,7 @@ class ResyncCrossAdaptation
     }
 
     //Public validation functions
-    public function validateResyncCrossAdaptations(AdaptationSet $adaptationSet): void
+    public function validateAdaptationSet(AdaptationSet $adaptationSet): void
     {
         $this->lowestQualityRanking = 0;
         $lowestBandwidth = 0;

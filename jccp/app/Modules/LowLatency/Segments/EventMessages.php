@@ -11,29 +11,28 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\SegmentListComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class EventMessages
+class EventMessages extends SegmentListComponent
 {
-    //Private subreporters
-    private SubReporter $legacyReporter;
-
     private TestCase $eventDependencyCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "Low Latency",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "Low Latency",
+                []
+            )
+        );
 
         //TODO: Make this a dependency on the 'correct' spec
-        $this->eventDependencyCase = $this->legacyReporter->dependencyAdd(
+        $this->eventDependencyCase = $this->reporter->dependencyAdd(
             section: "9.X.4.5",
             test: "All 'emsg' boxes inserted [..] after the start of the first CMAF chunk " .
                   "SHALL be repeated before the first chunk of the next segment",
@@ -44,7 +43,7 @@ class EventMessages
     }
 
     //Public validation functions
-    public function validateEventMessages(Representation $representation): void
+    public function validateSegmentList(Representation $representation, array $segments): void
     {
         $this->eventDependencyCase->pathAdd(
             path: $representation->path(),

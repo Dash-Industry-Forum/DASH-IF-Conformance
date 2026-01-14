@@ -41,8 +41,8 @@ class Segments extends Module
 
     public function validateCrossAdaptationSet(AdaptationSet $adaptationSet): void
     {
-        new ResyncCrossAdaptation()->validateResyncCrossAdaptations($adaptationSet);
-        new ChunkedCrossAdaptation()->validateChunkedCrossAdaptation($adaptationSet);
+        new ResyncCrossAdaptation()->withAdaptationSet($adaptationSet);
+        new ChunkedCrossAdaptation()->withAdaptationSet($adaptationSet);
     }
 
     /**
@@ -51,10 +51,10 @@ class Segments extends Module
     ///NOTE: Removed checks that are dependent on ISOSegmentValidator error output in this commit
     public function validateSegments(Representation $representation, array $segments): void
     {
-        new EventMessages()->validateEventMessages($representation);
-        new SegmentOrChunked()->validateSegmentOrChunked($representation, $segments);
-        new SelfInitializingSidx()->validateSidx($representation, $segments);
-        new SegmentTiming()->validateTimings($representation, $segments);
+        new EventMessages()->withSegmentList($representation, $segments);
+        new SegmentOrChunked()->withSegmentList($representation, $segments);
+        new SelfInitializingSidx()->withSegmentList($representation, $segments);
+        new SegmentTiming()->withSegmentList($representation, $segments);
         foreach ($segments as $segmentIndex => $segment) {
             if ($segmentIndex == 0) {
                 $this->validateInitialization($representation, $segment);
@@ -65,7 +65,7 @@ class Segments extends Module
 
     private function validateInitialization(Representation $representation, Segment $segment): void
     {
-        new DASHProfile()->validateCMAFProfile($representation, $segment);
+        new DASHProfile()->withInitSegment($representation, $segment);
     }
 
     private function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void

@@ -11,6 +11,7 @@ use App\Services\Validators\MP4Box;
 use App\Services\Validators\MP4BoxRepresentation;
 use App\Services\Validators\Boxes;
 use App\Services\Segment\BoxAccess;
+use Keepsuit\LaravelOpenTelemetry\Facades\Tracer;
 
 class Segment
 {
@@ -29,6 +30,9 @@ class Segment
     private array $analyzedRepresentations = [];
     public function __construct(string $init, string $segment, string $representationDir, int $segmentIndex)
     {
+        $span = Tracer::newSpan('New Segment')->start();
+        $scope = $span->activate();
+
         $this->initPath = $init;
         $this->segmentPath = $segment;
         $this->representationDir = $representationDir;
@@ -39,6 +43,9 @@ class Segment
         if ($gpacPath != '') {
             $this->analyzedRepresentations[] = new MP4BoxRepresentation($gpacPath);
         }
+
+        $scope->detach();
+        $span->end();
     }
 
     public function getSize(): int

@@ -11,16 +11,13 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\AdaptationComponent;
 use App\Services\SegmentManager;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class ContentProtection
+class ContentProtection extends AdaptationComponent
 {
-    //Private subreporters
-    private SubReporter $v141Reporter;
-
     private TestCase $genericIdentifierCase;
     private TestCase $psshCase;
     private TestCase $systemInformationCase;
@@ -37,30 +34,32 @@ class ContentProtection
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->v141Reporter = &$reporter->context(new ReporterContext(
-            "CrossValidation",
-            "LEGACY",
-            "DVB",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "CrossValidation",
+                "LEGACY",
+                "DVB",
+                []
+            )
+        );
 
-        $this->genericIdentifierCase = $this->v141Reporter->add(
+        $this->genericIdentifierCase = $this->reporter->add(
             section: 'DRM',
             test: "Content Protection SHALL contain a ContentProtectionDescriptor",
             skipReason: 'No protected stream found'
         );
-        $this->psshCase = $this->v141Reporter->add(
+        $this->psshCase = $this->reporter->add(
             section: 'DRM',
             test: "PSSH Boxes SHOULD exist in either the MPD or the Initialization Segment",
             skipReason: 'No protected stream found'
         );
-        $this->systemInformationCase = $this->v141Reporter->add(
+        $this->systemInformationCase = $this->reporter->add(
             section: 'DRM',
             test: "MPD DRM System information",
             skipReason: 'No protected stream found'
         );
-        $this->cencCase = $this->v141Reporter->add(
+        $this->cencCase = $this->reporter->add(
             section: 'DRM',
             test: "The scheme SHOULD be set to 'cenc'",
             skipReason: "No protected stream or no 'schm' box found"
@@ -68,7 +67,7 @@ class ContentProtection
     }
 
     //Public validation functions
-    public function validateContentProtection(AdaptationSet $adaptationSet): void
+    public function validateAdaptationSet(AdaptationSet $adaptationSet): void
     {
         $contentProtectionNodes = $adaptationSet->getDOMElements('ContentProtection');
         if (count($contentProtectionNodes) == 0) {

@@ -12,16 +12,14 @@ use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
 use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\SegmentListComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use App\Modules\LowLatency\Segments\SegmentAdaptation;
 use App\Modules\LowLatency\Segments\ChunkedAdaptation;
 
-class SegmentOrChunked
+class SegmentOrChunked extends SegmentListComponent
 {
-    //Private subreporters
-    private SubReporter $legacyReporter;
-
     private TestCase $validCase;
 
     private SegmentAdaptation $segmentAdaptationValidator;
@@ -29,15 +27,17 @@ class SegmentOrChunked
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "LEGACY",
-            "Low Latency",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "Low Latency",
+                []
+            )
+        );
 
-        $this->validCase = $this->legacyReporter->add(
+        $this->validCase = $this->reporter->add(
             section: '9.X.4.3',
             test: 'A Low Latency Adaptation Set SHALL either be a Segment or a Chunked Set',
             skipReason: "",
@@ -51,7 +51,7 @@ class SegmentOrChunked
     /**
      * @param array<Segment> $segments
      **/
-    public function validateSegmentOrChunked(Representation $representation, array $segments): void
+    public function validateSegmentList(Representation $representation, array $segments): void
     {
 
         $segmentTemplates = $representation->getDOMElements('SegmentTemplate');
@@ -78,7 +78,7 @@ class SegmentOrChunked
                 pass_message: "Detected Segment Adaptation Set",
                 fail_message: "",
             );
-            $this->segmentAdaptationValidator->validateSegmentAdaptation($representation, $segments);
+            $this->segmentAdaptationValidator->withSegmentList($representation, $segments);
         } else {
             $this->validCase->pathAdd(
                 path: $representation->path(),
@@ -87,7 +87,7 @@ class SegmentOrChunked
                 pass_message: "Detected Chunked Adaptation Set",
                 fail_message: "",
             );
-            $this->chunkedAdaptationValidator->validateChunkedAdaptation($representation, $segments);
+            $this->chunkedAdaptationValidator->withSegmentList($representation, $segments);
         }
     }
 

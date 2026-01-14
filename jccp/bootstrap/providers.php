@@ -6,4 +6,5 @@ return [
     App\Providers\ValidatorProvider::class,
     App\Providers\DownloaderProvider::class,
     App\Providers\SpecManagerProvider::class,
+    App\Providers\SegmentManagerProvider::class,
 ];

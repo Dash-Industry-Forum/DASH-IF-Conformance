@@ -10,33 +10,28 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Reporter\TestCase;
 use App\Services\Validators\Boxes\DescriptionType;
+use App\Interfaces\ModuleComponents\SegmentListComponent;
 use App\Interfaces\Module;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class Bitrate
+class Bitrate extends SegmentListComponent
 {
-    //Private subreporters
-    private SubReporter $waveReporter;
-
     private TestCase $bitrateCase;
 
     public function __construct()
     {
-        $this->registerChecks();
-    }
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "CTA-5005-A",
+                "Final",
+                []
+            )
+        );
 
-    private function registerChecks(): void
-    {
-        $reporter = app(ModuleReporter::class);
-        $this->waveReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "CTA-5005-A",
-            "Final",
-            []
-        ));
-
-        $this->bitrateCase = $this->waveReporter->add(
+        $this->bitrateCase = $this->reporter->add(
             section: '4.1.2 -  Basic On-Demand and Live Streaming',
             test:  "The Average Bitrate of a CMAF Fragment [..] SHOULD be within 10% of the Average Bitrate " .
                    "[..] of the Track.",
@@ -48,7 +43,7 @@ class Bitrate
     /**
      * @param array<Segment> $segments
      **/
-    public function validateBitrate(Representation $representation, array $segments): void
+    public function validateSegmentList(Representation $representation, array $segments): void
     {
 
         $segmentSizes = [];

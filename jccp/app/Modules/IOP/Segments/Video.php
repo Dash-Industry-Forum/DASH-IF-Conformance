@@ -11,34 +11,33 @@ use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\TestCase;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Validators\Boxes\DescriptionType;
-use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\InitSegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class Video
+class Video extends InitSegmentComponent
 {
-    //Private subreporters
-    private SubReporter $legacyReporter;
-
     private TestCase $editListCase;
     private TestCase $timingCase;
 
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->legacyReporter = &$reporter->context(new ReporterContext(
-            "Segments",
-            "DASH-IF IOP",
-            "4.3",
-            []
-        ));
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "DASH-IF IOP",
+                "4.3",
+                []
+            )
+        );
 
-        $this->editListCase = $this->legacyReporter->add(
+        $this->editListCase = $this->reporter->add(
             section: '6.2.5.2',
             test: "Edit lists SHALL NOT be present unless On-Demand profile is signalled",
             skipReason: "@bitstreamSwitching flag not set, or no video representation found",
         );
-        $this->timingCase = $this->legacyReporter->add(
+        $this->timingCase = $this->reporter->add(
             section: '6.2.5.2',
             test: "The composition time and decoded time for the first sample SHALL match",
             skipReason: "@bitstreamSwitching flag not set, or no video representation found",
@@ -46,7 +45,7 @@ class Video
     }
 
     //Public validation functions
-    public function validateVideo(Representation $representation, Segment $segment): void
+    public function validateInitSegment(Representation $representation, Segment $segment): void
     {
         if ($representation->getTransientAttribute('bitstreamSwitching') == '') {
             return;
