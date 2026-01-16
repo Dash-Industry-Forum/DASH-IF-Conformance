@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use League\Uri\Uri;
 use Keepsuit\LaravelOpenTelemetry\Facades\Tracer;
+use App\Services\Manifest\ManifestType;
 use App\Services\Manifest\Period;
 use App\Services\Manifest\AdaptationSet;
 use App\Services\Manifest\Representation;
@@ -13,7 +14,10 @@ use App\Services\Manifest\ProfileSpecificMPD;
 
 class MPDCache
 {
-    private ?\DOMElement $domCache = null;
+    /**
+     * @var array<string, \DOMELement> $domCache;
+     **/
+    private array $domCache = [];
     public string $error = '';
 
 
@@ -21,10 +25,10 @@ class MPDCache
     {
     }
 
-    private function parseDom(): ?\DOMElement
+    private function parseDom(ManifestType $type): ?\DOMElement
     {
-        return Tracer::newSpan("Parse mpd")->measure(function () {
-            $mpd = $this->getMPD();
+        return Tracer::newSpan("Parse mpd")->measure(function () use ($type) {
+            $mpd = $this->getMPD($type);
             if (!$mpd) {
                 return null;
             }
@@ -43,15 +47,15 @@ class MPDCache
         });
     }
 
-    private function getDom(): ?\DOMElement
+    private function getDom(ManifestType $type): ?\DOMElement
     {
-        if (!$this->domCache) {
-            $this->domCache = $this->parseDom();
+        if (!array_key_exists($type->name, $this->domCache)) {
+            $this->domCache[$type->name] = $this->parseDom($type);
         }
-        return $this->domCache;
+        return $this->domCache[$type->name];
     }
 
-    public function getMPD(): string
+    public function getMPD(ManifestType $type = ManifestType::Regular): string
     {
         $cachedUrl = Cache::get(cache_path(['mpd', 'url']), '');
         if ($cachedUrl != session()->get('mpd')) {
@@ -63,8 +67,8 @@ class MPDCache
         Cache::remember(cache_path(['mpd','url']), 3600, function () {
             return session()->get('mpd');
         });
-        $res = Cache::remember(cache_path(['mpd','contents']), 3600, function () {
-            return Tracer::newSpan("Retrieve mpd")->measure(function () {
+        $res = Cache::remember(cache_path(['mpd','contents', $type->name]), 3600, function () use ($type) {
+            return Tracer::newSpan("Retrieve mpd")->measure(function () use ($type) {
                 $contents = '';
                 try {
                     $contents = file_get_contents(session()->get('mpd'));
@@ -72,6 +76,9 @@ class MPDCache
                 }
                 if ($contents === false) {
                     return '';
+                }
+                if ($type == ManifestType::Regular) {
+                    Cache::put(cache_path(['mpd','url_retrieval']), time(), $seconds = 3600);
                 }
                 return $contents;
             });
@@ -82,10 +89,10 @@ class MPDCache
         return $res;
     }
 
-    public function getBaseUrl(): string
+    public function getBaseUrl(ManifestType $type = ManifestType::Regular): string
     {
         $myBase = '';
-        $dom = $this->getDom();
+        $dom = $this->getDom($type);
         if (!$dom) {
             return '';
         }
@@ -103,18 +110,18 @@ class MPDCache
         return Uri::fromBaseUri($myBase, $urlPath)->toString();
     }
 
-    public function getPeriodCount(): int
+    public function getPeriodCount(ManifestType $type = ManifestType::Regular): int
     {
-        $dom = $this->getDom();
+        $dom = $this->getDom($type);
         if (!$dom) {
             return 0;
         }
         return count($dom->getElementsByTagName('Period'));
     }
 
-    public function getPeriod(int $periodIndex): ?Period
+    public function getPeriod(int $periodIndex, ManifestType $type = ManifestType::Regular): ?Period
     {
-        $dom = $this->getDom();
+        $dom = $this->getDom($type);
         if (!$dom || $periodIndex > $this->getPeriodCount()) {
             return null;
         }
@@ -127,10 +134,10 @@ class MPDCache
     /**
      * @return array<int,Period>
      */
-    public function allPeriods(): array
+    public function allPeriods(ManifestType $type = ManifestType::Regular): array
     {
         $result = [];
-        $dom = $this->getDom();
+        $dom = $this->getDom($type);
         if ($dom) {
             foreach ($dom->getElementsByTagName('Period') as $periodIndex => $period) {
                 $result[] = new Period($period, $periodIndex);
@@ -141,9 +148,10 @@ class MPDCache
 
     public function getAdaptationSet(
         int $periodIndex,
-        int $adaptationIndex
+        int $adaptationIndex,
+        ManifestType $type = ManifestType::Regular
     ): ?AdaptationSet {
-        $period = $this->getPeriod($periodIndex);
+        $period = $this->getPeriod($periodIndex, $type);
         if (!$period) {
             return null;
         }
@@ -153,9 +161,10 @@ class MPDCache
     public function getRepresentation(
         int $periodIndex,
         int $adaptationIndex,
-        int $representationIndex
+        int $representationIndex,
+        ManifestType $type = ManifestType::Regular
     ): ?Representation {
-        $period = $this->getPeriod($periodIndex);
+        $period = $this->getPeriod($periodIndex, $type);
         if (!$period) {
             return null;
         }
@@ -164,9 +173,9 @@ class MPDCache
 
 
 
-    public function getAttribute(string $attribute): string
+    public function getAttribute(string $attribute, ManifestType $type = ManifestType::Regular): string
     {
-        $dom = $this->getDom();
+        $dom = $this->getDom($type);
         if (!$dom) {
             return '';
         }
@@ -176,29 +185,29 @@ class MPDCache
     /**
      * @return \DOMNodeList<\DOMElement>
      **/
-    public function getDOMElements(string $tagName): ?\DOMNodeList
+    public function getDOMElements(string $tagName, ManifestType $type = ManifestType::Regular): ?\DOMNodeList
     {
-        $dom = $this->getDom();
+        $dom = $this->getDom($type);
         if (!$dom) {
             return null;
         }
         return $dom->getElementsByTagName($tagName);
     }
 
-    public function hasProfile(string $profile): bool
+    public function hasProfile(string $profile, ManifestType $type = ManifestType::Regular): bool
     {
-        $profileList = explode(',', $this->getAttribute('profiles'));
+        $profileList = explode(',', $this->getAttribute('profiles', $type));
         return in_array($profile, $profileList);
     }
 
-    public function profileSpecificMPD(string $profile): ?ProfileSpecificMPD
+    public function profileSpecificMPD(string $profile, ManifestType $type = ManifestType::Regular): ?ProfileSpecificMPD
     {
-        if (!$this->hasProfile($profile)) {
+        if (!$this->hasProfile($profile, $type)) {
             return null;
         }
         $result = new ProfileSpecificMPD();
 
-        foreach ($this->allPeriods() as $period) {
+        foreach ($this->allPeriods($type) as $period) {
             $result->periods[] = $period;
 
             foreach ($period->allAdaptationSets() as $adaptationSet) {
@@ -221,11 +230,11 @@ class MPDCache
     /**
      * @return array<string>
      **/
-    public function getMediaTypes(): array
+    public function getMediaTypes(ManifestType $type = ManifestType::Regular): array
     {
         $mediaTypes = [];
 
-        foreach ($this->allPeriods() as $period) {
+        foreach ($this->allPeriods($type) as $period) {
             foreach ($period->allAdaptationSets() as $adaptationSet) {
                 foreach ($adaptationSet->allRepresentations() as $representation) {
                     $contentType = $representation->getTransientAttribute('contentType');

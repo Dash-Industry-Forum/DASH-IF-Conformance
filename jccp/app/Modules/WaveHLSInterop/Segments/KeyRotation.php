@@ -24,11 +24,12 @@ class KeyRotation extends SegmentComponent
         parent::__construct(
             self::class,
             new ReporterContext(
-            "Segments",
-            "CTA-5005-A",
-            "Final",
-            []
-        ));
+                "Segments",
+                "CTA-5005-A",
+                "Final",
+                []
+            )
+        );
 
         $this->sgbpCase = $this->reporter->add(
             section: '4.6.2 - Rotation of Encryption Keys',

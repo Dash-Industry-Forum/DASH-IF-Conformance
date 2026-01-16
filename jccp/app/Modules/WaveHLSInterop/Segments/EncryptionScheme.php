@@ -33,11 +33,12 @@ class EncryptionScheme extends InitSegmentComponent
         parent::__construct(
             self::class,
             new ReporterContext(
-            "Segments",
-            "CTA-5005-A",
-            "Final",
-            []
-        ));
+                "Segments",
+                "CTA-5005-A",
+                "Final",
+                []
+            )
+        );
 
         $this->cbcsCase = $this->reporter->add(
             section: $this->section,

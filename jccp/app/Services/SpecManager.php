@@ -151,7 +151,8 @@ class SpecManager
         foreach ($mpdCache->allPeriods() as $period) {
             foreach ($period->allAdaptationSets() as $adaptationSet) {
                 foreach ($adaptationSet->allRepresentations() as $representation) {
-                    $this->allSegments[$representation->path()] = $segmentManager->representationSegments($representation);
+                    $this->allSegments[$representation->path()] =
+                        $segmentManager->representationSegments($representation);
                 }
             }
         }

@@ -24,11 +24,12 @@ class TextComponentConstraints extends InitSegmentComponent
         parent::__construct(
             self::class,
             new ReporterContext(
-            "Segments",
-            "CTA-5005-A",
-            "Final",
-            []
-        ));
+                "Segments",
+                "CTA-5005-A",
+                "Final",
+                []
+            )
+        );
 
         $this->packageCase = $this->reporter->add(
             section: '4.1.2 - Basic On-Demand and Live Streaming',

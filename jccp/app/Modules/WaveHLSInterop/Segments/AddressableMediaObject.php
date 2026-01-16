@@ -24,11 +24,12 @@ class AddressableMediaObject extends SegmentComponent
         parent::__construct(
             self::class,
             new ReporterContext(
-            "Segments",
-            "CTA-5005-A",
-            "Final",
-            []
-        ));
+                "Segments",
+                "CTA-5005-A",
+                "Final",
+                []
+            )
+        );
 
         $this->sidxCase = $this->reporter->add(
             section: '4.1.2 - Basic On-Demand and Live Streaming',

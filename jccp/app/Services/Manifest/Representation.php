@@ -138,7 +138,7 @@ class Representation
             if (!$startNumber) {
                 $startNumber = 1;
             }
-            for ($i = 0; $i < 50; $i++) {
+            for ($i = 0; $i < 3; $i++) {
                 $filledTemplate =
                     Uri::fromTemplate($uriTemplate, [
                     'Number' => ($startNumber + $i),

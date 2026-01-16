@@ -26,11 +26,12 @@ class TrackRoles extends InitSegmentComponent
         parent::__construct(
             self::class,
             new ReporterContext(
-            "Segments",
-            "CTA-5005-A",
-            "Final",
-            []
-        ));
+                "Segments",
+                "CTA-5005-A",
+                "Final",
+                []
+            )
+        );
 
         $this->kindCase = $this->reporter->add(
             section: $this->section,

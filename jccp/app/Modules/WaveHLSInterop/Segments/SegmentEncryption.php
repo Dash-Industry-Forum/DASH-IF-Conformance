@@ -25,11 +25,12 @@ class SegmentEncryption extends SegmentComponent
         parent::__construct(
             self::class,
             new ReporterContext(
-            "Segments",
-            "CTA-5005-A",
-            "Final",
-            []
-        ));
+                "Segments",
+                "CTA-5005-A",
+                "Final",
+                []
+            )
+        );
 
         $this->psshCase = $this->reporter->add(
             section: '4.3.2 - Encrypted Media Presentations',

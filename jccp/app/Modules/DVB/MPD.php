@@ -29,6 +29,7 @@ use App\Modules\DVB\MPD\BandwidthChecks;
 use App\Modules\DVB\MPD\ContentProtectionChecks;
 use App\Modules\DVB\MPD\Resolution;
 use App\Modules\DVB\MPD\Codecs;
+use App\Modules\DVB\MPD\UpdateConstraints;
 
 class MPD extends Module
 {
@@ -89,6 +90,7 @@ class MPD extends Module
         new ContentProtectionChecks()->validateContentProtection();
         new EventChecks()->validateEvents();
         new SCTEChecks()->validateSCTE();
+        new UpdateConstraints()->validateUpdateConstraints();
 
         $resolutionChecker = new Resolution();
         $codecChecker = new Codecs();
