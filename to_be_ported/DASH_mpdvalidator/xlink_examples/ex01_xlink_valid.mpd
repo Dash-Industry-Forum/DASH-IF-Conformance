@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MPD 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="urn:mpeg:dash:schema:mpd:2011"
+	xsi:schemaLocation="urn:mpeg:dash:schema:mpd:2011 http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-DASH_schema_files/DASH-MPD.xsd"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	minBufferTime="PT10.00S" mediaPresentationDuration="PT30.00S"
+	type="dynamic" availabilityStartTime="2001-12-17T09:40:57Z"
+	profiles="urn:mpeg:dash:profile:isoff-main:2011">
+	<Period xlink:href="http://ftp-itec.uni-klu.ac.at/dash/conformance/xlink_files/ex01_include.mpd"
+                xlink:actuate="onRequest" start="PT06H"/>
+	<Period start="PT08H" id="10">
+		<BaseURL>http://www.example.com</BaseURL>
+		<AdaptationSet group="1">
+			<Representation  id="QVGA-LQ" mimeType="video/mp4" codecs="avc1.42E00C, mp4a.40.2" bandwidth="192000" width="320" height="240">
+				<SegmentBase>
+					<Initialization sourceURL="http://www.example.com/rep-QVGA-LQ/seg-init.mp4"/>
+				</SegmentBase>
+			</Representation>
+			<Representation id="QVGA-HQ" mimeType="video/mp4" codecs="avc1.42E00C, mp4a.40.2" bandwidth="384000" width="320" height="240">
+				<SegmentBase>
+					<Initialization sourceURL="http://www.example.com/rep-QVGA-HQ/seg-init.mp4"/>
+				</SegmentBase>
+			</Representation>
+		</AdaptationSet>
+	</Period>
+</MPD>

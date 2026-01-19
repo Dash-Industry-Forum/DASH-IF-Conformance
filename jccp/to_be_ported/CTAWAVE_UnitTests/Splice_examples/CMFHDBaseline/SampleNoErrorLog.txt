@@ -1,3 +1,0 @@
-Sample log file with no WAVE Splice Constraints errors.
-
-No errors.

@@ -1,5 +1,0 @@
-<Representation id="QVGA-LQ" mimeType='video/mp4; codecs="avc1.42E00C, mp4a.40.2"' bandwidth="192000" width="320" height="240" xmlns="urn:mpeg:dash:schema:mpd:2011">
-	<SegmentBase>
-		<Initialization sourceURL="http://www.example.com/rep-QVGA-LQ/seg-init.mp4"/>
-	</SegmentBase>
-</Representation>

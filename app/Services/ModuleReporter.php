@@ -1,0 +1,176 @@
+<?php
+
+namespace App\Services;
+
+use Illuminate\Support\Facades\Log;
+use App\Services\Reporter\Context;
+use App\Services\Reporter\SubReporter;
+
+class ModuleReporter
+{
+    /**
+        * @var array<Context> $contextList
+    **/
+    private array $contextList = [];
+    /**
+        * @var array<SubReporter> $reportByContext
+    **/
+    private array $reportByContext = [];
+
+    public function __construct()
+    {
+    }
+
+    public function &context(Context $context): SubReporter
+    {
+        $key = array_find_key($this->contextList, function (Context $value) use ($context) {
+            return $value->equals($context);
+        });
+        if ($key === null) {
+            $this->contextList[] = $context;
+            $this->reportByContext[] = new SubReporter();
+            $key = array_key_last($this->contextList);
+        }
+        return $this->reportByContext[$key];
+    }
+
+    /**
+     * @return array<string>
+     **/
+    public function knownContexts(): array
+    {
+        $result = [];
+        foreach ($this->contextList as $context) {
+            $result[] = $context->toString();
+        }
+        return $result;
+    }
+
+    public function verdict(): string
+    {
+        $verdict = "PASS";
+
+        foreach ($this->reportByContext as $context) {
+            switch ($context->verdict()) {
+                case "FAIL":
+                    return "FAIL";
+                case "WARN":
+                    $verdict = "WARN";
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return $verdict;
+    }
+
+    /**
+     * @return array<array<mixed>>
+     **/
+    public function serialize(bool $verbose = false): array
+    {
+        $res = [];
+
+
+        foreach ($this->contextList as $i => $ctx) {
+            $specVersion = $ctx->spec . " - " . $ctx->version;
+
+            if (!array_key_exists($ctx->element, $res)) {
+                $res[$ctx->element] = [];
+            }
+            if (!array_key_exists($specVersion, $res[$ctx->element])) {
+                $res[$ctx->element][$specVersion] = [];
+            }
+
+            $res[$ctx->element][$specVersion] = array_merge(
+                $res[$ctx->element][$specVersion],
+                $this->reportByContext[$i]->byCheck($verbose)
+            );
+        }
+
+        $this->resolveDependencies($res);
+
+        return $res;
+    }
+
+    /**
+     * @return array<string, array<string, string>>
+     **/
+    public function asTable(): array
+    {
+        $res = [];
+
+        $serialized = $this->serialize(true);
+
+        foreach ($serialized as $element => $specResults) {
+            foreach ($specResults as $spec => $results) {
+                $res[$spec][$element] = $this->getSpecResult($spec, $results);
+            }
+        }
+
+        ksort($res);
+        return $res;
+    }
+
+    /**
+     * @param array<mixed> $results
+     **/
+    public function getSpecResult(string $spec, array $results): string
+    {
+        $res = "✓";
+        foreach ($results as $section => $sectionResults) {
+            foreach ($sectionResults['checks'] as $check => $checkResults) {
+                if ($checkResults['state'] == "FAIL") {
+                    return "✗";
+                }
+                if ($checkResults['state'] == "WARN") {
+                    $res =  "!";
+                }
+            }
+        }
+        return $res;
+    }
+
+
+
+    /**
+     * @param array<array<mixed>> $serialized
+     **/
+    public function resolveDependencies(array &$serialized): void
+    {
+        foreach ($serialized as &$element) {
+            foreach ($element as &$module) {
+                foreach ($module as &$section) {
+                    foreach ($section['checks'] as $statement => &$check) {
+                        if ($check['state'] != "DEPENDENCY") {
+                            continue;
+                        }
+                        $depArray = explode('::', $statement);//check['messages'][0]);
+
+                        if (!array_key_exists($depArray[0], $element)) {
+                            $check['messages'][] = "✗ Unable to resolve dependent spec";
+                            $check['state'] = "FAIL";
+                            continue;
+                        }
+                        if (!array_key_exists($depArray[1], $element[$depArray[0]])) {
+                            $check['messages'][] = "✗ Unable to resolve dependent section";
+                            $check['state'] = "FAIL";
+                            continue;
+                        }
+                        $dependentState = $element[$depArray[0]][$depArray[1]]['state'];
+                        $check['state'] = $dependentState;
+                        if ($dependentState == "WARN") {
+                            if ($section['state'] != "FAIL") {
+                                $section['state'] = "WARN";
+                            }
+                        }
+                        if ($dependentState == "FAIL") {
+                            $section['state'] = "FAIL";
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
