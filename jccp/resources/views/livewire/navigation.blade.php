@@ -22,9 +22,9 @@
         <li class="nav-item">
           <a class="nav-link" href="/about" wire:navigate>About</a>
         </li>
-        <li class="nav-item">
+        <!--li class="nav-item">
           <a class="nav-link" href="/statistics" wire:navigate>Statistics</a>
-        </li>
+        </li-->
         <li class="nav-item">
           <a class="nav-link" href="/faq" wire:navigate>FAQ</a>
         </li>
