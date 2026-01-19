@@ -6,4 +6,4 @@ services:
       target: jccp
 #    entrypoint: php artisan octane:frankenphp --workers=1 --max-requests=1
     ports:
-      - "8000:80"
+      - 8008:80

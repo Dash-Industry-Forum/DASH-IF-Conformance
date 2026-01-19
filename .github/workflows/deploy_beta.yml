@@ -49,6 +49,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
+          context: ./
           tags: ghcr.io/${{ env.REPOSITORY_LC }}:beta
           target: jccp
           build-args: |
