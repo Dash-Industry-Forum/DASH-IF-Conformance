@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-        with: 
+        with:
           fetch-tags: true
           fetch-depth: 0
       - name: Convert repository name to lower case
@@ -25,7 +25,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN  }}
       - name: Composer and npm install
         run: |
-          cd ./jccp
+          composer update
           composer install
           npm i
           npm run build
@@ -34,12 +34,22 @@ jobs:
           echo "BUILD_COMMIT=\"${{ github.sha }}\"" >> .env
           php artisan key:generate
           php artisan migrate
+      - name: Run unit tests
+        env:
+          XDEBUG_MODE: coverage
+        run: |
+          php artisan test --coverage
+      - name: Run PHPCodeSniffer
+        run: |
+          ./vendor/bin/phpcs ./app
+      - name: Run PHPStan
+        run: |
+          ./vendor/bin/phpstan analyse --memory-limit 1G
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
           push: true
           tags: ghcr.io/${{ env.REPOSITORY_LC }}:beta
-          context: ./jccp
           target: jccp
           build-args: |
             SHORT_SHA:${{ github.sha }}

@@ -5,7 +5,7 @@ namespace Tests\Unit\WaveHLSInterop\Bitrate;
 use Tests\TestCase;
 use App\Services\ModuleReporter;
 use App\Services\Manifest\Representation;
-use App\Modules\Wave\Segments\Bitrate;
+use App\Modules\WaveHLSInterop\Segments\Bitrate;
 
 class Test extends TestCase
 {
@@ -24,14 +24,14 @@ class Test extends TestCase
 
     public function testNoRepresentations(): void
     {
-        $this->subject->validateBitrate($this->mockRepresentation, []);
+        $this->subject->withSegmentList($this->mockRepresentation, []);
 
         $this->assertEquals($this->reporter->verdict(), "FAIL");
     }
 
     public function testValidBitrates(): void
     {
-        $this->subject->validateBitrate($this->mockRepresentation, [
+        $this->subject->withSegmentList($this->mockRepresentation, [
             new Segment(CaseEnum::Valid1),
             new Segment(CaseEnum::Valid2),
         ]);
@@ -41,7 +41,7 @@ class Test extends TestCase
 
     public function testInvalidBitrates(): void
     {
-        $this->subject->validateBitrate($this->mockRepresentation, [
+        $this->subject->withSegmentList($this->mockRepresentation, [
             new Segment(CaseEnum::Valid1),
             new Segment(CaseEnum::Valid2),
             new Segment(CaseEnum::Invalid1),
@@ -52,7 +52,7 @@ class Test extends TestCase
 
     public function testNoDuration(): void
     {
-        $this->subject->validateBitrate($this->mockRepresentation, [
+        $this->subject->withSegmentList($this->mockRepresentation, [
             new Segment(CaseEnum::Valid1),
             new Segment(CaseEnum::Valid2),
             new Segment(CaseEnum::Invalid2),
