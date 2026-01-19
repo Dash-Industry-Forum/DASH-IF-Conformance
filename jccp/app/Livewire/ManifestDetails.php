@@ -30,11 +30,6 @@ class ManifestDetails extends Component
     }
 
 
-    public function isOpenSection(string $spec): bool
-    {
-        return $this->sections[0] == $spec;
-    }
-
     public function render(): View
     {
         return view('livewire.manifest-details');

@@ -18,7 +18,8 @@
   </div>
   @if ($this->mpdError())
     <div class="alert alert-danger">
-      <b>Unable to parse MPD: {{ $this->mpdError() }}</b>
+      <b>Unable to parse MPD</b>
+      <div>{{ $this->mpdError() }}</div>
     </div>
   @endif
 </div>

@@ -1,3 +1,5 @@
+<div>
+  <h4 class="text-center">Quick Results</h4>
 <table class="container table table-striped">
   <thead>
   <tr class="row">
@@ -27,3 +29,4 @@
   @endforeach
   </tbody>
 </table>
+</div>

@@ -25,23 +25,35 @@ class SpecManager extends Component
      **/
     public function mpdSpecs(): array
     {
-        return array_filter(app(\App\Services\SpecManager::class)->specNames(), function ($spec) {
+        $manifestSpecifications = array_filter(app(\App\Services\SpecManager::class)->specNames(), function ($spec) {
             return strpos($spec, "MPD") !== false;
         });
+        return array_map(
+            function ($spec) {
+                return substr($spec, 0, strpos($spec, " MPD"));
+            },
+            $manifestSpecifications
+        );
     }
     /**
      * @return array<string>
      **/
     public function segmentSpecs(): array
     {
-        return array_filter(app(\App\Services\SpecManager::class)->specNames(), function ($spec) {
+        $segmentSpecifications = array_filter(app(\App\Services\SpecManager::class)->specNames(), function ($spec) {
             return strpos($spec, "Segment") !== false;
         });
+        return array_map(
+            function ($spec) {
+                return substr($spec, 0, strpos($spec, " Segment"));
+            },
+            $segmentSpecifications
+        );
     }
 
-    public function buttonClassForSpec(string $spec): string
+    public function buttonClassForSpec(string $spec, string $type): string
     {
-        $state = app(\App\Services\SpecManager::class)->specState($spec);
+        $state = app(\App\Services\SpecManager::class)->specState("$spec $type");
         if ($state == 'Enabled') {
             return 'btn-success';
         }
@@ -51,9 +63,9 @@ class SpecManager extends Component
         return 'btn-outline-dark';
     }
 
-    public function enable(string $spec): void
+    public function enable(string $spec, string $type): void
     {
-        app(\App\Services\SpecManager::class)->toggle($spec);
+        app(\App\Services\SpecManager::class)->toggle("$spec $type");
         $this->dispatch('spec-selection-changed');
     }
 
