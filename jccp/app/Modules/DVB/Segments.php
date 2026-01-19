@@ -60,6 +60,7 @@ class Segments extends Module
     {
         //NOTE: Removed legacy self-consistency checks in this commit, as they were disabled to begin with.
         //TODO: Re-implent segment vs mpd timing checks in this commit
+        //TODO: Re-implement subtitle checks from this commit. Would only validate ttml files if they are signalled as mp4/video...
         foreach ($segments as $segmentIndex => $segment) {
             if ($segmentIndex == 0) {
                 $this->validateInitialization($representation, $segment);
