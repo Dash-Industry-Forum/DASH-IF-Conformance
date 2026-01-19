@@ -17,3 +17,4 @@ Utils/sessions
 unit-test-results
 ISOSegmentValidator/public/linux/obj
 external/*
+.phpdoc
