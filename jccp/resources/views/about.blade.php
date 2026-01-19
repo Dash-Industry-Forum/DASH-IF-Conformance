@@ -30,5 +30,7 @@
     <p>
       The DASH-IF Conformance Tool is an open source software available on <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance" target="_blank">Github</a>. A live demo of the tool is also provided <a href="https://conformance.dashif.org/" target="_blank">here</a>.
     </p>
+
+    <div class="mb-5">&nbsp;</div>
   </div>
 </x-layout>

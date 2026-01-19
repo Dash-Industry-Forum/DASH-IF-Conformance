@@ -4,7 +4,7 @@
     <div class="container">
       <div class="row align-items-center">
         <div class="col-11">
-          <b>You have given permission for us to collect usage data in order to improve the tool</b>
+          <b>You have given us permission to collect usage data in order to improve the tool</b>
         </div>
         <button class="col-1 btn btn-outline-danger" type="button" wire:click="revoke">Revoke</button>
       </div>
