@@ -31,8 +31,8 @@ class Module
         return $this->autoDetected;
     }
 
-    public function enableDependencies(SpecManager $manager) : void {
-
+    public function enableDependencies(SpecManager $manager): void
+    {
     }
 
     public function validateMPD(): void

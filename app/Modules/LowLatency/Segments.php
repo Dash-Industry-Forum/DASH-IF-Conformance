@@ -31,7 +31,8 @@ class Segments extends Module
         parent::__construct("Low Latency Segments");
     }
 
-    public function enableDependencies(SpecManager $manager): void {
+    public function enableDependencies(SpecManager $manager): void
+    {
         $manager->activateDependency("CMAF Segments");
         $manager->activateDependency("CMAF Segments");
         $manager->activateDependency("Wave HLS Interop Segments");

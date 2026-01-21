@@ -30,7 +30,8 @@ class Segments extends Module
         parent::validateMPD();
     }
 
-    public function enableDependencies(SpecManager $manager): void {
+    public function enableDependencies(SpecManager $manager): void
+    {
         $manager->activateDependency("DVB Segments");
     }
 

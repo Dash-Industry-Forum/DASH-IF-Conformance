@@ -27,7 +27,8 @@ class MPD extends Module
         parent::__construct("HbbTV MPD");
     }
 
-    public function enableDependencies(SpecManager $manager): void {
+    public function enableDependencies(SpecManager $manager): void
+    {
         $manager->activateDependency("DVB MPD");
     }
 

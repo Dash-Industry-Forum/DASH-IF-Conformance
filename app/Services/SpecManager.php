@@ -58,7 +58,8 @@ class SpecManager
         }
     }
 
-    private function enableDependencies(): void {
+    private function enableDependencies(): void
+    {
         foreach ($this->manifestSpecs as $manifestSpec) {
             $state = &$this->moduleStates[$manifestSpec->name];
             if (!$state['enabled']) {

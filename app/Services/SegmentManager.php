@@ -57,7 +57,7 @@ class SegmentManager
         foreach ($queuedIter as $file) {
             $queuedFiles[] = $file;
         }
-        if (count($queuedFiles) > count($files)){
+        if (count($queuedFiles) > count($files)) {
             return 0;
         }
         return count($files) - count($queuedFiles);
@@ -98,8 +98,8 @@ class SegmentManager
                 representationDir: $representationDir,
                 segmentIndex: $segmentIdx
             );
-            if ($seg->getSize() > 0){
-              $segments[] = $seg;
+            if ($seg->getSize() > 0) {
+                $segments[] = $seg;
             }
         }
 

@@ -24,7 +24,7 @@ class SpecManager extends Component
 
     public function specManagerState(): string
     {
-        $this->specManager->stateJSON();
+        return $this->specManager->stateJSON();
     }
 
     /**
