@@ -35,18 +35,24 @@ class DownloadSegment implements ShouldQueue
 
         $curl = curl_init();
         curl_setopt_array($curl, array(
-        CURLOPT_URL => $this->url,
-        CURLOPT_FAILONERROR => true,
-        CURLOPT_SSL_VERIFYPEER => false,
-        CURLOPT_TIMEOUT => 240,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_CONNECTTIMEOUT => 0,
-        CURLOPT_USERAGENT => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)',
-        CURLOPT_FILE => $fp
+            CURLOPT_URL => $this->url,
+            CURLOPT_FAILONERROR => true,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_TIMEOUT => 240,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_CONNECTTIMEOUT => 0,
+            CURLOPT_MAXFILESIZE => 100000000, //100mb
+            CURLOPT_USERAGENT => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)',
+            CURLOPT_FILE => $fp
         ));
 
         curl_exec($curl);
         fclose($fp);
+
+        if (curl_error($curl) == CURLE_FILESIZE_EXCEEDED){
+            $fp = fopen($this->targetPath, "w");
+            fclose($fp);
+        }
 
 
         unlink($this->targetPath . ".queued");
