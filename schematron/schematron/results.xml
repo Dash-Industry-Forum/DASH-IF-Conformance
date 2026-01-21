@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<svrl:schematron-output xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+                        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                        xmlns:saxon="http://saxon.sf.net/"
+                        xmlns:schold="http://www.ascc.net/xml/schematron"
+                        xmlns:iso="http://purl.oclc.org/dsdl/schematron"
+                        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+                        xmlns:dash="urn:mpeg:dash:schema:mpd:2011"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xmlns:cenc="urn:mpeg:cenc:2013"
+                        xmlns:dlb="http://www.dolby.com/ns/2019/dash-if"
+                        title="Schema for validating MPDs"
+                        schemaVersion="ISO19757-3"><!--   
+		   
+		   
+		 -->
+   <svrl:ns-prefix-in-attribute-values uri="urn:mpeg:dash:schema:mpd:2011" prefix="dash"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/1999/xlink" prefix="xlink"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema" prefix="xs"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/1999/XSL/Transform" prefix="xsl"/>
+   <svrl:ns-prefix-in-attribute-values uri="urn:mpeg:cenc:2013" prefix="cenc"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.dolby.com/ns/2019/dash-if" prefix="dlb"/>
+   <svrl:ns-prefix-in-attribute-values uri="urn:mpeg:dash:schema:mpd:2011" prefix="dash"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.dolby.com/ns/2019/dash-if" prefix="dlb"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="MPD element"/>
+   <svrl:fired-rule context="dash:MPD"/>
+   <svrl:failed-assert test="if (not(@profiles) or (every $t in tokenize(@profiles,',') satisfies $t = $supported-profiles/dlb:profile/@uri)) then true() else false()"
+                       location="/*:MPD[namespace-uri()='urn:mpeg:dash:schema:mpd:2011'][1]">
+      <svrl:text>An unknown profile string "urn:dvb:dash:profile:dvb-dash:2014,urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014" (other than the On-Demand profile -"urn:mpeg:dash:profile:isoff-on-demand:2011", the extended On-Demand profile -"urn:mpeg:dash:profile:isoff-ext-on-demand:2014", the live profile -"urn:mpeg:dash:profile:isoff-live:2011", the extended live profile -"urn:mpeg:dash:profile:isoff-ext-live:2014", the main profile -"urn:mpeg:dash:profile:isoff-main:2011", the full profile -"urn:mpeg:dash:profile:full:2011", the common profile -"urn:mpeg:dash:profile:isoff-common:2014", the broadcast profile -"urn:mpeg:dash:profile:isoff-broadcast:2015", the mp2t-main profile -"urn:mpeg:dash:profile:mp2t-main:2011", the mp2t-simple profile -"urn:mpeg:dash:profile:mp2t-simple:2011", the DASH-IF profile -"http://dashif.org/guidelines/dash264", the DASH-IF SD profile -"http://dashif.org/guidelines/dash264#sd", the DASH-IF HD profile -"http://dashif.org/guidelines/dash264#hd", the DASH-IF main profile -"http://dashif.org/guidelines/dash264main", the DASH-IF high profile -"http://dashif.org/guidelines/dash264high", the DASH-IF IOP simple profile -"http://dashif.org/guidelines/dash-if-simple", the DASH-IF IOP main profile -"http://dashif.org/guidelines/dash-if-main", the DASH-IF IOP on demand profile -"http://dashif.org/guidelines/dash-if-ondemand", the DASH-IF IOP mixed on demand profile -"http://dashif.org/guidelines/dash-if-mixed", the DASH-IF multichannel audio extension with Enhanced AC-3 -"http://dashif.org/guidelines/dashif#ec-3", the DASH-IF multichannel extension with Dolby TrueHD -"http://dashif.org/guidelines/dashif#mlpa", the Dolby AC-4 profile -"http://dashif.org/guidelines/dashif#ac-4", the DASH-IF multichannel extension with DTS Digital Surround -"http://dashif.org/guidelines/dashif#dtsc", the DASH-IF multichannel audio extension with DTS-HD High Resolution and DTS-HD Master Audio -"http://dashif.org/guidelines/dashif#dtsh", the DASH-IF multichannel audio extension with DTS Express -"http://dashif.org/guidelines/dashif#dtse", the DASH-IF multichannel audio extension with DTS-HD Lossless profile -"http://dashif.org/guidelines/dashif#dtsl", the DASH-IF multichannel audio extension with MPEG Surround profile -"http://dashif.org/guidelines/dashif#mps", the DASH-IF multichannel audio extension with HEAACv2 Level 4 profile -"http://dashif.org/guidelines/dashif#heaac-mc51", the DASH-IF multichannel audio extension with HEAACv2 Level 6 profile -"http://dashif.org/guidelines/dashif#heaac-mc71", the multichannel audio extension with MPEG-H 3D Audio profile -"http://dashif.org/guidelines/dashif#mpeg-h-3da", the DASH-IF audio extension with USAC profile -"http://dashif.org/guidelines/dashif#cxha", the DASH-IF UHD HEVC 4K profile -"http://dashif.org/guidelines/dash-if-uhd#4k", the DASH-IF HEVC HDR PQ10 profile -"http://dashif.org/guidelines/dash-if-uhd#hdr-pq10", the VP9-HD profile -"http://dashif.org/guidelines/dashif#vp9", the VP9-UHD profile -"http://dashif.org/guidelines/dash-if-uhd#vp9", the VP9-HDR profile -"http://dashif.org/guidelines/dashif#vp9-hdr", the VP9-HDR profile -"http://dashif.org/guidelines/dash-if-uhd#vp9-hdr", the DVB-DASH 2014 profile -"urn:dvb:dash:profile:dvb-dash:2014", the DVB-DASH 2017 profile -"urn:dvb:dash:profile:dvb-dash:2017", the HbbTV 1.5 profile -"urn:hbbtv:dash:profile:isoff-live:2012") found.</svrl:text>
+   </svrl:failed-assert>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="Period element"/>
+   <svrl:fired-rule context="dash:Period"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="AdaptationSet element"/>
+   <svrl:fired-rule context="dash:AdaptationSet"/>
+   <svrl:fired-rule context="dash:AdaptationSet"/>
+   <svrl:fired-rule context="dash:AdaptationSet"/>
+   <svrl:fired-rule context="dash:AdaptationSet"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="ContentComponent element"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="Representation element"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="SubRepresentation element"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="SegmentTemplate element"/>
+   <svrl:fired-rule context="dash:SegmentTemplate"/>
+   <svrl:fired-rule context="dash:SegmentTemplate"/>
+   <svrl:fired-rule context="dash:SegmentTemplate"/>
+   <svrl:fired-rule context="dash:SegmentTemplate"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="SegmentList element"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="SegmentBase element"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="SegmentTimeline element"/>
+   <svrl:fired-rule context="dash:SegmentTimeline"/>
+   <svrl:fired-rule context="dash:SegmentTimeline"/>
+   <svrl:fired-rule context="dash:SegmentTimeline"/>
+   <svrl:fired-rule context="dash:SegmentTimeline"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="ProgramInformation element"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="ContentProtection element"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="Role element"/>
+   <svrl:fired-rule context="dash:Role"/>
+   <svrl:fired-rule context="dash:Role"/>
+   <svrl:fired-rule context="dash:Role"/>
+   <svrl:fired-rule context="dash:Role"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="FramePacking element"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml"
+                        name="AudioChannelConfiguration element"/>
+   <svrl:fired-rule context="dash:AudioChannelConfiguration"/>
+   <svrl:fired-rule context="dash:AudioChannelConfiguration"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="EventStream element"/>
+   <svrl:fired-rule context="dash:EventStream"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="Subset element"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="UTCTiming element"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml"
+                        name="SupplementalProperty element"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="SRD description element"/>
+   <svrl:fired-rule context="dash:Period"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="MPD element"/>
+   <svrl:fired-rule context="dash:MPD"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="Period element"/>
+   <svrl:fired-rule context="dash:Period"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="AdaptationSet element"/>
+   <svrl:fired-rule context="dash:AdaptationSet"/>
+   <svrl:fired-rule context="dash:AdaptationSet"/>
+   <svrl:fired-rule context="dash:AdaptationSet"/>
+   <svrl:fired-rule context="dash:AdaptationSet"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="Representation element"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:fired-rule context="dash:Representation"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="SubRepresentation element"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="SegmentBase element"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="ContentProtection element"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml"
+                        name="AudioChannelConfiguration element"/>
+   <svrl:fired-rule context="dash:AudioChannelConfiguration"/>
+   <svrl:fired-rule context="dash:AudioChannelConfiguration"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="EssentialProperty element"/>
+   <svrl:ns-prefix-in-attribute-values uri="urn:mpeg:dash:schema:mpd:2011" prefix="dash"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/1999/xlink" prefix="xlink"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.dolby.com/ns/2019/dash-if" prefix="dlb"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml"
+                        name="AdaptationSet element for DVB DASH 2017 profile"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml"
+                        name="Preselection element for DVB DASH 2017 profile"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml"
+                        name="AdaptationSet and Preselection element for AC-4 for DVB DASH 2017 profile"/>
+   <svrl:ns-prefix-in-attribute-values uri="urn:mpeg:dash:schema:mpd:2011" prefix="dash"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/1999/xlink" prefix="xlink"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.w3.org/2001/XMLSchema-instance" prefix="xsi"/>
+   <svrl:ns-prefix-in-attribute-values uri="http://www.dolby.com/ns/2019/dash-if" prefix="dlb"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml"
+                        name="AdaptationSet and Preselection element for AC-4"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="Representation for AC-4"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml" name="Role element for AC-4"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml"
+                        name="AC-4 supplemental property descriptors"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml"
+                        name="AudioChannelConfiguration element for AC-4 part 1"/>
+   <svrl:active-pattern document="file:/tmp/CLI/resolved.xml"
+                        name="AudioChannelConfiguration element for AC-4 part 2"/>
+</svrl:schematron-output>

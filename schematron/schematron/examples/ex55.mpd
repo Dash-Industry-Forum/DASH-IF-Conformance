@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MPD 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns="urn:mpeg:dash:schema:mpd:2011" 
+    xsi:schemaLocation="urn:mpeg:dash:schema:mpd:2011 DASH-MPD.xsd"
+    type="static" 
+    mediaPresentationDuration="PT3256S" 
+    minBufferTime="PT1.2S" 
+    profiles="urn:mpeg:dash:profile:isoff-on-demand:2011"> 
+    
+    <BaseURL>http://cdn1.example.com/</BaseURL> 
+    <BaseURL>http://cdn2.example.com/</BaseURL> 
+    
+    <!-- Period with a multiplexed stream with subrepresentations 
+       described for use with fast forward -->
+    <Period> 
+        <AdaptationSet 
+            mimeType="video/mp4"  codecs="avc2.4D401E,avc1.4D401E,mp4a.40" 
+            width="640" height="480" frameRate="30" lang="en" 
+            subsegmentAlignment="true" subsegmentStartsWithSAP="2"> 
+            <ContentComponent id="0"  contentType="video"/> 
+            <ContentComponent id="1"  contentType="audio"/> 
+            <Representation id="tag0" bandwidth="512000">
+                <BaseURL>video-512k.mp4</BaseURL> 
+                <SubRepresentation level="0" contentComponent="0" bandwidth="128000" codecs="avc1.4D401E" maxPlayoutRate="4"/> 
+                <SubRepresentation level="1" dependencyLevel="0" contentComponent="0" bandwidth="320000" codecs="avc2.4D401E"/>
+                <SubRepresentation level="2" contentComponent="1" bandwidth="64000" codecs="mp4a.40"/> 
+                <SegmentBase indexRange="7632" />
+            </Representation> 
+        </AdaptationSet> 
+    </Period> 
+</MPD> 
+

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- valid -->
+<MPD 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="urn:mpeg:dash:schema:mpd:2011"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xsi:schemaLocation="urn:mpeg:dash:schema:mpd:2011 http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-DASH_schema_files/DASH-MPD.xsd"
+	minBufferTime="PT10.00S"
+	 mediaPresentationDuration="PT3256S"
+	type="dynamic" availabilityStartTime="2001-12-17T09:40:57Z"
+	profiles="urn:mpeg:dash:profile:isoff-main:2011">
+	<Period start="PT0S" id="1">
+		<AdaptationSet group="1">
+			<AudioChannelConfiguration schemeIdUri="urn:mpeg:dash:23003:3:audio_channel_configuration:2011" value="2"></AudioChannelConfiguration>
+			<Role schemeIdUri="urn:mpeg:dash:role:2011" value="main"></Role>
+			<Role schemeIdUri="urn:mpeg:dash:stereoid:2011" value="l0"></Role>
+			<Representation mimeType="video/mp4" codecs="avc1.644028, svc1" width="320" height="240" frameRate="15" id="tag0" bandwidth="128000">
+				<FramePacking schemeIdUri="urn:mpeg:dash:14496:10:frame_packing_arrangement_type:2011" value="3"></FramePacking>
+				<ContentProtection schemeIdUri="urn:mpeg:dash:mp4protection:2011" value="abcd"></ContentProtection>
+				<SegmentList duration="10">
+					<Initialization sourceURL="seg-s-init.mp4"/>
+					<SegmentURL media="seg-s1-128k-1.mp4"/>
+					<SegmentURL media="seg-s1-128k-2.mp4"/>
+					<SegmentURL media="seg-s1-128k-3.mp4"/>
+				</SegmentList>
+			</Representation>
+			<Representation mimeType="video/mp2t" codecs="mp2v.61 mp2a.67" width="320" height="240" frameRate="15" id="tag1" bandwidth="128000">
+				<FramePacking schemeIdUri="urn:mpeg:dash:13818:1:stereo_video_format_type:2011" value="0000011"></FramePacking>
+				<ContentProtection schemeIdUri="urn:mpeg:dash:13818:1:CA_descriptor:2011" value="abcd"></ContentProtection>
+				<SegmentList duration="10">
+					<Initialization sourceURL="seg-s-init.ts"/>
+					<SegmentURL media="seg-s1-128k-1.ts"/>
+					<SegmentURL media="seg-s1-128k-2.ts"/>
+					<SegmentURL media="seg-s1-128k-3.ts"/>
+				</SegmentList>
+			</Representation>
+		</AdaptationSet>
+	</Period>
+</MPD>
