@@ -4,6 +4,7 @@ namespace App\Interfaces;
 
 use App\Services\ModuleLogger;
 use App\Services\Segment;
+use App\Services\SpecManager;
 use App\Services\Manifest\Period;
 use App\Services\Manifest\Representation;
 use App\Services\Manifest\AdaptationSet;
@@ -28,6 +29,10 @@ class Module
     public function isAutoDetected(): bool
     {
         return $this->autoDetected;
+    }
+
+    public function enableDependencies(SpecManager $manager) : void {
+
     }
 
     public function validateMPD(): void

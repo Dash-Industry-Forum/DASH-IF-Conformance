@@ -8,11 +8,11 @@
       <button type="button" disabled class="col-12 btn btn-success">Global Module</button>
       <h5 class="col-12 text-center">Manifest</h5>
       @foreach ($this->mpdSpecs() as $spec)
-        <button type="button" class="col-6 btn {{ $this->buttonClassForSpec($spec, 'MPD') }}" wire:click="enable('{{$spec}}', 'MPD')">{{$spec}}</button>
+        <button type="button" {{ $this->isDisabled($spec, 'MPD') ? "disabled" : "" }}  class="col-6 btn {{ $this->buttonClassForSpec($spec, 'MPD') }}" wire:click="enable('{{$spec}}', 'MPD')">{{$spec}}</button>
       @endforeach
       <h5 class="col-12 text-center">Segments</h5>
       @foreach ($this->segmentSpecs() as $spec)
-        <button type="button" {{ $this->isDisabled($spec) ? "disabled" : "" }} class="col-6 btn {{ $this->buttonClassForSpec($spec, 'Segments') }}" wire:click="enable('{{$spec}}', 'Segments')">{{$spec}}</button>
+        <button type="button" {{ $this->isDisabled($spec, 'Segments') ? "disabled" : "" }} class="col-6 btn {{ $this->buttonClassForSpec($spec, 'Segments') }}" wire:click="enable('{{$spec}}', 'Segments')">{{$spec}}</button>
       @endforeach
   </div>
 </div>

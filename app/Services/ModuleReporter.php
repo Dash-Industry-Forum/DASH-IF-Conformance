@@ -149,7 +149,7 @@ class ModuleReporter
                         $depArray = explode('::', $statement);//check['messages'][0]);
 
                         if (!array_key_exists($depArray[0], $element)) {
-                            $check['messages'][] = "✗ Unable to resolve dependent spec";
+                            $check['messages'][] = "✗ Unable to resolve dependent specification";
                             $check['state'] = "FAIL";
                             continue;
                         }

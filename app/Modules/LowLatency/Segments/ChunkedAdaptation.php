@@ -44,7 +44,7 @@ class ChunkedAdaptation extends SegmentListComponent
         $this->cmafCase = $this->reporter->dependencyAdd(
             section: '9.X.4.5',
             test: "Each Segment SHALL Conform to a CMAF Fragment",
-            dependentModule: "CMAF Segments Module",
+            dependentModule: "CMAF Segments",
             dependentSpec: "LEGACY - CMAF",
             dependentSection: "Section 7.3.2.3",
             skipReason: "No Chunked Adaptation Set Found",
@@ -52,7 +52,7 @@ class ChunkedAdaptation extends SegmentListComponent
         $this->emsgCase = $this->reporter->dependencyAdd(
             section: '9.X.4.5',
             test: "EMSG box constraints",
-            dependentModule: "Wave HLS Interop Segments Module",
+            dependentModule: "Wave HLS Interop Segments",
             dependentSpec: "CTA-5005-A - Final",
             dependentSection: "4.5.2 - Carriage of Timed Event Data",
             skipReason: "No Chunked Adaptation Set Found",

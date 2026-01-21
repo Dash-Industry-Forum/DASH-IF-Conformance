@@ -56,7 +56,7 @@ class MPD extends Module
             "DVB",
             []
         ))->add(
-            section: "Unkown",
+            section: "Unknown",
             test: "MPD@minimumUpdatePeriod SHOULD have a value of 1 second or higher",
             skipReason: ''
         );

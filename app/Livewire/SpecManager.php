@@ -10,6 +10,13 @@ use App\Services\SegmentManager;
 
 class SpecManager extends Component
 {
+    private \App\Services\SpecManager $specManager;
+
+    public function __construct()
+    {
+        $this->specManager = app(\App\Services\SpecManager::class);
+    }
+
     public function render(): View
     {
         return view('livewire.spec-manager');
@@ -17,7 +24,7 @@ class SpecManager extends Component
 
     public function specManagerState(): string
     {
-        return app(\App\Services\SpecManager::class)->stateJSON();
+        $this->specManager->stateJSON();
     }
 
     /**
@@ -25,7 +32,7 @@ class SpecManager extends Component
      **/
     public function mpdSpecs(): array
     {
-        $manifestSpecifications = array_filter(app(\App\Services\SpecManager::class)->specNames(), function ($spec) {
+        $manifestSpecifications = array_filter($this->specManager->specNames(), function ($spec) {
             return strpos($spec, "MPD") !== false;
         });
         return array_map(
@@ -40,7 +47,7 @@ class SpecManager extends Component
      **/
     public function segmentSpecs(): array
     {
-        $segmentSpecifications = array_filter(app(\App\Services\SpecManager::class)->specNames(), function ($spec) {
+        $segmentSpecifications = array_filter($this->specManager->specNames(), function ($spec) {
             return strpos($spec, "Segment") !== false;
         });
         return array_map(
@@ -53,25 +60,29 @@ class SpecManager extends Component
 
     public function buttonClassForSpec(string $spec, string $type): string
     {
-        $state = app(\App\Services\SpecManager::class)->specState("$spec $type");
+        $state = $this->specManager->specState("$spec $type");
         if ($state == 'Enabled') {
             return 'btn-success';
         }
         if ($state == 'Dependency') {
-            return 'btn-outline-success';
+            return 'btn-success';
         }
         return 'btn-outline-dark';
     }
 
     public function enable(string $spec, string $type): void
     {
-        app(\App\Services\SpecManager::class)->toggle("$spec $type");
+        $this->specManager->toggle("$spec $type");
         $this->dispatch('spec-selection-changed');
     }
 
-    public function isDisabled(string $spec): bool
+    public function isDisabled(string $spec, string $type): bool
     {
         if ($spec == "Global Module") {
+            return true;
+        }
+        $state = $this->specManager->specState("$spec $type");
+        if ($state == 'Dependency') {
             return true;
         }
         if (strpos($spec, "MPD") !== false) {

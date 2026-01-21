@@ -27,6 +27,10 @@ class MPD extends Module
         parent::__construct("HbbTV MPD");
     }
 
+    public function enableDependencies(SpecManager $manager): void {
+        $manager->activateDependency("DVB MPD");
+    }
+
     public function validateMPD(): void
     {
         parent::validateMPD();
@@ -39,14 +43,11 @@ class MPD extends Module
             []
         ));
 
-        $specManager = app(SpecManager::class);
-        $specManager->activateDependency("DVB MPD Module");
-
 
         $this->legacyreporter->dependencyAdd(
             section: "Unknown",
             test: "Inherit DVB legacy checks",
-            dependentModule: "DVB MPD Module",
+            dependentModule: "DVB MPD",
             dependentSpec: "LEGACY - DVB",
             dependentSection: "Unknown"
         )->add(

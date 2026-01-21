@@ -36,7 +36,7 @@ class EventMessages extends SegmentListComponent
             section: "9.X.4.5",
             test: "All 'emsg' boxes inserted [..] after the start of the first CMAF chunk " .
                   "SHALL be repeated before the first chunk of the next segment",
-            dependentModule: "Wave HLS Interop Segments Module",
+            dependentModule: "Wave HLS Interop Segments",
             dependentSpec: "CTA-5005-A - Final",
             dependentSection: "4.5.2 - Carriage of Timed Event Data"
         );

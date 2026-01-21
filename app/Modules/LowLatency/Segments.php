@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use App\Services\ModuleLogger;
 use App\Services\MPDCache;
 use App\Services\ModuleReporter;
+use App\Services\SpecManager;
 use App\Services\Reporter\SubReporter;
 use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Manifest\Period;
@@ -28,6 +29,12 @@ class Segments extends Module
     public function __construct()
     {
         parent::__construct("Low Latency Segments");
+    }
+
+    public function enableDependencies(SpecManager $manager): void {
+        $manager->activateDependency("CMAF Segments");
+        $manager->activateDependency("CMAF Segments");
+        $manager->activateDependency("Wave HLS Interop Segments");
     }
 
     public function validateMPD(): void

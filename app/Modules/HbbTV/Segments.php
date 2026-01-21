@@ -13,6 +13,7 @@ use App\Services\Reporter\Context as ReporterContext;
 use App\Interfaces\Module;
 use App\Services\Manifest\Representation;
 use App\Services\Segment;
+use App\Services\SpecManager;
 //Module checks
 use App\Modules\HbbTV\Segments\Dependencies;
 use App\Modules\HbbTV\Segments\LegacyCodecs;
@@ -27,6 +28,10 @@ class Segments extends Module
     public function validateMPD(): void
     {
         parent::validateMPD();
+    }
+
+    public function enableDependencies(SpecManager $manager): void {
+        $manager->activateDependency("DVB Segments");
     }
 
     /**

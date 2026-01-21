@@ -58,6 +58,16 @@ class SpecManager
         }
     }
 
+    private function enableDependencies(): void {
+        foreach ($this->manifestSpecs as $manifestSpec) {
+            $state = &$this->moduleStates[$manifestSpec->name];
+            if (!$state['enabled']) {
+                continue;
+            }
+            $manifestSpec->enableDependencies($this);
+        }
+    }
+
     private function registerMPDSpecs(): void
     {
         $this->manifestSpecs[] = new Schematron();
@@ -110,6 +120,7 @@ class SpecManager
                     continue;
                 }
                 $manifestSpec->activate();
+                $manifestSpec->enableDependencies($this);
                 $manifestSpec->validateMPD();
                 $manifestSpec->deactivate();
                 $state['run'] = true;
@@ -132,6 +143,7 @@ class SpecManager
                     continue;
                 }
                 $manifestSpec->activate();
+                $manifestSpec->enableDependencies($this);
                 $this->validateAllRepresentations($manifestSpec);
                 $manifestSpec->deactivate();
                 $state['runSegments'] = true;
@@ -206,6 +218,7 @@ class SpecManager
 
     public function specState(string $spec): string
     {
+        $this->enableDependencies();
         $state = $this->moduleStates[$spec];
         if ($state) {
             if ($state['enabled']) {
@@ -220,6 +233,7 @@ class SpecManager
 
     public function stateJSON(): string
     {
+        $this->enableDependencies();
         return \json_encode($this->moduleStates, JSON_PRETTY_PRINT);
     }
 }
