@@ -98,7 +98,9 @@ class SegmentManager
                 representationDir: $representationDir,
                 segmentIndex: $segmentIdx
             );
-            $segments[] = $seg;
+            if ($seg->getSize() > 0){
+              $segments[] = $seg;
+            }
         }
 
         return $segments;
