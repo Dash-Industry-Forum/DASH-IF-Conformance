@@ -4,7 +4,6 @@ set -m
 
 frankenphp run --config /etc/frankenphp/Caddyfile --adapter caddyfile &
 
-frankenphp php-cli /app/artisan queue:work
-
+/usr/bin/supervisord
 
 fg %1

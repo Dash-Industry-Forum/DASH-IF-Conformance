@@ -38,7 +38,7 @@ class DownloadSegment implements ShouldQueue
         CURLOPT_URL => $this->url,
         CURLOPT_FAILONERROR => true,
         CURLOPT_SSL_VERIFYPEER => false,
-        CURLOPT_TIMEOUT => 500,
+        CURLOPT_TIMEOUT => 240,
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_CONNECTTIMEOUT => 0,
         CURLOPT_USERAGENT => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)',

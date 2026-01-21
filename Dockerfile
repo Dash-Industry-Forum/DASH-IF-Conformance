@@ -1,6 +1,6 @@
 FROM dunglas/frankenphp AS base
 
-RUN apt-get update && apt install -y  openjdk-21-jre-headless
+RUN apt-get update && apt install -y  openjdk-21-jre-headless supervisor
 
 
 RUN install-php-extensions \
@@ -20,6 +20,7 @@ COPY --from=builder /gpac/bin/gcc/* /usr/bin/
 
 ENV SERVER_NAME=:80
 COPY . /app
+COPY laravel-queue-worker.conf /etc/supervisor/conf.d/laravel-queue-worker.conf
 
 CMD /bin/bash /app/queue_wrapper.sh
 

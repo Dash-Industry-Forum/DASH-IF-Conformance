@@ -52,7 +52,15 @@ class SegmentManager
         foreach ($regexIter as $file) {
             $files[] = $file;
         }
-        return count($files);
+        $queuedIter = new \RegexIterator($recursiveIterator, '/^.+\.queued$/i', \RecursiveRegexIterator::GET_MATCH);
+        $queuedFiles = [];
+        foreach ($queuedIter as $file) {
+            $queuedFiles[] = $file;
+        }
+        if (count($queuedFiles) > count($files)){
+            return 0;
+        }
+        return count($files) - count($queuedFiles);
     }
 
     public function segmentCount(): int
