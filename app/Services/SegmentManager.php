@@ -9,6 +9,9 @@ use App\Services\Segment;
 use App\Services\MPDCache;
 use App\Interfaces\Module;
 use App\Services\Manifest\Representation;
+use App\Services\Reporter\SubReporter;
+use App\Services\Reporter\Context as ReporterContext;
+use App\Services\Reporter\TestCase;
 
 //TODO : Make singleton
 class SegmentManager
@@ -18,9 +21,18 @@ class SegmentManager
      **/
     private array $loadedSegments = [];
 
+    private SubReporter $segmentReporter;
+
+    /**
+     * @var array<string, TestCase>
+     **/
+    private array $downloadCases = [];
+
 
     public function __construct()
     {
+        $reporter = app(ModuleReporter::class);
+        $this->segmentReporter = &$reporter->context(new ReporterContext("Segments", "", "Download Status", array()));
     }
 
     /**
@@ -98,6 +110,21 @@ class SegmentManager
                 representationDir: $representationDir,
                 segmentIndex: $segmentIdx
             );
+            $path = "$periodIndex::$adaptationSetIndex::$representationIndex::$segmentIdx";
+            if (!array_key_exists($path, $this->downloadCases)) {
+                $case = $this->segmentReporter->add(
+                    section: "",
+                    test: "Segments can be downloaded",
+                    skipReason: "No Segments"
+                );
+                $case->pathAdd(
+                    path: "$periodIndex::$adaptationSetIndex::$representationIndex::$segmentIdx",
+                    result: $seg->getSize() > 0,
+                    severity: "FAIL",
+                    pass_message: "Succesfully downloaded",
+                    fail_message: "Unable to download (>100mb or not available)"
+                );
+            }
             if ($seg->getSize() > 0) {
                 $segments[] = $seg;
             }

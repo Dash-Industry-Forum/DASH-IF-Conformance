@@ -49,7 +49,7 @@ class DownloadSegment implements ShouldQueue
         curl_exec($curl);
         fclose($fp);
 
-        if (curl_error($curl) == CURLE_FILESIZE_EXCEEDED){
+        if (curl_error($curl) == CURLE_FILESIZE_EXCEEDED) {
             $fp = fopen($this->targetPath, "w");
             fclose($fp);
         }

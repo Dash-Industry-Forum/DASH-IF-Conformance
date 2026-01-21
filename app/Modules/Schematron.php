@@ -35,7 +35,7 @@ class Schematron extends Module
     {
         $reporter = app(ModuleReporter::class);
         //$this->globalReporter = &$reporter->context(new ReporterContext("MPD", "Global", "", array()));
-        $this->schematronReporter = &$reporter->context(new ReporterContext("MPD", "Schematron", "", array()));
+        $this->schematronReporter = &$reporter->context(new ReporterContext("MPD", "", "Schematron", array()));
 
         /*
         $this->xlinkCase = $this->globalReporter->add(
