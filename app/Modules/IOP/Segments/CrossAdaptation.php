@@ -74,8 +74,12 @@ class CrossAdaptation extends AdaptationComponent
 
             if (strpos($codecs, 'avc') !== false) {
                 $avcc = $segmentList[0]->getAVCConfiguration();
-                $videoLevels[] = intval($avcc['level_idc']);
-                $videoProfiles[] = intval($avcc['profile_idc']);
+                if (array_key_exists('level_idc', $avcc)) {
+                    $videoLevels[] = intval($avcc['level_idc']);
+                }
+                if (array_key_exists('profile_idc', $avcc)) {
+                    $videoProfiles[] = intval($avcc['profile_idc']);
+                }
 
                 $elst = $segmentList[0]->boxAccess()->elst();
                 if (count($elst)) {
@@ -85,8 +89,12 @@ class CrossAdaptation extends AdaptationComponent
 
             if (strpos($codecs, 'hvc') !== false || strpos($codecs, 'hev') !== false) {
                 $hvcc = $segmentList[0]->getHEVCConfiguration();
-                $videoLevels[] = intval($hvcc['level_idc']);
-                $videoProfiles[] = intval($hvcc['profile_idc']);
+                if (array_key_exists('level_idc', $hvcc)) {
+                    $videoLevels[] = intval($hvcc['level_idc']);
+                }
+                if (array_key_exists('profile_idc', $hvcc)) {
+                    $videoProfiles[] = intval($hvcc['profile_idc']);
+                }
 
                 $elst = $segmentList[0]->boxAccess()->elst();
                 if (count($elst)) {
