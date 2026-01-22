@@ -12,11 +12,28 @@ use App\Services\ModuleReporter;
 class ResultsTable extends Component
 {
     public mixed $table;
+    private SegmentManager $segmentManager;
 
     public function __construct()
     {
+        $this->segmentManager = app(SegmentManager::class);
         $this->refresh();
     }
+
+    public function stateCount(string $state): int
+    {
+        return $this->segmentManager->segmentState()[$state];
+    }
+
+    /**
+     * @return array<string>
+     **/
+    public function failedSegments(): array
+    {
+
+        return $this->segmentManager->failedSegments();
+    }
+
 
     public function render(): View
     {
@@ -28,7 +45,6 @@ class ResultsTable extends Component
     {
         $specManager = app(SpecManager::class);
         $specManager->validate();
-        $segmentManager = new SegmentManager();
         $specManager->validateSegments();
 
         $this->table = app(ModuleReporter::class)->asTable();//serialize(true);

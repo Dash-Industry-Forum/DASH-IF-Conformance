@@ -54,7 +54,6 @@ class Segment
         try {
             $segmentSize = filesize($this->segmentPath);
         } catch (\Exception $e) {
-            Log::error($e);
         }
         return $segmentSize;
     }

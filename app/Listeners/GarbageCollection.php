@@ -7,8 +7,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Process;
-
 use Arifhp86\ClearExpiredCacheFile\Events\GarbageCollectionEnded;
+use Illuminate\Support\Facades\Storage;
 
 class GarbageCollection
 {
@@ -25,17 +25,14 @@ class GarbageCollection
      */
     public function handle(GarbageCollectionEnded $event): void
     {
-        $allManifests = glob("/tmp/*/manifest.mpd");
+        $disk = Storage::build([
+        'driver' => 'local',
+        'root' => storage_path("sessions/"),
+        ]);
 
-        foreach($allManifests as $manifest){
-            $split = explode("/", $manifest);
-            $sessionId = $split[2];
-
-            $cachedUrl = Cache::get("$sessionId::mpd::url", '');
-
-            if ($cachedUrl == ''){
-              Log::info("Manifest for " . $sessionId . " is expired");
-              Process::run("rm -r /tmp/$sessionId");
+        foreach ($disk->directories() as $sessionId) {
+            if (Cache::get("$sessionId::mpd::url", '') == '') {
+                $disk->deleteDirectory($sessionId);
             }
         }
     }

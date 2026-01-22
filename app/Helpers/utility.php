@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Contracts\Filesystem\Filesystem;
+
 if (!function_exists('dom_direct_children')) {
     /**
      * @return array<\DomNode>
@@ -30,11 +33,22 @@ if (!function_exists('cli_or_session')) {
 if (!function_exists('session_dir')) {
     function session_dir(): string
     {
-        $sessionDir = "/tmp/" . cli_or_session() . "/";
+        $sessionDir = storage_path("sessions/" . cli_or_session() . "/");
         if (!file_exists($sessionDir)) {
             mkdir($sessionDir, 0777, true);
         }
         return $sessionDir;
+    }
+}
+
+if (!function_exists('session_disk')) {
+    function session_disk(): Filesystem
+    {
+        $disk = Storage::build([
+            'driver' => 'local',
+            'root' => storage_path("sessions/" . cli_or_session())
+        ]);
+        return $disk;
     }
 }
 

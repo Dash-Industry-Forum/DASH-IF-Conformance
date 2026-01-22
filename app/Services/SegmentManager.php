@@ -21,18 +21,8 @@ class SegmentManager
      **/
     private array $loadedSegments = [];
 
-    private SubReporter $segmentReporter;
-
-    /**
-     * @var array<string, TestCase>
-     **/
-    private array $downloadCases = [];
-
-
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->segmentReporter = &$reporter->context(new ReporterContext("Segments", "", "Download Status", array()));
     }
 
     /**
@@ -55,24 +45,57 @@ class SegmentManager
         return $this->segmentCount() - $this->downloadedSegmentCount();
     }
 
+    /**
+     * @return array<string, int>
+     **/
+    public function segmentState(): array
+    {
+        $res = [
+            'downloaded' => 0,
+            'queued' => 0,
+            'failed' => 0,
+        ];
+        $disk = session_disk();
+        foreach ($disk->allFiles() as $filePath) {
+            if (str_ends_with($filePath, ".mp4")) {
+                $res["downloaded"]++;
+            }
+            if (str_ends_with($filePath, ".failed")) {
+                $res["failed"]++;
+            }
+            if (str_ends_with($filePath, ".queued")) {
+                $res["queued"]++;
+            }
+        }
+        return $res;
+    }
+
+    /**
+     * @return array<string>
+     **/
+    public function failedSegments(): array
+    {
+        $res = [];
+
+        $disk = session_disk();
+        foreach ($disk->allFiles() as $filePath) {
+            if (str_ends_with($filePath, ".failed")) {
+                $segmentPortion = explode(".", $filePath)[0];
+                $s = explode("/", $segmentPortion);
+
+                $res[] = "$s[0]::$s[1]::$s[2]-$s[3]";
+            }
+        }
+        return $res;
+    }
+
     private function downloadedSegmentCount(): int
     {
-        $directoryIterator = new \RecursiveDirectoryIterator(session_dir());
-        $recursiveIterator = new \RecursiveIteratorIterator($directoryIterator);
-        $regexIter = new \RegexIterator($recursiveIterator, '/^.+\.mp4$/i', \RecursiveRegexIterator::GET_MATCH);
-        $files = [];
-        foreach ($regexIter as $file) {
-            $files[] = $file;
-        }
-        $queuedIter = new \RegexIterator($recursiveIterator, '/^.+\.queued$/i', \RecursiveRegexIterator::GET_MATCH);
-        $queuedFiles = [];
-        foreach ($queuedIter as $file) {
-            $queuedFiles[] = $file;
-        }
-        if (count($queuedFiles) > count($files)) {
+        $state = $this->segmentState();
+        if ($state['queued'] > $state['downloaded']) {
             return 0;
         }
-        return count($files) - count($queuedFiles);
+        return $state['downloaded'] - $state['queued'];
     }
 
     public function segmentCount(): int
@@ -111,20 +134,6 @@ class SegmentManager
                 segmentIndex: $segmentIdx
             );
             $path = "$periodIndex::$adaptationSetIndex::$representationIndex::$segmentIdx";
-            if (!array_key_exists($path, $this->downloadCases)) {
-                $case = $this->segmentReporter->add(
-                    section: "",
-                    test: "Segments can be downloaded",
-                    skipReason: "No Segments"
-                );
-                $case->pathAdd(
-                    path: "$periodIndex::$adaptationSetIndex::$representationIndex::$segmentIdx",
-                    result: $seg->getSize() > 0,
-                    severity: "FAIL",
-                    pass_message: "Succesfully downloaded",
-                    fail_message: "Unable to download (>100mb or not available)"
-                );
-            }
             if ($seg->getSize() > 0) {
                 $segments[] = $seg;
             }
