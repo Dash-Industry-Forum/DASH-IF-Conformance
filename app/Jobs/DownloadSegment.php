@@ -49,19 +49,16 @@ class DownloadSegment implements ShouldQueue
         $result = curl_exec($curl);
         fclose($fp);
 
-        if (curl_error($curl) == CURLE_FILESIZE_EXCEEDED) {
+        file_put_contents($this->targetPath . ".source", $this->url);
+
+        if (curl_errno($curl) == CURLE_FILESIZE_EXCEEDED) {
+            touch($this->targetPath . ".exceeded");
             $fp = fopen($this->targetPath, "w");
             fclose($fp);
         }
-        unlink($this->targetPath . ".queued");
-        $segmentSize = 0;
-        try {
-            $segmentSize = filesize($this->targetPath);
-        } catch (\Exception $e) {
-            Log::error($e);
-        }
-        if ($segmentSize == 0) {
+        if (curl_errno($curl) != CURLE_OK) {
             touch($this->targetPath . ".failed");
         }
+        unlink($this->targetPath . ".queued");
     }
 }

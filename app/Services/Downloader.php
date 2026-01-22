@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Process;
 use App\Services\MPDCache;
+use App\Services\Manifest\Representation;
 use App\Jobs\DownloadSegment;
 
 class Downloader
@@ -32,7 +33,7 @@ class Downloader
     /**
      * @return array<string, array<string>>
      **/
-    public function downloadSegments(int $periodIndex, int $adaptationSetIndex, int $representationIndex): array
+    public function downloadSegments(Representation $representation): array
     {
 
 
@@ -41,15 +42,9 @@ class Downloader
         'segments' => []
         ];
 
-        $representationDir = session_dir() . "${periodIndex}/${adaptationSetIndex}/${representationIndex}/";
+        $representationDir = session_dir() . $representation->path() . "/";
 
         $mpdCache = app(MPDCache::class);
-
-        $representation = $mpdCache->getRepresentation($periodIndex, $adaptationSetIndex, $representationIndex);
-        if (!$representation) {
-            return $segments;
-        }
-
 
         if (!file_exists($representationDir)) {
             mkdir($representationDir, 0777, true);

@@ -16,11 +16,6 @@ class MpdResults extends Component
     private string $selectedSpec = '';
     public string $section;
 
-    /**
-     * @var array<Segment> $segmentDebug;
-     **/
-    private array $segmentDebug;
-
     public function mount(string $section): void
     {
         $this->section = $section;
@@ -37,7 +32,6 @@ class MpdResults extends Component
         }
         if ($this->section == "Segments" || $this->section == "CrossValidation") {
             $segmentManager = new SegmentManager();
-            $this->segmentDebug = $segmentManager->getSegments(0, 0, 0);
             $specManager->validateSegments();
         }
 
@@ -170,10 +164,5 @@ class MpdResults extends Component
         );
 
         return $res;
-    }
-
-    public function getSegmentDebug(): mixed
-    {
-        return \json_encode($this->segmentDebug, JSON_PRETTY_PRINT);
     }
 }

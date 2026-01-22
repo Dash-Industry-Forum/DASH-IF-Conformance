@@ -78,9 +78,6 @@ class AnalyzeManifest extends Command
             $schematron->validate();
             $schematron->validateSchematron();
 
-            $downloader = app(Downloader::class);
-            $downloader->downloadSegments(0, 0, 0);
-
 
             $dvbMpd = new DVBMpd();
             $dvbMpd->validateMPD();

@@ -32,9 +32,7 @@ class SegmentManager
     {
         if (!array_key_exists($representation->path(), $this->loadedSegments)) {
             $this->loadedSegments[$representation->path()] = $this->getSegments(
-                $representation->periodIndex,
-                $representation->adaptationSetIndex,
-                $representation->representationIndex
+                $representation
             );
         }
         return $this->loadedSegments[$representation->path()];
@@ -71,19 +69,31 @@ class SegmentManager
     }
 
     /**
-     * @return array<string>
+     * @return array<string, string>
      **/
     public function failedSegments(): array
     {
         $res = [];
 
         $disk = session_disk();
-        foreach ($disk->allFiles() as $filePath) {
+        $allFiles = $disk->allFiles();
+        foreach ($allFiles as $filePath) {
             if (str_ends_with($filePath, ".failed")) {
-                $segmentPortion = explode(".", $filePath)[0];
-                $s = explode("/", $segmentPortion);
+                $rawFile = substr($filePath, 0, strrpos($filePath, '.'));
 
-                $res[] = "$s[0]::$s[1]::$s[2]-$s[3]";
+                $reason = "Unable to download";
+
+                Log::info("$rawFile");
+
+                if (in_array("$rawFile.exceeded", $allFiles)) {
+                    $reason = "Exceeded maximum segment size (>100mb)";
+                }
+
+                $source = file_get_contents(session_dir() . $rawFile . ".source");
+
+                $key = explode("/", $rawFile)[0] . " -> $source";
+
+                $res[$key] = $reason;
             }
         }
         return $res;
@@ -118,11 +128,11 @@ class SegmentManager
     /**
      * @return array<Segment>
      **/
-    public function getSegments(int $periodIndex, int $adaptationSetIndex, int $representationIndex): array
+    public function getSegments(Representation $representation): array
     {
-        $representationDir = session_dir() . "${periodIndex}/${adaptationSetIndex}/${representationIndex}/";
+        $representationDir = session_dir() . $representation->path() . "/";
         $downloader = app(Downloader::class);
-        $segmentFiles = $downloader->downloadSegments($periodIndex, $adaptationSetIndex, $representationIndex);
+        $segmentFiles = $downloader->downloadSegments($representation);
 
 
         $segments = [];
@@ -133,7 +143,7 @@ class SegmentManager
                 representationDir: $representationDir,
                 segmentIndex: $segmentIdx
             );
-            $path = "$periodIndex::$adaptationSetIndex::$representationIndex::$segmentIdx";
+            $path = $representation->path() . $segmentIdx;
             if ($seg->getSize() > 0) {
                 $segments[] = $seg;
             }

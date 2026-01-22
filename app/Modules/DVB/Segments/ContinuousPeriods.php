@@ -105,11 +105,7 @@ class ContinuousPeriods
 
         $earliestPresentationTimes = [];
         foreach ($adaptationSet->allRepresentations() as $representation) {
-            $segments = $segmentManager->getSegments(
-                $representation->periodIndex,
-                $representation->adaptationSetIndex,
-                $representation->representationIndex
-            );
+            $segments = $segmentManager->getSegments($representation);
             if (!count($segments)) {
                 $earliestPresentationTimes[] = null;
                 continue;
