@@ -1,25 +1,25 @@
 <div>
   <h4 class="text-center">Quick Results</h4>
   @if ($this->stateCount('queued') > 0)
-  <div wire:poll>
+      <div wire:poll></div>
   @else
   <div>
-  @endif
-  @if ($this->stateCount('failed') > 0)
-    <div class="alert alert-danger">
-    <b>Failed segment downloads</b>
-    <ul>
-    @foreach ($this->failedSegments() as $failed)
-    <li>{{$failed}} </li>
-    @endforeach
-    </ul>
-    </div>
-  @else
-    <div class="alert alert-success">
-      <b>All segments downloaded</b>
-    </div>
-  @endif
+      @if ($this->stateCount('failed') > 0)
+        <div class="alert alert-danger">
+        <b>Failed segment downloads</b>
+        <ul>
+        @foreach ($this->failedSegments() as $failed)
+        <li>{{$failed}} </li>
+        @endforeach
+        </ul>
+        </div>
+      @else
+        <div class="alert alert-success">
+          <b>All segments downloaded</b>
+        </div>
+      @endif
   </div>
+  @endif
 <table class="container table table-striped">
   <thead>
   <tr class="row">

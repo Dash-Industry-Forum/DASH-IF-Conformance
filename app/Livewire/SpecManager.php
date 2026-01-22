@@ -81,12 +81,12 @@ class SpecManager extends Component
         if ($spec == "Global Module") {
             return true;
         }
-        if ($type == "MPD") {
-            return false;
-        }
         $state = $this->specManager->specState("$spec $type");
         if ($state == 'Dependency') {
             return true;
+        }
+        if ($type == "MPD") {
+            return false;
         }
         return $this->segmentsLoading();
     }
