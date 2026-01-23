@@ -86,6 +86,14 @@ class SpecManager
         $this->manifestSpecs[] = new CTAWaveSegments();
     }
 
+    public function enable(string $moduleName): void
+    {
+        $cachePath = cache_path(['spec', $moduleName]);
+        if (!Cache::has($cachePath)) {
+            $this->toggle($moduleName);
+        }
+    }
+
     public function toggle(string $moduleName): void
     {
         if ($moduleName == "Global Module") {

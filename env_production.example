@@ -64,3 +64,10 @@ AWS_USE_PATH_STYLE_ENDPOINT=false
 
 VITE_APP_NAME="${APP_NAME}"
 ASSET_URL=/
+
+
+OTEL_TRACES_EXPORTER="null"  # Comment out or set to "otlp" to enable the opentelemetry traces exporter
+#OTEL_SERVICE_NAME="dashif.conformance.laravel"
+#OTEL_SERVICE_INSTANCE_ID="dev"
+#OTEL_RESOURCE_ATTRIBUTES="service.namespace=dashif.conformance"
+#OTEL_EXPORTER_OTLP_ENDPOINT=""

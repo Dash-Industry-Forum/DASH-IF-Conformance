@@ -8,6 +8,7 @@ use Keepsuit\LaravelOpenTelemetry\Facades\Tracer;
 use App\Services\ModuleReporter;
 use App\Services\ModuleLogger;
 use App\Services\MPDCache;
+use App\Services\SpecManager;
 use App\Modules\Schematron;
 use App\Services\Downloader;
 use App\Modules\DVB\MPD as DVBMpd;
@@ -19,7 +20,12 @@ class AnalyzeManifest extends Command
      *
      * @var string
      */
-    protected $signature = 'app:analyze-manifest {manifest_url}';
+    protected $signature = 'app:analyze-manifest
+                              {manifest_url : The URL of the manifest to analyze}
+                              {--all : Enable all modules}
+                              {--M|modules : List all modules}
+                              {module?* : The modules to enable validation for}
+                            ';
 
     /**
      * The console command description.
@@ -43,46 +49,26 @@ class AnalyzeManifest extends Command
             $mpdCache = app(MPDCache::class);
             $reporter = app(ModuleReporter::class);
 
-            echo " - " .
-                $mpdCache->getBaseUrl() . "\n";
+            $specManager = app(SpecManager::class);
 
-            foreach ($mpdCache->allPeriods() as $period) {
-                $adaptationSetCount = $period->getAdaptationSetCount();
-                echo $period->path() . " - " .
-                    $period->getTransientAttribute('profiles') . "\n";
-                echo $period->path() . " - " .
-                    $period->getBaseUrl() . "\n";
 
-                foreach ($period->allAdaptationSets() as $adaptationSet) {
-                    echo $adaptationSet->path() . " - " .
-                        $adaptationSet->getTransientAttribute('profiles') . "\n";
-                    echo $adaptationSet->path() . " - " .
-                    $adaptationSet->getBaseUrl() . "\n";
-                    foreach ($adaptationSet->allRepresentations() as $representation) {
-                        echo $representation->path() . " - " .
-                        $representation->getTransientAttribute('profiles') . "\n";
-                        echo $representation->path() . " - " .
-                        $representation->getBaseUrl() . "\n";
-                        $initUrl = $representation->initializationUrl();
-                        if ($initUrl) {
-                            echo "  Init: $initUrl\n";
-                        }
-                        foreach ($representation->segmentUrls() as $url) {
-                            echo "    $url\n";
-                        }
-                    }
-                }
+            if ($this->option('modules')) {
+                echo \json_encode($specManager->specNames(), JSON_PRETTY_PRINT);
+                return;
             }
 
-            $schematron = app(Schematron::class);
-            $schematron->validate();
-            $schematron->validateSchematron();
+            $toEnable = $this->argument("module");
+            if ($this->option("all")) {
+                $toEnable = $specManager->specNames();
+            }
+
+            foreach ($toEnable as $specification) {
+                $specManager->enable($specification);
+            }
 
 
-            $dvbMpd = new DVBMpd();
-            $dvbMpd->validateMPD();
-
-            #echo app(ModuleLogger::class)->asJSON() . "\n";
+            $specManager->validate();
+            $specManager->validateSegments();
 
 
             echo \json_encode($reporter->serialize(true), JSON_PRETTY_PRINT);
