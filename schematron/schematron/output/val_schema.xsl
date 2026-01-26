@@ -686,13 +686,7 @@
                <xsl:attribute name="location">
                   <xsl:apply-templates select="." mode="schematron-select-full-path"/>
                </xsl:attribute>
-               <svrl:text>An unknown profile string "
-            <xsl:text/>
-                  <xsl:value-of select="@profiles"/>
-                  <xsl:text/>" (other than
-            <xsl:text/>
-                  <xsl:value-of select="$supported-profiles-docstring"/>
-                  <xsl:text/>) found.</svrl:text>
+               <svrl:text>At least one unknown profile string found. Known list in schematron file</svrl:text>
             </svrl:failed-assert>
          </xsl:otherwise>
       </xsl:choose>

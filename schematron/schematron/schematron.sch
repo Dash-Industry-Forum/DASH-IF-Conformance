@@ -74,9 +74,7 @@
             <let name="supported-profiles-helper" value="for $x in $supported-profiles/dlb:profile return concat('the ',$x,' -',$DQUOTE,$x/@uri,$DQUOTE)" />
             <let name="supported-profiles-docstring" value="string-join($supported-profiles-helper,', ')" />
             <!-- assert that all profiles are in the list of supported profiles -->
-            <assert test="if (not(@profiles) or (every $t in tokenize(@profiles,',') satisfies $t = $supported-profiles/dlb:profile/@uri)) then true() else false()">An unknown profile string "
-            <value-of select="@profiles" />" (other than
-            <value-of select="$supported-profiles-docstring" />) found.</assert>
+            <assert test="if (not(@profiles) or (every $t in tokenize(@profiles,',') satisfies $t = $supported-profiles/dlb:profile/@uri)) then true() else false()">At least one unknown profile string found. Known list in schematron file.</assert>
             <!-- R1.8 -->
             <assert test="if (not(contains(@profiles, 'urn:mpeg:dash:profile:isoff-on-demand:2011')) or not(@type) or @type='static') then true() else false()">For On-Demand profile, the MPD @type shall be "static".</assert>
             <!-- R1.9 -->
