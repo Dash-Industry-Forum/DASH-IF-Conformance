@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- RD3.2 -->
+<MPD 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="urn:mpeg:dash:schema:mpd:2011"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xsi:schemaLocation="urn:mpeg:dash:schema:mpd:2011 http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-DASH_schema_files/DASH-MPD.xsd"
+	minBufferTime="PT10.00S"
+	mediaPresentationDuration="PT3256S"
+	type="dynamic" availabilityStartTime="2001-12-17T09:40:57Z" publishTime="2001-12-17T09:40:57Z"
+	maxSegmentDuration="2S"
+	profiles="urn:com:dashif:dash264,urn:mpeg:dash:profile:isoff-main:2011">
+	<Period start="PT0S" id="1">
+		<AdaptationSet group="1" contentType="video" par="1:1" >
+			<Role schemeIdUri="urn:mpeg:dash:role:2011" value="main"></Role>
+			<Representation mimeType="video/mp4" codecs="avc1.644028, svc1" width="320" height="240" frameRate="15"  sar="10:11" id="tag0" bandwidth="128000">
+				<SegmentList duration="10">
+					<Initialization sourceURL="seg-s-init.mp4"/>
+					<SegmentURL media="seg-s1-128k-1.mp4"/>
+				</SegmentList>
+			</Representation>
+		</AdaptationSet>
+              <AdaptationSet mimeType="audio/mp4" contentType="audio" codecs="mp4a.0x40" audioSamplingRate="22050" subsegmentAlignment="true" subsegmentStartsWithSAP="1"> <!--Insert to conform: lang="en"-->
+ 			<AudioChannelConfiguration schemeIdUri="urn:mpeg:dash:23003:3:audio_channel_configuration:2011" value="2"></AudioChannelConfiguration>
+			<Role schemeIdUri="urn:mpeg:dash:role:2011" value="main"></Role>
+			<Representation id="tag1" bandwidth="64000">
+				<SegmentList duration="10">
+					<Initialization sourceURL="seg-s-init_audio.mp4"/>
+					<SegmentURL media="seg-s1-64k-1.mp4"/>
+				</SegmentList>
+			</Representation>
+		</AdaptationSet>
+	</Period>
+</MPD>

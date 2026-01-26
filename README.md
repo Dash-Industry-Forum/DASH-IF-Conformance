@@ -18,14 +18,10 @@ DASH-IF provides hosted versions of the Conformance Tools. Currently this is don
 
 |URL| Version                             |Branch|
 |---|-------------------------------------|---|
-|https://conformance.dashif.org/| 1.0.0                               |https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/releases/tag/v1.0.0|
-|https://beta.conformance.dashif.org/| latest released version, e.g. 2.0.0 |master|
-|https://staging.conformance.dashif.org/| latest development version          |development|
+|https://conformance.dashif.org/| Latest stable release |                               |https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/releases/latest|
+|https://staging.conformance.dashif.org/| Current development version          |development|
 
-As part of the JCCP project a major refactoring was done with version 2.0.0. To
-offer users the possibility to fall back to version 1.0.0 of the tools three installations are maintained at this point (see table
-above). At some point https://conformance.dashif.org/ will be replaced with the content that is currently available
-at https://beta.conformance.dashif.org/.
+We have recently upgraded all hosted versions to the 3.x release cycle. The last 2.x release is version [2.4.1](https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/releases/tag/v2.4.1), which can be deployed locally but no longer has a hosted version.
 
 ## Installation
 

@@ -1,2 +1,0 @@
-<?xml version="1.0"?>
-<root><Profile/><PeriodCount/><Progress><percent>0</percent><dataProcessed>0</dataProcessed><dataDownloaded>0</dataDownloaded><CurrentPeriod>1</CurrentPeriod><CurrentAdapt>1</CurrentAdapt><CurrentRep>1</CurrentRep></Progress><completed>false</completed><MPDError>1</MPDError></root>

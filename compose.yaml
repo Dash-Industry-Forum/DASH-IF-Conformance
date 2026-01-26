@@ -1,0 +1,8 @@
+# compose.yaml
+services:
+  frankenphp:
+    build:
+      context: .
+      target: jccp
+    ports:
+      - 8008:80
