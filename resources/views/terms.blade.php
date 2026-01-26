@@ -5,10 +5,10 @@
     <h5>1. Data Processing</h5>
 
     <p>
-      This application processes media files and manifests as provided by a user to validate conformance with industry standards. In order to do this, these files are stored on the server that hosts the application.
+      This application processes media files and manifests as provided by a user to validate conformance with industry standards. In order to do this, these files are uploaded and stored on the server that hosts the application.
     </p>
 
-    <p>Anonymized usage data is stored for application impromevent purposes.</p>
+    <p>Anonymized usage data is stored for application improvement purposes only.</p>
 
 
     <h5>2. Storage of Preferences</h5>

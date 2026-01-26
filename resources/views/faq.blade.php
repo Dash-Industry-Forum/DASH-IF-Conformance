@@ -4,7 +4,7 @@
 
   <h5>What is the 'DASH-IF Conformance Tool'?</h5>
 
-  <p>The DASH-IF Conformance Tool is an open source applications that checks whether a given DASH Manifest corresponds to the statements of a media specification.</p>
+  <p>The DASH-IF Conformance Tool is an open source application that checks whether a given DASH Manifest corresponds to the statements of a media specification.</p>
 
   <p>Also see the <a href="/about">About</a> page for more information</p>
 
@@ -32,7 +32,7 @@
     <li>
       Click 'Process'.
       <ul>
-        <li>The application will now download the given MPD, as well as at most 3 segment urls per representation.</li>
+        <li>The application will now download the given MPD, as well as at most 3 segment URLs per representation.</li>
         <li>A progress bar is displayed while downloading the segments to indicate the progress</li>
       </ul>
     </li>
@@ -61,7 +61,7 @@
 
   <h5>How can I contribute?</h5>
     <p>
-        The project is developed as an open source project on <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance" target="_blank">Github</a>.
+        The project is developed as an open source project on <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance" target="_blank">Github</a>. It's been funded mainly by DASH-IF until 2022, and then by ATSC, CTA (WAVE), DVB, and HbbTV - with the help of many individual contributors. Contact us if you are interested in sponsoring the project.
     </p>
 
     <p>
@@ -69,7 +69,7 @@
     </p>
 
     <p>
-      If you want to contibute to the project directly, our development guidelines can be found on the <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Development-principles" target="_blank">Wiki</a>.
+      If you want to contribute to the project directly, our development guidelines can be found on the <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Development-principles" target="_blank">Wiki</a>.
     </p>
 
   <div class="mb-5">&nbsp;</div>
