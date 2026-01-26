@@ -51,8 +51,26 @@
      DASH-IF provides a set of test vectors that can be used as example MPDs. These are hosted as a separate project on <a href="https://testassets.dashif.org/" target="_blank">testasset.dashif.org</a>
    </p>
 
+  <h5>I used to be able to do &lt;x&gt;, but this option is not available anymore</h5>
+
+  <p>
+    During the core rewrite of the application for the v3.x series, we have disabled some of the previously available features, in favor of a more robust base set.
+    Many of these items are scheduled for re-implementation in the <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/issues" target="_blank">Github issues</a> section.
+  </p>
+
+
   <h5>How can I contribute?</h5>
-    <p>The project is developed as an open source project on <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance" target="_blank">Github</a>. Development guidelines can be found on the <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Development-principles" target="_blank">Wiki</a>.
+    <p>
+        The project is developed as an open source project on <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance" target="_blank">Github</a>.
+    </p>
+
+    <p>
+      If there is a feature we missed, or you have more information on any of our open items, we welcome feedback in the <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/issues" target="_blank">issues</a>.
+    </p>
+
+    <p>
+      If you want to contibute to the project directly, our development guidelines can be found on the <a href="https://github.com/Dash-Industry-Forum/DASH-IF-Conformance/wiki/Development-principles" target="_blank">Wiki</a>.
+    </p>
 
   <div class="mb-5">&nbsp;</div>
 

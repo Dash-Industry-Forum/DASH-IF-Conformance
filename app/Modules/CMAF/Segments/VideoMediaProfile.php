@@ -343,8 +343,8 @@ class VideoMediaProfile extends AdaptationComponent
 
         if ($spsConfiguration["colour_description_present_flag"] == "1") {
             $signalledColourPrimaries = $spsConfiguration['colour_primaries'];
-            $signalledTransferCharacteristics = $spsConfiguration['transfer_characteristics'];
-            $signalledMatrixCoefficients = $spsConfiguration['matrix_coefficients'];
+            $signalledTransferCharacteristics = $spsConfiguration['transfer_characteristic'];
+            $signalledMatrixCoefficients = $spsConfiguration['matrix_coeffs'];
         }
 
         //As tier is only hevc based, we handle it separately
@@ -372,9 +372,9 @@ class VideoMediaProfile extends AdaptationComponent
             validMatrixCoefficients: $validMatrixCoefficients,
             signalledMatrixCoefficients: $signalledMatrixCoefficients,
             maxHeight: $maxHeight,
-            signalledHeight: $segment->getHeight(),
+            signalledHeight: $segment->getHeight() ?? 0,
             maxWidth: $maxWidth,
-            signalledWidth: $segment->getWidth(),
+            signalledWidth: $segment->getWidth() ?? 0,
             maxFrameRate: $maxFrameRate,
             signalledFrameRate: 0,
         );
