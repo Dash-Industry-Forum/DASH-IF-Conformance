@@ -6,8 +6,11 @@ use Livewire\Component;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 //
+use App\Services\ModuleReporter;
 use App\Services\MPDCache;
+use App\Services\SpecManager;
 
 class ManifestDetails extends Component
 {
@@ -43,5 +46,16 @@ class ManifestDetails extends Component
         $mpdCache = app(MPDCache::class);
         $mpdCache->getMPD();
         return $mpdCache->error == '';
+    }
+
+    public function download(): StreamedResponse
+    {
+        $moduleReporter = app(ModuleReporter::class);
+        $specManager = app(SpecManager::class);
+        $specManager->validate();
+        $specManager->validateSegments();
+        return response()->streamDownload(function () use ($moduleReporter) {
+            echo json_encode($moduleReporter->serialize(true));
+        }, 'results.json');
     }
 }

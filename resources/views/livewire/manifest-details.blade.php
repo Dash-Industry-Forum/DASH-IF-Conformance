@@ -15,7 +15,10 @@
 
 
   <div class="row bg-body-secondary mt-4 " style="padding: 10px">
-  <h4 class="text-center mb-2">Detailed results</h4>
+      <span class="col-2"></span>
+      <h4 class="text-center mb-2 col-8">Detailed results</h4>
+      <button type="button" class="col-2 mb-2 btn btn-outline-success" wire:click="download">Download as JSON</button>
+
       <div class="accordion accordion-flush" id="resultsAccordion">
         @foreach ($this->sections as $section)
           <div class="accordion-item">
