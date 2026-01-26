@@ -22,8 +22,8 @@ class Schematron extends Module
     /*
     private TestCase $xlinkCase;
     private TestCase $mpdCase;
-    private TestCase $schematronRunCase;
      */
+    private TestCase $schematronCase;
 
     public function __construct()
     {
@@ -36,6 +36,12 @@ class Schematron extends Module
         $reporter = app(ModuleReporter::class);
         //$this->globalReporter = &$reporter->context(new ReporterContext("MPD", "Global", "", array()));
         $this->schematronReporter = &$reporter->context(new ReporterContext("MPD", "", "Schematron", array()));
+
+        $this->schematronCase = $this->schematronReporter->add(
+            section: "Conformance Tool",
+            test: "Schematron shall be able to run",
+            skipReason: ''
+        );
 
         /*
         $this->xlinkCase = $this->globalReporter->add(
@@ -75,14 +81,11 @@ class Schematron extends Module
 
     public function getSchematronOutput(): string
     {
-        if (!Cache::get(cache_path(['mpd','schematron']))) {
-            $this->runSchematron();
-        }
-        return Cache::get(cache_path(['mpd','schematron']), '');
+        return $this->runSchematron();
     }
 
 
-    private function runSchematron(): void
+    private function runSchematron(): string
     {
         $sessionDir = session_dir();
         if (!Cache::get(cache_path(['mpd','resolved']))) {
@@ -103,32 +106,34 @@ class Schematron extends Module
         $schematronResult = Process::run($schematronCommand);
 
 
-            $schematronCase = $this->schematronReporter->add(
-                section: "Conformance Tool",
-                test: "Schematron shall be able to run",
-                skipReason: ''
-            );
-            $schematronCase->add(
-                result: $schematronResult->successful(),
-                severity: "FAIL",
-                pass_message: "",
-                fail_message: "Stdout: " . $schematronResult->output()
-            );
-            $schematronCase->add(
-                result: $schematronResult->successful(),
-                severity: "FAIL",
-                pass_message: "",
-                fail_message: "Stderr: " . $schematronResult->errorOutput()
-            );
-
+        $this->schematronCase->add(
+            result: $schematronResult->successful(),
+            severity: "FAIL",
+            pass_message: "Schematron ran successfully",
+            fail_message: "Unable to run schematron",
+        );
         if (!$schematronResult->successful()) {
-            return;
+            $this->schematronCase->pathAdd(
+                path: "stdout",
+                result: false,
+                severity: "INFO",
+                pass_message: "",
+                fail_message: $schematronResult->output()
+            );
+            $this->schematronCase->pathAdd(
+                path: "stderr",
+                result: false,
+                severity: "INFO",
+                pass_message: "",
+                fail_message: $schematronResult->errorOutput()
+            );
         }
 
-        //Make sure we cache our schematron code
-        Cache::remember(cache_path(['mpd','schematron']), 3600, function () use ($sessionDir) {
-            return file_get_contents($sessionDir . "schematron.xml");
-        });
+        if (!$schematronResult->successful()) {
+            return '';
+        }
+
+        return file_get_contents($sessionDir . "schematron.xml");
     }
 
     private function runValidator(): void
@@ -192,10 +197,6 @@ class Schematron extends Module
 
     public function validateSchematron(): void
     {
-        if (!Cache::get(cache_path(['mpd','schematron']))) {
-            $this->runSchematron();
-        }
-
         $schematronOutput = $this->getSchematronOutput();
         if (!$schematronOutput) {
             return;
@@ -259,13 +260,6 @@ class Schematron extends Module
             severity: "FAIL",
             pass_message: "MPD validation succesful",
             fail_message: "MPD validation failed"
-        );
-
-        $this->schematronRunCase->add(
-            result: strpos($validatorOutput, 'Schematron validation successful') !== false,
-            severity: "FAIL",
-            pass_message: "Schematron validation succesful",
-            fail_message: "Schematron validation failed"
         );
          */
     }
