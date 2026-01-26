@@ -62,6 +62,8 @@ class AnalyzeManifest extends Command
                 $toEnable = $specManager->specNames();
             }
 
+            $specManager->disableAll();
+
             foreach ($toEnable as $specification) {
                 $specManager->enable($specification);
             }
