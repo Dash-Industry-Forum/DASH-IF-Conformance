@@ -1,0 +1,183 @@
+<?php
+
+namespace App\Modules\CTAWave\Segments;
+
+use App\Services\MPDCache;
+use App\Services\Manifest\Period;
+use App\Services\Manifest\AdaptationSet;
+use App\Services\Manifest\Representation;
+use App\Services\Segment;
+use App\Services\SegmentManager;
+use App\Services\ModuleReporter;
+use App\Services\Reporter\SubReporter;
+use App\Services\Reporter\Context as ReporterContext;
+use App\Services\Reporter\TestCase;
+use App\Services\Validators\Boxes;
+use App\Interfaces\Module;
+use App\Interfaces\ModuleComponents\AdaptationComponent;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
+
+class SubtitleProfile extends AdaptationComponent
+{
+    private TestCase $validProfileCase;
+    private TestCase $singleProfileCase;
+    private TestCase $mandatoryProfileCase;
+    private TestCase $crossPeriodProfileCase;
+
+    public function __construct()
+    {
+        parent::__construct(
+            self::class,
+            new ReporterContext(
+                "Segments",
+                "LEGACY",
+                "WAVE Content Spec 2018Ed",
+                []
+            )
+        );
+
+        $this->validProfileCase = $this->reporter->add(
+            section: '4.4.1',
+            test: "Each WAVE Subtitle Media profile SHALL conform to normative ref. listed in Table 1",
+            skipReason: "No video track found",
+        );
+        $this->singleProfileCase = $this->reporter->add(
+            section: '4.1',
+            test: "Wave content SHALL include one or more switch sets conforming to at least one approved CMAF profile",
+            skipReason: "No corresponding adaptations"
+        );
+        //NOTE: This check seems very conflicting with the above one....
+        $this->mandatoryProfileCase = $this->reporter->add(
+            section: '5 ',
+            test: "If a subtitle track is included, the conforming (presentation will at least " .
+                  "include TTML Text Media profile",
+            skipReason: "No corresponding adaptations"
+        );
+        $this->crossPeriodProfileCase = $this->reporter->add(
+            section: "7.2.2",
+            test: "Sequential sets SHALL conform to the same CMAF profile",
+            skipReason: "Single period found",
+        );
+    }
+
+    //Public validation functions
+    public function validateAdaptationSet(AdaptationSet $adaptationSet): void
+    {
+        if (
+            $adaptationSet->getAttribute('mimeType') == 'audio/mp4' ||
+            $adaptationSet->getAttribute('mimeType') == 'video/mp4'
+        ) {
+            return;
+        }
+        $segmentManager = app(SegmentManager::class);
+        $foundProfiles = [];
+        foreach ($adaptationSet->allRepresentations() as $representation) {
+            $segmentList = $segmentManager->representationSegments($representation);
+
+            if (count($segmentList) == 0) {
+                $this->validProfileCase->pathAdd(
+                    path: $representation->path(),
+                    result: false,
+                    severity: "FAIL",
+                    pass_message: "",
+                    fail_message: "No segments"
+                );
+                $foundProfiles[] = '';
+                continue;
+            }
+            $foundProfiles[] = $this->getProfile($representation, $segmentList);
+        }
+        if (count($foundProfiles) == 0) {
+            return;
+        }
+        $this->singleProfileCase->pathAdd(
+            path: $adaptationSet->path(),
+            result:  count(array_unique($foundProfiles)) == 1 && $foundProfiles[0] != '',
+            severity: "FAIL",
+            pass_message: "Subtitles conforms to a single approved profile",
+            fail_message: "Subtitles do not conform to a single approved profile",
+        );
+        $this->mandatoryProfileCase->pathAdd(
+            path: $adaptationSet->path(),
+            result: in_array('TTML_IMSC1_Text', $foundProfiles),
+            severity: "FAIL",
+            pass_message: "Mandatory profile found",
+            fail_message: "Mandatory profile not found"
+        );
+
+        $this->validateCrossPeriod($adaptationSet, $foundProfiles[0]);
+    }
+
+    //Private helper functions
+    private function validateCrossPeriod(AdaptationSet $adaptationSet, string $profile): void
+    {
+        $mpdCache = app(MPDCache::class);
+        $segmentManager = app(SegmentManager::class);
+
+        foreach ($mpdCache->allPeriods() as $period) {
+            if ($period->periodIndex <= $adaptationSet->periodIndex) {
+                continue;
+            }
+
+            $correspondingAdaptation = $period->getAdaptationSet($adaptationSet->adaptationSetIndex);
+            $firstCorrespondingRepresentation = $correspondingAdaptation->getRepresentation(0);
+
+            $segmentList = $segmentManager->representationSegments($firstCorrespondingRepresentation);
+
+            $correspondingProfile = $this->getProfile(
+                $firstCorrespondingRepresentation,
+                $segmentList
+            );
+
+            $this->crossPeriodProfileCase->pathAdd(
+                path: $adaptationSet->path() . " - " . $correspondingAdaptation->path(),
+                result: $profile == $correspondingProfile,
+                severity: "FAIL",
+                pass_message: "Profiles correspond",
+                fail_message: "Profiles do not correspond"
+            );
+        }
+    }
+    /**
+     * @param array<Segment> $segments
+     **/
+    private function getProfile(Representation $representation, array $segments): string
+    {
+        $sdType = $segments[0]->getSampleDescriptor();
+
+
+        if ($sdType != 'stpp') {
+            $this->validProfileCase->pathAdd(
+                path: $representation->path(),
+                result: false,
+                severity: "FAIL",
+                pass_message: "",
+                fail_message: "Unsupported Sample description $sdType"
+            );
+            return '';
+        }
+
+        //todo Check mimetype in a correct way
+
+        $codecs = $representation->getTransientAttribute('codecs');
+
+        $mediaProfile = '';
+
+        if (strpos($codecs, 'im1t') !== false) {
+            $mediaProfile = 'TTML_IMSC1_Text';
+        }
+        if (strpos($codecs, 'im1i') !== false) {
+            $mediaProfile = 'TTML_IMSC1_Image';
+        }
+
+        $this->validProfileCase->pathAdd(
+            path: $representation->path(),
+            result: $mediaProfile != '',
+            severity: "FAIL",
+            pass_message: "$mediaProfile",
+            fail_message: "Unsupported sample descriptor $sdType"
+        );
+        return $mediaProfile;
+    }
+}

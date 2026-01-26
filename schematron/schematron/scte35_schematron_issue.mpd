@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MPD xmlns="urn:mpeg:dash:schema:mpd:2011" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mpeg:dash:schema:mpd:2011 DASH-MPD.xsd" xmlns:dvb="urn:dvb:dash-extensions:2014-1" xmlns:scte35="http://www.scte.org/schemas/35/2016" profiles="urn:dvb:dash:profile:dvb-dash:2014,urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014" type="dynamic" availabilityStartTime="1970-01-01T00:00:00Z" publishTime="2024-09-13T16:15:27.062720Z" minimumUpdatePeriod="PT2S" minBufferTime="PT10S" timeShiftBufferDepth="PT9M52S" maxSegmentDuration="PT7S">
+<Period id="period_1726243960320000" start="PT479512H12M40.320000S">
+    <EventStream schemeIdUri="urn:scte:scte35:2014:xml+bin" timescale="10000000">
+      <Event duration="100000000" id="77679360" presentationTime="0">
+        <scte35:Signal>
+          <scte35:Binary>/DAlAABeX1L/AP/wFAUEoUsAf+/+p9opAf4ADbugCpkBCQAAvrGc7g==</scte35:Binary>
+        </scte35:Signal>
+      </Event>
+      <Event duration="2400000000" id="913241715" presentationTime="0">
+        <scte35:Signal>
+          <scte35:Binary>/DAlAABeX1L/AP/wFAU2bvZzf+/+p9opAf4BSZcAypkBAwAAJjZ5dQ==</scte35:Binary>
+        </scte35:Signal>
+      </Event>
+    </EventStream>
+    <AdaptationSet id="1" group="1" mimeType="audio/mp4" lang="aud" contentType="audio" profiles="urn:dvb:dash:profile:dvb-dash:2014,urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014" segmentAlignment="true">
+      <Role schemeIdUri="urn:mpeg:dash:role:2011" value="main" />
+      <SegmentTemplate timescale="10000000" presentationTimeOffset="17262439603200000" initialization="ITV-SCTE_INSERTS-$RepresentationID$-p=1726243960320000-init.mp4" media="ITV-SCTE_INSERTS-$RepresentationID$-p=1726243960320000-$Time$.mp4">
+        <SegmentTimeline>
+          <S t="17262439563336666" d="39893334" />
+          <S d="60160000" />
+          <S d="39893333" />
+        </SegmentTimeline>
+      </SegmentTemplate>
+      <Representation id="mp4a_256000_aud=1235663272" bandwidth="256000" audioSamplingRate="48000" codecs="mp4a.40.2">
+        <AudioChannelConfiguration schemeIdUri="urn:mpeg:dash:23003:3:audio_channel_configuration:2011" value="2" />
+      </Representation>
+    </AdaptationSet>
+    <AdaptationSet id="2" group="1" mimeType="audio/mp4" lang="en" contentType="audio" profiles="urn:dvb:dash:profile:dvb-dash:2014,urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014" segmentAlignment="true">
+      <Role schemeIdUri="urn:mpeg:dash:role:2011" value="main" />
+      <SegmentTemplate timescale="10000000" presentationTimeOffset="17262439603200000" initialization="ITV-SCTE_INSERTS-$RepresentationID$-p=1726243960320000-init.mp4" media="ITV-SCTE_INSERTS-$RepresentationID$-p=1726243960320000-$Time$.mp4">
+        <SegmentTimeline>
+          <S t="17262439563336666" d="39893334" />
+          <S d="60160000" />
+          <S d="39893333" />
+        </SegmentTimeline>
+      </SegmentTemplate>
+      <Representation id="mp4a_256000_eng=2339035901" bandwidth="256000" audioSamplingRate="48000" codecs="mp4a.40.2">
+        <AudioChannelConfiguration schemeIdUri="urn:mpeg:dash:23003:3:audio_channel_configuration:2011" value="2" />
+      </Representation>
+    </AdaptationSet>
+    <AdaptationSet id="3" group="3" mimeType="application/mp4" lang="und" contentType="text" profiles="urn:dvb:dash:profile:dvb-dash:2014,urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014" segmentAlignment="true">
+      <Role schemeIdUri="urn:mpeg:dash:role:2011" value="subtitle" />
+      <SegmentTemplate timescale="10000000" presentationTimeOffset="17262439603200000" initialization="ITV-SCTE_INSERTS-$RepresentationID$-p=1726243960320000-init.mp4" media="ITV-SCTE_INSERTS-$RepresentationID$-p=1726243960320000-$Time$.mp4">
+        <SegmentTimeline>
+          <S t="17262439603200000" d="60000000" />
+          <S d="40000000" />
+        </SegmentTimeline>
+      </SegmentTemplate>
+      <Representation id="stpp_1000=2924859646" bandwidth="1000" codecs="stpp" />
+    </AdaptationSet>
+    <AdaptationSet id="4" group="2" frameRate="25" mimeType="video/mp4" startWithSAP="1" scanType="progressive" contentType="video" par="16:9" minBandwidth="672000" maxBandwidth="8072000" minWidth="704" maxWidth="1920" minHeight="396" maxHeight="1080" profiles="urn:dvb:dash:profile:dvb-dash:2014,urn:dvb:dash:profile:dvb-dash:isoff-ext-live:2014" segmentAlignment="true">
+      <Role schemeIdUri="urn:mpeg:dash:role:2011" value="main" />
+      <SegmentTemplate timescale="10000000" presentationTimeOffset="17262439603200000" initialization="ITV-SCTE_INSERTS-$RepresentationID$-p=1726243960320000-init.mp4" media="ITV-SCTE_INSERTS-$RepresentationID$-p=1726243960320000-$Time$.mp4">
+        <SegmentTimeline>
+          <S t="17262439603200000" d="60000000" />
+          <S d="40000000" />
+        </SegmentTimeline>
+      </SegmentTemplate>
+      <Representation id="avc1_672000=4190649716" bandwidth="672000" width="704" height="396" sar="1:1" codecs="avc1.4d401e" />
+      <Representation id="avc1_1272000=2504131706" bandwidth="1272000" width="1024" height="576" sar="1:1" codecs="avc1.64001f" />
+      <Representation id="avc1_2000000=2494704593" bandwidth="2000000" width="1024" height="576" sar="1:1" codecs="avc1.4d401f" />
+      <Representation id="avc1_3371968=2878174461" bandwidth="3371968" width="1280" height="720" sar="1:1" codecs="avc1.64001f" />
+      <Representation id="avc1_5272000=1378663619" bandwidth="5272000" width="1280" height="720" sar="1:1" codecs="avc1.64001f" />
+      <Representation id="avc1_8072000=880897565" bandwidth="8072000" width="1920" height="1080" sar="1:1" codecs="avc1.640028" />
+    </AdaptationSet>
+  </Period>
+</MPD>

@@ -24,6 +24,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-tags: true
+          fetch-depth: 0
       - name: Convert repository name to lower case
         run: |
           echo REPOSITORY_LC=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
@@ -33,11 +38,35 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN  }}
+      - name: Composer and npm install
+        run: |
+          composer update
+          composer install
+          npm i
+          npm run build
+          cp env_production.example .env
+          echo "BUILD_VERSION=\"`git describe --tags`\"" >> .env
+          echo "BUILD_COMMIT=\"${{ github.sha }}\"" >> .env
+          php artisan key:generate
+          php artisan migrate
+      - name: Run unit tests
+        env:
+          XDEBUG_MODE: coverage
+        run: |
+          php artisan test --coverage
+      - name: Run PHPCodeSniffer
+        run: |
+          ./vendor/bin/phpcs ./app
+      - name: Run PHPStan
+        run: |
+          ./vendor/bin/phpstan analyse --memory-limit 1G
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
           push: true
+          context: ./
           tags: ghcr.io/${{ env.REPOSITORY_LC }}:${{inputs.docker_tag}}
+          target: jccp
           build-args: |
             SHORT_SHA:${{ github.sha }}
       - name: Login to production server and deploy

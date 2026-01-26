@@ -1,0 +1,77 @@
+<!--
+	ANT build file for compiling the MPEG-DASH Validator.
+	09.01.2012, Waltl Markus
+-->
+
+<project name="MPEGDASHValidator" default="compile-java" basedir=".">
+	<description>
+Ant build file for compiling MPEG-DASH Validator.
+
+Properties:
+  src     - location of the source files
+  build   - location where to put the compiled files
+  doc     - location where to put the doc files
+  input   - input path for validating
+  resolved - File (possibly including path) to place xlink resolved MPD
+  schema  - input path for XSD schema to use
+
+Example for running:   ant run -Dinput=test.mpd
+	</description>
+  <!-- set global properties for this build -->
+  <property name="src" location="src"/>
+  <property name="build" location="bin"/>
+  <property name="doc" location="doc"/>
+  <property name="input" location="/path/to/input"/>
+  <property name="resolved" location="/xlink/resolved/file"/>
+  <property name="schema" value=""/>
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+  </target>
+
+  <target name="javadoc">
+	<!-- Create the doc directory structure used by javadoc -->
+	<mkdir dir="${doc}"/>
+  	<javadoc packagenames="*.*"
+	    sourcepath="${src}"
+        destdir="${doc}"
+        access="private"
+        verbose="true"
+        author="true"
+        version="true">
+  		<classpath>
+  			<pathelement location="${build}"/>
+  			<pathelement path="${java.class.path}"/>
+  			<fileset dir=".">
+  				<include name="**/*.jar" />
+  			</fileset>
+  		</classpath>
+  	</javadoc>
+  </target>
+
+
+  <target name="compile-java" depends="init"
+        description="compile the source" >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac includeantruntime="false" srcdir="${src}" destdir="${build}" classpath="saxon9he.jar:xercesImpl.jar"/>
+  </target>
+
+
+	<target name="run" depends="compile-java" description="runs the test file">
+		<!-- Use "failonerror" to propagate any exit codes from the validator to ant -->
+		<java fork="true" failonerror="true" classname="Validator" classpath="saxon9he.jar:xercesImpl.jar:${build}">
+			<arg value="${input}"/>
+			<arg value="${resolved}"/>
+			<arg value="${schema}"/>
+		</java>
+	</target>
+
+  <target name="clean"
+        description="clean up" >
+    <!-- Delete the ${build} directory tree -->
+    <delete dir="${build}"/>
+  </target>
+</project>

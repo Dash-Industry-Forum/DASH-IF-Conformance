@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Attention: this is not a complete MPD and thus will not validate against the MPD Schema -->
+<MPD>
+    <Period>
+        <AdaptationSet mimeType="video/mp4" group="1">
+            <Role schemeIdUri="urn:mpeg:dash:role:2011" value="main"/>
+            <Viewpoint schemeIdUri="urn:mpeg:dash:viewpoint:2011" value="vp1"/>
+            <Representation id="11" bandwidth="1024000"><!-- ... --></Representation>
+            <Representation id="12" bandwidth="512000"><!-- ... --></Representation>
+            <!-- ... -->
+        </AdaptationSet>
+
+        <AdaptationSet mimeType="video/mp4" group="1">
+            <Role schemeIdUri="urn:mpeg:dash:role:2011" value="main"/>
+            <Viewpoint schemeIdUri="urn:mpeg:dash:viewpoint:2011" value="vp2"/>
+            <Representation id="11" bandwidth="1024000"><!-- ... --></Representation>
+            <Representation id="12" bandwidth="512000"><!-- ... --></Representation>
+            <!-- ... -->
+        </AdaptationSet>
+
+        <AdaptationSet mimeType="audio/mp4" group="1">
+            <Role schemeIdUri="urn:mpeg:dash:role:2011" value="main"/>
+            <Role schemeIdUri="urn:mpeg:dash:role:2011" value="supplementary"/>
+            <Viewpoint schemeIdUri="urn:mpeg:dash:viewpoint:2011" value="vp1"/>
+            <Representation id="11" bandwidth="1024000"><!-- ... --></Representation>
+            <Representation id="12" bandwidth="512000"><!-- ... --></Representation>
+            <!-- ... -->
+        </AdaptationSet>
+
+        <AdaptationSet mimeType="audio/mp4" group="1">
+            <Role schemeIdUri="urn:mpeg:dash:role:2011" value="main"/>
+            <Role schemeIdUri="urn:mpeg:dash:role:2011" value="supplementary"/>
+            <Viewpoint schemeIdUri="urn:mpeg:dash:viewpoint:2011" value="vp2"/>
+            <Representation id="11" bandwidth="1024000"><!-- ... --></Representation>
+            <Representation id="12" bandwidth="512000"><!-- ... --></Representation>
+            <!-- ... -->
+        </AdaptationSet>
+
+    </Period>
+    <!-- ... -->
+</MPD>
