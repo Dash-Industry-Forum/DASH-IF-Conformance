@@ -88,15 +88,15 @@ class SpecManager
 
     public function disableAll(): void
     {
-        foreach ($this->manifestSpecs as $specification){
-        if ($specification->name == "Global Module") {
-            continue;
-        }
-        $cachePath = cache_path(['spec', $specification->name]);
-        if (Cache::has($cachePath)) {
-            Cache::forget($cachePath);
-        }
-        $this->moduleStates[$specification->name]['enabled'] = false;
+        foreach ($this->manifestSpecs as $specification) {
+            if ($specification->name == "Global Module") {
+                continue;
+            }
+            $cachePath = cache_path(['spec', $specification->name]);
+            if (Cache::has($cachePath)) {
+                Cache::forget($cachePath);
+            }
+            $this->moduleStates[$specification->name]['enabled'] = false;
         }
     }
 
