@@ -56,13 +56,13 @@ Example for running:   ant run -Dinput=test.mpd
   <target name="compile-java" depends="init"
         description="compile the source" >
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac includeantruntime="false" srcdir="${src}" destdir="${build}" classpath="saxon9he.jar:xercesImpl.jar"/>
+    <javac includeantruntime="false" srcdir="${src}" destdir="${build}" classpath="saxon12he.jar:xercesImpl.jar"/>
   </target>
 
 
 	<target name="run" depends="compile-java" description="runs the test file">
 		<!-- Use "failonerror" to propagate any exit codes from the validator to ant -->
-		<java fork="true" failonerror="true" classname="Validator" classpath="saxon9he.jar:xercesImpl.jar:${build}">
+		<java fork="true" failonerror="true" classname="Validator" classpath="saxon12he.jar:xercesImpl.jar:${build}">
 			<arg value="${input}"/>
 			<arg value="${resolved}"/>
 			<arg value="${schema}"/>

@@ -12,6 +12,7 @@ use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Reporter\TestCase;
 use Illuminate\Support\Facades\Log;
 //Module checks
+use App\Modules\Common\MPD\XLink;
 use App\Modules\Common\MPD\Schematron;
 use App\Modules\Common\MPD\XSDValidation;
 
@@ -25,6 +26,8 @@ class MPD extends Module
     public function validateMPD(): void
     {
         parent::validateMPD();
+        //IMPORTANT! We first run XlinkResolve as it generates the required files for the steps below
+        new XLink()->resolveAndValidate();
 
         new Schematron()->validateSchematron();
         new XSDValidation()->validateXSD();

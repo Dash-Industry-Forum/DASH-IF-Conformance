@@ -44,6 +44,7 @@ class Schematron
     private function runSchematron(): string
     {
         $sessionDir = session_dir();
+        file_put_contents($sessionDir . "manifest.mpd", app(MPDCache::class)->getMPD());
 
         $validatorPath = base_path() . "/schematron";
         $schematronCommand = implode(" ", [
@@ -51,7 +52,7 @@ class Schematron
             "-jar",
             "${validatorPath}/saxon12he.jar",
             "-versionmsg:off",
-            "-s:${sessionDir}/manifest.mpd",
+            "-s:${sessionDir}/resolved.mpd",
             "-o:${sessionDir}/schematron.xml",
             "-xsl:${validatorPath}/schematron/output/val_schema.xsl"
         ]);
