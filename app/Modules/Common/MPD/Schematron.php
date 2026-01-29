@@ -54,7 +54,7 @@ class Schematron
             "-versionmsg:off",
             "-s:${sessionDir}/resolved.mpd",
             "-o:${sessionDir}/schematron.xml",
-            "-xsl:${validatorPath}/schematron/output/val_schema.xsl"
+            "-xsl:${validatorPath}/output/val_schema.xsl"
         ]);
 
         $schematronResult = Process::run($schematronCommand);
