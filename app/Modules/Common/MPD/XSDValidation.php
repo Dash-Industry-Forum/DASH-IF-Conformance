@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules;
+namespace App\Modules\Common\MPD;
 
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Cache;
@@ -12,62 +12,100 @@ use App\Services\Reporter\Context as ReporterContext;
 use App\Services\Reporter\TestCase;
 use Illuminate\Support\Facades\Log;
 
-class Schematron extends Module
+class XSDValidation
 {
     //TODO Move to module
     //private string $schemaPath;
-    private SubReporter $schematronReporter;
+    private SubReporter $xsdReporter;
+    private SubReporter $legacyReporter;
     //private SubReporter $globalReporter;
 
     /*
     private TestCase $xlinkCase;
     private TestCase $mpdCase;
      */
-    private TestCase $schematronCase;
+    private TestCase $xsdCase;
+    private TestCase $xsd2Case;
+    private TestCase $xsd4Case;
 
     public function __construct()
     {
-        parent::__construct("Global Module");
-        $this->registerChecks();
-    }
-
-    public function registerChecks(): void
-    {
         $reporter = app(ModuleReporter::class);
-        //$this->globalReporter = &$reporter->context(new ReporterContext("MPD", "Global", "", array()));
-        $this->schematronReporter = &$reporter->context(new ReporterContext("MPD", "", "Schematron", array()));
-
-        $this->schematronCase = $this->schematronReporter->add(
-            section: "Conformance Tool",
-            test: "Schematron shall be able to run",
+        $this->xsdReporter = &$reporter->context(new ReporterContext(
+            "MPD",
+            "Global",
+            "XSD",
+            []
+        ));
+        $this->xsdCase = $this->xsdReporter->add(
+            section: "DASH 5th",
+            test: "MPD SHALL be valid",
             skipReason: ''
         );
 
-        /*
-        $this->xlinkCase = $this->globalReporter->add(
-            section: "",
-            test: "xlink resolution SHALL be succesful",
-            skipReason: "Unable to run schematron"
+        $this->legacyReporter = &$reporter->context(new ReporterContext(
+            "MPD",
+            "LEGACY",
+            "XSD",
+            []
+        ));
+        $this->xsd2Case = $this->legacyReporter->add(
+            section: "DASH 2nd (DVB 2018)",
+            test: "MPD SHALL be valid",
+            skipReason: ''
         );
-
-        $this->mpdCase = $this->globalReporter->add(
-            section: "",
-            test: "MPD Validation SHALL be succesful",
-            skipReason: "Unable to run schematron"
+        $this->xsd4Case = $this->legacyReporter->add(
+            section: "DASH 4th-amd1 (DVB 2019)",
+            test: "MPD SHALL be valid",
+            skipReason: ''
         );
-
-        $this->schematronRunCase = $this->globalReporter->add(
-            section: "",
-            test: "Schematron Validation SHALL run succesfully",
-            skipReason: "Unable to run schematron"
-        );
-         */
     }
+
+    private function xsdValidation(TestCase &$testCase, string $xsdLocation): void
+    {
+        libxml_use_internal_errors(true);
+        $mpdCache = app(MPDCache::class);
+        $domDocument = $mpdCache->getDocument();
+
+        $testCase->add(
+            result: true,
+            severity: "INFO",
+            pass_message: "Used resource: $xsdLocation",
+            fail_message: ""
+        );
+
+        $validMPD = $domDocument->schemaValidate(resource_path($xsdLocation));
+        if ($validMPD) {
+            $testCase->add(
+                result: true,
+                severity: "PASS",
+                pass_message: "MPD valid",
+                fail_message: ""
+            );
+        } else {
+            foreach (libxml_get_errors() as $error) {
+                $testCase->pathAdd(
+                    path: "Line: $error->line",
+                    result: false,
+                    severity: $error->level == LIBXML_ERR_WARNING ? "WARN" : "FAIL",
+                    pass_message: "",
+                    fail_message: $error->message
+                );
+            }
+        }
+        libxml_use_internal_errors(false);
+    }
+
+    public function validateXSD(): void
+    {
+        $this->xsdValidation($this->xsdCase, "xsd/DASH5th.xsd");
+        $this->xsdValidation($this->xsd2Case, "xsd/DASH2nd.xsd");
+        $this->xsdValidation($this->xsd4Case, "xsd/DASH4th-amd1.xsd");
+    }
+
 
     public function validateMPD(): void
     {
-        parent::validateMPD();
-        $this->validateSchematron();
         $this->validate();
     }
 
@@ -79,62 +117,6 @@ class Schematron extends Module
         return Cache::get(cache_path(['validator','output']), '');
     }
 
-    public function getSchematronOutput(): string
-    {
-        return $this->runSchematron();
-    }
-
-
-    private function runSchematron(): string
-    {
-        $sessionDir = session_dir();
-        if (!Cache::get(cache_path(['mpd','resolved']))) {
-            $this->runValidator();
-        }
-
-        $validatorPath = base_path() . "/schematron";
-        $schematronCommand = implode(" ", [
-            "java",
-            "-jar",
-            "${validatorPath}/saxon12he.jar",
-            "-versionmsg:off",
-            "-s:${sessionDir}/manifest.mpd",
-            "-o:${sessionDir}/schematron.xml",
-            "-xsl:${validatorPath}/schematron/output/val_schema.xsl"
-        ]);
-
-        $schematronResult = Process::run($schematronCommand);
-
-
-        $this->schematronCase->add(
-            result: $schematronResult->successful(),
-            severity: "FAIL",
-            pass_message: "Schematron ran successfully",
-            fail_message: "Unable to run schematron",
-        );
-        if (!$schematronResult->successful()) {
-            $this->schematronCase->pathAdd(
-                path: "stdout",
-                result: false,
-                severity: "INFO",
-                pass_message: "",
-                fail_message: $schematronResult->output()
-            );
-            $this->schematronCase->pathAdd(
-                path: "stderr",
-                result: false,
-                severity: "INFO",
-                pass_message: "",
-                fail_message: $schematronResult->errorOutput()
-            );
-        }
-
-        if (!$schematronResult->successful()) {
-            return '';
-        }
-
-        return file_get_contents($sessionDir . "schematron.xml");
-    }
 
     private function runValidator(): void
     {
@@ -193,41 +175,6 @@ class Schematron extends Module
             return substr($javaRemoved, $xlinkOffset);
         });
 */
-    }
-
-    public function validateSchematron(): void
-    {
-        $schematronOutput = $this->getSchematronOutput();
-        if (!$schematronOutput) {
-            return;
-        }
-
-        $doc = new \DOMDocument();
-        $doc->loadXML($schematronOutput);
-
-        $namespace = 'http://purl.oclc.org/dsdl/svrl';
-        $schematronResult = $doc->getElementsByTagNameNS($namespace, 'schematron-output')->item(0);
-        $failedAssertions = $schematronResult->getElementsByTagNameNS($namespace, 'failed-assert');
-        foreach ($failedAssertions as $failedAssertion) {
-            $testLocation = $failedAssertion->getAttribute('location');
-            $testDescription = $failedAssertion->getAttribute('test');
-            $testRole = $failedAssertion->getAttribute('role');
-            $textComponents = $failedAssertion->getElementsByTagNameNS($namespace, 'text');
-
-            foreach ($textComponents as $textComponent) {
-                //Always false, as we're parsing failed assertions
-                $this->schematronReporter->add(
-                    section: $testLocation,
-                    test: $testDescription,
-                    skipReason: ''
-                )->add(
-                    result: false,
-                    severity: $testRole == "warn" ? "WARN" : "FAIL",
-                    pass_message: "",
-                    fail_message: $textComponent->nodeValue
-                );
-            }
-        }
     }
 
     public function validate(): void

@@ -20,9 +20,19 @@ class MPDCache
     private array $domCache = [];
     public string $error = '';
 
+    private ?\DOMDocument $document = null;
+
 
     public function __construct()
     {
+    }
+
+    public function getDocument(): \DOMDocument
+    {
+        if (!$this->document) {
+            $this->parseDom(ManifestType::Regular);
+        }
+        return $this->document;
     }
 
     private function parseDom(ManifestType $type): ?\DOMElement
@@ -32,11 +42,11 @@ class MPDCache
             if (!$mpd) {
                 return null;
             }
-            $doc = new \DOMDocument();
-            $doc->loadXML($mpd);
+            $this->document = new \DOMDocument();
+            $this->document->loadXML($mpd);
 
 
-            $main_element_nodes = $doc->getElementsByTagName('MPD');
+            $main_element_nodes = $this->document->getElementsByTagName('MPD');
             if ($main_element_nodes->length == 0) {
                 Log::error("No MPD in xml");
                 return null;
