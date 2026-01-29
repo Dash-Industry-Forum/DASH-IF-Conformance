@@ -88,10 +88,9 @@ class MPDCache
     public function getPreviousMPD(ManifestType $type = ManifestType::Regular): string
     {
         $mpdInput = session()->get('mpd');
-        if (str_starts_with($mpdInput, '<?xml') ||str_starts_with($mpdInput, '<MPD ')){
-           Cache::put(cache_path(['mpd','url']), 'unavailable://');
-           return session()->get('mpd');
-
+        if (str_starts_with($mpdInput, '<?xml') || str_starts_with($mpdInput, '<MPD ')) {
+            Cache::put(cache_path(['mpd','url']), 'unavailable://');
+            return session()->get('mpd');
         }
         $cachedUrl = Cache::get(cache_path(['mpd', 'url']), '');
         if ($cachedUrl != session()->get('mpd')) {
