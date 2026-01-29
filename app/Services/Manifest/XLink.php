@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Common\MPD;
+namespace App\Services\Manifest;
 
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Cache;
@@ -14,24 +14,8 @@ use Illuminate\Support\Facades\Log;
 
 class XLink
 {
-    private SubReporter $xlinkReporter;
-    private TestCase $xlinkCase;
-
     public function __construct()
     {
-        $reporter = app(ModuleReporter::class);
-        $this->xlinkReporter = &$reporter->context(new ReporterContext(
-            "MPD",
-            "Global",
-            "XLink",
-            []
-        ));
-
-        $this->xlinkCase = $this->xlinkReporter->add(
-            section: "XLink",
-            test: "XLink validation succesful",
-            skipReason: ''
-        );
     }
 
     private function resolvePeriod(\DOMDocument $parent, \DOMElement $adoptedNode): \DOMNode
@@ -41,34 +25,15 @@ class XLink
             return $adoptedNode;
         }
 
-        $this->xlinkCase->add(
-            result: $adoptedNode->getAttribute("xlink:actuate") == "onLoad",
-            severity: "FAIL",
-            pass_message: "Valid xlink:actuate found",
-            fail_message: "Invalid xlink:actuate found",
-        );
-
         $xlinkContents = file_get_contents($href);
 
         $xlinkDocument = new \DOMDocument();
         $xlinkDocument->loadXML($xlinkContents);
 
-        if ($xlinkDocument->childNodes->length != 1){
-            $this->xlinkCase->add(
-                result: false,
-                severity: "FAIL",
-                pass_message: "",
-                fail_message: "Found more than 1 child element, ignoring",
-            );
+        if ($xlinkDocument->childNodes->length != 1) {
             return $adoptedNode;
         }
-        if ($xlinkDocument->firstElementChild->nodeName != "Period"){
-            $this->xlinkCase->add(
-                result: false,
-                severity: "FAIL",
-                pass_message: "",
-                fail_message: "Node name different than xlink source, ignoring",
-            );
+        if ($xlinkDocument->firstElementChild->nodeName != "Period") {
             return $adoptedNode;
         }
 
@@ -76,13 +41,13 @@ class XLink
         return $parent->adoptNode($xlinkDocument->firstElementChild->cloneNode(true));
     }
 
-
-    public function resolveAndValidate(): void
+    public function resolveAndValidate(string $manifest): string
     {
         //TODO: Implement xlink resolution on elements other than Period
         $mpdCache = app(MPDCache::class);
 
-        $xmlDocument = $mpdCache->getDocument();
+        $xmlDocument = new \DOMDocument();
+        $xmlDocument->loadXML($manifest);
 
         $resolvedDocument = new \DOMDocument();
         $resolvedDocument->formatOutput = true;
@@ -90,6 +55,7 @@ class XLink
         //Adopt MPD
         $mpdNode = $resolvedDocument->adoptNode($xmlDocument->getElementsByTagName('MPD')->item(0)->cloneNode(false));
         $resolvedDocument->appendChild($mpdNode);
+
 
         //Adopt Periods
         $periods = $xmlDocument->getElementsByTagName('Period');
@@ -105,7 +71,6 @@ class XLink
         }
 
         $resolvedPayload = $resolvedDocument->saveXML();
-        $sessionDir = session_dir();
-        file_put_contents($sessionDir . "resolved.mpd", $resolvedPayload);
+        return $resolvedPayload;
     }
 }
