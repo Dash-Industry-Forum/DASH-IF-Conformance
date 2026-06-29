@@ -24,6 +24,11 @@ class Segment
     private string $level = '';
 
     /**
+     * @var array<string> $errors
+     **/
+    private array $errors = [];
+
+    /**
      * //TODO Change mixed with correct parent class
      * @var array<mixed> $analyzedRepresentations;
      **/
@@ -46,6 +51,13 @@ class Segment
 
         $scope->detach();
         $span->end();
+    }
+
+    /**
+     * @return array<string>
+     **/
+    public function getErrors(): array {
+        return $this->errors;
     }
 
     public function getSize(): int
@@ -121,6 +133,14 @@ class Segment
             if ($levelPos !== false) {
                 $level = substr($line, $levelPos + 6);
                 $this->level = substr($level, 0, strpos($level, ' '));
+            }
+
+
+            $errorMarkerPos = strpos($line, '[31m');
+            if ($errorMarkerPos !== false){
+                if (strpos($line, "Error opening file") === false){
+                    $this->errors[] = substr($line, $errorMarkerPos + 4);
+                }
             }
         }
     }
