@@ -372,9 +372,9 @@ class VideoMediaProfile extends AdaptationComponent
             validMatrixCoefficients: $validMatrixCoefficients,
             signalledMatrixCoefficients: $signalledMatrixCoefficients,
             maxHeight: $maxHeight,
-            signalledHeight: $segment->getHeight() ?? 0,
+            signalledHeight: $segment->getHeight(),
             maxWidth: $maxWidth,
-            signalledWidth: $segment->getWidth() ?? 0,
+            signalledWidth: $segment->getWidth(),
             maxFrameRate: $maxFrameRate,
             signalledFrameRate: 0,
         );

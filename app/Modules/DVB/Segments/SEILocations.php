@@ -48,9 +48,6 @@ class SEILocations extends SegmentComponent
     public function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
         $sdType = $segment->getSampleDescriptor();
-        if ($sdType === null) {
-            return;
-        }
 
         if ($sdType == 'hev1' || $sdType == 'hevc') {
             $this->validateHEVCSEI($representation, $segment, $segmentIndex);

@@ -47,18 +47,12 @@ class Codecs extends InitSegmentComponent
     public function validateInitSegment(Representation $representation, Segment $segment): void
     {
         $sdType = $segment->getSampleDescriptor();
-        if ($sdType === null) {
-            return;
-        }
-
 
         // We use format to either contain the sdtype, or inferred sdtype from encrypted streams
         $format = $sdType;
         if (str_starts_with($sdType, 'enc')) {
             $sinfBox = $segment->getProtectionScheme();
-            if ($sinfBox) {
-                $format = $sinfBox->originalFormat;
-            }
+            $format = $sinfBox->originalFormat;
         }
         if (!str_starts_with($format, 'avc')) {
             return;

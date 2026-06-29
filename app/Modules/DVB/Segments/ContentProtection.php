@@ -133,16 +133,14 @@ class ContentProtection extends AdaptationComponent
         );
 
         $schmBox = $segment->getProtectionScheme();
-        if ($schmBox) {
-            $schemeType = $schmBox->scheme->schemeType;
-            $this->cencCase->pathAdd(
-                path: $representation->path() . "-init",
-                result: $schemeType == 'cenc',
-                severity: "WARN",
-                pass_message: "Scheme set to 'cenc'",
-                fail_message: "Scheme set to '" . $schemeType . "'"
-            );
-        }
+        $schemeType = $schmBox->scheme->schemeType;
+        $this->cencCase->pathAdd(
+            path: $representation->path() . "-init",
+            result: $schemeType == 'cenc',
+            severity: "WARN",
+            pass_message: "Scheme set to 'cenc'",
+            fail_message: "Scheme set to '" . $schemeType . "'"
+        );
 
         // TODO: Re-implement 'unique track KID' << blame this commit for previous implementation
         // TODO: Re-implement 'key rotation' << blame this commit for previous implementation

@@ -80,16 +80,8 @@ class Subtitle extends SegmentComponent
         Segment $segment,
         int $segmentIndex
     ): void {
-        /** @var ?Boxes\STPPBox $sampleDescription **/
+        /** @var Boxes\STPPBox $sampleDescription **/
         $sampleDescription = $segment->getSampleDescription();
-
-
-        if ($sampleDescription === null) {
-            return;
-        }
-
-
-
 
         $this->stppCase->pathAdd(
             result: $sampleDescription->codingname == 'stpp',
