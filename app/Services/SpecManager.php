@@ -5,7 +5,6 @@ namespace App\Services;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use App\Modules\Common\MPD as GlobalManifest;
-use App\Modules\Common\Segments as GlobalSegments;
 use App\Modules\DVB\MPD as DVBManifest;
 use App\Modules\DVB\Segments as DVBSegments;
 use App\Modules\HbbTV\MPD as HbbTVManifest;
@@ -48,7 +47,6 @@ class SpecManager
         //Always enable schematron
         $cachePath = cache_path(['spec', 'Global Module']);
         Cache::put($cachePath, 'enabled');
-        Cache::put(cache_path(['spec','Global Segments']), 'enabled');
 
         foreach ($this->manifestSpecs as $manifestSpec) {
             $this->moduleStates[$manifestSpec->name] = [
@@ -74,7 +72,6 @@ class SpecManager
     private function registerMPDSpecs(): void
     {
         $this->manifestSpecs[] = new GlobalManifest();
-        $this->manifestSpecs[] = new GlobalSegments();
         $this->manifestSpecs[] = new DVBManifest();
         $this->manifestSpecs[] = new DVBSegments();
         $this->manifestSpecs[] = new HbbTVManifest();
@@ -92,7 +89,7 @@ class SpecManager
     public function disableAll(): void
     {
         foreach ($this->manifestSpecs as $specification) {
-            if ($specification->name == "Global Module" || $specification->name == "Global Segments") {
+            if ($specification->name == "Global Module"){
                 continue;
             }
             $cachePath = cache_path(['spec', $specification->name]);
@@ -113,7 +110,7 @@ class SpecManager
 
     public function toggle(string $moduleName): void
     {
-        if ($moduleName == "Global Module" || $moduleName == "Global Segments") {
+        if ($moduleName == "Global Module") {
             return;
         }
         $cachePath = cache_path(['spec', $moduleName]);

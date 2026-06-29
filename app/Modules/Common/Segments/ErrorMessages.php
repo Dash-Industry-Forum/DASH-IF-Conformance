@@ -51,7 +51,7 @@ class ErrorMessages extends SegmentComponent
             fail_message: "Error messages found",
         );
 
-        foreach ($errors as $error){
+        foreach ($errors as $error) {
             $this->errorCase->pathAdd(
                 result: false,
                 severity: "INFO",

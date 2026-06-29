@@ -56,7 +56,8 @@ class Segment
     /**
      * @return array<string>
      **/
-    public function getErrors(): array {
+    public function getErrors(): array
+    {
         return $this->errors;
     }
 
@@ -137,8 +138,8 @@ class Segment
 
 
             $errorMarkerPos = strpos($line, '[31m');
-            if ($errorMarkerPos !== false){
-                if (strpos($line, "Error opening file") === false){
+            if ($errorMarkerPos !== false) {
+                if (strpos($line, "Error opening file") === false) {
                     $this->errors[] = substr($line, $errorMarkerPos + 4);
                 }
             }

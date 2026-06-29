@@ -55,7 +55,7 @@ class SegmentManager
         ];
         $disk = session_disk();
         foreach ($disk->allFiles() as $filePath) {
-            if (strpos($filePath, "/seg") !== false){
+            if (strpos($filePath, "/seg") !== false) {
                 continue;
             }
             if (str_ends_with($filePath, ".mp4")) {
