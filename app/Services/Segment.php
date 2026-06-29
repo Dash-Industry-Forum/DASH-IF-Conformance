@@ -159,25 +159,25 @@ class Segment
         return null;
     }
 
-    public function getTrackId(): ?int
+    public function getTrackId(): int
     {
-        return $this->runAnalyzedFunction('getTrackIdFromTKHD');
+        return $this->runAnalyzedFunction('getTrackIdFromTKHD') ?? 0;
     }
 
     /**
-     * @return ?array<float>
+     * @return array<float>
      **/
-    public function getFragmentDurations(): ?array
+    public function getFragmentDurations(): array
     {
-        return $this->runAnalyzedFunction('getFragmentDurations');
+        return $this->runAnalyzedFunction('getFragmentDurations') ?? [];
     }
 
     /**
-     * @return array<?string>
+     * @return array<string>
      **/
     public function getSegmentSAPTypes(): array
     {
-        return $this->runAnalyzedFunction('getSegmentSAP');
+        return $this->runAnalyzedFunction('getSegmentSAP') ?? [];
     }
 
     /**
@@ -185,17 +185,17 @@ class Segment
      **/
     public function getSegmentDurations(): array
     {
-        return $this->runAnalyzedFunction('getSegmentDurations');
+        return $this->runAnalyzedFunction('getSegmentDurations') ?? [];
     }
 
-    public function getProtectionScheme(): ?Boxes\SINFBox
+    public function getProtectionScheme(): Boxes\SINFBox
     {
-        return $this->runAnalyzedFunction('getProtectionScheme');
+        return $this->runAnalyzedFunction('getProtectionScheme') ?? new Boxes\SINFBox();
     }
 
-    public function getSampleDescriptor(): ?string
+    public function getSampleDescriptor(): string
     {
-        return $this->runAnalyzedFunction('getSDType');
+        return $this->runAnalyzedFunction('getSDType') ?? '';
     }
 
     /**
@@ -203,32 +203,32 @@ class Segment
      **/
     public function getBrands(): array
     {
-        return $this->runAnalyzedFunction('getBrands');
+        return $this->runAnalyzedFunction('getBrands') ?? [];
     }
 
     public function getTimeScale(): int
     {
-        return $this->runAnalyzedFunction('getTimeScale');
+        return $this->runAnalyzedFunction('getTimeScale') ?? 0;
     }
 
-    public function getHandlerType(): ?string
+    public function getHandlerType(): string
     {
-        return $this->runAnalyzedFunction('getHandlerType');
+        return $this->runAnalyzedFunction('getHandlerType') ?? '';
     }
 
-    public function getSampleAuxiliaryInformation(): ?Boxes\SampleAuxiliaryInformation
+    public function getSampleAuxiliaryInformation(): Boxes\SampleAuxiliaryInformation
     {
-        return $this->runAnalyzedFunction('getSampleAuxiliaryInformation');
+        return $this->runAnalyzedFunction('getSampleAuxiliaryInformation') ?? new Boxes\SampleAuxiliaryInformation();
     }
 
-    public function getBoxNameTree(): ?Boxes\NameOnlyNode
+    public function getBoxNameTree(): Boxes\NameOnlyNode
     {
-        return $this->runAnalyzedFunction('getBoxNameTree');
+        return $this->runAnalyzedFunction('getBoxNameTree') ?? new Boxes\NameOnlyNode('');
     }
 
-    public function getSampleDuration(): ?float
+    public function getSampleDuration(): float
     {
-        return $this->runAnalyzedFunction('getSampleDuration');
+        return $this->runAnalyzedFunction('getSampleDuration') ?? 0.0;
     }
 
     /**
@@ -236,7 +236,7 @@ class Segment
      **/
     public function getSIDXReferenceTypes(): array
     {
-        return $this->runAnalyzedFunction('getSIDXReferenceTypes');
+        return $this->runAnalyzedFunction('getSIDXReferenceTypes') ?? [];
     }
 
     /**
@@ -244,73 +244,73 @@ class Segment
      **/
     public function getTopLevelBoxNames(): array
     {
-        return $this->runAnalyzedFunction('getTopLevelBoxNames');
+        return $this->runAnalyzedFunction('getTopLevelBoxNames') ?? [];
     }
 
-    public function getSampleDescription(): ?Boxes\SampleDescription
+    public function getSampleDescription(): Boxes\SampleDescription
     {
-        return $this->runAnalyzedFunction('getSampleDescription');
+        return $this->runAnalyzedFunction('getSampleDescription') ?? new Boxes\SampleDescription();
     }
 
 
     /**
      * @return array<string,string>
      **/
-    public function getHEVCConfiguration(): ?array
+    public function getHEVCConfiguration(): array
     {
-        return $this->runAnalyzedFunction('getHEVCConfiguration');
-    }
-
-    /**
-     * @return array<string,string>
-     **/
-    public function getAudioConfiguration(): ?array
-    {
-        return $this->runAnalyzedFunction('getAudioConfiguration');
+        return $this->runAnalyzedFunction('getHEVCConfiguration') ?? [];
     }
 
     /**
      * @return array<string,string>
      **/
-    public function getAVCConfiguration(): ?array
+    public function getAudioConfiguration(): array
     {
-        return $this->runAnalyzedFunction('getAVCConfiguration');
+        return $this->runAnalyzedFunction('getAudioConfiguration') ?? [];
+    }
+
+    /**
+     * @return array<string,string>
+     **/
+    public function getAVCConfiguration(): array
+    {
+        return $this->runAnalyzedFunction('getAVCConfiguration') ?? [];
     }
     /**
      * @return array<string,string>
      **/
-    public function getSPSConfiguration(): ?array
+    public function getSPSConfiguration(): array
     {
-        return $this->runAnalyzedFunction('getSPSConfiguration');
+        return $this->runAnalyzedFunction('getSPSConfiguration') ?? [];
     }
     /**
      * @return array<string,string>
      **/
-    public function getAACConfiguration(): ?array
+    public function getAACConfiguration(): array
     {
-        return $this->runAnalyzedFunction('getAACConfiguration');
+        return $this->runAnalyzedFunction('getAACConfiguration') ?? [];
     }
 
 
     public function AVCConfigurationHasSPSPPS(): bool
     {
-        return $this->runAnalyzedFunction('AVCConfigurationHasSPSPPS');
+        return $this->runAnalyzedFunction('AVCConfigurationHasSPSPPS') ?? false;
     }
 
 
-    public function getWidth(): ?int
+    public function getWidth(): int
     {
-        return $this->runAnalyzedFunction('getWidth');
+        return $this->runAnalyzedFunction('getWidth') ?? 0;
     }
 
-    public function getHeight(): ?int
+    public function getHeight(): int
     {
-        return $this->runAnalyzedFunction('getHeight');
+        return $this->runAnalyzedFunction('getHeight') ?? 0;
     }
 
-    public function getEPT(): ?int
+    public function getEPT(): int
     {
-        return $this->runAnalyzedFunction('getEPT');
+        return $this->runAnalyzedFunction('getEPT') ?? 0;
     }
 
     /**
@@ -318,6 +318,6 @@ class Segment
      **/
     public function getNalSamples(): array
     {
-        return $this->runAnalyzedFunction('getNalSamples');
+        return $this->runAnalyzedFunction('getNalSamples') ?? [];
     }
 }
