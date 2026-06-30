@@ -44,14 +44,13 @@ class TextComponentConstraints extends InitSegmentComponent
         $sampleDescription = $segment->getSampleDescription();
 
         if (
-            $sampleDescription &&
             $sampleDescription->type == Boxes\DescriptionType::Subtitle &&
             $sampleDescription instanceof Boxes\STPPBox
         ) {
             $this->validateISMC($representation, $segment, $sampleDescription);
         }
 
-        if ($sampleDescription &&  $sampleDescription->type == Boxes\DescriptionType::Text) {
+        if ($sampleDescription->type == Boxes\DescriptionType::Text) {
             $this->validateWebvtt($representation, $segment, $sampleDescription);
         }
     }

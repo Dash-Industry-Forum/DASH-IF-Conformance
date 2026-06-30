@@ -69,7 +69,7 @@ class EncryptionProfile extends SegmentComponent
     {
         $this->cmfhdCase->pathAdd(
             path: $representation->path() . "-$segmentIndex",
-            result: $segment->getProtectionScheme() === null,
+            result: !$segment->getProtectionScheme()->encryption->isEncrypted,
             severity: "FAIL",
             pass_message: "Non-encrypted track",
             fail_message: "Encrypted track",
@@ -78,7 +78,7 @@ class EncryptionProfile extends SegmentComponent
     public function validateCMFHDC(Representation $representation, Segment $segment, int $segmentIndex): void
     {
         $protectionScheme = $segment->getProtectionScheme();
-        if ($protectionScheme) {
+        if ($protectionScheme->encryption->isEncrypted) {
             $this->cmfhdcCase->pathAdd(
                 path: $representation->path() . "-$segmentIndex",
                 result: $protectionScheme->scheme->schemeType == 'cenc',
@@ -91,7 +91,7 @@ class EncryptionProfile extends SegmentComponent
     public function validateCMFHDS(Representation $representation, Segment $segment, int $segmentIndex): void
     {
         $protectionScheme = $segment->getProtectionScheme();
-        if ($protectionScheme) {
+        if ($protectionScheme->encryption->isEncrypted) {
             $this->cmfhdsCase->pathAdd(
                 path: $representation->path() . "-$segmentIndex",
                 result: $protectionScheme->scheme->schemeType == 'cbcs',

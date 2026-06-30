@@ -82,9 +82,6 @@ class BitStream extends InitSegmentComponent
     private function validateSignalling(Representation $representation, Segment $segment): void
     {
         $sdType = $segment->getSampleDescriptor();
-        if ($sdType === null) {
-            return;
-        }
 
         if ($sdType == 'hev1' || $sdType == 'hvc1') {
             $this->validateHEVCSignalling($representation, $segment);

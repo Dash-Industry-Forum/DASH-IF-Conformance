@@ -152,10 +152,10 @@ class SplicingPoints
 
         if ($firstSd == $secondSd && $firstSd == 'soun') {
             $audioMatches = false;
-            if ($firstAudioConfig === null && $secondAudioConfig === null) {
+            if (!count($firstAudioConfig) && !count($secondAudioConfig)) {
                 $audioMatches = true;
             }
-            if ($firstAudioConfig !== null && $secondAudioConfig !== null) {
+            if (count($firstAudioConfig) && count($secondAudioConfig)) {
                 if (
                     array_key_exists('Channels', $firstAudioConfig) &&
                     array_key_exists('Channels', $secondAudioConfig)
@@ -211,12 +211,12 @@ class SplicingPoints
 
         $schemeMatches = false;
         $defaultKIDMatches = false;
-        if ($firstEncryption === null && $secondEncryption === null) {
+        if (!$firstEncryption->encryption->isEncrypted && !$secondEncryption->encryption->isEncrypted) {
             $schemeMatches = true;
             $defaultKIDMatches = true;
         }
 
-        if ($firstEncryption !== null && $secondEncryption !== null) {
+        if ($firstEncryption->encryption->isEncrypted && $secondEncryption->encryption->isEncrypted) {
             $schemeMatches = ($firstEncryption->scheme->schemeType == $secondEncryption->scheme->schemeType);
             $defaultKIDMatches = ($firstEncryption->encryption->kid == $secondEncryption->encryption->kid);
         }

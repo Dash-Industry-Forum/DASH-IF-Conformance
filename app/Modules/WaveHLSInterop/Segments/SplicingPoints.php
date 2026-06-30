@@ -50,9 +50,6 @@ class SplicingPoints extends SegmentListComponent
     {
 
         $boxTree = $segment->getBoxNameTree();
-        if (!$boxTree) {
-            return;
-        }
 
         $moofBoxes = $boxTree->filterChildrenRecursive('moof');
 
@@ -87,8 +84,8 @@ class SplicingPoints extends SegmentListComponent
         );
 
         for ($i = 0; $i < $segmentCount - 1; $i++) {
-            $fragmentDurationCurrent = array_sum($segments[$i]->getFragmentDurations() ?? []);
-            $fragmentDurationNext = array_sum($segments[$i + 1]->getFragmentDurations() ?? []);
+            $fragmentDurationCurrent = array_sum($segments[$i]->getFragmentDurations());
+            $fragmentDurationNext = array_sum($segments[$i + 1]->getFragmentDurations());
 
             $this->fragmentDurationCase->pathAdd(
                 result: abs($fragmentDurationNext - $fragmentDurationCurrent) <= $sampleDuration,

@@ -89,7 +89,7 @@ class SpecManager
     public function disableAll(): void
     {
         foreach ($this->manifestSpecs as $specification) {
-            if ($specification->name == "Global Module") {
+            if ($specification->name == "Global Module"){
                 continue;
             }
             $cachePath = cache_path(['spec', $specification->name]);

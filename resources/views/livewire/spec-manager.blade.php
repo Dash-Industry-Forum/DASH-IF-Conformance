@@ -4,6 +4,7 @@
       <div class="row" wire:poll>
   @else
       <div class="row">
+      {{ $this->enable("Global", "Module") }}
   @endif
       <button type="button" disabled class="col-12 btn btn-success">Global Module</button>
       <h5 class="col-12 text-center">Manifest</h5>

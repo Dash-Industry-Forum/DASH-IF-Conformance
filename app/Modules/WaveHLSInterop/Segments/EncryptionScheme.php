@@ -82,7 +82,7 @@ class EncryptionScheme extends InitSegmentComponent
     {
         $protectionScheme = $segment->getProtectionScheme();
 
-        if (!$protectionScheme || !$protectionScheme->encryption->isEncrypted) {
+        if (!$protectionScheme->encryption->isEncrypted) {
             return;
         }
 
