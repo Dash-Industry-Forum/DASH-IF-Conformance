@@ -1,10 +1,10 @@
 FROM dunglas/frankenphp AS base
 
-RUN apt-get update && apt install -y  openjdk-21-jre-headless supervisor
+RUN apt-get update && apt install -y  openjdk-21-jre-headless supervisor nodejs npm
 
 
 RUN install-php-extensions \
-    pcntl
+    pcntl zip
 
 FROM base AS builder
 
@@ -17,10 +17,19 @@ FROM base AS jccp
 
 COPY --from=builder /gpac/bin/gcc/* /usr/bin/
 
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 ENV SERVER_NAME=:80
 COPY . /app
+
+WORKDIR /app
+
+RUN composer install --no-dev --optimize-autoloader --no-interaction && \
+    npm install && \
+    npm run build
+
+RUN php artisan migrate --force
+
 COPY laravel-queue-worker.conf /etc/supervisor/conf.d/laravel-queue-worker.conf
 
-CMD /bin/bash /app/queue_wrapper.sh
-
+CMD ["/bin/bash", "/app/queue_wrapper.sh"]
