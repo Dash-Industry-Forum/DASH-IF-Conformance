@@ -17,7 +17,7 @@ class Durations extends SegmentListComponent
             self::class,
             new ReporterContext(
                 "Segments",
-                "LEGACY",
+                "Edition 3",
                 "CMAF",
                 []
             )
@@ -35,11 +35,15 @@ class Durations extends SegmentListComponent
     public function validateSegmentList(Representation $representation, array $segments): void
     {
         //TODO: Version that works without sidx boxes
-        $currentOffset = 0;
+        $currentOffset = null;
 
         foreach ($segments as $segmentIndex => $segment) {
             $sidxBoxes = $segment->boxAccess()->sidx();
             $tfdtBoxes = $segment->boxAccess()->tfdt();
+
+            if ($currentOffset === null && count($tfdtBoxes) > 0){
+                $currentOffset = $tfdtBoxes[0]->decodeTime;
+            }
 
             $allReferences = [];
             foreach ($sidxBoxes as $sidxBox) {
@@ -58,6 +62,7 @@ class Durations extends SegmentListComponent
                 );
                 return;
             }
+
 
             $index = 0;
             $allValid = true;
