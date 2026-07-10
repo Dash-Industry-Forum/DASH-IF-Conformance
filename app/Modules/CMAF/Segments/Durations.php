@@ -41,7 +41,7 @@ class Durations extends SegmentListComponent
             $sidxBoxes = $segment->boxAccess()->sidx();
             $tfdtBoxes = $segment->boxAccess()->tfdt();
 
-            if ($currentOffset === null && count($tfdtBoxes) > 0){
+            if ($currentOffset === null && count($tfdtBoxes) > 0) {
                 $currentOffset = $tfdtBoxes[0]->decodeTime;
             }
 

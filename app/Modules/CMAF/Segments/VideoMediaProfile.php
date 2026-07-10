@@ -52,7 +52,7 @@ class VideoMediaProfile extends AdaptationComponent
     //Public validation functions
     public function validateAdaptationSet(AdaptationSet $adaptationSet): void
     {
-        if (!str_starts_with($adaptationSet->getTransientAttribute('mimeType'), 'video/')){
+        if (!str_starts_with($adaptationSet->getTransientAttribute('mimeType'), 'video/')) {
             return;
         }
         $signalledBrands = [];

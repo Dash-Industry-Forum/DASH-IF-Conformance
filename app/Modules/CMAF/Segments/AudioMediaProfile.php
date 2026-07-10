@@ -52,7 +52,7 @@ class AudioMediaProfile extends AdaptationComponent
     //Public validation functions
     public function validateAdaptationSet(AdaptationSet $adaptationSet): void
     {
-        if (!str_starts_with($adaptationSet->getTransientAttribute('mimeType'), 'audio/')){
+        if (!str_starts_with($adaptationSet->getTransientAttribute('mimeType'), 'audio/')) {
             return;
         }
         $signalledBrands = [];
