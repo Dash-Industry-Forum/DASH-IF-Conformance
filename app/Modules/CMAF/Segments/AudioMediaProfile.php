@@ -96,7 +96,7 @@ class AudioMediaProfile extends AdaptationComponent
         if ($sdType != 'mp4a') {
             return '____';
         }
-            return $this->validateAndDetermineBrandAAC($representation, $segment);
+        return $this->validateAndDetermineBrandAAC($representation, $segment);
     }
 
     private function validateAndDetermineBrandAAC(Representation $representation, Segment $segment): string
@@ -154,7 +154,7 @@ class AudioMediaProfile extends AdaptationComponent
 
         $this->brandCase->pathAdd(
             path: $representation->path() . "-init",
-            result: in_array($aacConfiguration['objectTypeIndication'], $allowedObjectTypes),
+            result: in_array($aacConfiguration['streamType'], $allowedObjectTypes),
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to allowed object types",
             fail_message: "Signalled brand $brand does not conform to allowed object types",
