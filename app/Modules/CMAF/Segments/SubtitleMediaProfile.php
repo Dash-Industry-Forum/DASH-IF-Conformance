@@ -43,7 +43,9 @@ class SubtitleMediaProfile extends AdaptationComponent
     public function validateAdaptationSet(AdaptationSet $adaptationSet): void
     {
         //TODO: Check if all languages exist
-        //TODO: Only if subtitle
+        if (!str_starts_with($adaptationSet->getTransientAttribute('mimeType'), 'text/')) {
+            return;
+        }
         $signalledBrands = [];
 
         $segmentManager = app(SegmentManager::class);
