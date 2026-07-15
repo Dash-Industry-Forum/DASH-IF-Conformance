@@ -452,17 +452,17 @@ class VideoMediaProfile extends AdaptationComponent
 
         $this->brandCase->pathAdd(
             path: $representation->path() . "-init",
-            result: $segment->getHeight() < $maxHeight,
+            result: $segment->getHeight() <= $maxHeight,
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to maximum height",
             fail_message: "Signalled brand $brand exceeds maximum height",
         );
         $this->brandCase->pathAdd(
             path: $representation->path() . "-init",
-            result: $segment->getWidth() < $maxWidth,
+            result: $segment->getWidth() <= $maxWidth,
             severity: "FAIL",
-            pass_message: "Signalled brand $brand conforms to maximum height",
-            fail_message: "Signalled brand $brand exceeds maximum height",
+            pass_message: "Signalled brand $brand conforms to maximum width",
+            fail_message: "Signalled brand $brand exceeds maximum width",
         );
         $this->brandCase->pathAdd(
             path: $representation->path() . "-init",
