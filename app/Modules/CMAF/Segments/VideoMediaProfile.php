@@ -118,7 +118,7 @@ class VideoMediaProfile extends AdaptationComponent
                 representation: $representation,
                 segment: $segment,
                 brand: 'cfsd',
-                targetProfile: "100",
+                targetProfile: ["66","77","100"],
                 maxLevel: "31",
                 validColourPrimaries: ["1","5","6"],
                 validTransferCharacteristics: ["1","6"],
@@ -134,7 +134,7 @@ class VideoMediaProfile extends AdaptationComponent
                 representation: $representation,
                 segment: $segment,
                 brand: 'cfhd',
-                targetProfile: "100",
+                targetProfile: ["66","77","100"],
                 maxLevel: "40",
                 validColourPrimaries: ["1"],
                 validTransferCharacteristics: ["1"],
@@ -150,7 +150,7 @@ class VideoMediaProfile extends AdaptationComponent
                 representation: $representation,
                 segment: $segment,
                 brand: 'chdf',
-                targetProfile: "100",
+                targetProfile: ["66","77","100"],
                 maxLevel: "42",
                 validColourPrimaries: ["1"],
                 validTransferCharacteristics: ["1"],
@@ -253,6 +253,7 @@ class VideoMediaProfile extends AdaptationComponent
 
     /**
      * @param array<string> $validColourPrimaries
+     * @param array<string> $targetProfile
      * @param array<string> $validTransferCharacteristics
      * @param array<string> $validMatrixCoefficients
      **/
@@ -260,7 +261,7 @@ class VideoMediaProfile extends AdaptationComponent
         Representation $representation,
         Segment $segment,
         string $brand,
-        string $targetProfile,
+        array $targetProfile,
         string $maxLevel,
         array $validColourPrimaries,
         array $validTransferCharacteristics,
@@ -287,7 +288,7 @@ class VideoMediaProfile extends AdaptationComponent
             representation: $representation,
             segment: $segment,
             brand: $brand,
-            targetProfile: [$targetProfile],
+            targetProfile: $targetProfile,
             signalledProfile: $avcConfiguration['AVCProfileIndication'],
             maxLevel: $maxLevel,
             signalledLevel: $avcConfiguration['AVCLevelIndication'],
@@ -452,17 +453,17 @@ class VideoMediaProfile extends AdaptationComponent
 
         $this->brandCase->pathAdd(
             path: $representation->path() . "-init",
-            result: $segment->getHeight() < $maxHeight,
+            result: $segment->getHeight() <= $maxHeight,
             severity: "FAIL",
             pass_message: "Signalled brand $brand conforms to maximum height",
             fail_message: "Signalled brand $brand exceeds maximum height",
         );
         $this->brandCase->pathAdd(
             path: $representation->path() . "-init",
-            result: $segment->getWidth() < $maxWidth,
+            result: $segment->getWidth() <= $maxWidth,
             severity: "FAIL",
-            pass_message: "Signalled brand $brand conforms to maximum height",
-            fail_message: "Signalled brand $brand exceeds maximum height",
+            pass_message: "Signalled brand $brand conforms to maximum width",
+            fail_message: "Signalled brand $brand exceeds maximum width",
         );
         $this->brandCase->pathAdd(
             path: $representation->path() . "-init",
