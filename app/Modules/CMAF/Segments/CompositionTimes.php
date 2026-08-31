@@ -24,7 +24,7 @@ class CompositionTimes extends SegmentComponent
             self::class,
             new ReporterContext(
                 "Segments",
-                "LEGACY",
+                "Edition 3",
                 "CMAF",
                 []
             )
@@ -32,7 +32,7 @@ class CompositionTimes extends SegmentComponent
 
         $this->offsetCase = $this->reporter->add(
             section: 'Section 9.2.1',
-            test: "Video tracks SHALL contain either 'trun' v1 or 'elst', but no both",
+            test: "Video tracks SHALL contain either 'trun(v1)' OR 'elst' combined with 'trun(v0)', but not both",
             skipReason: 'No video track found'
         );
     }
@@ -51,23 +51,33 @@ class CompositionTimes extends SegmentComponent
             $trunVersions[] = $trunBox->version;
         }
 
-        $trunV1 = count(array_unique($trunVersions)) == 1 && $trunVersions[0] == "1";
 
-        $this->offsetCase->pathAdd(
-            result: $trunV1 xor count($elstBoxes),
-            severity: "FAIL",
-            path: $representation->path() . "-$segmentIndex",
-            pass_message: "'trun' v1 OR 'elst' found",
-            fail_message: "None or mixed elements found"
-        );
-        if (count($elstBoxes) && !$trunV1) {
-            //TODO: Validate earliestCompositionTime
+        if (count(array_unique($trunVersions)) != 1) {
             $this->offsetCase->pathAdd(
-                result: true,
-                severity: "INFO",
+                result: false,
+                severity: "FAIL",
                 path: $representation->path() . "-$segmentIndex",
-                pass_message: "'elst' is not validated yet",
-                fail_message: ""
+                pass_message: "",
+                fail_message: "Mixed 'trun' versions found",
+            );
+            return;
+        }
+
+        if ($trunVersions[0] == "0") {
+            $this->offsetCase->pathAdd(
+                result: count($elstBoxes) > 0,
+                severity: "FAIL",
+                path: $representation->path() . "-$segmentIndex",
+                pass_message: "'trun(v0) with 'elst' box found",
+                fail_message: "Missing 'elst' box with 'trun(v0)'"
+            );
+        } else {
+            $this->offsetCase->pathAdd(
+                result: count($elstBoxes) == 0,
+                severity: "FAIL",
+                path: $representation->path() . "-$segmentIndex",
+                pass_message: "'trun(v1) without 'elst' box found",
+                fail_message: "Disallowed 'elst' box with 'trun(v1)' found"
             );
         }
     }

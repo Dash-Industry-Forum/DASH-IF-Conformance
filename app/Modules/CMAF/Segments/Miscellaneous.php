@@ -26,14 +26,14 @@ class Miscellaneous extends AdaptationComponent
             self::class,
             new ReporterContext(
                 "Segments",
-                "LEGACY",
+                "Edition 3",
                 "CMAF",
                 []
             )
         );
 
         $this->hdlrCase = $this->reporter->add(
-            section: 'Section 7.3.4.1',
+            section: 'Section 7.3.9.1',
             test: "A CMAF switching set SHALL have only media type",
             skipReason: 'No video track found'
         );
@@ -63,7 +63,7 @@ class Miscellaneous extends AdaptationComponent
             result: count(array_unique($hdlrTypes)) == 1,
             severity: "FAIL",
             pass_message: "Single 'hdlr' type found",
-            fail_message: "Differing 'hdlr' types found",
+            fail_message: "Different 'hdlr' types found",
         );
     }
 

@@ -84,6 +84,14 @@ class BoxAccess
     }
 
     /**
+     * @return array<Boxes\TFHDBox>
+     **/
+    public function tfhd(): array
+    {
+        return $this->runAnalyzedFunction('tfhdBoxes') ?? [];
+    }
+
+    /**
      * @return array<Boxes\COLRBox>
      **/
     public function colr(): array

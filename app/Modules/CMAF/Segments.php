@@ -29,6 +29,7 @@ use App\Modules\CMAF\Segments\SubtitleMediaProfile;
 use App\Modules\CMAF\Segments\HEVCComparison;
 use App\Modules\CMAF\Segments\Durations;
 use App\Modules\CMAF\Segments\Initialization;
+use App\Modules\CMAF\Segments\LegacyInitialization;
 
 class Segments extends Module
 {
@@ -78,6 +79,7 @@ class Segments extends Module
     private function validateInitialization(Representation $representation, Segment $segment): void
     {
         new Initialization()->withInitSegment($representation, $segment);
+        new LegacyInitialization()->withInitSegment($representation, $segment);
     }
 
     private function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
