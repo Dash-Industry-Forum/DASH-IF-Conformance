@@ -169,7 +169,7 @@ class Representation
         preg_match_all('/\$Number%[0-9]+d\$/', $uriTemplate, $numberTemplates);
 
 
-        foreach (array_unique($numberTemplates[0]) as $numberTemplate){
+        foreach (array_unique($numberTemplates[0]) as $numberTemplate) {
             $templateVar = str_replace('$', '', $numberTemplate);
 
             $uriTemplate = str_replace(
@@ -179,7 +179,6 @@ class Representation
             );
 
             $substitutions[$templateVar] =  sprintf(str_replace('Number', '', $templateVar), $index);
-
         }
 
         return Uri::fromTemplate($uriTemplate, $substitutions)->toString();
