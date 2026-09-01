@@ -123,7 +123,7 @@ class Representation
             //TODO: Fix identifiers properly
             $uriTemplate = str_replace(
                 array('$Bandwidth$','$Number$','$Number%03d$','$RepresentationID$','$Time$'),
-                array('{bandwidth}','{Number}','{Number3d}','{RepresentationID}','{Time}'),
+                array('{bandwidth}','{Number}','{Number03d}','{RepresentationID}','{Time}'),
                 $segmentTemplateUrl
             );
 
@@ -139,13 +139,7 @@ class Representation
                 $startNumber = 1;
             }
             for ($i = 0; $i < 3; $i++) {
-                $filledTemplate =
-                    Uri::fromTemplate($uriTemplate, [
-                    'Number' => ($startNumber + $i),
-                    'Number3d' => sprintf('%03d', ($startNumber + $i)),
-                    'RepresentationID' => $this->getId(),
-                ])->toString();
-                $result[] = $filledTemplate;
+                $result[] = $this->fillTemplateUrl($segmentTemplateUrl, $startNumber + $i);
             }
         }
 
@@ -155,6 +149,23 @@ class Representation
 
 
         return $result;
+    }
+
+    public function fillTemplateUrl(string $segmentTemplateUrl, int $index): string
+    {
+        $uriTemplate = str_replace(
+            array('$Bandwidth$','$Number$','$Number%03d$','$RepresentationID$','$Time$'),
+            array('{bandwidth}','{Number}','{Number03d}','{RepresentationID}','{Time}'),
+            $segmentTemplateUrl
+        );
+
+        $substitutions = [
+         'Number' => $index,
+         'Number03d' => sprintf('%03d', $index),
+         'RepresentationID' => $this->getId(),
+        ];
+
+        return Uri::fromTemplate($uriTemplate, $substitutions)->toString();
     }
 
 
