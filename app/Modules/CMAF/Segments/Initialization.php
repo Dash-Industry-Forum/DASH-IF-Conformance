@@ -12,9 +12,7 @@ class Initialization extends InitSegmentComponent
 {
     private TestCase $avcCase;
     private TestCase $hevcCase;
-    private TestCase $hevcColourCase;
     private TestCase $audioCase;
-    private TestCase $decryptionCase;
 
     public function __construct()
     {
@@ -22,36 +20,26 @@ class Initialization extends InitSegmentComponent
             self::class,
             new ReporterContext(
                 "Segments",
-                "LEGACY",
+                "Edition 3",
                 "CMAF",
                 []
             )
         );
 
         $this->avcCase = $this->reporter->add(
-            section: 'Section 7.3.2.4',
+            section: 'Section 7.3.5',
             test: "Each AVC CMAF Fragment SHALL be independently accessible",
             skipReason: "No AVC track found"
         );
         $this->hevcCase = $this->reporter->add(
-            section: 'Section 7.3.2.4',
+            section: 'Section 7.3.5',
             test: "Each HEVC CMAF Fragment SHALL be independently accessible",
             skipReason: "No HEVC track found"
         );
-        $this->hevcColourCase = $this->reporter->add(
-            section: 'Section 7.3.2.4',
-            test: "The HEVCSampleEntry SHALL contain a 'colr' box with type 'nclx'",
-            skipReason: "No 'hev1' track found"
-        );
         $this->audioCase = $this->reporter->add(
-            section: 'Section 7.3.2.4',
+            section: 'Section 7.3.5',
             test: "Each Audio CMAF Fragment SHALL be independently accessible",
             skipReason: "No Audio track found"
-        );
-        $this->decryptionCase = $this->reporter->add(
-            section: 'Section 7.3.2.4',
-            test: "Each encrypted Fragment SHALL be independently decryptable",
-            skipReason: "No encrypted track found"
         );
     }
 
@@ -71,39 +59,11 @@ class Initialization extends InitSegmentComponent
         if ($segment->getHandlerType() == "soun") {
             $this->validateAudioInitialization($representation, $segment);
         }
-
-        if ($representation->hasProfile("http://dashif.org/guidelines/dash264")) {
-            $this->validateDecryption($representation, $segment);
-        }
     }
 
 
 
     //Private helper functions
-    private function validateDecryption(Representation $representation, Segment $segment): void
-    {
-        $contentProtection = $representation->getDomElements('ContentProtection');
-        if (!count($contentProtection)) {
-            $contentProtection = $representation->getAdaptationSet()->getDomElements('ContentProtection');
-        }
-
-        if (!count($contentProtection)) {
-            return;
-        }
-
-        $boxAccess = $segment->boxAccess();
-        $sencBoxes = $boxAccess->senc();
-        $moofBoxes = $boxAccess->moof();
-
-        //TODO: Check whether this is still correct
-        $this->decryptionCase->pathAdd(
-            path: $representation->path() . "-init",
-            result: count($moofBoxes) == count($sencBoxes),
-            severity: "FAIL",
-            pass_message: "Found decryption Configuration",
-            fail_message: "Unable to find decryption Configuration",
-        );
-    }
 
     private function validateAudioInitialization(Representation $representation, Segment $segment): void
     {
@@ -201,22 +161,6 @@ class Initialization extends InitSegmentComponent
             severity: "FAIL",
             pass_message: "Found Configuration",
             fail_message: "Unable to find HEVCConfiguration",
-        );
-
-        if ($segment->getSampleDescriptor() != "hev1") {
-            return;
-        }
-
-        //TODO: Only if no VUI parameters present flag?
-        //TODO: Add check for 'pasp' box
-
-        $colrBoxes = $segment->boxAccess()->colr();
-        $this->hevcColourCase->pathAdd(
-            path: $representation->path() . "-init",
-            result: count($colrBoxes) != 0 && $colrBoxes[0]->colourType == 'nclx',
-            severity: "FAIL",
-            pass_message: "Correct 'colr' box found",
-            fail_message: "No 'colr' box or wrong colourType found",
         );
     }
 }

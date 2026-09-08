@@ -97,7 +97,28 @@ class MP4BoxRepresentation extends RepresentationInterface
             $trun->sampleCount = intval($trunBox->getAttribute('SampleCount'));
             $trun->dataOffset = intval($trunBox->getAttribute('DataOffset'));
             $trun->earliestCompositionTime = $trunBox->getAttribute('EarliestCompositionTime');
+            foreach ($trunBox->getElementsByTagName('TrackRunEntry') as $trunEntry) {
+                $trun->sizes[] = intval($trunEntry->getAttribute('Size'));
+            }
             $res[] = $trun;
+        }
+        return $res;
+    }
+
+    /**
+     * @return array<Boxes\TFHDBox>
+     **/
+    public function tfhdBoxes(): array
+    {
+        if (!$this->payload) {
+            return [];
+        }
+        $res = [];
+        $tfhdBoxes = $this->payload->getElementsByTagName('TrackFragmentHeaderBox');
+        foreach ($tfhdBoxes as $tfhdBox) {
+            $tfhd = new Boxes\TFHDBox();
+            $tfhd->sampleDuration = intval($tfhdBox->getAttribute('SampleDuration'));
+            $res[] = $tfhd;
         }
         return $res;
     }
@@ -942,6 +963,8 @@ class MP4BoxRepresentation extends RepresentationInterface
             $samples = $naluSample->getElementsByTagName('Sample');
             foreach ($samples as $sample) {
                 $singleSample = new Boxes\NALSample();
+
+                $singleSample->size = intval($sample->getAttribute('size'));
 
                 foreach ($sample->getElementsByTagName('NALU') as $nalUnit) {
                     $unit = new Boxes\NALUnit();

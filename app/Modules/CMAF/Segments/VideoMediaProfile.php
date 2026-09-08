@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Cache;
 
 class VideoMediaProfile extends AdaptationComponent
 {
-    private TestCase $profileCase;
     private TestCase $brandCase;
     private TestCase $cfhdCase;
 
@@ -26,26 +25,21 @@ class VideoMediaProfile extends AdaptationComponent
             self::class,
             new ReporterContext(
                 "Segments",
-                "LEGACY",
+                "Edition 3",
                 "CMAF",
                 []
             )
         );
 
-        $this->profileCase = $this->reporter->add(
-            section: 'Section 7.3.4.1',
-            test: "All CMAF video tracks in a CMAF Switching Set SHALL conform to one CMAF Media Profile",
-            skipReason: 'No video switching set found'
-        );
         $this->brandCase = $this->reporter->add(
-            section: 'Section A.2 / B.5',
-            test: "If a CMAF brand is signalled, it SHALL correspond with the table",
+            section: 'Section A.2 (AVC) / B.6 (HEVC)',
+            test: "The maximum encoding parameters [..as per the table..] SHALL not be exceeded",
             skipReason: 'No cmaf brands signalled'
         );
         $this->cfhdCase = $this->reporter->add(
-            section: 'Section A.1.2/A.1.3/A.1.4',
+            section: 'Section A.1.2',
             test: "Video adaptation sets SHALL include at least one 'cfhd' representation",
-            skipReason: 'No video track found with CMAF profile found'
+            skipReason: 'No video track found, or no CMFHD profile signalled'
         );
     }
 
@@ -55,7 +49,6 @@ class VideoMediaProfile extends AdaptationComponent
         if (!str_starts_with($adaptationSet->getTransientAttribute('mimeType'), 'video/')) {
             return;
         }
-        $signalledBrands = [];
 
         $segmentManager = app(SegmentManager::class);
 
@@ -63,57 +56,47 @@ class VideoMediaProfile extends AdaptationComponent
         foreach ($adaptationSet->allRepresentations() as $representation) {
             $segmentList = $segmentManager->representationSegments($representation);
 
-            $highestBrand = '____'; // Unknown;
             if (count($segmentList)) {
                 if (in_array('cfhd', $segmentList[0]->getBrands())) {
                     $hasCFHD = true;
                 }
-                $highestBrand = $this->validateAndDetermineBrand($representation, $segmentList[0]);
+                $this->validateAndDetermineBrand($representation, $segmentList[0]);
             }
-            $signalledBrands[] = $highestBrand; // Unknown
         }
 
-        $this->profileCase->pathAdd(
-            result: count(array_unique($signalledBrands)) == 1,
-            severity: "FAIL",
-            path: $adaptationSet->path(),
-            pass_message: "All representations signal the same highest brand",
-            fail_message: "Not all representations signal the same highest brand"
-        );
+        $mpdCache = app(MPDCache::class);
 
-        $this->cfhdCase->pathAdd(
-            result: $hasCFHD,
-            severity: "FAIL",
-            path: $adaptationSet->path(),
-            pass_message: "At least one 'cfhd' track found",
-            fail_message: "No 'cfhd' tracks found"
-        );
+
+        if ($mpdCache->hasProfile("urn:mpeg:cmaf:presentation_profile:cmfhd:2016")) {
+            $this->cfhdCase->pathAdd(
+                result: $hasCFHD,
+                severity: "FAIL",
+                path: $adaptationSet->path(),
+                pass_message: "At least one 'cfhd' track found",
+                fail_message: "No 'cfhd' tracks found"
+            );
+        }
     }
 
     //Private helper functions
-    private function validateAndDetermineBrand(Representation $representation, Segment $segment): string
+    private function validateAndDetermineBrand(Representation $representation, Segment $segment): void
     {
         $sdType = $segment->getSampleDescriptor();
 
         if ($sdType == 'avc1' || $sdType == 'avc3') {
-            return $this->validateAndDetermineBrandAVC($representation, $segment);
+            $this->validateAndDetermineBrandAVC($representation, $segment);
         }
         if ($sdType == 'hev1' || $sdType == 'hvc1') {
-            return $this->validateAndDetermineBrandHEVC($representation, $segment);
+            $this->validateAndDetermineBrandHEVC($representation, $segment);
         }
-
-
-        return '____'; // Unknown
     }
 
-    private function validateAndDetermineBrandAVC(Representation $representation, Segment $segment): string
+    private function validateAndDetermineBrandAVC(Representation $representation, Segment $segment): void
     {
         $brands = $segment->getBrands();
 
-        $highestBrand = '____'; //Unknown
 
         if (in_array('cfsd', $brands)) {
-            $highestBrand = 'cfsd';
             $this->validateAVCParameters(
                 representation: $representation,
                 segment: $segment,
@@ -129,7 +112,6 @@ class VideoMediaProfile extends AdaptationComponent
             );
         }
         if (in_array('cfhd', $brands)) {
-            $highestBrand = 'cfhd';
             $this->validateAVCParameters(
                 representation: $representation,
                 segment: $segment,
@@ -145,7 +127,6 @@ class VideoMediaProfile extends AdaptationComponent
             );
         }
         if (in_array('chdf', $brands)) {
-            $highestBrand = 'chdf';
             $this->validateAVCParameters(
                 representation: $representation,
                 segment: $segment,
@@ -160,16 +141,12 @@ class VideoMediaProfile extends AdaptationComponent
                 maxFrameRate: 60
             );
         }
-        return $highestBrand;
     }
-    private function validateAndDetermineBrandHEVC(Representation $representation, Segment $segment): string
+    private function validateAndDetermineBrandHEVC(Representation $representation, Segment $segment): void
     {
         $brands = $segment->getBrands();
 
-        $highestBrand = '____'; //Unknown
-
         if (in_array('chhd', $brands)) {
-            $highestBrand = 'chhd';
             $this->validateHEVCParameters(
                 representation: $representation,
                 segment: $segment,
@@ -185,7 +162,6 @@ class VideoMediaProfile extends AdaptationComponent
             );
         }
         if (in_array('chh1', $brands)) {
-            $highestBrand = 'chh1';
             $this->validateHEVCParameters(
                 representation: $representation,
                 segment: $segment,
@@ -201,7 +177,6 @@ class VideoMediaProfile extends AdaptationComponent
             );
         }
         if (in_array('cud8', $brands)) {
-            $highestBrand = 'cud8';
             $this->validateHEVCParameters(
                 representation: $representation,
                 segment: $segment,
@@ -217,7 +192,6 @@ class VideoMediaProfile extends AdaptationComponent
             );
         }
         if (in_array('cud1', $brands)) {
-            $highestBrand = 'cud1';
             $this->validateHEVCParameters(
                 representation: $representation,
                 segment: $segment,
@@ -233,7 +207,6 @@ class VideoMediaProfile extends AdaptationComponent
             );
         }
         if (in_array('chr1', $brands)) {
-            $highestBrand = 'chr1';
             $this->validateHEVCParameters(
                 representation: $representation,
                 segment: $segment,
@@ -248,7 +221,6 @@ class VideoMediaProfile extends AdaptationComponent
                 maxFrameRate: 60
             );
         }
-        return $highestBrand;
     }
 
     /**
@@ -410,8 +382,6 @@ class VideoMediaProfile extends AdaptationComponent
         int $maxFrameRate,
         int $signalledFrameRate,
     ): void {
-        //NOTE: Should we keep supporting colourPrimaries, transferCharacteristics and matrixCoefficients?
-
         $this->brandCase->pathAdd(
             path: $representation->path() . "-init",
             result: in_array($signalledProfile, $targetProfile),

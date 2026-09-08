@@ -48,10 +48,13 @@ class HEVCComparison extends AdaptationComponent
     //Public validation functions
     public function validateAdaptationSet(AdaptationSet $adaptationSet): void
     {
-        //TODO: Only if HEVC
+        $codec = $adaptationSet->getAttribute('codecs');
+        if (!str_starts_with($codec, 'hev1') && !str_starts_with($codec, 'hvc1')) {
+            return;
+        }
+
         //TODO: Rename fields so they're not hardcoded ISOSegmentvalidator ones
         //TODO: Compare prefix and postfix sei messages in first sample
-        $signalledBrands = [];
 
         $segmentManager = app(SegmentManager::class);
 

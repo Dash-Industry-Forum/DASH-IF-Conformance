@@ -32,7 +32,7 @@ class SegmentIndex extends SegmentComponent
 
         $this->sidxCase = $this->reporter->add(
             section: 'Section 7.3.3.3',
-            test: "Each sbusegment referenced in the 'sidx' box SHALL be a single fragment",
+            test: "Each subsegment referenced in the 'sidx' box SHALL be a single fragment",
             skipReason: "No 'sidx' box used",
         );
     }

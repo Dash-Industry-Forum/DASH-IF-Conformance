@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Cache;
 
 class AudioMediaProfile extends AdaptationComponent
 {
-    private TestCase $profileCase;
     private TestCase $brandCase;
     private TestCase $caacCase;
 
@@ -26,26 +25,21 @@ class AudioMediaProfile extends AdaptationComponent
             self::class,
             new ReporterContext(
                 "Segments",
-                "LEGACY",
+                "Edition 3",
                 "CMAF",
                 []
             )
         );
 
-        $this->profileCase = $this->reporter->add(
-            section: 'Section 7.3.4.1',
-            test: "All CMAF audio tracks in a CMAF Switching Set SHALL conform to one CMAF Media Profile",
-            skipReason: 'No audio switching set found'
-        );
         $this->brandCase = $this->reporter->add(
             section: 'Section A.3',
-            test: "If a CMAF brand is signalled, it SHALL correspond with the table",
+            test: "The maximum encoding parameters [..as per the table..] SHALL not be exceeded",
             skipReason: 'No cmaf brands signalled'
         );
         $this->caacCase = $this->reporter->add(
-            section: 'Section A.1.2/A.1.3/A.1.4',
+            section: 'Section A.1.2',
             test: "Audio adaptation sets SHALL include at least one 'caac' representation",
-            skipReason: 'No audio track found with CMAF profile found'
+            skipReason: 'No audio track found, or no CMFHD profile signalled'
         );
     }
 
@@ -55,60 +49,49 @@ class AudioMediaProfile extends AdaptationComponent
         if (!str_starts_with($adaptationSet->getTransientAttribute('mimeType'), 'audio/')) {
             return;
         }
-        $signalledBrands = [];
-
         $segmentManager = app(SegmentManager::class);
 
         $hasCAAC = false;
         foreach ($adaptationSet->allRepresentations() as $representation) {
             $segmentList = $segmentManager->representationSegments($representation);
 
-            $highestBrand = '____'; // Unknown;
             if (count($segmentList)) {
                 if (in_array('caac', $segmentList[0]->getBrands())) {
                     $hasCAAC = true;
                 }
-                $highestBrand = $this->validateAndDetermineBrand($representation, $segmentList[0]);
+                $this->validateAndDetermineBrand($representation, $segmentList[0]);
             }
-            $signalledBrands[] = $highestBrand; // Unknown
         }
 
-        $this->profileCase->pathAdd(
-            result: count(array_unique($signalledBrands)) == 1,
-            severity: "FAIL",
-            path: $adaptationSet->path(),
-            pass_message: "All representations signal the same highest brand",
-            fail_message: "Not all representations signal the same highest brand"
-        );
+        $mpdCache = app(MPDCache::class);
 
-        $this->caacCase->pathAdd(
-            result: $hasCAAC,
-            severity: "FAIL",
-            path: $adaptationSet->path(),
-            pass_message: "At least one 'caac' track found",
-            fail_message: "No 'caac' tracks found"
-        );
+        if ($mpdCache->hasProfile("urn:mpeg:cmaf:presentation_profile:cmfhd:2016")) {
+            $this->caacCase->pathAdd(
+                result: $hasCAAC,
+                severity: "FAIL",
+                path: $adaptationSet->path(),
+                pass_message: "At least one 'caac' track found",
+                fail_message: "No 'caac' tracks found"
+            );
+        }
     }
 
     //Private helper functions
-    private function validateAndDetermineBrand(Representation $representation, Segment $segment): string
+    private function validateAndDetermineBrand(Representation $representation, Segment $segment): void
     {
         $sdType = $segment->getSampleDescriptor();
 
-        if ($sdType != 'mp4a') {
-            return '____';
+        if ($sdType == 'mp4a') {
+            $this->validateAndDetermineBrandAAC($representation, $segment);
         }
-        return $this->validateAndDetermineBrandAAC($representation, $segment);
     }
 
-    private function validateAndDetermineBrandAAC(Representation $representation, Segment $segment): string
+    private function validateAndDetermineBrandAAC(Representation $representation, Segment $segment): void
     {
         $brands = $segment->getBrands();
 
-        $highestBrand = '____'; //Unknown
 
         if (in_array('caac', $brands)) {
-            $highestBrand = 'caac';
             $this->validateAACParameters(
                 representation: $representation,
                 segment: $segment,
@@ -118,10 +101,6 @@ class AudioMediaProfile extends AdaptationComponent
                 allowedObjectTypes: ["2","5","29"]
             );
         }
-        if (in_array('caaa', $brands)) {
-            $highestBrand = 'caaa';
-        }
-        return $highestBrand;
     }
 
     /**

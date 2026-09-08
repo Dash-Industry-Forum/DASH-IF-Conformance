@@ -51,6 +51,8 @@
             <profile uri='urn:dvb:dash:profile:dvb-dash:2014'>DVB-DASH 2014 profile</profile>
             <profile uri='urn:dvb:dash:profile:dvb-dash:2017'>DVB-DASH 2017 profile</profile>
             <profile uri='urn:hbbtv:dash:profile:isoff-live:2012'>HbbTV 1.5 profile</profile>
+            <profile uri='urn:mpeg:dash:profile:cmaf:2019'>DASH CMAF 2019 Profile</profile>
+            <profile uri='urn:cta:wave:test-content-media-profile:2022'>CTA Wave Test Profile 2022</profile>
         </profiles>
     </xsl:function>
     <xsl:function name="dlb:dquote">"</xsl:function>
