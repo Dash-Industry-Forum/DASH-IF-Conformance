@@ -248,7 +248,7 @@ class VideoProfile extends AdaptationComponent
     private function getHEVCProfile(Representation $representation, array $segments): string
     {
         $hvcc = $segments[0]->getHEVCConfiguration();
-        $validTier = $hvcc !== null & $hvcc['tier_flag'] == "0";
+        $validTier = array_key_exists('tier_flag', $hvcc) & $hvcc['tier_flag'] == "0";
         if (!$validTier) {
             $this->validProfileCase->pathAdd(
                 path: $representation->path(),

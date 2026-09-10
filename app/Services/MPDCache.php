@@ -11,6 +11,8 @@ use App\Services\Manifest\Period;
 use App\Services\Manifest\AdaptationSet;
 use App\Services\Manifest\Representation;
 use App\Services\Manifest\ProfileSpecificMPD;
+use Illuminate\Contracts\Filesystem\Filesystem;
+use App\Services\Manifest\XLink;
 
 class MPDCache
 {
@@ -19,10 +21,22 @@ class MPDCache
      **/
     private array $domCache = [];
     public string $error = '';
+    private Filesystem $sessionStorage;
+
+    private ?\DOMDocument $document = null;
 
 
     public function __construct()
     {
+        $this->sessionStorage = session_disk();
+    }
+
+    public function getDocument(): \DOMDocument
+    {
+        if (!$this->document) {
+            $this->parseDom(ManifestType::Regular);
+        }
+        return $this->document;
     }
 
     private function parseDom(ManifestType $type): ?\DOMElement
@@ -32,11 +46,11 @@ class MPDCache
             if (!$mpd) {
                 return null;
             }
-            $doc = new \DOMDocument();
-            $doc->loadXML($mpd);
+            $this->document = new \DOMDocument();
+            $this->document->loadXML($mpd);
 
 
-            $main_element_nodes = $doc->getElementsByTagName('MPD');
+            $main_element_nodes = $this->document->getElementsByTagName('MPD');
             if ($main_element_nodes->length == 0) {
                 Log::error("No MPD in xml");
                 return null;
@@ -57,6 +71,27 @@ class MPDCache
 
     public function getMPD(ManifestType $type = ManifestType::Regular): string
     {
+        $resolveFilename = ($type == ManifestType::Live ? "live_resolved.mpd" : "resolved.mpd");
+        $manifestFilename = ($type == ManifestType::Live ? "live_manifest.mpd" : "manifest.mpd");
+        if (!$this->sessionStorage->exists($resolveFilename)) {
+            if (!$this->sessionStorage->exists($manifestFilename)) {
+                $contents = $this->getPreviousMPD($type);
+                $this->sessionStorage->put($manifestFilename, $contents);
+            }
+            $manifest = $this->sessionStorage->get($manifestFilename);
+            $resolved = new XLink()->resolveAndValidate($manifest);
+            $this->sessionStorage->put($resolveFilename, $resolved);
+        }
+        return $this->sessionStorage->get($resolveFilename);
+    }
+
+    public function getPreviousMPD(ManifestType $type = ManifestType::Regular): string
+    {
+        $mpdInput = session()->get('mpd');
+        if (str_starts_with($mpdInput, '<?xml') || str_starts_with($mpdInput, '<MPD ')) {
+            Cache::put(cache_path(['mpd','url']), 'unavailable://');
+            return session()->get('mpd');
+        }
         $cachedUrl = Cache::get(cache_path(['mpd', 'url']), '');
         if ($cachedUrl != session()->get('mpd')) {
             invalidate_mpd_cache();
@@ -67,21 +102,19 @@ class MPDCache
         Cache::remember(cache_path(['mpd','url']), 3600, function () {
             return session()->get('mpd');
         });
-        $res = Cache::remember(cache_path(['mpd','contents', $type->name]), 3600, function () use ($type) {
-            return Tracer::newSpan("Retrieve mpd")->measure(function () use ($type) {
-                $contents = '';
-                try {
-                    $contents = file_get_contents(session()->get('mpd'));
-                } catch (\Exception $e) {
-                }
-                if ($contents === false) {
-                    return '';
-                }
-                if ($type == ManifestType::Regular) {
-                    Cache::put(cache_path(['mpd','url_retrieval']), time(), $seconds = 3600);
-                }
-                return $contents;
-            });
+        $res = Tracer::newSpan("Retrieve mpd")->measure(function () use ($type) {
+            $contents = '';
+            try {
+                $contents = file_get_contents(session()->get('mpd'));
+            } catch (\Exception $e) {
+            }
+            if ($contents === false) {
+                return '';
+            }
+            if ($type == ManifestType::Regular) {
+                Cache::put(cache_path(['mpd','url_retrieval']), time(), $seconds = 3600);
+            }
+            return $contents;
         });
         if ($res == '') {
             $this->error = "Unable to retrieve MPD";
@@ -105,7 +138,7 @@ class MPDCache
             return $myBase;
         }
         if ($urlPath[0] == '/') {
-            $urlPath = "file://$urlPath";
+            $urlPath = "file:/$urlPath";
         }
         return Uri::fromBaseUri($myBase, $urlPath)->toString();
     }

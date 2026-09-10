@@ -95,7 +95,7 @@ class SwitchableRepresentation extends AdaptationComponent
                 $trackIds[] = $segmentList[0]->getTrackId();
 
                 $protection = $segmentList[0]->getProtectionScheme();
-                if ($protection) {
+                if ($protection->encryption->isEncrypted) {
                     $anyProtection = true;
                     $keyIds[] = $protection->encryption->kid;
                 }

@@ -25,7 +25,7 @@ class MetaData extends SegmentComponent
             self::class,
             new ReporterContext(
                 "Segments",
-                "LEGACY",
+                "Edition 3",
                 "CMAF",
                 []
             )

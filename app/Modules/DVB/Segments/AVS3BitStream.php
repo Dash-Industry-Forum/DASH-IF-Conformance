@@ -75,9 +75,6 @@ class AVS3BitStream extends InitSegmentComponent
     private function validateSignalling(Representation $representation, Segment $segment): void
     {
         $sdType = $segment->getSampleDescriptor();
-        if ($sdType === null) {
-            return;
-        }
 
         if ($sdType == 'avs3') {
             $this->validateColourProperties($representation, $segment);

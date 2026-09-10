@@ -1,16 +1,16 @@
 <div class="container">
   <div class="row">
       <div class="input-group mb-3 col-12">
-         <span class="input-group-text">Manifest URL</span>
+         <span class="input-group-text">Manifest URL<br/>or Contents</span>
          @session('mpd')
-             <input disabled type="text" class="form-control" wire:model.live="mpd">
+             <textarea class="form-control" rows="3" wire:model.live="mpd" disabled></textarea>
              <button class="btn btn-outline-danger" type="button" wire:click="clearSession">Clear</button>
          @else
              @session('process-consent')
-                 <input type="text" class="form-control" wire:model.live="mpd">
+                 <textarea class="form-control" wire:model.live="mpd"></textarea>
                  <button class="btn btn-outline-secondary" type="button" wire:click="process">Process</button>
              @else
-                 <input type="text" class="form-control" wire:model.live="mpd" disabled>
+                 <textarea class="form-control" rows="3" wire:model.live="mpd" disabled></textarea>
                  <button class="btn btn-outline-secondary" type="button" wire:click="process" disabled>Process</button>
              @endsession
          @endsession

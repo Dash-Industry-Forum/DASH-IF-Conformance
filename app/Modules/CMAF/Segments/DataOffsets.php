@@ -26,15 +26,15 @@ class DataOffsets extends SegmentComponent
             self::class,
             new ReporterContext(
                 "Segments",
-                "LEGACY",
+                "Edition 3",
                 "CMAF",
                 []
             )
         );
 
         $this->offsetCase = $this->reporter->add(
-            section: 'Section 7.3.2.3',
-            test: "All media samples in a CMAF chunk shall be addressed by byte offsets  in a 'trun' box",
+            section: 'Section 7.3.5',
+            test: "All media samples in a CMAF Fragment SHALL be addressed by byte offsets in the 'trun' box",
             skipReason: "No valid track found"
         );
     }
@@ -42,48 +42,35 @@ class DataOffsets extends SegmentComponent
     //Public validation functions
     public function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
-        $sidxBoxes = $segment->boxAccess()->sidx();
-        $moofBoxes = $segment->boxAccess()->moof();
-        $trunBoxes = $segment->boxAccess()->trun();
+        $trunBox = $segment->boxAccess()->trun()[0];
+        $samples = $segment->getNalSamples();
 
-        $allReferences = [];
-        foreach ($sidxBoxes as $sidxBox) {
-            foreach ($sidxBox->references as $reference) {
-                $allReferences[] = $reference;
-            }
-        }
-
-        if (count($allReferences) != count($moofBoxes) || count($allReferences) != count($trunBoxes)) {
+        if (count($samples) != $trunBox->sampleCount) {
             $this->offsetCase->pathAdd(
                 path: $representation->path() . "-$segmentIndex",
                 result: false,
                 severity: "FAIL",
                 pass_message: "",
-                fail_message: "Unable to check due to inconsistent box counts"
+                fail_message: "Trun signals " . $trunBox->sampleCount . " but " . count($samples) . " samples found",
             );
             return;
         }
 
         $index = 0;
         $allValid = true;
-        while ($index < count($trunBoxes)) {
-            if ($trunBoxes[$index]->dataOffset < ($moofBoxes[$index]->boxSize + 8)) {
+        while ($index < $trunBox->sampleCount) {
+            if ($trunBox->sizes[$index] != $samples[$index]->size) {
                 $allValid = false;
                 break;
             }
-            if ($trunBoxes[$index]->dataOffset > (($moofBoxes[$index]->boxSize + 8) + $allReferences[$index]->size)) {
-                $allValid = false;
-                break;
-            }
-
             $index++;
         }
         $this->offsetCase->pathAdd(
             path: $representation->path() . "-$segmentIndex",
             result: $allValid,
             severity: "FAIL",
-            pass_message: "All trun offsets between begin and end of referenced boxes",
-            fail_message: "At least one offset out of bounds"
+            pass_message: "All sample sizes correspond with their 'trun' counterpart",
+            fail_message: "Not all sizes corrsespond to their trun counterpart",
         );
     }
 

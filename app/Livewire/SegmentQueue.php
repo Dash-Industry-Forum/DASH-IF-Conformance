@@ -41,6 +41,15 @@ class SegmentQueue extends Component
      **/
     public function failedSegments(): array
     {
-        return $this->segmentManager->failedSegments();
+        $segments = $this->segmentManager->failedSegments();
+        $filteredSegments = array_filter($segments, function ($k, $v) {
+            return !str_contains($v, "unavailable://");
+        }, ARRAY_FILTER_USE_BOTH);
+
+        if (count($filteredSegments) == 0 && count($segments) != 0) {
+            return [ "All Segments Unavailable" => "Manifest Contents without BaseURL"];
+        }
+
+        return $filteredSegments;
     }
 }

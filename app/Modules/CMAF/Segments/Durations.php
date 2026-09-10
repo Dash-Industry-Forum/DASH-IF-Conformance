@@ -17,7 +17,7 @@ class Durations extends SegmentListComponent
             self::class,
             new ReporterContext(
                 "Segments",
-                "LEGACY",
+                "Edition 3",
                 "CMAF",
                 []
             )
@@ -34,48 +34,43 @@ class Durations extends SegmentListComponent
 
     public function validateSegmentList(Representation $representation, array $segments): void
     {
-        //TODO: Version that works without sidx boxes
-        $currentOffset = 0;
+        $currentOffset = null;
 
         foreach ($segments as $segmentIndex => $segment) {
-            $sidxBoxes = $segment->boxAccess()->sidx();
             $tfdtBoxes = $segment->boxAccess()->tfdt();
+            $tfhdBoxes = $segment->boxAccess()->tfhd();
+            $trunBoxes = $segment->boxAccess()->trun();
 
-            $allReferences = [];
-            foreach ($sidxBoxes as $sidxBox) {
-                foreach ($sidxBox->references as $reference) {
-                    $allReferences[] = $reference;
-                }
+            if ($currentOffset === null && count($tfdtBoxes) > 0) {
+                $currentOffset = $tfdtBoxes[0]->decodeTime;
             }
 
-            if (count($allReferences) != count($tfdtBoxes)) {
+            if (count($tfdtBoxes) != count($tfhdBoxes)) {
                 $this->offsetCase->pathAdd(
                     path: $representation->path() . "-$segmentIndex",
                     result: false,
                     severity: "FAIL",
                     pass_message: "",
-                    fail_message: "Unable to check due to inconsistent box counts"
+                    fail_message: "Mismatched count between 'tfhd' and 'tfdt' boxes",
                 );
                 return;
             }
 
-            $index = 0;
             $allValid = true;
-            while ($index < count($allReferences)) {
-                if ($tfdtBoxes[$index]->decodeTime != $currentOffset) {
+            for ($index = 0; $index < count($tfhdBoxes); $index++) {
+                if ($tfdtBoxes[0]->decodeTime != $currentOffset) {
                     $allValid = false;
                     break;
                 }
 
-                $currentOffset += $allReferences[$index]->duration;
-                $index++;
+                $currentOffset += ($trunBoxes[$index]->sampleCount * $tfhdBoxes[$index]->sampleDuration);
             }
             $this->offsetCase->pathAdd(
                 path: $representation->path() . "-$segmentIndex",
                 result: $allValid,
                 severity: "FAIL",
-                pass_message: "All trun offsets between begin and end of referenced boxes",
-                fail_message: "At least one offset out of bounds"
+                pass_message: "Values correct",
+                fail_message: "Mismatch between value increase and sum of sample durations"
             );
         }
     }

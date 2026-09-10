@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
-use App\Modules\Schematron;
+use App\Modules\Common\MPD as GlobalManifest;
 use App\Modules\DVB\MPD as DVBManifest;
 use App\Modules\DVB\Segments as DVBSegments;
 use App\Modules\HbbTV\MPD as HbbTVManifest;
@@ -71,7 +71,7 @@ class SpecManager
 
     private function registerMPDSpecs(): void
     {
-        $this->manifestSpecs[] = new Schematron();
+        $this->manifestSpecs[] = new GlobalManifest();
         $this->manifestSpecs[] = new DVBManifest();
         $this->manifestSpecs[] = new DVBSegments();
         $this->manifestSpecs[] = new HbbTVManifest();

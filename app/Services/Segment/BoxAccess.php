@@ -48,7 +48,7 @@ class BoxAccess
      **/
     public function elst(): array
     {
-        return $this->runAnalyzedFunction('elstBoxes');
+        return $this->runAnalyzedFunction('elstBoxes') ?? [];
     }
 
     /**
@@ -56,7 +56,7 @@ class BoxAccess
      **/
     public function moof(): array
     {
-        return $this->runAnalyzedFunction('moofBoxes');
+        return $this->runAnalyzedFunction('moofBoxes') ?? [];
     }
 
     /**
@@ -64,7 +64,7 @@ class BoxAccess
      **/
     public function trun(): array
     {
-        return $this->runAnalyzedFunction('trunBoxes');
+        return $this->runAnalyzedFunction('trunBoxes') ?? [];
     }
 
     /**
@@ -72,7 +72,7 @@ class BoxAccess
      **/
     public function sidx(): array
     {
-        return $this->runAnalyzedFunction('sidxBoxes');
+        return $this->runAnalyzedFunction('sidxBoxes') ?? [];
     }
 
     /**
@@ -80,7 +80,15 @@ class BoxAccess
      **/
     public function tfdt(): array
     {
-        return $this->runAnalyzedFunction('tfdtBoxes');
+        return $this->runAnalyzedFunction('tfdtBoxes') ?? [];
+    }
+
+    /**
+     * @return array<Boxes\TFHDBox>
+     **/
+    public function tfhd(): array
+    {
+        return $this->runAnalyzedFunction('tfhdBoxes') ?? [];
     }
 
     /**
@@ -88,7 +96,7 @@ class BoxAccess
      **/
     public function colr(): array
     {
-        return $this->runAnalyzedFunction('colrBoxes');
+        return $this->runAnalyzedFunction('colrBoxes') ?? [];
     }
 
     /**
@@ -96,7 +104,7 @@ class BoxAccess
      **/
     public function pssh(): array
     {
-        return $this->runAnalyzedFunction('getPSSHBoxes');
+        return $this->runAnalyzedFunction('getPSSHBoxes') ?? [];
     }
 
     /**
@@ -104,7 +112,7 @@ class BoxAccess
      **/
     public function senc(): array
     {
-        return $this->runAnalyzedFunction('getSENCBoxes');
+        return $this->runAnalyzedFunction('getSENCBoxes') ?? [];
     }
 
     /**
@@ -112,7 +120,7 @@ class BoxAccess
      **/
     public function kind(): array
     {
-        return $this->runAnalyzedFunction('getKindBoxes');
+        return $this->runAnalyzedFunction('getKindBoxes') ?? [];
     }
 
     /**
@@ -120,7 +128,7 @@ class BoxAccess
      **/
     public function emsg(): array
     {
-        return $this->runAnalyzedFunction('getEmsgBoxes');
+        return $this->runAnalyzedFunction('getEmsgBoxes') ?? [];
     }
 
     /**
@@ -128,7 +136,7 @@ class BoxAccess
      **/
     public function seig(): array
     {
-        return $this->runAnalyzedFunction('getSeigDescriptionGroups');
+        return $this->runAnalyzedFunction('getSeigDescriptionGroups') ?? [];
     }
 
     /**
@@ -136,7 +144,7 @@ class BoxAccess
      **/
     public function sgbp(): array
     {
-        return $this->runAnalyzedFunction('getSampleGroups');
+        return $this->runAnalyzedFunction('getSampleGroups') ?? [];
     }
 
     /**
@@ -144,7 +152,7 @@ class BoxAccess
      **/
     public function ac4DSI(): array
     {
-        return $this->runAnalyzedFunction('getAC4DSI');
+        return $this->runAnalyzedFunction('getAC4DSI') ?? [];
     }
 
     /**
@@ -152,6 +160,6 @@ class BoxAccess
      **/
     public function ac4TOC(): array
     {
-        return $this->runAnalyzedFunction('getAC4TOC');
+        return $this->runAnalyzedFunction('getAC4TOC') ?? [];
     }
 }

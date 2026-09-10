@@ -181,7 +181,7 @@ class DASHProfile extends InitSegmentComponent
     private function validateProtection(Representation $representation, Segment $segment): void
     {
         $protectionScheme = $segment->getProtectionScheme();
-        if (!$protectionScheme) {
+        if (!$protectionScheme->encryption->isEncrypted) {
             return;
         }
 

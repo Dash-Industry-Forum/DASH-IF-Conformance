@@ -123,29 +123,23 @@ class Representation
             //TODO: Fix identifiers properly
             $uriTemplate = str_replace(
                 array('$Bandwidth$','$Number$','$Number%03d$','$RepresentationID$','$Time$'),
-                array('{bandwidth}','{Number}','{Number3d}','{RepresentationID}','{Time}'),
+                array('{bandwidth}','{Number}','{Number03d}','{RepresentationID}','{Time}'),
                 $segmentTemplateUrl
             );
-
-
-            $segmentTimeline = $segmentTemplate->item(0)->getElementsByTagName('SegmentTimeline');
-            if (count($segmentTimeline)) {
-                return $this->timelineUrls($segmentTimeline->item(0), $uriTemplate);
-            }
-
 
             $startNumber = $segmentTemplate->item(0)->getAttribute('startNumber');
             if (!$startNumber) {
                 $startNumber = 1;
             }
+
+            $segmentTimeline = $segmentTemplate->item(0)->getElementsByTagName('SegmentTimeline');
+            if (count($segmentTimeline)) {
+                return $this->timelineUrls($segmentTimeline->item(0), $uriTemplate, $startNumber);
+            }
+
+
             for ($i = 0; $i < 3; $i++) {
-                $filledTemplate =
-                    Uri::fromTemplate($uriTemplate, [
-                    'Number' => ($startNumber + $i),
-                    'Number3d' => sprintf('%03d', ($startNumber + $i)),
-                    'RepresentationID' => $this->getId(),
-                ])->toString();
-                $result[] = $filledTemplate;
+                $result[] = $this->fillTemplateUrl($segmentTemplateUrl, $startNumber + $i);
             }
         }
 
@@ -157,15 +151,50 @@ class Representation
         return $result;
     }
 
+    public function fillTemplateUrl(string $segmentTemplateUrl, int $index, int $time = 0): string
+    {
+        $uriTemplate = str_replace(
+            array('$Bandwidth$','$Number$','$RepresentationID$','$Time$'),
+            array('{bandwidth}','{Number}','{RepresentationID}','{Time}'),
+            $segmentTemplateUrl
+        );
+
+        $substitutions = [
+         'Number' => $index,
+         'Time' => $time,
+         'RepresentationID' => $this->getId(),
+        ];
+
+        $numberTemplates = null;
+        preg_match_all('/\$Number%[0-9]+d\$/', $uriTemplate, $numberTemplates);
+
+
+        foreach (array_unique($numberTemplates[0]) as $numberTemplate) {
+            $templateVar = str_replace('$', '', $numberTemplate);
+
+            $uriTemplate = str_replace(
+                $numberTemplate,
+                '{' . $templateVar . '}',
+                $uriTemplate
+            );
+
+            $substitutions[$templateVar] =  sprintf(str_replace('Number', '', $templateVar), $index);
+        }
+
+        return Uri::fromTemplate($uriTemplate, $substitutions)->toString();
+    }
+
 
     /**
      * @return array<string>
      */
     ///TODO Implement negative repeats
-    private function timelineUrls(\DOMElement $timeline, string $template): array
+    private function timelineUrls(\DOMElement $timeline, string $template, int $startNumber): array
     {
         $urls = [];
         $time = 0;
+        $index = $startNumber;
+
         $segmentElements = $timeline->getElementsByTagName('S');
         foreach ($segmentElements as $segmentElement) {
             if ($segmentElement->getAttribute('t') != '') {
@@ -176,10 +205,8 @@ class Representation
                 $repeats = intval($segmentElement->getAttribute('r')) + 1;
             }
             for ($r = 0; $r < $repeats; $r++) {
-                $urls[] = Uri::fromTemplate($template, [
-                    'RepresentationID' => $this->getId(),
-                    'Time' => $time
-                ])->toString();
+                $urls[] = $this->fillTemplateUrl($template, $index, $time);
+                $index++;
                 $time += intval($segmentElement->getAttribute('d'));
                 if (count($urls) > 3) {
                     break;

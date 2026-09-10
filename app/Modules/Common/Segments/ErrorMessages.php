@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\CMAF\Segments;
+namespace App\Modules\Common\Segments;
 
 use App\Services\MPDCache;
 use App\Services\Manifest\Representation;
@@ -14,9 +14,9 @@ use App\Interfaces\ModuleComponents\SegmentComponent;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 
-class SegmentIndex extends SegmentComponent
+class ErrorMessages extends SegmentComponent
 {
-    private TestCase $sidxCase;
+    private TestCase $errorCase;
 
     public function __construct()
     {
@@ -24,16 +24,16 @@ class SegmentIndex extends SegmentComponent
             self::class,
             new ReporterContext(
                 "Segments",
-                "LEGACY",
-                "CMAF",
+                "Global",
+                "Error Messages",
                 []
             )
         );
 
-        $this->sidxCase = $this->reporter->add(
-            section: 'Section 7.3.3.3',
-            test: "Each subsegment referenced in the 'sidx' box SHALL be a single fragment",
-            skipReason: "No 'sidx' box used",
+        $this->errorCase = $this->reporter->add(
+            section: '',
+            test: "Segment analysis should not result in errors",
+            skipReason: 'No segments found'
         );
     }
 
@@ -41,26 +41,25 @@ class SegmentIndex extends SegmentComponent
     public function validateSegment(Representation $representation, Segment $segment, int $segmentIndex): void
     {
 
-        $sidxReferenceTypes = $segment->getSIDXReferenceTypes();
+        $errors = $segment->getErrors();
 
-        if (!count($sidxReferenceTypes)) {
-            return;
-        }
-
-        $validReferences = true;
-        foreach ($sidxReferenceTypes as $referenceType) {
-            if ($referenceType != '0') {
-                $validReferences = false;
-            }
-        }
-
-        $this->sidxCase->pathAdd(
-            result: $validReferences,
+        $this->errorCase->pathAdd(
+            result: !count($errors),
             severity: "FAIL",
             path: $representation->path() . "-$segmentIndex",
-            pass_message: "Only valid reference types found",
-            fail_message: "At least one invalid reference type found",
+            pass_message: "No error messages found",
+            fail_message: "Error messages found",
         );
+
+        foreach ($errors as $error) {
+            $this->errorCase->pathAdd(
+                result: false,
+                severity: "INFO",
+                path: $representation->path() . "-$segmentIndex",
+                pass_message: "",
+                fail_message: $error,
+            );
+        }
     }
 
     //Private helper functions
