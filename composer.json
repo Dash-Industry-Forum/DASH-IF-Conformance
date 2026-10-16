@@ -10,27 +10,27 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "arifhp86/laravel-clear-expired-cache-file": "^1.0",
-        "keepsuit/laravel-opentelemetry": "^1.5",
-        "laravel/framework": "^12.0",
-        "laravel/octane": "^2.12",
-        "laravel/tinker": "^2.10.1",
-        "laravel/ui": "^4.6",
-        "league/uri": "^7.0",
-        "livewire/livewire": "^3.6"
+        "arifhp86/laravel-clear-expired-cache-file": "^1.0.4",
+        "keepsuit/laravel-opentelemetry": "^1.15",
+        "laravel/framework": "^12.70",
+        "laravel/octane": "^2.22",
+        "laravel/tinker": "^2.11.1",
+        "laravel/ui": "^4.6.3",
+        "league/uri": "^7.8.1",
+        "livewire/livewire": "^3.8.10"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.23",
-        "larastan/larastan": "^3.0",
-        "laravel/pail": "^1.2.2",
-        "laravel/pint": "^1.13",
-        "laravel/sail": "^1.41",
-        "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.6",
-        "phpstan/phpstan": "*",
-        "phpunit/phpunit": "^11.5.3",
-        "phpcompatibility/php-compatibility": "*",
-        "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+        "fakerphp/faker": "^1.24.1",
+        "larastan/larastan": "^3.13",
+        "laravel/pail": "^1.2.7",
+        "laravel/pint": "^1.32.1",
+        "laravel/sail": "^1.69",
+        "mockery/mockery": "^1.6.15",
+        "nunomaduro/collision": "^8.9.5",
+        "phpstan/phpstan": ">=2.3.1",
+        "phpunit/phpunit": "^11.5.57",
+        "phpcompatibility/php-compatibility": ">=9.3.5",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.2.1"
     },
     "autoload": {
         "files": [
