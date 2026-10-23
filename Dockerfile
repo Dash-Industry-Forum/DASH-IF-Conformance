@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp AS base
+FROM dunglas/frankenphp:1.13.3-php8.4-trixie AS base
 
 RUN apt-get update && apt install -y  openjdk-21-jre-headless supervisor nodejs npm
 
